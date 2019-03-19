@@ -27,6 +27,10 @@ namespace ERPAPI.Controllers.Api
             _context = context;
         }
 
+        /// <summary>
+        /// Obtiente el listado de todos los clientes.
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Customer
         [HttpGet]
         public async Task<ActionResult> GetCustomer()
@@ -38,7 +42,11 @@ namespace ERPAPI.Controllers.Api
         }
 
 
-
+        /// <summary>
+        /// Obtiene un cliente , filtrado por su id.
+        /// </summary>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
         [HttpGet("GetCustomerById/{CustomerId}")]
         public async Task<ActionResult> GetCustomerById(Int64 CustomerId)
         {
@@ -46,6 +54,11 @@ namespace ERPAPI.Controllers.Api
             return Ok(Items);
         }
 
+        /// <summary>
+        /// Agrega un nuevo usuario con los datos proporcionados , el CustomerId es un identity.
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<Customer>> Insert([FromBody]Customer payload)
         {
@@ -55,6 +68,11 @@ namespace ERPAPI.Controllers.Api
             return (customer);
         }
 
+        /// <summary>
+        /// Actualiza un cliente con el CustomerId y datos del cliente proporcionados.
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPut("[action]")]
         public async Task<ActionResult<Customer>> Update([FromBody]Customer payload)
         {
@@ -64,6 +82,11 @@ namespace ERPAPI.Controllers.Api
             return (customer);
         }
 
+        /// <summary>
+        /// Elimina un cliente con el CustomerId proporcionado.
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<Customer>> Remove([FromBody]Customer payload)
         {

@@ -32,41 +32,12 @@ namespace ERPAPI.Controllers
             _signInManager = signInManager;
             _configuration = configuration;
             _rolemanager = rolemanager;
-        }
+        } 
+   
 
-
-        [HttpPost("CrearRole")]
-        public async Task<ActionResult<IdentityRole>> CreateRole([FromBody] IdentityRole model)
-        {
-            var result = await _rolemanager.CreateAsync(new IdentityRole { Name = model.Name , NormalizedName= model.NormalizedName });
-            if (result.Succeeded)
-            {
-                return model;
-            }
-            else
-            {
-                return BadRequest("Role exists");
-            }
-        }
-
-
-
-        [HttpPost("AddRoleToUser")]
-        public async Task<ActionResult<IdentityResult>> AddRoleToUser([FromBody] UserRole model)
-        {
-            var result = await   _userManager.AddToRoleAsync(model.ApplicationUser, model.rol);
-            if (result.Succeeded)
-            {
-                return result;
-            }
-            else
-            {
-                return BadRequest("Role exists");
-            }
-        }
 
         /// <summary>
-        /// Crea una nueva cuenta de usuario , el cual puede autenticarse a la api , y generar un web token.
+        /// Crea una nueva cuenta de usuario,con el email y el Usuario , el cual puede autenticarse a la api , y generar un web token.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -84,15 +55,7 @@ namespace ERPAPI.Controllers
             {
                 return BadRequest("Username or password invalid");
             }
-
-            //  var existeusuario = await _userManager.FindByEmailAsync(model.Email);
-            //if (existeusuario.Id == "")
-            //{                
-            //}
-            //else
-            //{
-            //     return BuildToken(model);
-            //}
+      
 
         }
 
@@ -107,16 +70,25 @@ namespace ERPAPI.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<UserToken>> Login([FromBody] UserInfo userInfo)
         {
-            var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
-            if (result.Succeeded)
+
+            try
             {
-                return BuildToken(userInfo);
+                var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return BuildToken(userInfo);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return BadRequest(ModelState);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                return BadRequest(ModelState);
+               return BadRequest($"Ocurrio un error: {ex.Message}");
             }
+          
         }
 
         private UserToken BuildToken(UserInfo userInfo)
