@@ -50,11 +50,31 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<JsonResult> GetUsuarios()
+        {
+            List<ApplicationUser> _users = new List<ApplicationUser>();
+            try
+            {
+               _users = await _context.Users.ToListAsync();
+            }
+            catch (System.Exception myExc)
+            {
+                throw (new Exception(myExc.Message));
+            }
+            return Json(_users);
+        }
+
+
+        /// <summary>
         /// Obtiene los usuarios de la aplicacion.
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]      
-        public async Task<ActionResult<List<ApplicationUser>>> GetUsuarios()
+        public async Task<ActionResult<List<ApplicationUser>>> GetUsers()
         {
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
@@ -67,6 +87,19 @@ namespace ERPAPI.Controllers
             }
 
             return _users;
+        }
+
+
+        /// <summary>
+        /// Obtiene un usuario , filtrado por su id.
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{UserId}")]
+        public async Task<ActionResult> GetUserById(string UserId)
+        {
+            ApplicationUser Items = await _context.Users.Where(q => q.Id == UserId).FirstOrDefaultAsync();
+            return Ok(Items);
         }
 
 
@@ -105,15 +138,23 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_user"></param>
         /// <returns></returns>
-        [HttpDelete("DeleteUsuario")]
+        [HttpPost("DeleteUsuario")]
         public async Task<ActionResult<ApplicationUser>> DeleteUsuario([FromBody]ApplicationUser _user)
         {
-            ApplicationUser customer = _context.Users
-                .Where(x => x.Id == _user.Id)
-                .FirstOrDefault();
-            _context.Users.Remove(_user);
-            await _context.SaveChangesAsync();
-            return (customer);
+
+            try
+            {
+                _context.Users.Remove(_user);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+          
+
+            return (_user);
         }
 
 

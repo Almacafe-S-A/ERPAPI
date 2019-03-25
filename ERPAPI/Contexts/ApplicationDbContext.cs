@@ -30,9 +30,9 @@ namespace ERP.Contexts
 
         public DbSet<Estados> Estados { get; set; }
 
-        public virtual DbSet<ApplicationRole> Roles { get; set; }
+       // public virtual DbSet<ApplicationRole> Roles { get; set; }
 
-        public virtual DbSet<ApplicationUserRole> UserRoles { get; set; }
+       // public virtual DbSet<ApplicationUserRole> UserRoles { get; set; }
 
        
 

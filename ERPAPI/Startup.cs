@@ -20,6 +20,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using AutoMapper;
+
+[assembly:ApiConventionType(typeof(DefaultApiConventions))]
+
 
 namespace ERPAPI
 {
@@ -44,6 +48,12 @@ namespace ERPAPI
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddAutoMapper(options =>
+          {
+              //options.CreateMap<AutorCreacionDTO, Autor>();
+          });
+
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

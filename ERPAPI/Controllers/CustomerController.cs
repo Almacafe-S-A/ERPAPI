@@ -35,10 +35,18 @@ namespace ERPAPI.Controllers.Api
         [HttpGet]
         public async Task<ActionResult> GetCustomer()
         {
-            List<Customer> Items = await _context.Customer.ToListAsync(); 
-            //  int Count = Items.Count();
-            //return Ok(new { Items, Count });
-            return Ok(Items);
+
+            try
+            {
+                List<Customer> Items = await _context.Customer.ToListAsync();               
+                return Ok(Items);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
         }
 
 
@@ -50,8 +58,17 @@ namespace ERPAPI.Controllers.Api
         [HttpGet("GetCustomerById/{CustomerId}")]
         public async Task<ActionResult> GetCustomerById(Int64 CustomerId)
         {
-            Customer Items = await _context.Customer.Where(q=>q.CustomerId== CustomerId).FirstOrDefaultAsync();           
-            return Ok(Items);
+            try
+            {
+                Customer Items = await _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefaultAsync();
+                return Ok(Items);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+         
         }
 
         /// <summary>
@@ -62,10 +79,20 @@ namespace ERPAPI.Controllers.Api
         [HttpPost("[action]")]
         public async Task<ActionResult<Customer>> Insert([FromBody]Customer payload)
         {
-            Customer customer = payload;
-            _context.Customer.Add(customer);
-            await _context.SaveChangesAsync();
-            return (customer);
+
+            try
+            {
+                Customer customer = payload;
+                _context.Customer.Add(customer);
+                await _context.SaveChangesAsync();
+                return (customer);
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
         }
 
         /// <summary>
@@ -76,10 +103,18 @@ namespace ERPAPI.Controllers.Api
         [HttpPut("[action]")]
         public async Task<ActionResult<Customer>> Update([FromBody]Customer payload)
         {
-            Customer customer = payload;
-            _context.Customer.Update(customer);
-            await _context.SaveChangesAsync();
-            return (customer);
+            try
+            {
+                Customer customer = payload;
+                _context.Customer.Update(customer);
+                await _context.SaveChangesAsync();
+                return (customer);
+            }
+            catch (Exception ex)
+            { 
+              return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
         }
 
         /// <summary>
@@ -90,13 +125,24 @@ namespace ERPAPI.Controllers.Api
         [HttpPost("[action]")]
         public async Task<ActionResult<Customer>> Remove([FromBody]Customer payload)
         {
-            Customer customer = _context.Customer
-                .Where(x => x.CustomerId == (Int64)payload.CustomerId)
-                .FirstOrDefault();
-            _context.Customer.Remove(customer);
-            await _context.SaveChangesAsync();
-            return (customer);
+
+            try
+            {
+                Customer customer = _context.Customer
+               .Where(x => x.CustomerId == (Int64)payload.CustomerId)
+               .FirstOrDefault();
+                _context.Customer.Remove(customer);
+                await _context.SaveChangesAsync();
+                return (customer);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
 
         }
+
+
     }
 }
