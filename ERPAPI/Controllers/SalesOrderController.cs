@@ -59,10 +59,10 @@ namespace coderush.Controllers.Api
                     .Where(x => !ids.Contains(x.SalesOrderId))
                     .ToListAsync();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
             return Ok(salesOrders);
         }
@@ -70,12 +70,21 @@ namespace coderush.Controllers.Api
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            SalesOrder result = await _context.SalesOrder
-                .Where(x => x.SalesOrderId.Equals(id))
-                .Include(x => x.SalesOrderLines)
-                .FirstOrDefaultAsync();
+            try
+            {
+                SalesOrder result = await _context.SalesOrder
+              .Where(x => x.SalesOrderId.Equals(id))
+              .Include(x => x.SalesOrderLines)
+              .FirstOrDefaultAsync();
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+
+               return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+          
         }
 
         private void UpdateSalesOrder(int salesOrderId)
@@ -105,42 +114,70 @@ namespace coderush.Controllers.Api
                     _context.SaveChanges();
                 }
             }
-            catch (Exception)
+            catch (Exception ex )
             {
 
-                throw;
+               
             }
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Insert([FromBody]SalesOrder payload)
+        public async Task<IActionResult> Insert([FromBody]SalesOrder salesorder)
         {
-            SalesOrder salesOrder = payload;
-          //  salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
-            _context.SalesOrder.Add(salesOrder);
-            await  _context.SaveChangesAsync();
-            this.UpdateSalesOrder(salesOrder.SalesOrderId);
+             SalesOrder salesOrder = salesorder;
+            try
+            {
+               
+                //salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
+                _context.SalesOrder.Add(salesOrder);
+                await _context.SaveChangesAsync();
+                this.UpdateSalesOrder(salesOrder.SalesOrderId);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+          
             return Ok(salesOrder);
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]SalesOrder payload)
         {
-            SalesOrder salesOrder = payload;
-            _context.SalesOrder.Update(salesOrder);
-            await _context.SaveChangesAsync();
+              SalesOrder salesOrder = payload;
+            try
+            {
+              
+                _context.SalesOrder.Update(salesOrder);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                 return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+         
             return Ok(salesOrder);
         }
 
         [HttpPost("[action]")]
         public async  Task<IActionResult> Remove([FromBody]SalesOrder payload)
         {
-            SalesOrder salesOrder = _context.SalesOrder
-                .Where(x => x.SalesOrderId == (int)payload.SalesOrderId)
-                .FirstOrDefault();
-            _context.SalesOrder.Remove(salesOrder);
-           await _context.SaveChangesAsync();
-            return Ok(salesOrder);
+            try
+            {
+                SalesOrder salesOrder = _context.SalesOrder
+              .Where(x => x.SalesOrderId == (int)payload.SalesOrderId)
+              .FirstOrDefault();
+                _context.SalesOrder.Remove(salesOrder);
+                await _context.SaveChangesAsync();
+                  return Ok(salesOrder);
+            }
+            catch (Exception ex)
+            {
+                 return BadRequest($"Ocurrio un error:{ex.Message}");
+               
+            }
+          
 
         }
     }

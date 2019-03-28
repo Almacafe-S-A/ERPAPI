@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
     public class UsuarioController : Controller

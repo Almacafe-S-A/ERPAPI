@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ERP.Contexts;
 using ERPAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
     public class UserRolController : Controller
@@ -31,6 +32,11 @@ namespace ERPAPI.Controllers
             _rolemanager = rolemanager;
         }
 
+
+        /// <summary>
+        /// Obtiene los roles asignados a los usuarios
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<ActionResult<List<IdentityUserRole<string>>>> GetUserRoles()
         {
@@ -51,7 +57,7 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Agrega un nuevo usuario con los datos proporcionados , el CustomerId es un identity.
+        /// Agrega un nuevo rola a un usuario con los datos proporcionados.
         /// </summary>
         /// <param name="_ApplicationUserRole"></param>
         /// <returns></returns>
@@ -61,10 +67,21 @@ namespace ERPAPI.Controllers
 
             try
             {
-                IdentityUserRole<string> _userrole = mapper.Map<IdentityUserRole<string>>(_ApplicationUserRole);
-                _context.UserRoles.Add(_userrole);
-                await _context.SaveChangesAsync();
-                return Ok(_ApplicationUserRole);
+                List<IdentityUserRole<string>> _listrole = (_context.UserRoles
+                                                       .Where(q => q.RoleId == _ApplicationUserRole.RoleId)
+                                                        .Where(q => q.UserId == _ApplicationUserRole.UserId)
+                                                       ).ToList();
+                if (_listrole.Count == 0)
+                {
+                    IdentityUserRole<string> _userrole = mapper.Map<IdentityUserRole<string>>(_ApplicationUserRole);
+                    _context.UserRoles.Add(_userrole);
+                    await _context.SaveChangesAsync();
+                    return Ok(_ApplicationUserRole);
+                }
+                else
+                {
+                   return  BadRequest("Ya existe esta agregado el rol para el usuario!");
+                }
             }
             catch (Exception ex)
             {
@@ -74,29 +91,25 @@ namespace ERPAPI.Controllers
          
         }
 
-        /// <summary>
-        /// Actualiza rol con usuario con el CustomerId y datos del cliente proporcionados.
-        /// </summary>
-        /// <param name="_ApplicationUserRole"></param>
-        /// <returns></returns>
-        [HttpPut("[action]")]
-        public async Task<ActionResult<ApplicationUserRole>> Update([FromBody]ApplicationUserRole _ApplicationUserRole)
-        {
-            try
-            {
-                _context.UserRoles.Update(_ApplicationUserRole);
-                await _context.SaveChangesAsync();
-                return Ok(_ApplicationUserRole);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
+
+        //[HttpPut("[action]")]
+        //public async Task<ActionResult<ApplicationUserRole>> Update([FromBody]ApplicationUserRole _ApplicationUserRole)
+        //{
+        //    try
+        //    {
+        //        _context.UserRoles.Update(_ApplicationUserRole);
+        //        await _context.SaveChangesAsync();
+        //        return Ok(_ApplicationUserRole);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest($"Ocurrio un error:{ex.Message}");
+        //    }
            
-        }
+        //}
 
         /// <summary>
-        /// Elimina un cliente con el CustomerId proporcionado.
+        /// Elimina un Rol asignado a un usuario con la llave RoleId Y UserId .
         /// </summary>
         /// <param name="_ApplicationUserRole"></param>
         /// <returns></returns>
@@ -105,17 +118,23 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                 IdentityUserRole<string> customer = _context.UserRoles
-                   .Where(x => x.RoleId == _ApplicationUserRole.RoleId)
-                   .Where(x => x.UserId == _ApplicationUserRole.UserId)
-                   .FirstOrDefault();
 
-                _ApplicationUserRole = mapper.Map<ApplicationUserRole>(customer);
-                _context.UserRoles.Remove(customer);
-                await _context.SaveChangesAsync();
+                IdentityUserRole<string> customer = _context.UserRoles
+                  .Where(x => x.RoleId == _ApplicationUserRole.RoleId)
+                  .Where(x => x.UserId == _ApplicationUserRole.UserId)
+                  .FirstOrDefault();
 
-
-                return Ok(_ApplicationUserRole);
+                if (customer != null)
+                {
+                    _context.UserRoles.Remove(customer);
+                    await _context.SaveChangesAsync();
+                     return Ok(_ApplicationUserRole);
+                }
+                else
+                {
+                   return BadRequest($"No existe ese usuario con el rol enviado!");
+                }
+               
             }
             catch (Exception ex)
             {
