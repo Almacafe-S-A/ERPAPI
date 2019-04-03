@@ -33,6 +33,10 @@ namespace ERPAPI.Controllers
             _rolemanager = rolemanager;
         }
 
+        /// <summary>
+        /// Obtiene/Retorna todas las politicas creadas
+        /// </summary>
+        /// <returns></returns>
 
         [HttpGet("[action]")]
         public async Task<ActionResult<List<Policy>>> GetPolicies()
@@ -51,6 +55,11 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Obtiene Los Roles que existen por Politica
+        /// </summary>
+        /// <param name="PolicyId"></param>
+        /// <returns></returns>
         [HttpGet("[action]/{PolicyId}")]
         public async Task<ActionResult> GetRolesByPolicy(Guid PolicyId)
         {
@@ -74,6 +83,11 @@ namespace ERPAPI.Controllers
         
 
          
+        /// <summary>
+        /// Obtiene los CLAIMS DE USUARIO que existen por politica
+        /// </summary>
+        /// <param name="PolicyId"></param>
+        /// <returns></returns>
         [HttpGet("[action]/{PolicyId}")]
         public async Task<ActionResult> GetUserClaims(Guid PolicyId)
         {
@@ -99,6 +113,96 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Agrega una Politica de seguridad
+        /// </summary>
+        /// <param name="_Policy"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ApplicationUserRole>> Insert([FromBody]Policy _Policy)
+        {
+
+            try
+            {
+                List<Policy> _listrole = (_context.Policy
+                                          .Where(q => q.Name == _Policy.Name)                                                       
+                                         ).ToList();
+
+                if (_listrole.Count == 0)
+                {                    
+                    _context.Policy.Add(_Policy);
+                    await _context.SaveChangesAsync();
+                    return Ok(_Policy);
+                }
+                else
+                {
+                    return BadRequest("Ya existe la politica con ese nombre!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }  
+
+        }
+
+
+
+        /// <summary>
+        /// Modifica la politica con el id enviado
+        /// </summary>
+        /// <param name="_Policy"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<Policy>> Update([FromBody]Policy _Policy)
+        {
+            try
+            {               
+                _context.Policy.Update(_Policy);
+                await _context.SaveChangesAsync();
+                return (_Policy);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
+
+
+        /// <summary>
+        /// Elimina una Politica de seguridad
+        /// </summary>
+        /// <param name="_Policy"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ApplicationUserRole>> Delete([FromBody]Policy _Policy)
+        {
+
+            try
+            {
+                List<Policy> _listrole = (_context.Policy
+                                          .Where(q => q.Id == _Policy.Id)
+                                         ).ToList();
+
+                if (_listrole.Count > 0)
+                {
+                    _context.Policy.Remove(_Policy);
+                    await _context.SaveChangesAsync();
+                    return Ok(_Policy);
+                }
+                else
+                {
+                    return BadRequest("No existe la policita enviada!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }  
+
+        }
 
 
 
