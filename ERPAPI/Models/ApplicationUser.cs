@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class ApplicationUser : IdentityUser
+     public class ApplicationUser : IdentityUser
+   // public class ApplicationUser : IdentityUser<string, IdentityUserLogin, IdentityUserRole, ApplicationUserClaim>
     {
+    
 
     }
 }

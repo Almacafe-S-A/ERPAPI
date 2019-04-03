@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace coderush.Controllers.Api
 {
-     [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     //[Produces("application/json")]
     [Route("api/SalesOrderLine")]
     public class SalesOrderLineController : Controller

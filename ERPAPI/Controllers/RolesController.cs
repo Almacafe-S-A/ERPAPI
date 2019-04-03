@@ -37,7 +37,7 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene un rol , filtrado por su id.
         /// </summary>
-        /// <param name="UserId"></param>
+        /// <param name="RoleId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{RoleId}")]
         public async Task<ActionResult> GetRoleById(string RoleId)
@@ -56,8 +56,12 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Obtiene los roles en formato Json
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<List<ApplicationRole>> GetJsonRoles()
+        public async Task<ActionResult<List<ApplicationRole>>> GetJsonRoles()
         {
             List<ApplicationRole> _users = new List<ApplicationRole>();
             try
@@ -69,7 +73,7 @@ namespace ERPAPI.Controllers
             {
                 throw (new Exception(myExc.Message));
             }
-            return (_users);
+            return Ok(_users);
         }
 
 

@@ -5,10 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace ERP.Contexts
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    //public class ApplicationDbContext :
+    //    IdentityDbContext<ApplicationUser,IdentityRole,string,ApplicationUserClaim,IdentityUserRole<string>
+    //        ,IdentityUserLogin<string>,IdentityRoleClaim<string>,IdentityUserToken<string>>
+
     {
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -27,11 +32,15 @@ namespace ERP.Contexts
         public DbSet<Shipment> Shipment { get; set; }
         public DbSet<ShipmentType> ShipmentType { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
-
         public DbSet<Estados> Estados { get; set; }
-
-       // public virtual DbSet<ApplicationRole> Roles { get; set; }
-
+        public DbSet<Policy> Policy { get; set; }
+        public DbSet<PolicyClaims> PolicyClaims { get; set; }
+        public DbSet<PolicyRoles> PolicyRoles { get; set; }
+        public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }
+        
+         
+       
+        // public virtual DbSet<ApplicationRole> Roles { get; set; }
        // public virtual DbSet<ApplicationUserRole> UserRoles { get; set; }
 
        
@@ -44,9 +53,21 @@ namespace ERP.Contexts
             //     new Customer(){CustomerId=2,CustomerName="CAFE INDIO"},
             //};
 
-            //modelBuilder.Entity<Customer>().HasData(Customers);
+            //modelBuilder.Entity<Customer>().HasData(Customers);         
+          
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<PolicyClaims>()
+           .HasKey(c => new { c.idroleclaim, c.IdPolicy });
+
+
+         //   modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims"); 
+
+             //  modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
+
+
+            
         }
     }
 }
