@@ -29,9 +29,12 @@ namespace ERPAPI
 {
     public class Startup
     {
+        //private readonly ILogger _logger;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+           // _logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -54,6 +57,7 @@ namespace ERPAPI
               //options.CreateMap<AutorCreacionDTO, Autor>();
           });
 
+            services.AddLogging();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -93,8 +97,10 @@ namespace ERPAPI
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 config.IncludeXmlComments(xmlPath);
-
+                // _logger.LogInformation("Agrego los comentarios de los endpoints a swagger! ");
             });
+
+            //  _logger.LogInformation("Arranco! ");
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -118,6 +124,7 @@ namespace ERPAPI
                 app.UseHsts();
             }
 
+            
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();

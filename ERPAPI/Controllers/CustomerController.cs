@@ -11,6 +11,7 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers.Api
 {
@@ -21,10 +22,13 @@ namespace ERPAPI.Controllers.Api
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
 
-        public CustomerController(ApplicationDbContext context)
+        public CustomerController(ILogger<CustomerController> logger,ApplicationDbContext context)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         /// <summary>
@@ -43,7 +47,7 @@ namespace ERPAPI.Controllers.Api
             }
             catch (Exception ex)
             {
-
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            
@@ -60,12 +64,13 @@ namespace ERPAPI.Controllers.Api
         {
             try
             {
+               // _logger.LogInformation("Esta retornando el cliente!");
                 Customer Items = await _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefaultAsync();
                 return Ok(Items);
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
          
@@ -90,6 +95,7 @@ namespace ERPAPI.Controllers.Api
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            
@@ -112,6 +118,7 @@ namespace ERPAPI.Controllers.Api
             }
             catch (Exception ex)
             { 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
               return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            
@@ -137,6 +144,7 @@ namespace ERPAPI.Controllers.Api
             }
             catch (Exception ex)
             {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            

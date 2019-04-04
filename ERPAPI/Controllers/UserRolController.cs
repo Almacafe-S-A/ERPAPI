@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
@@ -21,15 +22,17 @@ namespace ERPAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _rolemanager;
         private readonly IMapper mapper;
+         private readonly ILogger _logger;
 
-
-        public UserRolController(ApplicationDbContext context
+        public UserRolController(ILogger<UserRolController> logger,
+            ApplicationDbContext context
             , RoleManager<IdentityRole> rolemanager
             , IMapper mapper)
         {
             this.mapper = mapper;
             _context = context;
             _rolemanager = rolemanager;
+            _logger = logger;
         }
 
 
@@ -48,6 +51,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error: {ex.Message}");
             }
 
@@ -85,6 +89,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            // ApplicationUserRole _userrole = _ApplicationUserRole;
@@ -128,7 +133,7 @@ namespace ERPAPI.Controllers
                 {
                     _context.UserRoles.Remove(customer);
                     await _context.SaveChangesAsync();
-                     return Ok(_ApplicationUserRole);
+                    return Ok(_ApplicationUserRole);
                 }
                 else
                 {
@@ -138,7 +143,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
         

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
@@ -22,15 +23,17 @@ namespace ERPAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _rolemanager;
         private readonly IMapper mapper;
+         private readonly ILogger _logger;
 
-
-        public PoliciesController(ApplicationDbContext context
+        public PoliciesController(ILogger<PoliciesController> logger,
+            ApplicationDbContext context
             , RoleManager<IdentityRole> rolemanager
             , IMapper mapper)
         {
             this.mapper = mapper;
             _context = context;
             _rolemanager = rolemanager;
+            _logger = logger;
         }
 
         /// <summary>
@@ -49,6 +52,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
@@ -76,6 +80,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
@@ -107,6 +112,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
@@ -136,11 +142,13 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
+                     _logger.LogError($"Ya existe la politica con ese nombre!");
                     return BadRequest("Ya existe la politica con ese nombre!");
                 }
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }  
 
@@ -164,6 +172,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
@@ -194,11 +203,13 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
+
                     return BadRequest("No existe la policita enviada!");
                 }
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }  
 
