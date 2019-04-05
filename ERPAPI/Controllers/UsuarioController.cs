@@ -32,7 +32,7 @@ namespace ERPAPI.Controllers
             _context = context;
             _rolemanager = rolemanager;
             _userManager = userManager;
-               _logger = logger;
+            _logger = logger;
         }
 
         /// <summary>

@@ -36,13 +36,14 @@ namespace coderush.Controllers.Api
         }
 
         // GET: api/SalesOrder
-        [HttpGet]
+
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetSalesOrder()
         {
             try
             {
                 List<SalesOrder> Items = await _context.SalesOrder.ToListAsync();
-                int Count = Items.Count();
+              //  int Count = Items.Count();
                 return Ok(Items);
             }
             catch (Exception ex)
@@ -125,7 +126,6 @@ namespace coderush.Controllers.Api
                     salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
 
                     _context.Update(salesOrder);
-
                     _context.SaveChanges();
                 }
             }
@@ -177,7 +177,7 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public async  Task<IActionResult> Remove([FromBody]SalesOrder payload)
+        public async  Task<IActionResult> Delete([FromBody]SalesOrder payload)
         {
             try
             {
