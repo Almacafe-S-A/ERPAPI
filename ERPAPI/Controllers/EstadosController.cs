@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
 
 namespace ERPAPI.Controllers
 {
@@ -21,10 +23,12 @@ namespace ERPAPI.Controllers
     {
 
         private readonly ApplicationDbContext _context;
+        private ILogger _logger;
 
-        public EstadosController(ApplicationDbContext context)
+        public EstadosController(ILogger<EstadosController> logger,ApplicationDbContext context)
         {
             _context = context;
+            _logger = logger ;
         }
 
         // GET: Estados
@@ -32,9 +36,18 @@ namespace ERPAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> GetEstados()
         {
-            List<Estados> Items = await _context.Estados.ToListAsync();
+            try
+            {
+                List<Estados> Items = await _context.Estados.ToListAsync();
+                return Ok(Items);
+
+            }
+            catch (Exception ex)
+            {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+               return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
            
-            return Ok(Items);
         }
                      
 

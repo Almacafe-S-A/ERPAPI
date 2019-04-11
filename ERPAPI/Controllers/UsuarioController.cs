@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
@@ -20,8 +21,10 @@ namespace ERPAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _rolemanager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger _logger;
 
-        public UsuarioController(ApplicationDbContext context
+        public UsuarioController(ILogger<UserRolController> logger
+            ,ApplicationDbContext context
             , RoleManager<IdentityRole> rolemanager
             , UserManager<ApplicationUser> userManager
           )
@@ -29,6 +32,7 @@ namespace ERPAPI.Controllers
             _context = context;
             _rolemanager = rolemanager;
             _userManager = userManager;
+            _logger = logger;
         }
 
         /// <summary>
@@ -39,32 +43,43 @@ namespace ERPAPI.Controllers
         [HttpPost("AddRoleToUser")]
         public async Task<ActionResult<IdentityResult>> AddRoleToUser([FromBody] UserRole model)
         {
-            var result = await _userManager.AddToRoleAsync(model.ApplicationUser, model.rol);
-            if (result.Succeeded)
+            try
             {
-                return result;
+                var result = await _userManager.AddToRoleAsync(model.ApplicationUser, model.rol);
+                if (result.Succeeded)
+                {
+                    return result;
+                }
+                else
+                {
+                    return BadRequest("Role exists");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest("Role exists");
+
+               _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                  return BadRequest($"Ocurrio un error: {ex.Message}");
             }
+          
         }
 
         /// <summary>
-        /// 
+        /// Obtiene los usuarios en Json
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<JsonResult> GetUsuarios()
+        public async Task<ActionResult<JsonResult>> GetUsuarios()
         {
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
                _users = await _context.Users.ToListAsync();
             }
-            catch (System.Exception myExc)
+            catch (System.Exception ex)
             {
-                throw (new Exception(myExc.Message));
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                 return BadRequest($"Ocurrio un error: {ex.Message}");
             }
             return Json(_users);
         }
@@ -84,6 +99,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error: {ex.Message}");
             }
 
@@ -99,8 +115,18 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{UserId}")]
         public async Task<ActionResult> GetUserById(string UserId)
         {
-            ApplicationUser Items = await _context.Users.Where(q => q.Id == UserId).FirstOrDefaultAsync();
-            return Ok(Items);
+            try
+            {
+                ApplicationUser Items = await _context.Users.Where(q => q.Id == UserId).FirstOrDefaultAsync();
+                return Ok(Items);
+            }
+            catch (Exception ex)
+            {
+
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
+            }
+           
         }
 
 
@@ -112,11 +138,19 @@ namespace ERPAPI.Controllers
         [HttpPost("PostUsuario")]
         public async Task< ActionResult<ApplicationUser>> PostUsuario([FromBody]ApplicationUser _usuario)
         {
+            try
+            {
+                _context.Users.Add(_usuario);
+                await _context.SaveChangesAsync();
 
-           _context.Users.Add(_usuario);
-            await _context.SaveChangesAsync();
-
-           return _usuario;
+                return _usuario;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
+            }
+          
 
         }
 
@@ -128,10 +162,20 @@ namespace ERPAPI.Controllers
         [HttpPut("PutUsuario")]
         public async Task<ActionResult<ApplicationUser>> PutUsuario([FromBody]ApplicationUser _usuario)
         {
-            _context.Users.Update(_usuario);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Users.Update(_usuario);
+                await _context.SaveChangesAsync();
 
-            return _usuario;
+                return _usuario;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
+            }
+          
         }
 
         /// <summary>
@@ -151,6 +195,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
           
