@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace ERPAPI.Controllers.Api
+namespace ERPAPI.Controllers
 {
      [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
    // [Produces("application/json")]

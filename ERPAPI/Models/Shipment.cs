@@ -15,7 +15,7 @@ namespace ERPAPI.Models
         public string ShipmentName { get; set; }
         [Display(Name = "Sales Order")]
         public int SalesOrderId { get; set; }
-        public DateTimeOffset ShipmentDate { get; set; }
+        public DateTime ShipmentDate { get; set; }
         [Display(Name = "Shipment Type")]
         public int ShipmentTypeId { get; set; }
         [Display(Name = "Warehouse")]

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190410030205_Currency")]
+    partial class Currency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,9 +238,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("InvoiceDate");
+                    b.Property<DateTimeOffset>("InvoiceDate");
 
-                    b.Property<DateTime>("InvoiceDueDate");
+                    b.Property<DateTimeOffset>("InvoiceDueDate");
 
                     b.Property<string>("InvoiceName");
 
@@ -387,13 +389,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerRefNumber");
 
-                    b.Property<DateTime>("DeliveryDate");
+                    b.Property<DateTimeOffset>("DeliveryDate");
 
                     b.Property<double>("Discount");
 
                     b.Property<double>("Freight");
 
-                    b.Property<DateTime>("OrderDate");
+                    b.Property<DateTimeOffset>("OrderDate");
 
                     b.Property<string>("Remarks");
 
@@ -461,7 +463,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("SalesOrderId");
 
-                    b.Property<DateTime>("ShipmentDate");
+                    b.Property<DateTimeOffset>("ShipmentDate");
 
                     b.Property<string>("ShipmentName");
 

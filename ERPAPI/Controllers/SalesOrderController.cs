@@ -12,8 +12,9 @@ using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
 
-namespace coderush.Controllers.Api
+namespace ERPAPI.Controllers
 {
    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     //[Produces("application/json")]
@@ -22,21 +23,32 @@ namespace coderush.Controllers.Api
     public class SalesOrderController : Controller
     {
         private readonly ApplicationDbContext _context;
+         private readonly ILogger _logger;
       //  private readonly INumberSequence _numberSequence;
 
-        public SalesOrderController(ApplicationDbContext context)
+        public SalesOrderController(ILogger<CurrencyController> logger,ApplicationDbContext context)
                       //,  INumberSequence numberSequence)
         {
             _context = context;
-            //_numberSequence = numberSequence;
+           _logger= logger  ;
         }
 
         // GET: api/SalesOrder
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetSalesOrder()
         {
-            List<SalesOrder> Items = await _context.SalesOrder.ToListAsync();
-            int Count = Items.Count();
+            List<SalesOrder> Items = new List<SalesOrder>();
+            try
+            {
+                Items = await _context.SalesOrder.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
+            //int Count = Items.Count();
             return Ok(Items);
         }
 
@@ -61,7 +73,7 @@ namespace coderush.Controllers.Api
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
             return Ok(salesOrders);
@@ -81,8 +93,8 @@ namespace coderush.Controllers.Api
             }
             catch (Exception ex)
             {
-
-               return BadRequest($"Ocurrio un error:{ex.Message}");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
           
         }
@@ -116,8 +128,8 @@ namespace coderush.Controllers.Api
             }
             catch (Exception ex )
             {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
 
-               
             }
         }
 
@@ -131,11 +143,11 @@ namespace coderush.Controllers.Api
                 //salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
                 _context.SalesOrder.Add(salesOrder);
                 await _context.SaveChangesAsync();
-                this.UpdateSalesOrder(salesOrder.SalesOrderId);
+               // this.UpdateSalesOrder(salesOrder.SalesOrderId);
             }
             catch (Exception ex)
             {
-
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
           
@@ -145,7 +157,7 @@ namespace coderush.Controllers.Api
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]SalesOrder payload)
         {
-              SalesOrder salesOrder = payload;
+           SalesOrder salesOrder = payload;
             try
             {
               
@@ -154,7 +166,8 @@ namespace coderush.Controllers.Api
             }
             catch (Exception ex)
             {
-                 return BadRequest($"Ocurrio un error:{ex.Message}");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
          
             return Ok(salesOrder);
@@ -174,11 +187,14 @@ namespace coderush.Controllers.Api
             }
             catch (Exception ex)
             {
-                 return BadRequest($"Ocurrio un error:{ex.Message}");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
                
-            }
-          
+            }          
 
         }
+
+
+
     }
 }

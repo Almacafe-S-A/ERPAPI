@@ -1,0 +1,110 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using ERP.Contexts;
+using ERPAPI.Models;
+using Microsoft.Extensions.Logging;
+
+namespace ERPAPI.Controllers
+{
+    [Authorize]
+    [Route("api/ProductType")]
+    public class ProductTypeController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
+
+        public ProductTypeController(ILogger<ProductTypeController> logger, ApplicationDbContext context)
+        {
+            _logger = logger;
+            _context = context;
+        }
+
+        // GET: api/ProductType
+        [HttpGet]
+        public async Task<IActionResult> GetProductType()
+        {
+            List<ProductType> Items = new List<ProductType>();
+            try
+            {
+                Items = await _context.ProductType.ToListAsync();
+                //int Count = Items.Count();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(Items);
+        }
+
+
+
+        [HttpPost("[action]")]
+        public IActionResult Insert([FromBody]ProductType _ProductType)
+        {
+            ProductType productType = new ProductType();
+            try
+            {
+                productType = _ProductType;
+                _context.ProductType.Add(productType);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(productType);
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult Update([FromBody]ProductType _ProductType)
+        {
+            ProductType productType = new ProductType();
+            try
+            {
+                productType = _ProductType;
+                _context.ProductType.Update(productType);
+                _context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return Ok(productType);
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult Delete([FromBody]ProductType _ProductType)
+        {
+            ProductType productType = new ProductType();
+            try
+            {
+                productType = _context.ProductType
+                  .Where(x => x.ProductTypeId == _ProductType.ProductTypeId)
+                  .FirstOrDefault();
+                _context.ProductType.Remove(productType);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return Ok(productType);
+
+        }
+    }
+}

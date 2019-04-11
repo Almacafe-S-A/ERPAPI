@@ -14,9 +14,9 @@ namespace ERPAPI.Models
         [Display(Name = "Envio")]
         public int ShipmentId { get; set; }
         [Display(Name = "Fecha de Factura")]
-        public DateTimeOffset InvoiceDate { get; set; }
+        public DateTime InvoiceDate { get; set; }
         [Display(Name = "Fecha de vencimiento")]
-        public DateTimeOffset InvoiceDueDate { get; set; }
+        public DateTime InvoiceDueDate { get; set; }
         [Display(Name = "Tipo de Factura")]
         public int InvoiceTypeId { get; set; }
     }

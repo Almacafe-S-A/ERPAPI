@@ -17,8 +17,8 @@ namespace ERPAPI.Models
         public int BranchId { get; set; }
         [Display(Name = "Customer")]
         public int CustomerId { get; set; }
-        public DateTimeOffset OrderDate { get; set; }
-        public DateTimeOffset DeliveryDate { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime DeliveryDate { get; set; }
 
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }

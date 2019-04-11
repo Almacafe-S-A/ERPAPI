@@ -11,8 +11,10 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
+using ERPAPI.Helpers;
 
-namespace coderush.Controllers.Api
+namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     //[Produces("application/json")]
@@ -20,54 +22,50 @@ namespace coderush.Controllers.Api
     public class SalesOrderLineController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
 
-        public SalesOrderLineController(ApplicationDbContext context)
+        public SalesOrderLineController(ILogger<TaxController> logger, ApplicationDbContext context)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         // GET: api/SalesOrderLine
         [HttpGet]
         public async Task<IActionResult> GetSalesOrderLine()
         {
-            var headers = Request.Headers["SalesOrderId"];
-            int salesOrderId = Convert.ToInt32(headers);
-            List<SalesOrderLine> Items = await _context.SalesOrderLine
-                .Where(x => x.SalesOrderId.Equals(salesOrderId))
-                .ToListAsync();
-            int Count = Items.Count();
+            List<SalesOrderLine> Items = new List<SalesOrderLine>();
+
+            try
+            {
+                var headers = Request.Headers["SalesOrderId"];
+                int salesOrderId = Convert.ToInt32(headers);
+                Items = await _context.SalesOrderLine
+                    .Where(x => x.SalesOrderId.Equals(salesOrderId))
+                    .ToListAsync();
+                int Count = Items.Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
             return Ok(Items);
         }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSalesOrderLineByShipmentId()
         {
-            var headers = Request.Headers["ShipmentId"];
-            int shipmentId = Convert.ToInt32(headers);
-            Shipment shipment = await _context.Shipment.SingleOrDefaultAsync(x => x.ShipmentId.Equals(shipmentId));
-            List<SalesOrderLine> Items = new List<SalesOrderLine>();
-            if (shipment != null)
-            {
-                int salesOrderId = shipment.SalesOrderId;
-                Items = await _context.SalesOrderLine
-                    .Where(x => x.SalesOrderId.Equals(salesOrderId))
-                    .ToListAsync();
-            }
-           // int Count = Items.Count();
-            return Ok(Items);
-        }
+             List<SalesOrderLine> Items = new List<SalesOrderLine>();
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetSalesOrderLineByInvoiceId()
-        {
-            var headers = Request.Headers["InvoiceId"];
-            int invoiceId = Convert.ToInt32(headers);
-            Invoice invoice = await _context.Invoice.SingleOrDefaultAsync(x => x.InvoiceId.Equals(invoiceId));
-            List<SalesOrderLine> Items = new List<SalesOrderLine>();
-            if (invoice != null)
+            try
             {
-                int shipmentId = invoice.ShipmentId;
+                var headers = Request.Headers["ShipmentId"];
+                int shipmentId = Convert.ToInt32(headers);
                 Shipment shipment = await _context.Shipment.SingleOrDefaultAsync(x => x.ShipmentId.Equals(shipmentId));
+
                 if (shipment != null)
                 {
                     int salesOrderId = shipment.SalesOrderId;
@@ -76,6 +74,46 @@ namespace coderush.Controllers.Api
                         .ToListAsync();
                 }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        
+           // int Count = Items.Count();
+            return Ok(Items);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSalesOrderLineByInvoiceId()
+        {
+            List<SalesOrderLine> Items = new List<SalesOrderLine>();
+
+            try
+            {
+                var headers = Request.Headers["InvoiceId"];
+                int invoiceId = Convert.ToInt32(headers);
+                Invoice invoice = await _context.Invoice.SingleOrDefaultAsync(x => x.InvoiceId.Equals(invoiceId));
+
+                if (invoice != null)
+                {
+                    int shipmentId = invoice.ShipmentId;
+                    Shipment shipment = await _context.Shipment.SingleOrDefaultAsync(x => x.ShipmentId.Equals(shipmentId));
+                    if (shipment != null)
+                    {
+                        int salesOrderId = shipment.SalesOrderId;
+                        Items = await _context.SalesOrderLine
+                            .Where(x => x.SalesOrderId.Equals(salesOrderId))
+                            .ToListAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+          
           //  int Count = Items.Count();
             return Ok(Items);
         }
@@ -84,17 +122,17 @@ namespace coderush.Controllers.Api
         {
             try
             {
-                salesOrderLine.Amount = salesOrderLine.Quantity * salesOrderLine.Price;
-                salesOrderLine.DiscountAmount = (salesOrderLine.DiscountPercentage * salesOrderLine.Amount) / 100.0;
-                salesOrderLine.SubTotal = salesOrderLine.Amount - salesOrderLine.DiscountAmount;
-                salesOrderLine.TaxAmount = (salesOrderLine.TaxPercentage * salesOrderLine.SubTotal) / 100.0;
-                salesOrderLine.Total = salesOrderLine.SubTotal + salesOrderLine.TaxAmount;
+                salesOrderLine.Amount = Math.Round((salesOrderLine.Quantity * salesOrderLine.Price),2,MidpointRounding.AwayFromZero);
+                salesOrderLine.DiscountAmount = Math.Round((((salesOrderLine.DiscountPercentage/ 100.0) * salesOrderLine.Amount) ),2,MidpointRounding.AwayFromZero);
+                salesOrderLine.SubTotal = Math.Round((salesOrderLine.Amount - salesOrderLine.DiscountAmount),2,MidpointRounding.AwayFromZero);
+                salesOrderLine.TaxAmount = Math.Round((((salesOrderLine.TaxPercentage/ 100.0) * salesOrderLine.SubTotal) ),2,MidpointRounding.AwayFromZero);
+                salesOrderLine.Total = Math.Round((salesOrderLine.SubTotal + salesOrderLine.TaxAmount),2,MidpointRounding.AwayFromZero);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                throw ex;
             }
 
             return salesOrderLine;
@@ -128,9 +166,9 @@ namespace coderush.Controllers.Api
                     _context.SaveChanges();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 throw;
             }
         }
@@ -138,35 +176,89 @@ namespace coderush.Controllers.Api
         [HttpPost("[action]")]
         public async Task<IActionResult> Insert([FromBody]SalesOrderLine payload)
         {
-            SalesOrderLine salesOrderLine = payload;
-            salesOrderLine = this.Recalculate(salesOrderLine);
-            _context.SalesOrderLine.Add(salesOrderLine);
-            await _context.SaveChangesAsync();
-            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
-            return Ok(salesOrderLine);
+            try
+            {
+                SalesOrderLine salesOrderLine = new SalesOrderLine { Quantity= payload.Quantity,Price=payload.Price
+                     ,SalesOrderId = payload.SalesOrderId
+                    ,DiscountAmount=payload.DiscountAmount  
+                    ,TaxPercentage=payload.TaxPercentage
+                    ,DiscountPercentage=payload.DiscountPercentage };
+               // salesOrderLine = payload;
+
+                salesOrderLine = this.Recalculate(salesOrderLine);
+
+                List<string> _propiedadesAComparar = new List<string>();
+                _propiedadesAComparar.Add("Amount");
+                 _propiedadesAComparar.Add("DiscountAmount");
+                 _propiedadesAComparar.Add("SubTotal");                
+                 _propiedadesAComparar.Add("TaxAmount");
+                _propiedadesAComparar.Add("Total");
+
+                EntityComparer<SalesOrderLine> comparer = new EntityComparer<SalesOrderLine>(_propiedadesAComparar,"SalesOrderId", 0);
+                var res =  comparer.Compare(payload, salesOrderLine);
+
+                if (res)
+                {
+                    _context.SalesOrderLine.Add(salesOrderLine);
+                    await _context.SaveChangesAsync();
+                    //Falta comparar los totales , haciendo suma de las lineas
+                    //this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+                     return Ok(salesOrderLine);
+                }
+                else
+                {
+                     return BadRequest($"Ocurrio un error, en el envio de los datos!");
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
         }
 
         [HttpPost("[action]")]
         public async  Task<IActionResult> Update([FromBody]SalesOrderLine payload)
         {
-            SalesOrderLine salesOrderLine = payload;
-            salesOrderLine = this.Recalculate(salesOrderLine);
-            _context.SalesOrderLine.Update(salesOrderLine);
-            await _context.SaveChangesAsync();
-            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
-            return Ok(salesOrderLine);
+            try
+            {
+                SalesOrderLine salesOrderLine = payload;
+                salesOrderLine = this.Recalculate(salesOrderLine);
+                _context.SalesOrderLine.Update(salesOrderLine);
+                await _context.SaveChangesAsync();
+                this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+                return Ok(salesOrderLine);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+       
         }
 
         [HttpPost("[action]")]
-        public async  Task<IActionResult> Remove([FromBody]SalesOrderLine payload)
+        public async  Task<IActionResult> Delete([FromBody]SalesOrderLine payload)
         {
-            SalesOrderLine salesOrderLine = _context.SalesOrderLine
+            try
+            {
+                SalesOrderLine salesOrderLine = _context.SalesOrderLine
                 .Where(x => x.SalesOrderLineId == (Int64)payload.SalesOrderLineId)
                 .FirstOrDefault();
-            _context.SalesOrderLine.Remove(salesOrderLine);
-            await _context.SaveChangesAsync();
-            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
-            return Ok(salesOrderLine);
+                _context.SalesOrderLine.Remove(salesOrderLine);
+                await _context.SaveChangesAsync();
+                this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+                return Ok(salesOrderLine);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+         
 
         }
 
