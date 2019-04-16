@@ -32,6 +32,7 @@ namespace ERP.Contexts
         public DbSet<Shipment> Shipment { get; set; }
         public DbSet<ShipmentType> ShipmentType { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
+        public DbSet<InvoiceLine> InvoiceLine { get; set; }
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
@@ -40,12 +41,14 @@ namespace ERP.Contexts
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
         public DbSet<Tax> Tax { get; set; }
-         public DbSet<Currency> Currency { get; set; }
+        public DbSet<Currency> Currency { get; set; }
+        public virtual DbSet<Branch> Branch { get; set; }
+        public virtual DbSet<Warehouse> Warehouse { get; set; }
+        public virtual DbSet<SalesType> SalesType { get; set; }
+        public virtual DbSet<UnitOfMeasure> UnitOfMeasure { get; set; }
+        public DbSet<ProformaInvoice> ProformaInvoice { get; set; }
+        public DbSet<ProformaInvoiceLine> ProformaInvoiceLine { get; set; }
 
-        // public virtual DbSet<ApplicationRole> Roles { get; set; }
-       // public virtual DbSet<ApplicationUserRole> UserRoles { get; set; }
-
-       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,9 +67,8 @@ namespace ERP.Contexts
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
 
 
-         //   modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims"); 
-
-             //  modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
+          //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims"); 
+          //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
 
 
             

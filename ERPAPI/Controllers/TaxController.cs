@@ -85,7 +85,7 @@ namespace ERPAPI.Controllers
                 Tax tax = _Tax;
                 _context.Tax.Add(tax);
                 await _context.SaveChangesAsync();
-                return (tax);
+                return (tax); 
 
             }
             catch (Exception ex)

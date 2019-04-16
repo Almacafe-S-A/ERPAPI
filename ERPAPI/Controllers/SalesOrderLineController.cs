@@ -122,10 +122,12 @@ namespace ERPAPI.Controllers
         {
             try
             {
+                var discount = salesOrderLine.DiscountPercentage==0?0: salesOrderLine.DiscountPercentage / 100.0;
+                var taxamount = (salesOrderLine.TaxPercentage == 0 ? 0 : (salesOrderLine.TaxPercentage / 100.0));
                 salesOrderLine.Amount = Math.Round((salesOrderLine.Quantity * salesOrderLine.Price),2,MidpointRounding.AwayFromZero);
-                salesOrderLine.DiscountAmount = Math.Round((((salesOrderLine.DiscountPercentage/ 100.0) * salesOrderLine.Amount) ),2,MidpointRounding.AwayFromZero);
+                salesOrderLine.DiscountAmount = Math.Round((((discount) * salesOrderLine.Amount) ),2,MidpointRounding.AwayFromZero);
                 salesOrderLine.SubTotal = Math.Round((salesOrderLine.Amount - salesOrderLine.DiscountAmount),2,MidpointRounding.AwayFromZero);
-                salesOrderLine.TaxAmount = Math.Round((((salesOrderLine.TaxPercentage/ 100.0) * salesOrderLine.SubTotal) ),2,MidpointRounding.AwayFromZero);
+                salesOrderLine.TaxAmount = Math.Round(((  (taxamount) * salesOrderLine.SubTotal) ),2,MidpointRounding.AwayFromZero);
                 salesOrderLine.Total = Math.Round((salesOrderLine.SubTotal + salesOrderLine.TaxAmount),2,MidpointRounding.AwayFromZero);
 
             }

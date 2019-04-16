@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190411220742_CotizacionesTotales")]
+    partial class CotizacionesTotales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,48 +89,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ApplicationUserClaim");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Branch", b =>
-                {
-                    b.Property<int>("BranchId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address");
-
-                    b.Property<string>("BranchName")
-                        .IsRequired();
-
-                    b.Property<string>("City");
-
-                    b.Property<string>("ContactPerson");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Email");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("Phone");
-
-                    b.Property<string>("State");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.Property<string>("ZipCode");
-
-                    b.HasKey("BranchId");
-
-                    b.ToTable("Branch");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Currency", b =>
@@ -278,38 +238,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("CAI");
-
-                    b.Property<string>("Caja");
-
-                    b.Property<string>("Correo");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<string>("CustomerRefNumber");
-
-                    b.Property<DateTime>("DeliveryDate");
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<double>("Discount");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaLimiteEmision");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Freight");
-
-                    b.Property<int>("IdEstado");
-
                     b.Property<DateTime>("InvoiceDate");
 
                     b.Property<DateTime>("InvoiceDueDate");
@@ -318,96 +246,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("InvoiceTypeId");
 
-                    b.Property<string>("NoConstanciadeRegistro");
-
-                    b.Property<string>("NoFin");
-
-                    b.Property<string>("NoInicio");
-
-                    b.Property<string>("NoOCExenta");
-
-                    b.Property<string>("NoSAG");
-
-                    b.Property<int>("NumeroDEI");
-
-                    b.Property<DateTime>("OrderDate");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("Remarks");
-
-                    b.Property<int>("SalesTypeId");
-
                     b.Property<int>("ShipmentId");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<string>("Sucursal");
-
-                    b.Property<double>("Tax");
-
-                    b.Property<double>("Tax18");
-
-                    b.Property<string>("Tefono");
-
-                    b.Property<string>("TipoDocumento");
-
-                    b.Property<double>("Total");
-
-                    b.Property<double>("TotalExento");
-
-                    b.Property<double>("TotalExonerado");
-
-                    b.Property<double>("TotalGravado");
-
-                    b.Property<double>("TotalGravado18");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("InvoiceId");
 
                     b.ToTable("Invoice");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
-                {
-                    b.Property<long>("SalesOrderLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("Description");
-
-                    b.Property<double>("DiscountAmount");
-
-                    b.Property<double>("DiscountPercentage");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<int>("SalesOrderId");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("TaxAmount");
-
-                    b.Property<string>("TaxCode");
-
-                    b.Property<double>("TaxPercentage");
-
-                    b.Property<double>("Total");
-
-                    b.HasKey("SalesOrderLineId");
-
-                    b.HasIndex("SalesOrderId");
-
-                    b.ToTable("InvoiceLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Policy", b =>
@@ -530,114 +373,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("ProductType");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.ProformaInvoice", b =>
-                {
-                    b.Property<int>("SalesOrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("Correo");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<string>("CustomerRefNumber");
-
-                    b.Property<DateTime>("DeliveryDate");
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<double>("Discount");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Freight");
-
-                    b.Property<int>("IdEstado");
-
-                    b.Property<DateTime>("OrderDate");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("Remarks");
-
-                    b.Property<string>("SalesOrderName");
-
-                    b.Property<int>("SalesTypeId");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("Tax");
-
-                    b.Property<double>("Tax18");
-
-                    b.Property<string>("Tefono");
-
-                    b.Property<double>("Total");
-
-                    b.Property<double>("TotalExento");
-
-                    b.Property<double>("TotalExonerado");
-
-                    b.Property<double>("TotalGravado");
-
-                    b.Property<double>("TotalGravado18");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("SalesOrderId");
-
-                    b.ToTable("ProformaInvoice");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ProformaInvoiceLine", b =>
-                {
-                    b.Property<long>("ProformaLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("Description");
-
-                    b.Property<double>("DiscountAmount");
-
-                    b.Property<double>("DiscountPercentage");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<int>("ProformaInvoiceId");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("TaxAmount");
-
-                    b.Property<string>("TaxCode");
-
-                    b.Property<double>("TaxPercentage");
-
-                    b.Property<double>("Total");
-
-                    b.HasKey("ProformaLineId");
-
-                    b.HasIndex("ProformaInvoiceId");
-
-                    b.ToTable("ProformaInvoiceLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.SalesOrder", b =>
                 {
                     b.Property<int>("SalesOrderId")
@@ -662,13 +397,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Discount");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<double>("Freight");
-
-                    b.Property<int>("IdEstado");
 
                     b.Property<DateTime>("OrderDate");
 
@@ -684,8 +413,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Tax");
 
-                    b.Property<double>("Tax18");
-
                     b.Property<string>("Tefono");
 
                     b.Property<double>("Total");
@@ -695,12 +422,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("TotalExonerado");
 
                     b.Property<double>("TotalGravado");
-
-                    b.Property<double>("TotalGravado18");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("SalesOrderId");
 
@@ -720,8 +441,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("DiscountAmount");
 
                     b.Property<double>("DiscountPercentage");
-
-                    b.Property<int?>("InvoiceId");
 
                     b.Property<double>("Price");
 
@@ -743,37 +462,9 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("SalesOrderLineId");
 
-                    b.HasIndex("InvoiceId");
-
                     b.HasIndex("SalesOrderId");
 
                     b.ToTable("SalesOrderLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.SalesType", b =>
-                {
-                    b.Property<int>("SalesTypeId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("SalesTypeName")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.HasKey("SalesTypeId");
-
-                    b.ToTable("SalesType");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Shipment", b =>
@@ -838,32 +529,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("TaxId");
 
                     b.ToTable("Tax");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.UnitOfMeasure", b =>
-                {
-                    b.Property<int>("UnitOfMeasureId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UnitOfMeasureName")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.HasKey("UnitOfMeasureId");
-
-                    b.ToTable("UnitOfMeasure");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Vendor", b =>
@@ -946,34 +611,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("VendorTypeId");
 
                     b.ToTable("VendorType");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Warehouse", b =>
-                {
-                    b.Property<int>("WarehouseId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.Property<string>("WarehouseName")
-                        .IsRequired();
-
-                    b.HasKey("WarehouseId");
-
-                    b.ToTable("Warehouse");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1094,28 +731,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
-                        .WithMany()
-                        .HasForeignKey("SalesOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ProformaInvoiceLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.ProformaInvoice", "ProformaInvoice")
-                        .WithMany("ProformaInvoiceLine")
-                        .HasForeignKey("ProformaInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Invoice")
-                        .WithMany("SalesOrderLines")
-                        .HasForeignKey("InvoiceId");
-
                     b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
                         .HasForeignKey("SalesOrderId")

@@ -1,57 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class Invoice
+    public class ProformaInvoice
     {
-        [Display(Name = "Id")]
-        public int InvoiceId { get; set; }       
-        public string InvoiceName { get; set; }
-        [Display(Name = "Envio")]
-        public int ShipmentId { get; set; }
-        [Display(Name = "Fecha de Factura")]
-        public DateTime InvoiceDate { get; set; }
-        [Display(Name = "Fecha de vencimiento")]
-        public DateTime InvoiceDueDate { get; set; }
-        [Display(Name = "Tipo de Factura")]
-        public int InvoiceTypeId { get; set; }
-
-        [Display(Name = "Sucursal")]
-        public string Sucursal { get; set; }
-
-        [Display(Name = "Sucursal")]
-        public string Caja { get; set; }
-
-        [Display(Name = "Numero de Factura")]
-        public string TipoDocumento { get; set; }
-
-        [Display(Name = "Numero de Factura")]
-        public int NumeroDEI { get; set; }
-
-        [Display(Name = "Numero de inicio")]
-        public string NoInicio { get; set; }
-
-        [Display(Name = "Numero fin")]
-        public string NoFin { get; set; }
-
-        [Display(Name = "Fecha Limite")]
-        public DateTime FechaLimiteEmision { get; set; }
-
-        [Display(Name = "Numero de Factura")]
-        public string CAI { get; set; }
-
-        [Display(Name = "Numero de orden de compra exenta")]
-        public string NoOCExenta { get; set; }
-
-        [Display(Name = "Numero de constancia de registro de exoneracion")]
-        public string NoConstanciadeRegistro { get; set; }
-
-        [Display(Name = "Numero de registro de la SAG")]
-        public string NoSAG { get; set; }
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int SalesOrderId { get; set; }
+        [Display(Name = "Order Number")]
+        public string SalesOrderName { get; set; }
 
         [Display(Name = "RTN")]
         public string RTN { get; set; }
@@ -79,24 +40,19 @@ namespace ERPAPI.Models
         public string CustomerRefNumber { get; set; }
         [Display(Name = "Tipo de ventas")]
         public int SalesTypeId { get; set; }
-
-        [Display(Name = "Observacion")]
         public string Remarks { get; set; }
 
         [Display(Name = "Monto")]
         public double Amount { get; set; }
-        public double SubTotal { get; set; }
+        public double SubTotal { get; set; }     
 
-        [Display(Name = "Descuento")]
         public double Discount { get; set; }
 
-
-        [Display(Name = "Impuesto")]
+        [Display(Name = "Impuesto%")]
         public double Tax { get; set; }
 
         [Display(Name = "Impuesto 18%")]
         public double Tax18 { get; set; }
-
 
         [Display(Name = "Flete")]
         public double Freight { get; set; }
@@ -115,6 +71,8 @@ namespace ERPAPI.Models
 
         public double Total { get; set; }
 
+     
+
         public int IdEstado { get; set; }
 
         public DateTime FechaCreacion { get; set; }
@@ -122,7 +80,6 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public List<SalesOrderLine> SalesOrderLines { get; set; } = new List<SalesOrderLine>();
-
+        public List<ProformaInvoiceLine> ProformaInvoiceLine { get; set; } = new List<ProformaInvoiceLine>();
     }
 }

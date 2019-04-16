@@ -8,7 +8,7 @@ namespace ERPAPI.Models
 {
     public class ApplicationUserClaim : IdentityUserClaim<int>
     {
-        public int Id { get; set; }
+       // public int Id { get; set; }
 
         public string UserId { get; set; }
 
