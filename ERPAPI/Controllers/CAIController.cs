@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/CAI")]
+    [ApiController]
     public class CAIController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,6 +28,11 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Obtiene el Listado de CAI , de los documentos que ha tenido y tiene la empresa.
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetCAI()
         {
@@ -40,14 +52,19 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        /// <summary>
+        /// Inserta un nuevo cai
+        /// </summary>
+        /// <param name="_CAI"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Insert([FromBody]CAI payload)
+        public async Task<IActionResult> Insert([FromBody]CAI _CAI)
         {
-            CAI _CAI = new CAI();
+            CAI _CAIq = new CAI();
             try
             {
-                _CAI = payload;
-                _context.CAI.Add(_CAI);
+                _CAIq = _CAI;
+                _context.CAI.Add(_CAIq);
                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -60,6 +77,11 @@ namespace ERPAPI.Controllers
             return Ok(_CAI);
         }
 
+        /// <summary>
+        /// Actualiza el CAI 
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]CAI payload)
         {
@@ -79,6 +101,12 @@ namespace ERPAPI.Controllers
             return Ok(_Cai);
         }
 
+        /// <summary>
+        /// Elimina un cai , un cai se puede eliminar si no ha sido usado en cualquiera
+        /// de los documentos fiscales , asegurarse por cai y tipo de documento.
+        /// </summary>
+        /// <param name="_cai"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody]CAI _cai)
         {

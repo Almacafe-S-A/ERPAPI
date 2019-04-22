@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190422162817_ControllersNumeracionSAR")]
-    partial class ControllersNumeracionSAR
+    [Migration("20190422164645_NumeracionSARId")]
+    partial class NumeracionSARId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

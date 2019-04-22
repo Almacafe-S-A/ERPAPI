@@ -4,12 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/TiposDocumento")]
+    [ApiController]
     public class TiposDocumentoController : Controller
     {
         private readonly ApplicationDbContext _context;

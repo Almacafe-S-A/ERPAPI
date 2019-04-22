@@ -13,6 +13,10 @@
   <ItemGroup>
     <Compile Remove="Migrations\20190319213029_addtable.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.Designer.cs" />
+    <Compile Remove="Migrations\20190422162817_ControllersNumeracionSAR.cs" />
+    <Compile Remove="Migrations\20190422162817_ControllersNumeracionSAR.Designer.cs" />
+    <Compile Remove="Migrations\20190422164347_ControllersNumeracionSAR.cs" />
+    <Compile Remove="Migrations\20190422164347_ControllersNumeracionSAR.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

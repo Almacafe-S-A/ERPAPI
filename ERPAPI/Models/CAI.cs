@@ -12,7 +12,7 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 IdCAI { get; set; }
-        public string cai { get; set; }
+        public string _cai { get; set; }
         public DateTime FechaRecepcion { get; set; }
         public DateTime FechaLimiteEmision { get; set; }
         public string Estado { get; set; }

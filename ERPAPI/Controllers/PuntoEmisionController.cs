@@ -4,12 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/PuntoEmision")]
+    [ApiController]
     public class PuntoEmisionController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,7 +27,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetCAI()
+        public async Task<IActionResult> GetPuntoEmision()
         {
             List<PuntoEmision> Items = new List<PuntoEmision>();
             try
