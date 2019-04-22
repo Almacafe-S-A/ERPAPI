@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,6 +10,7 @@ namespace ERPAPI.Models
     public class Invoice
     {
         [Display(Name = "Id")]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int InvoiceId { get; set; }       
         public string InvoiceName { get; set; }
         [Display(Name = "Envio")]
@@ -69,6 +71,10 @@ namespace ERPAPI.Models
         public int BranchId { get; set; }
         [Display(Name = "Customer")]
         public int CustomerId { get; set; }
+
+        [Display(Name = "Nombre Cliente")]
+        public string CustomerName { get; set; }
+
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
 

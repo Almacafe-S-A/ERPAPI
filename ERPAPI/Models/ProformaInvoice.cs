@@ -10,9 +10,9 @@ namespace ERPAPI.Models
     public class ProformaInvoice
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int SalesOrderId { get; set; }
+        public int ProformaId { get; set; }
         [Display(Name = "Order Number")]
-        public string SalesOrderName { get; set; }
+        public string ProformaName { get; set; }
 
         [Display(Name = "RTN")]
         public string RTN { get; set; }
@@ -30,6 +30,9 @@ namespace ERPAPI.Models
         public int BranchId { get; set; }
         [Display(Name = "Customer")]
         public int CustomerId { get; set; }
+
+        [Display(Name = "Nombre Cliente")]
+        public string CustomerName { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
 

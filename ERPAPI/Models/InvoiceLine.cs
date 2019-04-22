@@ -10,14 +10,18 @@ namespace ERPAPI.Models
     public class InvoiceLine
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 SalesOrderLineId { get; set; }
+        public Int64 InvoiceLineId { get; set; }
         [Display(Name = "Sales Order")]
-        public int SalesOrderId { get; set; }
+        public int InvoiceId { get; set; }
         [Display(Name = "Cotizacion")]
-        public SalesOrder SalesOrder { get; set; }
+        public Invoice SalesOrder { get; set; }
         [Display(Name = "Product Item")]
         public Int64 ProductId { get; set; }
-         [Display(Name = "Descripcion")]
+
+        [Display(Name = "Nombre producto")]
+        public string ProductName { get; set; }
+
+        [Display(Name = "Descripcion")]
         public string Description { get; set; }
           [Display(Name = "Cantidad")]
         public double Quantity { get; set; }

@@ -28,8 +28,12 @@ namespace ERPAPI.Models
 
         [Display(Name = "Branch")]
         public int BranchId { get; set; }
-        [Display(Name = "Customer")]
+        [Display(Name = "Cliente Id")]
         public int CustomerId { get; set; }
+
+        [Display(Name = "Nombre Cliente")]
+        public string CustomerName { get; set; }
+
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
 

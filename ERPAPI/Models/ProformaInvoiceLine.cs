@@ -15,9 +15,13 @@ namespace ERPAPI.Models
         public int ProformaInvoiceId { get; set; }
         [Display(Name = "Cotizacion")]
         public ProformaInvoice ProformaInvoice { get; set; }
-        [Display(Name = "Product Item")]
+        [Display(Name = "Product Id")]
         public Int64 ProductId { get; set; }
-         [Display(Name = "Descripcion")]
+
+        [Display(Name = "Nombre Producto")]
+        public string ProductName { get; set; }
+
+        [Display(Name = "Descripcion")]
         public string Description { get; set; }
           [Display(Name = "Cantidad")]
         public double Quantity { get; set; }

@@ -17,7 +17,11 @@ namespace ERPAPI.Models
         public SalesOrder SalesOrder { get; set; }
         [Display(Name = "Product Item")]
         public Int64 ProductId { get; set; }
-         [Display(Name = "Descripcion")]
+
+        [Display(Name = "Nombre Producto")]
+        public string ProductName { get; set; }
+
+        [Display(Name = "Descripcion")]
         public string Description { get; set; }
           [Display(Name = "Cantidad")]
         public double Quantity { get; set; }
