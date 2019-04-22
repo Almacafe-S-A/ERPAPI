@@ -48,14 +48,14 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]ProductType _ProductType)
+        public async Task<IActionResult> Insert([FromBody]ProductType _ProductType)
         {
             ProductType productType = new ProductType();
             try
             {
                 productType = _ProductType;
                 _context.ProductType.Add(productType);
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -68,14 +68,14 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]ProductType _ProductType)
+        public async Task<IActionResult> Update([FromBody]ProductType _ProductType)
         {
             ProductType productType = new ProductType();
             try
             {
                 productType = _ProductType;
                 _context.ProductType.Update(productType);
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
 
             }
             catch (Exception ex)
@@ -87,7 +87,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult Delete([FromBody]ProductType _ProductType)
+        public async Task<IActionResult> Delete([FromBody]ProductType _ProductType)
         {
             ProductType productType = new ProductType();
             try
@@ -95,14 +95,15 @@ namespace ERPAPI.Controllers
                 productType = _context.ProductType
                   .Where(x => x.ProductTypeId == _ProductType.ProductTypeId)
                   .FirstOrDefault();
-                _context.ProductType.Remove(productType);
-                _context.SaveChanges();
+                  _context.ProductType.Remove(productType);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
+
             return Ok(productType);
 
         }

@@ -22,4 +22,6 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
     }
+
+
 }

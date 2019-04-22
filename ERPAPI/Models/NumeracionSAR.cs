@@ -10,6 +10,8 @@ namespace ERPAPI.Models
     public class NumeracionSAR
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Int64 IdNumeracion { get; set; }
+
         public Int64 IdCAI { get; set; }
 
         public string NoInicio { get; set; }

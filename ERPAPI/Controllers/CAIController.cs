@@ -2,60 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using ERP.Contexts;
+using ERPAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using ERPAPI.Models;
-using ERP.Contexts;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    // [Produces("application/json")]
-    [Route("api/Branch")]
-    public class BranchController : Controller
+    public class CAIController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public BranchController(ILogger<BranchController> logger, ApplicationDbContext context)
+        public CAIController(ILogger<CAIController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
-        
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetBranch()
+        public async Task<IActionResult> GetCAI()
         {
-            List<Branch> Items = new List<Branch>();
+            List<CAI> Items = new List<CAI>();
             try
             {
-                Items = await _context.Branch.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-               
-          //  int Count = Items.Count();
-            return Ok( Items);
-        }
-
-        [HttpPost("[action]")]
-        public async  Task<IActionResult> Insert([FromBody]Branch payload)
-        {
-            Branch branch = new Branch();
-            try
-            {
-                branch = payload;
-                _context.Branch.Add(branch);
-              await  _context.SaveChangesAsync();
+                Items = await _context.CAI.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -64,16 +36,18 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(branch);
+            //  int Count = Items.Count();
+            return Ok(Items);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]Branch payload)
+        public async Task<IActionResult> Insert([FromBody]CAI payload)
         {
-            Branch branch = payload;
+            CAI _CAI = new CAI();
             try
             {
-                _context.Branch.Update(branch);
+                _CAI = payload;
+                _context.CAI.Add(_CAI);
                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -82,20 +56,39 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok(branch);
+
+            return Ok(_CAI);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Branch payload)
+        public async Task<IActionResult> Update([FromBody]CAI payload)
         {
-            Branch branch = new Branch();
+            CAI _Cai = payload;
             try
             {
-                branch = _context.Branch
-               .Where(x => x.BranchId == (int)payload.BranchId)
-               .FirstOrDefault();
-                _context.Branch.Remove(branch);
+                _context.CAI.Update(_Cai);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_Cai);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]CAI _cai)
+        {
+            CAI _caiq = new CAI();
+            try
+            {
+                _caiq = _context.CAI
+                .Where(x => x.IdCAI == (int)_cai.IdCAI)
+                .FirstOrDefault();
+                _context.CAI.Remove(_caiq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -104,11 +97,15 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(branch);
+            return Ok(_caiq);
 
         }
 
 
-        
+
+
+
+
+
     }
 }

@@ -2,60 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using ERP.Contexts;
+using ERPAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using ERPAPI.Models;
-using ERP.Contexts;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    // [Produces("application/json")]
-    [Route("api/Branch")]
-    public class BranchController : Controller
+    public class PuntoEmisionController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public BranchController(ILogger<BranchController> logger, ApplicationDbContext context)
+        public PuntoEmisionController(ILogger<PuntoEmisionController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
-        
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetBranch()
+        public async Task<IActionResult> GetCAI()
         {
-            List<Branch> Items = new List<Branch>();
+            List<PuntoEmision> Items = new List<PuntoEmision>();
             try
             {
-                Items = await _context.Branch.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-               
-          //  int Count = Items.Count();
-            return Ok( Items);
-        }
-
-        [HttpPost("[action]")]
-        public async  Task<IActionResult> Insert([FromBody]Branch payload)
-        {
-            Branch branch = new Branch();
-            try
-            {
-                branch = payload;
-                _context.Branch.Add(branch);
-              await  _context.SaveChangesAsync();
+                Items = await _context.PuntoEmision.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -64,16 +36,18 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(branch);
+            //  int Count = Items.Count();
+            return Ok(Items);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]Branch payload)
+        public async  Task<IActionResult> Insert([FromBody]PuntoEmision payload)
         {
-            Branch branch = payload;
+            PuntoEmision _PuntoEmision = new PuntoEmision();
             try
             {
-                _context.Branch.Update(branch);
+                _PuntoEmision = payload;
+                _context.PuntoEmision.Add(_PuntoEmision);
                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -82,20 +56,39 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok(branch);
+
+            return Ok(_PuntoEmision);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Branch payload)
+        public async Task<IActionResult> Update([FromBody]PuntoEmision payload)
         {
-            Branch branch = new Branch();
+            PuntoEmision _PuntoEmision = payload;
             try
             {
-                branch = _context.Branch
-               .Where(x => x.BranchId == (int)payload.BranchId)
+                _context.PuntoEmision.Update(_PuntoEmision);
+               await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_PuntoEmision);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]PuntoEmision _puntoemision)
+        {
+            PuntoEmision _puntoemisionq = new PuntoEmision();
+            try
+            {
+                _puntoemisionq = _context.PuntoEmision
+               .Where(x => x.IdPuntoEmision == (int)_puntoemisionq.IdPuntoEmision)
                .FirstOrDefault();
-                _context.Branch.Remove(branch);
+                _context.PuntoEmision.Remove(_puntoemisionq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -104,11 +97,15 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(branch);
+            return Ok(_puntoemisionq);
 
         }
 
 
-        
+
+
+
+
+
     }
 }

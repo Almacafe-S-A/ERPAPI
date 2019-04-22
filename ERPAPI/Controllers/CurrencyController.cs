@@ -48,19 +48,6 @@ namespace ERPAPI.Controllers
             return Ok( Items);
         }
 
-        //[HttpGet("[action]/{id}")]
-        //public async Task<IActionResult> GetByBranchId([FromRoute]int id)
-        //{
-        //    Branch branch = new Branch();
-        //    Currency currency = new Currency();
-        //    branch = await _context.Branch.SingleOrDefaultAsync(x => x.BranchId.Equals(id));
-        //    if (branch != null && branch.CurrencyId != 0)
-        //    {
-        //        currency = await _context.Currency.SingleOrDefaultAsync(x => x.CurrencyId.Equals(branch.CurrencyId));
-                
-        //    }
-        //    return Ok(currency);
-        //}
 
         [HttpPost("[action]")]
         public async Task<ActionResult<Currency>> Insert([FromBody]Currency _Currency)
@@ -119,5 +106,7 @@ namespace ERPAPI.Controllers
             return Ok(currency);
 
         }
+
+
     }
 }

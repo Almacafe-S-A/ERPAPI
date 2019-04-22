@@ -87,16 +87,16 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Remove([FromBody]UnitOfMeasure payload)
+        public async Task<IActionResult> Remove([FromBody]UnitOfMeasure payload)
         {
             UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
             try
             {
                 unitOfMeasure = _context.UnitOfMeasure
-              .Where(x => x.UnitOfMeasureId == (int)payload.UnitOfMeasureId)
-              .FirstOrDefault();
+                .Where(x => x.UnitOfMeasureId == (int)payload.UnitOfMeasureId)
+                .FirstOrDefault();
                 _context.UnitOfMeasure.Remove(unitOfMeasure);
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -108,5 +108,8 @@ namespace coderush.Controllers.Api
             return Ok(unitOfMeasure);
 
         }
+
+
+
     }
 }

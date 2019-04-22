@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-//using coderush.Data;
 using ERPAPI.Models;
-//using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -157,12 +155,9 @@ namespace ERPAPI.Controllers
                     //update master data by its lines
                     salesOrder.Amount = lines.Sum(x => x.Amount);
                     salesOrder.SubTotal = lines.Sum(x => x.SubTotal);
-
                     salesOrder.Discount = lines.Sum(x => x.DiscountAmount);
                     salesOrder.Tax = lines.Sum(x => x.TaxAmount);
-
                     salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
-
                     _context.Update(salesOrder);
 
                     _context.SaveChanges();
@@ -259,10 +254,11 @@ namespace ERPAPI.Controllers
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-         
+            }        
 
         }
+
+
 
 
     }

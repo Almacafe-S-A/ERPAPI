@@ -47,14 +47,14 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]Product _product)
+        public async Task<IActionResult> Insert([FromBody]Product _product)
         {
             Product product = new Product();
             try
             {
                 product = _product;
                 _context.Product.Add(product);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
             }
             catch (Exception ex)
@@ -66,14 +66,14 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]Product _product)
+        public async  Task<IActionResult> Update([FromBody]Product _product)
         {
             Product product = new Product();
             try
             {
                 product = _product;
                 _context.Product.Update(product);
-                _context.SaveChanges();
+               await  _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -84,7 +84,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public IActionResult Delete([FromBody]Product _product)
+        public async  Task<IActionResult> Delete([FromBody]Product _product)
         {
             Product product = new Product();
             try
@@ -93,7 +93,7 @@ namespace ERPAPI.Controllers
                    .Where(x => x.ProductId == (int)_product.ProductId)
                    .FirstOrDefault();
                 _context.Product.Remove(product);
-                _context.SaveChanges();
+               await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

@@ -2,60 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using ERP.Contexts;
+using ERPAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using ERPAPI.Models;
-using ERP.Contexts;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    // [Produces("application/json")]
-    [Route("api/Branch")]
-    public class BranchController : Controller
+    public class NumeracionSARController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public BranchController(ILogger<BranchController> logger, ApplicationDbContext context)
+        public NumeracionSARController(ILogger<NumeracionSARController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
-        
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetBranch()
+        public async Task<IActionResult> GetNumeracion()
         {
-            List<Branch> Items = new List<Branch>();
+            List<NumeracionSAR> Items = new List<NumeracionSAR>();
             try
             {
-                Items = await _context.Branch.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-               
-          //  int Count = Items.Count();
-            return Ok( Items);
-        }
-
-        [HttpPost("[action]")]
-        public async  Task<IActionResult> Insert([FromBody]Branch payload)
-        {
-            Branch branch = new Branch();
-            try
-            {
-                branch = payload;
-                _context.Branch.Add(branch);
-              await  _context.SaveChangesAsync();
+                Items = await _context.NumeracionSAR.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -64,16 +36,18 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(branch);
+            //  int Count = Items.Count();
+            return Ok(Items);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]Branch payload)
+        public async Task<IActionResult> Insert([FromBody]NumeracionSAR _NumeracionSAR)
         {
-            Branch branch = payload;
+            NumeracionSAR _NumeracionSARq = new NumeracionSAR();
             try
             {
-                _context.Branch.Update(branch);
+                _NumeracionSARq = _NumeracionSAR;
+                _context.NumeracionSAR.Add(_NumeracionSARq);
                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -82,20 +56,39 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok(branch);
+
+            return Ok(_NumeracionSAR);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Branch payload)
+        public async Task<IActionResult> Update([FromBody]NumeracionSAR _NumeracionSARq)
         {
-            Branch branch = new Branch();
+            NumeracionSAR __NumeracionSARq = _NumeracionSARq;
             try
             {
-                branch = _context.Branch
-               .Where(x => x.BranchId == (int)payload.BranchId)
-               .FirstOrDefault();
-                _context.Branch.Remove(branch);
+                _context.NumeracionSAR.Update(_NumeracionSARq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(__NumeracionSARq);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]NumeracionSAR __NumeracionSAR)
+        {
+            NumeracionSAR __NumeracionSARq = new NumeracionSAR();
+            try
+            {
+                __NumeracionSARq = _context.NumeracionSAR
+                .Where(x => x.IdNumeracion== (int)__NumeracionSARq.IdNumeracion)
+                .FirstOrDefault();
+                _context.NumeracionSAR.Remove(__NumeracionSARq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -104,11 +97,15 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(branch);
+            return Ok(__NumeracionSARq);
 
         }
 
 
-        
+
+
+
+
+
     }
 }
