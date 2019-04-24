@@ -23,7 +23,7 @@ namespace ERPAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _rolemanager;
         private readonly IMapper mapper;
-         private readonly ILogger _logger;
+        private readonly ILogger _logger;
 
         public PoliciesController(ILogger<PoliciesController> logger,
             ApplicationDbContext context
@@ -47,7 +47,8 @@ namespace ERPAPI.Controllers
             try
             {
                 var Items = await _context.Policy.ToListAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
+                //return Ok(Items);
 
             }
             catch (Exception ex)
@@ -75,7 +76,8 @@ namespace ERPAPI.Controllers
 
                 
                 List<IdentityRole> Items = await _context.Roles.Where(q => _policiesrole.Contains(q.Id)).ToListAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
+                // return Ok(Items);
 
             }
             catch (Exception ex)
@@ -103,11 +105,11 @@ namespace ERPAPI.Controllers
 
                 List<ApplicationUserClaim> _usersclaims =
                     await _context.ApplicationUserClaim.FromSql(query).ToListAsync();
-            
-                                                          
-                
-               
-                return Ok(_usersclaims);
+
+
+
+                return await Task.Run(() => Ok(_usersclaims));
+                //  return Ok(_usersclaims);
 
             }
             catch (Exception ex)
@@ -138,7 +140,8 @@ namespace ERPAPI.Controllers
                 {                    
                     _context.Policy.Add(_Policy);
                     await _context.SaveChangesAsync();
-                    return Ok(_Policy);
+                    return await Task.Run(() => Ok(_Policy));
+                    // return Ok(_Policy);
                 }
                 else
                 {
@@ -168,7 +171,8 @@ namespace ERPAPI.Controllers
             {               
                 _context.Policy.Update(_Policy);
                 await _context.SaveChangesAsync();
-                return (_Policy);
+                return await Task.Run(() => Ok(_Policy));
+                // return (_Policy);
             }
             catch (Exception ex)
             {
@@ -199,7 +203,8 @@ namespace ERPAPI.Controllers
                 {
                     _context.Policy.Remove(_Policy);
                     await _context.SaveChangesAsync();
-                    return Ok(_Policy);
+                    return await Task.Run(() => Ok(_Policy));
+                    // return Ok(_Policy);
                 }
                 else
                 {

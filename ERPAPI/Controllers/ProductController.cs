@@ -27,14 +27,17 @@ namespace ERPAPI.Controllers
         }
 
         // GET: api/Product
+        /// <summary>
+        ///   Obtiene el listado de productos.        
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetProduct()
         {
             List<Product> Items = new List<Product>();
             try
             {
-                Items = await _context.Product.ToListAsync();
-                //int Count = Items.Count();
+                Items = await _context.Product.ToListAsync();               
             }
             catch (Exception ex)
             {
@@ -45,7 +48,11 @@ namespace ERPAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// Inserta un producto
+        /// </summary>
+        /// <param name="_product"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Insert([FromBody]Product _product)
         {
@@ -65,6 +72,11 @@ namespace ERPAPI.Controllers
             return Ok(product);
         }
 
+        /// <summary>
+        /// Actualiza un producto
+        /// </summary>
+        /// <param name="_product"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async  Task<IActionResult> Update([FromBody]Product _product)
         {
@@ -83,6 +95,11 @@ namespace ERPAPI.Controllers
             return Ok(product);
         }
 
+        /// <summary>
+        /// Elimina un producto
+        /// </summary>
+        /// <param name="_product"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async  Task<IActionResult> Delete([FromBody]Product _product)
         {

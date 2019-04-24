@@ -80,15 +80,15 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Actualiza el CAI 
         /// </summary>
-        /// <param name="payload"></param>
+        /// <param name="_cai"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]CAI payload)
+        public async Task<IActionResult> Update([FromBody]CAI _cai)
         {
-            CAI _Cai = payload;
+            CAI _Caiq = _cai;
             try
             {
-                _context.CAI.Update(_Cai);
+                _context.CAI.Update(_Caiq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -98,7 +98,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_Cai);
+            return Ok(_Caiq);
         }
 
         /// <summary>

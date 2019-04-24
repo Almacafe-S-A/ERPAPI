@@ -17,6 +17,8 @@
     <Compile Remove="Migrations\20190422162817_ControllersNumeracionSAR.Designer.cs" />
     <Compile Remove="Migrations\20190422164347_ControllersNumeracionSAR.cs" />
     <Compile Remove="Migrations\20190422164347_ControllersNumeracionSAR.Designer.cs" />
+    <Compile Remove="Migrations\20190423143016_SubProductos_Relacion.cs" />
+    <Compile Remove="Migrations\20190423143016_SubProductos_Relacion.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

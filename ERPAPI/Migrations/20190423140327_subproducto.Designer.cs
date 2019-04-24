@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190423140327_subproducto")]
+    partial class subproducto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -646,29 +648,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>
-                {
-                    b.Property<long>("RelationProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("RelationProductId");
-
-                    b.ToTable("ProductRelation");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.ProductType", b =>
                 {
                     b.Property<long>("ProductTypeId")
@@ -1014,6 +993,8 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<string>("ProductCode");
+
+                    b.Property<long>("ProductId");
 
                     b.Property<string>("ProductName");
 

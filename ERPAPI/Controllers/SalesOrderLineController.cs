@@ -49,8 +49,9 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok(Items);
+
+            return await Task.Run(() => Ok(Items));
+            // return Ok(Items);
         }
 
         [HttpGet("[action]")]
@@ -77,9 +78,10 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-        
-           // int Count = Items.Count();
-            return Ok(Items);
+
+            // int Count = Items.Count();
+            // return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpGet("[action]")]
@@ -111,9 +113,10 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-          
-          //  int Count = Items.Count();
-            return Ok(Items);
+
+            //int Count = Items.Count();
+            // return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         private SalesOrderLine Recalculate(SalesOrderLine salesOrderLine)
@@ -138,7 +141,7 @@ namespace ERPAPI.Controllers
             return salesOrderLine;
         }
 
-        private void UpdateSalesOrder(int salesOrderId)
+        private async void UpdateSalesOrder(int salesOrderId)
         {
             try
             {
@@ -160,13 +163,13 @@ namespace ERPAPI.Controllers
                     salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
                     _context.Update(salesOrder);
 
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                throw;
+                throw ex;
             }
         }
 
@@ -200,7 +203,8 @@ namespace ERPAPI.Controllers
                     await _context.SaveChangesAsync();
                     //Falta comparar los totales , haciendo suma de las lineas
                     //this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
-                     return Ok(salesOrderLine);
+                    //return Ok(salesOrderLine);
+                    return await Task.Run(() => Ok(salesOrderLine));
                 }
                 else
                 {
@@ -226,7 +230,8 @@ namespace ERPAPI.Controllers
                 _context.SalesOrderLine.Update(salesOrderLine);
                 await _context.SaveChangesAsync();
                 this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
-                return Ok(salesOrderLine);
+                //return Ok(salesOrderLine);
+                return await Task.Run(() => Ok(salesOrderLine));
             }
             catch (Exception ex)
             {
@@ -247,8 +252,8 @@ namespace ERPAPI.Controllers
                 _context.SalesOrderLine.Remove(salesOrderLine);
                 await _context.SaveChangesAsync();
                 this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
-                return Ok(salesOrderLine);
-
+                //return Ok(salesOrderLine);
+                return await Task.Run(() => Ok(salesOrderLine));
             }
             catch (Exception ex)
             {

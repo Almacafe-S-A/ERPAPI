@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-//using ERPAPI.Data;
 using ERPAPI.Models;
-//using ERPAPI.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,7 +36,8 @@ namespace ERPAPI.Controllers
             {
                 List<CustomerType> Items = await _context.CustomerType.ToListAsync();
                 //  int Count = Items.Count();
-                return Ok(Items);
+                // return Ok(Items);
+                return await Task.Run(() => Ok(Items));
             }
             catch (Exception ex)
             {
@@ -58,7 +57,8 @@ namespace ERPAPI.Controllers
                 CustomerType customerType = payload;
                 _context.CustomerType.Add(customerType);
                 await _context.SaveChangesAsync();
-                return Ok(customerType);
+                return await Task.Run(() => Ok(customerType));
+                // return Ok(customerType);
             }
             catch (Exception ex)
             {
@@ -75,7 +75,8 @@ namespace ERPAPI.Controllers
                 CustomerType customerType = payload;
                 _context.CustomerType.Update(customerType);
                 await _context.SaveChangesAsync();
-                return Ok(customerType);
+                return await Task.Run(() => Ok(customerType));
+                //return Ok(customerType);
             }
             catch (Exception ex)
             {
@@ -94,7 +95,8 @@ namespace ERPAPI.Controllers
                .FirstOrDefault();
                 _context.CustomerType.Remove(customerType);
                 await _context.SaveChangesAsync();
-                return Ok(customerType);
+                return await Task.Run(() => Ok(customerType));
+                //return Ok(customerType);
             }
             catch (Exception ex)
             {

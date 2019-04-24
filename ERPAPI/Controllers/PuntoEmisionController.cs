@@ -26,6 +26,10 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Obtiene  un punto de emision
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetPuntoEmision()
         {
@@ -45,6 +49,11 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        /// <summary>
+        /// Inserta un punto de emision
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async  Task<IActionResult> Insert([FromBody]PuntoEmision payload)
         {
@@ -65,6 +74,11 @@ namespace ERPAPI.Controllers
             return Ok(_PuntoEmision);
         }
 
+        /// <summary>
+        /// Actualiza un punto de emision
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]PuntoEmision payload)
         {
@@ -84,6 +98,11 @@ namespace ERPAPI.Controllers
             return Ok(_PuntoEmision);
         }
 
+        /// <summary>
+        /// Elimina el punto de emision
+        /// </summary>
+        /// <param name="_puntoemision"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody]PuntoEmision _puntoemision)
         {

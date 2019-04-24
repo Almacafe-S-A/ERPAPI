@@ -86,7 +86,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<Currency>> Remove([FromBody]Currency _Currency)
+        public async Task<ActionResult<Currency>> Delete([FromBody]Currency _Currency)
         {
             Currency currency = new Currency();
             try

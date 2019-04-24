@@ -26,6 +26,10 @@ namespace ERPAPI.Controllers
         }
 
         // GET: api/ProductType
+        /// <summary>
+        /// Obtiene el listado de tipos de producto.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetProductType()
         {
@@ -46,7 +50,11 @@ namespace ERPAPI.Controllers
         }
 
 
-
+        /// <summary>
+        /// Inserta un tipo de producto
+        /// </summary>
+        /// <param name="_ProductType"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Insert([FromBody]ProductType _ProductType)
         {
@@ -67,6 +75,11 @@ namespace ERPAPI.Controllers
             return Ok(productType);
         }
 
+        /// <summary>
+        /// Actualiza un tipo de producto
+        /// </summary>
+        /// <param name="_ProductType"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]ProductType _ProductType)
         {
@@ -75,7 +88,7 @@ namespace ERPAPI.Controllers
             {
                 productType = _ProductType;
                 _context.ProductType.Update(productType);
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
             }
             catch (Exception ex)
@@ -83,9 +96,15 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
+
             return Ok(productType);
         }
 
+        /// <summary>
+        /// Elimina un tipo de producto.
+        /// </summary>
+        /// <param name="_ProductType"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody]ProductType _ProductType)
         {
@@ -107,5 +126,7 @@ namespace ERPAPI.Controllers
             return Ok(productType);
 
         }
+
+
     }
 }

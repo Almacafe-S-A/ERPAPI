@@ -30,6 +30,10 @@ namespace ERPAPI.Controllers
            _logger= logger  ;
         }
 
+        /// <summary>
+        /// Obtiene una cotizacion 
+        /// </summary>
+        /// <returns></returns>
         // GET: api/SalesOrder
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSalesOrder()
@@ -49,6 +53,10 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetNotShippedYet()
         {

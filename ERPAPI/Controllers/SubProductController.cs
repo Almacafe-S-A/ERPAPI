@@ -1,0 +1,113 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ERP.Contexts;
+using ERPAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace ERPAPI.Controllers
+{
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/SubProduct")]
+    public class SubProductController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
+
+        public SubProductController(ILogger<CurrencyController> logger, ApplicationDbContext context)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        // GET: api/Currency
+        [HttpGet("[action]")]
+        public async Task<ActionResult<SubProduct>> GetSubProduct()
+        {
+            List<SubProduct> Items = new List<SubProduct>();
+            try
+            {
+                Items = await _context.SubProduct.ToListAsync();
+               
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+            //  return Ok(Items);
+        }
+
+        
+
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<SubProduct>> Insert([FromBody]SubProduct _Currency)
+        {
+            SubProduct subProduct = _Currency;
+            try
+            {
+                _context.SubProduct.Add(subProduct);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(subProduct));
+            //  return Ok(currency);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<SubProduct>> Update([FromBody]SubProduct _subproduct)
+        {
+            SubProduct subproduct = _subproduct;
+            try
+            {
+                _context.SubProduct.Update(subproduct);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(subproduct));
+            //   return Ok(subproduct);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<SubProduct>> Delete([FromBody]SubProduct _Currency)
+        {
+            SubProduct subproduct = new SubProduct();
+            try
+            {
+                subproduct = _context.SubProduct
+               .Where(x => x.SubproductId == _Currency.SubproductId)
+               .FirstOrDefault();
+                _context.SubProduct.Remove(subproduct);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            // return Ok(currency);
+            return await Task.Run(() => Ok(subproduct));
+        }
+
+
+    }
+}

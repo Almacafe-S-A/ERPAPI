@@ -40,6 +40,12 @@ namespace ERPAPI.Models
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
 
+        [Display(Name = "Id")]
+        public Int64 ProductId { get; set; }
+
+        [Display(Name = "Nombre Producto")]
+        public string ProductName { get; set; }
+
         [Display(Name = "Numero de referencia de cliente")]
         public string CustomerRefNumber { get; set; }
         [Display(Name = "Tipo de ventas")]

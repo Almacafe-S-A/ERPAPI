@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-//using coderush.Data;
 using ERPAPI.Models;
-//using ERPAPI.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,13 +34,14 @@ namespace ERPAPI.Controllers
         /// <returns></returns>
         // GET: api/Customer
         [HttpGet("[action]")]
-        public async Task<ActionResult> GetCustomer()
+        public async Task<ActionResult<List<Customer>>> GetCustomer()
         {
 
             try
             {
-                List<Customer> Items = await _context.Customer.ToListAsync();               
-                return Ok(Items);
+                List<Customer> Items = await _context.Customer.ToListAsync();
+                return await Task.Run(() => Ok(Items));
+                //  return Ok(Items);
             }
             catch (Exception ex)
             {
@@ -64,7 +63,8 @@ namespace ERPAPI.Controllers
             try
             {
                 Customer Items = await _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefaultAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
+                //return Ok(Items);
             }
             catch (Exception ex)
             {
@@ -88,8 +88,8 @@ namespace ERPAPI.Controllers
                 Customer customer = payload;
                 _context.Customer.Add(customer);
                 await _context.SaveChangesAsync();
-                return (customer);
-
+                // return (customer);
+                return await Task.Run(() => Ok(customer));
             }
             catch (Exception ex)
             {
@@ -112,7 +112,8 @@ namespace ERPAPI.Controllers
                 Customer customer = payload;
                 _context.Customer.Update(customer);
                 await _context.SaveChangesAsync();
-                return (customer);
+                // return (customer);
+                return await Task.Run(() => Ok(customer));
             }
             catch (Exception ex)
             { 
@@ -138,12 +139,14 @@ namespace ERPAPI.Controllers
                .FirstOrDefault();
                 _context.Customer.Remove(customer);
                 await _context.SaveChangesAsync();
-                return (customer);
+                // return (customer);
+                return await Task.Run(() => Ok(customer));
             }
             catch (Exception ex)
             {
-                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                //return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            
 

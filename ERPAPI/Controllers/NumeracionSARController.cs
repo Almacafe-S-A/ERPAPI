@@ -27,6 +27,10 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Obtiene las numeraciones de DEI       
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetNumeracion()
         {
@@ -46,6 +50,11 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        /// <summary>
+        /// Inserta numeracion SAR
+        /// </summary>
+        /// <param name="_NumeracionSAR"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Insert([FromBody]NumeracionSAR _NumeracionSAR)
         {
@@ -66,6 +75,11 @@ namespace ERPAPI.Controllers
             return Ok(_NumeracionSAR);
         }
 
+        /// <summary>
+        /// Actualiza la numeracion DEI
+        /// </summary>
+        /// <param name="_NumeracionSARq"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]NumeracionSAR _NumeracionSARq)
         {
@@ -85,6 +99,11 @@ namespace ERPAPI.Controllers
             return Ok(__NumeracionSARq);
         }
 
+        /// <summary>
+        /// Elimina la Numeración  
+        /// </summary>
+        /// <param name="__NumeracionSAR"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody]NumeracionSAR __NumeracionSAR)
         {

@@ -48,14 +48,14 @@ namespace ERP.Contexts
         public virtual DbSet<UnitOfMeasure> UnitOfMeasure { get; set; }
         public DbSet<ProformaInvoice> ProformaInvoice { get; set; }
         public DbSet<ProformaInvoiceLine> ProformaInvoiceLine { get; set; }
-
         public DbSet<CertificadoDeposito> CertificadoDeposito { get; set; }
         public DbSet<CertificadoLine> CertificadoLine { get; set; }
         public DbSet<CAI> CAI { get; set; }
         public DbSet<NumeracionSAR> NumeracionSAR { get; set; }
         public DbSet<PuntoEmision> PuntoEmision { get; set; }
         public DbSet<TiposDocumento> TiposDocumento { get; set; }
-
+        public DbSet<SubProduct> SubProduct { get; set; }
+        public DbSet<ProductRelation> ProductRelation { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
