@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ERP.Contexts
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     //public class ApplicationDbContext :
-    //    IdentityDbContext<ApplicationUser,IdentityRole,string,ApplicationUserClaim,IdentityUserRole<string>
-    //        ,IdentityUserLogin<string>,IdentityRoleClaim<string>,IdentityUserToken<string>>
+    //    IdentityDbContext<ApplicationUser, IdentityRole, string, ApplicationUserClaim, IdentityUserRole<int>
+    //        , IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
 
     {
 
@@ -37,7 +37,7 @@ namespace ERP.Contexts
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
         public DbSet<PolicyRoles> PolicyRoles { get; set; }
-        public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }       
+     //   public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }       
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
         public DbSet<Tax> Tax { get; set; }
@@ -58,8 +58,8 @@ namespace ERP.Contexts
         public DbSet<ProductRelation> ProductRelation { get; set; }
         public DbSet<Conditions> Conditions { get; set; }
         public DbSet<ClientConditions> ClientConditions { get; set; }
-      
 
+        //public DbSet<IdentityUserClaim<int>> IdentityUserClaim { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

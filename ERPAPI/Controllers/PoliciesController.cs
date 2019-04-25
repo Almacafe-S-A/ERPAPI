@@ -95,30 +95,30 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="PolicyId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{PolicyId}")]
-        public async Task<ActionResult> GetUserClaims(Guid PolicyId)
-        {
-            try
-            {
-                string query = "";
-                query = $"select Id,UserId,ClaimType,ClaimValue,PolicyId from [dbo].[AspNetUserClaims] where PolicyId='{PolicyId.ToString()}'";
+        //[HttpGet("[action]/{PolicyId}")]
+        //public async Task<ActionResult> GetUserClaims(Guid PolicyId)
+        //{
+        //    try
+        //    {
+        //        string query = "";
+        //        query = $"select Id,UserId,ClaimType,ClaimValue,PolicyId from [dbo].[AspNetUserClaims] where PolicyId='{PolicyId.ToString()}'";
 
-                List<ApplicationUserClaim> _usersclaims =
-                    await _context.ApplicationUserClaim.FromSql(query).ToListAsync();
+        //        List<ApplicationUserClaim> _usersclaims =
+        //            await _context.ApplicationUserClaim.FromSql(query).ToListAsync();
 
 
 
-                return await Task.Run(() => Ok(_usersclaims));
-                //  return Ok(_usersclaims);
+        //        return await Task.Run(() => Ok(_usersclaims));
+        //        //  return Ok(_usersclaims);
 
-            }
-            catch (Exception ex)
-            {
-                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //         _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+        //        return BadRequest($"Ocurrio un error:{ex.Message}");
+        //    }
 
-        }
+        //}
 
 
         /// <summary>

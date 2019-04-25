@@ -10,7 +10,7 @@ namespace ERPAPI.Models
     {
        // public int Id { get; set; }
 
-        public string UserId { get; set; }
+        //public string UserId { get; set; }
 
         public Guid PolicyId { get; set; }
     }
