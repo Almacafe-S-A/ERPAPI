@@ -56,6 +56,10 @@ namespace ERP.Contexts
         public DbSet<TiposDocumento> TiposDocumento { get; set; }
         public DbSet<SubProduct> SubProduct { get; set; }
         public DbSet<ProductRelation> ProductRelation { get; set; }
+        public DbSet<Conditions> Conditions { get; set; }
+        public DbSet<ClientConditions> ClientConditions { get; set; }
+      
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

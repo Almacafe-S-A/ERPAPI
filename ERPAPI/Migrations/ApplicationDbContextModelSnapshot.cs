@@ -220,6 +220,64 @@ namespace ERPAPI.Migrations
                     b.ToTable("CertificadoLine");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.ClientConditions", b =>
+                {
+                    b.Property<long>("ClientConditionId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ClientConditionName");
+
+                    b.Property<long>("ConditionId");
+
+                    b.Property<long>("CustomerId");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdTipoDocumento");
+
+                    b.Property<string>("LogicalCondition");
+
+                    b.Property<long>("ProductId");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.Property<double>("ValueDecimal");
+
+                    b.Property<string>("ValueString");
+
+                    b.Property<string>("ValueToEvaluate");
+
+                    b.HasKey("ClientConditionId");
+
+                    b.ToTable("ClientConditions");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Conditions", b =>
+                {
+                    b.Property<long>("ConditionId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ConditionName");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("ConditionId");
+
+                    b.ToTable("Conditions");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.Currency", b =>
                 {
                     b.Property<int>("CurrencyId")
@@ -854,6 +912,10 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("OrderDate");
 
+                    b.Property<long>("ProductId");
+
+                    b.Property<string>("ProductName");
+
                     b.Property<string>("RTN");
 
                     b.Property<string>("Remarks");
@@ -914,6 +976,10 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Quantity");
 
                     b.Property<int>("SalesOrderId");
+
+                    b.Property<long>("SubProductId");
+
+                    b.Property<string>("SubProductName");
 
                     b.Property<double>("SubTotal");
 
