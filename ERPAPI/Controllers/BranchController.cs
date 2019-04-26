@@ -28,6 +28,10 @@ namespace ERPAPI.Controllers
         }
         
 
+        /// <summary>
+        /// Obtiene el Listado de sucursales.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetBranch()
         {
@@ -47,6 +51,35 @@ namespace ERPAPI.Controllers
             return Ok( Items);
         }
 
+        /// <summary>
+        /// Obtiene la sucursal mediante el Id enviado.
+        /// </summary>
+        /// <param name="BranchId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{BranchId}")]
+        public async Task<IActionResult> GetBranchById(int BranchId)
+        {
+            Branch Items = new Branch();
+            try
+            {
+                Items = await _context.Branch.Where(q=>q.BranchId== BranchId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            
+            return Ok(Items);
+        }
+
+
+        /// <summary>
+        /// Inserta una sucursal
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async  Task<IActionResult> Insert([FromBody]Branch payload)
         {
@@ -67,6 +100,11 @@ namespace ERPAPI.Controllers
             return Ok(branch);
         }
 
+        /// <summary>
+        /// Actualiza una sucursal
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]Branch payload)
         {
@@ -86,6 +124,12 @@ namespace ERPAPI.Controllers
             return Ok(branch);
         }
 
+
+        /// <summary>
+        /// Elimina una sucursal
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody]Branch payload)
         {
