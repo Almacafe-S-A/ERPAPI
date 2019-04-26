@@ -26,8 +26,12 @@ namespace ERPAPI.Models
         [Display(Name = "Direccion")]
         public string Direccion { get; set; }
 
-        [Display(Name = "Branch")]
+        [Display(Name = "Id Sucursal")]
         public int BranchId { get; set; }
+
+        [Display(Name = "Sucursal Nombre")]
+        public int BranchName { get; set; }
+
         [Display(Name = "Cliente Id")]
         public int CustomerId { get; set; }
 

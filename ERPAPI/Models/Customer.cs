@@ -44,6 +44,18 @@ namespace ERPAPI.Models
         [Display(Name = "Activo/Inactivo ")]
         public Int64 IdEstado { get; set; }
 
+        [Required]
+        public string UsuarioCreacion { get; set; }
+
+        [Required]
+        public string UsuarioModificacion { get; set; }
+
+        [Required]
+        public DateTime FechaCreacion { get; set; }
+
+        [Required]
+        public DateTime FechaModificacion { get; set; }
+
         public List<CustomersOfCustomer> _Customers { get; set; }
 
         public List<VendorOfCustomer> _Vendor { get; set; }

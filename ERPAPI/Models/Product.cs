@@ -25,5 +25,17 @@ namespace ERPAPI.Models
         public int BranchId { get; set; }
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
+
+        [Required]
+        public string UsuarioCreacion { get; set; }
+
+        [Required]
+        public string UsuarioModificacion { get; set; }
+
+        [Required]
+        public DateTime FechaCreacion { get; set; }
+
+        [Required]
+        public DateTime FechaModificacion { get; set; }
     }
 }
