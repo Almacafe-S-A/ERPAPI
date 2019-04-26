@@ -50,6 +50,30 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene el punto de emision por medio del Id Enviado.
+        /// </summary>
+        /// <param name="IdPuntoEmision"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetPuntoEmisionById(Int64 IdPuntoEmision)
+        {
+            PuntoEmision Items = new PuntoEmision();
+            try
+            {
+                Items = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision == IdPuntoEmision).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+        /// <summary>
         /// Inserta un punto de emision
         /// </summary>
         /// <param name="payload"></param>

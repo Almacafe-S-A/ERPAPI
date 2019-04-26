@@ -51,6 +51,31 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene la Numeracion por medio del Id enviado
+        /// </summary>
+        /// <param name="IdNumeracion"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdNumeracion}")]
+        public async Task<IActionResult> GetNumeracionById(Int64 IdNumeracion )
+        {
+            NumeracionSAR Items = new NumeracionSAR();
+            try
+            {
+                Items = await _context.NumeracionSAR.Where(q=>q.IdNumeracion== IdNumeracion).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+
+        /// <summary>
         /// Inserta numeracion SAR
         /// </summary>
         /// <param name="_NumeracionSAR"></param>

@@ -27,6 +27,11 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+
+        /// <summary>
+        /// Obtiene el listado de Monedas.
+        /// </summary>
+        /// <returns></returns>
         // GET: api/Currency
         [HttpGet("[action]")]
         public async Task<ActionResult<Currency>> GetCurrency()
@@ -48,7 +53,36 @@ namespace ERPAPI.Controllers
             return Ok( Items);
         }
 
+        /// <summary>
+        /// Obtiene los datos de la moneda con el id enviado
+        /// </summary>
+        /// <param name="CurrencyId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CurrencyId}")]
+        public async Task<ActionResult<Currency>> GetCurrencyById(int CurrencyId)
+        {
+            Currency Items = new Currency();
+            try
+            {
+                Items = await _context.Currency.Where(q=>q.CurrencyId== CurrencyId).FirstOrDefaultAsync();
+                // int Count = Items.Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
 
+
+
+            return Ok(Items);
+        }
+
+        /// <summary>
+        /// Inserta la moneda 
+        /// </summary>
+        /// <param name="_Currency"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<Currency>> Insert([FromBody]Currency _Currency)
         {
@@ -67,6 +101,11 @@ namespace ERPAPI.Controllers
             return Ok(currency);
         }
 
+        /// <summary>
+        /// Actualiza la moneda
+        /// </summary>
+        /// <param name="_Currency"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<Currency>> Update([FromBody]Currency _Currency)
         {
@@ -85,6 +124,11 @@ namespace ERPAPI.Controllers
             return Ok(currency);
         }
 
+        /// <summary>
+        /// Elimina la moneda
+        /// </summary>
+        /// <param name="_Currency"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<Currency>> Delete([FromBody]Currency _Currency)
         {

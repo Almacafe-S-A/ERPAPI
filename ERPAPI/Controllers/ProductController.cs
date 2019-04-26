@@ -47,9 +47,30 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        /// <summary>
+        /// Obtiene el Producto mediante el Id Enviado
+        /// </summary>
+        /// <param name="ProductId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProductById(Int64 ProductId)
+        {
+            Product Items = new Product();
+            try
+            {
+                Items = await _context.Product.Where(q=>q.ProductId== ProductId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return Ok(Items);
+        }
+
 
         /// <summary>
-        /// Inserta un producto
+        /// Inserta un producto , y retorna el id generado.
         /// </summary>
         /// <param name="_product"></param>
         /// <returns></returns>
