@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ERPAPI.Models
 {
 
-    public class ApplicationUserRole : IdentityUserRole<string> 
+    public class ApplicationUserRole : IdentityUserRole<Guid> 
     {
         public string UserName { get; set; }
 

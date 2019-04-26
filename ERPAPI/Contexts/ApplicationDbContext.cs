@@ -9,7 +9,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace ERP.Contexts
 {
-     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser,
+    ApplicationRole, Guid, ApplicationUserClaim, ApplicationUserRole, AspNetUserLogins,
+    AspNetRoleClaims, AspNetUserTokens>
+    
+    //  public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     //public class ApplicationDbContext :
     //    IdentityDbContext<ApplicationUser, IdentityRole, string, ApplicationUserClaim, IdentityUserRole<int>
     //        , IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
@@ -37,7 +41,7 @@ namespace ERP.Contexts
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
         public DbSet<PolicyRoles> PolicyRoles { get; set; }
-     //   public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }       
+       // public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }       
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
         public DbSet<Tax> Tax { get; set; }
@@ -77,12 +81,14 @@ namespace ERP.Contexts
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
 
+            //modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("AspNetUserClaims");
+            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
 
-          //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims"); 
-          //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
+            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims"); 
+            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
 
 
-            
+
         }
     }
 }

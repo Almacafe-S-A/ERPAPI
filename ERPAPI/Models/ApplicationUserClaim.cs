@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class ApplicationUserClaim : IdentityUserClaim<int>
+    public class ApplicationUserClaim : IdentityUserClaim<Guid>
     {
        // public int Id { get; set; }
 
@@ -14,4 +14,13 @@ namespace ERPAPI.Models
 
         public Guid PolicyId { get; set; }
     }
+    
+
+
+    public class AspNetUserTokens : IdentityUserToken<Guid> { /*your code here*/ }
+    public class AspNetRoleClaims : IdentityRoleClaim<Guid> { /*your code here*/ }
+    public class AspNetUserLogins : IdentityUserLogin<Guid> { /*your code here*/ }
+  //  public class AspNetUserRoles : IdentityUserRole<Guid> { /*your code here*/ }
+   // public class AspNetUserClaims : IdentityUserClaim<Guid> { /*your code here*/ }
+
 }

@@ -20,12 +20,12 @@ namespace ERPAPI.Controllers
     public class UserRolController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly RoleManager<IdentityRole> _rolemanager;
+        private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly IMapper mapper;
          private readonly ILogger _logger;
 
         public UserRolController(ILogger<UserRolController> logger,ApplicationDbContext context
-            , RoleManager<IdentityRole> rolemanager
+            , RoleManager<ApplicationRole> rolemanager
             , IMapper mapper)
         {
             this.mapper = mapper;
@@ -40,9 +40,9 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<IdentityUserRole<string>>>> GetUserRoles()
+        public async Task<ActionResult<List<ApplicationUserRole>>> GetUserRoles()
         {
-            List<IdentityUserRole<string>> _users = new List<IdentityUserRole<string>>();
+            List<ApplicationUserRole> _users = new List<ApplicationUserRole>();
             try
             {
                _users= await (_context.UserRoles.ToListAsync());
@@ -70,14 +70,14 @@ namespace ERPAPI.Controllers
 
             try
             {
-                List<IdentityUserRole<string>> _listrole = (_context.UserRoles
+                List<ApplicationUserRole> _listrole = (_context.UserRoles
                                                        .Where(q => q.RoleId == _ApplicationUserRole.RoleId)
                                                         .Where(q => q.UserId == _ApplicationUserRole.UserId)
                                                        ).ToList();
                 if (_listrole.Count == 0)
                 {
-                    IdentityUserRole<string> _userrole = mapper.Map<IdentityUserRole<string>>(_ApplicationUserRole);
-                    _context.UserRoles.Add(_userrole);
+                   // IdentityUserRole<string> _userrole = mapper.Map<IdentityUserRole<string>>(_ApplicationUserRole);
+                    _context.UserRoles.Add(_ApplicationUserRole);
                     await _context.SaveChangesAsync();
                     return Ok(_ApplicationUserRole);
                 }
@@ -124,7 +124,7 @@ namespace ERPAPI.Controllers
             try
             {
 
-                IdentityUserRole<string> customer = _context.UserRoles
+               ApplicationUserRole customer = _context.UserRoles
                   .Where(x => x.RoleId == _ApplicationUserRole.RoleId)
                   .Where(x => x.UserId == _ApplicationUserRole.UserId)
                   .FirstOrDefault();

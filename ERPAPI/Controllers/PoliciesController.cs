@@ -21,13 +21,13 @@ namespace ERPAPI.Controllers
     {
 
         private readonly ApplicationDbContext _context;
-        private readonly RoleManager<IdentityRole> _rolemanager;
+        private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly IMapper mapper;
         private readonly ILogger _logger;
 
         public PoliciesController(ILogger<PoliciesController> logger,
             ApplicationDbContext context
-            , RoleManager<IdentityRole> rolemanager
+            , RoleManager<ApplicationRole> rolemanager
             , IMapper mapper)
         {
             this.mapper = mapper;
@@ -71,11 +71,11 @@ namespace ERPAPI.Controllers
             try
             {
 
-                List<string> _policiesrole = await _context.PolicyRoles.Where(q=>q.IdPolicy==PolicyId)
-                    .Select(q=>q.IdRol.ToString()).ToListAsync();
+                List<Guid> _policiesrole = await _context.PolicyRoles.Where(q=>q.IdPolicy==PolicyId)
+                    .Select(q=>q.IdRol).ToListAsync();
 
                 
-                List<IdentityRole> Items = await _context.Roles.Where(q => _policiesrole.Contains(q.Id)).ToListAsync();
+                List<ApplicationRole> Items = await _context.Roles.Where(q => _policiesrole.Contains(q.Id)).ToListAsync();
                 return await Task.Run(() => Ok(Items));
                 // return Ok(Items);
 
@@ -87,38 +87,37 @@ namespace ERPAPI.Controllers
             }
 
         }
-        
 
-         
+
+
         /// <summary>
         /// Obtiene los CLAIMS DE USUARIO que existen por politica
         /// </summary>
         /// <param name="PolicyId"></param>
         /// <returns></returns>
-        //[HttpGet("[action]/{PolicyId}")]
-        //public async Task<ActionResult> GetUserClaims(Guid PolicyId)
-        //{
-        //    try
-        //    {
-        //        string query = "";
-        //        query = $"select Id,UserId,ClaimType,ClaimValue,PolicyId from [dbo].[AspNetUserClaims] where PolicyId='{PolicyId.ToString()}'";
+        [HttpGet("[action]/{PolicyId}")]
+        public async Task<ActionResult> GetUserClaims(Guid PolicyId)
+        {
+            try
+            {
+                //string query = "";
+                // query = $"select Id,UserId,ClaimType,ClaimValue,PolicyId from [dbo].[AspNetUserClaims] where PolicyId='{PolicyId.ToString()}'";
 
-        //        List<ApplicationUserClaim> _usersclaims =
-        //            await _context.ApplicationUserClaim.FromSql(query).ToListAsync();
+                List<ApplicationUserClaim> _usersclaims = await _context.UserClaims.Where(q => q.PolicyId == PolicyId).ToListAsync();
+                  //  await _context.UserClaims.FromSql(query).ToListAsync();
 
 
+                return await Task.Run(() => Ok(_usersclaims));
+                //  return Ok(_usersclaims);
 
-        //        return await Task.Run(() => Ok(_usersclaims));
-        //        //  return Ok(_usersclaims);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //         _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-        //        return BadRequest($"Ocurrio un error:{ex.Message}");
-        //    }
-
-        //}
+        }
 
 
         /// <summary>

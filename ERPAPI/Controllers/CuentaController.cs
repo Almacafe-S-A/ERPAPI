@@ -18,13 +18,13 @@ namespace ERPAPI.Controllers
     public class CuentaController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _rolemanager;
+        private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
 
         public CuentaController(
             UserManager<ApplicationUser> userManager,
-             RoleManager<IdentityRole> rolemanager,
+             RoleManager<ApplicationRole> rolemanager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration)
         {

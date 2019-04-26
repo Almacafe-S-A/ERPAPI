@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class ApplicationRole : IdentityRole
+    public class ApplicationRole : IdentityRole<Guid>
     {
        // public string rolename { get; set; }
     }

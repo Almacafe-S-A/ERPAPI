@@ -19,13 +19,13 @@ namespace ERPAPI.Controllers
     public class UsuarioController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly RoleManager<IdentityRole> _rolemanager;
+        private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
 
         public UsuarioController(ILogger<UserRolController> logger
             ,ApplicationDbContext context
-            , RoleManager<IdentityRole> rolemanager
+            , RoleManager<ApplicationRole> rolemanager
             , UserManager<ApplicationUser> userManager
           )
         {
@@ -113,7 +113,7 @@ namespace ERPAPI.Controllers
         /// <param name="UserId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{UserId}")]
-        public async Task<ActionResult> GetUserById(string UserId)
+        public async Task<ActionResult> GetUserById(Guid UserId)
         {
             try
             {

@@ -22,13 +22,13 @@ namespace ERPAPI.Controllers
     public class RolesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly RoleManager<IdentityRole> _rolemanager;
+        private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly IMapper mapper;
         private readonly ILogger _logger;
 
         public RolesController(ILogger<PoliciesController> logger,
             ApplicationDbContext context
-            , RoleManager<IdentityRole> rolemanager
+            , RoleManager<ApplicationRole> rolemanager
             ,IMapper mapper)
         {
             this.mapper = mapper;
@@ -43,11 +43,11 @@ namespace ERPAPI.Controllers
         /// <param name="RoleId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{RoleId}")]
-        public async Task<ActionResult> GetRoleById(string RoleId)
+        public async Task<ActionResult> GetRoleById(Guid RoleId)
         {
             try
             {
-                IdentityRole Items = await _context.Roles.Where(q => q.Id == RoleId).FirstOrDefaultAsync();
+                ApplicationRole Items = await _context.Roles.Where(q => q.Id == RoleId).FirstOrDefaultAsync();
                 return Ok(Items);
 
             }
@@ -90,12 +90,12 @@ namespace ERPAPI.Controllers
         [HttpGet("GetRoles")]
         public async Task<ActionResult<List<ApplicationRole>>> GetRoles()
         {
-            List<IdentityRole> _roles = new List<IdentityRole>();
+           // List<IdentityRole> _roles = new List<IdentityRole>();
             List<ApplicationRole> _rolesprod = new List<ApplicationRole>();
             try
             {
-              _roles  = await _context.Roles.ToListAsync();
-              _rolesprod = mapper.Map<List<IdentityRole>, List<ApplicationRole>>(_roles);
+                _rolesprod = await _context.Roles.ToListAsync();
+             // _rolesprod = mapper.Map<List<IdentityRole>, List<ApplicationRole>>(_roles);
 
             }
             catch (Exception ex)
@@ -116,11 +116,11 @@ namespace ERPAPI.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost("CreateRole")]
-        public async Task<ActionResult<IdentityRole>> CreateRole([FromBody] ApplicationRole model)
+        public async Task<ActionResult<ApplicationRole>> CreateRole([FromBody] ApplicationRole model)
         {
             try
             {
-                 IdentityRole _idrole = mapper.Map<ApplicationRole, IdentityRole>(model);
+                // IdentityRole _idrole = mapper.Map<ApplicationRole, IdentityRole>(model);
                 //new ApplicationRole { Name = model.Name, NormalizedName = model.NormalizedName }
                 var result = await _rolemanager.CreateAsync(model);
                 if (result.Succeeded)
@@ -147,11 +147,11 @@ namespace ERPAPI.Controllers
         /// <param name="_rol"></param>
         /// <returns></returns>
         [HttpPut("PutRol")]
-        public async Task<ActionResult<IdentityRole>> PutRol([FromBody]ApplicationRole _rol)
+        public async Task<ActionResult<ApplicationRole>> PutRol([FromBody]ApplicationRole _rol)
         {
             try
             {
-                IdentityRole _idrole = mapper.Map<ApplicationRole, IdentityRole>(_rol);
+              //  IdentityRole _idrole = mapper.Map<ApplicationRole, IdentityRole>(_rol);
 
                 _context.Roles.Update(_rol);
                 await _context.SaveChangesAsync();
@@ -177,7 +177,7 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                List<IdentityUserRole<string>> _rolasignado = await _context.UserRoles.Where(q => q.RoleId == _ApplicationRole.Id).ToListAsync();
+                List<ApplicationUserRole> _rolasignado = await _context.UserRoles.Where(q => q.RoleId == _ApplicationRole.Id).ToListAsync();
                 if (_rolasignado.Count == 0)
                 {
                     _context.Roles.Remove(_ApplicationRole);

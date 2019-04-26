@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 [assembly:ApiConventionType(typeof(DefaultApiConventions))]
 
@@ -48,9 +49,19 @@ namespace ERPAPI
             services.AddDbContext<ApplicationDbContext>(options =>
            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+            //services.AddIdentity<ApplicationUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
+
+            services.AddIdentity<ApplicationUser,  ApplicationRole>()
+           .AddEntityFrameworkStores<ApplicationDbContext>()
+          // .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
+           // .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>()
+          //.AddRoleManager<ApplicationRole>()
+          // .AddSignInManager<SignInManager<ApplicationUser>>()          
+          .AddDefaultTokenProviders();
+
+            
 
             services.AddAutoMapper(options =>
           {
