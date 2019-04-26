@@ -53,6 +53,31 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene los Datos por medio del Id enviado.
+        /// </summary>
+        /// <param name="IdCai"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdCai}")]
+        public async Task<IActionResult> GetCAIById(Int64 IdCai)
+        {
+            CAI Items = new CAI();
+            try
+            {
+                Items = await _context.CAI.Where(q=>q.IdCAI==IdCai).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            
+            return Ok(Items);
+        }
+
+
+        /// <summary>
         /// Inserta un nuevo cai
         /// </summary>
         /// <param name="_CAI"></param>
