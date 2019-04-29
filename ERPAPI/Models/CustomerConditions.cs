@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class ClientConditions
+    public class CustomerConditions
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 ClientConditionId { get; set; }
