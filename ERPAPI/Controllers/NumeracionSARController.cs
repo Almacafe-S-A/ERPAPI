@@ -28,7 +28,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene las numeraciones de DEI       
+        /// Obtiene las numeraciones de SAR       
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
@@ -56,7 +56,7 @@ namespace ERPAPI.Controllers
         /// <param name="IdNumeracion"></param>
         /// <returns></returns>
         [HttpGet("[action]/{IdNumeracion}")]
-        public async Task<IActionResult> GetNumeracionById(Int64 IdNumeracion )
+        public async Task<ActionResult<NumeracionSAR>> GetNumeracionById(Int64 IdNumeracion )
         {
             NumeracionSAR Items = new NumeracionSAR();
             try
@@ -81,7 +81,7 @@ namespace ERPAPI.Controllers
         /// <param name="_NumeracionSAR"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Insert([FromBody]NumeracionSAR _NumeracionSAR)
+        public async Task<ActionResult<NumeracionSAR>> Insert([FromBody]NumeracionSAR _NumeracionSAR)
         {
             NumeracionSAR _NumeracionSARq = new NumeracionSAR();
             try
@@ -101,12 +101,12 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Actualiza la numeracion DEI
+        /// Actualiza la numeracion SAR
         /// </summary>
         /// <param name="_NumeracionSARq"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]NumeracionSAR _NumeracionSARq)
+        public async Task<ActionResult<NumeracionSAR>> Update([FromBody]NumeracionSAR _NumeracionSARq)
         {
             NumeracionSAR __NumeracionSARq = _NumeracionSARq;
             try
@@ -130,7 +130,7 @@ namespace ERPAPI.Controllers
         /// <param name="__NumeracionSAR"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]NumeracionSAR __NumeracionSAR)
+        public async Task<ActionResult<NumeracionSAR>> Delete([FromBody]NumeracionSAR __NumeracionSAR)
         {
             NumeracionSAR __NumeracionSARq = new NumeracionSAR();
             try
