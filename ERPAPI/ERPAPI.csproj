@@ -23,6 +23,8 @@
     <Compile Remove="Migrations\20190425234305_IdentityUserClaimPolicyId.Designer.cs" />
     <Compile Remove="Migrations\20190426043216_unitofmeasure.cs" />
     <Compile Remove="Migrations\20190426043216_unitofmeasure.Designer.cs" />
+    <Compile Remove="Migrations\20190430225529_CustomerCondition.cs" />
+    <Compile Remove="Migrations\20190430225529_CustomerCondition.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

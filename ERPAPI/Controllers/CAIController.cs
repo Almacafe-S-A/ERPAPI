@@ -110,9 +110,19 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]CAI _cai)
         {
-            CAI _Caiq = _cai;
+            CAI _Caiq = new CAI();
             try
             {
+
+                _Caiq = (from c in _context.CAI
+                                .Where(q => q.IdCAI == _cai.IdCAI)
+                                select c
+                               ).FirstOrDefault();
+
+                _cai.FechaCreacion = _Caiq.FechaCreacion;
+                _cai.UsuarioCreacion = _Caiq.UsuarioCreacion;
+
+                _context.Entry(_Caiq).CurrentValues.SetValues((_cai));
                 _context.CAI.Update(_Caiq);
                 await _context.SaveChangesAsync();
             }

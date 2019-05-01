@@ -113,7 +113,14 @@ namespace ERPAPI.Controllers
             Conditions _conditionsq = _conditions;
             try
             {
-                _context.Conditions.Update(_conditionsq);
+                _conditionsq = (from c in _context.Conditions
+                                 .Where(q => q.ConditionId == _conditions.ConditionId)
+                                  select c
+                                ).FirstOrDefault();
+                
+                _context.Entry(_conditionsq).CurrentValues.SetValues((_conditions));
+
+                //_context.Conditions.Update(_conditionsq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

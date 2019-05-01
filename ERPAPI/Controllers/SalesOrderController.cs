@@ -160,13 +160,20 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]SalesOrder payload)
+        public async Task<IActionResult> Update([FromBody]SalesOrder _salesorder)
         {
-           SalesOrder salesOrder = payload;
+        
             try
             {
-              
-                _context.SalesOrder.Update(salesOrder);
+                SalesOrder salesOrderq   = (from c in _context.SalesOrder
+                                      .Where(q => q.SalesOrderId == _salesorder.SalesOrderId)
+                                                    select c
+                                     ).FirstOrDefault();
+
+                _salesorder.FechaCreacion = salesOrderq.FechaCreacion;
+                _salesorder.UsuarioCreacion = salesOrderq.UsuarioCreacion;
+
+                _context.SalesOrder.Update(_salesorder);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -175,7 +182,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
          
-            return Ok(salesOrder);
+            return Ok(_salesorder);
         }
 
         [HttpPost("[action]")]

@@ -61,7 +61,7 @@ namespace ERP.Contexts
         public DbSet<SubProduct> SubProduct { get; set; }
         public DbSet<ProductRelation> ProductRelation { get; set; }
         public DbSet<Conditions> Conditions { get; set; }
-        public DbSet<CustomerConditions> ClientConditions { get; set; }
+        public DbSet<CustomerConditions> CustomerConditions { get; set; }
 
         //public DbSet<IdentityUserClaim<int>> IdentityUserClaim { get; set; }
 

@@ -71,12 +71,20 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<Warehouse>> Update([FromBody]Warehouse payload)
-        {
-            Warehouse warehouse = payload;
+        public async Task<ActionResult<Warehouse>> Update([FromBody]Warehouse _Warehouse)
+        {            
             try
             {
-                _context.Warehouse.Update(warehouse);
+
+                Warehouse warehouseq = (from c in _context.Warehouse
+                     .Where(q => q.WarehouseId == _Warehouse.WarehouseId)
+                                                   select c
+                       ).FirstOrDefault();
+
+                _Warehouse.FechaCreacion = warehouseq.FechaCreacion;
+                _Warehouse.UsuarioCreacion = warehouseq.UsuarioCreacion;
+
+                _context.Warehouse.Update(_Warehouse);
                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -85,7 +93,7 @@ namespace coderush.Controllers.Api
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            
-            return Ok(warehouse);
+            return Ok(_Warehouse);
         }
 
         [HttpPost("[action]")]

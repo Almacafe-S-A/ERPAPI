@@ -66,12 +66,21 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]TiposDocumento payload)
+        public async Task<IActionResult> Update([FromBody]TiposDocumento _TipoDocumento)
         {
-            TiposDocumento _tiposdocumento = payload;
+          
             try
             {
-                _context.TiposDocumento.Update(_tiposdocumento);
+
+                TiposDocumento _tiposdocumentoq = (from c in _context.TiposDocumento
+                       .Where(q => q.IdTipoDocumento == _TipoDocumento.IdTipoDocumento)
+                            select c
+                         ).FirstOrDefault();
+
+                _TipoDocumento.FechaCreacion = _tiposdocumentoq.FechaCreacion;
+                _TipoDocumento.UsuarioCreacion = _tiposdocumentoq.UsuarioCreacion;
+
+                _context.TiposDocumento.Update(_TipoDocumento);
               await  _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -81,7 +90,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_tiposdocumento);
+            return Ok(_TipoDocumento);
         }
 
         [HttpPost("[action]")]

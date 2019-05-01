@@ -68,14 +68,22 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]CustomerType payload)
+        public async Task<IActionResult> Update([FromBody]CustomerType _customertype)
         {
             try
-            {
-                CustomerType customerType = payload;
-                _context.CustomerType.Update(customerType);
+            {          
+
+                CustomerType customerTypeq = (from c in _context.CustomerType
+                                     .Where(q => q.CustomerTypeId == _customertype.CustomerTypeId)
+                                      select c
+                                    ).FirstOrDefault();
+
+                _customertype.FechaCreacion = customerTypeq.FechaCreacion;
+                _customertype.UsuarioCreacion = customerTypeq.UsuarioCreacion;
+
+                _context.CustomerType.Update(_customertype);
                 await _context.SaveChangesAsync();
-                return await Task.Run(() => Ok(customerType));
+                return await Task.Run(() => Ok(_customertype));
                 //return Ok(customerType);
             }
             catch (Exception ex)

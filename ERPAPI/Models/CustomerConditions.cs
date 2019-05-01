@@ -10,7 +10,7 @@ namespace ERPAPI.Models
     public class CustomerConditions
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 ClientConditionId { get; set; }
+        public Int64 CustomerConditionId { get; set; }
         public Int64 ConditionId { get; set; }
         public Int64 CustomerId { get; set; }
         public Int64 ProductId { get; set; }

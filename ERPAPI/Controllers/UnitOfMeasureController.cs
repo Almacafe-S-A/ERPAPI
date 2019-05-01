@@ -67,13 +67,20 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<UnitOfMeasure>> Update([FromBody]UnitOfMeasure payload)
-        {
-            UnitOfMeasure unitOfMeasure = payload;
+        public async Task<ActionResult<UnitOfMeasure>> Update([FromBody]UnitOfMeasure _UnitOfMeasure)
+        {           
 
             try
             {
-                _context.UnitOfMeasure.Update(unitOfMeasure);
+                UnitOfMeasure unitOfMeasureq = (from c in _context.UnitOfMeasure
+                   .Where(q => q.UnitOfMeasureId == _UnitOfMeasure.UnitOfMeasureId)
+                                                   select c
+                     ).FirstOrDefault();
+
+                _UnitOfMeasure.FechaCreacion = unitOfMeasureq.FechaCreacion;
+                _UnitOfMeasure.UsuarioCreacion = unitOfMeasureq.UsuarioCreacion;
+
+                _context.UnitOfMeasure.Update(_UnitOfMeasure);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -83,11 +90,11 @@ namespace coderush.Controllers.Api
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            
-            return Ok(unitOfMeasure);
+            return Ok(_UnitOfMeasure);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Remove([FromBody]UnitOfMeasure payload)
+        public async Task<IActionResult> Delete([FromBody]UnitOfMeasure payload)
         {
             UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
             try

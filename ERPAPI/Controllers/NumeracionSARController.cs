@@ -103,14 +103,22 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Actualiza la numeracion SAR
         /// </summary>
-        /// <param name="_NumeracionSARq"></param>
+        /// <param name="_NumeracionSAR"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<NumeracionSAR>> Update([FromBody]NumeracionSAR _NumeracionSARq)
+        public async Task<ActionResult<NumeracionSAR>> Update([FromBody]NumeracionSAR _NumeracionSAR)
         {
-            NumeracionSAR __NumeracionSARq = _NumeracionSARq;
+          
             try
             {
+                NumeracionSAR _NumeracionSARq = (from c in _context.NumeracionSAR
+                                    .Where(q => q.IdNumeracion == _NumeracionSAR.IdNumeracion)
+                                              select c
+                                   ).FirstOrDefault();
+
+                _NumeracionSARq.FechaCreacion = _NumeracionSARq.FechaCreacion;
+                _NumeracionSARq.UsuarioCreacion = _NumeracionSARq.UsuarioCreacion;
+
                 _context.NumeracionSAR.Update(_NumeracionSARq);
                 await _context.SaveChangesAsync();
             }
@@ -121,7 +129,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(__NumeracionSARq);
+            return Ok(_NumeracionSAR);
         }
 
         /// <summary>

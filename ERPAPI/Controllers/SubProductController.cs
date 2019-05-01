@@ -71,10 +71,19 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<SubProduct>> Update([FromBody]SubProduct _subproduct)
         {
-            SubProduct subproduct = _subproduct;
+            
             try
             {
-                _context.SubProduct.Update(subproduct);
+
+                SubProduct subproductq = (from c in _context.SubProduct
+                                   .Where(q => q.SubproductId == _subproduct.SubproductId)
+                                          select c
+                                    ).FirstOrDefault();
+
+                _subproduct.FechaCreacion = subproductq.FechaCreacion;
+                _subproduct.UsuarioCreacion = subproductq.UsuarioCreacion;
+
+                _context.SubProduct.Update(_subproduct);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -82,7 +91,7 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-            return await Task.Run(() => Ok(subproduct));
+            return await Task.Run(() => Ok(_subproduct));
             //   return Ok(subproduct);
         }
 

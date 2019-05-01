@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190430225727_CustomerCondition")]
+    partial class CustomerCondition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,10 +70,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
@@ -94,10 +92,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("Id");
 
@@ -377,14 +371,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
                     b.HasKey("CurrencyId");
 
                     b.ToTable("Currency");
@@ -440,7 +426,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.CustomerConditions", b =>
                 {
-                    b.Property<long>("CustomerConditionId")
+                    b.Property<long>("ClientConditionId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -470,7 +456,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ValueToEvaluate");
 
-                    b.HasKey("CustomerConditionId");
+                    b.HasKey("ClientConditionId");
 
                     b.ToTable("CustomerConditions");
                 });
@@ -485,14 +471,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.Property<string>("Description");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("CustomerTypeId");
 

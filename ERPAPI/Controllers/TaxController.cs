@@ -106,10 +106,19 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                Tax customer = _Tax;
+            
+
+                Tax Taxq  = (from c in _context.Tax
+                               .Where(q => q.TaxId == _Tax.TaxId)
+                                          select c
+                                ).FirstOrDefault();
+
+                _Tax.FechaCreacion = Taxq.FechaCreacion;
+                _Tax.UsuarioCreacion = Taxq.UsuarioCreacion;
+
                 _context.Tax.Update(_Tax);
                 await _context.SaveChangesAsync();
-                return (_Tax);
+                return Ok(_Tax);
             }
             catch (Exception ex)
             {

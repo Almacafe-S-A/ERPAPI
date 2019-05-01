@@ -109,10 +109,17 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Currency>> Update([FromBody]Currency _Currency)
         {
-            Currency currency = _Currency;
+          
             try
             {
-                _context.Currency.Update(currency);
+                Currency currencyq  = (from c in _context.Currency
+                                        .Where(q => q.CurrencyId == _Currency.CurrencyId)
+                                        select c
+                                      ).FirstOrDefault();
+
+                _Currency.FechaCreacion = currencyq.FechaCreacion;
+                _Currency.UsuarioCreacion = currencyq.UsuarioCreacion;
+                _context.Currency.Update(_Currency);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -121,7 +128,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
            
-            return Ok(currency);
+            return Ok(_Currency);
         }
 
         /// <summary>

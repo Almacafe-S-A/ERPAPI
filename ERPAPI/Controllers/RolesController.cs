@@ -151,7 +151,14 @@ namespace ERPAPI.Controllers
         {
             try
             {
-              //  IdentityRole _idrole = mapper.Map<ApplicationRole, IdentityRole>(_rol);
+                ApplicationRole ApplicationRoleq = (from c in _context.Roles
+                                     .Where(q => q.Id == _rol.Id)
+                            select c
+                                    ).FirstOrDefault();
+
+                _rol.FechaCreacion = ApplicationRoleq.FechaCreacion;
+                _rol.UsuarioCreacion = ApplicationRoleq.UsuarioCreacion;
+
 
                 _context.Roles.Update(_rol);
                 await _context.SaveChangesAsync();

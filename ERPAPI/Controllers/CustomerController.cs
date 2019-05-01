@@ -102,18 +102,25 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Actualiza un cliente con el CustomerId y datos del cliente proporcionados.
         /// </summary>
-        /// <param name="payload"></param>
+        /// <param name="_customer"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Customer>> Update([FromBody]Customer payload)
+        public async Task<ActionResult<Customer>> Update([FromBody]Customer _customer)
         {
             try
             {
-                Customer customer = payload;
-                _context.Customer.Update(customer);
+                Customer customerq = (from c in _context.Customer
+                                     .Where(q => q.CustomerId == _customer.CustomerId)
+                                     select c
+                                   ).FirstOrDefault();
+
+                _customer.FechaCreacion = customerq.FechaCreacion;
+                _customer.UsuarioCreacion = customerq.UsuarioCreacion;
+
+                _context.Customer.Update(_customer);
                 await _context.SaveChangesAsync();
                 // return (customer);
-                return await Task.Run(() => Ok(customer));
+                return await Task.Run(() => Ok(_customer));
             }
             catch (Exception ex)
             { 
