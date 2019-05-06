@@ -27,7 +27,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetCAI()
+        public async Task<IActionResult> GetTipoDocumento()
         {
             List<TiposDocumento> Items = new List<TiposDocumento>();
             try

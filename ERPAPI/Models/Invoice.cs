@@ -15,6 +15,10 @@ namespace ERPAPI.Models
         public string InvoiceName { get; set; }
         [Display(Name = "Envio")]
         public int ShipmentId { get; set; }
+
+        [Display(Name = "Cotizacion")]
+        public int OrderId { get; set; }
+
         [Display(Name = "Fecha de Factura")]
         public DateTime InvoiceDate { get; set; }
         [Display(Name = "Fecha de vencimiento")]
@@ -67,19 +71,32 @@ namespace ERPAPI.Models
         [Display(Name = "Direccion")]
         public string Direccion { get; set; }
 
-        [Display(Name = "Branch")]
+        [Display(Name = "Sucursal")]
         public int BranchId { get; set; }
+
+        [Display(Name = "Nombre Sucursal")]
+        public string BranchName { get; set; }
+
         [Display(Name = "Customer")]
         public int CustomerId { get; set; }
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
 
+        [Display(Name = "Id")]
+        public Int64 ProductId { get; set; }
+
+        [Display(Name = "Nombre Producto")]
+        public string ProductName { get; set; }
+
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
 
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
+
+        [Display(Name = "Moneda tasa")]
+        public double Currency { get; set; }
 
         [Display(Name = "Numero de referencia de cliente")]
         public string CustomerRefNumber { get; set; }

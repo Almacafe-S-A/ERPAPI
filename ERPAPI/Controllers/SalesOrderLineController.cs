@@ -54,6 +54,34 @@ namespace ERPAPI.Controllers
             // return Ok(Items);
         }
 
+        /// <summary>
+        /// Obtiene la Linea por Id enviado
+        /// </summary>
+        /// <param name="_salesorderline"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSalesOrderLineById([FromBody]SalesOrderLine _salesorderline)
+        {
+            SalesOrderLine Items = new SalesOrderLine();
+
+            try
+            {
+            
+                Items = await _context.SalesOrderLine
+                    .Where(x => x.SalesOrderLineId== _salesorderline.SalesOrderLineId)
+                    .FirstOrDefaultAsync();
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+            
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSalesOrderLineByShipmentId()
         {

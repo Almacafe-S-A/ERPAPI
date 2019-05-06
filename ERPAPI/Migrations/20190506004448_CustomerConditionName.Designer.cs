@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190506004448_CustomerConditionName")]
+    partial class CustomerConditionName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -450,8 +452,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CustomerId");
 
-                    b.Property<long>("DocumentId");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -461,8 +461,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("LogicalCondition");
 
                     b.Property<long>("ProductId");
-
-                    b.Property<long>("SubProductId");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -581,15 +579,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("BranchId");
 
-                    b.Property<string>("BranchName");
-
                     b.Property<string>("CAI");
 
                     b.Property<string>("Caja");
 
                     b.Property<string>("Correo");
-
-                    b.Property<double>("Currency");
 
                     b.Property<int>("CurrencyId");
 
@@ -636,12 +630,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("NumeroDEI");
 
                     b.Property<DateTime>("OrderDate");
-
-                    b.Property<int>("OrderId");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
 
                     b.Property<string>("RTN");
 
@@ -925,11 +913,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("BranchId");
 
-                    b.Property<string>("BranchName");
-
                     b.Property<string>("Correo");
-
-                    b.Property<double>("Currency");
 
                     b.Property<int>("CurrencyId");
 
@@ -954,10 +938,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("IdEstado");
 
                     b.Property<DateTime>("OrderDate");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
 
                     b.Property<string>("ProformaName");
 
@@ -1066,11 +1046,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("BranchId");
 
-                    b.Property<string>("BranchName");
+                    b.Property<int>("BranchName");
 
                     b.Property<string>("Correo");
-
-                    b.Property<double>("Currency");
 
                     b.Property<int>("CurrencyId");
 
@@ -1085,8 +1063,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Direccion");
 
                     b.Property<double>("Discount");
-
-                    b.Property<DateTime>("ExpirationDate");
 
                     b.Property<DateTime>("FechaCreacion");
 

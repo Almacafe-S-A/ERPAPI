@@ -30,19 +30,22 @@ namespace ERPAPI.Models
         public int BranchId { get; set; }
 
         [Display(Name = "Sucursal Nombre")]
-        public int BranchName { get; set; }
+        public string BranchName { get; set; }
 
         [Display(Name = "Cliente Id")]
         public int CustomerId { get; set; }
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
-
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
 
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
+
+        [Display(Name = "Moneda tasa")]
+        public double Currency { get; set; }
 
         [Display(Name = "Id")]
         public Int64 ProductId { get; set; }
