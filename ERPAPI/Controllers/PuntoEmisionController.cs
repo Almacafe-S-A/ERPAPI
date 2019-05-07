@@ -134,7 +134,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _puntoemisionq = _context.PuntoEmision
-               .Where(x => x.IdPuntoEmision == (int)_puntoemisionq.IdPuntoEmision)
+               .Where(x => x.IdPuntoEmision == (Int64)_puntoemision.IdPuntoEmision)
                .FirstOrDefault();
                 _context.PuntoEmision.Remove(_puntoemisionq);
                 await _context.SaveChangesAsync();
