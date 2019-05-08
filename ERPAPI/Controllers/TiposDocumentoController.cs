@@ -65,7 +65,7 @@ namespace ERPAPI.Controllers
             return Ok(_TiposDocumento);
         }
 
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<IActionResult> Update([FromBody]TiposDocumento _TipoDocumento)
         {
           
