@@ -72,10 +72,10 @@ namespace ERPAPI.Controllers
             try
             {
 
-                TiposDocumento _tiposdocumentoq = (from c in _context.TiposDocumento
+                TiposDocumento _tiposdocumentoq = await (from c in _context.TiposDocumento
                        .Where(q => q.IdTipoDocumento == _TipoDocumento.IdTipoDocumento)
                             select c
-                         ).FirstOrDefault();
+                         ).FirstOrDefaultAsync();
 
                 _TipoDocumento.FechaCreacion = _tiposdocumentoq.FechaCreacion;
                 _TipoDocumento.UsuarioCreacion = _tiposdocumentoq.UsuarioCreacion;
