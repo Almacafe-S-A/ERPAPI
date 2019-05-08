@@ -97,15 +97,16 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<Warehouse>> Remove([FromBody]Warehouse payload)
+        public async Task<ActionResult<Warehouse>> Delete([FromBody]Warehouse payload)
         {
             Warehouse warehouse = new Warehouse();
 
             try
             {
-                _context.Warehouse
+                warehouse = _context.Warehouse
                .Where(x => x.WarehouseId == (int)payload.WarehouseId)
                .FirstOrDefault();
+
                _context.Warehouse.Remove(warehouse);
                await _context.SaveChangesAsync();
             }

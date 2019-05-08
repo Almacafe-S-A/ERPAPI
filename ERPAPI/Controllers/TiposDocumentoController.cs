@@ -48,11 +48,11 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Insert([FromBody]TiposDocumento payload)
         {
-            TiposDocumento _CAI = new TiposDocumento();
+            TiposDocumento _TiposDocumento = new TiposDocumento();
             try
             {
-                _CAI = payload;
-                _context.TiposDocumento.Add(_CAI);
+                _TiposDocumento = payload;
+                _context.TiposDocumento.Add(_TiposDocumento);
                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -62,7 +62,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_CAI);
+            return Ok(_TiposDocumento);
         }
 
         [HttpPost("[action]")]
@@ -100,7 +100,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _tiposdocumentoq = _context.TiposDocumento
-               .Where(x => x.IdTipoDocumento == (int)_tiposdocumentoq.IdTipoDocumento)
+               .Where(x => x.IdTipoDocumento == (Int64)_tiposdocumento.IdTipoDocumento)
                .FirstOrDefault();
                 _context.TiposDocumento.Remove(_tiposdocumentoq);
                 await _context.SaveChangesAsync();
