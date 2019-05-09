@@ -105,14 +105,23 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<IActionResult> Update([FromBody]Branch payload)
         {
             Branch branch = payload;
             try
             {
-                _context.Branch.Update(branch);
-               await _context.SaveChangesAsync();
+                branch = (from c in _context.Branch
+                                    .Where(q => q.BranchId == payload.BranchId)
+                                      select c
+                                    ).FirstOrDefault();
+
+                payload.FechaCreacion = branch.FechaCreacion;
+                payload.UsuarioCreacion = branch.UsuarioCreacion;
+
+                _context.Entry(branch).CurrentValues.SetValues(payload);
+                // _context.Branch.Update(payload);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
