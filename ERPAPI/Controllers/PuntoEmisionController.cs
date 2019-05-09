@@ -106,10 +106,16 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]PuntoEmision payload)
         {
-            PuntoEmision _PuntoEmision = payload;
+            PuntoEmision _PuntoEmision = new PuntoEmision() ;
             try
             {
-                _context.PuntoEmision.Update(_PuntoEmision);
+                _PuntoEmision = await (from c in _context.PuntoEmision
+                                       .Where(q=>q.IdPuntoEmision==payload.IdPuntoEmision)
+                                       select c).FirstOrDefaultAsync();
+
+                _context.Entry(_PuntoEmision).CurrentValues.SetValues(payload);
+
+               // _context.PuntoEmision.Update(_PuntoEmision);
                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -136,6 +142,7 @@ namespace ERPAPI.Controllers
                 _puntoemisionq = _context.PuntoEmision
                .Where(x => x.IdPuntoEmision == (Int64)_puntoemision.IdPuntoEmision)
                .FirstOrDefault();
+
                 _context.PuntoEmision.Remove(_puntoemisionq);
                 await _context.SaveChangesAsync();
             }

@@ -80,7 +80,8 @@ namespace ERPAPI.Controllers
                 _TipoDocumento.FechaCreacion = _tiposdocumentoq.FechaCreacion;
                 _TipoDocumento.UsuarioCreacion = _tiposdocumentoq.UsuarioCreacion;
 
-                _context.TiposDocumento.Update(_tiposdocumentoq);
+                _context.Entry(_tiposdocumentoq).CurrentValues.SetValues(_TipoDocumento);
+              //  _context.TiposDocumento.Update(_TipoDocumento);
               await  _context.SaveChangesAsync();
             }
             catch (Exception ex)

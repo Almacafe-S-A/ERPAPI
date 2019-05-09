@@ -116,10 +116,11 @@ namespace ERPAPI.Controllers
                                               select c
                                    ).FirstOrDefault();
 
-                _NumeracionSARq.FechaCreacion = _NumeracionSARq.FechaCreacion;
-                _NumeracionSARq.UsuarioCreacion = _NumeracionSARq.UsuarioCreacion;
+                _NumeracionSAR.FechaCreacion = _NumeracionSARq.FechaCreacion;
+                _NumeracionSAR.UsuarioCreacion = _NumeracionSARq.UsuarioCreacion;
 
-                _context.NumeracionSAR.Update(_NumeracionSARq);
+                _context.Entry(_NumeracionSARq).CurrentValues.SetValues(_NumeracionSAR);
+                // _context.NumeracionSAR.Update(_NumeracionSARq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
