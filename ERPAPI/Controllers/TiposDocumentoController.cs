@@ -100,9 +100,10 @@ namespace ERPAPI.Controllers
             TiposDocumento _tiposdocumentoq = new TiposDocumento();
             try
             {
-                _tiposdocumentoq = _context.TiposDocumento
+                _tiposdocumentoq = await _context.TiposDocumento
                .Where(x => x.IdTipoDocumento == (Int64)_tiposdocumento.IdTipoDocumento)
-               .FirstOrDefault();
+               .FirstOrDefaultAsync();
+
                 _context.TiposDocumento.Remove(_tiposdocumentoq);
                 await _context.SaveChangesAsync();
             }
