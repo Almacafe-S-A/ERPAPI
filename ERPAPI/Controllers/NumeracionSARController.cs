@@ -105,7 +105,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_NumeracionSAR"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<ActionResult<NumeracionSAR>> Update([FromBody]NumeracionSAR _NumeracionSAR)
         {
           
