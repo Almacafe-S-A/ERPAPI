@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190510182536_GrupoElementoConfiguracion")]
+    partial class GrupoElementoConfiguracion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -553,19 +555,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<DateTime?>("FechaCreacion");
-
                     b.Property<DateTime?>("FechaModificacion");
+
+                    b.Property<DateTime?>("Fechacreacion");
 
                     b.Property<string>("Formula");
 
                     b.Property<long?>("Idconfiguracion");
 
                     b.Property<string>("Nombre");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.Property<double?>("Valordecimal");
 
@@ -612,9 +610,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("FechaCreacion");
+                    b.Property<DateTime>("Fechacreacion");
 
-                    b.Property<DateTime>("FechaModificacion");
+                    b.Property<DateTime>("Fechamodificacion");
 
                     b.Property<long?>("IdConfiguraciondestino");
 
