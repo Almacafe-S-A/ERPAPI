@@ -25,6 +25,8 @@
     <Compile Remove="Migrations\20190426043216_unitofmeasure.Designer.cs" />
     <Compile Remove="Migrations\20190430225529_CustomerCondition.cs" />
     <Compile Remove="Migrations\20190430225529_CustomerCondition.Designer.cs" />
+    <Compile Remove="Migrations\20190513204728_AddPallets.cs" />
+    <Compile Remove="Migrations\20190513204728_AddPallets.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

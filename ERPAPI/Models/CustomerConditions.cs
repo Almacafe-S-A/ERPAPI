@@ -18,6 +18,7 @@ namespace ERPAPI.Models
         public Int64 DocumentId { get; set; }
         public Int64 IdTipoDocumento { get; set; }
         public string CustomerConditionName { get; set; }
+        public string Description { get; set; }
         public string LogicalCondition { get; set; }
         public string ValueToEvaluate { get; set; }
         public double ValueDecimal { get; set; }

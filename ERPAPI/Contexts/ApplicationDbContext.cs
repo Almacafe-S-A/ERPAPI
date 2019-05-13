@@ -64,7 +64,10 @@ namespace ERP.Contexts
         public DbSet<CustomerConditions> CustomerConditions { get; set; }
         public DbSet<ElementoConfiguracion> ElementoConfiguracion { get; set; }
         public DbSet<GrupoConfiguracion> GrupoConfiguracion { get; set; }
-        //public DbSet<IdentityUserClaim<int>> IdentityUserClaim { get; set; }
+        public DbSet<ControlPallets> ControlPallets { get; set; }
+        public DbSet<ControlPalletsLine> ControlPalletsLine { get; set; }
+        public DbSet<GoodsReceived> GoodsReceived { get; set; }
+        public DbSet<GoodsReceivedLine> GoodsReceivedLine { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
