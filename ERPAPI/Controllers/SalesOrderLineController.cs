@@ -210,6 +210,11 @@ namespace ERPAPI.Controllers
                      ,SalesOrderId = payload.SalesOrderId
                     ,DiscountAmount=payload.DiscountAmount  
                     ,TaxPercentage=payload.TaxPercentage
+                    ,SubProductId = payload.SubProductId
+                    ,SubProductName = payload.SubProductName
+                    , ProductName = payload.ProductName
+                     , ProductId = payload.ProductId
+                    , Description = payload.Description
                     ,DiscountPercentage=payload.DiscountPercentage };
                // salesOrderLine = payload;
 
