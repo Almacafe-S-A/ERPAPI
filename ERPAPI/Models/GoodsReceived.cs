@@ -12,6 +12,9 @@ namespace ERPAPI.Models
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 GoodsReceivedId { get; set; }
+
+        [Display(Name = "Cliente")]
+        public Int64 CustomerId { get; set; }
         [Display(Name = "Fecha")]
         public DateTime OrderDate { get; set; }
         [Display(Name = "Fecha de documento")]

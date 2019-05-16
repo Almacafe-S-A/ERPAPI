@@ -64,6 +64,23 @@ namespace ERPAPI.Controllers
           
         }
 
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityUsuario()
+        {
+            try
+            {
+                var Items = await _context.Users.CountAsync();
+                return await Task.Run(() => Ok(Items));
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
         /// <summary>
         /// Obtiene los usuarios en Json
         /// </summary>
