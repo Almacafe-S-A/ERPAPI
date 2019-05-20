@@ -49,6 +49,27 @@ namespace coderush.Controllers.Api
         }
 
 
+        [HttpGet("[action]/{BranchId}")]
+        public async Task<IActionResult> GetWarehouseByBranchId(Int64 BranchId)
+        {
+            List<Warehouse> Items = new List<Warehouse>();
+            try
+            {
+                Items = await _context.Warehouse.Where(q=>q.BranchId==BranchId).ToListAsync();
+              
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(Items);
+        }
+
+
+
 
         [HttpPost("[action]")]
         public async Task<ActionResult<Warehouse>> Insert([FromBody]Warehouse payload)

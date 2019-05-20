@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using OFAC;
 
 namespace ERP.Contexts
 {
@@ -68,6 +69,25 @@ namespace ERP.Contexts
         public DbSet<ControlPalletsLine> ControlPalletsLine { get; set; }
         public DbSet<GoodsReceived> GoodsReceived { get; set; }
         public DbSet<GoodsReceivedLine> GoodsReceivedLine { get; set; }
+
+
+        /// <summary>
+        /// OFAC
+        /// </summary>
+        public DbSet<sdnListM> sdnList { get; set; }
+        public DbSet<sdnListPublshInformationM> sdnListPublshInformation { get; set; }
+        public DbSet<sdnListSdnEntryM> sdnListSdnEntry { get; set; }
+        public DbSet<sdnListSdnEntryIDM> sdnListSdnEntryID { get; set; }
+        public DbSet<sdnListSdnEntryAkaM> sdnListSdnEntryAka { get; set; }
+        public DbSet<sdnListSdnEntryAddressM> sdnListSdnEntryAddress { get; set; }
+        public DbSet<sdnListSdnEntryNationalityM> sdnListSdnEntryNationality { get; set; }
+        public DbSet<sdnListSdnEntryCitizenshipM> sdnListSdnEntryCitizenship { get; set; }
+        public DbSet<sdnListSdnEntryDateOfBirthItemM> sdnListSdnEntryDateOfBirthItem { get; set; }
+        public DbSet<sdnListSdnEntryPlaceOfBirthItemM> sdnListSdnEntryPlaceOfBirthItem { get; set; }
+        public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
+        public DbSet<CustomerProduct> CustomerProduct { get; set; }
+        ///// <summary>
+        ////////
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

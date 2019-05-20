@@ -52,6 +52,29 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+        [HttpGet("[action]/{ControlPalletsId}")]
+        public async Task<IActionResult> GetControlPalletsLineByControlPalletId(Int64 ControlPalletsId)
+        {
+            List<ControlPalletsLine> Items = new List<ControlPalletsLine>();
+            try
+            {
+                Items = await _context.ControlPalletsLine
+                             .Where(q=>q.ControlPalletsId== ControlPalletsId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+
+
         /// <summary>
         /// Obtiene los Datos de la ControlPalletsLine por medio del Id enviado.
         /// </summary>

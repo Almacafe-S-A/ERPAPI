@@ -46,7 +46,55 @@ namespace ERPAPI.Controllers
             //  return Ok(Items);
         }
 
-        
+        [HttpGet("[action]")]
+        public async Task<ActionResult<SubProduct>> GetSubProductbByProductTypeId(Int64 ProductTypeId)
+        {
+            List<SubProduct> Items = new List<SubProduct>();
+            try
+            {
+                Items = await _context.SubProduct.Where(q=>q.ProductTypeId== ProductTypeId).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+            //  return Ok(Items);
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<SubProduct>> GetSubProductoByTipoByCustomer([FromBody]CustomerTypeSubProduct _CustomerTypeSubProduct)
+        {
+            List<SubProduct> Items = new List<SubProduct>();
+            try
+            {
+                List<Int64> SubProductsCustomer = (from c in _context.CustomerProduct
+                                                    .Where(q=>q.CustomerId == _CustomerTypeSubProduct.CustomerId)
+                                                    select c.SubProductId
+                                                    ).ToList();
+
+                Items = await _context.SubProduct
+                              .Where(q=> SubProductsCustomer.Contains(q.SubproductId))
+                              .Where(q => q.ProductTypeId == _CustomerTypeSubProduct.ProductTypeId).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+            //  
+        }
+
+
 
 
         [HttpPost("[action]")]

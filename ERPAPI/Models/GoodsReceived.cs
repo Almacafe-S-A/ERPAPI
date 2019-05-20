@@ -18,7 +18,18 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha")]
         public DateTime OrderDate { get; set; }
         [Display(Name = "Fecha de documento")]
-        public DateTime DocumentDate { get; set; }     
+        public DateTime DocumentDate { get; set; }
+
+        [Display(Name = "Sucursal")]
+        public Int64 BranchId { get; set; }
+
+        [Display(Name = "Bodega")]
+        public int WarehouseId { get; set; }
+
+        [Display(Name = "Producto")]
+        public Int64 ProductId { get; set; }
+
+
         [Display(Name = "Recibimos de")]
         public string Name { get; set; }
         [Display(Name = "Referencia")]
