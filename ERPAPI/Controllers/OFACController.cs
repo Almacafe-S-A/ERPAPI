@@ -39,9 +39,10 @@ namespace ERPAPI.Controllers
             List<sdnListSdnEntryM> _personapornombre = new List<sdnListSdnEntryM>();
             try
             {
-                _personapornombre = await _context.sdnListSdnEntry
-                      .Where(q=>q.lastName.Contains(_sdnListSdnEntryM.lastName) 
-                           || q.firstName.Contains(_sdnListSdnEntryM.firstName))
+                var query = _context.sdnListSdnEntry
+                      .Where(q => q.lastName.Contains(_sdnListSdnEntryM.lastName)
+                           || q.firstName.Contains(_sdnListSdnEntryM.firstName));
+                _personapornombre = await query
                         .ToListAsync();
 
             }
@@ -77,6 +78,24 @@ namespace ERPAPI.Controllers
 
 
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Insert([FromBody]sdnListM payload)
+        {
+            try
+            {
+                sdnListM customerType = payload;
+                _context.sdnList.Add(customerType);
+                await _context.SaveChangesAsync();
+                return await Task.Run(() => Ok(customerType));
+                // return Ok(customerType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: { ex.Message }");
+            }
+
+        }
 
 
     }

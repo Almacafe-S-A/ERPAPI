@@ -27,6 +27,14 @@
     <Compile Remove="Migrations\20190430225529_CustomerCondition.Designer.cs" />
     <Compile Remove="Migrations\20190513204728_AddPallets.cs" />
     <Compile Remove="Migrations\20190513204728_AddPallets.Designer.cs" />
+    <Compile Remove="Migrations\20190517005526_OFAC.cs" />
+    <Compile Remove="Migrations\20190517005526_OFAC.Designer.cs" />
+    <Compile Remove="Migrations\20190517210335_AddFieldsGoodsReceived.cs" />
+    <Compile Remove="Migrations\20190517210335_AddFieldsGoodsReceived.Designer.cs" />
+    <Compile Remove="Migrations\20190519024126_CustomerProduct.cs" />
+    <Compile Remove="Migrations\20190519024126_CustomerProduct.Designer.cs" />
+    <Compile Remove="Migrations\20190519025043_CustomerProductTable.cs" />
+    <Compile Remove="Migrations\20190519025043_CustomerProductTable.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

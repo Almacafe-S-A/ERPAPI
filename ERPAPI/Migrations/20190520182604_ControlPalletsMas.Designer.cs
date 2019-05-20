@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190517210335_AddFieldsGoodsReceived")]
-    partial class AddFieldsGoodsReceived
+    [Migration("20190520182604_ControlPalletsMas")]
+    partial class ControlPalletsMas
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -407,6 +407,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("SacosDevueltos");
 
+                    b.Property<long>("SubProductId");
+
                     b.Property<int>("SubTotal");
 
                     b.Property<double>("Tara");
@@ -569,6 +571,35 @@ namespace ERPAPI.Migrations
                     b.HasKey("CustomerConditionId");
 
                     b.ToTable("CustomerConditions");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.CustomerProduct", b =>
+                {
+                    b.Property<long>("CustomerProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("CustomerId");
+
+                    b.Property<string>("CustomerName");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<long>("SubProductId");
+
+                    b.Property<string>("SubProductName");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("CustomerProductId");
+
+                    b.ToTable("CustomerProduct");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerType", b =>
@@ -1509,6 +1540,10 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ProductName");
 
+                    b.Property<long>("ProductTypeId");
+
+                    b.Property<string>("ProductTypeName");
+
                     b.Property<int?>("UnitOfMeasureId");
 
                     b.Property<string>("UsuarioCreacion");
@@ -1704,267 +1739,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Warehouse");
                 });
 
-            modelBuilder.Entity("OFAC.sdnListM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("publshInformationId");
-
-                    b.Property<int>("sdnListPublshInformationId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("publshInformationId");
-
-                    b.ToTable("sdnList");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListPublshInformationM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Publish_Date");
-
-                    b.Property<int>("Record_Count");
-
-                    b.Property<bool>("Record_CountSpecified");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("sdnListPublshInformation");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryAddressM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("address1");
-
-                    b.Property<string>("address2");
-
-                    b.Property<string>("address3");
-
-                    b.Property<string>("city");
-
-                    b.Property<string>("country");
-
-                    b.Property<string>("postalCode");
-
-                    b.Property<int>("sdnListSdnEntryMId");
-
-                    b.Property<string>("stateOrProvince");
-
-                    b.Property<int>("uid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListSdnEntryMId");
-
-                    b.ToTable("sdnListSdnEntryAddress");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryAkaM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("category");
-
-                    b.Property<string>("firstName");
-
-                    b.Property<string>("lastName");
-
-                    b.Property<int>("sdnListSdnEntryMId");
-
-                    b.Property<string>("type");
-
-                    b.Property<int>("uid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListSdnEntryMId");
-
-                    b.ToTable("sdnListSdnEntryAka");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryCitizenshipM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("country");
-
-                    b.Property<bool>("mainEntry");
-
-                    b.Property<int>("sdnListSdnEntryMId");
-
-                    b.Property<int>("uid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListSdnEntryMId");
-
-                    b.ToTable("sdnListSdnEntryCitizenship");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryDateOfBirthItemM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("dateOfBirth");
-
-                    b.Property<bool>("mainEntry");
-
-                    b.Property<int>("sdnListSdnEntryMId");
-
-                    b.Property<int>("uid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListSdnEntryMId");
-
-                    b.ToTable("sdnListSdnEntryDateOfBirthItem");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryIDM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("expirationDate");
-
-                    b.Property<string>("idCountry");
-
-                    b.Property<string>("idNumber");
-
-                    b.Property<string>("idType");
-
-                    b.Property<string>("issueDate");
-
-                    b.Property<int>("sdnListSdnEntryMId");
-
-                    b.Property<int>("uid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListSdnEntryMId");
-
-                    b.ToTable("sdnListSdnEntryID");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("firstName");
-
-                    b.Property<string>("lastName");
-
-                    b.Property<string>("programList");
-
-                    b.Property<string>("remarks");
-
-                    b.Property<int?>("sdnListMId");
-
-                    b.Property<string>("sdnType");
-
-                    b.Property<string>("title");
-
-                    b.Property<int>("uid");
-
-                    b.Property<int?>("vesselInfoId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListMId");
-
-                    b.HasIndex("vesselInfoId");
-
-                    b.ToTable("sdnListSdnEntry");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryNationalityM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("country");
-
-                    b.Property<bool>("mainEntry");
-
-                    b.Property<int>("sdnListSdnEntryMId");
-
-                    b.Property<int>("uid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListSdnEntryMId");
-
-                    b.ToTable("sdnListSdnEntryNationality");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryPlaceOfBirthItemM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("mainEntry");
-
-                    b.Property<string>("placeOfBirth");
-
-                    b.Property<int>("sdnListSdnEntryMId");
-
-                    b.Property<int>("uid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("sdnListSdnEntryMId");
-
-                    b.ToTable("sdnListSdnEntryPlaceOfBirthItem");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryVesselInfoM", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("callSign");
-
-                    b.Property<int>("grossRegisteredTonnage");
-
-                    b.Property<bool>("grossRegisteredTonnageSpecified");
-
-                    b.Property<int>("tonnage");
-
-                    b.Property<bool>("tonnageSpecified");
-
-                    b.Property<string>("vesselFlag");
-
-                    b.Property<string>("vesselOwner");
-
-                    b.Property<string>("vesselType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("sdnListSdnEntryVesselInfo");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.ApplicationUserClaim", b =>
                 {
                     b.HasOne("ERPAPI.Models.ApplicationUser")
@@ -2051,80 +1825,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Vendor")
                         .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListM", b =>
-                {
-                    b.HasOne("OFAC.sdnListPublshInformationM", "publshInformation")
-                        .WithMany()
-                        .HasForeignKey("publshInformationId");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryAddressM", b =>
-                {
-                    b.HasOne("OFAC.sdnListSdnEntryM")
-                        .WithMany("addressList")
-                        .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryAkaM", b =>
-                {
-                    b.HasOne("OFAC.sdnListSdnEntryM")
-                        .WithMany("akaList")
-                        .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryCitizenshipM", b =>
-                {
-                    b.HasOne("OFAC.sdnListSdnEntryM")
-                        .WithMany("citizenshipList")
-                        .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryDateOfBirthItemM", b =>
-                {
-                    b.HasOne("OFAC.sdnListSdnEntryM")
-                        .WithMany("dateOfBirthList")
-                        .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryIDM", b =>
-                {
-                    b.HasOne("OFAC.sdnListSdnEntryM")
-                        .WithMany("idList")
-                        .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryM", b =>
-                {
-                    b.HasOne("OFAC.sdnListM")
-                        .WithMany("sdnEntry")
-                        .HasForeignKey("sdnListMId");
-
-                    b.HasOne("OFAC.sdnListSdnEntryVesselInfoM", "vesselInfo")
-                        .WithMany()
-                        .HasForeignKey("vesselInfoId");
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryNationalityM", b =>
-                {
-                    b.HasOne("OFAC.sdnListSdnEntryM")
-                        .WithMany("nationalityList")
-                        .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("OFAC.sdnListSdnEntryPlaceOfBirthItemM", b =>
-                {
-                    b.HasOne("OFAC.sdnListSdnEntryM")
-                        .WithMany("placeOfBirthList")
-                        .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

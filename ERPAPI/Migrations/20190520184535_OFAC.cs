@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ERPAPI.Migrations
@@ -8,43 +7,6 @@ namespace ERPAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<long>(
-                name: "CustomerId",
-                table: "GoodsReceived",
-                nullable: false,
-                defaultValue: 0L);
-
-            migrationBuilder.AddColumn<long>(
-                name: "CustomerId",
-                table: "ControlPallets",
-                nullable: false,
-                defaultValue: 0L);
-
-            migrationBuilder.AddColumn<string>(
-                name: "CustomerName",
-                table: "ControlPallets",
-                nullable: true);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "FechaCreacion",
-                table: "ControlPallets",
-                nullable: true);
-
-            migrationBuilder.AddColumn<DateTime>(
-                name: "FechaModificacion",
-                table: "ControlPallets",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "UsuarioCreacion",
-                table: "ControlPallets",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "UsuarioModificacion",
-                table: "ControlPallets",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "sdnListPublshInformation",
                 columns: table => new
@@ -382,34 +344,6 @@ namespace ERPAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "sdnListPublshInformation");
-
-            migrationBuilder.DropColumn(
-                name: "CustomerId",
-                table: "GoodsReceived");
-
-            migrationBuilder.DropColumn(
-                name: "CustomerId",
-                table: "ControlPallets");
-
-            migrationBuilder.DropColumn(
-                name: "CustomerName",
-                table: "ControlPallets");
-
-            migrationBuilder.DropColumn(
-                name: "FechaCreacion",
-                table: "ControlPallets");
-
-            migrationBuilder.DropColumn(
-                name: "FechaModificacion",
-                table: "ControlPallets");
-
-            migrationBuilder.DropColumn(
-                name: "UsuarioCreacion",
-                table: "ControlPallets");
-
-            migrationBuilder.DropColumn(
-                name: "UsuarioModificacion",
-                table: "ControlPallets");
         }
     }
 }

@@ -69,7 +69,7 @@ namespace ERP.Contexts
         public DbSet<ControlPalletsLine> ControlPalletsLine { get; set; }
         public DbSet<GoodsReceived> GoodsReceived { get; set; }
         public DbSet<GoodsReceivedLine> GoodsReceivedLine { get; set; }
-
+        public DbSet<CustomerProduct> CustomerProduct { get; set; }
 
         /// <summary>
         /// OFAC
@@ -85,7 +85,7 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryDateOfBirthItemM> sdnListSdnEntryDateOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryPlaceOfBirthItemM> sdnListSdnEntryPlaceOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
-        public DbSet<CustomerProduct> CustomerProduct { get; set; }
+
         ///// <summary>
         ////////
 
@@ -104,6 +104,7 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
+
 
             //modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("AspNetUserClaims");
             //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");

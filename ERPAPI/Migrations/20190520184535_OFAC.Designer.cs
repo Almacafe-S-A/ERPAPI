@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190519024126_CustomerProduct")]
-    partial class CustomerProduct
+    [Migration("20190520184535_OFAC")]
+    partial class OFAC
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -571,6 +571,35 @@ namespace ERPAPI.Migrations
                     b.HasKey("CustomerConditionId");
 
                     b.ToTable("CustomerConditions");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.CustomerProduct", b =>
+                {
+                    b.Property<long>("CustomerProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("CustomerId");
+
+                    b.Property<string>("CustomerName");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<long>("SubProductId");
+
+                    b.Property<string>("SubProductName");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("CustomerProductId");
+
+                    b.ToTable("CustomerProduct");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerType", b =>
