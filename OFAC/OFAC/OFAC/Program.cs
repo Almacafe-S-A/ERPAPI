@@ -8,15 +8,26 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Microsoft.Extensions.Configuration;
 
 namespace OFAC
 {
     class Program
     {
+
+       static MyConfig moduleSettings = new MyConfig();
         static  void Main(string[] args)
         {
             // Mapper.CreateMap<sdnList, sdnListM>();
+            var builder = new ConfigurationBuilder()
+          .SetBasePath(Directory.GetCurrentDirectory())
+          .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
 
+            IConfigurationRoot configuration = builder.Build();
+            // var res =  configuration.GetSection("AppSettings");
+          
+            configuration.GetSection("AppSettings").Bind(moduleSettings);
 
             try
             {
@@ -65,9 +76,9 @@ namespace OFAC
             Console.WriteLine("Inserting data to db.. Please wait");
             HttpClient client = new HttpClient();
 
-            string baseadress = "https://localhost:44347/";
+            string baseadress = moduleSettings.urlbase;
             HttpClient _client = new HttpClient();
-            var resultlogin = await _client.PostAsJsonAsync(baseadress + "api/cuenta/login", new UserInfo { Email = "erp@bi-dss.com", Password = "Aa123456!" });
+            var resultlogin = await _client.PostAsJsonAsync(baseadress + "api/cuenta/login", new UserInfo { Email = moduleSettings.UserEmail, Password = moduleSettings.UserPassword });
             if (resultlogin.IsSuccessStatusCode)
             {
                 string webtoken = await (resultlogin.Content.ReadAsStringAsync());
@@ -122,6 +133,14 @@ namespace OFAC
         public string Token { get; set; }
         public DateTime Expiration { get; set; }
 
+    }
+
+    public class MyConfig
+    {
+        public string urlbase { get; set; }
+        public string UserEmail { get; set; }
+        public string UserPassword { get; set; }
+        public string wsorbiteciahhrr { get; set; }
     }
 
 

@@ -146,6 +146,23 @@ namespace ERPAPI.Controllers
            
         }
 
+        [HttpGet("[action]/{UserEmail}")]
+        public async Task<ActionResult> GetUserByEmail(string UserEmail)
+        {
+            try
+            {
+                ApplicationUser Items = await _context.Users.Where(q => q.Email == UserEmail).FirstOrDefaultAsync();
+                return Ok(Items);
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
+            }
+
+        }
+
 
         /// <summary>
         /// Agrega/Inserta un Usuario a la aplicacion
