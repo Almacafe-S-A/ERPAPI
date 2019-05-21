@@ -145,7 +145,7 @@ namespace ERPAPI.Controllers
             try
             {
                 __NumeracionSARq = _context.NumeracionSAR
-                .Where(x => x.IdNumeracion== (int)__NumeracionSARq.IdNumeracion)
+                .Where(x => x.IdNumeracion== (Int64)__NumeracionSAR.IdNumeracion)
                 .FirstOrDefault();
                 _context.NumeracionSAR.Remove(__NumeracionSARq);
                 await _context.SaveChangesAsync();
