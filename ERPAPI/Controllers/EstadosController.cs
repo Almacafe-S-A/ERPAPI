@@ -69,6 +69,92 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Inserta una nueva Estados
+        /// </summary>
+        /// <param name="_Estados"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Estados>> Insert([FromBody]Estados _Estados)
+        {
+            Estados _Estadosq = new Estados();
+            try
+            {
+                _Estadosq = _Estados;
+                _context.Estados.Add(_Estadosq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_Estadosq);
+        }
+
+        /// <summary>
+        /// Actualiza la Estados
+        /// </summary>
+        /// <param name="_Estados"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<Estados>> Update([FromBody]Estados _Estados)
+        {
+            Estados _Estadosq = _Estados;
+            try
+            {
+                _Estadosq = await (from c in _context.Estados
+                                 .Where(q => q.IdEstado == _Estados.IdEstado)
+                                   select c
+                                ).FirstOrDefaultAsync();
+
+                _context.Entry(_Estadosq).CurrentValues.SetValues((_Estados));
+
+                //_context.Estados.Update(_Estadosq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_Estadosq);
+        }
+
+        /// <summary>
+        /// Elimina una Estados       
+        /// </summary>
+        /// <param name="_Estados"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]Estados _Estados)
+        {
+            Estados _Estadosq = new Estados();
+            try
+            {
+                _Estadosq = _context.Estados
+                .Where(x => x.IdEstado == (Int64)_Estados.IdEstado)
+                .FirstOrDefault();
+
+                _context.Estados.Remove(_Estadosq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_Estadosq);
+
+        }
+
+
+
 
 
     }
