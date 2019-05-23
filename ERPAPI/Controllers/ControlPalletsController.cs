@@ -88,9 +88,29 @@ namespace ERPAPI.Controllers
             ControlPallets _ControlPalletsq = new ControlPallets();
             try
             {
-                _ControlPalletsq = _ControlPallets;
-                _context.ControlPallets.Add(_ControlPalletsq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _ControlPalletsq = _ControlPallets;
+                        _context.ControlPallets.Add(_ControlPalletsq);
+                        await _context.SaveChangesAsync();
+                        foreach (var item in _ControlPalletsq._ControlPalletsLine)
+                        {
+                            item.ControlPalletsId = _ControlPalletsq.ControlPalletsId;
+                            _context.ControlPalletsLine.Add(item);
+                        }
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                   
+                }
             }
             catch (Exception ex)
             {

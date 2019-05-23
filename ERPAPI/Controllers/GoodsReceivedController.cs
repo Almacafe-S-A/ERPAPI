@@ -88,9 +88,29 @@ namespace ERPAPI.Controllers
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
             try
             {
-                _GoodsReceivedq = _GoodsReceived;
-                _context.GoodsReceived.Add(_GoodsReceivedq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _GoodsReceivedq = _GoodsReceived;
+                        _context.GoodsReceived.Add(_GoodsReceivedq);
+                        await _context.SaveChangesAsync();
+
+                        foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
+                        {
+                            item.ControlPalletsId = _GoodsReceivedq.GoodsReceivedId;
+                            _context.GoodsReceivedLine.Add(item);
+                        }
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Commit();
+                        throw ex;
+                    }
+                }
             }
             catch (Exception ex)
             {

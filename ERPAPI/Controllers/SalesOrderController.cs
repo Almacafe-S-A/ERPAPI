@@ -72,6 +72,7 @@ namespace ERPAPI.Controllers
         }
 
         
+        
         /// <summary>
         /// 
         /// </summary>
@@ -163,10 +164,29 @@ namespace ERPAPI.Controllers
              SalesOrder salesOrder = salesorder;
             try
             {
-               
-                //salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
-                _context.SalesOrder.Add(salesOrder);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _context.SalesOrder.Add(salesOrder);
+                        await _context.SaveChangesAsync();
+
+                        foreach (var item in salesorder.SalesOrderLines)
+                        {
+                            item.SalesOrderId = salesorder.SalesOrderId;
+                            _context.SalesOrderLine.Add(item);
+                        }
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                 
+                }
                // this.UpdateSalesOrder(salesOrder.SalesOrderId);
             }
             catch (Exception ex)

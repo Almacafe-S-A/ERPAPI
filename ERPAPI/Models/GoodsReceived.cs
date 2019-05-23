@@ -23,12 +23,27 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
 
+        [Display(Name = "Sucursal")]
+        public Int64 BranchName { get; set; }
+
+
         [Display(Name = "Bodega")]
         public int WarehouseId { get; set; }
+
+        [Display(Name = "Bodega")]
+        public int WarehouseName { get; set; }
+
+        [Display(Name = "Producto Cliente")]
+        public Int64 SubProductId { get; set; }
+
+        [Display(Name = "Producto Cliente")]
+        public string SubProductName { get; set; }
 
         [Display(Name = "Producto")]
         public Int64 ProductId { get; set; }
 
+        [Display(Name = "Producto")]
+        public string ProductName { get; set; }
 
         [Display(Name = "Recibimos de")]
         public string Name { get; set; }
@@ -43,7 +58,8 @@ namespace ERPAPI.Models
         public DateTime? FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
-     
+
+        public List<GoodsReceivedLine> _GoodsReceivedLine = new List<GoodsReceivedLine>();
 
     }
 }

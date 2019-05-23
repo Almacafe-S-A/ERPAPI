@@ -53,5 +53,7 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public List<ControlPalletsLine> _ControlPalletsLine = new List<ControlPalletsLine>();
+
     }
 }
