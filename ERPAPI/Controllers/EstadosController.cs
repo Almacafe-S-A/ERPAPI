@@ -33,7 +33,7 @@ namespace ERPAPI.Controllers
 
         // GET: Estados
                
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<ActionResult> GetEstados()
         {
             try

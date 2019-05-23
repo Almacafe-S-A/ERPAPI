@@ -76,6 +76,26 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        
+       [HttpGet("[action]/{ControlPalletsId}")]
+        public async Task<IActionResult> GetGoodsReceivedLineByGoodsReceivedId(Int64 GoodsReceivedId)
+        {
+            List<GoodsReceivedLine> Items = new List<GoodsReceivedLine>();
+            try
+            {
+                Items = await _context.GoodsReceivedLine
+                             .Where(q => q.GoodsReceivedId == GoodsReceivedId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
 
         /// <summary>
         /// Inserta una nueva GoodsReceivedLine
