@@ -77,7 +77,7 @@ namespace ERPAPI.Controllers
         }
 
         
-       [HttpGet("[action]/{ControlPalletsId}")]
+       [HttpGet("[action]/{GoodsReceivedId}")]
         public async Task<IActionResult> GetGoodsReceivedLineByGoodsReceivedId(Int64 GoodsReceivedId)
         {
             List<GoodsReceivedLine> Items = new List<GoodsReceivedLine>();

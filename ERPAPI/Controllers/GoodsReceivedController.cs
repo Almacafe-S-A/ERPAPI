@@ -98,7 +98,7 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
-                            item.ControlPalletsId = _GoodsReceivedq.GoodsReceivedId;
+                            item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
                             _context.GoodsReceivedLine.Add(item);
                         }
                         await _context.SaveChangesAsync();
