@@ -104,7 +104,7 @@ namespace ERPAPI.Controllers
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             // Tiempo de expiración del token.
-            var expiration = DateTime.UtcNow.AddMinutes(30);
+            var expiration = DateTime.UtcNow.AddMinutes(120);
 
             JwtSecurityToken token = new JwtSecurityToken(
                issuer: null,
