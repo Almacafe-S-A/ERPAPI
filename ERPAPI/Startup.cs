@@ -50,17 +50,19 @@ namespace ERPAPI
             services.AddDataProtection();
 
 
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            _logger.LogInformation($"Antes de agregar el contexto");
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
-            {
-                var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
-                var httpRequest = httpContext.Request;
-                var connection = GetConnection(httpRequest);
-                options.UseSqlServer(connection);
-            });
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+
+            //_logger.LogInformation($"Antes de agregar el contexto");
+            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            //{
+            //    var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
+            //    var httpRequest = httpContext.Request;
+            //    var connection = GetConnection(httpRequest);
+            //    options.UseSqlServer(connection);
+            //});
             //services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
             //{
             //    var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
