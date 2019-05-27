@@ -67,7 +67,7 @@ namespace ERPAPI.Controllers
             }
         }
 
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<IActionResult> Update([FromBody]CustomerType _customertype)
         {
             try
