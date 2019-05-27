@@ -81,7 +81,8 @@ namespace ERPAPI.Controllers
                 _customertype.FechaCreacion = customerTypeq.FechaCreacion;
                 _customertype.UsuarioCreacion = customerTypeq.UsuarioCreacion;
 
-                _context.CustomerType.Update(_customertype);
+                _context.Entry(customerTypeq).CurrentValues.SetValues((_customertype));
+              //  _context.CustomerType.Update(_customertype);
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(_customertype));
                 //return Ok(customerType);

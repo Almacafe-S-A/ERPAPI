@@ -123,7 +123,7 @@ namespace ERPAPI.Controllers
                 _cai.UsuarioCreacion = _Caiq.UsuarioCreacion;
 
                 _context.Entry(_Caiq).CurrentValues.SetValues((_cai));
-                _context.CAI.Update(_Caiq);
+               // _context.CAI.Update(_Caiq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
