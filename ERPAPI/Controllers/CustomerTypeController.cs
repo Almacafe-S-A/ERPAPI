@@ -29,7 +29,7 @@ namespace ERPAPI.Controllers
         }
 
         // GET: api/CustomerType
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<IActionResult> GetCustomerType()
         {
             try
