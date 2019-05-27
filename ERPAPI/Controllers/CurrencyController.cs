@@ -119,7 +119,9 @@ namespace ERPAPI.Controllers
 
                 _Currency.FechaCreacion = currencyq.FechaCreacion;
                 _Currency.UsuarioCreacion = currencyq.UsuarioCreacion;
-                _context.Currency.Update(_Currency);
+
+                _context.Entry(currencyq).CurrentValues.SetValues((_Currency));
+                //  _context.Currency.Update(_Currency);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

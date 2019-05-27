@@ -31,12 +31,14 @@ namespace ERPAPI
 {
     public class Startup
     {
-        //private readonly ILogger _logger;
+        private readonly ILogger _logger;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration
+            , ILogger<Startup> logger
+            )
         {
             Configuration = configuration;
-           // _logger = logger;
+            _logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -48,30 +50,46 @@ namespace ERPAPI
             services.AddDataProtection();
 
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            //services.AddDbContext<ApplicationDbContext>((serviceProvider, options) => {
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            _logger.LogInformation($"Antes de agregar el contexto");
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            {
+                var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
+                var httpRequest = httpContext.Request;
+                var connection = GetConnection(httpRequest);
+                options.UseSqlServer(connection);
+            });
+            //services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+            //{
             //    var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
+            //    _logger.LogInformation(httpContext.ToString());
             //    var httpRequest = httpContext.Request;
-            //    var databaseQuerystringParameter = httpRequest.Query["database"].ToString();
+            //    var databaseQuerystringParameter = "";              
+            //         databaseQuerystringParameter = httpRequest.Query["database"].ToString();
             //    var db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-            //    if (databaseQuerystringParameter!="" && databaseQuerystringParameter!=null)
+
+            //    _logger.LogInformation($"Parametro de base de datos{databaseQuerystringParameter}");
+            //    if (databaseQuerystringParameter != "" && databaseQuerystringParameter != null)
             //    {
+            //        _logger.LogInformation($"Distinto de nulo");
             //        // We have a 'database' param, stick it in.
             //        db2ConnectionString = string.Format(db2ConnectionString, databaseQuerystringParameter);
             //    }
             //    else
             //    {
             //        // We havent been given a 'database' param, use the default.
-            //        var db2DefaultDatabaseValue = Configuration.GetConnectionString("DefaultConnection");
-            //        db2ConnectionString = string.Format(db2ConnectionString, db2DefaultDatabaseValue);
+            //         db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+            //        //db2ConnectionString = string.Format(db2ConnectionString, db2DefaultDatabaseValue);
             //    }
+
+            //    _logger.LogInformation($"Connection string usado:{db2ConnectionString}");
 
             //    options.UseSqlServer(db2ConnectionString);
             //    //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
 
-            //    });
+            //});
 
 
 
@@ -140,6 +158,32 @@ namespace ERPAPI
             //  _logger.LogInformation("Arranco! ");
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+        }
+
+        private string GetConnection(HttpRequest _request)
+        {
+            string db2ConnectionString = "";
+
+            var databaseQuerystringParameter = "";
+            databaseQuerystringParameter = _request.Query["database"].ToString();
+             db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+
+            _logger.LogInformation($"Parametro de base de datos{databaseQuerystringParameter}");
+            if (databaseQuerystringParameter != "" && databaseQuerystringParameter != null)
+            {
+                _logger.LogInformation($"Distinto de nulo");
+                // We have a 'database' param, stick it in.
+                db2ConnectionString = string.Format(db2ConnectionString, databaseQuerystringParameter);
+            }
+            else
+            {
+                // We havent been given a 'database' param, use the default.
+                db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+                //db2ConnectionString = string.Format(db2ConnectionString, db2DefaultDatabaseValue);
+            }
+
+            return db2ConnectionString;
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
