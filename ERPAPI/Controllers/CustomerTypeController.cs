@@ -95,7 +95,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Remove([FromBody]CustomerType payload)
+        public async Task<IActionResult> Delete([FromBody]CustomerType payload)
         {
             try
             {

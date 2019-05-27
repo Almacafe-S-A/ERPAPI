@@ -22,6 +22,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 
 [assembly:ApiConventionType(typeof(DefaultApiConventions))]
 
@@ -46,8 +47,27 @@ namespace ERPAPI
             services.AddScoped<HashService>();
             services.AddDataProtection();
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationDbContext>((serviceProvider, options) => {
+                var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
+                var httpRequest = httpContext.Request;
+                var databaseQuerystringParameter = httpRequest.Query["database"].ToString();
+                var db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+                if (databaseQuerystringParameter!="" && databaseQuerystringParameter!=null)
+                {
+                    // We have a 'database' param, stick it in.
+                    db2ConnectionString = string.Format(db2ConnectionString, databaseQuerystringParameter);
+                }
+                else
+                {
+                    // We havent been given a 'database' param, use the default.
+                    var db2DefaultDatabaseValue = Configuration.GetConnectionString("DefaultConnection");
+                    db2ConnectionString = string.Format(db2ConnectionString, db2DefaultDatabaseValue);
+                }
+
+                options.UseSqlServer(db2ConnectionString);
+                //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+
+                });
 
             //services.AddIdentity<ApplicationUser, IdentityRole>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>()
