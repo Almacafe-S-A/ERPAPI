@@ -27,7 +27,7 @@ namespace coderush.Controllers.Api
         }
 
         // GET: api/UnitOfMeasure
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetUnitOfMeasure()
         {
             List<UnitOfMeasure> Items = new List<UnitOfMeasure>();
@@ -66,7 +66,7 @@ namespace coderush.Controllers.Api
             return Ok(unitOfMeasure);
         }
 
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<ActionResult<UnitOfMeasure>> Update([FromBody]UnitOfMeasure _UnitOfMeasure)
         {           
 
@@ -80,7 +80,8 @@ namespace coderush.Controllers.Api
                 _UnitOfMeasure.FechaCreacion = unitOfMeasureq.FechaCreacion;
                 _UnitOfMeasure.UsuarioCreacion = unitOfMeasureq.UsuarioCreacion;
 
-                _context.UnitOfMeasure.Update(_UnitOfMeasure);
+                _context.Entry(unitOfMeasureq).CurrentValues.SetValues((_UnitOfMeasure));
+                // _context.UnitOfMeasure.Update(_UnitOfMeasure);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

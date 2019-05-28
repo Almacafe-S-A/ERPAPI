@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
             ControlPallets Items = new ControlPallets();
             try
             {
-                Items = await _context.ControlPallets.Where(q => q.ControlPalletsId == ControlPalletsId).FirstOrDefaultAsync();
+                Items = await _context.ControlPallets.Where(q => q.ControlPalletsId == ControlPalletsId).Include(q => q._ControlPalletsLine).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
