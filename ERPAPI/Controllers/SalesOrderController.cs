@@ -169,7 +169,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _context.SalesOrder.Add(salesOrder);
-                        await _context.SaveChangesAsync();
+                        //await _context.SaveChangesAsync();
 
                         foreach (var item in salesorder.SalesOrderLines)
                         {

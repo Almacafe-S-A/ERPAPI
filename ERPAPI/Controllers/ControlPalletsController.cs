@@ -29,7 +29,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de ControlPalletses 
+        /// Obtiene el Listado de Control Estibas 
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
@@ -40,6 +40,28 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.ControlPallets.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetControlPalletsNoSelected()
+        {
+            List<ControlPallets> Items = new List<ControlPallets>();
+            try
+            {
+                List<Int64> listayaprocesada = _context.GoodsReceivedLine
+                                              .Where(q=>q.ControlPalletsId>0)
+                                              .Select(q => q.ControlPalletsId).ToList();
+                Items = await _context.ControlPallets.Where(q=> !listayaprocesada.Contains(q.ControlPalletsId) ).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -94,14 +116,14 @@ namespace ERPAPI.Controllers
                     {
                         _ControlPalletsq = _ControlPallets;
                         _context.ControlPallets.Add(_ControlPalletsq);
-                        await _context.SaveChangesAsync();
+                      
                         foreach (var item in _ControlPalletsq._ControlPalletsLine)
                         {
                             item.ControlPalletsId = _ControlPalletsq.ControlPalletsId;
                             _context.ControlPalletsLine.Add(item);
                         }
+                        // await _context.SaveChangesAsync();
                         await _context.SaveChangesAsync();
-
                         transaction.Commit();
                     }
                     catch (Exception ex)

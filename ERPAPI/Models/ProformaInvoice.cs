@@ -11,7 +11,7 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProformaId { get; set; }
-        [Display(Name = "Order Number")]
+        [Display(Name = "Número de Proforma")]
         public string ProformaName { get; set; }
 
         [Display(Name = "RTN")]
@@ -37,6 +37,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
+
+        [Display(Name = "Fecha de vencimiento")]
+        public DateTime ExpirationDate { get; set; }
 
         [Display(Name = "Id")]
         public Int64 ProductId { get; set; }

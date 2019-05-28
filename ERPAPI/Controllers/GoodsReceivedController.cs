@@ -93,14 +93,16 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _GoodsReceivedq = _GoodsReceived;
+
                         _context.GoodsReceived.Add(_GoodsReceivedq);
-                        await _context.SaveChangesAsync();
+                       // await _context.SaveChangesAsync();
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
                             item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
                             _context.GoodsReceivedLine.Add(item);
                         }
+
                         await _context.SaveChangesAsync();
 
                         transaction.Commit();
