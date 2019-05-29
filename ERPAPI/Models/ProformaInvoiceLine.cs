@@ -10,8 +10,9 @@ namespace ERPAPI.Models
     public class ProformaInvoiceLine
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Display(Name = "Id Linea")]
         public Int64 ProformaLineId { get; set; }
-        [Display(Name = "Sales Order")]
+        [Display(Name = "Proforma")]
         public int ProformaInvoiceId { get; set; }
         [Display(Name = "Cotizacion")]
         public ProformaInvoice ProformaInvoice { get; set; }
@@ -20,6 +21,12 @@ namespace ERPAPI.Models
 
         [Display(Name = "Nombre Producto")]
         public string ProductName { get; set; }
+
+        [Display(Name = "SubProducto")]
+        public Int64 SubProductId { get; set; }
+
+        [Display(Name = "Nombre SubProducto")]
+        public string SubProductName { get; set; }
 
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
