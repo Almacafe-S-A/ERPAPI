@@ -28,6 +28,11 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre SubProducto")]
         public string SubProductName { get; set; }
 
+        [Display(Name = "Unidad de Medida")]
+        public Int64 UnitOfMeasureId { get; set; }
+
+        [Display(Name = "Unidad de Medida")]
+        public string UnitOfMeasureName { get; set; }
 
         [Display(Name = "Descripcion")]
         public string Description { get; set; }

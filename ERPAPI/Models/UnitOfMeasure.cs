@@ -16,6 +16,8 @@ namespace ERPAPI.Models
         public string UnitOfMeasureName { get; set; }
         public string Description { get; set; }
 
+        public Int64 IdEstado { get; set; }
+
         [Required]
         public string UsuarioCreacion { get; set; }
         [Required]

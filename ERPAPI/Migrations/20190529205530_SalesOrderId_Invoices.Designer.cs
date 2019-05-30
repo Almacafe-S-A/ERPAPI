@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190529205530_SalesOrderId_Invoices")]
+    partial class SalesOrderId_Invoices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,8 +61,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
-
-                    b.Property<long>("BranchId");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -983,8 +983,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<long>("CenterCostId");
-
                     b.Property<string>("Description");
 
                     b.Property<double>("DiscountAmount");
@@ -1014,12 +1012,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("TaxPercentage");
 
                     b.Property<double>("Total");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<long>("WareHouseId");
 
                     b.HasKey("InvoiceLineId");
 
@@ -1311,8 +1303,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<long>("CenterCostId");
-
                     b.Property<string>("Description");
 
                     b.Property<double>("DiscountAmount");
@@ -1342,12 +1332,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("TaxPercentage");
 
                     b.Property<double>("Total");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<long>("WareHouseId");
 
                     b.HasKey("ProformaLineId");
 
@@ -1501,10 +1485,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("TaxPercentage");
 
                     b.Property<double>("Total");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.HasKey("SalesOrderLineId");
 
@@ -1672,8 +1652,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("UnitOfMeasureName")
                         .IsRequired();

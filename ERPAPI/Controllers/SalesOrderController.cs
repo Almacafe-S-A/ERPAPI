@@ -71,8 +71,28 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
-        
-        
+        [HttpGet("[action]/{SalesOrderId}")]
+        public async Task<IActionResult> GetSalesOrderById(Int64 SalesOrderId)
+        {
+            SalesOrder Items = new SalesOrder();
+            try
+            {
+                Items = await _context.SalesOrder.Include(q=>q.SalesOrderLines).Where(q => q.SalesOrderId == SalesOrderId).FirstOrDefaultAsync();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //int Count = Items.Count();
+            return Ok(Items);
+        }
+
+       
+
+
         /// <summary>
         /// 
         /// </summary>

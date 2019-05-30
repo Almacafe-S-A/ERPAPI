@@ -27,6 +27,12 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre SubProducto")]
         public string SubProductName { get; set; }
 
+        [Display(Name = "Unidad de Medida")]
+        public Int64 UnitOfMeasureId { get; set; }
+
+        [Display(Name = "Unidad de Medida")]
+        public string UnitOfMeasureName { get; set; }
+
 
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
@@ -36,7 +42,11 @@ namespace ERPAPI.Models
         public double Price { get; set; }
         [Display(Name = "Monto")]
         public double Amount { get; set; }
-          [Display(Name = "Porcentaje descuento")]
+
+        public Int64 WareHouseId { get; set; }
+        [Display(Name = "Centro de costos")]
+        public Int64 CenterCostId { get; set; }
+        [Display(Name = "Porcentaje descuento")]
         public double DiscountPercentage { get; set; }
           [Display(Name = "Monto descuento")]
         public double DiscountAmount { get; set; }

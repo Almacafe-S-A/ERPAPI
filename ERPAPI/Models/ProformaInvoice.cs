@@ -47,6 +47,9 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Producto")]
         public string ProductName { get; set; }
 
+        [Display(Name = "Cotización Asociada")]
+        public Int64 SalesOrderId { get; set; }
+
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
 
