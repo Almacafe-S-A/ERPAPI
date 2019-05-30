@@ -15,6 +15,7 @@ namespace ERPAPI.Models
         public string _cai { get; set; }
         public DateTime FechaRecepcion { get; set; }
         public DateTime FechaLimiteEmision { get; set; }
+        public Int64 IdEstado { get; set; }
         public string Estado { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

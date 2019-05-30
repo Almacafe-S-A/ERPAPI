@@ -90,9 +90,32 @@ namespace ERPAPI.Controllers
             ProformaInvoice _ProformaInvoiceq = new ProformaInvoice();
             try
             {
-                _ProformaInvoiceq = _ProformaInvoice;
-                _context.ProformaInvoice.Add(_ProformaInvoiceq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _context.ProformaInvoice.Add(_ProformaInvoice);
+                        //await _context.SaveChangesAsync();
+
+                        foreach (var item in _ProformaInvoice.ProformaInvoiceLine)
+                        {
+                            item.ProformaInvoiceId = _ProformaInvoice.ProformaId;
+                            _context.ProformaInvoiceLine.Add(item);
+                        }
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+
+                }
+                //_ProformaInvoiceq = _ProformaInvoice;
+                //_context.ProformaInvoice.Add(_ProformaInvoiceq);
+                //await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

@@ -14,6 +14,8 @@ namespace ERPAPI.Models
         [Required]
         public string ProductTypeName { get; set; }
         public string Description { get; set; }
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
     }
 }
 

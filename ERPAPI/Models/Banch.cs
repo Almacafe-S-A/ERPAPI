@@ -40,6 +40,11 @@ namespace ERPAPI.Models
         [Display(Name = "Usuario de creacion")]
         public string UsuarioCreacion { get; set; }
 
+
+       
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
+
         [Required]
         [Display(Name = "Usuario de modificacion")]
         public string UsuarioModificacion { get; set; }

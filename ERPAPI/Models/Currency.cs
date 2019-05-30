@@ -11,6 +11,9 @@ namespace ERPAPI.Models
         public int CurrencyId { get; set; }
         [Required]
         public string CurrencyName { get; set; }
+
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
         [Required]
         public string CurrencyCode { get; set; }
         public string Description { get; set; }

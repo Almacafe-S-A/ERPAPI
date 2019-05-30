@@ -18,6 +18,8 @@ namespace ERPAPI.Models
 
         public Int64 IdEstado { get; set; }
 
+        public string Estado { get; set; }
+
         [Required]
         public string UsuarioCreacion { get; set; }
         [Required]

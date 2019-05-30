@@ -17,6 +17,8 @@ namespace ERPAPI.Models
         public Int64 SubProductId { get; set; }
         public Int64 DocumentId { get; set; }
         public Int64 IdTipoDocumento { get; set; }
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
         public string CustomerConditionName { get; set; }
         public string Description { get; set; }
         public string LogicalCondition { get; set; }

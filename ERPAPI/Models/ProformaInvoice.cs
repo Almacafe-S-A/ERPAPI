@@ -92,9 +92,10 @@ namespace ERPAPI.Models
         [Display(Name = "Total Gravado 18%")]
         public double TotalGravado18 { get; set; }
 
-        public double Total { get; set; }     
+        public double Total { get; set; }
 
-        public int IdEstado { get; set; }
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

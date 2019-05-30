@@ -19,6 +19,8 @@ namespace ERPAPI.Models
         public Int64 TaxId { get; set; }
         public string TaxCode { get; set; }
         public string Description { get; set; }
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
         public double TaxPercentage { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

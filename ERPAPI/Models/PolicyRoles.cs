@@ -25,6 +25,9 @@ namespace ERPAPI.Models
         [Required]
         public string UsuarioModificacion { get; set; }
 
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
+
     }
 
 

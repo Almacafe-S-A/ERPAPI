@@ -26,6 +26,16 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
 
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
+
+        [Display(Name = "Currency")]
+        public int CurrencyId { get; set; }
+
+        [Display(Name = "Moneda tasa")]
+        public double Currency { get; set; }
+
+
 
         [Display(Name = "Bodega")]
         public int WarehouseId { get; set; }
