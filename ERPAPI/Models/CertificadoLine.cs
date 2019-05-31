@@ -12,7 +12,7 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 CertificadoLineId { get; set; }
         [Display(Name = "Sales Order")]
-        public int CertificadoId { get; set; }
+        public Int64 CertificadoId { get; set; }
         [Display(Name = "Cotizacion")]
         public Int64 ProductId { get; set; }
         [Display(Name = "Nombre producto")]

@@ -53,7 +53,25 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
+        [HttpGet("[action]/{PolicyId}")]
+        public async Task<ActionResult<List<Policy>>> GetPoliciesById(Guid PolicyId)
+        {
+            try
+            {
+                var Items = await _context.Policy.Where(q=>q.Id==PolicyId).ToListAsync();
+                return await Task.Run(() => Ok(Items));
+                //return Ok(Items);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
