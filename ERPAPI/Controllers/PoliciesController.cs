@@ -184,9 +184,17 @@ namespace ERPAPI.Controllers
         [HttpPut("[action]")]
         public async Task<ActionResult<Policy>> Update([FromBody]Policy _Policy)
         {
+            Policy _Policyq = _Policy;
             try
-            {               
-                _context.Policy.Update(_Policy);
+            {
+
+                _Policyq = await (from c in _context.Policy
+                                .Where(q => q.Id == _Policy.Id)
+                                             select c
+                               ).FirstOrDefaultAsync();
+
+                _context.Entry(_Policyq).CurrentValues.SetValues((_Policy));
+                // _context.Policy.Update(_Policy);
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(_Policy));
                 // return (_Policy);

@@ -93,6 +93,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Nombre prestatario")]
         public string NombrePrestatario { get; set; }
+
+
         /// <summary>
         /// Totales de Detalle de Linea
         /// </summary>
@@ -112,5 +114,6 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public List<CertificadoLine> _CertificadoLine { get; set; } = new List<CertificadoLine>();
     }
 }

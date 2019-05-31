@@ -52,6 +52,26 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        [HttpGet("[action]/{GoodsReceivedId}")]
+        public async Task<IActionResult> GetCertificadoLineByIdCD(Int64 IdCD)
+        {
+            List<CertificadoLine> Items = new List<CertificadoLine>();
+            try
+            {
+                Items = await _context.CertificadoLine
+                             .Where(q => q.IdCD == IdCD).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
         /// <summary>
         /// Obtiene los Datos de la CertificadoLine por medio del Id enviado.
         /// </summary>

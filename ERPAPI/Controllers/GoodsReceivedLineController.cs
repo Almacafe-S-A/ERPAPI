@@ -77,6 +77,11 @@ namespace ERPAPI.Controllers
         }
 
         
+        /// <summary>
+        /// Obtiene el detalle de las mercaderias.
+        /// </summary>
+        /// <param name="GoodsReceivedId"></param>
+        /// <returns></returns>
        [HttpGet("[action]/{GoodsReceivedId}")]
         public async Task<IActionResult> GetGoodsReceivedLineByGoodsReceivedId(Int64 GoodsReceivedId)
         {
