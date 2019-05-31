@@ -70,6 +70,8 @@ namespace ERP.Contexts
         public DbSet<GoodsReceived> GoodsReceived { get; set; }
         public DbSet<GoodsReceivedLine> GoodsReceivedLine { get; set; }
         public DbSet<CustomerProduct> CustomerProduct { get; set; }
+        public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
+
 
         /// <summary>
         /// OFAC

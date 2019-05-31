@@ -66,6 +66,18 @@ namespace ERPAPI.Models
         [Display(Name = "Boleta de peso")]
         public Int64 WeightBallot { get; set; }
 
+        public double PesoBruto { get; set; }
+
+        public double TaraTransporte { get; set; }
+
+        public double PesoNeto { get; set; }
+
+        public double TaraUnidadMedida { get; set; }
+
+        public double PesoNeto2 { get; set; }
+
+
+
         [Display(Name = "Comentarios")]
         public string Comments { get; set; }
         public DateTime? FechaCreacion { get; set; }
