@@ -60,11 +60,11 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]/{PolicyId}")]
-        public async Task<ActionResult<List<Policy>>> GetPoliciesById(Guid PolicyId)
+        public async Task<ActionResult<Policy>> GetPoliciesById(Guid PolicyId)
         {
             try
             {
-                var Items = await _context.Policy.Where(q=>q.Id==PolicyId).ToListAsync();
+                var Items = await _context.Policy.Where(q=>q.Id==PolicyId).FirstOrDefaultAsync();
                 return await Task.Run(() => Ok(Items));
                 //return Ok(Items);
 
