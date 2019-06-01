@@ -224,6 +224,10 @@ namespace ERPAPI.Controllers
                                           .Where(q => q.Id == _Policy.Id)
                                          ).ToList();
 
+                _Policy = await (_context.Policy
+                                          .Where(q => q.Id == _Policy.Id)
+                             ).FirstOrDefaultAsync();
+
                 if (_listrole.Count > 0)
                 {
                     _context.Policy.Remove(_Policy);
