@@ -48,11 +48,11 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{IdTipoDocumento}")]
         public async Task<IActionResult> GetTipoDocumentoById(Int64 IdTipoDocumento)
         {
-            List<TiposDocumento> Items = new List<TiposDocumento>();
+            TiposDocumento Items = new TiposDocumento();
             try
             {
                 Items = await _context.TiposDocumento
-                    .Where(q=>q.IdTipoDocumento==IdTipoDocumento).ToListAsync();
+                    .Where(q=>q.IdTipoDocumento==IdTipoDocumento).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
