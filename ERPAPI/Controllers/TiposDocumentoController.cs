@@ -45,6 +45,24 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        [HttpGet("[action]/{IdTipoDocumento}")]
+        public async Task<IActionResult> GetTipoDocumentoById(Int64 IdTipoDocumento)
+        {
+            List<TiposDocumento> Items = new List<TiposDocumento>();
+            try
+            {
+                Items = await _context.TiposDocumento
+                    .Where(q=>q.IdTipoDocumento==IdTipoDocumento).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
+            return Ok(Items);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> Insert([FromBody]TiposDocumento payload)
         {

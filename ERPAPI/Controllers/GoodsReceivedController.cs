@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
             GoodsReceived Items = new GoodsReceived();
             try
             {
-                Items = await _context.GoodsReceived.Where(q => q.GoodsReceivedId == GoodsReceivedId).FirstOrDefaultAsync();
+                Items = await _context.GoodsReceived.Where(q => q.GoodsReceivedId == GoodsReceivedId).Include(q=>q._GoodsReceivedLine).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -73,6 +73,28 @@ namespace ERPAPI.Controllers
             }
 
 
+            return Ok(Items);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetGoodsReceivedNoSelected()
+        {
+            List<GoodsReceived> Items = new List<GoodsReceived>();
+            try
+            {
+                List<Int64> listayaprocesada = _context.RecibosCertificado
+                                              .Where(q => q.IdRecibo > 0)
+                                              .Select(q => q.IdRecibo).ToList();
+                Items = await _context.GoodsReceived.Where(q => !listayaprocesada.Contains(q.GoodsReceivedId)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
             return Ok(Items);
         }
 

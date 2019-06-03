@@ -15,10 +15,17 @@ namespace ERPAPI.Models
 
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
+
+        [Display(Name = "Cliente")]
+        public Int64 CustomerName { get; set; }
+
         [Display(Name = "Fecha")]
         public DateTime OrderDate { get; set; }
         [Display(Name = "Fecha de documento")]
         public DateTime DocumentDate { get; set; }
+
+        [Display(Name = "Fecha de vencimiento")]
+        public DateTime ExpirationDate { get; set; }
 
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
