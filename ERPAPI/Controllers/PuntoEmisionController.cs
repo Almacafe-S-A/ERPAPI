@@ -54,7 +54,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="IdPuntoEmision"></param>
         /// <returns></returns>
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{IdPuntoEmision}")]
         public async Task<IActionResult> GetPuntoEmisionById(Int64 IdPuntoEmision)
         {
             PuntoEmision Items = new PuntoEmision();
