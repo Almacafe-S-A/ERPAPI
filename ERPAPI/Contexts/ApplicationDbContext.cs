@@ -71,8 +71,8 @@ namespace ERP.Contexts
         public DbSet<GoodsReceivedLine> GoodsReceivedLine { get; set; }
         public DbSet<CustomerProduct> CustomerProduct { get; set; }
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
-
-
+        public DbSet<PEPS> PEPS { get; set; }
+        public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
         /// <summary>
         /// OFAC
         /// </summary>

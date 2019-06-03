@@ -7,40 +7,32 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class BlackListCustomers
+    public class PEPS
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
-        public Int64 BlackListId { get; set; }
-        [Display(Name = "Cliente")]
-        public Int64 CustomerId { get; set; }
-        [Display(Name = "Cliente")]
-        public string CustomerName { get; set; }
-        
-        [Display(Name = "Cliente referencia")]
-        public string CustomerReference { get; set; }
-        [Display(Name = "Fecha")]
+        public Int64 PEPSId { get; set; }
+        [Display(Name = "Fecha de documento")]
         public DateTime DocumentDate { get; set; }
-        [Display(Name = "Alias")]
-        public string Alias { get; set; }
-        [Display(Name = "Identidad")]
-        public string Identidad { get; set; }
-        [Display(Name = "RTN")]
-        public string RTN { get; set;  }
-        [Display(Name = "Referencia")]
-        public string Referencia { get; set; }
-        [Display(Name = "Origen")]
-        public string Origen { get; set; }
-
+        [Display(Name = "Funcionario")]
+        public string Funcionario { get; set; }
+        [Display(Name = "Cargo")]
+        public string Cargo { get; set; }
+        [Display(Name = "Departamento")]
+        public string Departamento { get; set; }
+        [Display(Name = "Municipio")]
+        public string Municipio { get; set; }
+        public string Pais { get; set; }
+        [Display(Name = "Observación")]
+        public string Observacion { get; set; }
+        [Display(Name = "Oficial")]
+        public string Official { get; set; }
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
-
         [Display(Name = "Estado")]
         public string Estado { get; set; }
-
         [Display(Name = "Fecha creación")]
         public DateTime FechaCreacion { get; set; }
-
         [Display(Name = "Fecha modificación")]
         public DateTime FechaModificacion { get; set; }
 
