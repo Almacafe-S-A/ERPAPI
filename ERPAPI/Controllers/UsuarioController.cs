@@ -23,7 +23,7 @@ namespace ERPAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
 
-        public UsuarioController(ILogger<UserRolController> logger
+        public UsuarioController(ILogger<UsuarioController> logger
             ,ApplicationDbContext context
             , RoleManager<ApplicationRole> rolemanager
             , UserManager<ApplicationUser> userManager

@@ -23,7 +23,7 @@ namespace ERPAPI.Controllers
          private readonly ILogger _logger;
       //  private readonly INumberSequence _numberSequence;
 
-        public SalesOrderController(ILogger<CurrencyController> logger,ApplicationDbContext context)
+        public SalesOrderController(ILogger<SalesOrderController> logger,ApplicationDbContext context)
                       //,  INumberSequence numberSequence)
         {
             _context = context;

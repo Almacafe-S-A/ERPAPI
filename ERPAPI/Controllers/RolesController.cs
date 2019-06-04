@@ -26,7 +26,7 @@ namespace ERPAPI.Controllers
         private readonly IMapper mapper;
         private readonly ILogger _logger;
 
-        public RolesController(ILogger<PoliciesController> logger,
+        public RolesController(ILogger<RolesController> logger,
             ApplicationDbContext context
             , RoleManager<ApplicationRole> rolemanager
             ,IMapper mapper)

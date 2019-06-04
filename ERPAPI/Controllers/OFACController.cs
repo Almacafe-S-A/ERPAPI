@@ -21,7 +21,7 @@ namespace ERPAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public OFACController(ILogger<GoodsReceivedController> logger, ApplicationDbContext context)
+        public OFACController(ILogger<OFACController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

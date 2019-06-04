@@ -22,7 +22,7 @@ namespace ERPAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public CustomerTypeController(ILogger<CustomerController> logger,ApplicationDbContext context)
+        public CustomerTypeController(ILogger<CustomerTypeController> logger,ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

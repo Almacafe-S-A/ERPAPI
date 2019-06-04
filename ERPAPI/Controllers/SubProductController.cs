@@ -19,7 +19,7 @@ namespace ERPAPI.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public SubProductController(ILogger<CurrencyController> logger, ApplicationDbContext context)
+        public SubProductController(ILogger<SubProductController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;

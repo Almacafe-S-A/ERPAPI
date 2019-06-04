@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
             GoodsReceived Items = new GoodsReceived();
             try
             {
-                Items = await _context.GoodsReceived.Where(q => q.GoodsReceivedId == GoodsReceivedId).Include(q=>q._GoodsReceivedLine).FirstOrDefaultAsync();
+                Items = await _context.GoodsReceived.Where(q => q.GoodsReceivedId == GoodsReceivedId).Include(q => q._GoodsReceivedLine).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -117,7 +117,7 @@ namespace ERPAPI.Controllers
                         _GoodsReceivedq = _GoodsReceived;
 
                         _context.GoodsReceived.Add(_GoodsReceivedq);
-                       // await _context.SaveChangesAsync();
+                        // await _context.SaveChangesAsync();
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
@@ -206,6 +206,34 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult<GoodsReceived>> AgruparRecibos(List<Int64> listarecibos)
+        {
+            GoodsReceived _goodsreceivedlis = new GoodsReceived();
+            try
+            {
+
+                // string[] ids = listarecibos.Split(',');
+                _goodsreceivedlis = await _context.GoodsReceived.Where(q => q.GoodsReceivedId == Convert.ToInt64(listarecibos[0])).FirstOrDefaultAsync();
+                _goodsreceivedlis._GoodsReceivedLine = _context.GoodsReceivedLine.FromSql<GoodsReceivedLine>(
+                ("  SELECT  grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName         "
+                 + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
+                 + "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
+                 + "  FROM GoodsReceivedLine grl                                                    "
+                 + "  GROUP BY grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName        "
+                 )
+                    ).Where(q => listarecibos.Contains(q.GoodsReceivedId)).ToList();
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                throw ex;
+            }
+
+            return Ok(_goodsreceivedlis);
+        }
 
 
 

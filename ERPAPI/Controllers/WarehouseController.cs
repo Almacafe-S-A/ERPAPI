@@ -20,7 +20,7 @@ namespace coderush.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public WarehouseController(ILogger<SalesTypeController> logger, ApplicationDbContext context)
+        public WarehouseController(ILogger<WarehouseController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
