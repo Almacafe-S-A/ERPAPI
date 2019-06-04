@@ -15,6 +15,7 @@ namespace ERPAPI.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/OFAC")]
     [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class OFACController : Controller
     {
 
