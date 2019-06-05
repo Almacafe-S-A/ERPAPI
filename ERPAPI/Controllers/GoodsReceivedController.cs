@@ -207,22 +207,57 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsReceived>> AgruparRecibos(List<Int64> listarecibos)
+        public async Task<ActionResult<GoodsReceived>> AgruparRecibos([FromBody]List<Int64> listarecibos)
         {
             GoodsReceived _goodsreceivedlis = new GoodsReceived();
             try
             {
+                string inparams = "";
+                foreach (var item in listarecibos)
+                {
+                    inparams += item +",";
+                }
 
+                inparams = inparams.Substring(0,inparams.Length-1);
                 // string[] ids = listarecibos.Split(',');
                 _goodsreceivedlis = await _context.GoodsReceived.Where(q => q.GoodsReceivedId == Convert.ToInt64(listarecibos[0])).FirstOrDefaultAsync();
-                _goodsreceivedlis._GoodsReceivedLine = _context.GoodsReceivedLine.FromSql<GoodsReceivedLine>(
-                ("  SELECT  grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName         "
+                //List<GoodsReceivedLineDTO> d = _context.Query<GoodsReceivedLineDTO>().FromSql (
+                //("  SELECT  grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName         "
+                // + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
+                // + "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
+                // + $"  FROM GoodsReceivedLine grl                 where  GoodsReceivedId in ({inparams})                                "
+                // + "  GROUP BY grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName        "
+                // )
+                //    ).AsNoTracking().ToList();
+                //.Where(q => listarecibos.Contains(q.GoodsReceivedId)).ToList();
+
+              //  List<GoodsReceivedLineDTO> d = new List<GoodsReceivedLineDTO>();
+                using (var command = _context.Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = ("  SELECT  grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName         "
                  + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
                  + "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
-                 + "  FROM GoodsReceivedLine grl                                                    "
+                 + $"  FROM GoodsReceivedLine grl                 where  GoodsReceivedId in ({inparams})                                "
                  + "  GROUP BY grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName        "
-                 )
-                    ).Where(q => listarecibos.Contains(q.GoodsReceivedId)).ToList();
+                 );
+
+                   _context.Database.OpenConnection();
+                    using (var result = command.ExecuteReader())
+                    {
+                        // do something with result
+                        while (await result.ReadAsync())
+                        {
+                            _goodsreceivedlis._GoodsReceivedLine.Add(new GoodsReceivedLine { SubProductId = Convert.ToInt64(result["SubProductId"]),
+                                SubProductName = result["SubProductId"].ToString(),
+                                UnitOfMeasureName = result["UnitOfMeasureName"].ToString(),
+                                Quantity = Convert.ToInt32(result["Cantidad"]),
+                                QuantitySacos = Convert.ToInt32(result["CantidadSacos"]),
+                                Price = Convert.ToDouble(result["Precio"]),
+                                Total = Convert.ToDouble(result["Total"]),
+                            });
+                        }
+                    }
+                }
 
 
             }
