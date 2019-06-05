@@ -74,7 +74,6 @@ namespace ERP.Contexts
         public DbSet<PEPS> PEPS { get; set; }
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
 
-
         public DbSet<City> City { get; set; }
         public DbSet<Country> Country { get; set; }
         public DbSet<Employees> Employees { get; set; }
