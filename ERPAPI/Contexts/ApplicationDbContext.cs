@@ -73,6 +73,27 @@ namespace ERP.Contexts
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
         public DbSet<PEPS> PEPS { get; set; }
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
+
+
+        public DbSet<City> City { get; set; }
+        public DbSet<Country> Country { get; set; }
+        public DbSet<Employees> Employees { get; set; }
+        public DbSet<HoursWorked> HoursWorked { get; set; }
+        public DbSet<HoursWorkedDetail> HoursWorkedDetail { get; set; }
+        public DbSet<Payroll> Payroll { get; set; }
+        public DbSet<PayrollEmployee> PayrollEmployee { get; set; }
+        public DbSet<Bitacora> Bitacora { get; set; }
+        public DbSet<CalculoPlanilla> CalculoPlanilla { get; set; }
+        public DbSet<CalculoPlanillaDetalle> CalculoPlanillaDetalle { get; set; }
+        public DbSet<Escala> Escala { get; set; }
+        public DbSet<Formula> Formula { get; set; }
+        public DbSet<FormulasAplicadas> FormulasAplicadas { get; set; }
+        public DbSet<Reconciliacion> Reconciliacion { get; set; }
+        public DbSet<ReconciliacionDetalle> ReconciliacionDetalle { get; set; }
+        public DbSet<ReconciliacionEscala> ReconciliacionEscala { get; set; }
+        public DbSet<ReconciliacionGasto> ReconciliacionGasto { get; set; }
+        public DbSet<OrdenFormula> OrdenFormula { get; set; }
+
         /// <summary>
         /// OFAC
         /// </summary>
