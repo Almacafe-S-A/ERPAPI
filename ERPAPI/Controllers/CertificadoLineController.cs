@@ -52,7 +52,7 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
-        [HttpGet("[action]/{GoodsReceivedId}")]
+        [HttpGet("[action]/{IdCD}")]
         public async Task<IActionResult> GetCertificadoLineByIdCD(Int64 IdCD)
         {
             List<CertificadoLine> Items = new List<CertificadoLine>();
