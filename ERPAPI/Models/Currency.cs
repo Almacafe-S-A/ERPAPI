@@ -10,6 +10,7 @@ namespace ERPAPI.Models
     {
         public int CurrencyId { get; set; }
         [Required]
+        [Display(Name = "Moneda")]
         public string CurrencyName { get; set; }
 
         public Int64 IdEstado { get; set; }

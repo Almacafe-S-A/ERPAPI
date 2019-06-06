@@ -47,6 +47,25 @@ namespace ERPAPI.Controllers
           
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCustomerTypeById(Int64 CustomerTypeId)
+        {
+            try
+            {
+                CustomerType Items = await _context.CustomerType
+                    .Where(q=>q.CustomerTypeId==CustomerTypeId).FirstOrDefaultAsync();
+                //  int Count = Items.Count();
+                // return Ok(Items);
+                return await Task.Run(() => Ok(Items));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: { ex.Message }");
+            }
+
+        }
+
 
 
         [HttpPost("[action]")]

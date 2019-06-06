@@ -73,6 +73,9 @@ namespace ERP.Contexts
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
         public DbSet<PEPS> PEPS { get; set; }
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
+        public DbSet<Bank> Bank { get; set; }
+
+   
 
         public DbSet<City> City { get; set; }
         public DbSet<Country> Country { get; set; }
