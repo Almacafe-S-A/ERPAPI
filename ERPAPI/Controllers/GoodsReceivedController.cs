@@ -248,7 +248,7 @@ namespace ERPAPI.Controllers
                         while (await result.ReadAsync())
                         {
                             _goodsreceivedlis._GoodsReceivedLine.Add(new GoodsReceivedLine { SubProductId = Convert.ToInt64(result["SubProductId"]),
-                                SubProductName = result["SubProductId"].ToString(),
+                                SubProductName = result["SubProductName"].ToString(),
                                 UnitOfMeasureName = result["UnitOfMeasureName"].ToString(),
                                 Quantity = Convert.ToInt32(result["Cantidad"]),
                                 QuantitySacos = Convert.ToInt32(result["CantidadSacos"]),
