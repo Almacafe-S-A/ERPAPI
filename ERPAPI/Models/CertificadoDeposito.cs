@@ -29,7 +29,7 @@ namespace ERPAPI.Models
         public Int64 ServicioId { get; set; }
 
         [Display(Name = "Servicio")]
-        public Int64 ServicioName { get; set; }
+        public string ServicioName { get; set; }
 
         [Display(Name = "Dirección")]
         public string Direccion { get; set; }
@@ -116,4 +116,16 @@ namespace ERPAPI.Models
 
         public List<CertificadoLine> _CertificadoLine { get; set; } = new List<CertificadoLine>();
     }
+
+
+
+    public class CertificadoDepositoDTO : CertificadoDeposito
+    {
+        public List<Int64> RecibosAsociados { get; set; }
+        public int editar { get; set; } = 1;
+
+    }
+
+
+
 }
