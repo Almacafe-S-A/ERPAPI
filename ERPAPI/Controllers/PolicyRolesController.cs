@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -109,10 +110,13 @@ namespace ERPAPI.Controllers
         /// <returns></returns>
         [HttpPut("[action]")]
         public async Task<ActionResult<PolicyRoles>> Update([FromBody]PolicyRoles _PolicyRoles)
+       // public async Task<ActionResult<PolicyRoles>> Update([FromBody]dynamic dto)
         {
+            //PolicyRoles _PolicyRoles = new PolicyRoles();
             PolicyRoles _PolicyRolesq = _PolicyRoles;
             try
             {
+              //  _PolicyRoles = JsonConvert.DeserializeObject<PolicyRoles>(dto.ToString());
                 _PolicyRolesq = await (from c in _context.PolicyRoles
                                  .Where(q => q.Id == _PolicyRoles.Id)
                                        select c
