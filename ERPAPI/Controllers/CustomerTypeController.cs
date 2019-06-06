@@ -47,7 +47,7 @@ namespace ERPAPI.Controllers
           
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{CustomerTypeId}")]
         public async Task<IActionResult> GetCustomerTypeById(Int64 CustomerTypeId)
         {
             try
