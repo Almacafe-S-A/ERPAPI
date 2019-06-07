@@ -102,7 +102,7 @@ namespace ERPAPI.Controllers
             return Ok(_ProformaInvoiceLineq);
         }
 
-        [HttpGet("[action]/{GoodsReceivedId}")]
+        [HttpGet("[action]/{ProformaInvoiceId}")]
         public async Task<IActionResult> GetProformaInvoiceLineByProformaInvoiceId(Int64 ProformaInvoiceId)
         {
             List<ProformaInvoiceLine> Items = new List<ProformaInvoiceLine>();

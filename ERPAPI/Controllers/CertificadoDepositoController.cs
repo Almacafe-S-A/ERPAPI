@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
             CertificadoDeposito Items = new CertificadoDeposito();
             try
             {
-                Items = await _context.CertificadoDeposito.Where(q => q.IdCD == IdCD).FirstOrDefaultAsync();
+                Items = await _context.CertificadoDeposito.Include(q=>q._CertificadoLine).Where(q => q.IdCD == IdCD).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

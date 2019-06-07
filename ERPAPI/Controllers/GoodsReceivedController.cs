@@ -236,9 +236,10 @@ namespace ERPAPI.Controllers
                 {
                     command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName         "
                  + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
-                 + "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
+                  //+ "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
+                  + "  , grl.Price as Precio, SUM(grl.Quantity) * (grl.Price)  AS Total                            "
                  + $"  FROM GoodsReceivedLine grl                 where  GoodsReceivedId in ({inparams})                                "
-                 + "  GROUP BY grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName        "
+                 + "  GROUP BY grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName,grl.Price        "
                  );
 
                    _context.Database.OpenConnection();
