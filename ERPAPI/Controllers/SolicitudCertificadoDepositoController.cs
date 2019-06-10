@@ -83,14 +83,52 @@ namespace ERPAPI.Controllers
         /// <param name="_SolicitudCertificadoDeposito"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<SolicitudCertificadoDeposito>> Insert([FromBody]SolicitudCertificadoDeposito _SolicitudCertificadoDeposito)
+        public async Task<ActionResult<SolicitudCertificadoDeposito>> Insert([FromBody]SolicitudCertificadoDepositoDTO _SolicitudCertificadoDeposito)
         {
             SolicitudCertificadoDeposito _SolicitudCertificadoDepositoq = new SolicitudCertificadoDeposito();
             try
             {
-                _SolicitudCertificadoDepositoq = _SolicitudCertificadoDeposito;
-                _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificadoDepositoq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _SolicitudCertificadoDepositoq = _SolicitudCertificadoDeposito;
+                        _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificadoDepositoq);
+                        // await _context.SaveChangesAsync();
+
+                        foreach (var item in _SolicitudCertificadoDeposito._SolicitudCertificadoLine)
+                        {
+                            item.IdCD = _SolicitudCertificadoDepositoq.IdCD;
+                            _context.SolicitudCertificadoLine.Add(item);
+                        }
+
+                        await _context.SaveChangesAsync();
+                        foreach (var item in _SolicitudCertificadoDeposito.RecibosAsociados)
+                        {
+                            RecibosCertificado _recibocertificado =
+                                new RecibosCertificado
+                                {
+                                    IdCD = _SolicitudCertificadoDepositoq.IdCD,
+                                    IdRecibo = item,
+                                    productocantidadbultos = _SolicitudCertificadoDeposito.Quantitysum,
+                                    productorecibolempiras = _SolicitudCertificadoDeposito.Total,
+                                    // UnitMeasureId =_CertificadoDeposito.
+                                };
+
+                            _context.RecibosCertificado.Add(_recibocertificado);
+                        }
+
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Commit();
+                        throw ex;
+                    }
+                }
             }
             catch (Exception ex)
             {
