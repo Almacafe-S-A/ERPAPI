@@ -55,15 +55,15 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la SolicitudCertificadoLine por medio del Id enviado.
         /// </summary>
-        /// <param name="SolicitudCertificadoLineId"></param>
+        /// <param name="CertificadoLineId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{SolicitudCertificadoLineId}")]
-        public async Task<IActionResult> GetSolicitudCertificadoLineById(Int64 SolicitudCertificadoLineId)
+        [HttpGet("[action]/{CertificadoLineId}")]
+        public async Task<IActionResult> GetSolicitudCertificadoLineById(Int64 CertificadoLineId)
         {
             SolicitudCertificadoLine Items = new SolicitudCertificadoLine();
             try
             {
-                Items = await _context.SolicitudCertificadoLine.Where(q => q.SolicitudCertificadoLineId == SolicitudCertificadoLineId).FirstOrDefaultAsync();
+                Items = await _context.SolicitudCertificadoLine.Where(q => q.CertificadoLineId == CertificadoLineId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _SolicitudCertificadoLineq = await (from c in _context.SolicitudCertificadoLine
-                                 .Where(q => q.SolicitudCertificadoLineId == _SolicitudCertificadoLine.SolicitudCertificadoLineId)
+                                 .Where(q => q.CertificadoLineId == _SolicitudCertificadoLine.CertificadoLineId)
                                                     select c
                                 ).FirstOrDefaultAsync();
 
@@ -145,7 +145,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _SolicitudCertificadoLineq = _context.SolicitudCertificadoLine
-                .Where(x => x.SolicitudCertificadoLineId == (Int64)_SolicitudCertificadoLine.SolicitudCertificadoLineId)
+                .Where(x => x.CertificadoLineId == (Int64)_SolicitudCertificadoLine.CertificadoLineId)
                 .FirstOrDefault();
 
                 _context.SolicitudCertificadoLine.Remove(_SolicitudCertificadoLineq);
