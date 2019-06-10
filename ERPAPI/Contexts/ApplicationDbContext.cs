@@ -95,6 +95,9 @@ namespace ERP.Contexts
         public DbSet<ReconciliacionEscala> ReconciliacionEscala { get; set; }
         public DbSet<ReconciliacionGasto> ReconciliacionGasto { get; set; }
         public DbSet<OrdenFormula> OrdenFormula { get; set; }
+        public DbSet<SolicitudCertificadoDeposito> SolicitudCertificadoDeposito { get; set; }
+        public DbSet<SolicitudCertificadoLine> SolicitudCertificadoLine { get; set; }
+
 
         /// <summary>
         /// OFAC
