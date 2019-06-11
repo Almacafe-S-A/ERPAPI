@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class CertificadoDeposito
+    public class SolicitudCertificadoDeposito
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
         public Int64 IdCD { get; set; }
-        [Display(Name = "No de certificado")]
+        [Display(Name = "No de solicitud")]
         public Int64 NoCD { get; set; }
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
@@ -114,12 +114,12 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public List<CertificadoLine> _CertificadoLine { get; set; } = new List<CertificadoLine>();
+        public List<SolicitudCertificadoLine> _SolicitudCertificadoLine { get; set; } = new List<SolicitudCertificadoLine>();
     }
 
 
 
-    public class CertificadoDepositoDTO : CertificadoDeposito
+    public class SolicitudCertificadoDepositoDTO :SolicitudCertificadoDeposito 
     {
         public List<Int64> RecibosAsociados { get; set; }
         public int editar { get; set; } = 1;

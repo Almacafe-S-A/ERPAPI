@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
             CertificadoDeposito Items = new CertificadoDeposito();
             try
             {
-                Items = await _context.CertificadoDeposito.Where(q => q.IdCD == IdCD).FirstOrDefaultAsync();
+                Items = await _context.CertificadoDeposito.Include(q=>q._CertificadoLine).Where(q => q.IdCD == IdCD).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -83,14 +83,55 @@ namespace ERPAPI.Controllers
         /// <param name="_CertificadoDeposito"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<CertificadoDeposito>> Insert([FromBody]CertificadoDeposito _CertificadoDeposito)
+        public async Task<ActionResult<CertificadoDeposito>> Insert([FromBody]CertificadoDepositoDTO _CertificadoDeposito)
         {
             CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
             try
             {
-                _CertificadoDepositoq = _CertificadoDeposito;
-                _context.CertificadoDeposito.Add(_CertificadoDepositoq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _CertificadoDepositoq = _CertificadoDeposito;
+                        _context.CertificadoDeposito.Add(_CertificadoDepositoq);
+                        // await _context.SaveChangesAsync();
+
+                        foreach (var item in _CertificadoDeposito._CertificadoLine)
+                        {
+                            item.IdCD = _CertificadoDepositoq.IdCD;
+                            _context.CertificadoLine.Add(item);
+                        }
+
+                        await _context.SaveChangesAsync();
+                        foreach (var item in _CertificadoDeposito.RecibosAsociados)
+                        {
+                            RecibosCertificado _recibocertificado =
+                                new RecibosCertificado
+                                {
+                                    IdCD = _CertificadoDepositoq.IdCD,
+                                    IdRecibo = item,
+                                    productocantidadbultos = _CertificadoDeposito.Quantitysum,
+                                    productorecibolempiras = _CertificadoDeposito.Total,
+                                    // UnitMeasureId =_CertificadoDeposito.
+                                };
+
+                            _context.RecibosCertificado.Add(_recibocertificado);
+                        }
+                       
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Commit();
+                        throw ex;
+                    }
+                }
+                //_CertificadoDepositoq = _CertificadoDeposito;
+                //_context.CertificadoDeposito.Add(_CertificadoDepositoq);
+                //await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

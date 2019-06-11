@@ -73,6 +73,7 @@ namespace ERP.Contexts
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
         public DbSet<PEPS> PEPS { get; set; }
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
+        public DbSet<Bank> Bank { get; set; }  
 
         public DbSet<City> City { get; set; }
         public DbSet<Country> Country { get; set; }
@@ -87,11 +88,17 @@ namespace ERP.Contexts
         public DbSet<Escala> Escala { get; set; }
         public DbSet<Formula> Formula { get; set; }
         public DbSet<FormulasAplicadas> FormulasAplicadas { get; set; }
+        public DbSet<FormulasConcepto> FormulasConcepto { get; set; }
+        public DbSet<FormulasConFormulas> FormulasConFormulas { get; set; }
+        public DbSet<Incapacidades> Incapacidades { get; set; }
         public DbSet<Reconciliacion> Reconciliacion { get; set; }
         public DbSet<ReconciliacionDetalle> ReconciliacionDetalle { get; set; }
         public DbSet<ReconciliacionEscala> ReconciliacionEscala { get; set; }
         public DbSet<ReconciliacionGasto> ReconciliacionGasto { get; set; }
         public DbSet<OrdenFormula> OrdenFormula { get; set; }
+        public DbSet<SolicitudCertificadoDeposito> SolicitudCertificadoDeposito { get; set; }
+        public DbSet<SolicitudCertificadoLine> SolicitudCertificadoLine { get; set; }
+
 
         /// <summary>
         /// OFAC

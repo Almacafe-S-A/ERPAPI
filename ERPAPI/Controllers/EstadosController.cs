@@ -50,6 +50,23 @@ namespace ERPAPI.Controllers
            
         }
 
+        [HttpGet("[action]/{IdEstado}")]
+        public async Task<ActionResult> GetEstadosById(Int64 IdEstado)
+        {
+            try
+            {
+                Estados Items = await _context.Estados.Where(q=>q.IdEstado==IdEstado).FirstOrDefaultAsync();
+                return Ok(Items);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
 
         [HttpGet("[action]/{idgrupoestado}")]
         public async Task<ActionResult> GetEstadosByGrupo(Int64 idgrupoestado)

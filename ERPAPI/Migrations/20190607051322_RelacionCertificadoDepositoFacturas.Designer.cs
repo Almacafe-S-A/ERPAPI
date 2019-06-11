@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190607051322_RelacionCertificadoDepositoFacturas")]
+    partial class RelacionCertificadoDepositoFacturas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2494,126 +2496,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("ShipmentType");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoDeposito", b =>
-                {
-                    b.Property<long>("IdCD")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Almacenaje");
-
-                    b.Property<long>("BankId");
-
-                    b.Property<string>("BankName");
-
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<string>("EmpresaSeguro");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCertificado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaFirma");
-
-                    b.Property<DateTime>("FechaInicioComputo");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaPagoBanco");
-
-                    b.Property<DateTime>("FechaVencimiento");
-
-                    b.Property<DateTime>("FechaVencimientoDeposito");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("LugarFirma");
-
-                    b.Property<double>("MontoGarantia");
-
-                    b.Property<long>("NoCD");
-
-                    b.Property<string>("NoPoliza");
-
-                    b.Property<long>("NoTraslado");
-
-                    b.Property<string>("NombreEmpresa");
-
-                    b.Property<string>("NombrePrestatario");
-
-                    b.Property<string>("OtrosCargos");
-
-                    b.Property<double>("PorcentajeInteresesInsolutos");
-
-                    b.Property<double>("Quantitysum");
-
-                    b.Property<string>("Seguro");
-
-                    b.Property<long>("ServicioId");
-
-                    b.Property<string>("ServicioName");
-
-                    b.Property<double>("SujetasAPago");
-
-                    b.Property<double>("Total");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("WarehouseId");
-
-                    b.Property<string>("WarehouseName");
-
-                    b.HasKey("IdCD");
-
-                    b.ToTable("SolicitudCertificadoDeposito");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoLine", b =>
-                {
-                    b.Property<long>("CertificadoLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("Description");
-
-                    b.Property<long>("IdCD");
-
-                    b.Property<double>("Price");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<double>("TotalCantidad");
-
-                    b.Property<string>("UnitMeasurName");
-
-                    b.Property<long>("UnitMeasureId");
-
-                    b.HasKey("CertificadoLineId");
-
-                    b.HasIndex("IdCD");
-
-                    b.ToTable("SolicitudCertificadoLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.SubProduct", b =>
                 {
                     b.Property<long>("SubproductId")
@@ -3217,14 +3099,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
                         .HasForeignKey("SalesOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.SolicitudCertificadoDeposito")
-                        .WithMany("_SolicitudCertificadoLine")
-                        .HasForeignKey("IdCD")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
