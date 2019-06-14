@@ -99,6 +99,8 @@ namespace ERP.Contexts
         public DbSet<SolicitudCertificadoDeposito> SolicitudCertificadoDeposito { get; set; }
         public DbSet<SolicitudCertificadoLine> SolicitudCertificadoLine { get; set; }
 
+        public DbSet<Kardex> Kardex { get; set; }
+        public DbSet<KardexLine> KardexLine { get; set; }
 
         /// <summary>
         /// OFAC

@@ -10,7 +10,9 @@ namespace ERPAPI.Models
     public class ControlPalletsLine
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Display(Name = "Linea Id")]
         public Int64 ControlPalletsLineId { get; set; }
+        [Display(Name = "Id")]
         public Int64 ControlPalletsId { get; set; }
         public int Alto { get; set; }
         public int Ancho { get; set; }
@@ -18,6 +20,11 @@ namespace ERPAPI.Models
         public double Totallinea { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }
+
+        [Display(Name = "Centro de costos")]
+        public Int64 CenterCostId { get; set; }
+        [Display(Name = "Centro de costos")]
+        public string CenterCostName { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190613051943_Kardex")]
+    partial class Kardex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -564,10 +566,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
-
                     b.Property<string>("Description");
 
                     b.Property<long>("IdCD");
@@ -707,10 +705,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("Alto");
 
                     b.Property<int>("Ancho");
-
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
 
                     b.Property<long>("ControlPalletsId");
 
@@ -1280,11 +1274,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("CurrencyId");
 
-                    b.Property<string>("CurrencyName");
-
                     b.Property<long>("CustomerId");
 
-                    b.Property<string>("CustomerName");
+                    b.Property<long>("CustomerName");
 
                     b.Property<DateTime>("DocumentDate");
 
@@ -1382,8 +1374,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.Property<long>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
 
                     b.HasKey("GoodsReceiveLinedId");
 
@@ -1530,8 +1520,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("CurrencyId");
 
-                    b.Property<string>("CurrencyName");
-
                     b.Property<int>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -1635,8 +1623,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CenterCostId");
 
-                    b.Property<string>("CenterCostName");
-
                     b.Property<string>("Description");
 
                     b.Property<double>("DiscountAmount");
@@ -1686,12 +1672,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("Currency");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
                     b.Property<string>("DocName");
 
                     b.Property<long>("DocType");
@@ -1731,10 +1711,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BranchName");
 
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
-
                     b.Property<long>("ControlEstibaId");
 
                     b.Property<string>("ControlEstibaName");
@@ -1764,10 +1740,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("TypeOperationId");
 
                     b.Property<string>("TypeOperationName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<long>("WareHouseId");
 
@@ -2148,8 +2120,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("CurrencyId");
 
-                    b.Property<string>("CurrencyName");
-
                     b.Property<int>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -2226,8 +2196,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Amount");
 
                     b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
 
                     b.Property<string>("Description");
 
@@ -2507,8 +2475,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Currency");
 
                     b.Property<int>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
 
                     b.Property<int>("CustomerId");
 

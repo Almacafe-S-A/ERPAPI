@@ -49,6 +49,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
+        [Display(Name = "Moneda")]
+        public string CurrencyName { get; set; }
 
         [Display(Name = "Moneda tasa")]
         public double Currency { get; set; }
