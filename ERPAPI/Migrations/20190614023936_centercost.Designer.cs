@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190614023936_centercost")]
+    partial class centercost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -739,19 +741,11 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
                     b.Property<string>("Name");
 
                     b.Property<int?>("PhoneCode");
 
                     b.Property<string>("SortName");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
 
                     b.HasKey("Id");
 
@@ -983,58 +977,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("CustomersOfCustomer");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Departamento", b =>
-                {
-                    b.Property<long>("IdDepartamento")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long?>("IdEstado");
-
-                    b.Property<string>("NombreDepartamento");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("IdDepartamento");
-
-                    b.ToTable("Departamento");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Dependientes", b =>
-                {
-                    b.Property<long>("IdDependientes")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long?>("IdEmpleado");
-
-                    b.Property<string>("NombreDependientes");
-
-                    b.Property<string>("Parentezco");
-
-                    b.Property<string>("Telefono");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("IdDependientes");
-
-                    b.ToTable("Dependientes");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.ElementoConfiguracion", b =>
                 {
                     b.Property<long>("Id")
@@ -1086,13 +1028,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<int>("Extension");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaEgreso");
-
-                    b.Property<DateTime>("FechaFinContrato");
 
                     b.Property<DateTime?>("FechaIngreso");
 
@@ -1110,17 +1048,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdCiudad");
 
-                    b.Property<int>("IdDepartamento");
-
                     b.Property<long?>("IdEstado");
 
                     b.Property<long?>("IdPais");
-
-                    b.Property<int>("IdPuesto");
-
-                    b.Property<int>("IdSucursal");
-
-                    b.Property<int>("IdTipoContrato");
 
                     b.Property<string>("Identidad");
 
@@ -1130,25 +1060,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NombreCiudad");
 
-                    b.Property<string>("NombreDepartamento");
-
                     b.Property<string>("NombreEmpleado");
 
                     b.Property<string>("NombreEstado");
 
                     b.Property<string>("NombrePais");
 
-                    b.Property<string>("NombrePuesto");
-
-                    b.Property<string>("NombreSucursal");
-
-                    b.Property<string>("Notas");
-
                     b.Property<long?>("Puesto");
 
                     b.Property<decimal?>("Salario");
-
-                    b.Property<string>("Telefono");
 
                     b.Property<string>("Userid");
 
@@ -1159,33 +1079,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdEmpleado");
 
                     b.ToTable("Employees");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Empresa", b =>
-                {
-                    b.Property<long>("IdEmpresa")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<string>("NombreContacto");
-
-                    b.Property<string>("NombreEmpresa");
-
-                    b.Property<string>("Telefono");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("IdEmpresa");
-
-                    b.ToTable("Empresa");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Escala", b =>
@@ -1393,7 +1286,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CustomerId");
 
-                    b.Property<string>("CustomerName");
+                    b.Property<long>("CustomerName");
 
                     b.Property<DateTime>("DocumentDate");
 
@@ -2381,31 +2274,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("ProformaInvoiceLine");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Puesto", b =>
-                {
-                    b.Property<long>("IdPuesto")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long?>("IdDepartamento");
-
-                    b.Property<string>("NombreDepartamento");
-
-                    b.Property<string>("NombrePuesto");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("IdPuesto");
-
-                    b.ToTable("Puesto");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.PuntoEmision", b =>
                 {
                     b.Property<long>("IdPuntoEmision")
@@ -3011,52 +2879,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("TaxId");
 
                     b.ToTable("Tax");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.TipoContrato", b =>
-                {
-                    b.Property<long>("IdTipoContrato")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long?>("IdEstado");
-
-                    b.Property<string>("NombreTipoContrato");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("IdTipoContrato");
-
-                    b.ToTable("TipoContrato");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.TipoDocumento", b =>
-                {
-                    b.Property<long>("IdTipoDocumento")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long?>("IdEstado");
-
-                    b.Property<string>("NombreTipoDocumento");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("IdTipoDocumento");
-
-                    b.ToTable("TipoDocumento");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.TiposDocumento", b =>

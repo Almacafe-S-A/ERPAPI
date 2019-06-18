@@ -105,7 +105,7 @@ namespace ERPAPI.Controllers
         /// <param name="_GoodsReceived"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsReceived>> Insert([FromBody]GoodsReceived _GoodsReceived)
+        public async Task<ActionResult<GoodsReceived>> Insert([FromBody]GoodsReceivedDTO _GoodsReceived)
         {
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
             try
@@ -123,7 +123,40 @@ namespace ERPAPI.Controllers
                         {
                             item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
                             _context.GoodsReceivedLine.Add(item);
+
+                            _GoodsReceived.Kardex._KardexLine.Add(new KardexLine
+                            {
+                                DocumentDate = _GoodsReceivedq.DocumentDate,
+                                ProducId = _GoodsReceivedq.ProductId,
+                                ProductName = _GoodsReceivedq.ProductName,
+                                SubProducId = _GoodsReceivedq.SubProductId,
+                                SubProductName = _GoodsReceivedq.SubProductName,
+                                QuantityEntry = item.Quantity,
+                                QuantityOut =0,
+                                BranchId = _GoodsReceivedq.BranchId,
+                                BranchName = _GoodsReceivedq.BranchName,
+                                WareHouseId = item.WareHouseId,
+                                WareHouseName = item.WareHouseName,
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                TypeOperationId = 1,
+                                TypeOperationName = "Entrada",
+                        });
                         }
+
+                        await _context.SaveChangesAsync();
+                        _GoodsReceived.Kardex.DocType = 0;                      
+                        _GoodsReceived.Kardex.DocName = "ReciboMercaderia/GoodsReceived";
+                        _GoodsReceived.Kardex.DocumentDate = _GoodsReceivedq.DocumentDate;
+                        _GoodsReceived.Kardex.FechaCreacion = DateTime.Now;
+                        _GoodsReceived.Kardex.FechaModificacion = DateTime.Now;
+                        _GoodsReceived.Kardex.TypeOperationId = 1;
+                        _GoodsReceived.Kardex.TypeOperationName = "Entrada";                        
+                       
+                        _GoodsReceived.Kardex.CurrencyId = _GoodsReceivedq.CurrencyId;
+                        _GoodsReceived.Kardex.CurrencyName = _GoodsReceivedq.CurrencyName;
+                        _GoodsReceived.Kardex.DocumentId = _GoodsReceivedq.GoodsReceivedId;
+                        _context.Kardex.Add(_GoodsReceived.Kardex);
 
                         await _context.SaveChangesAsync();
 
@@ -131,7 +164,7 @@ namespace ERPAPI.Controllers
                     }
                     catch (Exception ex)
                     {
-                        transaction.Commit();
+                        transaction.Rollback();
                         throw ex;
                     }
                 }

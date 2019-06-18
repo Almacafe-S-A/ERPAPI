@@ -45,6 +45,10 @@ namespace ERPAPI.Models
         public double Total { get; set; }
         [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
+
+        [Display(Name = "Bodega")]
+        public string WareHouseName { get; set; }
+
         [Display(Name = "Centro de costos")]
         public Int64 CenterCostId { get; set; }
 

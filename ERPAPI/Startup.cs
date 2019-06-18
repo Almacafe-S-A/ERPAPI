@@ -23,6 +23,8 @@ using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 [assembly:ApiConventionType(typeof(DefaultApiConventions))]
 
@@ -52,6 +54,8 @@ namespace ERPAPI
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            
 
 
             //_logger.LogInformation($"Antes de agregar el contexto");

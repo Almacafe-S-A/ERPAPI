@@ -47,6 +47,16 @@
     <Compile Remove="Migrations\20190603201343_PEPS_BlackListCustomers.Designer.cs" />
     <Compile Remove="Migrations\20190618231039_ActualizacionTablasRH.cs" />
     <Compile Remove="Migrations\20190618231039_ActualizacionTablasRH.Designer.cs" />
+    <Compile Remove="Migrations\20190611151624_Kardex.cs" />
+    <Compile Remove="Migrations\20190611151624_Kardex.Designer.cs" />
+    <Compile Remove="Migrations\20190611152012_Kardex.cs" />
+    <Compile Remove="Migrations\20190611152012_Kardex.Designer.cs" />
+    <Compile Remove="Migrations\20190611153109_Kardex_1.cs" />
+    <Compile Remove="Migrations\20190611153109_Kardex_1.Designer.cs" />
+    <Compile Remove="Migrations\20190611160014_GoodsReceived_Kardex.cs" />
+    <Compile Remove="Migrations\20190611160014_GoodsReceived_Kardex.Designer.cs" />
+    <Compile Remove="Migrations\20190613051706_Kardex.cs" />
+    <Compile Remove="Migrations\20190613051706_Kardex.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

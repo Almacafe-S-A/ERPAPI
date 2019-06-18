@@ -98,8 +98,11 @@ namespace ERPAPI.Models
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
 
-        [Display(Name = "Currency")]
+        [Display(Name = "Moneda")]
         public int CurrencyId { get; set; }
+
+        [Display(Name = "Moneda")]
+        public string CurrencyName { get; set; }
 
         [Display(Name = "Moneda tasa")]
         public double Currency { get; set; }

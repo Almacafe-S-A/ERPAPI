@@ -51,6 +51,9 @@ namespace ERPAPI.Models
         [Display(Name = "Centro de costos")]
         public Int64 CenterCostId { get; set; }
 
+        [Display(Name = "Centro de costos")]
+        public string CenterCostName { get; set; }
+
         [Display(Name = "Subtotal")]
         public double SubTotal { get; set; }
          [Display(Name = "% Impuesto")]
