@@ -45,6 +45,8 @@
     <Compile Remove="Migrations\20190529205154_SalesOrderId_Invoices.Designer.cs" />
     <Compile Remove="Migrations\20190603201343_PEPS_BlackListCustomers.cs" />
     <Compile Remove="Migrations\20190603201343_PEPS_BlackListCustomers.Designer.cs" />
+    <Compile Remove="Migrations\20190618231039_ActualizacionTablasRH.cs" />
+    <Compile Remove="Migrations\20190618231039_ActualizacionTablasRH.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

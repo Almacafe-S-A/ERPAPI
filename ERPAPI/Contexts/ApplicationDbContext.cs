@@ -144,5 +144,35 @@ namespace ERP.Contexts
 
 
         }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.Empresa> Empresa { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.Departamento> Departamento { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.TipoContrato> TipoContrato { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.Dependientes> Dependientes { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
     }
 }
