@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class GoodsReceived
+    public class GoodsDelivered
     {
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 GoodsReceivedId { get; set; }
+        public Int64 GoodsDeliveredId { get; set; }
 
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
@@ -87,6 +87,8 @@ namespace ERPAPI.Models
 
         public double PesoNeto2 { get; set; }
 
+
+
         [Display(Name = "Comentarios")]
         public string Comments { get; set; }
         public DateTime? FechaCreacion { get; set; }
@@ -94,14 +96,14 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        //  public List<GoodsReceivedLine> _GoodsReceivedLine = new List<GoodsReceivedLine>();
-        public List<GoodsReceivedLine> _GoodsReceivedLine { get; set; } = new List<GoodsReceivedLine>();
+
+        public List<GoodsDeliveredLine> _GoodsDeliveredLine { get; set; } = new List<GoodsDeliveredLine>();
 
      //   public Kardex Kardex { get; set; }
     }
 
 
-    public class GoodsReceivedDTO: GoodsReceived
+    public class GoodsDeliveredDTO : GoodsDelivered
     {
         public Kardex Kardex { get; set; } = new Kardex();
     }

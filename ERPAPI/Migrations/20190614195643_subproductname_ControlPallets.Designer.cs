@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190614195643_subproductname_ControlPallets")]
+    partial class subproductname_ControlPallets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1266,138 +1268,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("FormulasConcepto");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.GoodsDelivered", b =>
-                {
-                    b.Property<long>("GoodsDeliveredId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<string>("Comments");
-
-                    b.Property<double>("Currency");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<long>("ExitTicket");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("Marca");
-
-                    b.Property<string>("Name");
-
-                    b.Property<DateTime>("OrderDate");
-
-                    b.Property<double>("PesoBruto");
-
-                    b.Property<double>("PesoNeto");
-
-                    b.Property<double>("PesoNeto2");
-
-                    b.Property<string>("Placa");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<string>("Reference");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<double>("TaraTransporte");
-
-                    b.Property<double>("TaraUnidadMedida");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<int>("WarehouseId");
-
-                    b.Property<string>("WarehouseName");
-
-                    b.Property<long>("WeightBallot");
-
-                    b.HasKey("GoodsDeliveredId");
-
-                    b.ToTable("GoodsDelivered");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveredLine", b =>
-                {
-                    b.Property<long>("GoodsDeliveredLinedId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<long>("ControlPalletsId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long>("GoodsDeliveredId");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("ProducId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<int>("Quantity");
-
-                    b.Property<int>("QuantitySacos");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<double>("Total");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
-
-                    b.HasKey("GoodsDeliveredLinedId");
-
-                    b.HasIndex("GoodsDeliveredId");
-
-                    b.ToTable("GoodsDeliveredLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.GoodsReceived", b =>
                 {
                     b.Property<long>("GoodsReceivedId")
@@ -1434,8 +1304,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Marca");
-
                     b.Property<string>("Name");
 
                     b.Property<DateTime>("OrderDate");
@@ -1445,8 +1313,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("PesoNeto");
 
                     b.Property<double>("PesoNeto2");
-
-                    b.Property<string>("Placa");
 
                     b.Property<long>("ProductId");
 
@@ -3515,14 +3381,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Customers")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveredLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.GoodsDelivered")
-                        .WithMany("_GoodsDeliveredLine")
-                        .HasForeignKey("GoodsDeliveredId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
