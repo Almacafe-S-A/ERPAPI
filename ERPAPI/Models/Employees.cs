@@ -35,7 +35,21 @@ namespace ERPAPI.Models
         public long? IdActivoinactivo { get; set; }
         public string Foto { get; set; } 
         public long? IdBanco { get; set; }
-        public string CuentaBanco { get; set; } 
+        public string CuentaBanco { get; set; }
+
+        public DateTime FechaFinContrato { get; set; }
+        public string Telefono { get; set; }
+        public int Extension { get; set; }
+        public string Notas { get; set; }
+        public int IdPuesto { get; set; }
+        public string NombrePuesto { get; set; }
+        public int IdSucursal { get; set; }
+        public string NombreSucursal { get; set; }
+        public int IdTipoContrato { get; set; }
+        public int IdDepartamento { get; set; }
+        public string NombreDepartamento { get; set; }
+        
+
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; } 
         public DateTime? FechaCreacion { get; set; }
