@@ -69,65 +69,65 @@ namespace ERPAPI.Migrations
                 table: "Employees",
                 nullable: true);
 
-            migrationBuilder.CreateTable(
-                name: "FormulasConcepto",
-                columns: table => new
-                {
-                    IdformulaConcepto = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Idformula = table.Column<long>(nullable: true),
-                    IdConcepto = table.Column<long>(nullable: true),
-                    NombreConcepto = table.Column<string>(nullable: true),
-                    FechaCreacion = table.Column<DateTime>(nullable: true),
-                    FechaModificacion = table.Column<DateTime>(nullable: true),
-                    UsuarioCreacion = table.Column<string>(nullable: true),
-                    UsuarioModificacion = table.Column<string>(nullable: true),
-                    EstructuraConcepto = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FormulasConcepto", x => x.IdformulaConcepto);
-                });
+            //migrationBuilder.CreateTable(
+            //    name: "FormulasConcepto",
+            //    columns: table => new
+            //    {
+            //        IdformulaConcepto = table.Column<long>(nullable: false)
+            //            .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+            //        Idformula = table.Column<long>(nullable: true),
+            //        IdConcepto = table.Column<long>(nullable: true),
+            //        NombreConcepto = table.Column<string>(nullable: true),
+            //        FechaCreacion = table.Column<DateTime>(nullable: true),
+            //        FechaModificacion = table.Column<DateTime>(nullable: true),
+            //        UsuarioCreacion = table.Column<string>(nullable: true),
+            //        UsuarioModificacion = table.Column<string>(nullable: true),
+            //        EstructuraConcepto = table.Column<string>(nullable: true)
+            //    },
+            //    constraints: table =>
+            //    {
+            //        table.PrimaryKey("PK_FormulasConcepto", x => x.IdformulaConcepto);
+            //    });
 
-            migrationBuilder.CreateTable(
-                name: "FormulasConFormulas",
-                columns: table => new
-                {
-                    IdFormulaconformula = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    IdFormula = table.Column<long>(nullable: true),
-                    IdFormulachild = table.Column<long>(nullable: true),
-                    NombreFormulachild = table.Column<string>(nullable: true),
-                    EstructuraConcepto = table.Column<string>(nullable: true),
-                    FechaCreacion = table.Column<DateTime>(nullable: true),
-                    Fechamodificacion = table.Column<DateTime>(nullable: true),
-                    UsuarioCreacion = table.Column<string>(nullable: true),
-                    UsuarioModificacion = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FormulasConFormulas", x => x.IdFormulaconformula);
-                });
+            //migrationBuilder.CreateTable(
+            //    name: "FormulasConFormulas",
+            //    columns: table => new
+            //    {
+            //        IdFormulaconformula = table.Column<long>(nullable: false)
+            //            .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+            //        IdFormula = table.Column<long>(nullable: true),
+            //        IdFormulachild = table.Column<long>(nullable: true),
+            //        NombreFormulachild = table.Column<string>(nullable: true),
+            //        EstructuraConcepto = table.Column<string>(nullable: true),
+            //        FechaCreacion = table.Column<DateTime>(nullable: true),
+            //        Fechamodificacion = table.Column<DateTime>(nullable: true),
+            //        UsuarioCreacion = table.Column<string>(nullable: true),
+            //        UsuarioModificacion = table.Column<string>(nullable: true)
+            //    },
+            //    constraints: table =>
+            //    {
+            //        table.PrimaryKey("PK_FormulasConFormulas", x => x.IdFormulaconformula);
+            //    });
 
-            migrationBuilder.CreateTable(
-                name: "Incapacidades",
-                columns: table => new
-                {
-                    Idincapacidad = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    FechaInicio = table.Column<DateTime>(nullable: true),
-                    FechaFin = table.Column<DateTime>(nullable: true),
-                    IdEmpleado = table.Column<long>(nullable: true),
-                    DescripcionIncapacidad = table.Column<string>(nullable: true),
-                    FechaCreacion = table.Column<DateTime>(nullable: true),
-                    FechaModificacion = table.Column<DateTime>(nullable: true),
-                    UsuarioCreacion = table.Column<string>(nullable: true),
-                    UsuarioModificacion = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Incapacidades", x => x.Idincapacidad);
-                });
+            //migrationBuilder.CreateTable(
+            //    name: "Incapacidades",
+            //    columns: table => new
+            //    {
+            //        Idincapacidad = table.Column<long>(nullable: false)
+            //            .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+            //        FechaInicio = table.Column<DateTime>(nullable: true),
+            //        FechaFin = table.Column<DateTime>(nullable: true),
+            //        IdEmpleado = table.Column<long>(nullable: true),
+            //        DescripcionIncapacidad = table.Column<string>(nullable: true),
+            //        FechaCreacion = table.Column<DateTime>(nullable: true),
+            //        FechaModificacion = table.Column<DateTime>(nullable: true),
+            //        UsuarioCreacion = table.Column<string>(nullable: true),
+            //        UsuarioModificacion = table.Column<string>(nullable: true)
+            //    },
+            //    constraints: table =>
+            //    {
+            //        table.PrimaryKey("PK_Incapacidades", x => x.Idincapacidad);
+            //    });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
