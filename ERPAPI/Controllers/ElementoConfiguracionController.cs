@@ -49,7 +49,7 @@ namespace ERPAPI.Controllers
             }
 
             //  int Count = Items.Count();
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace ERPAPI.Controllers
             }
 
 
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
 
@@ -149,7 +149,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_ElementoConfiguracionq);
+            return await Task.Run(() => Ok(_ElementoConfiguracionq));
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_ElementoConfiguracionq);
+            return await Task.Run(() => Ok(_ElementoConfiguracionq));
 
         }
 

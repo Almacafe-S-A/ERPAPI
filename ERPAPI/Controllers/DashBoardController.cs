@@ -65,7 +65,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public ActionResult FacturacionByProductByYear([FromBody]Fechas _Fecha)
+        public async Task<ActionResult> FacturacionByProductByYear([FromBody]Fechas _Fecha)
         {
 
             try
@@ -105,12 +105,12 @@ namespace ERPAPI.Controllers
 
                 result = result.OrderBy(q => q.Date).ToList();
 
-                return Json(result);
+                return await Task.Run(() => Json(result));
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -127,7 +127,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -144,7 +144,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -161,7 +161,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }

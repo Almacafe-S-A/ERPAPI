@@ -45,10 +45,10 @@ namespace ERPAPI.Controllers
 
             if (dependientes == null)
             {
-                return NotFound();
+                return await Task.Run(() => NotFound());
             }
 
-            return dependientes;
+            return await Task.Run(() => dependientes);
         }
 
         // PUT: api/Dependientes/5
@@ -70,7 +70,7 @@ namespace ERPAPI.Controllers
             {
                 if (!DependientesExists(id))
                 {
-                    return NotFound();
+                    return await Task.Run(() => NotFound());
                 }
                 else
                 {
@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return await Task.Run(() => NoContent());
         }
 
         // POST: api/Dependientes
@@ -98,13 +98,13 @@ namespace ERPAPI.Controllers
             var dependientes = await _context.Dependientes.FindAsync(id);
             if (dependientes == null)
             {
-                return NotFound();
+                return await Task.Run(() => NotFound());
             }
 
             _context.Dependientes.Remove(dependientes);
             await _context.SaveChangesAsync();
 
-            return dependientes;
+            return await Task.Run(() => dependientes);
         }
 
         private bool DependientesExists(long id)

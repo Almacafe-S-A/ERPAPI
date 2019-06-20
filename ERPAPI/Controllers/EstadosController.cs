@@ -39,19 +39,19 @@ namespace ERPAPI.Controllers
             try
             {
                 List<Estados> Items = await _context.Estados.ToListAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
 
             }
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-               return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
            
         }
 
         [HttpGet("[action]/{IdEstado}")]
-        public async Task<ActionResult> GetEstadosById(Int64 IdEstado)
+        public async Task<ActionResult<Estados>> GetEstadosById(Int64 IdEstado)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -74,7 +74,7 @@ namespace ERPAPI.Controllers
             try
             {
                 List<Estados> Items = await _context.Estados.Where(q=>q.IdGrupoEstado==idgrupoestado).ToListAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
 
             }
             catch (Exception ex)
@@ -108,7 +108,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_Estadosq);
+            return await Task.Run(() => Ok(_Estadosq));
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_Estadosq);
+            return await Task.Run(() => Ok(_Estadosq));
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace ERPAPI.Controllers
         /// <param name="_Estados"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Estados _Estados)
+        public async Task<ActionResult<Estados>> Delete([FromBody]Estados _Estados)
         {
             Estados _Estadosq = new Estados();
             try
@@ -166,7 +166,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_Estadosq);
+            return await Task.Run(() => Ok(_Estadosq));
 
         }
 

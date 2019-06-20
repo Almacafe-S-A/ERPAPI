@@ -45,10 +45,10 @@ namespace ERPAPI.Controllers
 
             if (empresa == null)
             {
-                return NotFound();
+                return await Task.Run(() => NotFound());
             }
 
-            return empresa;
+            return await Task.Run(() => empresa);
         }
 
         // PUT: api/Empresa/5
@@ -57,7 +57,7 @@ namespace ERPAPI.Controllers
         {
             if (id != empresa.IdEmpresa)
             {
-                return BadRequest();
+                return await Task.Run(() => BadRequest());
             }
 
             _context.Entry(empresa).State = EntityState.Modified;
@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return await Task.Run(() => NoContent());
         }
 
         // POST: api/Empresa
@@ -98,13 +98,13 @@ namespace ERPAPI.Controllers
             var empresa = await _context.Empresa.FindAsync(id);
             if (empresa == null)
             {
-                return NotFound();
+                return await Task.Run(() => NotFound());
             }
 
             _context.Empresa.Remove(empresa);
             await _context.SaveChangesAsync();
 
-            return empresa;
+            return await Task.Run(() => empresa);
         }
 
         private bool EmpresaExists(long id)

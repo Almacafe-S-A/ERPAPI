@@ -76,7 +76,6 @@ namespace ERP.Contexts
         public DbSet<PEPS> PEPS { get; set; }
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
         public DbSet<Bank> Bank { get; set; }  
-
         public DbSet<City> City { get; set; }
         public DbSet<Country> Country { get; set; }
         public DbSet<Employees> Employees { get; set; }
@@ -100,9 +99,38 @@ namespace ERP.Contexts
         public DbSet<OrdenFormula> OrdenFormula { get; set; }
         public DbSet<SolicitudCertificadoDeposito> SolicitudCertificadoDeposito { get; set; }
         public DbSet<SolicitudCertificadoLine> SolicitudCertificadoLine { get; set; }
-
         public DbSet<Kardex> Kardex { get; set; }
         public DbSet<KardexLine> KardexLine { get; set; }
+        public DbSet<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; }
+        public DbSet<GoodsDeliveryAuthorization> GoodsDeliveryAuthorization { get; set; }
+
+
+        public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.Empresa> Empresa { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.Departamento> Departamento { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.TipoContrato> TipoContrato { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.Dependientes> Dependientes { get; set; }
+
+        ///// <summary>
+        ////////
+
+        public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
 
         /// <summary>
         /// OFAC
@@ -152,31 +180,6 @@ namespace ERP.Contexts
         ///// <summary>
         ////////
 
-        public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
-
-        ///// <summary>
-        ////////
-
-        public DbSet<ERPAPI.Models.Empresa> Empresa { get; set; }
-
-        ///// <summary>
-        ////////
-
-        public DbSet<ERPAPI.Models.Departamento> Departamento { get; set; }
-
-        ///// <summary>
-        ////////
-
-        public DbSet<ERPAPI.Models.TipoContrato> TipoContrato { get; set; }
-
-        ///// <summary>
-        ////////
-
-        public DbSet<ERPAPI.Models.Dependientes> Dependientes { get; set; }
-
-        ///// <summary>
-        ////////
-
-        public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
+     
     }
 }

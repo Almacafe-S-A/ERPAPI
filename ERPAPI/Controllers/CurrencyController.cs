@@ -47,10 +47,10 @@ namespace ERPAPI.Controllers
                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
 
 
-            return Ok( Items);
+
+            return await Task.Run(() => Ok( Items));
         }
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace ERPAPI.Controllers
                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-          
-            return Ok(currency);
+
+            return await Task.Run(() => Ok(currency));
         }
 
         /// <summary>
@@ -129,8 +129,8 @@ namespace ERPAPI.Controllers
                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok(_Currency);
+
+            return await Task.Run(() => Ok(_Currency));
         }
 
         /// <summary>
@@ -155,8 +155,8 @@ namespace ERPAPI.Controllers
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                  return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-            
-            return Ok(currency);
+
+            return await Task.Run(() => Ok(currency));
 
         }
 

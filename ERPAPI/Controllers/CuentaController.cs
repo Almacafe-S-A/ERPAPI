@@ -49,11 +49,11 @@ namespace ERPAPI.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                return BuildToken(model);
+                return await Task.Run(() => BuildToken(model));
             }
             else
             {
-                return BadRequest("Username or password invalid");
+                return await Task.Run(() => BadRequest("Username or password invalid"));
             }
       
 
@@ -76,12 +76,12 @@ namespace ERPAPI.Controllers
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return BuildToken(userInfo);
+                    return await Task.Run(() => BuildToken(userInfo));
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return BadRequest(ModelState);
+                    return await Task.Run(() => BadRequest(ModelState));
                 }
             }
             catch (Exception ex)

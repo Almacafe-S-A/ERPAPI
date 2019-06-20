@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
-
 using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -70,7 +69,7 @@ namespace ERPAPI.Controllers
             {
                 if (!DepartamentoExists(id))
                 {
-                    return NotFound();
+                    return await Task.Run(() => NotFound());
                 }
                 else
                 {
@@ -88,7 +87,7 @@ namespace ERPAPI.Controllers
             _context.Departamento.Add(departamento);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDepartamento", new { id = departamento.IdDepartamento }, departamento);
+            return await Task.Run(() => CreatedAtAction("GetDepartamento", new { id = departamento.IdDepartamento }, departamento));
         }
 
         // DELETE: api/Departamento/5
