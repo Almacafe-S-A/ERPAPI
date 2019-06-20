@@ -16,6 +16,24 @@ namespace ERPAPI.Models
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
         [Display(Name = "Número de certificado")]
         public Int64 NoCertificadoDeposito { get; set; }
+
+        [Display(Name = "Producto cliente")]
+        public Int64 SubProductId { get; set; }
+        [Display(Name = "Producto cliente")]
+        public string SubProductName { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public Int64 UnitOfMeasureId { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public string UnitOfMeasureName { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public Int64 WarehouseId { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public string WarehouseName { get; set; }
+
         [Display(Name = "Cantidad")]
         public double Quantity { get; set; }
         [Display(Name = "Descripción")]
