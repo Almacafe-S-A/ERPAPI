@@ -58,7 +58,7 @@ namespace ERPAPI.Controllers
         /// <param name="IdHorastrabajadas"></param>
         /// <returns></returns>
         [HttpGet("[action]/{IdHorastrabajadas}")]
-        public async Task<IActionResult> GetHoursWorkedById(Int64 IdHorastrabajadas)
+        public async Task<ActionResult<HoursWorked>> GetHoursWorkedById(Int64 IdHorastrabajadas)
         {
             HoursWorked Items = new HoursWorked();
             try

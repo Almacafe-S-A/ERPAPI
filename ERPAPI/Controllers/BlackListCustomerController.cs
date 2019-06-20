@@ -58,7 +58,7 @@ namespace ERPAPI.Controllers
         /// <param name="BlackListCustomersId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{BlackListCustomersId}")]
-        public async Task<IActionResult> GetBlackListCustomersById(Int64 BlackListCustomersId)
+        public async Task<ActionResult<BlackListCustomers>> GetBlackListCustomersById(Int64 BlackListCustomersId)
         {
             BlackListCustomers Items = new BlackListCustomers();
             try
