@@ -69,6 +69,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Creacion")]
         public string UsuarioModificacion { get; set; }
 
+        public List<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; } = new List<GoodsDeliveryAuthorizationLine>();
 
     }
 }

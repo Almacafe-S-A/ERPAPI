@@ -63,7 +63,8 @@ namespace ERPAPI.Controllers
             GoodsDeliveryAuthorization Items = new GoodsDeliveryAuthorization();
             try
             {
-                Items = await _context.GoodsDeliveryAuthorization.Where(q => q.GoodsDeliveryAuthorizationId == GoodsDeliveryAuthorizationId).FirstOrDefaultAsync();
+                Items = await _context.GoodsDeliveryAuthorization.Include(q=>q.GoodsDeliveryAuthorizationLine)
+                       .Where(q => q.GoodsDeliveryAuthorizationId == GoodsDeliveryAuthorizationId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -73,6 +74,29 @@ namespace ERPAPI.Controllers
             }
 
 
+            return await Task.Run(() => Ok(Items));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetGoodsDeliveryAuthorizationNoSelected()
+        {
+            List<GoodsDeliveryAuthorization> Items = new List<GoodsDeliveryAuthorization>();
+            try
+            {
+                List<Int64> listayaprocesada = _context.GoodsDeliveredLine
+                                              .Where(q => q.NoAR > 0)
+                                              .Select(q => q.NoAR).ToList();
+
+                Items = await _context.GoodsDeliveryAuthorization.Where(q => !listayaprocesada.Contains(q.GoodsDeliveryAuthorizationId)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
 
@@ -88,9 +112,29 @@ namespace ERPAPI.Controllers
             GoodsDeliveryAuthorization _GoodsDeliveryAuthorizationq = new GoodsDeliveryAuthorization();
             try
             {
-                _GoodsDeliveryAuthorizationq = _GoodsDeliveryAuthorization;
-                _context.GoodsDeliveryAuthorization.Add(_GoodsDeliveryAuthorizationq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _GoodsDeliveryAuthorizationq = _GoodsDeliveryAuthorization;
+                        _context.GoodsDeliveryAuthorization.Add(_GoodsDeliveryAuthorizationq);
+
+                        foreach (var item in _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationLine)
+                        {
+                            item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
+                            _context.GoodsDeliveryAuthorizationLine.Add(item);
+                        }
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                   
+                }
             }
             catch (Exception ex)
             {

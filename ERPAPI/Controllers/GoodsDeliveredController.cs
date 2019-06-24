@@ -83,14 +83,71 @@ namespace ERPAPI.Controllers
         /// <param name="_GoodsDelivered"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsDelivered>> Insert([FromBody]GoodsDelivered _GoodsDelivered)
+        public async Task<ActionResult<GoodsDelivered>> Insert([FromBody]GoodsDeliveredDTO _GoodsDelivered)
         {
             GoodsDelivered _GoodsDeliveredq = new GoodsDelivered();
             try
             {
-                _GoodsDeliveredq = _GoodsDelivered;
-                _context.GoodsDelivered.Add(_GoodsDeliveredq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _GoodsDeliveredq = _GoodsDelivered;
+                        _context.GoodsDelivered.Add(_GoodsDeliveredq);
+
+                        foreach (var item in _GoodsDeliveredq._GoodsDeliveredLine)
+                        {
+                            item.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
+                            _context.GoodsDeliveredLine.Add(item);
+
+                            _GoodsDelivered.Kardex._KardexLine.Add(new KardexLine
+                            {
+                                DocumentDate = _GoodsDeliveredq.DocumentDate,
+                                ProducId = _GoodsDeliveredq.ProductId,
+                                ProductName = _GoodsDeliveredq.ProductName,
+                                SubProducId = _GoodsDeliveredq.SubProductId,
+                                SubProductName = _GoodsDeliveredq.SubProductName,
+                                QuantityEntry = item.Quantity,
+                                QuantityOut = 0,
+                                BranchId = _GoodsDeliveredq.BranchId,
+                                BranchName = _GoodsDeliveredq.BranchName,
+                                WareHouseId = item.WareHouseId,
+                                WareHouseName = item.WareHouseName,
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                TypeOperationId = 1,
+                                TypeOperationName = "Salida",
+                            });
+                        }
+
+                        await _context.SaveChangesAsync();
+                        _GoodsDelivered.Kardex.DocType = 0;
+                        _GoodsDelivered.Kardex.DocName = "EntregaMercaderia/GoodsDelivered";
+                        _GoodsDelivered.Kardex.DocumentDate = _GoodsDeliveredq.DocumentDate;
+                        _GoodsDelivered.Kardex.FechaCreacion = DateTime.Now;
+                        _GoodsDelivered.Kardex.FechaModificacion = DateTime.Now;
+                        _GoodsDelivered.Kardex.TypeOperationId = 1;
+                        _GoodsDelivered.Kardex.TypeOperationName = "Salida";
+                        _GoodsDelivered.Kardex.KardexDate = DateTime.Now;
+
+                        _GoodsDelivered.Kardex.DocumentName = "GoodsDelivered";
+
+                        _GoodsDelivered.Kardex.CustomerId = _GoodsDeliveredq.CustomerId;
+                        _GoodsDelivered.Kardex.CustomerName = _GoodsDeliveredq.CustomerName;
+                        _GoodsDelivered.Kardex.CurrencyId = _GoodsDeliveredq.CurrencyId;
+                        _GoodsDelivered.Kardex.CurrencyName = _GoodsDeliveredq.CurrencyName;
+                        _GoodsDelivered.Kardex.DocumentId = _GoodsDeliveredq.GoodsDeliveredId;
+                        _context.Kardex.Add(_GoodsDelivered.Kardex);
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                }
             }
             catch (Exception ex)
             {

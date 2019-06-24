@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190621092859_goodsdeliveredLine_NoCD_NoAR")]
+    partial class goodsdeliveredLine_NoCD_NoAR
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -907,10 +909,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<double>("SaldoProductoCertificado");
-
-                    b.Property<double>("SaldoProductoTotal");
 
                     b.Property<long>("SubProductId");
 
@@ -2044,10 +2042,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
 
                     b.Property<string>("DocName");
 

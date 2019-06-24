@@ -151,8 +151,12 @@ namespace ERPAPI.Controllers
                         _GoodsReceived.Kardex.FechaCreacion = DateTime.Now;
                         _GoodsReceived.Kardex.FechaModificacion = DateTime.Now;
                         _GoodsReceived.Kardex.TypeOperationId = 1;
-                        _GoodsReceived.Kardex.TypeOperationName = "Entrada";                        
-                       
+                        _GoodsReceived.Kardex.TypeOperationName = "Entrada";
+                        _GoodsReceived.Kardex.KardexDate = DateTime.Now;
+                        _GoodsReceived.Kardex.DocumentName = "GoodsReceived";
+
+                        _GoodsReceived.Kardex.CustomerId = _GoodsReceivedq.CustomerId;
+                        _GoodsReceived.Kardex.CustomerName = _GoodsReceivedq.CustomerName;
                         _GoodsReceived.Kardex.CurrencyId = _GoodsReceivedq.CurrencyId;
                         _GoodsReceived.Kardex.CurrencyName = _GoodsReceivedq.CurrencyName;
                         _GoodsReceived.Kardex.DocumentId = _GoodsReceivedq.GoodsReceivedId;

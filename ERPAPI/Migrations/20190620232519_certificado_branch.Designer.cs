@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190620232519_certificado_branch")]
+    partial class certificado_branch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -908,10 +910,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<double>("SaldoProductoCertificado");
-
-                    b.Property<double>("SaldoProductoTotal");
-
                     b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
@@ -1480,10 +1478,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("GoodsDeliveredId");
 
-                    b.Property<long>("NoAR");
-
-                    b.Property<long>("NoCD");
-
                     b.Property<double>("Price");
 
                     b.Property<long>("ProducId");
@@ -1607,8 +1601,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("valorfinanciado");
 
                     b.HasKey("GoodsDeliveryAuthorizationLineId");
-
-                    b.HasIndex("GoodsDeliveryAuthorizationId");
 
                     b.ToTable("GoodsDeliveryAuthorizationLine");
                 });
@@ -2044,10 +2036,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
 
                     b.Property<string>("DocName");
 
@@ -3813,14 +3801,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GoodsDelivered")
                         .WithMany("_GoodsDeliveredLine")
                         .HasForeignKey("GoodsDeliveredId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorizationLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorization")
-                        .WithMany("GoodsDeliveryAuthorizationLine")
-                        .HasForeignKey("GoodsDeliveryAuthorizationId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

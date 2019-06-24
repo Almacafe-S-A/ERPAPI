@@ -19,6 +19,7 @@ namespace ERPAPI.Models
 
         [Display(Name = "Producto cliente")]
         public Int64 SubProductId { get; set; }
+
         [Display(Name = "Producto cliente")]
         public string SubProductName { get; set; }
 

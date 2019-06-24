@@ -13,6 +13,13 @@ namespace ERPAPI.Models
         public Int64 GoodsDeliveredLinedId { get; set; }
         [Display(Name = "Recibo de mercaderia")]
         public Int64 GoodsDeliveredId { get; set; }
+
+        [Display(Name = "Número de certificado de depósito")]
+        public Int64 NoCD { get; set; }
+
+        [Display(Name = "Número de autorización de retiro")]
+        public Int64 NoAR { get; set; }
+
         [Display(Name = "Unidad de Medida")]
         public Int64 UnitOfMeasureId { get; set; }
 
@@ -34,6 +41,8 @@ namespace ERPAPI.Models
         public string Description { get; set; }
         [Display(Name = "Estiba")]
         public Int64 ControlPalletsId { get; set; }
+
+
         [Display(Name = "Cantidad")]
         public int Quantity { get; set; }
         [Display(Name = "Sacos")]
