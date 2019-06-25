@@ -57,7 +57,7 @@ namespace ERPAPI.Controllers
             {
                 return BadRequest();
             }
-
+             
             _context.Entry(puesto).State = EntityState.Modified;
 
             try

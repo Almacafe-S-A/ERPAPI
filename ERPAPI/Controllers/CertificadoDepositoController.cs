@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,9 +22,13 @@ namespace ERPAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
+        private readonly IMapper mapper;
 
-        public CertificadoDepositoController(ILogger<CertificadoDepositoController> logger, ApplicationDbContext context)
+        public CertificadoDepositoController(ILogger<CertificadoDepositoController> logger, ApplicationDbContext context
+            , IMapper mapper
+            )
         {
+            this.mapper = mapper;
             _context = context;
             _logger = logger;
         }
@@ -86,12 +91,26 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<CertificadoDeposito>> Insert([FromBody]CertificadoDepositoDTO _CertificadoDeposito)
         {
             CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
+            SolicitudCertificadoDeposito _SolicitudCertificado = new SolicitudCertificadoDeposito();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
+                        //Solicitud de certificado
+                        _SolicitudCertificado = mapper.Map<SolicitudCertificadoDeposito>(_CertificadoDeposito);
+                        _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
+                        foreach (var item in _CertificadoDeposito._CertificadoLine)
+                        {
+                            SolicitudCertificadoLine _SolicitudCertificadoLine = new SolicitudCertificadoLine();
+                            _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);
+                            _context.SolicitudCertificadoLine.Add(_SolicitudCertificadoLine);
+
+                        }
+
+                        //Certificado
+
                         _CertificadoDepositoq = _CertificadoDeposito;
                         _context.CertificadoDeposito.Add(_CertificadoDepositoq);
                         // await _context.SaveChangesAsync();
@@ -100,6 +119,8 @@ namespace ERPAPI.Controllers
                         {
                             item.IdCD = _CertificadoDepositoq.IdCD;
                             _context.CertificadoLine.Add(item);
+
+
                         }
 
                         await _context.SaveChangesAsync();
@@ -117,7 +138,9 @@ namespace ERPAPI.Controllers
 
                             _context.RecibosCertificado.Add(_recibocertificado);
                         }
+
                        
+
 
                         await _context.SaveChangesAsync();
 
