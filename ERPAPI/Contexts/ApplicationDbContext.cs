@@ -104,6 +104,8 @@ namespace ERP.Contexts
         public DbSet<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; }
         public DbSet<GoodsDeliveryAuthorization> GoodsDeliveryAuthorization { get; set; }
 
+        public DbSet<Boleto_Ent> Boleto_Ent { get; set; }
+        public DbSet<Boleto_Sal> Boleto_Sal { get; set; }
 
         public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
 
@@ -165,6 +167,11 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
+
+          modelBuilder.Entity<Boleto_Ent>()
+            .HasOne(a => a.Boleto_Sal)
+            .WithOne(b => b.Boleto_Ent)
+           .HasForeignKey<Boleto_Sal>(b => b.clave_e);
 
 
             //modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("AspNetUserClaims");

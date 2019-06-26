@@ -57,6 +57,8 @@
     <Compile Remove="Migrations\20190611160014_GoodsReceived_Kardex.Designer.cs" />
     <Compile Remove="Migrations\20190613051706_Kardex.cs" />
     <Compile Remove="Migrations\20190613051706_Kardex.Designer.cs" />
+    <Compile Remove="Migrations\20190625223010_boletos_entradasalida_Balanza.cs" />
+    <Compile Remove="Migrations\20190625223010_boletos_entradasalida_Balanza.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>
