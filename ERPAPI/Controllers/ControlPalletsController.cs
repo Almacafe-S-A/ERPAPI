@@ -39,7 +39,7 @@ namespace ERPAPI.Controllers
             List<ControlPallets> Items = new List<ControlPallets>();
             try
             {
-                Items = await _context.ControlPallets.ToListAsync();
+                Items = await _context.ControlPallets.Where(q=>q.EsIngreso==1).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -52,6 +52,34 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene el Listado de Control Estibas 
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetControlPalletsSalida()
+        {
+            List<ControlPallets> Items = new List<ControlPallets>();
+            try
+            {
+                Items = await _context.ControlPallets.Where(q=>q.EsIngreso==0).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Controles de ingresos 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetControlPalletsNoSelected()
         {
