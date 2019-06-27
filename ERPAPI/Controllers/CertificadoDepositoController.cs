@@ -228,6 +228,69 @@ namespace ERPAPI.Controllers
 
 
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult<GoodsReceived>> AgruparCertificados([FromBody]List<Int64> listacertificados)
+        {
+            CertificadoDeposito _goodsreceivedlis = new CertificadoDeposito();
+            try
+            {
+                string inparams = "";
+                foreach (var item in listacertificados)
+                {
+                    inparams += item + ",";
+                }
+
+                inparams = inparams.Substring(0, inparams.Length - 1);
+            
+                _goodsreceivedlis = await _context.CertificadoDeposito.Where(q => q.IdCD == Convert.ToInt64(listacertificados[0])).FirstOrDefaultAsync();
+              
+                using (var command = _context.Database.GetDbConnection().CreateCommand())
+                {
+                    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName         "
+                   + " , SUM(Quantity) AS Cantidad, SUM(grl.IdCD) AS IdCD         "                    
+                   + " , SUM(grl.Quantity) * (grl.Price)  AS Total                            "
+                   + " ,Price "
+                   + $"  FROM CertificadoLine grl                 where  CertificadoLineId in ({inparams})                                "
+                   + "  GROUP BY grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName,grl.IdCD,grl.Price       "
+                 );
+
+                    _context.Database.OpenConnection();
+                    using (var result = command.ExecuteReader())
+                    {
+                        // do something with result
+                        while (await result.ReadAsync())
+                        {
+                            _goodsreceivedlis._CertificadoLine.Add(new CertificadoLine
+                            {                                
+                                SubProductId = Convert.ToInt64(result["SubProductId"]),
+                                SubProductName = result["SubProductName"].ToString(),
+                                UnitMeasureId = Convert.ToInt64(result["UnitMeasureId"]),
+                                UnitMeasurName = result["UnitMeasurName"].ToString(),
+                                Quantity = Convert.ToInt32(result["Cantidad"]),
+                                IdCD = Convert.ToInt32(result["IdCD"]),
+                                Price = Convert.ToDouble(result["Price"]),
+                                
+                               // Total = Convert.ToDouble(result["Total"]),
+
+                            });
+                        }
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                throw ex;
+            }
+
+            return await Task.Run(() => Ok(_goodsreceivedlis));
+        }
+
+
+
+
 
 
 
