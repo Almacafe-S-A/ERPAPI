@@ -99,16 +99,60 @@ namespace ERPAPI.Controllers
                     try
                     {
                         //Solicitud de certificado
-                        _SolicitudCertificado = mapper.Map<SolicitudCertificadoDeposito>(_CertificadoDeposito);
+                        //  _SolicitudCertificado = mapper.Map<SolicitudCertificadoDeposito>(_CertificadoDeposito);
+                        _SolicitudCertificado = new SolicitudCertificadoDeposito
+                        {
+                            CurrencyId = _CertificadoDeposito.CurrencyId,
+                            CurrencyName = _CertificadoDeposito.CurrencyName,
+                            BankName = _CertificadoDeposito.BankName,
+                            BankId = _CertificadoDeposito.BankId,
+                            Almacenaje = _CertificadoDeposito.Almacenaje,
+                            CustomerId = _CertificadoDeposito.CustomerId,
+                            CustomerName = _CertificadoDeposito.CustomerName,
+                            Direccion =  _CertificadoDeposito.Direccion,
+                            EmpresaSeguro = _CertificadoDeposito.EmpresaSeguro,
+                            Estado = _CertificadoDeposito.Estado,
+                            FechaCertificado = _CertificadoDeposito.FechaCertificado,
+                            FechaFirma = _CertificadoDeposito.FechaFirma,
+                            FechaInicioComputo = _CertificadoDeposito.FechaInicioComputo,
+                            FechaVencimientoDeposito = _CertificadoDeposito.FechaVencimientoDeposito,
+                            FechaVencimiento = _CertificadoDeposito.FechaVencimiento,
+                            NoCD = _CertificadoDeposito.NoCD,
+                            FechaPagoBanco = _CertificadoDeposito.FechaPagoBanco,
+                            NombreEmpresa= _CertificadoDeposito.NombreEmpresa,
+                            LugarFirma = _CertificadoDeposito.LugarFirma,
+                            MontoGarantia = _CertificadoDeposito.MontoGarantia,
+                            NoPoliza = _CertificadoDeposito.NoPoliza,
+                            NombrePrestatario = _CertificadoDeposito.NombrePrestatario,
+                            NoTraslado = _CertificadoDeposito.NoTraslado,
+                            OtrosCargos = _CertificadoDeposito.OtrosCargos,
+                            PorcentajeInteresesInsolutos = _CertificadoDeposito.PorcentajeInteresesInsolutos,
+                            Seguro = _CertificadoDeposito.Seguro,
+                            ServicioId = _CertificadoDeposito.ServicioId,
+                            ServicioName = _CertificadoDeposito.ServicioName,
+                            Quantitysum = _CertificadoDeposito.Quantitysum,
+                            Total= _CertificadoDeposito.Total,
+                            SujetasAPago= _CertificadoDeposito.SujetasAPago,
+                            WarehouseId = _CertificadoDeposito.WarehouseId,
+                            WarehouseName = _CertificadoDeposito.WarehouseName,
+                             
+
+                        };
+
                         _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
                         foreach (var item in _CertificadoDeposito._CertificadoLine)
                         {
                             SolicitudCertificadoLine _SolicitudCertificadoLine = new SolicitudCertificadoLine();
+
                             _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);
+                            _SolicitudCertificadoLine.IdCD = _SolicitudCertificado.IdCD;
                             _context.SolicitudCertificadoLine.Add(_SolicitudCertificadoLine);
 
                         }
 
+                        await _context.SaveChangesAsync();
+
+                        /////////////////////////////////////////////////////////////////////////
                         //Certificado
 
                         _CertificadoDepositoq = _CertificadoDeposito;
@@ -148,7 +192,7 @@ namespace ERPAPI.Controllers
                     }
                     catch (Exception ex)
                     {
-                        transaction.Commit();
+                        transaction.Rollback();
                         throw ex;
                     }
                 }
@@ -231,7 +275,7 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<GoodsReceived>> AgruparCertificados([FromBody]List<Int64> listacertificados)
         {
-            CertificadoDeposito _goodsreceivedlis = new CertificadoDeposito();
+            List<CertificadoDeposito> _goodsreceivedlis = new List<CertificadoDeposito>();
             try
             {
                 string inparams = "";
@@ -241,41 +285,45 @@ namespace ERPAPI.Controllers
                 }
 
                 inparams = inparams.Substring(0, inparams.Length - 1);
-            
-                _goodsreceivedlis = await _context.CertificadoDeposito.Where(q => q.IdCD == Convert.ToInt64(listacertificados[0])).FirstOrDefaultAsync();
-              
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName         "
-                   + " , SUM(Quantity) AS Cantidad, SUM(grl.IdCD) AS IdCD         "                    
-                   + " , SUM(grl.Quantity) * (grl.Price)  AS Total                            "
-                   + " ,Price "
-                   + $"  FROM CertificadoLine grl                 where  CertificadoLineId in ({inparams})                                "
-                   + "  GROUP BY grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName,grl.IdCD,grl.Price       "
-                 );
 
-                    _context.Database.OpenConnection();
-                    using (var result = command.ExecuteReader())
-                    {
-                        // do something with result
-                        while (await result.ReadAsync())
-                        {
-                            _goodsreceivedlis._CertificadoLine.Add(new CertificadoLine
-                            {                                
-                                SubProductId = Convert.ToInt64(result["SubProductId"]),
-                                SubProductName = result["SubProductName"].ToString(),
-                                UnitMeasureId = Convert.ToInt64(result["UnitMeasureId"]),
-                                UnitMeasurName = result["UnitMeasurName"].ToString(),
-                                Quantity = Convert.ToInt32(result["Cantidad"]),
-                                IdCD = Convert.ToInt32(result["IdCD"]),
-                                Price = Convert.ToDouble(result["Price"]),
-                                
-                               // Total = Convert.ToDouble(result["Total"]),
+                _goodsreceivedlis = await _context.CertificadoDeposito.Include(q=>q._CertificadoLine).Where(q => listacertificados.Contains(q.IdCD)).ToListAsync();
 
-                            });
-                        }
-                    }
-                }
+                //_goodsreceivedlis = await _context.CertificadoDeposito.Where(q => q.IdCD == Convert.ToInt64(listacertificados[0])).FirstOrDefault();
+
+
+
+                //using (var command = _context.Database.GetDbConnection().CreateCommand())
+                //{
+                //    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName         "
+                //   + " , SUM(Quantity) AS Cantidad, SUM(grl.IdCD) AS IdCD         "                    
+                //   + " , SUM(grl.Quantity) * (grl.Price)  AS Total                            "
+                //   + " ,Price "
+                //   + $"  FROM CertificadoLine grl                 where  CertificadoLineId in ({inparams})                                "
+                //   + "  GROUP BY grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName,grl.IdCD,grl.Price       "
+                // );
+
+                //    _context.Database.OpenConnection();
+                //    using (var result = command.ExecuteReader())
+                //    {
+                //        // do something with result
+                //        while (await result.ReadAsync())
+                //        {
+                //            _goodsreceivedlis._CertificadoLine.Add(new CertificadoLine
+                //            {                                
+                //                SubProductId = Convert.ToInt64(result["SubProductId"]),
+                //                SubProductName = result["SubProductName"].ToString(),
+                //                UnitMeasureId = Convert.ToInt64(result["UnitMeasureId"]),
+                //                UnitMeasurName = result["UnitMeasurName"].ToString(),
+                //                Quantity = Convert.ToInt32(result["Cantidad"]),
+                //                IdCD = Convert.ToInt32(result["IdCD"]),
+                //                Price = Convert.ToDouble(result["Price"]),
+
+                //               // Total = Convert.ToDouble(result["Total"]),
+
+                //            });
+                //        }
+                //    }
+                //}
 
 
             }
