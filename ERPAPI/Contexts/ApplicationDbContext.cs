@@ -103,7 +103,7 @@ namespace ERP.Contexts
         public DbSet<KardexLine> KardexLine { get; set; }
         public DbSet<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; }
         public DbSet<GoodsDeliveryAuthorization> GoodsDeliveryAuthorization { get; set; }
-
+        public DbSet<CustomerArea> CustomerArea { get; set; }
         public DbSet<Boleto_Ent> Boleto_Ent { get; set; }
         public DbSet<Boleto_Sal> Boleto_Sal { get; set; }
 
