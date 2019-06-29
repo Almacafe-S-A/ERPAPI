@@ -104,6 +104,14 @@ namespace ERP.Contexts
         public DbSet<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; }
         public DbSet<GoodsDeliveryAuthorization> GoodsDeliveryAuthorization { get; set; }
         public DbSet<CustomerArea> CustomerArea { get; set; }
+        public DbSet<EndososCertificados> EndososCertificados { get; set; }
+        public DbSet<EndososCertificadosLine> EndososCertificadosLine { get; set; }
+        public DbSet<EndososBono> EndososBono { get; set; }
+        public DbSet<EndososBonoLine> EndososBonoLine { get; set; }
+        public DbSet<EndososTalon> EndososTalon { get; set; }
+        public DbSet<EndososTalonLine> EndososTalonLine { get; set; }
+        public DbSet<EndososLiberacion> EndososLiberacion { get; set; }
+
         public DbSet<Boleto_Ent> Boleto_Ent { get; set; }
         public DbSet<Boleto_Sal> Boleto_Sal { get; set; }
 
