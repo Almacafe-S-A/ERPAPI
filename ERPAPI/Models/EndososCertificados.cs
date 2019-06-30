@@ -87,5 +87,16 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public List<EndososCertificadosLine> EndososCertificadosLine { get; set; } = new List<EndososCertificadosLine>();
+
     }
+
+
+    public class EndososDTO : EndososCertificados
+    {
+        public List<Int64> TipoEndosoIdList { get; set; }
+        public Int64 editar { get; set; } = 1;
+    }
+
+
 }

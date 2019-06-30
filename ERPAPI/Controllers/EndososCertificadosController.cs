@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using AutoMapper;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,9 +22,11 @@ namespace ERPAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
+        private readonly IMapper mapper;
 
-        public EndososCertificadosController(ILogger<EndososCertificadosController> logger, ApplicationDbContext context)
+        public EndososCertificadosController(ILogger<EndososCertificadosController> logger, IMapper mapper, ApplicationDbContext context)
         {
+            this.mapper = mapper;
             _context = context;
             _logger = logger;
         }
@@ -75,6 +78,8 @@ namespace ERPAPI.Controllers
 
             return Ok(Items);
         }
+       
+
 
 
         /// <summary>
@@ -83,14 +88,154 @@ namespace ERPAPI.Controllers
         /// <param name="_EndososCertificados"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<EndososCertificados>> Insert([FromBody]EndososCertificados _EndososCertificados)
+        public async Task<ActionResult<EndososCertificados>> Insert([FromBody]EndososDTO _EndososCertificados)
         {
             EndososCertificados _EndososCertificadosq = new EndososCertificados();
             try
             {
-                _EndososCertificadosq = _EndososCertificados;
-                _context.EndososCertificados.Add(_EndososCertificadosq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        //_EndososCertificadosq = _EndososCertificados;
+                        EndososTalon _endosostalon = new EndososTalon();
+                        EndososBono _EndososBono = new EndososBono();
+                        foreach (var item in _EndososCertificados.TipoEndosoIdList)
+                        {
+                            if (item == 10)
+                            {
+                                //_endosostalon = mapper.Map<EndososTalon>(_EndososCertificados);
+
+                                _endosostalon = new EndososTalon
+                                {
+                                    BankId = _EndososCertificados.BankId,
+                                    BankName = _EndososCertificados.BankName,
+                                    CantidadEndosar = _EndososCertificados.CantidadEndosar,
+                                    CurrencyId = _EndososCertificados.CurrencyId,
+                                    CurrencyName = _EndososCertificados.CurrencyName,
+                                    CustomerId = _EndososCertificados.CustomerId,
+                                    CustomerName = _EndososCertificados.CustomerName,
+                                    DocumentDate = _EndososCertificados.DocumentDate,
+                                    ExpirationDate = _EndososCertificados.ExpirationDate,
+                                    FechaOtorgado = _EndososCertificados.FechaOtorgado,
+                                    IdCD = _EndososCertificados.IdCD,
+                                    NoCD = _EndososCertificados.NoCD,
+                                    NombreEndoso = _EndososCertificados.NombreEndoso,
+                                    TipoEndoso = _EndososCertificados.TipoEndoso,
+                                    ProductId = _EndososCertificados.ProductId,
+                                    ProductName = _EndososCertificados.ProductName,
+                                    TipoEndosoId = _EndososCertificados.TipoEndosoId,
+                                    FirmadoEn = _EndososCertificados.FirmadoEn,
+                                    TasaDeInteres = _EndososCertificados.TasaDeInteres,
+                                    TotalEndoso = _EndososCertificados.TotalEndoso,
+                                    TipoEndosoName = _EndososCertificados.TipoEndosoName,
+                                    ValorEndosar = _EndososCertificados.ValorEndosar,
+                                    FechaCreacion = DateTime.Now,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioCreacion = _EndososCertificados.UsuarioCreacion,
+                                    UsuarioModificacion = _EndososCertificados.UsuarioModificacion,
+
+
+
+                                }; //mapper.Map<EndososBono>(_EndososCertificados);
+
+                                foreach (var linea in _EndososCertificados.EndososCertificadosLine)
+                                {
+                                    _endosostalon.EndososTalonLine.Add(new EndososTalonLine
+                                    {
+                                        Price = linea.Price,
+                                        SubProductId = linea.SubProductId,
+                                        SubProductName = linea.SubProductName
+                                        ,
+                                        UnitOfMeasureId = linea.UnitOfMeasureId,
+                                        UnitOfMeasureName = linea.UnitOfMeasureName
+                                        ,
+                                        ValorEndoso = linea.ValorEndoso
+                                    });
+
+                                }
+                                _context.EndososTalon.Add(_endosostalon);
+                                await _context.SaveChangesAsync();
+                            }
+
+                            if (item == 8)
+                            {
+                                _EndososBono = new EndososBono
+                                {
+                                    BankId = _EndososCertificados.BankId,
+                                    BankName = _EndososCertificados.BankName,
+                                    CantidadEndosar = _EndososCertificados.CantidadEndosar,
+                                    CurrencyId = _EndososCertificados.CurrencyId,
+                                    CurrencyName = _EndososCertificados.CurrencyName,
+                                    CustomerId = _EndososCertificados.CustomerId,
+                                    CustomerName = _EndososCertificados.CustomerName,
+                                    DocumentDate = _EndososCertificados.DocumentDate,
+                                    ExpirationDate = _EndososCertificados.ExpirationDate,
+                                    FechaOtorgado = _EndososCertificados.FechaOtorgado,
+                                    IdCD = _EndososCertificados.IdCD,
+                                    NoCD = _EndososCertificados.NoCD,
+                                    NombreEndoso = _EndososCertificados.NombreEndoso,
+                                    TipoEndoso = _EndososCertificados.TipoEndoso,
+                                    ProductId = _EndososCertificados.ProductId,
+                                    ProductName = _EndososCertificados.ProductName,
+                                    TipoEndosoId = _EndososCertificados.TipoEndosoId,
+                                    FirmadoEn = _EndososCertificados.FirmadoEn,
+                                    TasaDeInteres = _EndososCertificados.TasaDeInteres,
+                                    TotalEndoso = _EndososCertificados.TotalEndoso,
+                                    TipoEndosoName = _EndososCertificados.TipoEndosoName,
+                                    ValorEndosar = _EndososCertificados.ValorEndosar,
+                                    FechaCreacion = DateTime.Now,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioCreacion = _EndososCertificados.UsuarioCreacion,
+                                    UsuarioModificacion = _EndososCertificados.UsuarioModificacion,
+
+
+
+                                }; //mapper.Map<EndososBono>(_EndososCertificados);
+
+                                foreach (var linea in _EndososCertificados.EndososCertificadosLine)
+                                {
+                                    _EndososBono.EndososBonoLine.Add(new EndososBonoLine
+                                    {
+                                        Price = linea.Price,
+                                        SubProductId = linea.SubProductId,
+                                        SubProductName = linea.SubProductName
+                                        ,
+                                        UnitOfMeasureId = linea.UnitOfMeasureId,
+                                        UnitOfMeasureName = linea.UnitOfMeasureName
+                                        ,
+                                        ValorEndoso = linea.ValorEndoso
+                                    });
+
+                                }
+
+                                _context.EndososBono.Add(_EndososBono);
+                                await _context.SaveChangesAsync();
+                            }
+
+
+                        }
+
+
+                        //Siempre guarda en certificado porque es el que muestra
+                        _EndososCertificadosq = mapper.Map<EndososCertificados>(_EndososCertificados);
+                        _EndososCertificadosq.TipoEndosoName = string.Join(",",_EndososCertificados.TipoEndosoIdList.Select(n=>n.ToString()));
+                        _context.EndososCertificados.Add(_EndososCertificadosq);
+                        await _context.SaveChangesAsync();
+
+
+                        transaction.Commit();
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                  
+                }
             }
             catch (Exception ex)
             {

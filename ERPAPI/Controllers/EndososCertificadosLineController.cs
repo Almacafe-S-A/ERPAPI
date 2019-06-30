@@ -76,7 +76,25 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        [HttpGet("[action]/{EndososCertificadosId}")]
+        public async Task<IActionResult> GetEndososCertificadosLineByEndososCertificadosId(Int64 EndososCertificadosId)
+        {
+            List<EndososCertificadosLine> Items = new List<EndososCertificadosLine>();
+            try
+            {
+                Items = await _context.EndososCertificadosLine
+                             .Where(q => q.EndososCertificadosId == EndososCertificadosId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Inserta una nueva EndososCertificadosLine
         /// </summary>

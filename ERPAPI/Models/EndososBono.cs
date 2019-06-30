@@ -86,5 +86,6 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public List<EndososBonoLine> EndososBonoLine { get; set; } = new List<EndososBonoLine>();
     }
 }
