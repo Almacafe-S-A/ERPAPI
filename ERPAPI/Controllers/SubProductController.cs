@@ -66,13 +66,13 @@ namespace ERPAPI.Controllers
             //  return Ok(Items);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{SubProductId}")]
         public async Task<ActionResult<SubProduct>> GetSubProductbById(Int64 SubProductId)
         {
-            List<SubProduct> Items = new List<SubProduct>();
+            SubProduct Items = new SubProduct();
             try
             {
-                Items = await _context.SubProduct.Where(q => q.SubproductId == SubProductId).ToListAsync();
+                Items = await _context.SubProduct.Where(q => q.SubproductId == SubProductId).FirstOrDefaultAsync();
 
             }
             catch (Exception ex)
