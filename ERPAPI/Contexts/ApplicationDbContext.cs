@@ -114,6 +114,7 @@ namespace ERP.Contexts
 
         public DbSet<Boleto_Ent> Boleto_Ent { get; set; }
         public DbSet<Boleto_Sal> Boleto_Sal { get; set; }
+        public DbSet<BoletaDeSalida> BoletaDeSalida { get; set; }
 
         public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
 
