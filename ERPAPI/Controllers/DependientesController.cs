@@ -53,58 +53,74 @@ namespace ERPAPI.Controllers
 
         // PUT: api/Dependientes/5
         [HttpPut("[action]")]
-        public async Task<IActionResult> PutDependientes(long id, Dependientes dependientes)
+        public async Task<ActionResult<Dependientes>> Update([FromBody]Dependientes _Dependientes)
         {
-            if (id != dependientes.IdDependientes)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(dependientes).State = EntityState.Modified;
-
+            Dependientes _Dependientesq = _Dependientes;
             try
             {
+                _Dependientesq = await (from c in _context.Dependientes
+                                 .Where(q => q.IdDependientes == _Dependientesq.IdDependientes)
+                                        select c
+                                ).FirstOrDefaultAsync();
+
+                _context.Entry(_Dependientesq).CurrentValues.SetValues((_Dependientes));
+
+                //_context.Escala.Update(_Escalaq);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!DependientesExists(id))
-                {
-                    return await Task.Run(() => NotFound());
-                }
-                else
-                {
-                    throw;
-                }
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => NoContent());
+            return Ok(_Dependientesq);
         }
 
         // POST: api/Dependientes
         [HttpPost("[action]")]
-        public async Task<ActionResult<Dependientes>> PostDependientes(Dependientes dependientes)
+        public async Task<ActionResult<Dependientes>> Insert([FromBody]Dependientes _Dependientes)
         {
-            _context.Dependientes.Add(dependientes);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDependientes", new { id = dependientes.IdDependientes }, dependientes);
-        }
-
-        // DELETE: api/Dependientes/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Dependientes>> DeleteDependientes(long id)
-        {
-            var dependientes = await _context.Dependientes.FindAsync(id);
-            if (dependientes == null)
+            Dependientes _Dependientesq = new Dependientes();
+            try
             {
-                return await Task.Run(() => NotFound());
+                _Dependientesq = _Dependientes;
+                _context.Dependientes.Add(_Dependientesq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            _context.Dependientes.Remove(dependientes);
-            await _context.SaveChangesAsync();
+            return Ok(_Dependientesq);
+        }
 
-            return await Task.Run(() => dependientes);
+
+        // DELETE: api/Dependientes/5
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]Dependientes _Dependientes)
+        {
+            Dependientes _Dependientesq = new Dependientes();
+            try
+            {
+                _Dependientesq = _context.Dependientes
+                .Where(x => x.IdDependientes == (Int64)_Dependientes.IdDependientes)
+                .FirstOrDefault();
+
+                _context.Dependientes.Remove(_Dependientesq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_Dependientesq);
         }
 
         private bool DependientesExists(long id)
