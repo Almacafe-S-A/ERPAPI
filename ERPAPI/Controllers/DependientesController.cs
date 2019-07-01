@@ -54,6 +54,7 @@ namespace ERPAPI.Controllers
         // PUT: api/Dependientes/5
         [HttpPut("[action]")]
         public async Task<ActionResult<Dependientes>> Update([FromBody]Dependientes _Dependientes)
+
         {
             Dependientes _Dependientesq = _Dependientes;
             try
