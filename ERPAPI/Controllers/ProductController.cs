@@ -52,7 +52,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="ProductId"></param>
         /// <returns></returns>
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{ProductId}")]
         public async Task<IActionResult> GetProductById(Int64 ProductId)
         {
             Product Items = new Product();
@@ -96,31 +96,32 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Actualiza un producto
         /// </summary>
-        /// <param name="_product"></param>
+        /// <param name="_Product"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
-        public async  Task<IActionResult> Update([FromBody]Product _product)
+        [HttpPut("[action]")]
+        public async Task<ActionResult<Product>> Update([FromBody]Product _Product)
         {
-            Product productq = new Product();
+            Product _Productq = _Product;
             try
             {
-                productq = (from c in _context.Product
-                                    .Where(q => q.ProductId == _product.ProductId)
-                                                 select c
-                                   ).FirstOrDefault();
+                _Productq = await (from c in _context.Product
+                                 .Where(q => q.ProductId == _Product.ProductId)
+                                  select c
+                                ).FirstOrDefaultAsync();
 
-                _product.FechaCreacion = productq.FechaCreacion;
-                _product.UsuarioCreacion = productq.UsuarioCreacion;
+                _context.Entry(_Productq).CurrentValues.SetValues((_Product));
 
-                _context.Product.Update(_product);
-               await  _context.SaveChangesAsync();
+                //_context.Escala.Update(_Escalaq);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
+
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-            return Ok(_product);
+
+            return Ok(_Productq);
         }
 
         /// <summary>

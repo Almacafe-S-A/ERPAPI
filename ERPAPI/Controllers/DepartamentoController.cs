@@ -51,59 +51,79 @@ namespace ERPAPI.Controllers
         }
 
         // PUT: api/Departamento/5
+        //[HttpPut("[action]")]
+        //public async Task<IActionResult> PutDepartamento(long id, Departamento departamento)
+
         [HttpPut("[action]")]
-        public async Task<IActionResult> PutDepartamento(long id, Departamento departamento)
+        public async Task<ActionResult<Departamento>> Update([FromBody]Departamento _Departamento)
         {
-            if (id != departamento.IdDepartamento)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(departamento).State = EntityState.Modified;
-
+            Departamento _Departamentoq = _Departamento;
             try
             {
+                _Departamentoq = await (from c in _context.Departamento
+                                 .Where(q => q.IdDepartamento == _Departamentoq.IdDepartamento)
+                                  select c
+                                ).FirstOrDefaultAsync();
+
+                _context.Entry(_Departamentoq).CurrentValues.SetValues((_Departamento));
+
+                //_context.Escala.Update(_Escalaq);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!DepartamentoExists(id))
-                {
-                    return await Task.Run(() => NotFound());
-                }
-                else
-                {
-                    throw;
-                }
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return NoContent();
+            return Ok(_Departamentoq);
         }
 
         // POST: api/Departamento
         [HttpPost("[action]")]
-        public async Task<ActionResult<Departamento>> PostDepartamento(Departamento departamento)
+        public async Task<ActionResult<Escala>> Insert([FromBody]Departamento _Departamento)
         {
-            _context.Departamento.Add(departamento);
-            await _context.SaveChangesAsync();
+            Departamento _Departamentoq = new Departamento();
+            try
+            {
+                _Departamentoq = _Departamento;
+                _context.Departamento.Add(_Departamentoq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
 
-            return await Task.Run(() => CreatedAtAction("GetDepartamento", new { id = departamento.IdDepartamento }, departamento));
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_Departamentoq);
         }
 
         // DELETE: api/Departamento/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Departamento>> DeleteDepartamento(long id)
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]Departamento _Departamento)
         {
-            var departamento = await _context.Departamento.FindAsync(id);
-            if (departamento == null)
+            Departamento _Departamentoq = new Departamento();
+            try
             {
-                return NotFound();
+                _Departamentoq = _context.Departamento
+                .Where(x => x.IdDepartamento == (Int64)_Departamento.IdDepartamento)
+                .FirstOrDefault();
+
+                _context.Departamento.Remove(_Departamentoq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            _context.Departamento.Remove(departamento);
-            await _context.SaveChangesAsync();
+            return Ok(_Departamentoq);
 
-            return departamento;
         }
 
         private bool DepartamentoExists(long id)

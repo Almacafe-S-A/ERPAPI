@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190628031920_CustomerArea")]
+    partial class CustomerArea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,61 +318,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("BlackListId");
 
                     b.ToTable("BlackListCustomers");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.BoletaDeSalida", b =>
-                {
-                    b.Property<long>("BoletaDeSalidaId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<long>("CargadoId");
-
-                    b.Property<string>("Cargadoname");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long>("GoodsDeliveryAuthorizationId");
-
-                    b.Property<string>("Marca");
-
-                    b.Property<string>("Motorista");
-
-                    b.Property<long>("NoEntrega");
-
-                    b.Property<string>("Placa");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<string>("Vigilante");
-
-                    b.HasKey("BoletaDeSalidaId");
-
-                    b.ToTable("BoletaDeSalida");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Boleto_Ent", b =>
@@ -1368,309 +1315,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdEmpresa");
 
                     b.ToTable("Empresa");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososBono", b =>
-                {
-                    b.Property<long>("EndososBonoId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BankId");
-
-                    b.Property<string>("BankName");
-
-                    b.Property<double>("CantidadEndosar");
-
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaOtorgado");
-
-                    b.Property<string>("FirmadoEn");
-
-                    b.Property<long>("IdCD");
-
-                    b.Property<long>("NoCD");
-
-                    b.Property<string>("NombreEndoso");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<double>("TasaDeInteres");
-
-                    b.Property<long>("TipoEndoso");
-
-                    b.Property<long>("TipoEndosoId");
-
-                    b.Property<string>("TipoEndosoName");
-
-                    b.Property<double>("TotalEndoso");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("ValorEndosar");
-
-                    b.HasKey("EndososBonoId");
-
-                    b.ToTable("EndososBono");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososBonoLine", b =>
-                {
-                    b.Property<long>("EndososBonoLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("EndososBonoId");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<double>("ValorEndoso");
-
-                    b.HasKey("EndososBonoLineId");
-
-                    b.HasIndex("EndososBonoId");
-
-                    b.ToTable("EndososBonoLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososCertificados", b =>
-                {
-                    b.Property<long>("EndososCertificadosId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BankId");
-
-                    b.Property<string>("BankName");
-
-                    b.Property<double>("CantidadEndosar");
-
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaOtorgado");
-
-                    b.Property<string>("FirmadoEn");
-
-                    b.Property<long>("IdCD");
-
-                    b.Property<long>("NoCD");
-
-                    b.Property<string>("NombreEndoso");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<double>("TasaDeInteres");
-
-                    b.Property<long>("TipoEndoso");
-
-                    b.Property<long>("TipoEndosoId");
-
-                    b.Property<string>("TipoEndosoName");
-
-                    b.Property<double>("TotalEndoso");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("ValorEndosar");
-
-                    b.HasKey("EndososCertificadosId");
-
-                    b.ToTable("EndososCertificados");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososCertificadosLine", b =>
-                {
-                    b.Property<long>("EndososCertificadosLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("EndososCertificadosId");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<double>("ValorEndoso");
-
-                    b.HasKey("EndososCertificadosLineId");
-
-                    b.HasIndex("EndososCertificadosId");
-
-                    b.ToTable("EndososCertificadosLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososLiberacion", b =>
-                {
-                    b.Property<long>("EndososLiberacionId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("EndososId");
-
-                    b.Property<long>("EndososLineId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaLiberacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<double>("Saldo");
-
-                    b.Property<string>("TipoEndoso");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("EndososLiberacionId");
-
-                    b.ToTable("EndososLiberacion");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososTalon", b =>
-                {
-                    b.Property<long>("EndososTalonId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BankId");
-
-                    b.Property<string>("BankName");
-
-                    b.Property<double>("CantidadEndosar");
-
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaOtorgado");
-
-                    b.Property<string>("FirmadoEn");
-
-                    b.Property<long>("IdCD");
-
-                    b.Property<long>("NoCD");
-
-                    b.Property<string>("NombreEndoso");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<double>("TasaDeInteres");
-
-                    b.Property<long>("TipoEndoso");
-
-                    b.Property<long>("TipoEndosoId");
-
-                    b.Property<string>("TipoEndosoName");
-
-                    b.Property<double>("TotalEndoso");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("ValorEndosar");
-
-                    b.HasKey("EndososTalonId");
-
-                    b.ToTable("EndososTalon");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososTalonLine", b =>
-                {
-                    b.Property<long>("EndososTalonLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("EndososTalonId");
-
-                    b.Property<double>("Price");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<double>("ValorEndoso");
-
-                    b.HasKey("EndososTalonLineId");
-
-                    b.HasIndex("EndososTalonId");
-
-                    b.ToTable("EndososTalonLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Escala", b =>
@@ -3688,8 +3332,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<double>("Merma");
-
                     b.Property<string>("ProductCode");
 
                     b.Property<string>("ProductName");
@@ -3699,8 +3341,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ProductTypeName");
 
                     b.Property<int?>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -4292,30 +3932,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Customers")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososBonoLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.EndososBono")
-                        .WithMany("EndososBonoLine")
-                        .HasForeignKey("EndososBonoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososCertificadosLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.EndososCertificados")
-                        .WithMany("EndososCertificadosLine")
-                        .HasForeignKey("EndososCertificadosId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososTalonLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.EndososTalon")
-                        .WithMany("EndososTalonLine")
-                        .HasForeignKey("EndososTalonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

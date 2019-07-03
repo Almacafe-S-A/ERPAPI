@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190629054006_Endosos")]
+    partial class Endosos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,61 +318,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("BlackListId");
 
                     b.ToTable("BlackListCustomers");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.BoletaDeSalida", b =>
-                {
-                    b.Property<long>("BoletaDeSalidaId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<long>("CargadoId");
-
-                    b.Property<string>("Cargadoname");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long>("GoodsDeliveryAuthorizationId");
-
-                    b.Property<string>("Marca");
-
-                    b.Property<string>("Motorista");
-
-                    b.Property<long>("NoEntrega");
-
-                    b.Property<string>("Placa");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<string>("Vigilante");
-
-                    b.HasKey("BoletaDeSalidaId");
-
-                    b.ToTable("BoletaDeSalida");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Boleto_Ent", b =>
@@ -1455,8 +1402,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("EndososBonoLineId");
 
-                    b.HasIndex("EndososBonoId");
-
                     b.ToTable("EndososBonoLine");
                 });
 
@@ -1544,8 +1489,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("ValorEndoso");
 
                     b.HasKey("EndososCertificadosLineId");
-
-                    b.HasIndex("EndososCertificadosId");
 
                     b.ToTable("EndososCertificadosLine");
                 });
@@ -1667,8 +1610,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("ValorEndoso");
 
                     b.HasKey("EndososTalonLineId");
-
-                    b.HasIndex("EndososTalonId");
 
                     b.ToTable("EndososTalonLine");
                 });
@@ -3688,8 +3629,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<double>("Merma");
-
                     b.Property<string>("ProductCode");
 
                     b.Property<string>("ProductName");
@@ -3699,8 +3638,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ProductTypeName");
 
                     b.Property<int?>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -4292,30 +4229,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Customers")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososBonoLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.EndososBono")
-                        .WithMany("EndososBonoLine")
-                        .HasForeignKey("EndososBonoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososCertificadosLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.EndososCertificados")
-                        .WithMany("EndososCertificadosLine")
-                        .HasForeignKey("EndososCertificadosId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EndososTalonLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.EndososTalon")
-                        .WithMany("EndososTalonLine")
-                        .HasForeignKey("EndososTalonId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
