@@ -1,45 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
+
+using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/HoursWorked")]
+    [Route("api/PayrollEmployee")]
     [ApiController]
-    public class HoursWorkedController : Controller
+    public class PayrollEmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public HoursWorkedController(ILogger<HoursWorkedController> logger, ApplicationDbContext context)
+        public PayrollEmployeeController(ILogger<PayrollController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de HoursWorkedes 
-        /// El estado define cuales son los cai activos
+        /// Listado Planillas/Empleado.
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetHoursWorked()
+        public async Task<IActionResult> GetPayrollEmployee()
         {
-            List<HoursWorked> Items = new List<HoursWorked>();
+            List<PayrollEmployee> Items = new List<PayrollEmployee>();
             try
             {
-                Items = await _context.HoursWorked.ToListAsync();
+                Items = await _context.PayrollEmployee.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -52,17 +53,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la HoursWorked por medio del Id enviado.
+        /// Obtiene una relación específica.
         /// </summary>
-        /// <param name="IdHorastrabajadas"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{IdHorastrabajadas}")]
-        public async Task<ActionResult<HoursWorked>> GetHoursWorkedById(Int64 IdHorastrabajadas)
+        [HttpGet("[action]/{Id}")]
+        public async Task<ActionResult<PayrollEmployee>> GetPayrollEmployee(Int64 Id)
         {
-            HoursWorked Items = new HoursWorked();
+            List<PayrollEmployee> Items = new List<PayrollEmployee>();
             try
             {
-                Items = await _context.HoursWorked.Where(q => q.IdHorastrabajadas == IdHorastrabajadas).FirstOrDefaultAsync();
+                Items = await _context.PayrollEmployee.Where(q => q.IdPlanilla == Id).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -75,50 +76,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
         /// <summary>
-        /// Inserta una nueva HoursWorked
+        /// Actualizar relación.
         /// </summary>
-        /// <param name="_HoursWorked"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<HoursWorked>> Insert([FromBody]HoursWorked _HoursWorked)
-        {
-            HoursWorked _HoursWorkedq = new HoursWorked();
-            try
-            {
-                _HoursWorkedq = _HoursWorked;
-                _context.HoursWorked.Add(_HoursWorkedq);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            return await Task.Run(() => Ok(_HoursWorkedq));
-        }
-
-        /// <summary>
-        /// Actualiza la HoursWorked
-        /// </summary>
-        /// <param name="_HoursWorked"></param>
+        /// <param name="_payrollEmployee"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<HoursWorked>> Update([FromBody]HoursWorked _HoursWorked)
+        public async Task<ActionResult<PayrollEmployee>> Update([FromBody]PayrollEmployee _payrollEmployee)
         {
-            HoursWorked _HoursWorkedq = _HoursWorked;
+            PayrollEmployee _payrollEmployeeq = _payrollEmployee;
             try
             {
-                _HoursWorkedq = await (from c in _context.HoursWorked
-                                 .Where(q => q.IdHorastrabajadas == _HoursWorked.IdHorastrabajadas)
-                                       select c
+                _payrollEmployeeq = await (from c in _context.PayrollEmployee
+                                 .Where(q => q.IdPlanillaempleado == _payrollEmployee.IdPlanillaempleado)
+                                   select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_HoursWorkedq).CurrentValues.SetValues((_HoursWorked));
-                
+                _context.Entry(_payrollEmployeeq).CurrentValues.SetValues((_payrollEmployee));
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -128,25 +103,50 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_HoursWorkedq));
+            return await Task.Run(() => Ok(_payrollEmployeeq));
         }
 
         /// <summary>
-        /// Elimina una HoursWorked       
+        /// Crear relación.
         /// </summary>
-        /// <param name="_HoursWorked"></param>
+        /// <param name="_payrollEmployee"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]HoursWorked _HoursWorked)
+        public async Task<ActionResult<PayrollEmployee>> Insert([FromBody]PayrollEmployee _payrollEmployee)
         {
-            HoursWorked _HoursWorkedq = new HoursWorked();
+            PayrollEmployee _payrollEmployeeq = new PayrollEmployee();
             try
             {
-                _HoursWorkedq = _context.HoursWorked
-                .Where(x => x.IdHorastrabajadas == (Int64)_HoursWorked.IdHorastrabajadas)
+                _payrollEmployeeq = _payrollEmployee;
+                _context.PayrollEmployee.Add(_payrollEmployeeq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_payrollEmployeeq));
+        }
+
+        /// <summary>
+        /// Elimina relación.
+        /// </summary>
+        /// <param name="_payrollEmployee"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<PayrollEmployee>> Delete([FromBody]PayrollEmployee _payrollEmployee)
+        {
+            PayrollEmployee _payrollEmployeeq = new PayrollEmployee();
+            try
+            {
+                _payrollEmployeeq = _context.PayrollEmployee
+                .Where(x => x.IdPlanillaempleado == (Int64)_payrollEmployee.IdPlanillaempleado)
                 .FirstOrDefault();
 
-                _context.HoursWorked.Remove(_HoursWorkedq);
+                _context.PayrollEmployee.Remove(_payrollEmployeeq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -155,15 +155,8 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_HoursWorkedq));
-
+            return await Task.Run(() => Ok(_payrollEmployeeq));
         }
-
-
-
-
-
-
-
+        
     }
 }

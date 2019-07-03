@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class Incapacidades
+    public class Incidencias
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Idincapacidad { get; set; } 
+        public long IdIncidencia { get; set; } 
         public DateTime? FechaInicio { get; set; } 
         public DateTime? FechaFin { get; set; } 
         public long? IdEmpleado { get; set; } 
-        public string DescripcionIncapacidad { get; set; }
+        public string DescripcionIncidencia { get; set; }
+        public long? IdTipoIncidencia { get; set; }
+
         public DateTime? FechaCreacion { get; set; } 
         public DateTime? FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; } 
