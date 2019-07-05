@@ -34,7 +34,6 @@ namespace coderush.Controllers.Api
             try
             {
                 Items = await _context.UnitOfMeasure.ToListAsync();
-                //int Count = Items.Count();
             }
             catch (Exception ex)
             {
@@ -42,8 +41,9 @@ namespace coderush.Controllers.Api
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok( Items);
+
+            //  int Count = Items.Count();
+            return Ok(Items);
         }
 
         // api/UnitOfMeasureGetUnitOfMeasureById
