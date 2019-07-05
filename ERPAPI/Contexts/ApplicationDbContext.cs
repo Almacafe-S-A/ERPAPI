@@ -91,7 +91,7 @@ namespace ERP.Contexts
         public DbSet<FormulasAplicadas> FormulasAplicadas { get; set; }
         public DbSet<FormulasConcepto> FormulasConcepto { get; set; }
         public DbSet<FormulasConFormulas> FormulasConFormulas { get; set; }
-        public DbSet<Incapacidades> Incapacidades { get; set; }
+        public DbSet<Incidencias> Incidencias { get; set; }
         public DbSet<Reconciliacion> Reconciliacion { get; set; }
         public DbSet<ReconciliacionDetalle> ReconciliacionDetalle { get; set; }
         public DbSet<ReconciliacionEscala> ReconciliacionEscala { get; set; }
@@ -118,28 +118,13 @@ namespace ERP.Contexts
 
         public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
 
-        ///// <summary>
-        ////////
-
         public DbSet<ERPAPI.Models.Empresa> Empresa { get; set; }
-
-        ///// <summary>
-        ////////
 
         public DbSet<ERPAPI.Models.Departamento> Departamento { get; set; }
 
-        ///// <summary>
-        ////////
-
         public DbSet<ERPAPI.Models.TipoContrato> TipoContrato { get; set; }
 
-        ///// <summary>
-        ////////
-
         public DbSet<ERPAPI.Models.Dependientes> Dependientes { get; set; }
-
-        ///// <summary>
-        ////////
 
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
 
