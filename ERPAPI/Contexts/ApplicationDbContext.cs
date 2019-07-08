@@ -162,10 +162,21 @@ namespace ERP.Contexts
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
 
-          modelBuilder.Entity<Boleto_Ent>()
+           modelBuilder.Entity<Boleto_Ent>()
             .HasOne(a => a.Boleto_Sal)
             .WithOne(b => b.Boleto_Ent)
            .HasForeignKey<Boleto_Sal>(b => b.clave_e);
+             
+            modelBuilder.Entity<SubProduct>()
+           .HasIndex(p => new { p.ProductCode })
+           .IsUnique(true);
+
+            //modelBuilder.Entity<SubProduct>(entity => {
+            //    entity.HasIndex(e => e.ProductCode).IsUnique();
+            //});
+
+
+            // .HasIndex(p => new { p.FirstColumn, p.SecondColumn }).IsUnique();
 
 
             //modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("AspNetUserClaims");

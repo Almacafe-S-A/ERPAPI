@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +76,63 @@ namespace ERPAPI.Controllers
 
             return Ok(Items);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetBoleto_SalByClaveEList([FromBody]List<Int64> clave_e_list)
+        {
+            List<Int64> Items = new List<Int64>();
+            try
+            {
+                //string listadosalidas = string.Join(",", clave_e_list);
+                _context.Database.SetCommandTimeout(60);
+
+                List<Int64> _encontrados = await _context.Boleto_Sal.Select(q => q.clave_e).ToListAsync();
+                Items = clave_e_list.Except(_encontrados).ToList(); 
+                // Items = await _context.Boleto_Sal.Where(q => clave_e_list.Contains(q.clave_e)).Select(q => q.clave_e).ToListAsync();
+
+                // Items = await _context.Boleto_Sal.Any(q => q.clave_e == clave_e_list)();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetBoleto_S_ByClassList([FromBody]List<Boleto_Sal> clave_e_list)
+        {
+            List<Int64> Items = new List<Int64>();
+            try
+            {                
+                try
+                {                 
+                    _context.BulkInsert(clave_e_list);
+                    await _context.SaveChangesAsync();
+
+                }
+                catch (Exception ex)
+                {                   
+                    throw ex;
+                }
+               
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
 
 
         /// <summary>

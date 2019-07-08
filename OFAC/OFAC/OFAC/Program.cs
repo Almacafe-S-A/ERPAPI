@@ -15,7 +15,7 @@ namespace OFAC
     class Program
     {
 
-       static MyConfig moduleSettings = new MyConfig();
+        static MyConfig moduleSettings = new MyConfig();
         static  void Main(string[] args)
         {
             // Mapper.CreateMap<sdnList, sdnListM>();
