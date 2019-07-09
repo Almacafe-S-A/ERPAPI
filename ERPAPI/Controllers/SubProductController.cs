@@ -78,7 +78,30 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
-     
+        [HttpPost("[action]")]
+        public async Task<ActionResult<SubProduct>> GetSubProductByProductCodeAndInsert([FromBody]SubProduct _SubProductp)
+        {
+            SubProduct Items = new SubProduct();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.ProductCode == _SubProductp.ProductCode).FirstOrDefaultAsync();
+                if (Items == null) { Items = new SubProduct(); }
+                if(Items.SubproductId==0)
+                {
+                    var subproductinsert=  Insert(_SubProductp).Result;
+                    var value = (subproductinsert.Result as ObjectResult).Value;
+                    Items = ((SubProduct)(value));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return Ok(Items);
+        }
+
+
 
         [HttpPost("[action]")]
         public async Task<ActionResult<SubProduct>> GetSubProductoByTipoByCustomer([FromBody]CustomerTypeSubProduct _CustomerTypeSubProduct)

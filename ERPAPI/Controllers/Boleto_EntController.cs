@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MoreLinq;
 
 namespace ERPAPI.Controllers
 {
@@ -51,6 +53,92 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return Ok(Items);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetBoleto_EntByClaveEList([FromBody]List<Int64> clave_e_list)
+        {
+            List<Int64> Items = new List<Int64>();
+            try
+            {
+                //string listadoentradas = string.Join(",", clave_e_list);
+                _context.Database.SetCommandTimeout(30);
+                List<Int64> _encontrados = await _context.Boleto_Ent.Select(q => q.clave_e).ToListAsync();
+                Items = clave_e_list.Except(_encontrados).ToList();
+
+              
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+        private async Task<List<Int64>> GetBatchExistsEntry(List<Int64> Id)
+        {
+            List<Int64> _entradasexistentes = new List<Int64>();
+
+            try
+            {
+                Int64 p = 0;
+                foreach (var item in Id)
+                {
+                    p = await _context.Boleto_Ent.Where(q => q.clave_e==item).Select(q => q.clave_e).FirstOrDefaultAsync();
+                    if(p>0)
+                    {
+                        _entradasexistentes.Add(p);
+                    }
+                }
+              //  _entradasexistentes = await _context.Boleto_Ent.Where(q => Id.Contains(q.clave_e)).Select(q => q.clave_e).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+            return _entradasexistentes;
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetBoleto_E_ByClassList([FromBody]List<Boleto_Ent> clave_e_list)
+        {
+            List<Int64> Items = new List<Int64>();
+            try
+            {
+                //using (var transaction = _context.Database.BeginTransaction())
+                //{
+                try
+                {                  
+                     _context.BulkInsert(clave_e_list);
+                    await _context.SaveChangesAsync();            
+
+
+                }
+                catch (Exception ex)
+                {
+                    // transaction.Rollback();
+                    throw ex;
+                }                  
+
+
+              //  }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
 
         /// <summary>
         /// Obtiene los Datos de la Boleto_Ent por medio del Id enviado.

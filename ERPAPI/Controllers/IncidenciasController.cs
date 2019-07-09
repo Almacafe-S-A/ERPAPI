@@ -163,7 +163,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="EmpId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{Id}")]
+        [HttpGet("[action]/{EmpId}")]
         public async Task<IActionResult> GetVacaciones(Int64 EmpId)
         {
             List<Incidencias> Items = new List<Incidencias>();
