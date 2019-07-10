@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -41,6 +42,68 @@ namespace ERPAPI.Controllers
             }
             return Ok(Items);
         }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int64>> GetSubProductCount()
+        {
+            //List<SubProduct> Items = new List<SubProduct>();
+            SubProduct _SubProduct = new SubProduct();
+            Int64 Total = 0;
+            try
+            {
+                //Items = await _context.SubProduct.ToListAsync();
+                _SubProduct = await _context.SubProduct.FromSql("select  count(SubproductId) SubproductId  from SubProduct ").FirstOrDefaultAsync();
+                Total = _SubProduct.SubproductId;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Total);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int64>> GetSubProductByCodeCount()
+        {
+            List<SubProduct> Items = new List<SubProduct>();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.Description == "Balanza").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items.Count);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<SubProduct>> GetSubProductByCodeBalanza()
+        {
+            List<SubProduct> Items = new List<SubProduct>();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.Description == "Balanza").ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
 
         [HttpGet("[action]")]
         public async Task<ActionResult<SubProduct>> GetSubProductbByProductTypeId(Int64 ProductTypeId)
@@ -88,6 +151,9 @@ namespace ERPAPI.Controllers
                 if (Items == null) { Items = new SubProduct(); }
                 if(Items.SubproductId==0)
                 {
+                    _SubProductp.FechaCreacion = DateTime.Now;
+                    _SubProductp.FechaModificacion = DateTime.Now;
+                  
                     var subproductinsert=  Insert(_SubProductp).Result;
                     var value = (subproductinsert.Result as ObjectResult).Value;
                     Items = ((SubProduct)(value));
@@ -128,6 +194,50 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
             //  
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> InsertSubproduct_ClassList([FromBody]List<SubProduct> SubProducts)
+        {
+            List<SubProduct> Items = new List<SubProduct>();
+            try
+            {
+                //using (var transaction = _context.Database.BeginTransaction())
+                //{
+                try
+                {
+                    List<string> _existentes = await _context.SubProduct.Where(q => q.Description == "Balanza").Select(q => q.ProductCode).ToListAsync();
+
+                    List<string> total = SubProducts.Select(q => q.ProductCode).ToList();
+
+                    List<string> noexistenItems = total.Except(_existentes).ToList();
+
+                    Items = SubProducts.Where(q => noexistenItems.Contains(q.ProductCode)).ToList();
+
+                    _context.BulkInsert(Items);
+                    await _context.SaveChangesAsync();
+
+
+                }
+                catch (Exception ex)
+                {
+                    // transaction.Rollback();
+                    throw ex;
+                }
+
+
+                //  }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+           
+            return Ok(Items);
         }
 
 

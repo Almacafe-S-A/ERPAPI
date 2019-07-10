@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -54,18 +55,74 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetBoleto_EntMax()
+        {
+            Int64 Max = 0;
+            try
+            {
+                //Max = await _context.Boleto_Ent.Select(x => x.clave_e).DefaultIfEmpty(0).Max();
+                Max =  _context.Boleto_Ent.Max(x => x.clave_e);
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Max);
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int64>> GetBoleto_EntCount()
+        {
+            // List<Boleto_Ent> Items = new List<Boleto_Ent>();
+            Boleto_Ent _Boleto_Ent = new Boleto_Ent();
+            Int64 Total = 0;
+            try
+            {
+
+               Total = await _context.Boleto_Ent.CountAsync();
+
+                //Items = await _context.Boleto_Ent.ToListAsync();
+                //_Boleto_Ent = await _context.Boleto_Ent.FromSql("select  count(clave_e) clave_e  from Boleto_Ent ").FirstOrDefaultAsync();
+                //_Boleto_Ent = await _context.Query<Boleto_Ent>()
+                // .FromSql($"SELECT count(clave_e) as clave_e FROM dbo.Boleto_Ent ")
+                //  .AsNoTracking()
+                //  .FirstOrDefaultAsync();
+
+               // Total = _Boleto_Ent.clave_e;
+                //Items = await _context.Boleto_Ent.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(()=>Ok(Total));
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> GetBoleto_EntByClaveEList([FromBody]List<Int64> clave_e_list)
         {
             List<Int64> Items = new List<Int64>();
             try
             {
+                Stopwatch stopwatch = Stopwatch.StartNew();
+                _logger.LogInformation($"Arranca comparación Entrada: {stopwatch.Elapsed}");
                 //string listadoentradas = string.Join(",", clave_e_list);
                 _context.Database.SetCommandTimeout(30);
                 List<Int64> _encontrados = await _context.Boleto_Ent.Select(q => q.clave_e).ToListAsync();
                 Items = clave_e_list.Except(_encontrados).ToList();
+                _logger.LogInformation($"Termina comparación Entrada: {stopwatch.Elapsed}");
 
-              
             }
             catch (Exception ex)
             {

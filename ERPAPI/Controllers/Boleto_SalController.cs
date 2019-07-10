@@ -53,6 +53,53 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int64>> GetBoleto_SalCount()
+        {
+            // List<Boleto_Sal> Items = new List<Boleto_Sal>();
+            Boleto_Sal _Boleto_Sal = new Boleto_Sal();
+            Int64 Total = 0;
+            try
+            {
+                // Items = await _context.Boleto_Sal.ToListAsync();
+                _Boleto_Sal = await _context.Boleto_Sal.FromSql("select  count(clave_e) clave_e  from Boleto_Sal ").FirstOrDefaultAsync();
+                Total = _Boleto_Sal.clave_e;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Total);
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetBoleto_SalMax()
+        {
+            Int64? Max = 0;
+            try
+            {
+                //Max = await _context.Boleto_Ent.Select(x => x.clave_e).DefaultIfEmpty(0).Max();
+                Max = _context.Boleto_Sal.Max(x => x.clave_e);
+                if (Max == null) { Max = 0; }
+            }
+            catch (Exception ex)
+            {
+                Max = 0;
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return Ok(Max);
+                //return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Max);
+        }
+
         /// <summary>
         /// Obtiene los Datos de la Boleto_Sal por medio del Id enviado.
         /// </summary>
