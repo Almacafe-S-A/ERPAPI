@@ -33,14 +33,28 @@ namespace ERPAPI.Controllers
             List<ProductRelation> Items = new List<ProductRelation>();
             try
             {
-                Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
+                //Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
+                Items = await (from c in _context.ProductRelation
+                               join d in _context.SubProduct on c.SubProductId equals d.SubproductId
+                               join e in _context.Product on c.ProductId equals e.ProductId
+                               select new ProductRelation {
+                                    RelationProductId =c.RelationProductId,
+                                    SubProductId = c.SubProductId,
+                                    ProductId = c.ProductId,
+                                    SubProduct = d,
+                                    Product = e
+
+                               }
+                               ).ToListAsync();
+                // Items = await _context.ProductRelation.ToListAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-            return Ok(Items);
+
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpGet("[action]/{ProductId}")]

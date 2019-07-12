@@ -21,8 +21,8 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public Product Product { get; set; }
-        public SubProduct SubProduct { get; set; }
+        public virtual Product Product { get; set; }
+        public virtual SubProduct SubProduct { get; set; }
 
     }
 
