@@ -132,7 +132,8 @@ namespace ERPAPI.Controllers
                                 SubProducId = _GoodsReceivedq.SubProductId,
                                 SubProductName = _GoodsReceivedq.SubProductName,
                                 QuantityEntry = item.Quantity,
-                                QuantityOut =0,
+                                
+                                QuantityOut = 0,
                                 BranchId = _GoodsReceivedq.BranchId,
                                 BranchName = _GoodsReceivedq.BranchName,
                                 WareHouseId = item.WareHouseId,
@@ -141,7 +142,7 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = item.UnitOfMeasureName,
                                 TypeOperationId = 1,
                                 TypeOperationName = "Entrada",
-                        });
+                            });
                         }
 
                         await _context.SaveChangesAsync();
@@ -160,6 +161,9 @@ namespace ERPAPI.Controllers
                         _GoodsReceived.Kardex.CurrencyId = _GoodsReceivedq.CurrencyId;
                         _GoodsReceived.Kardex.CurrencyName = _GoodsReceivedq.CurrencyName;
                         _GoodsReceived.Kardex.DocumentId = _GoodsReceivedq.GoodsReceivedId;
+                        _GoodsReceived.Kardex.UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion;
+                        _GoodsReceived.Kardex.UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion;
+
                         _context.Kardex.Add(_GoodsReceived.Kardex);
 
                         await _context.SaveChangesAsync();

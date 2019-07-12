@@ -28,6 +28,12 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
+        [Display(Name = "Unidad de medida")]
+        public Int64 UnitOfMeasureId { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public string UnitOfMeasureName { get; set; }
+
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
 
@@ -65,6 +71,8 @@ namespace ERPAPI.Models
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
-        
+
+        public string Impreso { get; set; }
+
     }
 }

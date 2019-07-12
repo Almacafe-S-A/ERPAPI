@@ -11,7 +11,9 @@ namespace ERPAPI.Models
         [Key]
         public long Id { get; set; } 
         public string Nombre { get; set; }
+        [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
+        [Display(Name = "Estado")]
         public string Estado { get; set; } 
         public long? Idconfiguracion { get; set; } 
         public double? Valordecimal { get; set; } 
@@ -23,6 +25,7 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public GrupoConfiguracion GrupoConfiguracion { get; set; }
     }
 
 

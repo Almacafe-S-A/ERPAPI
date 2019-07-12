@@ -100,6 +100,8 @@ namespace ERPAPI.Models
         public Int64 IdEstado { get; set; }
         public string Estado { get; set; }
 
+        public string Impreso { get; set; }
+
         public List<SalesOrderLine> SalesOrderLines { get; set; } = new List<SalesOrderLine>();
 
         public DateTime FechaCreacion { get; set; }

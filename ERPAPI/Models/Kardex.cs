@@ -57,6 +57,9 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public string Impreso { get; set; }
+
         public List<KardexLine> _KardexLine { get; set; } = new List<KardexLine>();
     }
+
 }

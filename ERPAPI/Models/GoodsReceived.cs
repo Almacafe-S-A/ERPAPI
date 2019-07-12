@@ -99,6 +99,8 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public string Impreso { get; set; }
+
         //  public List<GoodsReceivedLine> _GoodsReceivedLine = new List<GoodsReceivedLine>();
         public List<GoodsReceivedLine> _GoodsReceivedLine { get; set; } = new List<GoodsReceivedLine>();
 

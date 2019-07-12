@@ -63,6 +63,8 @@
     <Compile Remove="Migrations\20190629021743_Endosos.Designer.cs" />
     <Compile Remove="Migrations\20190708212146_index.cs" />
     <Compile Remove="Migrations\20190708212146_index.Designer.cs" />
+    <Compile Remove="Migrations\20190711180956_ImpresionDocumentos_Sacos_Quintales.cs" />
+    <Compile Remove="Migrations\20190711180956_ImpresionDocumentos_Sacos_Quintales.Designer.cs" />
   </ItemGroup> 
 
   <ItemGroup>

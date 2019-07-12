@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190711182750_ImpresionDocumentos_Sacos_Quintales")]
+    partial class ImpresionDocumentos_Sacos_Quintales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -819,8 +821,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Tara");
 
                     b.Property<int>("TotalSacos");
-
-                    b.Property<int>("TotalSacosPolietileno");
 
                     b.Property<int>("TotalSacosYute");
 
@@ -2987,10 +2987,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("RelationProductId");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SubProductId");
-
                     b.ToTable("ProductRelation");
                 });
 
@@ -4434,19 +4430,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Kardex")
                         .WithMany("_KardexLine")
                         .HasForeignKey("KardexId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

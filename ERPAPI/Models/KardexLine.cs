@@ -66,7 +66,25 @@ namespace ERPAPI.Models
         [Display(Name = "Salida")]
         public double QuantityOut { get; set; }
 
-        [Display(Name = "Cantidad")]
+        [Display(Name = "Entrada de sacos")]
+        public double QuantityEntryBags { get; set; }
+
+        [Display(Name = "Salida de sacos")]
+        public double QuantityOutBags { get; set; }
+
+        [Display(Name = "Entrada certificado deposito")]
+        public double QuantityEntryCD { get; set; }
+
+        [Display(Name = "Salida de certificado de deposito")]
+        public double QuantityOutCD { get; set; }
+
+        [Display(Name = "Saldo Certificado depositos")]
+        public double TotalCD { get; set; }
+
+        [Display(Name = "Saldo sacos")]
+        public double TotalBags { get; set; }
+
+        [Display(Name = "Saldo")]
         public double Total { get; set; }
 
         [Display(Name = "Entrada/Salida")]

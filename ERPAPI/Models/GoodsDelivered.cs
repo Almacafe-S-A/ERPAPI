@@ -96,7 +96,7 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-
+        public string Impreso { get; set; }
         public List<GoodsDeliveredLine> _GoodsDeliveredLine { get; set; } = new List<GoodsDeliveredLine>();
 
      //   public Kardex Kardex { get; set; }

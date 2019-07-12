@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190710183912_ElementoConfiguracionLlaveForanea")]
+    partial class ElementoConfiguracionLlaveForanea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -640,8 +642,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<string>("LugarFirma");
 
                     b.Property<double>("MontoGarantia");
@@ -790,8 +790,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<string>("Marca");
 
                     b.Property<string>("Motorista");
@@ -819,10 +817,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Tara");
 
                     b.Property<int>("TotalSacos");
-
-                    b.Property<int>("TotalSacosPolietileno");
-
-                    b.Property<int>("TotalSacosYute");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -862,10 +856,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<int>("cantidadPoliEtileno");
-
-                    b.Property<int>("cantidadYute");
 
                     b.HasKey("ControlPalletsLineId");
 
@@ -1004,8 +994,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<double>("Largo");
 
                     b.Property<long>("ProductId");
@@ -1015,10 +1003,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("TypeId");
 
                     b.Property<string>("TypeName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<double>("UsedArea");
 
@@ -1424,8 +1408,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdCD");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<long>("NoCD");
 
                     b.Property<string>("NombreEndoso");
@@ -1515,8 +1497,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("FirmadoEn");
 
                     b.Property<long>("IdCD");
-
-                    b.Property<string>("Impreso");
 
                     b.Property<long>("NoCD");
 
@@ -1638,8 +1618,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("FirmadoEn");
 
                     b.Property<long>("IdCD");
-
-                    b.Property<string>("Impreso");
 
                     b.Property<long>("NoCD");
 
@@ -1920,8 +1898,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<string>("Marca");
 
                     b.Property<string>("Name");
@@ -2054,8 +2030,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<string>("Name");
 
                     b.Property<long>("NoCD");
@@ -2153,8 +2127,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime?>("FechaModificacion");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<string>("Impreso");
 
                     b.Property<string>("Marca");
 
@@ -2418,8 +2390,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<DateTime>("InvoiceDate");
 
                     b.Property<DateTime>("InvoiceDueDate");
@@ -2574,8 +2544,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<DateTime>("KardexDate");
 
                     b.Property<int>("TypeOperationId");
@@ -2623,25 +2591,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("QuantityEntry");
 
-                    b.Property<double>("QuantityEntryBags");
-
-                    b.Property<double>("QuantityEntryCD");
-
                     b.Property<double>("QuantityOut");
-
-                    b.Property<double>("QuantityOutBags");
-
-                    b.Property<double>("QuantityOutCD");
 
                     b.Property<long>("SubProducId");
 
                     b.Property<string>("SubProductName");
 
                     b.Property<double>("Total");
-
-                    b.Property<double>("TotalBags");
-
-                    b.Property<double>("TotalCD");
 
                     b.Property<int>("TypeOperationId");
 
@@ -2987,10 +2943,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("RelationProductId");
 
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SubProductId");
-
                     b.ToTable("ProductRelation");
                 });
 
@@ -3059,8 +3011,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Freight");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<string>("Impreso");
 
                     b.Property<DateTime>("OrderDate");
 
@@ -3447,8 +3397,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Impreso");
-
                     b.Property<string>("NameContract");
 
                     b.Property<DateTime>("OrderDate");
@@ -3655,8 +3603,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaVencimientoDeposito");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<string>("Impreso");
 
                     b.Property<string>("LugarFirma");
 
@@ -4434,19 +4380,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Kardex")
                         .WithMany("_KardexLine")
                         .HasForeignKey("KardexId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

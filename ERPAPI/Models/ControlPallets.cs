@@ -51,6 +51,9 @@ namespace ERPAPI.Models
         public int EsSalida { get; set; }
         public int SubTotal { get; set; }
         public int TotalSacos { get; set; }
+        public int TotalSacosPolietileno { get; set; }
+
+        public int TotalSacosYute { get; set; }
         public int SacosDevueltos { get; set; }
         public double QQPesoBruto { get; set; }
         public double Tara { get; set; }
@@ -60,6 +63,8 @@ namespace ERPAPI.Models
         public DateTime? FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
+
+        public string Impreso { get; set; }
 
         public List<ControlPalletsLine> _ControlPalletsLine { get; set; } = new List<ControlPalletsLine>();
        // public List<ControlPalletsLine> _ControlPalletsLine = new List<ControlPalletsLine>();
