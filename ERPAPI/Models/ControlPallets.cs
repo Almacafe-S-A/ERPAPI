@@ -63,8 +63,10 @@ namespace ERPAPI.Models
         public DateTime? FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
-
         public string Impreso { get; set; }
+
+        [Display(Name = "Boleta de peso")]
+        public Int64 WeightBallot { get; set; }
 
         public List<ControlPalletsLine> _ControlPalletsLine { get; set; } = new List<ControlPalletsLine>();
        // public List<ControlPalletsLine> _ControlPalletsLine = new List<ControlPalletsLine>();
