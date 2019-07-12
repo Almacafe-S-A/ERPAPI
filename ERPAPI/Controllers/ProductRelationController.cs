@@ -28,23 +28,19 @@ namespace ERPAPI.Controllers
 
         // GET: api/Currency
         [HttpGet("[action]")]
-        public async Task<ActionResult<ProductRelation>> GetProductRelation()
+        public async Task<IActionResult> GetProductRelation()
         {
             List<ProductRelation> Items = new List<ProductRelation>();
             try
             {
-                Items = await _context.ProductRelation.ToListAsync();
-
+                Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-
-            return await Task.Run(() => Ok(Items));
-            //  return Ok(Items);
+            return Ok(Items);
         }
 
         [HttpGet("[action]/{ProductId}")]
