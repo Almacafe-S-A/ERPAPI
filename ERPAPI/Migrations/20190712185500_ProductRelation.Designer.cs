@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190712181530_ProductRelation")]
+    [Migration("20190712185500_ProductRelation")]
     partial class ProductRelation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -4442,14 +4442,14 @@ namespace ERPAPI.Migrations
             modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>
                 {
                     b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("ProductRelation")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
+                        .WithMany("ProductRelation")
                         .HasForeignKey("SubProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ProformaInvoiceLine", b =>

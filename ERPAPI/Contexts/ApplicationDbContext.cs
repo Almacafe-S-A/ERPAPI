@@ -172,6 +172,16 @@ namespace ERP.Contexts
            .HasIndex(p => new { p.ProductCode })
            .IsUnique(true);
 
+            modelBuilder.Entity<SubProduct>()
+             .HasMany(c => c.ProductRelation)
+             .WithOne(e => e.SubProduct)
+             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Product>()
+           .HasMany(c => c.ProductRelation)
+           .WithOne(e => e.Product)
+           .OnDelete(DeleteBehavior.Restrict);
+
             //modelBuilder.Entity<SubProduct>(entity => {
             //    entity.HasIndex(e => e.ProductCode).IsUnique();
             //});

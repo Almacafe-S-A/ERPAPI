@@ -4440,14 +4440,14 @@ namespace ERPAPI.Migrations
             modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>
                 {
                     b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("ProductRelation")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
+                        .WithMany("ProductRelation")
                         .HasForeignKey("SubProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ProformaInvoiceLine", b =>

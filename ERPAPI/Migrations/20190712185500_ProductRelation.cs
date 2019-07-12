@@ -22,7 +22,7 @@ namespace ERPAPI.Migrations
                 column: "ProductId",
                 principalTable: "Product",
                 principalColumn: "ProductId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ProductRelation_SubProduct_SubProductId",
@@ -30,7 +30,7 @@ namespace ERPAPI.Migrations
                 column: "SubProductId",
                 principalTable: "SubProduct",
                 principalColumn: "SubproductId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
