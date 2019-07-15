@@ -73,7 +73,7 @@ namespace ERPAPI.Controllers
             }
 
 
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpGet("[action]")]
@@ -122,7 +122,30 @@ namespace ERPAPI.Controllers
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
                             item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
+
+                            Kardex _goodsreceivedmax =await (from c in  _context.Kardex
+                                                                    .OrderByDescending(q => q.DocumentDate)
+                                                                   // .Take(1)
+                                                                    join d in _context.KardexLine on c.KardexId equals d.KardexId
+                                                                    where c.CustomerId == _GoodsReceivedq.CustomerId && d.SubProducId==item.SubProductId                                                                   
+                                                                    select c                                                                    
+                                                                 )                                                             
+                                                                 .FirstOrDefaultAsync();
+
+                            if (_goodsreceivedmax == null) { _goodsreceivedmax = new Kardex(); }
+
+
+                            KardexLine _goodsreceivedline = await _context.KardexLine
+                                                                         .Where(q=>q.KardexId== _goodsreceivedmax.KardexId)
+                                                                         .Where(q => q.SubProducId == item.SubProductId)
+                                                                         .OrderByDescending(q => q.KardexLineId)
+                                                                         .Take(1)
+                                                                        .FirstOrDefaultAsync();                           
+
+
                             _context.GoodsReceivedLine.Add(item);
+
+                            item.Total = item.Quantity + _goodsreceivedline.Total;
 
                             _GoodsReceived.Kardex._KardexLine.Add(new KardexLine
                             {
@@ -132,8 +155,8 @@ namespace ERPAPI.Controllers
                                 SubProducId = _GoodsReceivedq.SubProductId,
                                 SubProductName = _GoodsReceivedq.SubProductName,
                                 QuantityEntry = item.Quantity,
-                                
                                 QuantityOut = 0,
+                                QuantityEntryBags = item.QuantitySacos,
                                 BranchId = _GoodsReceivedq.BranchId,
                                 BranchName = _GoodsReceivedq.BranchName,
                                 WareHouseId = item.WareHouseId,
@@ -142,8 +165,12 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = item.UnitOfMeasureName,
                                 TypeOperationId = 1,
                                 TypeOperationName = "Entrada",
+                                Total = item.Total,
+                                TotalBags = item.QuantitySacos + _goodsreceivedline.TotalBags,
+                                QuantityEntryCD = item.Quantity / 1.03,
+                                TotalCD = _goodsreceivedline.TotalCD + (item.Quantity / 1.03),
                             });
-                        }
+                        }//Fin Foreach
 
                         await _context.SaveChangesAsync();
                         _GoodsReceived.Kardex.DocType = 0;                      
@@ -154,7 +181,7 @@ namespace ERPAPI.Controllers
                         _GoodsReceived.Kardex.TypeOperationId = 1;
                         _GoodsReceived.Kardex.TypeOperationName = "Entrada";
                         _GoodsReceived.Kardex.KardexDate = DateTime.Now;
-                        _GoodsReceived.Kardex.DocumentName = "GoodsReceived";
+                        _GoodsReceived.Kardex.DocumentName = "RM";
 
                         _GoodsReceived.Kardex.CustomerId = _GoodsReceivedq.CustomerId;
                         _GoodsReceived.Kardex.CustomerName = _GoodsReceivedq.CustomerName;
@@ -294,7 +321,7 @@ namespace ERPAPI.Controllers
                                 SubProductName = result["SubProductName"].ToString(),
                                 UnitOfMeasureId = Convert.ToInt64(result["UnitOfMeasureId"]),
                                 UnitOfMeasureName = result["UnitOfMeasureName"].ToString(),
-                                Quantity = Convert.ToInt32(result["Cantidad"]),
+                                Quantity = Convert.ToDouble(result["Cantidad"]),
                                 QuantitySacos = Convert.ToInt32(result["CantidadSacos"]),
                                 Price = Convert.ToDouble(result["Precio"]),
                                 Total = Convert.ToDouble(result["Total"]),

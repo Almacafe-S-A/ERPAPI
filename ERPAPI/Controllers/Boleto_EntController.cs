@@ -208,7 +208,7 @@ namespace ERPAPI.Controllers
             Boleto_Ent Items = new Boleto_Ent();
             try
             {
-                Items = await _context.Boleto_Ent.Where(q => q.clave_e == Boleto_EntId).FirstOrDefaultAsync();
+                Items = await _context.Boleto_Ent.Include(q=>q.Boleto_Sal).Where(q => q.clave_e == Boleto_EntId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
