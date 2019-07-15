@@ -202,7 +202,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -238,13 +238,13 @@ namespace ERPAPI.Controllers
                 else
                 {
 
-                    return BadRequest("No existe la policita enviada!");
+                    return await Task.Run(() => BadRequest("No existe la policita enviada!"));
                 }
             }
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }  
 
         }

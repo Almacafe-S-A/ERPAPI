@@ -54,7 +54,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error: {ex.Message}");
             }
 
-            return _users;
+            return await Task.Run(() => _users);
         }
 
 
@@ -79,18 +79,18 @@ namespace ERPAPI.Controllers
                    // IdentityUserRole<string> _userrole = mapper.Map<IdentityUserRole<string>>(_ApplicationUserRole);
                     _context.UserRoles.Add(_ApplicationUserRole);
                     await _context.SaveChangesAsync();
-                    return Ok(_ApplicationUserRole);
+                    return await Task.Run(() => Ok(_ApplicationUserRole));
                 }
                 else
                 {
                       _logger.LogError($"Ya existe esta agregado el rol para el usuario");
-                   return  BadRequest("Ya existe esta agregado el rol para el usuario!");
+                    return await Task.Run(() => BadRequest("Ya existe esta agregado el rol para el usuario!"));
                 }
             }
             catch (Exception ex)
             {
                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
            // ApplicationUserRole _userrole = _ApplicationUserRole;
          
@@ -133,19 +133,19 @@ namespace ERPAPI.Controllers
                 {
                     _context.UserRoles.Remove(customer);
                     await _context.SaveChangesAsync();
-                     return Ok(_ApplicationUserRole);
+                    return await Task.Run(() => Ok(_ApplicationUserRole));
                 }
                 else
                 {
                       _logger.LogError($"No existe ese usuario con el rol enviado!");
-                   return BadRequest($"No existe ese usuario con el rol enviado!");
+                    return await Task.Run(() => BadRequest($"No existe ese usuario con el rol enviado!"));
                 }
                
             }
             catch (Exception ex)
             {
                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
         
 

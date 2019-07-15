@@ -82,8 +82,8 @@ namespace coderush.Controllers.Api
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok(salesType);
+
+            return await Task.Run(() => Ok(salesType));
         }
 
         [HttpPost("[action]")]

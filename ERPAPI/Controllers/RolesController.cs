@@ -48,7 +48,7 @@ namespace ERPAPI.Controllers
             try
             {
                 ApplicationRole Items = await _context.Roles.Where(q => q.Id == RoleId).FirstOrDefaultAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
 
             }
             catch (Exception ex)
@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error: {ex.Message}");
             }
-            return Ok(_users);
+            return await Task.Run(() => Ok(_users));
         }
 
 
@@ -101,10 +101,10 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error: {ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
 
-            return _rolesprod;
+            return await Task.Run(() => _rolesprod);
         }
 
 
@@ -129,13 +129,13 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest("Role exists");
+                    return await Task.Run(() => BadRequest("Role exists"));
                 }
             }
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-               return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
          
         }
@@ -167,11 +167,11 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-              return  BadRequest($"Ocurrio un error: {ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
-          
 
-            return _rol;
+
+            return await Task.Run(() => _rol);
         }
 
         /// <summary>
@@ -189,17 +189,17 @@ namespace ERPAPI.Controllers
                 {
                     _context.Roles.Remove(_ApplicationRole);
                     await _context.SaveChangesAsync();
-                    return (_ApplicationRole);
+                    return await Task.Run(() => (_ApplicationRole));
                 }
                 else
                 {
-                    return BadRequest("El rol esta asignado a Usuarios");
+                    return await Task.Run(() => BadRequest("El rol esta asignado a Usuarios"));
                 }
             }
             catch (Exception ex)
             {
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-               return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }     
 
            

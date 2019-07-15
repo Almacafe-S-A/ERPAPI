@@ -48,18 +48,18 @@ namespace ERPAPI.Controllers
                 var result = await _userManager.AddToRoleAsync(model.ApplicationUser, model.rol);
                 if (result.Succeeded)
                 {
-                    return result;
+                    return await Task.Run(() => result);
                 }
                 else
                 {
-                    return BadRequest("Role exists");
+                    return await Task.Run(() => BadRequest("Role exists"));
                 }
             }
             catch (Exception ex)
             {
 
                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                  return BadRequest($"Ocurrio un error: {ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
           
         }
@@ -77,7 +77,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -98,7 +98,7 @@ namespace ERPAPI.Controllers
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                  return BadRequest($"Ocurrio un error: {ex.Message}");
             }
-            return Json(_users);
+            return await Task.Run(() => Json(_users));
         }
 
 
@@ -120,7 +120,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error: {ex.Message}");
             }
 
-            return _users;
+            return await Task.Run(() => _users);
         }
 
 
@@ -135,13 +135,13 @@ namespace ERPAPI.Controllers
             try
             {
                 ApplicationUser Items = await _context.Users.Where(q => q.Id == UserId).FirstOrDefaultAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
             }
             catch (Exception ex)
             {
 
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error: {ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
            
         }
@@ -152,13 +152,13 @@ namespace ERPAPI.Controllers
             try
             {
                 ApplicationUser Items = await _context.Users.Where(q => q.Email == UserEmail).FirstOrDefaultAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error: {ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
 
         }
@@ -177,7 +177,7 @@ namespace ERPAPI.Controllers
                 _context.Users.Add(_usuario);
                 await _context.SaveChangesAsync();
 
-                return _usuario;
+                return await Task.Run(() => _usuario);
             }
             catch (Exception ex)
             {
@@ -209,13 +209,13 @@ namespace ERPAPI.Controllers
                 _context.Users.Update(_usuario);
                 await _context.SaveChangesAsync();
 
-                return _usuario;
+                return await Task.Run(() => _usuario);
 
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error: {ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
           
         }
@@ -240,9 +240,9 @@ namespace ERPAPI.Controllers
                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-          
 
-            return (_user);
+
+            return await Task.Run(() => (_user));
         }
 
 

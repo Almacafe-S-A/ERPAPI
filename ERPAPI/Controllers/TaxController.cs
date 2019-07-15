@@ -39,12 +39,12 @@ namespace ERPAPI.Controllers
             try
             {
                 List<Tax> Items = await _context.Tax.ToListAsync();
-                return Ok(Items);
+                return await Task.Run(() => Ok(Items));
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -85,13 +85,13 @@ namespace ERPAPI.Controllers
                 Tax tax = _Tax;
                 _context.Tax.Add(tax);
                 await _context.SaveChangesAsync();
-                return (tax); 
+                return await Task.Run(() => (tax)); 
 
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
         }
@@ -118,7 +118,7 @@ namespace ERPAPI.Controllers
 
                 _context.Tax.Update(_Tax);
                 await _context.SaveChangesAsync();
-                return Ok(_Tax);
+                return await Task.Run(() => Ok(_Tax));
             }
             catch (Exception ex)
             {
@@ -144,12 +144,12 @@ namespace ERPAPI.Controllers
                .FirstOrDefault();
                 _context.Tax.Remove(tax);
                 await _context.SaveChangesAsync();
-                return (tax);
+                return await Task.Run(() => (tax));
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
 

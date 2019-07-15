@@ -48,7 +48,7 @@ namespace ERPAPI.Controllers
                 return NotFound();
             }
 
-            return tipoContrato;
+            return await Task.Run(() => tipoContrato);
         }
 
         // PUT: api/TipoContrato/5
@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return await Task.Run(() => NoContent());
         }
 
         // POST: api/TipoContrato
@@ -104,7 +104,7 @@ namespace ERPAPI.Controllers
             _context.TipoContrato.Remove(tipoContrato);
             await _context.SaveChangesAsync();
 
-            return tipoContrato;
+            return await Task.Run(() => tipoContrato);
         }
 
         private bool TipoContratoExists(long id)

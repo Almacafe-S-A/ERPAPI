@@ -48,9 +48,9 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
+
             //int Count = Items.Count();
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpGet("[action]/{CustomerId}")]
@@ -68,7 +68,7 @@ namespace ERPAPI.Controllers
             }
 
             //int Count = Items.Count();
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpGet("[action]/{SalesOrderId}")]
@@ -87,7 +87,7 @@ namespace ERPAPI.Controllers
             }
 
             //int Count = Items.Count();
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
        
@@ -119,9 +119,9 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-            return Ok(salesOrders);
+            return await Task.Run(() => Ok(salesOrders));
         }
 
         [HttpGet("[action]/{id}")]
@@ -214,8 +214,8 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-          
-            return Ok(salesOrder);
+
+            return await Task.Run(() => Ok(salesOrder));
         }
 
         [HttpPost("[action]")]
@@ -240,8 +240,8 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-         
-            return Ok(_salesorder);
+
+            return await Task.Run(() => Ok(_salesorder));
         }
 
         [HttpPost("[action]")]

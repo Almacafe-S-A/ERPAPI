@@ -34,7 +34,7 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<TipoDocumento>>> GetTipoDocumento()
         {
-            return await _context.TipoDocumento.ToListAsync();
+            return await Task.Run(() =>  _context.TipoDocumento.ToListAsync());
         }
 
         // GET: api/TipoDocumento/5
@@ -48,7 +48,7 @@ namespace ERPAPI.Controllers
                 return NotFound();
             }
 
-            return tipoDocumento;
+            return await Task.Run(() => tipoDocumento);
         }
 
         // PUT: api/TipoDocumento/5
@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return await Task.Run(() => NoContent());
         }
 
         // POST: api/TipoDocumento
@@ -104,7 +104,7 @@ namespace ERPAPI.Controllers
             _context.TipoDocumento.Remove(tipoDocumento);
             await _context.SaveChangesAsync();
 
-            return tipoDocumento;
+            return await Task.Run(() => tipoDocumento);
         }
 
         private bool TipoDocumentoExists(long id)

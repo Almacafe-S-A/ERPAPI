@@ -43,7 +43,7 @@ namespace coderush.Controllers.Api
             }
 
             //  int Count = Items.Count();
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         // api/UnitOfMeasureGetUnitOfMeasureById
@@ -61,8 +61,8 @@ namespace coderush.Controllers.Api
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-            
-            return Ok(Items);
+
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpPost("[action]")]
@@ -81,8 +81,8 @@ namespace coderush.Controllers.Api
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-          
-            return Ok(unitOfMeasure);
+
+            return await Task.Run(() => Ok(unitOfMeasure));
         }
 
         [HttpPut("[action]")]
@@ -107,10 +107,10 @@ namespace coderush.Controllers.Api
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-           
-            return Ok(_UnitOfMeasure);
+
+            return await Task.Run(() => Ok(_UnitOfMeasure));
         }
 
         [HttpPost("[action]")]
@@ -129,10 +129,10 @@ namespace coderush.Controllers.Api
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-         
-            return Ok(unitOfMeasure);
+
+            return await Task.Run(() => Ok(unitOfMeasure));
 
         }
 

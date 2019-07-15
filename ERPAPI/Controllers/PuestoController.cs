@@ -46,7 +46,7 @@ namespace ERPAPI.Controllers
                 return NotFound();
             }
 
-            return puesto;
+            return await Task.Run(() => puesto);
         }
 
         // PUT: api/Puesto/5
@@ -76,7 +76,7 @@ namespace ERPAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return await Task.Run(() => NoContent());
         }
 
         // POST: api/Puesto
@@ -96,13 +96,13 @@ namespace ERPAPI.Controllers
             var puesto = await _context.Puesto.FindAsync(id);
             if (puesto == null)
             {
-                return NotFound();
+                return await Task.Run(() => NotFound());
             }
 
             _context.Puesto.Remove(puesto);
             await _context.SaveChangesAsync();
 
-            return puesto;
+            return await Task.Run(() => puesto);
         }
 
         private bool PuestoExists(long id)

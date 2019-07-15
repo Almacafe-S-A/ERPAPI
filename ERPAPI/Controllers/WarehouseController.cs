@@ -42,10 +42,10 @@ namespace coderush.Controllers.Api
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-          
-            return Ok( Items);
+
+            return await Task.Run(() => Ok( Items));
         }
 
 
@@ -62,10 +62,10 @@ namespace coderush.Controllers.Api
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
 
@@ -83,12 +83,12 @@ namespace coderush.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-          
 
 
-            return Ok(warehouse);
+
+            return await Task.Run(() => Ok(warehouse));
         }
 
         [HttpPost("[action]")]
@@ -111,10 +111,10 @@ namespace coderush.Controllers.Api
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-           
-            return Ok(_Warehouse);
+
+            return await Task.Run(() => Ok(_Warehouse));
         }
 
         [HttpPost("[action]")]
@@ -135,10 +135,10 @@ namespace coderush.Controllers.Api
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return Ok(warehouse);
+            return await Task.Run(() => Ok(warehouse));
 
         }
     }

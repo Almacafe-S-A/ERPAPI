@@ -42,7 +42,7 @@ namespace ERPAPI.Controllers
             }
 
             //  int Count = Items.Count();
-            return Ok(Items);
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpGet("[action]/{IdTipoDocumento}")]
@@ -59,8 +59,8 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
-            return Ok(Items);
+
+            return await Task.Run(() => Ok(Items));
         }
 
         [HttpPost("[action]")]
@@ -77,10 +77,10 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return Ok(_TiposDocumento);
+            return await Task.Run(() => Ok(_TiposDocumento));
         }
 
         [HttpPut("[action]")]
@@ -106,10 +106,10 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return Ok(_TipoDocumento);
+            return await Task.Run(() => Ok(_TipoDocumento));
         }
 
         [HttpPost("[action]")]
@@ -128,10 +128,10 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return Ok(_tiposdocumentoq);
+            return await Task.Run(() => Ok(_tiposdocumentoq));
 
         }
 
