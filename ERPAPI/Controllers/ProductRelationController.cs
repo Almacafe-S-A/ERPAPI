@@ -57,6 +57,47 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Producto mediante el Id Enviado
+        /// </summary>
+        /// <param name="RelationProductId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{RelationProductId}")]
+        public async Task<IActionResult> GetProductRelationById(Int64 RelationProductId)
+        {
+            ProductRelation Items = new ProductRelation();
+            try
+            {
+                Items = await _context.ProductRelation.Where(q => q.RelationProductId == RelationProductId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetProductRelationByProductIDSubProductId([FromBody] ProductRelation _pr)
+        {
+            List<ProductRelation> Items = new List<ProductRelation>();
+            try
+            {
+                Items = await _context.ProductRelation.Where(q => q.ProductId == _pr.ProductId)
+                    .Where(q=>q.SubProductId==_pr.SubProductId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         [HttpGet("[action]/{ProductId}")]
         public async Task<ActionResult<ProductRelation>> GetSubProductByProductId(Int64 ProductId)
         {
