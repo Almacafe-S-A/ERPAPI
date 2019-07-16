@@ -68,6 +68,9 @@ namespace ERPAPI.Models
         [Display(Name = "Boleta de peso")]
         public Int64 WeightBallot { get; set; }
 
+        [Display(Name = "Id Autorización")]
+        public Int64 GoodsDeliveryAuthorizationId { get; set; }
+
         public List<ControlPalletsLine> _ControlPalletsLine { get; set; } = new List<ControlPalletsLine>();
        // public List<ControlPalletsLine> _ControlPalletsLine = new List<ControlPalletsLine>();
 

@@ -52,6 +52,29 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetGoodsDeliveredNoSelected()
+        {
+            List<GoodsDelivered> Items = new List<GoodsDelivered>();
+            try
+            {
+                List<Int64> listayaprocesada = _context.BoletaDeSalida
+                                              .Where(q => q.GoodsDeliveredId > 0)
+                                              .Select(q => q.GoodsDeliveredId).ToList();
+
+                Items = await _context.GoodsDelivered.Where(q => !listayaprocesada.Contains(q.GoodsDeliveredId)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la GoodsDelivered por medio del Id enviado.
         /// </summary>
@@ -63,7 +86,7 @@ namespace ERPAPI.Controllers
             GoodsDelivered Items = new GoodsDelivered();
             try
             {
-                Items = await _context.GoodsDelivered.Where(q => q.GoodsDeliveredId == GoodsDeliveredId).FirstOrDefaultAsync();
+                Items = await _context.GoodsDelivered.Include(q=>q._GoodsDeliveredLine).Where(q => q.GoodsDeliveredId == GoodsDeliveredId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
