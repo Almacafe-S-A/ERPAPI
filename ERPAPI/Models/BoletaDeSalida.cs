@@ -13,9 +13,9 @@ namespace ERPAPI.Models
         [Display(Name = "Boleta de Salida")]
         public Int64 BoletaDeSalidaId { get; set; }
 
-        [Display(Name = "C/E No.")]
-        public Int64 NoEntrega { get; set; }
-        
+        [Display(Name = "C/E No.")]        
+        public Int64 GoodsDeliveredId { get; set; }
+
         [Display(Name = "A/R No.")]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
 
@@ -57,6 +57,10 @@ namespace ERPAPI.Models
 
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
+
+     
+
+       
 
         [Display(Name = "Cantidad")]
         public double Quantity { get; set; }
