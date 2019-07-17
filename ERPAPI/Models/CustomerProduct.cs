@@ -21,14 +21,21 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public string SubProductName { get; set; }
 
-        [Display(Name = "Producto")]
+        [Display(Name = "Saldo Certificado Quintales")]
         public double SaldoProductoCertificado { get; set; }
+       
 
-        [Display(Name = "Producto")]
+        [Display(Name = "Saldo Quintales")]
         public double SaldoProductoTotal { get; set; }
+
+        [Display(Name = "Saldo Sacos")]
+        public double SaldoProductoSacos { get; set; }
 
         [Display(Name = "Activo/Inactivo ")]
         public Int64 IdEstado { get; set; }
+
+        [Display(Name = "Estado ")]
+        public string Estado { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }

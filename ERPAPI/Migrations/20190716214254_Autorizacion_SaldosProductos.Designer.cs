@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190716214254_Autorizacion_SaldosProductos")]
+    partial class Autorizacion_SaldosProductos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1045,6 +1047,10 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Largo");
 
+                    b.Property<long>("ProductId");
+
+                    b.Property<string>("ProductName");
+
                     b.Property<long>("TypeId");
 
                     b.Property<string>("TypeName");
@@ -1066,58 +1072,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("CustomerAreaId");
 
                     b.ToTable("CustomerArea");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerAreaProduct", b =>
-                {
-                    b.Property<long>("CustomerAreaProductId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CustomerAreaId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaMoficacion");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.HasKey("CustomerAreaProductId");
-
-                    b.HasIndex("CustomerAreaId");
-
-                    b.ToTable("CustomerAreaProduct");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerAuthorizedSignature", b =>
-                {
-                    b.Property<long>("CustomerAuthorizedSignatureId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Correo");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("Nombre");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("Telefono");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("CustomerAuthorizedSignatureId");
-
-                    b.ToTable("CustomerAuthorizedSignature");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerConditions", b =>
@@ -4447,14 +4401,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ControlPallets")
                         .WithMany("_ControlPalletsLine")
                         .HasForeignKey("ControlPalletsId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerAreaProduct", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CustomerArea")
-                        .WithMany("CustomerAreaProduct")
-                        .HasForeignKey("CustomerAreaId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
             CustomerArea Items = new CustomerArea();
             try
             {
-                Items = await _context.CustomerArea.Where(q => q.CustomerAreaId == CustomerAreaId).FirstOrDefaultAsync();
+                Items = await _context.CustomerArea.Include(q=>q.CustomerAreaProduct).Where(q => q.CustomerAreaId == CustomerAreaId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -88,9 +88,30 @@ namespace ERPAPI.Controllers
             CustomerArea _CustomerAreaq = new CustomerArea();
             try
             {
-                _CustomerAreaq = _CustomerArea;
-                _context.CustomerArea.Add(_CustomerAreaq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _CustomerAreaq = _CustomerArea;
+                        _context.CustomerArea.Add(_CustomerAreaq);
+
+                        foreach (var item in _CustomerArea.CustomerAreaProduct)
+                        {
+                            item.CustomerAreaId = _CustomerArea.CustomerAreaId;
+                            item.ProductName = await _context.SubProduct.Where(q => q.SubproductId == item.ProductId).Select(q => q.ProductName).FirstOrDefaultAsync();
+                            _context.CustomerAreaProduct.Add(item);
+                        }
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                }
             }
             catch (Exception ex)
             {

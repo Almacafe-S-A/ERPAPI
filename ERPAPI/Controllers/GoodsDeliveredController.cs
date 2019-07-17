@@ -123,6 +123,28 @@ namespace ERPAPI.Controllers
                             item.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
                             _context.GoodsDeliveredLine.Add(item);
 
+                            Kardex _kardexmax = await ( from c in _context.Kardex
+                                                        .OrderByDescending(q => q.DocumentDate)
+                                                        // .Take(1)
+                                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
+                                                        where c.CustomerId == _GoodsDeliveredq.CustomerId && d.SubProducId == item.SubProductId
+                                                        select c
+                                                      )
+                                                      .FirstOrDefaultAsync();
+
+                            if (_kardexmax == null) { _kardexmax = new Kardex(); }
+                            KardexLine _KardexLine = await _context.KardexLine
+                                                                         .Where(q => q.KardexId == _kardexmax.KardexId)
+                                                                         .Where(q => q.SubProducId == item.SubProductId)
+                                                                         .OrderByDescending(q => q.KardexLineId)
+                                                                         .Take(1)
+                                                                        .FirstOrDefaultAsync();
+
+                            SubProduct _subproduct = await (from c in _context.SubProduct
+                                                      .Where(q=>q.SubproductId==item.SubProductId)
+                                                      select c
+                                                      ).FirstOrDefaultAsync();
+
                             _GoodsDelivered.Kardex._KardexLine.Add(new KardexLine
                             {
                                 DocumentDate = _GoodsDeliveredq.DocumentDate,
@@ -130,8 +152,8 @@ namespace ERPAPI.Controllers
                                 ProductName = _GoodsDeliveredq.ProductName,
                                 SubProducId = _GoodsDeliveredq.SubProductId,
                                 SubProductName = _GoodsDeliveredq.SubProductName,
-                                QuantityEntry = item.Quantity,
-                                QuantityOut = 0,
+                                QuantityEntry = 0,
+                                QuantityOut = item.Quantity,
                                 BranchId = _GoodsDeliveredq.BranchId,
                                 BranchName = _GoodsDeliveredq.BranchName,
                                 WareHouseId = item.WareHouseId,
@@ -140,6 +162,10 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = item.UnitOfMeasureName,
                                 TypeOperationId = 1,
                                 TypeOperationName = "Salida",
+                                Total = item.Total,
+                                TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                                QuantityOutCD = item.Quantity / (1 + _subproduct.Merma),
+                                TotalCD = _KardexLine.TotalCD - (item.Quantity / (1+ _subproduct.Merma)),
                             });
                         }
 
@@ -153,13 +179,15 @@ namespace ERPAPI.Controllers
                         _GoodsDelivered.Kardex.TypeOperationName = "Salida";
                         _GoodsDelivered.Kardex.KardexDate = DateTime.Now;
 
-                        _GoodsDelivered.Kardex.DocumentName = "GoodsDelivered";
+                        _GoodsDelivered.Kardex.DocumentName = "CE";
 
                         _GoodsDelivered.Kardex.CustomerId = _GoodsDeliveredq.CustomerId;
                         _GoodsDelivered.Kardex.CustomerName = _GoodsDeliveredq.CustomerName;
                         _GoodsDelivered.Kardex.CurrencyId = _GoodsDeliveredq.CurrencyId;
                         _GoodsDelivered.Kardex.CurrencyName = _GoodsDeliveredq.CurrencyName;
                         _GoodsDelivered.Kardex.DocumentId = _GoodsDeliveredq.GoodsDeliveredId;
+                        _GoodsDelivered.Kardex.UsuarioCreacion = _GoodsDeliveredq.UsuarioCreacion;
+                        _GoodsDelivered.Kardex.UsuarioModificacion = _GoodsDeliveredq.UsuarioModificacion;
                         _context.Kardex.Add(_GoodsDelivered.Kardex);
 
                         await _context.SaveChangesAsync();
