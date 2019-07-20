@@ -117,7 +117,8 @@ namespace ERP.Contexts
         public DbSet<CompanyInfo> CompanyInfo { get; set; }
         public DbSet<CustomerAreaProduct> CustomerAreaProduct { get; set; }
         public DbSet<CustomerAuthorizedSignature> CustomerAuthorizedSignature { get; set; }
-
+        public DbSet<CustomerContract> CustomerContract { get; set; }
+        public DbSet<CustomerContractWareHouse> CustomerContractWareHouse { get; set; }
 
         public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
 

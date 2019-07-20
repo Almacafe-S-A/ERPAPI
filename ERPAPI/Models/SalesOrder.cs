@@ -26,6 +26,11 @@ namespace ERPAPI.Models
         [Display(Name = "Telefono")]
         public string Tefono { get; set; }
 
+       
+        //[EmailAddress(ErrorMessage ="Agregue una direccion de correo valida")]
+        [EmailAddress]
+        [RegularExpression(@"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", ErrorMessage = "Correo invalido")]
+        [DataType(DataType.EmailAddress)]
         [Display(Name = "Correo")]
         public string Correo { get; set; }
 

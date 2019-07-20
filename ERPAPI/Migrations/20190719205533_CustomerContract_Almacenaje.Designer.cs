@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190719205533_CustomerContract_Almacenaje")]
+    partial class CustomerContract_Almacenaje
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1215,14 +1217,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Manager");
 
-                    b.Property<double>("Porcentaje1");
-
-                    b.Property<double>("Porcentaje2");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
                     b.Property<string>("RTNCustomerManager");
 
                     b.Property<string>("RTNMANAGER");
@@ -1244,10 +1238,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("Valor1");
-
-                    b.Property<double>("Valor2");
 
                     b.Property<double>("ValueBascula");
 
