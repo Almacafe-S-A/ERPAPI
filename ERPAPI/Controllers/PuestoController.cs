@@ -155,5 +155,37 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(puesto));
 
         }
+
+
+        /// <summary>
+        /// Actualiza un producto
+        /// </summary>
+        /// <param name="_Puesto"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<Puesto>> Update([FromBody]Puesto _Puesto)
+        {
+            Puesto _Puestop = _Puesto;
+            try
+            {
+                _Puestop = await (from c in _context.Puesto
+                                 .Where(q => q.IdPuesto == _Puesto.IdPuesto)
+                                  select c
+                                ).FirstOrDefaultAsync();
+
+                _context.Entry(_Puestop).CurrentValues.SetValues((_Puesto));
+
+                //_context.Escala.Update(_Escalaq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_Puestop));
+        }
     }
 }
