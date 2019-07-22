@@ -52,7 +52,27 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-     
+
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetProformaInvoiceByCustomer(Int64 CustomerId)
+        {
+            List<ProformaInvoice> Items = new List<ProformaInvoice>();
+            try
+            {
+                Items = await _context.ProformaInvoice.Where(q=>q.CustomerId==CustomerId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
 
         /// <summary>
         /// Obtiene los Datos de la ProformaInvoice por medio del Id enviado.

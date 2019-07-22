@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190719003046_Contrato")]
+    partial class Contrato
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1187,8 +1189,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("BandaTransportadora");
-
                     b.Property<string>("Correo1");
 
                     b.Property<string>("Correo2");
@@ -1201,41 +1201,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerManager");
 
-                    b.Property<string>("CustomerManagerProfesionNacionalidad");
-
                     b.Property<string>("CustomerName");
-
-                    b.Property<double>("DelegateSalary");
-
-                    b.Property<double>("ExtraHours");
-
-                    b.Property<DateTime>("FechaContrato");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<double>("FoodPayment");
-
                     b.Property<double>("LatePayment");
 
                     b.Property<string>("Manager");
-
-                    b.Property<string>("Mercancias");
-
-                    b.Property<double>("MontaCargas");
-
-                    b.Property<double>("MulasHidraulicas");
-
-                    b.Property<double>("Papeleria");
-
-                    b.Property<double>("Porcentaje1");
-
-                    b.Property<double>("Porcentaje2");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
 
                     b.Property<string>("RTNCustomerManager");
 
@@ -1243,13 +1217,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Reception");
 
-                    b.Property<string>("Resolution");
-
                     b.Property<long>("SalesOrderId");
 
                     b.Property<string>("StorageTime");
-
-                    b.Property<double>("Transport");
 
                     b.Property<long>("UnitOfMeasureId");
 
@@ -1260,20 +1230,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("Valor1");
-
-                    b.Property<double>("Valor2");
-
-                    b.Property<double>("ValueBascula");
-
-                    b.Property<double>("ValueCD");
-
-                    b.Property<double>("ValueSecure");
-
-                    b.Property<string>("WareHouses");
-
-                    b.Property<string>("WarehouseRequirements");
 
                     b.HasKey("CustomerContractId");
 

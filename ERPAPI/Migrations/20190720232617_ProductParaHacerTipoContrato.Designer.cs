@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190720232617_ProductParaHacerTipoContrato")]
+    partial class ProductParaHacerTipoContrato
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1201,15 +1203,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerManager");
 
-                    b.Property<string>("CustomerManagerProfesionNacionalidad");
-
                     b.Property<string>("CustomerName");
 
-                    b.Property<double>("DelegateSalary");
-
                     b.Property<double>("ExtraHours");
-
-                    b.Property<DateTime>("FechaContrato");
 
                     b.Property<DateTime>("FechaCreacion");
 
@@ -1220,14 +1216,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("LatePayment");
 
                     b.Property<string>("Manager");
-
-                    b.Property<string>("Mercancias");
-
-                    b.Property<double>("MontaCargas");
-
-                    b.Property<double>("MulasHidraulicas");
-
-                    b.Property<double>("Papeleria");
 
                     b.Property<double>("Porcentaje1");
 
@@ -1242,8 +1230,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("RTNMANAGER");
 
                     b.Property<string>("Reception");
-
-                    b.Property<string>("Resolution");
 
                     b.Property<long>("SalesOrderId");
 
@@ -1272,8 +1258,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("ValueSecure");
 
                     b.Property<string>("WareHouses");
-
-                    b.Property<string>("WarehouseRequirements");
 
                     b.HasKey("CustomerContractId");
 

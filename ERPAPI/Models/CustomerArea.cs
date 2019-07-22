@@ -22,11 +22,11 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de documento")]
         public DateTime DocumentDate { get; set; }
 
-        [Display(Name = "Producto")]
-        public Int64 ProductId { get; set; }
+        //[Display(Name = "Producto")]
+        //public Int64 ProductId { get; set; }
 
-        [Display(Name = "Producto")]
-        public string ProductName { get; set; }
+        //[Display(Name = "Producto")]
+        //public string ProductName { get; set; }
 
         [Display(Name = "Unidad de medida")]
         public Int64 UnitOfMeasureId { get; set; }
@@ -73,6 +73,8 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
         public string Impreso { get; set; }
+
+        public List<CustomerAreaProduct> CustomerAreaProduct { get; set; }
 
     }
 }

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190717020232_customerAuthorizedSignatures")]
+    partial class customerAuthorizedSignatures
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -747,10 +749,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Company_Name");
 
-                    b.Property<long>("CountryId");
-
-                    b.Property<string>("CountryName");
-
                     b.Property<string>("Email");
 
                     b.Property<string>("Fax");
@@ -759,17 +757,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<string>("Manager");
-
                     b.Property<string>("Phone");
-
-                    b.Property<string>("PostalCode");
-
-                    b.Property<string>("PrintHeader");
-
-                    b.Property<string>("RTNMANAGER");
-
-                    b.Property<string>("RevOffice");
 
                     b.Property<string>("Tax_Id");
 
@@ -1179,132 +1167,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("CustomerConditionId");
 
                     b.ToTable("CustomerConditions");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerContract", b =>
-                {
-                    b.Property<long>("CustomerContractId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("BandaTransportadora");
-
-                    b.Property<string>("Correo1");
-
-                    b.Property<string>("Correo2");
-
-                    b.Property<string>("Correo3");
-
-                    b.Property<string>("CustomerConstitution");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerManager");
-
-                    b.Property<string>("CustomerManagerProfesionNacionalidad");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<double>("DelegateSalary");
-
-                    b.Property<double>("ExtraHours");
-
-                    b.Property<DateTime>("FechaContrato");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("FoodPayment");
-
-                    b.Property<double>("LatePayment");
-
-                    b.Property<string>("Manager");
-
-                    b.Property<string>("Mercancias");
-
-                    b.Property<double>("MontaCargas");
-
-                    b.Property<double>("MulasHidraulicas");
-
-                    b.Property<double>("Papeleria");
-
-                    b.Property<double>("Porcentaje1");
-
-                    b.Property<double>("Porcentaje2");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<string>("RTNCustomerManager");
-
-                    b.Property<string>("RTNMANAGER");
-
-                    b.Property<string>("Reception");
-
-                    b.Property<string>("Resolution");
-
-                    b.Property<long>("SalesOrderId");
-
-                    b.Property<string>("StorageTime");
-
-                    b.Property<double>("Transport");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<double>("UsedArea");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("Valor1");
-
-                    b.Property<double>("Valor2");
-
-                    b.Property<double>("ValueBascula");
-
-                    b.Property<double>("ValueCD");
-
-                    b.Property<double>("ValueSecure");
-
-                    b.Property<string>("WareHouses");
-
-                    b.Property<string>("WarehouseRequirements");
-
-                    b.HasKey("CustomerContractId");
-
-                    b.ToTable("CustomerContract");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerContractWareHouse", b =>
-                {
-                    b.Property<long>("CustomerContractWareHouseId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CustomerContractId");
-
-                    b.Property<string>("EdificioName");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
-
-                    b.HasKey("CustomerContractWareHouseId");
-
-                    b.ToTable("CustomerContractWareHouse");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerProduct", b =>
