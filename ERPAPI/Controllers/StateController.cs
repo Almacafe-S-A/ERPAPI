@@ -55,15 +55,15 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la State por medio del Id enviado.
         /// </summary>
-        /// <param name="StateId"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{StateId}")]
-        public async Task<IActionResult> GetStateById(Int64 StateId)
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetStateById(Int64 Id)
         {
             State Items = new State();
             try
             {
-                Items = await _context.State.Where(q => q.StateId == StateId).FirstOrDefaultAsync();
+                Items = await _context.State.Where(q => q.Id == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _Stateq = await (from c in _context.State
-                                 .Where(q => q.StateId == _State.StateId)
+                                 .Where(q => q.Id == _State.Id)
                                  select c
                                 ).FirstOrDefaultAsync();
 
@@ -145,7 +145,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _Stateq = _context.State
-                .Where(x => x.StateId == (Int64)_State.StateId)
+                .Where(x => x.Id == (Int64)_State.Id)
                 .FirstOrDefault();
 
                 _context.State.Remove(_Stateq);
