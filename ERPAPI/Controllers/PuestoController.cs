@@ -49,35 +49,51 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => puesto);
         }
 
-        // PUT: api/Puesto/5
-        [HttpPut("[action]")]
-        public async Task<IActionResult> PutPuesto(long id, Puesto puesto)
+        [HttpGet("[action]/{IdPuesto}")]
+        public async Task<IActionResult> GetPuestoById(Int64 IdPuesto)
         {
-            if (id != puesto.IdPuesto)
-            {
-                return BadRequest();
-            }
-             
-            _context.Entry(puesto).State = EntityState.Modified;
-
+            Puesto Items = new Puesto();
             try
             {
-                await _context.SaveChangesAsync();
+                Items = await _context.Puesto.Where(q => q.IdPuesto == IdPuesto).FirstOrDefaultAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!PuestoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            return await Task.Run(() => NoContent());
+            return await Task.Run(() => Ok(Items));
         }
+
+        // PUT: api/Puesto/5
+        //[HttpPut("[action]")]
+        //public async Task<IActionResult> PutPuesto(long id, Puesto puesto)
+        //{
+        //    if (id != puesto.IdPuesto)
+        //    {
+        //        return BadRequest();
+        //    }
+             
+        //    _context.Entry(puesto).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!PuestoExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return await Task.Run(() => NoContent());
+        //}
 
         // POST: api/Puesto
         [HttpPost("[action]")]
@@ -89,25 +105,87 @@ namespace ERPAPI.Controllers
             return CreatedAtAction("GetPuesto", new { id = puesto.IdPuesto }, puesto);
         }
 
-        // DELETE: api/Puesto/5
+
+        /// <summary>
+        /// Inserta un puesto , y retorna el id generado.
+        /// </summary>
+        /// <param name="_Puesto"></param>
+        /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Puesto>> DeletePuesto(long id)
+        public async Task<IActionResult> Insert([FromBody]Puesto _Puesto)
         {
-            var puesto = await _context.Puesto.FindAsync(id);
-            if (puesto == null)
+            Puesto puesto = new Puesto();
+            try
             {
-                return await Task.Run(() => NotFound());
+                puesto = _Puesto;
+                _context.Puesto.Add(puesto);
+                await _context.SaveChangesAsync();
+
             }
-
-            _context.Puesto.Remove(puesto);
-            await _context.SaveChangesAsync();
-
-            return await Task.Run(() => puesto);
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(puesto));
         }
 
-        private bool PuestoExists(long id)
+        /// <summary>
+        /// Elimina un producto
+        /// </summary>
+        /// <param name="_Puesto"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]Puesto _Puesto)
         {
-            return _context.Puesto.Any(e => e.IdPuesto == id);
+            Puesto puesto = new Puesto();
+            try
+            {
+                puesto = _context.Puesto
+                   .Where(x => x.IdPuesto == (int)_Puesto.IdPuesto)
+                   .FirstOrDefault();
+                _context.Puesto.Remove(puesto);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(puesto));
+
+        }
+
+
+        /// <summary>
+        /// Actualiza un producto
+        /// </summary>
+        /// <param name="_Puesto"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<Puesto>> Update([FromBody]Puesto _Puesto)
+        {
+            Puesto _Puestop = _Puesto;
+            try
+            {
+                _Puestop = await (from c in _context.Puesto
+                                 .Where(q => q.IdPuesto == _Puesto.IdPuesto)
+                                  select c
+                                ).FirstOrDefaultAsync();
+
+                _context.Entry(_Puestop).CurrentValues.SetValues((_Puesto));
+
+                //_context.Escala.Update(_Escalaq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_Puestop));
         }
     }
 }

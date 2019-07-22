@@ -75,7 +75,11 @@ namespace ERPAPI.Controllers
 
         //    return Ok(Items);
         //}
-
+        /// <summary>
+        /// Obtiene los Datos de la Country por medio del Id enviado.
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetElementoConfiguracionById(Int64 Id)
         {
@@ -83,12 +87,16 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.ElementoConfiguracion.Where(q => q.Id == Id).FirstOrDefaultAsync();
+
             }
             catch (Exception ex)
             {
+
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
+
             }
+
             return await Task.Run(() => Ok(Items));
         }
 
