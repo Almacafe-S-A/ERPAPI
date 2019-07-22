@@ -51,34 +51,44 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => tipoContrato);
         }
 
-        // PUT: api/TipoContrato/5
-        [HttpPut("[action]")]
-        public async Task<IActionResult> PutTipoContrato(long id, TipoContrato tipoContrato)
+        [HttpGet("[action]/{IdTipoContrato}")]
+        public async Task<ActionResult<TipoContrato>> GetTipoContratoById(Int64 IdTipoContrato)
         {
-            if (id != tipoContrato.IdTipoContrato)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(tipoContrato).State = EntityState.Modified;
-
+            TipoContrato Items = new TipoContrato();
             try
             {
-                await _context.SaveChangesAsync();
+                Items = await _context.TipoContrato.Where(q => q.IdTipoContrato == IdTipoContrato).FirstOrDefaultAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!TipoContratoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
+            return await Task.Run(() => Ok(Items));
+        }
 
-            return await Task.Run(() => NoContent());
+        /// <summary>
+        /// Inserta un puesto , y retorna el id generado.
+        /// </summary>
+        /// <param name="_TipoContrato"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Insert([FromBody]TipoContrato _TipoContrato)
+        {
+            TipoContrato tipocontrato = new TipoContrato();
+            try
+            {
+                tipocontrato = _TipoContrato;
+                _context.TipoContrato.Add(tipocontrato);
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(tipocontrato));
         }
 
         // POST: api/TipoContrato
@@ -92,24 +102,56 @@ namespace ERPAPI.Controllers
         }
 
         // DELETE: api/TipoContrato/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<TipoContrato>> DeleteTipoContrato(long id)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DeleteTipoContrato([FromBody]TipoContrato _TipoContrato)
         {
-            var tipoContrato = await _context.TipoContrato.FindAsync(id);
-            if (tipoContrato == null)
+            TipoContrato tipocontrato = new TipoContrato();
+            try
             {
-                return NotFound();
+                tipocontrato = _context.TipoContrato
+                   .Where(x => x.IdTipoContrato == (int)_TipoContrato.IdTipoContrato)
+                   .FirstOrDefault();
+                _context.TipoContrato.Remove(tipocontrato);
+                await _context.SaveChangesAsync();
             }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(tipocontrato));
 
-            _context.TipoContrato.Remove(tipoContrato);
-            await _context.SaveChangesAsync();
-
-            return await Task.Run(() => tipoContrato);
         }
 
-        private bool TipoContratoExists(long id)
+        /// <summary>
+        /// Actualiza un producto
+        /// </summary>
+        /// <param name="_TipoContrato"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<TipoContrato>> Update([FromBody]TipoContrato _TipoContrato)
         {
-            return _context.TipoContrato.Any(e => e.IdTipoContrato == id);
+            TipoContrato _Tipocontratoq = _TipoContrato;
+            try
+            {
+                _Tipocontratoq = await (from c in _context.TipoContrato
+                                 .Where(q => q.IdTipoContrato == _TipoContrato.IdTipoContrato)
+                                   select c
+                                ).FirstOrDefaultAsync();
+
+                _context.Entry(_Tipocontratoq).CurrentValues.SetValues((_TipoContrato));
+
+                //_context.Escala.Update(_Escalaq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_Tipocontratoq));
         }
     }
 }
