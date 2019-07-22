@@ -7,20 +7,17 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class Country
+    public partial class State
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; } // bigint
-        public string SortName { get; set; } // text
         public string Name { get; set; } // text
-        public int? PhoneCode { get; set; } // integer
-
+        public long? Country_id { get; set; } // bigint        
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }
-        public List<State> State { get; set; }
+
+        public List<City> City { get; set; }
     }
-
-
 }

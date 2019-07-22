@@ -77,6 +77,7 @@ namespace ERP.Contexts
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
         public DbSet<Bank> Bank { get; set; }  
         public DbSet<City> City { get; set; }
+        public DbSet<State> State { get; set; }
         public DbSet<Country> Country { get; set; }
         public DbSet<Employees> Employees { get; set; }
         public DbSet<HoursWorked> HoursWorked { get; set; }
