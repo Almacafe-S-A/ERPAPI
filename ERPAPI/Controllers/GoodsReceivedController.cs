@@ -123,14 +123,23 @@ namespace ERPAPI.Controllers
                         {
                             item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
 
-                            Kardex _kardexmax =await (from c in  _context.Kardex
-                                                                    .OrderByDescending(q => q.DocumentDate)
-                                                                   // .Take(1)
-                                                                    join d in _context.KardexLine on c.KardexId equals d.KardexId
-                                                                    where c.CustomerId == _GoodsReceivedq.CustomerId && d.SubProducId==item.SubProductId                                                                   
-                                                                    select c                                                                    
-                                                                 )                                                             
-                                                                 .FirstOrDefaultAsync();
+                            //Kardex _kardexmax = await (from c in  _context.Kardex
+                            //                                        .OrderByDescending(q => q.DocumentDate)
+                            //                                       // .Take(1)
+                            //                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
+                            //                                        where c.CustomerId == _GoodsReceivedq.CustomerId && d.SubProducId==item.SubProductId                                                                   
+                            //                                        select c                                                                    
+                            //                                     )                                                             
+                            //                                     .FirstOrDefaultAsync();
+
+
+                            Kardex _kardexmax = await (from kdx in _context.Kardex
+                                        .Where(q => q.CustomerId == _GoodsReceivedq.CustomerId)
+                                        from kdxline in _context.KardexLine
+                                          .Where(q => q.KardexId == kdx.KardexId)
+                                            .Where(o => o.SubProducId == item.SubProductId)
+                                            .OrderByDescending(o => o.DocumentDate).Take(1)
+                                        select kdx).FirstOrDefaultAsync();
 
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
 

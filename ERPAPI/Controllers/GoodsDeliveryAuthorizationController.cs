@@ -100,6 +100,8 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+      
+
 
         /// <summary>
         /// Inserta una nueva GoodsDeliveryAuthorization
@@ -107,7 +109,7 @@ namespace ERPAPI.Controllers
         /// <param name="_GoodsDeliveryAuthorization"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsDeliveryAuthorization>> Insert([FromBody]GoodsDeliveryAuthorization _GoodsDeliveryAuthorization)
+        public async Task<ActionResult<GoodsDeliveryAuthorization>> Insert([FromBody]GoodsDeliveryAuthorizationDTO _GoodsDeliveryAuthorization)
         {
             GoodsDeliveryAuthorization _GoodsDeliveryAuthorizationq = new GoodsDeliveryAuthorization();
             try
@@ -124,6 +126,20 @@ namespace ERPAPI.Controllers
                             item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
                             _context.GoodsDeliveryAuthorizationLine.Add(item);
                         }
+
+                        //await _context.SaveChangesAsync();
+                        //foreach (var item in _GoodsDeliveryAuthorization.CertificadosAsociados)
+                        //{
+                        //    CDGoodsDeliveryAuthorization _certificadoauthorization =
+                        //        new CDGoodsDeliveryAuthorization
+                        //        {
+                        //            CD = item,
+                        //            GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId,
+                        //        };
+
+                        //    _context.CDGoodsDeliveryAuthorization.Add(_certificadoauthorization);
+                        //}
+
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();

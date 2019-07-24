@@ -128,6 +128,7 @@ namespace ERPAPI.Models
 
     public class CertificadoDepositoDTO : CertificadoDeposito
     {
+        public Kardex Kardex { get; set; } = new Kardex();
         public List<Int64> RecibosAsociados { get; set; }
         public int editar { get; set; } = 1;
 

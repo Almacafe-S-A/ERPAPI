@@ -38,11 +38,19 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
 
+        //[Display(Name = "Certificado Deposito")]
+      //  public Int64 IdCD { get; set; }
+
+        [Display(Name = "Area Utilizada")]
+        public Int64 CustomerAreaId { get; set; }
+
         [Display(Name = "Fecha de vencimiento")]
         public DateTime ExpirationDate { get; set; }
 
         [Display(Name = "Id")]
         public Int64 ProductId { get; set; }
+
+
 
         [Display(Name = "Nombre Producto")]
         public string ProductName { get; set; }

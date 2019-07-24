@@ -83,4 +83,13 @@ namespace ERPAPI.Models
         public List<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; } = new List<GoodsDeliveryAuthorizationLine>();
 
     }
+
+    public class GoodsDeliveryAuthorizationDTO : GoodsDeliveryAuthorization
+    {
+        public int editar { get; set; } = 1;
+
+        public List<Int64> CertificadosAsociados { get; set; }
+
+
+    }
 }

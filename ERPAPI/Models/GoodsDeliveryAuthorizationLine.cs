@@ -44,7 +44,8 @@ namespace ERPAPI.Models
         [Display(Name = "Valor financiado")]
         public double valorfinanciado { get; set; }
 
-
+        [Display(Name = "Saldo de producto")]
+        public double SaldoProducto { get; set; }
 
 
     }

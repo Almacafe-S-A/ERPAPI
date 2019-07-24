@@ -77,6 +77,33 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSaldoProductoByCertificado([FromBody]Kardex _Kardexq)
+        {
+            KardexLine _kardexproduct = new KardexLine();
+            try
+            {
+                Int64 KardexId = await _context.Kardex
+                                              .Where(q => q.DocumentId == _Kardexq.DocumentId)
+                                              .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                              .Select(q => q.KardexId)
+                                              .MaxAsync();
+
+                _kardexproduct = await _context.KardexLine.Where(q => q.SubProducId == _Kardexq.CurrencyId).FirstOrDefaultAsync();
+                
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+           
+            return await Task.Run(() => Ok(_kardexproduct));
+        }
+
         /// <summary>
         /// Inserta una nueva Kardex
         /// </summary>
