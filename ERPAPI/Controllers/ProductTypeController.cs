@@ -30,7 +30,7 @@ namespace ERPAPI.Controllers
         /// Obtiene el listado de tipos de producto.
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetProductType()
         {
             List<ProductType> Items = new List<ProductType>();

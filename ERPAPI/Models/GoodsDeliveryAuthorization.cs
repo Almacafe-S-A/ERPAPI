@@ -88,6 +88,8 @@ namespace ERPAPI.Models
     {
         public int editar { get; set; } = 1;
 
+        public Kardex Kardex { get; set; } = new Kardex();
+
         public List<Int64> CertificadosAsociados { get; set; }
 
 
