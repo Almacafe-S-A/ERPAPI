@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/ProductType")]
+    [ApiController]
     public class ProductTypeController : Controller
     {
         private readonly ApplicationDbContext _context;
