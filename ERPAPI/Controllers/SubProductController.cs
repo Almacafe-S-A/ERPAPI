@@ -105,7 +105,7 @@ namespace ERPAPI.Controllers
         }
 
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{ProductTypeId}")]
         public async Task<ActionResult<SubProduct>> GetSubProductbByProductTypeId(Int64 ProductTypeId)
         {
             List<SubProduct> Items = new List<SubProduct>();

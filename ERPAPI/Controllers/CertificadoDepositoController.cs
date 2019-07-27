@@ -101,6 +101,26 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{NoCD}")]
+        public async Task<ActionResult> GetCertificadoDepositoByNoCD(Int64 NoCD)
+        {
+            CertificadoDeposito Items = new CertificadoDeposito();
+            try
+            {
+                Items = await _context.CertificadoDeposito.Include(q => q._CertificadoLine).Where(q => q.NoCD == NoCD).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return Ok(Items);
+        }
+
+
         /// <summary>
         /// Inserta una nueva CertificadoDeposito
         /// </summary>
@@ -183,13 +203,21 @@ namespace ERPAPI.Controllers
                             item.IdCD = _CertificadoDepositoq.IdCD;
                             _context.CertificadoLine.Add(item);
 
-                            Kardex _kardexmax = await (from kdx in _context.Kardex
-                                      .Where(q => q.CustomerId == _CertificadoDepositoq.CustomerId)
-                                                       from kdxline in _context.KardexLine
-                                                         .Where(q => q.KardexId == kdx.KardexId)
-                                                           .Where(o => o.SubProducId == item.SubProductId)
-                                                           .OrderByDescending(o => o.DocumentDate).Take(1)
-                                                       select kdx).FirstOrDefaultAsync();
+                            //Kardex _kardexmax = await (from kdx in _context.Kardex
+                            //          .Where(q => q.CustomerId == _CertificadoDepositoq.CustomerId)
+                            //                           from kdxline in _context.KardexLine
+                            //                             .Where(q => q.KardexId == kdx.KardexId)
+                            //                               .Where(o => o.SubProducId == item.SubProductId)
+                            //                               .OrderByDescending(o => o.DocumentDate).Take(1)
+                            //                           select kdx).FirstOrDefaultAsync();
+                            Kardex _kardexmax = await (from c in _context.Kardex
+                                                           .OrderByDescending(q => q.DocumentDate)
+                                                           // .Take(1)
+                                                       join d in _context.KardexLine on c.KardexId equals d.KardexId
+                                                       where c.CustomerId == _CertificadoDepositoq.CustomerId && d.SubProducId == item.SubProductId
+                                                       select c
+                                                        )
+                                                        .FirstOrDefaultAsync();
 
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
 
