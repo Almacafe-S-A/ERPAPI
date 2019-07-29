@@ -274,8 +274,8 @@ namespace ERPAPI.Controllers
                                           select c
                                     ).FirstOrDefault();
 
-                _subproduct.FechaCreacion = subproductq.FechaCreacion;
-                _subproduct.UsuarioCreacion = subproductq.UsuarioCreacion;
+                _subproduct.FechaModificacion = subproductq.FechaModificacion;
+                _subproduct.FechaModificacion = subproductq.FechaModificacion;
 
                 _context.SubProduct.Update(_subproduct);
                 await _context.SaveChangesAsync();
