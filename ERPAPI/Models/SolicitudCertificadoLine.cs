@@ -12,7 +12,7 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 CertificadoLineId { get; set; }
         [Display(Name = "Certificado")]
-        public Int64 IdCD { get; set; }
+        public Int64 IdSCD { get; set; }
         [Display(Name = "Producto")]
         public Int64 SubProductId { get; set; }
         [Display(Name = "Nombre producto")]
@@ -33,7 +33,16 @@ namespace ERPAPI.Models
         [Display(Name = "Total")]
         public double Amount { get; set; }
 
+        [Display(Name = "Valor a pagar impuestos")]
+        public double ValorImpuestos { get; set; }
+
         [Display(Name = "Total Cantidad")]
         public double TotalCantidad { get; set; }
+
+        [Display(Name = "Centro de costos")]
+        public Int64 CenterCostId { get; set; }
+
+        [Display(Name = "Centro de costos")]
+        public string CenterCostName { get; set; }
     }
 }
