@@ -11,7 +11,7 @@ namespace ERPAPI.Models
 
         public DateTime Expiration { get; set; }
 
-        public Int64 BranchId { get; set; }
+
     }
 
 
