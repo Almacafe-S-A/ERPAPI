@@ -105,7 +105,7 @@ namespace ERPAPI.Controllers
         }
 
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{ProductTypeId}")]
         public async Task<ActionResult<SubProduct>> GetSubProductbByProductTypeId(Int64 ProductTypeId)
         {
             List<SubProduct> Items = new List<SubProduct>();
@@ -277,7 +277,8 @@ namespace ERPAPI.Controllers
                 _subproduct.FechaModificacion = subproductq.FechaModificacion;
                 _subproduct.FechaModificacion = subproductq.FechaModificacion;
 
-                _context.SubProduct.Update(_subproduct);
+                _context.Entry(subproductq).CurrentValues.SetValues((_subproduct));
+                //                _context.SubProduct.Update(_subproduct);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -150,6 +150,11 @@ namespace ERPAPI.Controllers
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();
+                            if (_KardexLine == null)
+                            {
+                                _KardexLine = new KardexLine();
+
+                            }
 
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                      .Where(q => q.SubproductId == item.SubProductId)
@@ -181,8 +186,8 @@ namespace ERPAPI.Controllers
                                 TypeOperationName = "Entrada",
                                 Total = item.Total,
                                 TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
-                                QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
-                                TotalCD = _KardexLine.TotalCD + (item.Quantity / (1 + _subproduct.Merma)),
+                                QuantityEntryCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                                TotalCD = _KardexLine.TotalCD + (item.Quantity - (item.Quantity *  _subproduct.Merma)),
                             });
                         }//Fin Foreach
 

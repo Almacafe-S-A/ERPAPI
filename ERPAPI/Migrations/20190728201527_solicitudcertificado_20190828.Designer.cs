@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190728201527_solicitudcertificado_20190828")]
+    partial class solicitudcertificado_20190828
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3863,7 +3865,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoDeposito", b =>
                 {
-                    b.Property<long>("IdSCD")
+                    b.Property<long>("IdCD")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -3945,7 +3947,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("WarehouseName");
 
-                    b.HasKey("IdSCD");
+                    b.HasKey("IdCD");
 
                     b.ToTable("SolicitudCertificadoDeposito");
                 });
@@ -3964,7 +3966,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<long>("IdSCD");
+                    b.Property<long>("IdCD");
 
                     b.Property<double>("Price");
 
@@ -3984,7 +3986,7 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("CertificadoLineId");
 
-                    b.HasIndex("IdSCD");
+                    b.HasIndex("IdCD");
 
                     b.ToTable("SolicitudCertificadoLine");
                 });
@@ -4775,7 +4777,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.SolicitudCertificadoDeposito")
                         .WithMany("_SolicitudCertificadoLine")
-                        .HasForeignKey("IdSCD")
+                        .HasForeignKey("IdCD")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
