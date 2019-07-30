@@ -15,7 +15,7 @@ namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/ProductType")]
-    [ApiController]
+    //[ApiController]
     public class ProductTypeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -105,30 +105,31 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_ProductType"></param>
         /// <returns></returns>
-        [HttpPut("[action]")]
+
+        [HttpPost("[action]")]
         public async Task<ActionResult<ProductType>> Update([FromBody]ProductType _ProductType)
         {
-            ProductType _Productq = _ProductType;
+
             try
             {
-                _Productq = await (from c in _context.ProductType
-                                 .Where(q => q.ProductTypeId == _Productq.ProductTypeId)
-                                   select c
-                                ).FirstOrDefaultAsync();
 
-                _context.Entry(_Productq).CurrentValues.SetValues((_Productq));
+                ProductType subproductq = (from c in _context.ProductType
+                                   .Where(q => q.ProductTypeId == _ProductType.ProductTypeId)
+                                          select c
+                                    ).FirstOrDefault();
 
-                //_context.Escala.Update(_Escalaq);
+                _context.Entry(subproductq).CurrentValues.SetValues((_ProductType));
+                //                _context.SubProduct.Update(_subproduct);
                 await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            return await Task.Run(() => Ok(_Productq));
+            return await Task.Run(() => Ok(_ProductType));
+            //   return Ok(subproduct);
         }
 
         /// <summary>
