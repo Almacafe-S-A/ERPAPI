@@ -37,8 +37,8 @@ namespace ERPAPI.Controllers
             _configuration = configuration;
             _rolemanager = rolemanager;
             _context = context;
-        } 
-   
+        }
+
 
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace ERPAPI.Controllers
             {
                 return await Task.Run(() => BadRequest("Username or password invalid"));
             }
-      
+
 
         }
 
@@ -91,9 +91,9 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-               return BadRequest($"Ocurrio un error: {ex.Message}");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
             }
-          
+
         }
 
         private UserToken BuildToken(UserInfo userInfo)
@@ -118,7 +118,7 @@ namespace ERPAPI.Controllers
                expires: expiration,
                signingCredentials: creds);
 
-            Int64 BranchId = _context.Users.Where(q=>q.Email==userInfo.Email).Select(q => q.BranchId).FirstOrDefault();
+            Int64 BranchId = _context.Users.Where(q => q.Email == userInfo.Email).Select(q => q.BranchId).FirstOrDefault();
 
             return new UserToken()
             {

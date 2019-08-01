@@ -33,9 +33,6 @@ namespace ERPAPI.Models
         [Display(Name = "Total")]
         public double Amount { get; set; }
 
-        [Display(Name = "Valor a pagar impuestos")]
-        public double ValorImpuestos { get; set; }
-
         [Display(Name = "Total Cantidad")]
         public double TotalCantidad { get; set; }
 

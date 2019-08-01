@@ -15,31 +15,31 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/PEPS")]
+    [Route("api/Alert")]
     [ApiController]
-    public class PEPSController : Controller
+    public class AlertController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public PEPSController(ILogger<PEPSController> logger, ApplicationDbContext context)
+        public AlertController(ILogger<AlertController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de PEPSes 
+        /// Obtiene el Listado de Alertes 
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetPEPS()
+        public async Task<IActionResult> GetAlert()
         {
-            List<PEPS> Items = new List<PEPS>();
+            List<Alert> Items = new List<Alert>();
             try
             {
-                Items = await _context.PEPS.ToListAsync();
+                Items = await _context.Alert.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -53,17 +53,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la PEPS por medio del Id enviado.
+        /// Obtiene los Datos de la Alert por medio del Id enviado.
         /// </summary>
-        /// <param name="PEPSId"></param>
+        /// <param name="AlertId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{PEPSId}")]
-        public async Task<IActionResult> GetPEPSById(Int64 PEPSId)
+        [HttpGet("[action]/{AlertId}")]
+        public async Task<IActionResult> GetAlertById(Int64 AlertId)
         {
-            PEPS Items = new PEPS();
+            Alert Items = new Alert();
             try
             {
-                Items = await _context.PEPS.Where(q => q.PEPSId == PEPSId).FirstOrDefaultAsync();
+                Items = await _context.Alert.Where(q => q.AlertId == AlertId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -73,43 +73,23 @@ namespace ERPAPI.Controllers
             }
 
 
-            return await Task.Run(() => Ok(Items));
-        }
-
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetByParams([FromBody]PEPS _peps)
-        {
-            List<PEPS> Items = new List<PEPS>();
-            try
-            {
-                Items = await _context.PEPS.Where(q=>q.Funcionario.Contains(_peps.Funcionario)).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-           
             return await Task.Run(() => Ok(Items));
         }
 
 
         /// <summary>
-        /// Inserta una nueva PEPS
+        /// Inserta una nueva Alert
         /// </summary>
-        /// <param name="_PEPS"></param>
+        /// <param name="_Alert"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<PEPS>> Insert([FromBody]PEPS _PEPS)
+        public async Task<ActionResult<Alert>> Insert([FromBody]Alert _Alert)
         {
-            PEPS _PEPSq = new PEPS();
+            Alert _Alertq = new Alert();
             try
             {
-                _PEPSq = _PEPS;
-                _context.PEPS.Add(_PEPSq);
+                _Alertq = _Alert;
+                _context.Alert.Add(_Alertq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -119,65 +99,65 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-             return await Task.Run(() => Ok(_PEPSq));
+            return await Task.Run(() => Ok(_Alertq));
         }
 
         /// <summary>
-        /// Actualiza la PEPS
+        /// Actualiza la Alert
         /// </summary>
-        /// <param name="_PEPS"></param>
+        /// <param name="_Alert"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<PEPS>> Update([FromBody]PEPS _PEPS)
+        public async Task<ActionResult<Alert>> Update([FromBody]Alert _Alert)
         {
-            PEPS _PEPSq = _PEPS;
+            Alert _Alertq = _Alert;
             try
             {
-                _PEPSq = await (from c in _context.PEPS
-                                 .Where(q => q.PEPSId == _PEPS.PEPSId)
-                                select c
+                _Alertq = await (from c in _context.Alert
+                                 .Where(q => q.AlertId == _Alert.AlertId)
+                                 select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_PEPSq).CurrentValues.SetValues((_PEPS));
+                _context.Entry(_Alertq).CurrentValues.SetValues((_Alert));
 
-                //_context.PEPS.Update(_PEPSq);
+                //_context.Alert.Update(_Alertq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_PEPSq));
+            return await Task.Run(() => Ok(_Alertq));
         }
 
         /// <summary>
-        /// Elimina una PEPS       
+        /// Elimina una Alert       
         /// </summary>
-        /// <param name="_PEPS"></param>
+        /// <param name="_Alert"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]PEPS _PEPS)
+        public async Task<IActionResult> Delete([FromBody]Alert _Alert)
         {
-            PEPS _PEPSq = new PEPS();
+            Alert _Alertq = new Alert();
             try
             {
-                _PEPSq = _context.PEPS
-                .Where(x => x.PEPSId == (Int64)_PEPS.PEPSId)
+                _Alertq = _context.Alert
+                .Where(x => x.AlertId == (Int64)_Alert.AlertId)
                 .FirstOrDefault();
 
-                _context.PEPS.Remove(_PEPSq);
+                _context.Alert.Remove(_Alertq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_PEPSq));
+            return await Task.Run(() => Ok(_Alertq));
 
         }
 

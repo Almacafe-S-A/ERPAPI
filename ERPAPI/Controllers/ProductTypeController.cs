@@ -15,7 +15,7 @@ namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/ProductType")]
-    [ApiController]
+    //[ApiController]
     public class ProductTypeController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -52,6 +52,29 @@ namespace ERPAPI.Controllers
         }
 
 
+
+        /// <summary>
+        /// Obtiene el Producto mediante el Id Enviado
+        /// </summary>
+        /// <param name="ProductTypeId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ProductTypeId}")]
+        public async Task<IActionResult> GetProductTypeById(Int64 ProductTypeId)
+        {
+            ProductType Items = new ProductType();
+            try
+            {
+                Items = await _context.ProductType.Where(q => q.ProductTypeId == ProductTypeId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Inserta un tipo de producto
         /// </summary>
@@ -78,28 +101,35 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Actualiza un tipo de producto
+        /// Actualiza un producto
         /// </summary>
         /// <param name="_ProductType"></param>
         /// <returns></returns>
+
         [HttpPost("[action]")]
-        public async Task<IActionResult> Update([FromBody]ProductType _ProductType)
+        public async Task<ActionResult<ProductType>> Update([FromBody]ProductType _ProductType)
         {
-            ProductType productType = new ProductType();
+
             try
             {
-                productType = _ProductType;
-                _context.ProductType.Update(productType);
-                await _context.SaveChangesAsync();
 
+                ProductType subproductq = (from c in _context.ProductType
+                                   .Where(q => q.ProductTypeId == _ProductType.ProductTypeId)
+                                          select c
+                                    ).FirstOrDefault();
+
+                _context.Entry(subproductq).CurrentValues.SetValues((_ProductType));
+                //                _context.SubProduct.Update(_subproduct);
+                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            return await Task.Run(() => Ok(productType));
+            return await Task.Run(() => Ok(_ProductType));
+            //   return Ok(subproduct);
         }
 
         /// <summary>

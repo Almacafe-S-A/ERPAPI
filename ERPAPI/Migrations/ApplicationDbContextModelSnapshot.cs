@@ -15,9 +15,36 @@ namespace ERPAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("ERPAPI.Models.Alert", b =>
+                {
+                    b.Property<long>("AlertId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AlertName");
+
+                    b.Property<string>("DescriptionAlert");
+
+                    b.Property<long>("DocumentId");
+
+                    b.Property<string>("DocumentName");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("AlertId");
+
+                    b.ToTable("Alert");
+                });
 
             modelBuilder.Entity("ERPAPI.Models.ApplicationRole", b =>
                 {
@@ -714,8 +741,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UnitMeasurName");
 
                     b.Property<long>("UnitMeasureId");
-
-                    b.Property<double>("ValorImpuestos");
 
                     b.HasKey("CertificadoLineId");
 
@@ -2334,8 +2359,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("NoCertificadoDeposito");
 
-                    b.Property<double>("Price");
-
                     b.Property<double>("Quantity");
 
                     b.Property<double>("SaldoProducto");
@@ -2347,8 +2370,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<double>("ValorImpuestos");
 
                     b.Property<long>("WarehouseId");
 

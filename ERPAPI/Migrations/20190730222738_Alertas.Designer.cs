@@ -10,16 +10,43 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190725221623_goodsdeliveryauthline_price")]
-    partial class goodsdeliveryauthline_price
+    [Migration("20190730222738_Alertas")]
+    partial class Alertas
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("ERPAPI.Models.Alert", b =>
+                {
+                    b.Property<long>("AlertId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AlertName");
+
+                    b.Property<string>("DescriptionAlert");
+
+                    b.Property<long>("DocumentId");
+
+                    b.Property<string>("DocumentName");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("AlertId");
+
+                    b.ToTable("Alert");
+                });
 
             modelBuilder.Entity("ERPAPI.Models.ApplicationRole", b =>
                 {
@@ -716,6 +743,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UnitMeasurName");
 
                     b.Property<long>("UnitMeasureId");
+
+                    b.Property<double>("ValorImpuestos");
 
                     b.HasKey("CertificadoLineId");
 
@@ -2348,6 +2377,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UnitOfMeasureName");
 
+                    b.Property<double>("ValorImpuestos");
+
                     b.Property<long>("WarehouseId");
 
                     b.Property<string>("WarehouseName");
@@ -3861,7 +3892,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoDeposito", b =>
                 {
-                    b.Property<long>("IdCD")
+                    b.Property<long>("IdSCD")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -3943,7 +3974,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("WarehouseName");
 
-                    b.HasKey("IdCD");
+                    b.HasKey("IdSCD");
 
                     b.ToTable("SolicitudCertificadoDeposito");
                 });
@@ -3956,9 +3987,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
+                    b.Property<long>("CenterCostId");
+
+                    b.Property<string>("CenterCostName");
+
                     b.Property<string>("Description");
 
-                    b.Property<long>("IdCD");
+                    b.Property<long>("IdSCD");
 
                     b.Property<double>("Price");
 
@@ -3974,9 +4009,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("UnitMeasureId");
 
+                    b.Property<double>("ValorImpuestos");
+
                     b.HasKey("CertificadoLineId");
 
-                    b.HasIndex("IdCD");
+                    b.HasIndex("IdSCD");
 
                     b.ToTable("SolicitudCertificadoLine");
                 });
@@ -4767,7 +4804,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.SolicitudCertificadoDeposito")
                         .WithMany("_SolicitudCertificadoLine")
-                        .HasForeignKey("IdCD")
+                        .HasForeignKey("IdSCD")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
