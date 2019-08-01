@@ -33,6 +33,7 @@ namespace ERP.Contexts
         public DbSet<Vendor> Vendor { get; set; }
         public DbSet<VendorType> VendorType { get; set; }
         public DbSet<SalesOrder> SalesOrder { get; set; }
+       
         public DbSet<SalesOrderLine> SalesOrderLine { get; set; }
         public DbSet<Shipment> Shipment { get; set; }
         public DbSet<ShipmentType> ShipmentType { get; set; }
@@ -168,7 +169,12 @@ namespace ERP.Contexts
             .HasOne(a => a.Boleto_Sal)
             .WithOne(b => b.Boleto_Ent)
            .HasForeignKey<Boleto_Sal>(b => b.clave_e);
-             
+
+
+            modelBuilder.Entity<Product>()
+           .HasIndex(p => new { p.ProductCode })
+           .IsUnique(true);
+
             modelBuilder.Entity<SubProduct>()
            .HasIndex(p => new { p.ProductCode })
            .IsUnique(true);
