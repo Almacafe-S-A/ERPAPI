@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -21,20 +22,23 @@ namespace ERPAPI.Controllers
         private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
 
         public CuentaController(
             UserManager<ApplicationUser> userManager,
              RoleManager<ApplicationRole> rolemanager,
             SignInManager<ApplicationUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration
+            , ApplicationDbContext context
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _rolemanager = rolemanager;
             _context = context;
-        } 
-   
+        }
+
 
 
         /// <summary>
@@ -114,12 +118,13 @@ namespace ERPAPI.Controllers
                expires: expiration,
                signingCredentials: creds);
 
-            Int64 BranchId = _context.Users.Where(q=>q.Email==userInfo.Email).Select(q => q.BranchId).FirstOrDefault();
+            Int64 BranchId = _context.Users.Where(q => q.Email == userInfo.Email).Select(q => q.BranchId).FirstOrDefault();
 
             return new UserToken()
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration
+                Expiration = expiration,
+                BranchId = BranchId
             };
         }
 
