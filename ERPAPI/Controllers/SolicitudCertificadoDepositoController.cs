@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
             SolicitudCertificadoDeposito Items = new SolicitudCertificadoDeposito();
             try
             {
-                Items = await _context.SolicitudCertificadoDeposito.Where(q => q.IdSCD == SolicitudCertificadoDepositoId).FirstOrDefaultAsync();
+                Items = await _context.SolicitudCertificadoDeposito.Where(q => q.IdCD == SolicitudCertificadoDepositoId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -98,7 +98,7 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _SolicitudCertificadoDeposito._SolicitudCertificadoLine)
                         {
-                            item.IdSCD = _SolicitudCertificadoDepositoq.IdSCD;
+                            item.IdCD = _SolicitudCertificadoDepositoq.IdCD;
                             _context.SolicitudCertificadoLine.Add(item);
                         }
 
@@ -108,7 +108,7 @@ namespace ERPAPI.Controllers
                             RecibosCertificado _recibocertificado =
                                 new RecibosCertificado
                                 {
-                                    IdCD = _SolicitudCertificadoDepositoq.IdSCD,
+                                    IdCD = _SolicitudCertificadoDepositoq.IdCD,
                                     IdRecibo = item,
                                     productocantidadbultos = _SolicitudCertificadoDeposito.Quantitysum,
                                     productorecibolempiras = _SolicitudCertificadoDeposito.Total,
@@ -152,7 +152,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _SolicitudCertificadoDepositoq = await (from c in _context.SolicitudCertificadoDeposito
-                                 .Where(q => q.IdSCD == _SolicitudCertificadoDeposito.IdSCD)
+                                 .Where(q => q.IdCD == _SolicitudCertificadoDeposito.IdCD)
                                                         select c
                                 ).FirstOrDefaultAsync();
 
@@ -183,7 +183,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _SolicitudCertificadoDepositoq = _context.SolicitudCertificadoDeposito
-                .Where(x => x.IdSCD == (Int64)_SolicitudCertificadoDeposito.IdSCD)
+                .Where(x => x.IdCD == (Int64)_SolicitudCertificadoDeposito.IdCD)
                 .FirstOrDefault();
 
                 _context.SolicitudCertificadoDeposito.Remove(_SolicitudCertificadoDepositoq);

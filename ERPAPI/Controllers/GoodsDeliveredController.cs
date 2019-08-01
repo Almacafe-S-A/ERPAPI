@@ -164,8 +164,8 @@ namespace ERPAPI.Controllers
                                 TypeOperationName = "Salida",
                                 Total = item.Total,
                                 TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
-                                QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                                QuantityOutCD = item.Quantity / (1 + _subproduct.Merma),
+                                TotalCD = _KardexLine.TotalCD - (item.Quantity / (1+ _subproduct.Merma)),
                             });
                         }
 

@@ -11,7 +11,7 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
-        public Int64 IdSCD { get; set; }
+        public Int64 IdCD { get; set; }
         [Display(Name = "No de solicitud")]
         public Int64 NoCD { get; set; }
         [Display(Name = "Cliente")]

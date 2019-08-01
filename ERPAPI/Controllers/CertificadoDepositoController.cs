@@ -101,26 +101,6 @@ namespace ERPAPI.Controllers
         }
 
 
-        [HttpGet("[action]/{NoCD}")]
-        public async Task<ActionResult> GetCertificadoDepositoByNoCD(Int64 NoCD)
-        {
-            CertificadoDeposito Items = new CertificadoDeposito();
-            try
-            {
-                Items = await _context.CertificadoDeposito.Include(q => q._CertificadoLine).Where(q => q.NoCD == NoCD).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return Ok(Items);
-        }
-
-
         /// <summary>
         /// Inserta una nueva CertificadoDeposito
         /// </summary>
@@ -181,25 +161,10 @@ namespace ERPAPI.Controllers
                         _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
                         foreach (var item in _CertificadoDeposito._CertificadoLine)
                         {
-                            SolicitudCertificadoLine _SolicitudCertificadoLine = new SolicitudCertificadoLine {
-                                 Amount = item.Amount,
-                                 CenterCostName = item.CenterCostName,
-                                 IdSCD = item.IdCD,
-                                 Description = item.Description,
-                                 Price = item.Price,
-                                 Quantity = item.Quantity,
-                                 SubProductId = item.SubProductId,
-                                 SubProductName = item.SubProductName,
-                                 TotalCantidad = item.TotalCantidad,
-                                 UnitMeasureId = item.UnitMeasureId,
-                                 UnitMeasurName = item.UnitMeasurName,
-                                 ValorImpuestos = item.ValorImpuestos,
-                                 CenterCostId = item.CenterCostId,
+                            SolicitudCertificadoLine _SolicitudCertificadoLine = new SolicitudCertificadoLine();
 
-                            };
-
-                           // _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);
-                            _SolicitudCertificadoLine.IdSCD = _SolicitudCertificado.IdSCD;
+                            _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);
+                            _SolicitudCertificadoLine.IdCD = _SolicitudCertificado.IdCD;
                             _context.SolicitudCertificadoLine.Add(_SolicitudCertificadoLine);
 
                         }
@@ -218,21 +183,13 @@ namespace ERPAPI.Controllers
                             item.IdCD = _CertificadoDepositoq.IdCD;
                             _context.CertificadoLine.Add(item);
 
-                            //Kardex _kardexmax = await (from kdx in _context.Kardex
-                            //          .Where(q => q.CustomerId == _CertificadoDepositoq.CustomerId)
-                            //                           from kdxline in _context.KardexLine
-                            //                             .Where(q => q.KardexId == kdx.KardexId)
-                            //                               .Where(o => o.SubProducId == item.SubProductId)
-                            //                               .OrderByDescending(o => o.DocumentDate).Take(1)
-                            //                           select kdx).FirstOrDefaultAsync();
-                            Kardex _kardexmax = await (from c in _context.Kardex
-                                                           .OrderByDescending(q => q.DocumentDate)
-                                                           // .Take(1)
-                                                       join d in _context.KardexLine on c.KardexId equals d.KardexId
-                                                       where c.CustomerId == _CertificadoDepositoq.CustomerId && d.SubProducId == item.SubProductId
-                                                       select c
-                                                        )
-                                                        .FirstOrDefaultAsync();
+                            Kardex _kardexmax = await (from kdx in _context.Kardex
+                                      .Where(q => q.CustomerId == _CertificadoDepositoq.CustomerId)
+                                                       from kdxline in _context.KardexLine
+                                                         .Where(q => q.KardexId == kdx.KardexId)
+                                                           .Where(o => o.SubProducId == item.SubProductId)
+                                                           .OrderByDescending(o => o.DocumentDate).Take(1)
+                                                       select kdx).FirstOrDefaultAsync();
 
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
 
@@ -243,8 +200,6 @@ namespace ERPAPI.Controllers
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();
-
-                            if (_KardexLine == null) { _KardexLine = new KardexLine(); }
 
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                      .Where(q => q.SubproductId == item.SubProductId)
@@ -344,138 +299,12 @@ namespace ERPAPI.Controllers
             return Ok(_CertificadoDepositoq);
         }
 
-
-        [HttpPost("[action]")]
-        public async Task<ActionResult<CertificadoDeposito>> AnularCD([FromBody]CertificadoDeposito _CertificadoDeposito)
-        {
-            CertificadoDeposito _CertificadoDepositoq = _CertificadoDeposito;
-            try
-            {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        _CertificadoDepositoq = await  _context.CertificadoDeposito
-                                 .Where(q => q.IdCD == _CertificadoDeposito.IdCD)                                                      
-                                .FirstOrDefaultAsync();
-
-                        _CertificadoDepositoq.IdEstado = _CertificadoDeposito.IdEstado;
-                        _CertificadoDepositoq.Estado = _CertificadoDeposito.Estado;
-
-                        SolicitudCertificadoDeposito _solicitudq = await (from c in _context.SolicitudCertificadoDeposito
-                                      .Where(q => q.NoCD == _CertificadoDepositoq.NoCD)
-                                                                          select c
-                                      ).FirstOrDefaultAsync();
-
-                        _context.Entry(_CertificadoDepositoq).CurrentValues.SetValues((_CertificadoDepositoq));                      
-
-                        SolicitudCertificadoDeposito _solicitud = _solicitudq;
-                        _solicitud.IdEstado = 3;
-                        _solicitud.Estado = "Anulado";
-                        _context.Entry(_solicitudq).CurrentValues.SetValues((_solicitud));
-
-                        Kardex _kardexentrada = await (from c in _context.Kardex
-                                                       .Include(q=>q._KardexLine)
-                                                 .Where(q => q.DocumentId == _CertificadoDeposito.IdCD)
-                                                 .Where(q => q.DocumentName == "CD")
-                                                       select c).FirstOrDefaultAsync();
-
-                        Kardex _kardexsalida = new Kardex {
-                             KardexDate = _kardexentrada.KardexDate,
-                             TypeOperationId = _kardexentrada.TypeOperationId,
-                             TypeOperationName = "Salida",
-                             DocumentId  = _kardexentrada.DocumentId,
-                             DocumentName  = _kardexentrada.DocumentName,
-                             DocType = _kardexentrada.DocType,
-                             DocName = _kardexentrada.DocName,
-                             CustomerId = _kardexentrada.CustomerId,
-                             CustomerName = _kardexentrada.CustomerName,
-                             CurrencyId = _kardexentrada.CurrencyId,
-                             CurrencyName = _kardexentrada.CustomerName,
-                              
-                             DocumentDate = DateTime.Now,
-                             FechaCreacion =DateTime.Now,
-                             FechaModificacion =DateTime.Now,
-                             UsuarioCreacion = _kardexentrada.UsuarioCreacion,
-                             UsuarioModificacion = _CertificadoDeposito.UsuarioModificacion,
-                             
-                        };
-                        _kardexsalida.DocumentDate = DateTime.Now;
-                        _kardexsalida.KardexDate = DateTime.Now;
-                        _kardexsalida.TypeOperationName = "Salida";
-
-
-                        List<KardexLine> _entradas = new List<KardexLine>();
-                        _entradas.AddRange(_kardexentrada._KardexLine);
-                      //  _kardexsalida._KardexLine.Clear();
-
-                        _kardexsalida.KardexId = 0;
-
-                       // await _context.SaveChangesAsync();
-
-                        foreach (var item in _entradas)
-                        {
-                            _kardexsalida._KardexLine.Add(new KardexLine
-                            {
-                                //KardexId = _kardexsalida.KardexId,
-                                //KardexLineId=0,
-                                DocumentDate = item.DocumentDate,
-                                // ProducId = _CertificadoDeposito.,
-                                // ProductName = _GoodsReceivedq.ProductName,
-                                //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
-                                //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
-                                SubProducId = item.SubProducId,
-                                SubProductName = item.SubProductName,
-                                QuantityEntry = 0,
-                                QuantityOut = item.QuantityEntry,
-                                QuantityEntryBags = 0,
-                                BranchId = item.BranchId,
-                                BranchName = item.BranchName,
-                                WareHouseId = item.WareHouseId,
-                                WareHouseName = item.WareHouseName,
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 1,
-                                TypeOperationName = "Salida",
-                                Total = item.Total,
-                                KardexDate = DateTime.Now,
-                                QuantityOutCD = item.QuantityEntry,
-                                TotalCD = item.TotalCD - (item.QuantityEntry),
-                            });
-                        }
-
-                        
-
-                        _context.Kardex.Add(_kardexsalida);
-                        //_context.CertificadoDeposito.Update(_CertificadoDepositoq);
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        //return BadRequest($"Ocurrio un error:{ex.Message}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            return Ok(_CertificadoDepositoq);
-        }
-
-
         /// <summary>
         /// Actualiza la CertificadoDeposito
         /// </summary>
         /// <param name="_CertificadoDeposito"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<ActionResult<CertificadoDeposito>> Update([FromBody]CertificadoDeposito _CertificadoDeposito)
         {
             CertificadoDeposito _CertificadoDepositoq = _CertificadoDeposito;

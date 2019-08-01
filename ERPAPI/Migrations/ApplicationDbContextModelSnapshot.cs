@@ -15,7 +15,7 @@ namespace ERPAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -741,8 +741,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UnitMeasurName");
 
                     b.Property<long>("UnitMeasureId");
-
-                    b.Property<double>("ValorImpuestos");
 
                     b.HasKey("CertificadoLineId");
 
@@ -2361,8 +2359,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("NoCertificadoDeposito");
 
-                    b.Property<double>("Price");
-
                     b.Property<double>("Quantity");
 
                     b.Property<double>("SaldoProducto");
@@ -2374,8 +2370,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<double>("ValorImpuestos");
 
                     b.Property<long>("WarehouseId");
 
@@ -3890,7 +3884,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoDeposito", b =>
                 {
-                    b.Property<long>("IdSCD")
+                    b.Property<long>("IdCD")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -3972,7 +3966,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("WarehouseName");
 
-                    b.HasKey("IdSCD");
+                    b.HasKey("IdCD");
 
                     b.ToTable("SolicitudCertificadoDeposito");
                 });
@@ -3985,13 +3979,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
-
                     b.Property<string>("Description");
 
-                    b.Property<long>("IdSCD");
+                    b.Property<long>("IdCD");
 
                     b.Property<double>("Price");
 
@@ -4007,11 +3997,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("UnitMeasureId");
 
-                    b.Property<double>("ValorImpuestos");
-
                     b.HasKey("CertificadoLineId");
 
-                    b.HasIndex("IdSCD");
+                    b.HasIndex("IdCD");
 
                     b.ToTable("SolicitudCertificadoLine");
                 });
@@ -4802,7 +4790,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.SolicitudCertificadoDeposito")
                         .WithMany("_SolicitudCertificadoLine")
-                        .HasForeignKey("IdSCD")
+                        .HasForeignKey("IdCD")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
