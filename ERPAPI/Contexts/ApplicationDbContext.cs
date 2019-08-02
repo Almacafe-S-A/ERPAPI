@@ -7,6 +7,7 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using OFAC;
+using ONUListas;
 
 namespace ERP.Contexts
 {
@@ -148,6 +149,29 @@ namespace ERP.Contexts
 
         ///// <summary>
         ////////
+        /// <summary>
+        /// ONU 
+        /// </summary>
+       
+        public DbSet<CONSOLIDATED_LISTM> CONSOLIDATED_LISTM { get; set; }
+        public DbSet<INDIVIDUALM> INDIVIDUALM { get; set; }
+        public DbSet<LIST_TYPEM> LIST_TYPEM { get; set; }
+        public DbSet<INDIVIDUAL_ALIASM> INDIVIDUAL_ALIASM { get; set; }
+        public DbSet<INDIVIDUAL_ADDRESSM> INDIVIDUAL_ADDRESSM { get; set; }
+        public DbSet<INDIVIDUAL_DATE_OF_BIRTHM> INDIVIDUAL_DATE_OF_BIRTHM { get; set; }
+        public DbSet<INDIVIDUAL_PLACE_OF_BIRTHM> INDIVIDUAL_PLACE_OF_BIRTHM { get; set; }
+        public DbSet<INDIVIDUAL_DOCUMENTM> INDIVIDUAL_DOCUMENTM { get; set; }
+        public DbSet<ENTITYM> ENTITYM { get; set; }
+        public DbSet<ENTITY_ALIASM> ENTITY_ALIASM { get; set; }
+        public DbSet<ENTITY_ADDRESSM> ENTITY_ADDRESSM { get; set; }
+        public DbSet<INDIVIDUALSM> INDIVIDUALSM { get; set; }
+        public DbSet<TITLEM> TITLEM { get; set; }
+        public DbSet<DESIGNATIONM> DESIGNATIONM { get; set; }
+        public DbSet<NATIONALITYM> NATIONALITYM { get; set; }
+        public DbSet<ENTITIESM> ENTITIESM { get; set; }
+        public DbSet<LAST_DAY_UPDATEDM> LAST_DAY_UPDATEDM { get; set; }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -19,46 +19,60 @@ namespace ONUListas
 
                 var config = new MapperConfiguration(cfg =>
                 {
-                    cfg.CreateMap<CONSOLIDATED_LIST, CONSOLIDATED_LISTM>();
-                cfg.CreateMap<INDIVIDUAL, INDIVIDUALM>()
-                     .ForMember(d => d.tITLEField, opt => opt.MapFrom(src => String.Join(";", src.TITLE)))
-                      .ForMember(d => d.dESIGNATIONField, opt => opt.MapFrom(src => String.Join(";", src.DESIGNATION)))
-                       .ForMember(d => d.lAST_DAY_UPDATEDField, opt => opt.MapFrom(src => String.Join(";", src.LAST_DAY_UPDATED)))
-                          .ForMember(d => d.nATIONALITYField, opt => opt.MapFrom(src => String.Join(";", src.NATIONALITY)));
-                    cfg.CreateMap<LIST_TYPE, LIST_TYPEM>();
+                    cfg.CreateMap<CONSOLIDATED_LIST, CONSOLIDATED_LISTM>().ForMember(d=>d.Id, opt=>opt.Ignore());
+                 cfg.CreateMap<INDIVIDUAL, INDIVIDUALM>()
+                     .ForMember(d => d.TITLE, opt => opt.MapFrom(src => String.Join(";", src.TITLE)))
+                      .ForMember(d => d.DESIGNATION, opt => opt.MapFrom(src => String.Join(";", src.DESIGNATION)))
+                       .ForMember(d => d.LAST_DAY_UPDATED, opt => opt.MapFrom(src => String.Join(";", src.LAST_DAY_UPDATED)))
+                          .ForMember(d => d.NATIONALITY, opt => opt.MapFrom(src => String.Join(";", src.NATIONALITY)))
+                          .ForMember(d => d.Id, opt => opt.Ignore())
+                          ;
+                    cfg.CreateMap<LIST_TYPE, LIST_TYPEM>().ForMember(d => d.Id, opt => opt.Ignore());
 
-                    cfg.CreateMap<INDIVIDUAL_ALIAS, INDIVIDUAL_ALIASM>();
-                    cfg.CreateMap<INDIVIDUAL_ADDRESS, INDIVIDUAL_ADDRESSM>();
+                    cfg.CreateMap<INDIVIDUAL_ALIAS, INDIVIDUAL_ALIASM>().ForMember(d => d.Id, opt => opt.Ignore());
+                    cfg.CreateMap<INDIVIDUAL_ADDRESS, INDIVIDUAL_ADDRESSM>().ForMember(d => d.Id, opt => opt.Ignore());
                     cfg.CreateMap<INDIVIDUAL_DATE_OF_BIRTH, INDIVIDUAL_DATE_OF_BIRTHM>()
-                    .ForMember(d => d.itemsField, opt => opt.MapFrom(src => String.Join(";", src.Items)))
-                     .ForMember(d => d.itemsElementNameField, opt => opt.MapFrom(src => String.Join(";", src.ItemsElementName)));
+                    .ForMember(d => d.Items, opt => opt.MapFrom(src => String.Join(";", src.Items)))
+                     .ForMember(d => d.ItemsElementName, opt => opt.MapFrom(src => String.Join(";", src.ItemsElementName)))
+                     .ForMember(d => d.Id, opt => opt.Ignore())
+                     ;
                     
-                    cfg.CreateMap<INDIVIDUAL_PLACE_OF_BIRTH, INDIVIDUAL_PLACE_OF_BIRTHM>();
-                    cfg.CreateMap<INDIVIDUAL_DOCUMENT, INDIVIDUAL_DOCUMENTM>();
+                    cfg.CreateMap<INDIVIDUAL_PLACE_OF_BIRTH, INDIVIDUAL_PLACE_OF_BIRTHM>().ForMember(d => d.Id, opt => opt.Ignore());
+                    cfg.CreateMap<INDIVIDUAL_DOCUMENT, INDIVIDUAL_DOCUMENTM>().ForMember(d => d.Id, opt => opt.Ignore());
 
                     cfg.CreateMap<ENTITY, ENTITYM>()
-                     .ForMember(d => d.lAST_DAY_UPDATEDField, opt => opt.MapFrom(src => String.Join(";", src.LAST_DAY_UPDATED)));
-                    cfg.CreateMap<ENTITY_ADDRESS, ENTITY_ADDRESSM>();
-                    cfg.CreateMap<ENTITY_ALIAS, ENTITY_ALIASM>();
-                    cfg.CreateMap<INDIVIDUALS, INDIVIDUALSM>();
+                     .ForMember(d => d.LAST_DAY_UPDATED, opt => opt.MapFrom(src => String.Join(";", src.LAST_DAY_UPDATED)))
+                     .ForMember(d => d.Id, opt => opt.Ignore()); 
+
+                    cfg.CreateMap<ENTITY_ADDRESS, ENTITY_ADDRESSM>().ForMember(d => d.Id, opt => opt.Ignore());
+                    cfg.CreateMap<ENTITY_ALIAS, ENTITY_ALIASM>().ForMember(d => d.Id, opt => opt.Ignore());
+                    cfg.CreateMap<INDIVIDUALS, INDIVIDUALSM>().ForMember(d => d.Id, opt => opt.Ignore());
                     cfg.CreateMap<TITLE, TITLEM>()
-                     .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE)));
+                     .ForMember(d => d.VALUE, opt => opt.MapFrom(src => String.Join(";", src.VALUE)))
+                    .ForMember(d => d.Id, opt => opt.Ignore())
                     ;
 
                     cfg.CreateMap<DESIGNATION, DESIGNATIONM>()
-                     .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE))); 
+                     .ForMember(d => d.VALUE, opt => opt.MapFrom(src => String.Join(";", src.VALUE)))
+                     .ForMember(d => d.Id, opt => opt.Ignore());
 
                     cfg.CreateMap<NATIONALITY, NATIONALITYM>()
-                    .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE)));
-                    cfg.CreateMap<ENTITIES, ENTITIESM>();
+                    .ForMember(d => d.VALUE, opt => opt.MapFrom(src => String.Join(";", src.VALUE)))
+                    .ForMember(d => d.Id, opt => opt.Ignore())
+                    ;
+
+                    cfg.CreateMap<ENTITIES, ENTITIESM>().ForMember(d => d.Id, opt => opt.Ignore());
 
                     cfg.CreateMap<LAST_DAY_UPDATED, LAST_DAY_UPDATEDM>()
-                       .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE)));
+                       .ForMember(d => d.VALUE, opt => opt.MapFrom(src => String.Join(";", src.VALUE)))
+                       .ForMember(d => d.Id, opt => opt.Ignore());
                 });
 
                 IMapper mapper = config.CreateMapper();
 
                 CONSOLIDATED_LISTM CONSOLIDATED_LISTM = mapper.Map<CONSOLIDATED_LIST, CONSOLIDATED_LISTM>(data);
+                 mapper.ConfigurationProvider.AssertConfigurationIsValid();
+
 
                 Console.WriteLine("Inserting data to db.. Please wait");
 
