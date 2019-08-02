@@ -42,7 +42,12 @@ namespace ERPAPI.Controllers
             {
                 var query = _context.sdnListSdnEntry
                       .Where(q => q.lastName.Contains(_sdnListSdnEntryM.lastName)
-                           || q.firstName.Contains(_sdnListSdnEntryM.firstName));
+                           || q.firstName.Contains(_sdnListSdnEntryM.firstName)
+                           || (  q.lastName + q.firstName).Contains(_sdnListSdnEntryM.lastName + _sdnListSdnEntryM.firstName)
+                           || ( q.firstName+ q.lastName ).Contains(_sdnListSdnEntryM.firstName+_sdnListSdnEntryM.lastName)
+                           || (q.lastName + " " + q.firstName).Contains(_sdnListSdnEntryM.lastName+" "+_sdnListSdnEntryM.firstName)
+                           || (  q.firstName + " " + q.lastName ).Contains(_sdnListSdnEntryM.firstName+" "+ _sdnListSdnEntryM.lastName)
+                           );
                 _personapornombre = await query
                         .ToListAsync();
 
