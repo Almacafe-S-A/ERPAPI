@@ -4,18 +4,20 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190802180431_ONU")]
+    partial class ONU
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1493,22 +1495,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdDependientes");
 
                     b.ToTable("Dependientes");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Dimensions", b =>
-                {
-                    b.Property<string>("Num")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(30);
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(60);
-
-                    b.Property<int>("DimCode");
-
-                    b.HasKey("Num");
-
-                    b.ToTable("Dimensions");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ElementoConfiguracion", b =>

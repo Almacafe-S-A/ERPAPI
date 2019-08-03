@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -9,20 +10,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OFAC;
+using ONUListas;
 
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/OFAC")]
+    [Route("api/ONU")]
     [ApiController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class OFACController : Controller
+    public class ONUController : Controller
     {
 
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public OFACController(ILogger<OFACController> logger, ApplicationDbContext context)
+        public ONUController(ILogger<OFACController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
@@ -35,18 +37,17 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<ActionResult> GetPersonByName([FromBody]sdnListSdnEntryM _sdnListSdnEntryM)
+        public async Task<ActionResult> GetPersonByName([FromBody]INDIVIDUALM _INDIVIDUALM)
         {
-            List<sdnListSdnEntryM> _personapornombre = new List<sdnListSdnEntryM>();
+            List<INDIVIDUALM> _personapornombre = new List<INDIVIDUALM>();
             try
             {
-                var query = _context.sdnListSdnEntry
-                      .Where(q => q.lastName.Contains(_sdnListSdnEntryM.lastName)
-                           || q.firstName.Contains(_sdnListSdnEntryM.firstName)
-                           || (  q.lastName + q.firstName).Contains(_sdnListSdnEntryM.lastName + _sdnListSdnEntryM.firstName)
-                           || ( q.firstName+ q.lastName ).Contains(_sdnListSdnEntryM.firstName+_sdnListSdnEntryM.lastName)
-                           || (q.lastName + " " + q.firstName).Contains(_sdnListSdnEntryM.lastName+" "+_sdnListSdnEntryM.firstName)
-                           || (  q.firstName + " " + q.lastName ).Contains(_sdnListSdnEntryM.firstName+" "+ _sdnListSdnEntryM.lastName)
+                var query = _context.INDIVIDUALM
+                      .Where(q => (q.SECOND_NAME + q.FIRST_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
+                      || (q.FIRST_NAME+ q.SECOND_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
+                      || (q.SECOND_NAME +" "+ q.FIRST_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
+                      || (q.FIRST_NAME +" " + q.SECOND_NAME).Contains(_INDIVIDUALM.SECOND_NAME
+                      )
                            );
                 _personapornombre = await query
                         .ToListAsync();
@@ -85,12 +86,13 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Insert([FromBody]sdnListM payload)
+        public async Task<IActionResult> Insert([FromBody]CONSOLIDATED_LISTM payload)
         {
             try
             {
-                sdnListM customerType = payload;
-                _context.sdnList.Add(customerType);
+               CONSOLIDATED_LISTM customerType = payload;
+              //  _context.BulkInsert(payload);
+                 _context.CONSOLIDATED_LISTM.Add(customerType);
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(customerType));
                 // return Ok(customerType);
