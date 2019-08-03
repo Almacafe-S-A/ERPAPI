@@ -26,13 +26,14 @@ namespace ERP.Contexts
         {
 
         }
-
+        public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
         public DbSet<CustomerType> CustomerType { get; set; }
         public DbSet<Vendor> Vendor { get; set; }
         public DbSet<VendorType> VendorType { get; set; }
         public DbSet<SalesOrder> SalesOrder { get; set; }
+       
         public DbSet<SalesOrderLine> SalesOrderLine { get; set; }
         public DbSet<Shipment> Shipment { get; set; }
         public DbSet<ShipmentType> ShipmentType { get; set; }
@@ -120,11 +121,11 @@ namespace ERP.Contexts
         public DbSet<CustomerAuthorizedSignature> CustomerAuthorizedSignature { get; set; }
         public DbSet<CustomerContract> CustomerContract { get; set; }
         public DbSet<CustomerContractWareHouse> CustomerContractWareHouse { get; set; }
+        public DbSet<Alert> Alert { get; set; }
         public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
         public DbSet<ERPAPI.Models.Empresa> Empresa { get; set; }
         public DbSet<ERPAPI.Models.Departamento> Departamento { get; set; }
         public DbSet<ERPAPI.Models.TipoContrato> TipoContrato { get; set; }
-
         public DbSet<ERPAPI.Models.Dependientes> Dependientes { get; set; }
 
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
@@ -168,7 +169,12 @@ namespace ERP.Contexts
             .HasOne(a => a.Boleto_Sal)
             .WithOne(b => b.Boleto_Ent)
            .HasForeignKey<Boleto_Sal>(b => b.clave_e);
-             
+
+
+            modelBuilder.Entity<Product>()
+           .HasIndex(p => new { p.ProductCode })
+           .IsUnique(true);
+
             modelBuilder.Entity<SubProduct>()
            .HasIndex(p => new { p.ProductCode })
            .IsUnique(true);
@@ -182,7 +188,9 @@ namespace ERP.Contexts
            .HasMany(c => c.ProductRelation)
            .WithOne(e => e.Product)
            .OnDelete(DeleteBehavior.Restrict);
-
+            modelBuilder.Entity<Dimensions>()
+                .HasIndex(p => new { p.Num, p.DimCode })
+                .IsUnique(true);
             //modelBuilder.Entity<SubProduct>(entity => {
             //    entity.HasIndex(e => e.ProductCode).IsUnique();
             //});

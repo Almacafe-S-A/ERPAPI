@@ -80,7 +80,7 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GetSaldoProductoByCertificado([FromBody]Kardex _Kardexq)
         {
-            KardexLine _kardexproduct = new KardexLine();
+            List<KardexLine> _kardexproduct = new List<KardexLine>();
             try
             {
                 Int64 KardexId = await _context.Kardex
@@ -89,7 +89,12 @@ namespace ERPAPI.Controllers
                                               .Select(q => q.KardexId)
                                               .MaxAsync();
 
-                _kardexproduct = await _context.KardexLine.Where(q => q.SubProducId == _Kardexq.CurrencyId).FirstOrDefaultAsync();
+                _kardexproduct = await (_context.KardexLine
+                                              .Where(q => q.KardexId == KardexId)                                              
+                                             )
+                                              .ToListAsync();
+
+               // _kardexproduct = await _context.KardexLine.Where(q => q.SubProducId == _Kardexq.CurrencyId).FirstOrDefaultAsync();
                 
 
             }

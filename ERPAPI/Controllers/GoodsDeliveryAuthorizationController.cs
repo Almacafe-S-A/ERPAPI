@@ -125,7 +125,88 @@ namespace ERPAPI.Controllers
                         {
                             item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
                             _context.GoodsDeliveryAuthorizationLine.Add(item);
+
+
+                            Kardex _kardexmax = await (from kdx in _context.Kardex
+                                  .Where(q => q.CustomerId == _GoodsDeliveryAuthorization.CustomerId)
+                                                       from kdxline in _context.KardexLine
+                                                         .Where(q => q.KardexId == kdx.KardexId)
+                                                           .Where(o => o.SubProducId == item.SubProductId)
+                                                           .OrderByDescending(o => o.DocumentDate).Take(1)
+                                                       select kdx).FirstOrDefaultAsync();
+
+                            if (_kardexmax == null) { _kardexmax = new Kardex(); }
+
+
+                            KardexLine _KardexLine = await _context.KardexLine
+                                                                         .Where(q => q.KardexId == _kardexmax.KardexId)
+                                                                         .Where(q => q.SubProducId == item.SubProductId)
+                                                                         .OrderByDescending(q => q.KardexLineId)
+                                                                         .Take(1)
+                                                                        .FirstOrDefaultAsync();
+
+                            SubProduct _subproduct = await (from c in _context.SubProduct
+                                                     .Where(q => q.SubproductId == item.SubProductId)
+                                                            select c
+                                                     ).FirstOrDefaultAsync();
+
+
+                            //  _context.GoodsReceivedLine.Add(item);
+
+                            //item. = item.Quantity + _KardexLine.Total;
+
+                            //Por cada linea de certificado , se agrega un Kardex de salida del tipo CD
+                            _GoodsDeliveryAuthorization.Kardex._KardexLine.Add(new KardexLine
+                            {
+                                DocumentDate = _GoodsDeliveryAuthorization.DocumentDate,
+                                // ProducId = _CertificadoDeposito.,
+                                // ProductName = _GoodsReceivedq.ProductName,
+                                SubProducId = item.SubProductId,
+                                SubProductName = item.SubProductName,
+                                QuantityEntry = 0,
+                                QuantityOut = item.Quantity,
+                                QuantityEntryBags = 0,
+                                BranchId = _GoodsDeliveryAuthorization.BranchId,
+                                BranchName = _GoodsDeliveryAuthorization.BranchName,
+                                WareHouseId = item.WarehouseId,
+                                WareHouseName = item.WarehouseName,
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                TypeOperationId = 1,
+                                TypeOperationName = "Salida",
+                                Total = item.valorcertificado,
+                                //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
+                                //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
+                                QuantityEntryCD = item.Quantity,
+                                TotalCD = _KardexLine.TotalCD - (item.Quantity),
+                            });
+
+
+                            _GoodsDeliveryAuthorization.Kardex.DocType = 0;
+                            _GoodsDeliveryAuthorization.Kardex.DocName = "SolicitudAutorizacion/GoodsDeliveryAuthorization";
+                            _GoodsDeliveryAuthorization.Kardex.DocumentDate = _GoodsDeliveryAuthorization.DocumentDate;
+                            _GoodsDeliveryAuthorization.Kardex.FechaCreacion = DateTime.Now;
+                            _GoodsDeliveryAuthorization.Kardex.FechaModificacion = DateTime.Now;
+                            _GoodsDeliveryAuthorization.Kardex.TypeOperationId = 1;
+                            _GoodsDeliveryAuthorization.Kardex.TypeOperationName = "Salida";
+                            _GoodsDeliveryAuthorization.Kardex.KardexDate = DateTime.Now;
+                            _GoodsDeliveryAuthorization.Kardex.DocumentName = "CD";
+
+                            _GoodsDeliveryAuthorization.Kardex.CustomerId = _GoodsDeliveryAuthorization.CustomerId;
+                            _GoodsDeliveryAuthorization.Kardex.CustomerName = _GoodsDeliveryAuthorization.CustomerName;
+                            //_CertificadoDeposito.Kardex.CurrencyId = _CertificadoDeposito.CurrencyId;
+                            _GoodsDeliveryAuthorization.Kardex.CurrencyName = _GoodsDeliveryAuthorization.CurrencyName;
+                            _GoodsDeliveryAuthorization.Kardex.DocumentId = item.GoodsDeliveryAuthorizationId;
+                            _GoodsDeliveryAuthorization.Kardex.UsuarioCreacion = _GoodsDeliveryAuthorization.UsuarioCreacion;
+                            _GoodsDeliveryAuthorization.Kardex.UsuarioModificacion = _GoodsDeliveryAuthorization.UsuarioModificacion;
+
+                            _context.Kardex.Add(_GoodsDeliveryAuthorization.Kardex);
+
+
                         }
+
+                  
+
 
                         //await _context.SaveChangesAsync();
                         //foreach (var item in _GoodsDeliveryAuthorization.CertificadosAsociados)

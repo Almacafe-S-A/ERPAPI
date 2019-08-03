@@ -105,13 +105,33 @@ namespace ERPAPI.Controllers
         }
 
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{ProductTypeId}")]
         public async Task<ActionResult<SubProduct>> GetSubProductbByProductTypeId(Int64 ProductTypeId)
         {
             List<SubProduct> Items = new List<SubProduct>();
             try
             {
                 Items = await _context.SubProduct.Where(q=>q.ProductTypeId== ProductTypeId).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+            //  return Ok(Items);
+        }
+
+        [HttpGet("[action]/{ProductTypeId}")]
+        public async Task<ActionResult<SubProduct>> GetSubProductbByProductTypeIdPropios(Int64 ProductTypeId)
+        {
+            List<SubProduct> Items = new List<SubProduct>();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.ProductTypeId == ProductTypeId).ToListAsync();
 
             }
             catch (Exception ex)
@@ -262,30 +282,62 @@ namespace ERPAPI.Controllers
             //  return Ok(currency);
         }
 
+        ///// <param name="_SubProduct"></param>
+        ///// <returns></returns>
+        //[HttpPost("[action]")]
+        //public async Task<IActionResult> Insert([FromBody]SubProduct _SubProduct)
+        //{
+        //    SubProduct subproduct = new SubProduct();
+        //    try
+        //    {
+        //        subproduct = _SubProduct;
+        //        _context.SubProduct.Add(subproduct);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+        //        return BadRequest($"Ocurrio un error:{ex.Message}");
+        //    }
+
+        //    return await Task.Run(() => Ok(subproduct));
+        //}
+
+
+        /// <summary>
+        /// Actualiza un producto
+        /// </summary>
+        /// <param name="_Subproduct"></param>
+        /// <returns></returns>
+
         [HttpPost("[action]")]
-        public async Task<ActionResult<SubProduct>> Update([FromBody]SubProduct _subproduct)
+        public async Task<ActionResult<SubProduct>> Update([FromBody]SubProduct _Subproduct)
         {
             
             try
             {
 
                 SubProduct subproductq = (from c in _context.SubProduct
-                                   .Where(q => q.SubproductId == _subproduct.SubproductId)
+                                   .Where(q => q.SubproductId == _Subproduct.SubproductId)
                                           select c
                                     ).FirstOrDefault();
 
-                _subproduct.FechaCreacion = subproductq.FechaCreacion;
-                _subproduct.UsuarioCreacion = subproductq.UsuarioCreacion;
+                _Subproduct.FechaCreacion = subproductq.FechaCreacion;
+                _Subproduct.UsuarioCreacion = subproductq.UsuarioCreacion;
 
-                _context.SubProduct.Update(_subproduct);
+
+                _context.Entry(subproductq).CurrentValues.SetValues((_Subproduct));
+                //                _context.SubProduct.Update(_subproduct);
                 await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-            return await Task.Run(() => Ok(_subproduct));
+            return await Task.Run(() => Ok(_Subproduct));
             //   return Ok(subproduct);
         }
 
