@@ -27,7 +27,7 @@ namespace ERP.Contexts
         {
 
         }
-
+        public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
         public DbSet<CustomerType> CustomerType { get; set; }
@@ -212,7 +212,9 @@ namespace ERP.Contexts
            .HasMany(c => c.ProductRelation)
            .WithOne(e => e.Product)
            .OnDelete(DeleteBehavior.Restrict);
-
+            modelBuilder.Entity<Dimensions>()
+                .HasIndex(p => new { p.Num, p.DimCode })
+                .IsUnique(true);
             //modelBuilder.Entity<SubProduct>(entity => {
             //    entity.HasIndex(e => e.ProductCode).IsUnique();
             //});

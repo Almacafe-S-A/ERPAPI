@@ -17,6 +17,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Remove="Controllers\LedgerController.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.Designer.cs" />
     <Compile Remove="Migrations\20190422162817_ControllersNumeracionSAR.cs" />
@@ -67,6 +68,7 @@
     <Compile Remove="Migrations\20190711180956_ImpresionDocumentos_Sacos_Quintales.Designer.cs" />
     <Compile Remove="Migrations\20190712181530_ProductRelation.cs" />
     <Compile Remove="Migrations\20190712181530_ProductRelation.Designer.cs" />
+    <Compile Remove="Models\Ledger.cs" />
   </ItemGroup> 
 
   <ItemGroup>

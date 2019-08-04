@@ -20,6 +20,11 @@ namespace ERPAPI.Helpers
         Temporary = 6
     }
 
+    public enum SysDimension
+    {
+         Sucursal =1, 
+         CentroCoste =2
+    }
     public enum DocumentTypes
     {
         SalesQuote = 1,

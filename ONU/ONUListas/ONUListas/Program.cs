@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+﻿using AutoMapper;
+using System;
+using System.IO;
+using System.Net;
+=======
 ﻿using AspNetCore.Http.Extensions;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +13,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+>>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -14,13 +21,64 @@ namespace ONUListas
 {
     class Program
     {
+<<<<<<< HEAD
+=======
         static MyConfig moduleSettings = new MyConfig();
+>>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
         static void Main(string[] args)
         {
             Console.WriteLine("Downloading data from https://scsanctions.un.org/resources/xml/en/consolidated.xml");
 
             try
             {
+<<<<<<< HEAD
+                var data = GetData();
+
+                var config = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<CONSOLIDATED_LIST, CONSOLIDATED_LISTM>();
+                cfg.CreateMap<INDIVIDUAL, INDIVIDUALM>()
+                     .ForMember(d => d.tITLEField, opt => opt.MapFrom(src => String.Join(";", src.TITLE)))
+                      .ForMember(d => d.dESIGNATIONField, opt => opt.MapFrom(src => String.Join(";", src.DESIGNATION)))
+                       .ForMember(d => d.lAST_DAY_UPDATEDField, opt => opt.MapFrom(src => String.Join(";", src.LAST_DAY_UPDATED)))
+                          .ForMember(d => d.nATIONALITYField, opt => opt.MapFrom(src => String.Join(";", src.NATIONALITY)));
+                    cfg.CreateMap<LIST_TYPE, LIST_TYPEM>();
+
+                    cfg.CreateMap<INDIVIDUAL_ALIAS, INDIVIDUAL_ALIASM>();
+                    cfg.CreateMap<INDIVIDUAL_ADDRESS, INDIVIDUAL_ADDRESSM>();
+                    cfg.CreateMap<INDIVIDUAL_DATE_OF_BIRTH, INDIVIDUAL_DATE_OF_BIRTHM>()
+                    .ForMember(d => d.itemsField, opt => opt.MapFrom(src => String.Join(";", src.Items)))
+                     .ForMember(d => d.itemsElementNameField, opt => opt.MapFrom(src => String.Join(";", src.ItemsElementName)));
+                    
+                    cfg.CreateMap<INDIVIDUAL_PLACE_OF_BIRTH, INDIVIDUAL_PLACE_OF_BIRTHM>();
+                    cfg.CreateMap<INDIVIDUAL_DOCUMENT, INDIVIDUAL_DOCUMENTM>();
+
+                    cfg.CreateMap<ENTITY, ENTITYM>()
+                     .ForMember(d => d.lAST_DAY_UPDATEDField, opt => opt.MapFrom(src => String.Join(";", src.LAST_DAY_UPDATED)));
+                    cfg.CreateMap<ENTITY_ADDRESS, ENTITY_ADDRESSM>();
+                    cfg.CreateMap<ENTITY_ALIAS, ENTITY_ALIASM>();
+                    cfg.CreateMap<INDIVIDUALS, INDIVIDUALSM>();
+                    cfg.CreateMap<TITLE, TITLEM>()
+                     .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE)));
+                    ;
+
+                    cfg.CreateMap<DESIGNATION, DESIGNATIONM>()
+                     .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE))); 
+
+                    cfg.CreateMap<NATIONALITY, NATIONALITYM>()
+                    .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE)));
+                    cfg.CreateMap<ENTITIES, ENTITIESM>();
+
+                    cfg.CreateMap<LAST_DAY_UPDATED, LAST_DAY_UPDATEDM>()
+                       .ForMember(d => d.vALUEField, opt => opt.MapFrom(src => String.Join(";", src.VALUE)));
+                });
+
+                IMapper mapper = config.CreateMapper();
+
+                CONSOLIDATED_LISTM CONSOLIDATED_LISTM = mapper.Map<CONSOLIDATED_LIST, CONSOLIDATED_LISTM>(data);
+
+                Console.WriteLine("Inserting data to db.. Please wait");
+=======
                 var builder = new ConfigurationBuilder()
                  .SetBasePath(Directory.GetCurrentDirectory())
                  .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -32,6 +90,7 @@ namespace ONUListas
                 Ejecutar().Wait();
 
                
+>>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
 
             }
             catch (Exception ex)
@@ -44,6 +103,8 @@ namespace ONUListas
 
         }
 
+<<<<<<< HEAD
+=======
 
         public async static Task<int> Ejecutar()
         {
@@ -127,6 +188,7 @@ namespace ONUListas
 
         }
 
+>>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
         public static CONSOLIDATED_LIST GetData()
         {
             WebClient client = new WebClient();
@@ -150,6 +212,8 @@ namespace ONUListas
 
 
     }
+<<<<<<< HEAD
+=======
 
 
     public class UserInfo
@@ -172,4 +236,5 @@ namespace ONUListas
         public string UserPassword { get; set; }
         public string wsorbiteciahhrr { get; set; }
     }
+>>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
 }
