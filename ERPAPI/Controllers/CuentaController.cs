@@ -65,6 +65,28 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpPost("CambiarPassword")]
+        public async Task<ActionResult<UserToken>> CambiarPassword([FromBody] UserInfo model)
+        {
+            var user = _context.Users.Where(q => q.Email == model.Email).FirstOrDefault();
+
+
+            var result = await _userManager.RemovePasswordAsync(user);
+
+            var resultadd = await _userManager.AddPasswordAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                return await Task.Run(() => Ok());
+            }
+            else
+            {
+                return await Task.Run(() => BadRequest("Username or password invalid"));
+            }
+
+
+        }
+
 
 
         /// <summary>

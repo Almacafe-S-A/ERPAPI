@@ -7,6 +7,7 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -174,8 +175,15 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                _context.Users.Add(_usuario);
-                await _context.SaveChangesAsync();
+
+                var user = new ApplicationUser { UserName = _usuario.Email, Email = _usuario.Email };
+
+                var result = await _userManager.CreateAsync(user, _usuario.PasswordHash);
+
+               // _context.Users.Add(_usuario);
+               // await _context.SaveChangesAsync();
+
+                
 
                 return await Task.Run(() => _usuario);
             }
@@ -206,8 +214,25 @@ namespace ERPAPI.Controllers
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;
 
-                _context.Users.Update(_usuario);
+                string password = _usuario.PasswordHash;
+                _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
                 await _context.SaveChangesAsync();
+
+                //await _userManager.UpdateAsync(_usuario);
+
+                var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+
+                var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+                if(!resultadadd.Succeeded)
+                {
+                    string errores = "";
+                    foreach (var item in resultadadd.Errors)
+                    {
+                        errores += item.Description;
+                    }
+                    return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+                }
+              
 
                 return await Task.Run(() => _usuario);
 

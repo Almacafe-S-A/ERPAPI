@@ -232,7 +232,8 @@ namespace ERPAPI.Controllers
                 _salesorder.FechaCreacion = salesOrderq.FechaCreacion;
                 _salesorder.UsuarioCreacion = salesOrderq.UsuarioCreacion;
 
-                _context.SalesOrder.Update(_salesorder);
+                _context.Entry(salesOrderq).CurrentValues.SetValues((_salesorder));
+                //_context.SalesOrder.Update(_salesorder);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
