@@ -161,10 +161,22 @@ namespace ERPAPI.Controllers
                         _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
                         foreach (var item in _CertificadoDeposito._CertificadoLine)
                         {
-                            SolicitudCertificadoLine _SolicitudCertificadoLine = new SolicitudCertificadoLine();
+                            SolicitudCertificadoLine _SolicitudCertificadoLine = new SolicitudCertificadoLine {
 
-                            _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);
-                            _SolicitudCertificadoLine.IdCD = _SolicitudCertificado.IdCD;
+                                 Amount = item.Amount,
+                                 Description = item.Description,
+                               //  IdCD = item.IdCD,
+                                 Price = item.Price,
+                                 Quantity = item.Quantity,
+                                 SubProductId = item.SubProductId,
+                                 SubProductName = item.SubProductName,
+                                 TotalCantidad = item.TotalCantidad,
+                                 UnitMeasureId = item.UnitMeasureId,
+                                 UnitMeasurName = item.UnitMeasurName,
+                            };
+
+                          //  _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);
+                            _SolicitudCertificadoLine.IdSCD = _SolicitudCertificado.IdSCD;
                             _context.SolicitudCertificadoLine.Add(_SolicitudCertificadoLine);
 
                         }
