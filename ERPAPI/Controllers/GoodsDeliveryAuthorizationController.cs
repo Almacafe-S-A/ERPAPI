@@ -127,13 +127,22 @@ namespace ERPAPI.Controllers
                             _context.GoodsDeliveryAuthorizationLine.Add(item);
 
 
-                            Kardex _kardexmax = await (from kdx in _context.Kardex
-                                  .Where(q => q.CustomerId == _GoodsDeliveryAuthorization.CustomerId)
-                                                       from kdxline in _context.KardexLine
-                                                         .Where(q => q.KardexId == kdx.KardexId)
-                                                           .Where(o => o.SubProducId == item.SubProductId)
-                                                           .OrderByDescending(o => o.DocumentDate).Take(1)
-                                                       select kdx).FirstOrDefaultAsync();
+                            //Kardex _kardexmax = await (from kdx in _context.Kardex
+                            //      .Where(q => q.CustomerId == _GoodsDeliveryAuthorization.CustomerId)
+                            //                           from kdxline in _context.KardexLine
+                            //                             .Where(q => q.KardexId == kdx.KardexId)
+                            //                               .Where(o => o.SubProducId == item.SubProductId)
+                            //                               .OrderByDescending(o => o.DocumentDate).Take(1)
+                            //                           select kdx).FirstOrDefaultAsync();
+
+                            Kardex _kardexmax = await (from c in _context.Kardex
+                                                             .OrderByDescending(q => q.DocumentDate)
+                                                           // .Take(1)
+                                                       join d in _context.KardexLine on c.KardexId equals d.KardexId
+                                                       where c.CustomerId == _GoodsDeliveryAuthorization.CustomerId && d.SubProducId == item.SubProductId
+                                                       select c
+                                                          )
+                                                          .FirstOrDefaultAsync();
 
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
 
@@ -177,7 +186,7 @@ namespace ERPAPI.Controllers
                                 Total = item.valorcertificado,
                                 //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
                                 //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
-                                QuantityEntryCD = item.Quantity,
+                                QuantityOutCD = item.Quantity,
                                 TotalCD = _KardexLine.TotalCD - (item.Quantity),
                             });
 
@@ -196,7 +205,7 @@ namespace ERPAPI.Controllers
                             _GoodsDeliveryAuthorization.Kardex.CustomerName = _GoodsDeliveryAuthorization.CustomerName;
                             //_CertificadoDeposito.Kardex.CurrencyId = _CertificadoDeposito.CurrencyId;
                             _GoodsDeliveryAuthorization.Kardex.CurrencyName = _GoodsDeliveryAuthorization.CurrencyName;
-                            _GoodsDeliveryAuthorization.Kardex.DocumentId = item.GoodsDeliveryAuthorizationId;
+                            _GoodsDeliveryAuthorization.Kardex.DocumentId = await _context.CertificadoDeposito.Where(q => q.NoCD == item.NoCertificadoDeposito).Select(q => q.IdCD).FirstOrDefaultAsync(); ;
                             _GoodsDeliveryAuthorization.Kardex.UsuarioCreacion = _GoodsDeliveryAuthorization.UsuarioCreacion;
                             _GoodsDeliveryAuthorization.Kardex.UsuarioModificacion = _GoodsDeliveryAuthorization.UsuarioModificacion;
 
