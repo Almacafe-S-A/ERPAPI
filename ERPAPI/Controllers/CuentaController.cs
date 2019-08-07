@@ -140,13 +140,14 @@ namespace ERPAPI.Controllers
                expires: expiration,
                signingCredentials: creds);
 
-            Int64 BranchId = _context.Users.Where(q => q.Email == userInfo.Email).Select(q => q.BranchId).FirstOrDefault();
-
+            ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
+          
             return new UserToken()
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiration = expiration,
-                BranchId = BranchId
+                BranchId = _appuser.BranchId,
+                IsEnabled = _appuser.IsEnabled
             };
         }
 
