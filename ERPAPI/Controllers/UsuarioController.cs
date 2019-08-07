@@ -99,7 +99,7 @@ namespace ERPAPI.Controllers
                  _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                  return BadRequest($"Ocurrio un error: {ex.Message}");
             }
-            return await Task.Run(() => Json(_users));
+            return await Task.Run(() => Ok(_users));
         }
 
 
@@ -182,10 +182,17 @@ namespace ERPAPI.Controllers
 
                 var result = await _userManager.CreateAsync(user, _usuario.PasswordHash);
 
-               // _context.Users.Add(_usuario);
-               // await _context.SaveChangesAsync();
+                if (!result.Succeeded)
+                {
+                    string errores = "";
+                    foreach (var item in result.Errors)
+                    {
+                        errores += item.Description;
+                    }
+                    return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+                }
 
-                
+
 
                 return await Task.Run(() => _usuario);
             }
@@ -246,6 +253,48 @@ namespace ERPAPI.Controllers
             }
           
         }
+
+
+
+        /// <returns></returns>
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult<ApplicationUser>> ChangePassword([FromBody]ApplicationUser _usuario)
+        {
+            try
+            {
+                ApplicationUser ApplicationUserq = (from c in _context.Users
+                  .Where(q => q.Id == _usuario.Id)
+                                                    select c
+                    ).FirstOrDefault();
+
+                string password = _usuario.PasswordHash;               
+
+
+                var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+
+                var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+                if (!resultadadd.Succeeded)
+                {
+                    string errores = "";
+                    foreach (var item in resultadadd.Errors)
+                    {
+                        errores += item.Description;
+                    }
+                    return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+                }
+
+
+                return await Task.Run(() => _usuario);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
+            }
+
+        }
+
 
         /// <summary>
         /// Elimina un usuario de la aplicacion 

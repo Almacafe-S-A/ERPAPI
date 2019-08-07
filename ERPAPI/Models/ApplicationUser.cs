@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -9,6 +10,10 @@ namespace ERPAPI.Models
      public class ApplicationUser : IdentityUser<Guid>
    // public class ApplicationUser : IdentityUser<string, IdentityUserLogin, IdentityUserRole, ApplicationUserClaim>
     {
+
+        [Display(Name = "Habilitado")]
+        public bool? IsEnabled { get; set; }
+        [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
