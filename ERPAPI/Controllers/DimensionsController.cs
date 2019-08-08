@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
@@ -17,22 +18,42 @@ namespace ERPAPI.Controllers
     public class DimensionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public DimensionsController(ApplicationDbContext context)
+        private readonly ILogger _logger;
+        /*public DimensionsController(ApplicationDbContext context)
         {
             _context = context;
+        }*/
+        public DimensionsController(ILogger<DimensionsController> logger, ApplicationDbContext context)
+        {
+            _context = context;
+            _logger = logger;
         }
-
         // GET: api/Dimensions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Dimensions>>> GetDimensions()
+
         {
-            return await _context.Dimensions.ToListAsync();
+            List<Dimensions> Items = new List<Dimensions>();
+            try
+            {
+                Items = await _context.Dimensions.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
         }
 
         // GET: api/Dimensions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Dimensions>> GetDimensions(string id)
+
         {
             var dimensions = await _context.Dimensions.FindAsync(id);
 
