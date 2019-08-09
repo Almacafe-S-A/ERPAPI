@@ -44,7 +44,7 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Cantidad")]
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
         [Display(Name = "Sacos")]
         public int QuantitySacos { get; set; }
 
