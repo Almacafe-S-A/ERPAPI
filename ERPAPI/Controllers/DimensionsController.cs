@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
@@ -17,92 +18,131 @@ namespace ERPAPI.Controllers
     public class DimensionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public DimensionsController(ApplicationDbContext context)
+        private readonly ILogger _logger;
+        /*public DimensionsController(ApplicationDbContext context)
         {
             _context = context;
-        }
-
-        // GET: api/Dimensions
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dimensions>>> GetDimensions()
+        }*/
+        public DimensionsController(ILogger<DimensionsController> logger, ApplicationDbContext context)
         {
-            return await _context.Dimensions.ToListAsync();
+            _context = context;
+            _logger = logger;
+        }
+        // GET: api/Dimensions
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDimensions()
+
+        {
+            List<Dimensions> Items = new List<Dimensions>();
+            try
+            {
+                Items = await _context.Dimensions.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
         }
 
         // GET: api/Dimensions/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Dimensions>> GetDimensions(string id)
+        [HttpGet("[action]/{Num}")]
+        public async Task<IActionResult> GetDimensionsById(string Numid)
+
         {
-            var dimensions = await _context.Dimensions.FindAsync(id);
-
-            if (dimensions == null)
-            {
-                return NotFound();
-            }
-
-            return dimensions;
-        }
-
-        // PUT: api/Dimensions/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDimensions(string id, Dimensions dimensions)
-        {
-            if (id != dimensions.Num)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(dimensions).State = EntityState.Modified;
-
+            Dimensions Items = new Dimensions();
             try
             {
+                Items = await _context.Dimensions.Where(q => q.Num == Numid).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+        // POST: api/Dimensions
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Insert([FromBody]Dimensions payload)
+        {
+            Dimensions dimensions = new Dimensions();
+            try
+            {
+                dimensions = payload;
+                _context.Dimensions.Add(dimensions);
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!DimensionsExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return NoContent();
+            return await Task.Run(() => Ok(dimensions));
         }
 
-        // POST: api/Dimensions
-        [HttpPost]
-        public async Task<ActionResult<Dimensions>> PostDimensions(Dimensions dimensions)
+        
+        // PUT: api/Dimensions/5
+        [HttpPut("[action]")]
+        public async Task<IActionResult> Update([FromBody]Dimensions payload)
         {
-            _context.Dimensions.Add(dimensions);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDimensions", new { id = dimensions.Num }, dimensions);
-        }
-
-        // DELETE: api/Dimensions/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Dimensions>> DeleteDimensions(string id)
-        {
-            var dimensions = await _context.Dimensions.FindAsync(id);
-            if (dimensions == null)
+            Dimensions dimensions = payload;
+            try
             {
-                return NotFound();
+                dimensions = (from c in _context.Dimensions
+                                    .Where(q => q.Num == payload.Num)
+                          select c
+                                    ).FirstOrDefault();
+
+                payload.FechaCreacion = dimensions.FechaCreacion;
+                payload.UsuarioCreacion = dimensions.UsuarioCreacion;
+
+                _context.Entry(dimensions).CurrentValues.SetValues(payload);
+                // _context.Branch.Update(payload);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            _context.Dimensions.Remove(dimensions);
-            await _context.SaveChangesAsync();
-
-            return dimensions;
+            return await Task.Run(() => Ok(dimensions));
         }
 
-        private bool DimensionsExists(string id)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]Dimensions payload)
         {
-            return _context.Dimensions.Any(e => e.Num == id);
+            Dimensions dimensions = new Dimensions();
+            try
+            {
+                dimensions = _context.Dimensions
+               .Where(x => x.Num == (string)payload.Num)
+               .FirstOrDefault();
+                _context.Dimensions.Remove(dimensions);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(dimensions));
+
         }
+
+
+
     }
 }

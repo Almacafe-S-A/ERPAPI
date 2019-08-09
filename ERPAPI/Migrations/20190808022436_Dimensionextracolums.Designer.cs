@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190808022436_Dimensionextracolums")]
+    partial class Dimensionextracolums
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2209,8 +2211,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<long>("GoodsDeliveryAuthorizationId");
-
                     b.Property<long>("IdEstado");
 
                     b.Property<string>("Impreso");
@@ -2286,7 +2286,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ProductName");
 
-                    b.Property<double>("Quantity");
+                    b.Property<int>("Quantity");
 
                     b.Property<int>("QuantitySacos");
 
