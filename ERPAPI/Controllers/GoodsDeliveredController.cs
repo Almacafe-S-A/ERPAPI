@@ -116,6 +116,35 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _GoodsDeliveredq = _GoodsDelivered;
+
+                        BoletaDeSalida _boletadesalida = new BoletaDeSalida
+                        {
+                            BranchId = _GoodsDelivered.BranchId,
+                            BranchName = _GoodsDelivered.BranchName,
+                            CustomerId = _GoodsDelivered.CustomerId,
+                            CustomerName = _GoodsDelivered.CustomerName,
+                            DocumentDate = _GoodsDelivered.DocumentDate,
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            Marca = _GoodsDelivered.Marca,
+                            Placa = _GoodsDelivered.Placa,
+                            Motorista = _GoodsDelivered.Name,
+                            Quantity = _GoodsDelivered._GoodsDeliveredLine.Select(q => q.QuantitySacos).Sum(),
+                            SubProductId = _GoodsDelivered.SubProductId,
+                            SubProductName = _GoodsDelivered.SubProductName,
+                            GoodsDeliveryAuthorizationId = _GoodsDelivered.GoodsDeliveryAuthorizationId,
+                            GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId,
+                            CargadoId = 13,
+                            Cargadoname = "Cargado",
+                            UsuarioCreacion = _GoodsDelivered.UsuarioCreacion,
+                            UsuarioModificacion = _GoodsDelivered.UsuarioModificacion,
+                        };
+
+                        _context.BoletaDeSalida.Add(_boletadesalida);
+                        await _context.SaveChangesAsync();
+
+                        _GoodsDeliveredq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
+
                         _context.GoodsDelivered.Add(_GoodsDeliveredq);
 
                         foreach (var item in _GoodsDeliveredq._GoodsDeliveredLine)
@@ -191,6 +220,10 @@ namespace ERPAPI.Controllers
                         _context.Kardex.Add(_GoodsDelivered.Kardex);
 
                         await _context.SaveChangesAsync();
+
+                        _boletadesalida.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
+                        _context.Entry(_boletadesalida).CurrentValues.SetValues((_boletadesalida));
+
                         transaction.Commit();
                     }
                     catch (Exception ex)

@@ -88,13 +88,14 @@ namespace ERPAPI.Models
         public double PesoNeto2 { get; set; }
 
 
-
         [Display(Name = "Comentarios")]
         public string Comments { get; set; }
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
+
+        public Int64 GoodsDeliveryAuthorizationId { get; set; }
 
         public string Impreso { get; set; }
         public List<GoodsDeliveredLine> _GoodsDeliveredLine { get; set; } = new List<GoodsDeliveredLine>();

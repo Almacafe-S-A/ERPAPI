@@ -116,6 +116,35 @@ namespace ERPAPI.Controllers
                     {
                         _GoodsReceivedq = _GoodsReceived;
 
+                        BoletaDeSalida _boletadesalida = new BoletaDeSalida
+                        {
+                            BranchId = _GoodsReceived.BranchId,
+                            BranchName = _GoodsReceived.BranchName,
+                            CustomerId = _GoodsReceived.CustomerId,
+                            CustomerName = _GoodsReceived.CustomerName,
+                            DocumentDate = _GoodsReceived.DocumentDate,
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            Marca = _GoodsReceived.Marca,
+                            Placa = _GoodsReceived.Placa,
+                            Motorista = _GoodsReceived.Name,
+                            Quantity = _GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
+                            SubProductId = _GoodsReceived.SubProductId,
+                            SubProductName = _GoodsReceived.SubProductName,
+                            CargadoId = 14,
+                            Cargadoname = "Vacío",
+                            UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
+                            UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
+
+
+                        };
+
+                        _context.BoletaDeSalida.Add(_boletadesalida);
+                         await  _context.SaveChangesAsync();
+
+
+                        _GoodsReceivedq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
+
                         _context.GoodsReceived.Add(_GoodsReceivedq);
                         // await _context.SaveChangesAsync();
 
