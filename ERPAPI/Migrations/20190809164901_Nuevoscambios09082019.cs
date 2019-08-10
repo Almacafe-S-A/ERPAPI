@@ -8,9 +8,9 @@ namespace ERPAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_Dimensions_Num_DimCode",
-                table: "Dimensions");
+           // migrationBuilder.DropIndex(
+             //   name: "IX_Dimensions_Num_DimCode",
+               // table: "Dimensions");
 
             migrationBuilder.CreateTable(
                 name: "CenterCoste",
