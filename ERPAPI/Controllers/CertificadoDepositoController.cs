@@ -44,7 +44,10 @@ namespace ERPAPI.Controllers
             List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
             try
             {
+
                 Items = await _context.CertificadoDeposito.ToListAsync();
+
+                
             }
             catch (Exception ex)
             {
