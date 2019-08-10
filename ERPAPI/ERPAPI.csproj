@@ -17,6 +17,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <Compile Remove="Controllers\CenterCosteController.cs" />
     <Compile Remove="Controllers\LedgerController.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.Designer.cs" />
@@ -68,6 +69,12 @@
     <Compile Remove="Migrations\20190711180956_ImpresionDocumentos_Sacos_Quintales.Designer.cs" />
     <Compile Remove="Migrations\20190712181530_ProductRelation.cs" />
     <Compile Remove="Migrations\20190712181530_ProductRelation.Designer.cs" />
+    <Compile Remove="Migrations\20190809123359_CentrosCosto.cs" />
+    <Compile Remove="Migrations\20190809124102_CentrosCosto.cs" />
+    <Compile Remove="Migrations\20190809142509_Dimensions04.cs" />
+    <Compile Remove="Migrations\20190809150127_CentroCosto09082017.cs" />
+    <Compile Remove="Migrations\20190809152006_CentroCosto090820172.cs" />
+    <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup> 
 

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190809164901_Nuevoscambios09082019")]
+    partial class Nuevoscambios09082019
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -619,6 +621,31 @@ namespace ERPAPI.Migrations
                     b.HasKey("Iddetallecalculo");
 
                     b.ToTable("CalculoPlanillaDetalle");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.CenterCoste", b =>
+                {
+                    b.Property<int>("NumId")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(30)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(60);
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
+
+                    b.HasKey("NumId");
+
+                    b.ToTable("CenterCoste");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CertificadoDeposito", b =>
