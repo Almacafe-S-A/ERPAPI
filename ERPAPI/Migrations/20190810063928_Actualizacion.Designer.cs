@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190810063928_Actualizacion")]
+    partial class Actualizacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1024,10 +1026,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("City");
 
-                    b.Property<bool>("ClienteRecoger");
-
-                    b.Property<bool>("ConfirmacionCorreo");
-
                     b.Property<string>("ContactPerson");
 
                     b.Property<string>("CustomerName")
@@ -1035,11 +1033,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("CustomerTypeId");
 
-                    b.Property<string>("DireccionEnvio");
-
                     b.Property<string>("Email");
-
-                    b.Property<bool>("EnviarlaMensajero");
 
                     b.Property<string>("Estado");
 
@@ -1047,24 +1041,12 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<string>("GrupoEconomico");
-
                     b.Property<long>("IdEstado");
 
                     b.Property<string>("Identidad")
                         .IsRequired();
 
-                    b.Property<double>("MontoActivos");
-
-                    b.Property<double>("MontoIngresosAnuales");
-
-                    b.Property<string>("PerteneceEmpresa");
-
                     b.Property<string>("Phone");
-
-                    b.Property<string>("Proveedor1");
-
-                    b.Property<string>("Proveedor2");
 
                     b.Property<string>("RTN")
                         .IsRequired();
@@ -2226,8 +2208,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<long>("GoodsDeliveryAuthorizationId");
-
                     b.Property<long>("IdEstado");
 
                     b.Property<string>("Impreso");
@@ -2303,7 +2283,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ProductName");
 
-                    b.Property<double>("Quantity");
+                    b.Property<int>("Quantity");
 
                     b.Property<int>("QuantitySacos");
 

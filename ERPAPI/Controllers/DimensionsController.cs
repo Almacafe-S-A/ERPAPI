@@ -51,7 +51,7 @@ namespace ERPAPI.Controllers
         }
 
         // GET: api/Dimensions/5
-        [HttpGet("[action]/{Num}")]
+        [HttpGet("[action]/{Numid}")]
         public async Task<IActionResult> GetDimensionsById(string Numid)
 
         {
