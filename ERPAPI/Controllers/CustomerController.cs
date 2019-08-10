@@ -123,7 +123,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_customer"></param>
         /// <returns></returns>
-        [HttpPut("[action]")]
+        [HttpPost("[action]")]
         public async Task<ActionResult<Customer>> Update([FromBody]Customer _customer)
         {
             try
@@ -136,7 +136,9 @@ namespace ERPAPI.Controllers
                 _customer.FechaCreacion = customerq.FechaCreacion;
                 _customer.UsuarioCreacion = customerq.UsuarioCreacion;
 
-                _context.Customer.Update(_customer);
+                //_context.Customer.Update(_customer);
+
+                _context.Entry(customerq).CurrentValues.SetValues((_customer));
                 await _context.SaveChangesAsync();
                 // return (customer);
                 return await Task.Run(() => Ok(_customer));
