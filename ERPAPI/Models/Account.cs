@@ -35,17 +35,6 @@ namespace ERPAPI.Models
         public virtual AccountClass AccountClass { get; set; }
 
         public virtual CompanyInfo Company { get; set; }
-        [Display(Name = "Fecha de Creación")]
-        public DateTime FechaCreacion { get; set; }
-
-        [Display(Name = "Fecha de Modificación")]
-        public DateTime FechaModificacion { get; set; }
-
-        [Display(Name = "Usuario de Creación")]
-        public string UsuarioCreacion { get; set; }
-
-        [Display(Name = "Usuario de Modificación")]
-        public string UsuarioModificacion { get; set; }
 
         public virtual ICollection<Account> ChildAccounts { get; set; }
 
