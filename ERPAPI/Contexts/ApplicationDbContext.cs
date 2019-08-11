@@ -27,6 +27,9 @@ namespace ERP.Contexts
         {
 
         }
+        
+        public DbSet<Account> Account { get; set; }
+
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
