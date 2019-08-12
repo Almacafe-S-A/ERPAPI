@@ -19,6 +19,18 @@ namespace ERPAPI.Models
         public string Memo { get; set; }
         public virtual JournalEntry JournalEntry { get; set; }
         public virtual Account Account { get; set; }
+        [Required]
+        [Display(Name = "Usuario de creacion")]
+        public string UsuarioCreacion { get; set; }
+        [Required]
+        [Display(Name = "Usuario de modificacion")]
+        public string UsuarioModificacion { get; set; }
+        [Required]
+        [Display(Name = "Fecha de creacion")]
+        public DateTime FechaCreacion { get; set; }
+        [Required]
+        public DateTime FechaModificacion { get; set; }
+
     }
 
 

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190812055227_modifiedfourfields")]
+    partial class modifiedfourfields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1438,35 +1440,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("CustomerContractWareHouseId");
 
                     b.ToTable("CustomerContractWareHouse");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerDocument", b =>
-                {
-                    b.Property<long>("CustomerDocumentId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("DocumentName");
-
-                    b.Property<long>("DocumentTypeId");
-
-                    b.Property<string>("DocumentTypeName");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<string>("Path");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("CustomerDocumentId");
-
-                    b.ToTable("CustomerDocument");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerProduct", b =>

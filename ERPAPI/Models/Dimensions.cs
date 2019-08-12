@@ -18,6 +18,7 @@ namespace ERPAPI.Models
         [Required]
         public SysDimension DimCode { get; set; }
         [StringLength(60)]
+        [Display(Name = "Nombre ")]
         public string Description { get; set; }
 
         [Required]

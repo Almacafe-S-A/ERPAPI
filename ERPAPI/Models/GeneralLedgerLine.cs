@@ -21,5 +21,17 @@ namespace ERPAPI.Models
         public decimal Amount { get; set; }
         public virtual Account Account { get; set; }
         public virtual GeneralLedgerHeader GeneralLedgerHeader { get; set; }
+        [Required]
+        [Display(Name = "Usuario de creacion")]
+        public string UsuarioCreacion { get; set; }
+        [Required]
+        [Display(Name = "Usuario de modificacion")]
+        public string UsuarioModificacion { get; set; }
+        [Required]
+        [Display(Name = "Fecha de creacion")]
+        public DateTime FechaCreacion { get; set; }
+        [Required]
+        public DateTime FechaModificacion { get; set; }
+
     }
 }
