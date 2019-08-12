@@ -55,6 +55,40 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetBoleto_EntPag(int numeroDePagina=1,int cantidadDeRegistros=3500)
+        {
+            List<Boleto_Ent> Items = new List<Boleto_Ent>();
+            try
+            {
+
+                var query = _context.Boleto_Ent.AsQueryable();
+
+                var totalRegistro = query.Count();
+
+                Items = await query
+                        .OrderByDescending(q=>q.clave_e)
+                             .Skip(cantidadDeRegistros*(numeroDePagina-1))
+                                      .Take(cantidadDeRegistros)
+                                     .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
 
         [HttpGet("[action]")]
         public async Task<IActionResult> GetBoleto_EntMax()
