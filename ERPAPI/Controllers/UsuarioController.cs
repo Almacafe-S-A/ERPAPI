@@ -231,6 +231,8 @@ namespace ERPAPI.Controllers
 
                 var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
 
+                var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
+
                 var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
                 if(!resultadadd.Succeeded)
                 {
