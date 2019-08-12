@@ -269,24 +269,34 @@ namespace ERPAPI.Controllers
                                                     select c
                     ).FirstOrDefault();
 
-                string password = _usuario.PasswordHash;               
+                string password = _usuario.PasswordHash;
 
+                var passwordValidator = new PasswordValidator<ApplicationUser>();
+                var result = await passwordValidator.ValidateAsync(_userManager, null, password);
 
-                var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
-
-                var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
-                if (!resultadadd.Succeeded)
+                if (result.Succeeded)
                 {
-                    string errores = "";
-                    foreach (var item in resultadadd.Errors)
+
+                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+
+                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+                    if (!resultadadd.Succeeded)
                     {
-                        errores += item.Description;
+                        string errores = "";
+                        foreach (var item in resultadadd.Errors)
+                        {
+                            errores += item.Description;
+                        }
+                        return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
-                    return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+
+
+                    return await Task.Run(() => _usuario);
                 }
-
-
-                return await Task.Run(() => _usuario);
+                else
+                {
+                    return await Task.Run(() => BadRequest($"La contraseña no es correcta,debe tener mayusculas y minusculas!!"));
+                }
 
             }
             catch (Exception ex)

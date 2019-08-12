@@ -46,8 +46,9 @@ namespace ERPAPI.Controllers
                       .Where(q => (q.SECOND_NAME + q.FIRST_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
                       || (q.FIRST_NAME+ q.SECOND_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
                       || (q.SECOND_NAME +" "+ q.FIRST_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
-                      || (q.FIRST_NAME +" " + q.SECOND_NAME).Contains(_INDIVIDUALM.SECOND_NAME
-                      )
+                      || (q.FIRST_NAME +" " + q.SECOND_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
+                      || (q.FIRST_NAME + " " + q.SECOND_NAME +" "+ q.THIRD_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
+                      || (q.SECOND_NAME + " " + q.FIRST_NAME + " " + q.THIRD_NAME).Contains(_INDIVIDUALM.SECOND_NAME)
                            );
                 _personapornombre = await query
                         .ToListAsync();
