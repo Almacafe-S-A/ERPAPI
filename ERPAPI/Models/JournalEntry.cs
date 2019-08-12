@@ -29,6 +29,18 @@ namespace ERPAPI.Models
         public virtual Party Party { get; set; }
 
         public virtual ICollection<JournalEntryLine> JournalEntryLines { get; set; }
+        [Required]
+        [Display(Name = "Usuario de creacion")]
+        public string UsuarioCreacion { get; set; }
+        [Required]
+        [Display(Name = "Usuario de modificacion")]
+        public string UsuarioModificacion { get; set; }
+        [Required]
+        [Display(Name = "Fecha de creacion")]
+        public DateTime FechaCreacion { get; set; }
+        [Required]
+        public DateTime FechaModificacion { get; set; }
+
     }
 
 
