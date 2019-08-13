@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190811082002_Cambios")]
-    partial class Cambios
+    [Migration("20190813165554_DbInitial_20190813")]
+    partial class DbInitial_20190813
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,13 +21,103 @@ namespace ERPAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("ERPAPI.Models.Account", b =>
+                {
+                    b.Property<long>("AccountId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long?>("AccountClassid");
+
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasMaxLength(200);
+
+                    b.Property<long>("CompanyInfoId");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200);
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<bool>("IsCash");
+
+                    b.Property<bool>("IsContraAccount");
+
+                    b.Property<long?>("ParentAccountAccountId");
+
+                    b.Property<int?>("ParentAccountId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasMaxLength(8);
+
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
+
+                    b.HasKey("AccountId");
+
+                    b.HasIndex("AccountClassid");
+
+                    b.HasIndex("CompanyInfoId");
+
+                    b.HasIndex("ParentAccountAccountId");
+
+                    b.ToTable("Account");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.AccountClass", b =>
+                {
+                    b.Property<long>("AccountClassid")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("NormalBalance");
+
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
+
+                    b.HasKey("AccountClassid");
+
+                    b.ToTable("AccountClass");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.Alert", b =>
                 {
                     b.Property<long>("AlertId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<long>("ActionTakenId");
+
+                    b.Property<long>("ActionTakenName");
+
                     b.Property<string>("AlertName");
+
+                    b.Property<DateTime>("CloseDate");
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("DescriptionAlert");
 
@@ -35,9 +125,19 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DocumentName");
 
+                    b.Property<string>("Estado");
+
+                    b.Property<bool>("FalsoPositivo");
+
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<bool>("SujetaARos");
+
+                    b.Property<string>("Type");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -1362,6 +1462,35 @@ namespace ERPAPI.Migrations
                     b.ToTable("CustomerContractWareHouse");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.CustomerDocument", b =>
+                {
+                    b.Property<long>("CustomerDocumentId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("CustomerId");
+
+                    b.Property<string>("DocumentName");
+
+                    b.Property<long>("DocumentTypeId");
+
+                    b.Property<string>("DocumentTypeName");
+
+                    b.Property<DateTime?>("FechaCreacion");
+
+                    b.Property<DateTime?>("FechaModificacion");
+
+                    b.Property<string>("Path");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("CustomerDocumentId");
+
+                    b.ToTable("CustomerDocument");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.CustomerProduct", b =>
                 {
                     b.Property<long>("CustomerProductId")
@@ -2192,6 +2321,68 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdformulaConcepto");
 
                     b.ToTable("FormulasConcepto");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.GeneralLedgerHeader", b =>
+                {
+                    b.Property<long>("GeneralLedgerHeaderId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("DocumentType");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
+
+                    b.HasKey("GeneralLedgerHeaderId");
+
+                    b.ToTable("GeneralLedgerHeader");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
+                {
+                    b.Property<long>("GeneralLedgerHeaderId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId");
+
+                    b.Property<long?>("AccountId1");
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<int>("DrCr");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long?>("GeneralLedgerHeaderId1");
+
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
+
+                    b.HasKey("GeneralLedgerHeaderId");
+
+                    b.HasIndex("AccountId1");
+
+                    b.HasIndex("GeneralLedgerHeaderId1");
+
+                    b.ToTable("GeneralLedgerLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDelivered", b =>
@@ -5040,6 +5231,22 @@ namespace ERPAPI.Migrations
                     b.ToTable("TITLEM");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.Account", b =>
+                {
+                    b.HasOne("ERPAPI.Models.AccountClass", "AccountClass")
+                        .WithMany("Accounts")
+                        .HasForeignKey("AccountClassid");
+
+                    b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyInfoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.Account", "ParentAccount")
+                        .WithMany("ChildAccounts")
+                        .HasForeignKey("ParentAccountAccountId");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.ApplicationUserClaim", b =>
                 {
                     b.HasOne("ERPAPI.Models.ApplicationUser")
@@ -5161,6 +5368,17 @@ namespace ERPAPI.Migrations
                         .WithMany("EndososTalonLine")
                         .HasForeignKey("EndososTalonId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Account", "Account")
+                        .WithMany("GeneralLedgerLines")
+                        .HasForeignKey("AccountId1");
+
+                    b.HasOne("ERPAPI.Models.GeneralLedgerHeader", "GeneralLedgerHeader")
+                        .WithMany()
+                        .HasForeignKey("GeneralLedgerHeaderId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDeliveredLine", b =>

@@ -105,7 +105,17 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<long>("ActionTakenId");
+
+                    b.Property<long>("ActionTakenName");
+
                     b.Property<string>("AlertName");
+
+                    b.Property<DateTime>("CloseDate");
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("Description");
 
                     b.Property<string>("DescriptionAlert");
 
@@ -113,9 +123,19 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DocumentName");
 
+                    b.Property<string>("Estado");
+
+                    b.Property<bool>("FalsoPositivo");
+
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<bool>("SujetaARos");
+
+                    b.Property<string>("Type");
 
                     b.Property<string>("UsuarioCreacion");
 
