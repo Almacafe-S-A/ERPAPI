@@ -15,6 +15,8 @@ namespace ERPAPI.Models
         public bool? IsEnabled { get; set; }
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
+
+        public DateTime LastPasswordChangedDate { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }

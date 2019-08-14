@@ -277,8 +277,14 @@ namespace ERPAPI.Controllers
                 if (result.Succeeded)
                 {
 
-                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+                    ApplicationUserq.LastPasswordChangedDate=_usuario.LastPasswordChangedDate = DateTime.Now;
 
+
+                    var actualizarusuario = await PutUsuario(ApplicationUserq);
+                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+                    ApplicationUserq.PasswordHash = password;
+
+                     resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
                     var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
                     if (!resultadadd.Succeeded)
                     {
