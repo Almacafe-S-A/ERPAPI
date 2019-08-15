@@ -140,14 +140,18 @@ namespace ERPAPI.Controllers
                expires: expiration,
                signingCredentials: creds);
 
-            ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
-          
+             ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
+             Int32? cambiopassworddias = Convert.ToInt32(_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q=>q.Valordecimal).FirstOrDefault());
+             if (cambiopassworddias == null) { cambiopassworddias = 0; }
+
             return new UserToken()
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiration = expiration,
                 BranchId = _appuser.BranchId,
-                IsEnabled = _appuser.IsEnabled
+                IsEnabled = _appuser.IsEnabled,
+                LastPasswordChangedDate = _appuser.LastPasswordChangedDate,
+                Passworddias = cambiopassworddias.Value,
             };
         }
 

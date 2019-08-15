@@ -14,7 +14,9 @@ namespace ERPAPI.Models
             Accounts = new HashSet<Account>();
         }
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Display(Name = "Id Clase Cuenta")]
         public Int64 AccountClassid { get; set; }
+        [Display(Name = "Nombre")]
         public string Name { get; set; }
         public string NormalBalance { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
@@ -28,6 +30,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de creacion")]
         public DateTime FechaCreacion { get; set; }
         [Required]
+        [Display(Name = "Fecha de Modificacion")]
         public DateTime FechaModificacion { get; set; }
 
     }

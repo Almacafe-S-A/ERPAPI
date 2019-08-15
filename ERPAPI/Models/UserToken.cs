@@ -14,6 +14,10 @@ namespace ERPAPI.Models
 
         public Int64 BranchId { get; set; }
 
+        public DateTime LastPasswordChangedDate { get; set; }
+
+        public Int32 Passworddias { get; set; }
+
         [Display(Name = "Habilitado")]
         public bool? IsEnabled { get; set; }
 
