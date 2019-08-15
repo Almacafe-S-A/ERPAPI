@@ -19,12 +19,16 @@ namespace ERPAPI.Models
         public Int64 CustomerId { get; set; }
 
 
+
         [Display(Name = "Identidad")]
         public string Identidad { get; set; }
         public string RTN { get; set; }
 
         [Display(Name = "Telefono")]
         public string Telefono { get; set; }
+
+        [Display(Name = "Listados sancionados")]
+        public string Listados { get; set; }
 
         [EmailAddress]
         public string Correo { get; set; }
