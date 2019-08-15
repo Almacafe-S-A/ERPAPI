@@ -18,9 +18,12 @@ namespace ERPAPI.Models
             JournalEntryLines = new HashSet<JournalEntryLine>();
         }
 
+        [Display(Name = "Id Libro Mayor")]
         public int? GeneralLedgerHeaderId { get; set; }
         public int? PartyId { get; set; }
+        [Display(Name = "Tipos de Voucher")]
         public JournalVoucherTypes? VoucherType { get; set; }
+        [Display(Name = "Fecha")]
         public DateTime Date { get; set; }
         public string Memo { get; set; }
         public string ReferenceNo { get; set; }
@@ -39,6 +42,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de creacion")]
         public DateTime FechaCreacion { get; set; }
         [Required]
+        [Display(Name = "Fecha de Modificacion")]
         public DateTime FechaModificacion { get; set; }
 
     }

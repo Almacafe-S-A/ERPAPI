@@ -11,10 +11,13 @@ namespace ERPAPI.Models
     public class GeneralLedgerHeader
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Display(Name = "Id")]
         public Int64 GeneralLedgerHeaderId { get; set; }
-
+        [Display(Name = "Fecha")]
         public DateTime Date { get; set; }
+        [Display(Name = "Tipo de Documento")]
         public DocumentTypes DocumentType { get; set; }
+        [Display(Name = "Descripcion")]
         public string Description { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]
@@ -26,6 +29,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de creacion")]
         public DateTime FechaCreacion { get; set; }
         [Required]
+        [Display(Name = "Fecha de modificación")]
         public DateTime FechaModificacion { get; set; }
 
     }

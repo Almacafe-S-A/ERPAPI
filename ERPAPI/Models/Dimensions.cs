@@ -11,14 +11,16 @@ namespace ERPAPI.Models
     public class Dimensions
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "Dimension Numero")]
+        [Display(Name = "Numero de Centro de Costo")]
         [Required]
         [StringLength(30)]
         public string Num { get; set; }
         [Required]
+        [Display(Name = "Codigo de Centro")]
         public SysDimension DimCode { get; set; }
+
         [StringLength(60)]
-        [Display(Name = "Nombre ")]
+        [Display(Name = "Nombre de Centro Costo")]
         public string Description { get; set; }
 
         [Required]
@@ -31,6 +33,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de creacion")]
         public DateTime FechaCreacion { get; set; }
         [Required]
+        [Display(Name = "Fecha de Modificacion")]
         public DateTime FechaModificacion { get; set; }
 
     }
