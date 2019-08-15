@@ -207,6 +207,12 @@ namespace ERP.Contexts
            .HasIndex(p => new { p.ProductCode })
            .IsUnique(true);
 
+             modelBuilder.Entity<Customer>()
+            .HasIndex(p => new { p.RTN })
+            .IsUnique(true);
+
+
+
             modelBuilder.Entity<SubProduct>()
              .HasMany(c => c.ProductRelation)
              .WithOne(e => e.SubProduct)
