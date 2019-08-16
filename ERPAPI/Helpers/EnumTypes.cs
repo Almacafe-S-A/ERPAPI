@@ -12,12 +12,17 @@ namespace ERPAPI.Helpers
 {
     public enum AccountClasses
     {
-        Assets = 1,
-        Liabilities = 2,
-        Equity = 3,
-        Revenue = 4,
-        Expense = 5,
-        Temporary = 6
+        Assets = 1, //Activos
+        Liabilities = 2, //Pasivos
+        Equity = 3, // Capital
+        Revenue = 4, //Ingresos
+        Expense = 5, // Gastos
+        Temporary = 6, //Tempora
+        Operations=7, // Perdidas y Ganancias
+        Status = 8, // Saldos
+        HeadingEmpty = 9,  // Encabezados de 
+        AccountGroup =10
+
     }
 
     public enum SysDimension

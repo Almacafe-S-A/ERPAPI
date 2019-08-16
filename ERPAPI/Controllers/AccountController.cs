@@ -6,6 +6,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,7 +24,7 @@ namespace ERPAPI.Controllers
         {
             _context = context;
         }*/
-        public AccountController(ILogger<DimensionsController> logger, ApplicationDbContext context)
+        public AccountController(ILogger<AccountController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
@@ -109,14 +110,14 @@ namespace ERPAPI.Controllers
         /// <param name="_Account"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Bank>> Update([FromBody]Account _Account)
+        public async Task<ActionResult<Account>> Update([FromBody]Account _Account)
         {
             Account _Accountq = _Account;
             try
             {
                 _Accountq = await (from c in _context.Account
                                  .Where(q => q.AccountId == _Account.AccountId)
-                                select c
+                                   select c
                                 ).FirstOrDefaultAsync();
 
                 _context.Entry(_Accountq).CurrentValues.SetValues((_Account));
