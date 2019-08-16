@@ -7,14 +7,20 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public partial class State
+    public class CustomerPhones
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "Id")]
-        public long Id { get; set; } // bigint
-        [Display(Name = "Departamento")]
-        public string Name { get; set; } // text
-      
+        [Display(Name = "Cliente")]
+        public Int64 CustomerPhoneId{ get; set; }
+
+        [Display(Name = "Cliente")]
+        public Int64 CustomerId { get; set; }
+
+        [Display(Name = "Cliente")]
+        public string CustomerName { get; set; }
+
+        [Display(Name = "Usuario de creación")]
+        public string Phone { get; set; }
 
         [Display(Name = "Usuario de creación")]
         public string Usuariocreacion { get; set; }
@@ -27,6 +33,5 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de modificación")]
         public DateTime? FechaModificacion { get; set; }
 
-        public List<City> City { get; set; }
     }
 }

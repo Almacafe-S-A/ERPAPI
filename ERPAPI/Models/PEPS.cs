@@ -18,11 +18,25 @@ namespace ERPAPI.Models
         public string Funcionario { get; set; }
         [Display(Name = "Cargo")]
         public string Cargo { get; set; }
+
         [Display(Name = "Departamento")]
-        public string Departamento { get; set; }
+        public Int64 StateId { get; set; }
+
+        [Display(Name = "Departamento")]
+        public string StateName { get; set; }
+
         [Display(Name = "Municipio")]
-        public string Municipio { get; set; }
-        public string Pais { get; set; }
+        public Int64 CityId { get; set; }
+
+        [Display(Name = "Municipio")]
+        public string CityName { get; set; }
+
+        [Display(Name = "País")]
+        public Int64 CountryId { get; set; }
+
+        [Display(Name = "País")]
+        public string CountryName { get; set; }
+
         [Display(Name = "Observación")]
         public string Observacion { get; set; }
         [Display(Name = "Oficial")]
