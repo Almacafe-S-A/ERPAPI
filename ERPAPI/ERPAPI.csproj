@@ -74,6 +74,8 @@
     <Compile Remove="Migrations\20190809142509_Dimensions04.cs" />
     <Compile Remove="Migrations\20190809150127_CentroCosto09082017.cs" />
     <Compile Remove="Migrations\20190809152006_CentroCosto090820172.cs" />
+    <Compile Remove="Migrations\20190815185002_alert.cs" />
+    <Compile Remove="Migrations\20190815185002_alert.Designer.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup> 
