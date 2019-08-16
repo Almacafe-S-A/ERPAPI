@@ -4,18 +4,18 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
-  
+
   <PropertyGroup>
-  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  <NoWarn>1701;1702;1591</NoWarn>
-</PropertyGroup>
-  
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>false</Optimize>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors />
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Compile Remove="Controllers\CenterCosteController.cs" />
     <Compile Remove="Controllers\LedgerController.cs" />
@@ -76,9 +76,10 @@
     <Compile Remove="Migrations\20190809152006_CentroCosto090820172.cs" />
     <Compile Remove="Migrations\20190815185002_alert.cs" />
     <Compile Remove="Migrations\20190815185002_alert.Designer.cs" />
+    <Compile Remove="Migrations\20190816144826_ChangedAcccount.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
-  </ItemGroup> 
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Automapper" Version="8.1.1" />
@@ -91,8 +92,16 @@
     <PackageReference Include="Nlog" Version="4.6.6" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-  </ItemGroup> 
+  </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties appsettings_1json__JSONSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
 
 </Project>
