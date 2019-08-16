@@ -33,7 +33,8 @@ namespace ERPAPI.Models
         public bool IsCash { get; set; }
         [Display(Name = "Contracuenta:")]
         public bool IsContraAccount { get; set; }
-        [Display(Name = "Nivel Contable")]
+        [Required]
+        [Display(Name = "Nivel de Jerarquia:")]
         public Int64 HierarchyAccount { get; set; }
 
         [Required]

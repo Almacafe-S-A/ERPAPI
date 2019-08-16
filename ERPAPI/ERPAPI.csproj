@@ -76,8 +76,6 @@
     <Compile Remove="Migrations\20190809152006_CentroCosto090820172.cs" />
     <Compile Remove="Migrations\20190815185002_alert.cs" />
     <Compile Remove="Migrations\20190815185002_alert.Designer.cs" />
-    <Compile Remove="Migrations\20190816154133_quitar_countryidState.cs" />
-    <Compile Remove="Migrations\20190816154133_quitar_countryidState.Designer.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup> 
