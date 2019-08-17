@@ -21,7 +21,7 @@ namespace ERPAPI.Helpers
         Operations=7, // Perdidas y Ganancias
         Status = 8, // Saldos
         HeadingEmpty = 9,  // Encabezados de 
-        AccountGroup =10
+        AccountGroup =10 //Totalizar
 
     }
 
