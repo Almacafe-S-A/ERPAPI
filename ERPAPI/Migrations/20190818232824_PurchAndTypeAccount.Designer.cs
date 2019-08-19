@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190818232824_PurchAndTypeAccount")]
+    partial class PurchAndTypeAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,6 +39,8 @@ namespace ERPAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(200);
 
+                    b.Property<bool>("BlockedInJournal");
+
                     b.Property<long>("CompanyInfoId");
 
                     b.Property<string>("Description")
@@ -60,8 +64,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp")
                         .HasMaxLength(8);
-
-                    b.Property<long>("TypeAccountId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -3846,7 +3848,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Identidad")
                         .IsRequired();
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime>("ModifiedCreated");
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
@@ -4586,7 +4588,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime>("ModifiedCreated");
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();

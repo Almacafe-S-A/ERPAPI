@@ -22,6 +22,10 @@ namespace ERPAPI.Models
         [StringLength(60)]
         [Display(Name = "Nombre de Centro Costo")]
         public string Description { get; set; }
+        [Display(Name = "Id de estado")]
+        public Int64 IdEstado { get; set; }
+        [Display(Name = "Estado")]
+        public string Estado { get; set; }
 
         [Required]
         [Display(Name = "Usuario de creacion")]

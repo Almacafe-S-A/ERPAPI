@@ -85,8 +85,8 @@ namespace ERPAPI.Models
         public DateTime CreatedDate { get; set; }
 
         [Required]
-        [Display(Name = "Fecha de MOdificacion")]
-        public DateTime ModifiedCreated { get; set; }
+        [Display(Name = "Fecha de Modificacion")]
+        public DateTime ModifiedDate { get; set; }
 
     }
 }
