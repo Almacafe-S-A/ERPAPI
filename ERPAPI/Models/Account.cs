@@ -29,10 +29,15 @@ namespace ERPAPI.Models
         [StringLength(200)]
         [Display(Name = "Descripcion de la cuenta")]
         public string Description { get; set; }
-        [Display(Name = "Activa:")]
+        [Display(Name = "Estado")]
         public bool IsCash { get; set; }
+        [Display (Name = "Tipo de Cuenta")]
+        public AccountClasses AccountClasses { get; set; }
         [Display(Name = "Contracuenta:")]
         public bool IsContraAccount { get; set; }
+        [Display(Name = "Id")]
+        public Int64 TypeAccountId { get; set; }
+
         [Required]
         [Display(Name = "Nivel de Jerarquia:")]
         public Int64 HierarchyAccount { get; set; }
