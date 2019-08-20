@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,17 +24,20 @@ namespace ERPAPI.Controllers
         private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
+        private readonly IMapper mapper;
 
         public UsuarioController(ILogger<UsuarioController> logger
             ,ApplicationDbContext context
             , RoleManager<ApplicationRole> rolemanager
             , UserManager<ApplicationUser> userManager
+             , IMapper mapper
           )
         {
             _context = context;
             _rolemanager = rolemanager;
             _userManager = userManager;
             _logger = logger;
+            this.mapper = mapper;
         }
 
         /// <summary>
@@ -211,7 +215,7 @@ namespace ERPAPI.Controllers
         /// <param name="_usuario"></param>
         /// <returns></returns>
         [HttpPut("PutUsuario")]
-        public async Task<ActionResult<ApplicationUser>> PutUsuario([FromBody]ApplicationUser _usuario)
+        public async Task<ActionResult<ApplicationUser>> PutUsuario([FromBody]ApplicationUserDTO _usuario)
         {
             try
             {
@@ -223,27 +227,40 @@ namespace ERPAPI.Controllers
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;
 
-                string password = _usuario.PasswordHash;
+                string password = "";
+
+                if (_usuario.cambiarpassword) { password= _usuario.PasswordHash; }
+                else
+                {
+                    _context.Entry(ApplicationUserq).Property(x => x.PasswordHash).IsModified = false;
+                    //_context.Entry(ApplicationUserq).Property(x => x.PhoneNumber).IsModified = true;
+                    //_context.Entry(ApplicationUserq).Property(x => x.IsEnabled).IsModified = true;
+
+
+                    // _context.Users.Property(x => x.Password).IsModified = true;
+                    //password = _userManager.PasswordHasher.HashPassword(ApplicationUserq,ApplicationUserq.PasswordHash);
+                }
+
                 _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
                 await _context.SaveChangesAsync();
 
                 //await _userManager.UpdateAsync(_usuario);
-
-                var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
-
-                var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
-
-                var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
-                if(!resultadadd.Succeeded)
+                if (_usuario.cambiarpassword)
                 {
-                    string errores = "";
-                    foreach (var item in resultadadd.Errors)
+                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+                    var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
+
+                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+                    if (!resultadadd.Succeeded)
                     {
-                        errores += item.Description;
+                        string errores = "";
+                        foreach (var item in resultadadd.Errors)
+                        {
+                            errores += item.Description;
+                        }
+                        return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
-                    return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                 }
-              
 
                 return await Task.Run(() => _usuario);
 
@@ -260,29 +277,55 @@ namespace ERPAPI.Controllers
 
         /// <returns></returns>
         [HttpPost("ChangePassword")]
-        public async Task<ActionResult<ApplicationUser>> ChangePassword([FromBody]ApplicationUser _usuario)
+        public async Task<ActionResult<ApplicationUser>> ChangePassword([FromBody]ApplicationUserDTO _usuario)
         {
             try
             {
                 ApplicationUser ApplicationUserq = (from c in _context.Users
                   .Where(q => q.Id == _usuario.Id)
-                                                    select c
+                       select c
                     ).FirstOrDefault();
 
-                string password = _usuario.PasswordHash;
+                ApplicationUserDTO _appdto = new ApplicationUserDTO
+                {
+                     Id = ApplicationUserq.Id,
+                     IsEnabled = ApplicationUserq.IsEnabled,
+                     NormalizedEmail = ApplicationUserq.NormalizedEmail,
+                     LockoutEnd= ApplicationUserq.LockoutEnd,
+                     PhoneNumberConfirmed = ApplicationUserq.PhoneNumberConfirmed,
+                     SecurityStamp = ApplicationUserq.SecurityStamp,
+                     PhoneNumber = ApplicationUserq.PhoneNumber,
+                     TwoFactorEnabled = ApplicationUserq.TwoFactorEnabled,
+                     BranchId = ApplicationUserq.BranchId,
+                     AccessFailedCount = ApplicationUserq.AccessFailedCount,
+                     ConcurrencyStamp = ApplicationUserq.ConcurrencyStamp,
+                     Email = ApplicationUserq.Email,
+                     EmailConfirmed = ApplicationUserq.EmailConfirmed,
+                     FechaCreacion = ApplicationUserq.FechaCreacion,
+                     FechaModificacion = ApplicationUserq.FechaModificacion,
+                     LastPasswordChangedDate = ApplicationUserq.LastPasswordChangedDate,
+                     LockoutEnabled = ApplicationUserq.LockoutEnabled,
+                     NormalizedUserName = ApplicationUserq.NormalizedUserName,
+                     UsuarioCreacion = ApplicationUserq.UsuarioCreacion,
+                     UsuarioModificacion = ApplicationUserq.UsuarioModificacion,
+                     PasswordHash = ApplicationUserq.PasswordHash,
+                     UserName = ApplicationUserq.UserName,
+                     
+                };
 
+                string password = _usuario.PasswordHash;
                 var passwordValidator = new PasswordValidator<ApplicationUser>();
                 var result = await passwordValidator.ValidateAsync(_userManager, null, password);
 
                 if (result.Succeeded)
                 {
 
-                    ApplicationUserq.LastPasswordChangedDate=_usuario.LastPasswordChangedDate = DateTime.Now;
+                    _appdto.LastPasswordChangedDate=_usuario.LastPasswordChangedDate = DateTime.Now;
 
-
-                    var actualizarusuario = await PutUsuario(ApplicationUserq);
+                    _appdto.IsEnabled = true;
+                    var actualizarusuario = await PutUsuario(_appdto);
                     var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
-                    ApplicationUserq.PasswordHash = password;
+                    _appdto.PasswordHash = password;
 
                      resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
                     var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);

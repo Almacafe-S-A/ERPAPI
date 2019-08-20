@@ -13,6 +13,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Habilitado")]
         public bool? IsEnabled { get; set; }
+        
+
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
 
@@ -22,4 +24,11 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
     }
+
+    public class ApplicationUserDTO : ApplicationUser
+    {
+        public bool cambiarpassword { get; set; }
+    }
+
+
 }
