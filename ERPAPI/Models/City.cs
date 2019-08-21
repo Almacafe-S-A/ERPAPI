@@ -11,7 +11,10 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; } 
-        public string Name { get; set; } 
+        public string Name { get; set; }
+
+        [Display(Name = "Departamento")]
+        public long? StateId { get; set; }
     }
 
 
