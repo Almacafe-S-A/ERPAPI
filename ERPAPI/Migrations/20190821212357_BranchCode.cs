@@ -76,13 +76,13 @@ namespace ERPAPI.Migrations
                 principalColumn: "IdConfiguracion",
                 onDelete: ReferentialAction.Cascade);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Product_Branch_BranchId",
-                table: "Product",
-                column: "BranchId",
-                principalTable: "Branch",
-                principalColumn: "BranchId",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_Product_Branch_BranchId",
+            //    table: "Product",
+            //    column: "BranchId",
+            //    principalTable: "Branch",
+            //    principalColumn: "BranchId",
+            //    onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Product_Currency_CurrencyId",

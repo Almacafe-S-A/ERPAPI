@@ -21,6 +21,9 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
+        [Display(Name = "Tipo de documento")]
+        public string DocType { get; set; }
+
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
         [Display(Name = "Fecha de modificación")]

@@ -33,8 +33,16 @@ namespace ERPAPI.Models
 
     }
 
-    public static class BitacoraWrite
+    public class BitacoraWrite
     {
+
+        public BitacoraWrite(ApplicationDbContext _context, Bitacora _bitacora)
+        {
+            _context.Bitacora.Add(_bitacora);
+            //_context.SaveChangesAsync();
+        }
+
+
         public static void Write(Bitacora _bitacora)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();

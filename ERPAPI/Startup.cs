@@ -52,10 +52,14 @@ namespace ERPAPI
             services.AddDataProtection();
 
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")          
+            //), ServiceLifetime.Transient);
 
-            
+            services.AddDbContext<ApplicationDbContext>(options =>
+                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
+                    ));
+
 
 
             //_logger.LogInformation($"Antes de agregar el contexto");

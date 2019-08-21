@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -91,6 +92,23 @@ namespace ERPAPI.Controllers
                 _Alertq = _Alert;
                 _context.Alert.Add(_Alertq);
                 await _context.SaveChangesAsync();
+
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = _Alert.AlertId,
+                    DocType = "Alert",
+                    ClaseInicial = 
+                    Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),                
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = _Alert.UsuarioCreacion,
+                    UsuarioModificacion = _Alert.UsuarioModificacion,
+                    UsuarioEjecucion = _Alert.UsuarioModificacion,
+
+                });
+                await _context.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {
