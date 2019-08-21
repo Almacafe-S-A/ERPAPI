@@ -96,7 +96,7 @@ namespace ERPAPI.Controllers
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
-               _users = await _context.Users.ToListAsync();
+                _users = await _context.Users.Include(c => c.Branch).ToListAsync();
             }
             catch (System.Exception ex)
             {
@@ -117,7 +117,8 @@ namespace ERPAPI.Controllers
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
-                _users = await _context.Users.ToListAsync();
+                 _users = await _context.Users.Include(c => c.Branch).ToListAsync();
+               // _users = await _context.Users.ToListAsync();
             }
             catch (Exception ex)
             {

@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-     public class Branch
+    public class Branch
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
         public int BranchId { get; set; }
+        [Display(Name = "Codigo Sucursal"), ]
+        public string BranchCode { get; set; }
         [Required]
         [Display(Name = "Nombre Sucursal")]
         public string BranchName { get; set; }

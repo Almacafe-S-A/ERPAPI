@@ -68,6 +68,8 @@ namespace ERP.Contexts
         public DbSet<TiposDocumento> TiposDocumento { get; set; }
         public DbSet<SubProduct> SubProduct { get; set; }
         public DbSet<ProductRelation> ProductRelation { get; set; }
+        public DbSet<ProductUserRelation> ProductUserRelation { get; set; }
+
         public DbSet<Conditions> Conditions { get; set; }
         public DbSet<CustomerConditions> CustomerConditions { get; set; }
         public DbSet<ElementoConfiguracion> ElementoConfiguracion { get; set; }
@@ -227,6 +229,10 @@ namespace ERP.Contexts
            .HasMany(c => c.ProductRelation)
            .WithOne(e => e.Product)
            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Branch>()
+            .HasIndex(e => e.BranchCode)
+            .IsUnique(true); 
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })
             //    .IsUnique(true);

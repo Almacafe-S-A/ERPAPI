@@ -9,13 +9,15 @@ namespace ERPAPI.Models
 {
     public class Estados
     {
-
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 IdEstado { get; set; }
         [Required]
         public string NombreEstado { get; set; }
         public string DescripcionEstado { get; set; }
-        public Int64 IdGrupoEstado { get; set; }
+        public long IdGrupoEstado { get; set; }
+        [ForeignKey("IdGrupoEstado")]
+        public virtual GrupoConfiguracion GrupoConfiguracion { get; set; }
+
         [Required]
         public string UsuarioCreacion { get; set; }
         [Required]
