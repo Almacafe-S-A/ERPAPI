@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
-using ERPAPI.Helpers;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -15,9 +13,9 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Account")]
+    [Route("api/TypeAccount")]
     [ApiController]
-    public class AccountController : Controller
+    public class TypeAccountController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
@@ -25,24 +23,24 @@ namespace ERPAPI.Controllers
         {
             _context = context;
         }*/
-        public AccountController(ILogger<AccountController> logger, ApplicationDbContext context)
+        public TypeAccountController(ILogger<AccountController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la Account en una lista.
+        /// Obtiene los Datos de la TypeAccount en una lista.
         /// </summary>
 
-        // GET: api/Account
+        // GET: api/TypeAccount
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccount()
+        public async Task<IActionResult> GetTypeAccount()
 
         {
-            List<Account> Items = new List<Account>();
+            List<TypeAccount> Items = new List<TypeAccount>();
             try
             {
-                Items = await _context.Account.ToListAsync();
+                Items = await _context.TypeAccount.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -58,15 +56,15 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la Account por medio del Id enviado.
         /// </summary>
-        /// <param name="AccountId"></param>
+        /// <param name="TypeAccountId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AccountId}")]
-        public async Task<IActionResult> GetAccountById(Int64 AccountId)
+        [HttpGet("[action]/{TypeAccountId}")]
+        public async Task<IActionResult> GetTypeAccountById(Int64 TypeAccountId)
         {
-            Account Items = new Account();
+            TypeAccount Items = new TypeAccount();
             try
             {
-                Items = await _context.Account.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
+                Items = await _context.TypeAccount.Where(q => q.TypeAccountId == TypeAccountId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -83,16 +81,16 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Inserta una nueva Account
         /// </summary>
-        /// <param name="_Account"></param>
+        /// <param name="_TypeAccount"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Account>> Insert([FromBody]Account _Account)
+        public async Task<ActionResult<TypeAccount>> Insert([FromBody]TypeAccount _TypeAccount)
         {
-            Account _Accountq = new Account();
+            TypeAccount _TypeAccountq = new TypeAccount();
             try
             {
-                _Accountq = _Account;
-                _context.Account.Add(_Accountq);
+                _TypeAccountq = _TypeAccount;
+                _context.TypeAccount.Add(_TypeAccountq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -102,27 +100,28 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Accountq));
+            return await Task.Run(() => Ok(_TypeAccountq));
         }
 
         /// <summary>
         /// Actualiza la Account
         /// </summary>
-        /// <param name="_Account"></param>
+        /// <param name="_TypeAccount"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Account>> Update([FromBody]Account _Account)
+        public async Task<ActionResult<TypeAccount>> Update([FromBody]TypeAccount _TypeAccount)
         {
-            Account _Accountq = _Account;
+            TypeAccount _TypeAccountq = _TypeAccount;
             try
             {
-                _Accountq = await (from c in _context.Account
-                                 .Where(q => q.AccountId == _Account.AccountId)
-                                   select c
+                _TypeAccountq = await (from c in _context.TypeAccount
+                                 .Where(q => q.TypeAccountId == _TypeAccount.TypeAccountId)
+                                       select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Accountq).CurrentValues.SetValues((_Account));
+                _context.Entry(_TypeAccountq).CurrentValues.SetValues((_TypeAccount));
 
+                //_context.Bank.Update(_Bankq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -132,25 +131,25 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Accountq));
+            return await Task.Run(() => Ok(_TypeAccountq));
         }
 
         /// <summary>
         /// Elimina una Account       
         /// </summary>
-        /// <param name="_Account"></param>
+        /// <param name="_TypeAccount"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Account _Account)
+        public async Task<IActionResult> Delete([FromBody]TypeAccount _TypeAccount)
         {
-            Account _Accountq = new Account();
+            TypeAccount _TypeAccountq = new TypeAccount();
             try
             {
-                _Accountq = _context.Account
-                .Where(x => x.AccountId == (Int64)_Account.AccountId)
+                _TypeAccountq = _context.TypeAccount
+                .Where(x => x.TypeAccountId == (Int64)_TypeAccount.TypeAccountId)
                 .FirstOrDefault();
 
-                _context.Account.Remove(_Accountq);
+                _context.TypeAccount.Remove(_TypeAccountq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -159,43 +158,8 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Accountq));
+            return await Task.Run(() => Ok(_TypeAccountq));
 
         }
-        /*[HttpGet("[action]")]
-        public async Task<ActionResult<AccountClasses>> GetEnumClass()//Int64 idgrupoestado
-        {
-            List<AccountClasses> Items = new List<AccountClasses>();
-
-            try
-            {
-                Items = await _context.enum//.AccountClasses.ToListAsync();
-                //List<AccountClasses> Items; //await _context.Account.a//.Where(q => q.IdGrupoEstado == idgrupoestado).ToListAsync();
-                //return await Task.Run(() => Ok(AccountClasses));
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }*/
-            /*
-            List<Account> Items = new List<Account>();
-            try
-            {
-                Items = await _context.Account.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-             
-             */
-        //}
     }
 }

@@ -100,7 +100,32 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-      
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetGoodsDeliveryAuthorizationNoSelectedBoletaSalida()
+        {
+            List<GoodsDeliveryAuthorization> Items = new List<GoodsDeliveryAuthorization>();
+            try
+            {
+                List<Int64> listayaprocesada = _context.BoletaDeSalida
+                                              .Where(q => q.GoodsDeliveryAuthorizationId > 0)
+                                              .Select(q => q.GoodsDeliveryAuthorizationId).ToList();
+
+                Items = await _context.GoodsDeliveryAuthorization.Where(q => !listayaprocesada.Contains(q.GoodsDeliveryAuthorizationId)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
 
 
         /// <summary>

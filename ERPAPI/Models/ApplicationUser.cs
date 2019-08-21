@@ -15,6 +15,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Habilitado")]
         public bool? IsEnabled { get; set; }
+        
+
         [Display(Name = "Sucursal")]
         public int BranchId { get; set; }
 
@@ -29,4 +31,11 @@ namespace ERPAPI.Models
         [ForeignKey("BranchId")]
         public virtual Branch Branch { get; set; }
     }
+
+    public class ApplicationUserDTO : ApplicationUser
+    {
+        public bool cambiarpassword { get; set; }
+    }
+
+
 }

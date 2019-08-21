@@ -1,45 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/State")]
+    [Route("api/Purch")]
     [ApiController]
-    public class StateController : Controller
+    public class PurchController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-
-        public StateController(ILogger<StateController> logger, ApplicationDbContext context)
+        /*public DimensionsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }*/
+        public PurchController(ILogger<AccountController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
-
         /// <summary>
-        /// Obtiene el Listado de Statees 
-        /// El estado define cuales son los Estate
+        /// Obtiene los Datos de la Proveedores en una lista.
         /// </summary>
-        /// <returns></returns>
+
+        // GET: api/Purch
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetState()
+        public async Task<IActionResult> GetPurch()
+
         {
-            List<State> Items = new List<State>();
+            List<Purch> Items = new List<Purch>();
             try
             {
-                Items = await _context.State.ToListAsync();
+                Items = await _context.Purch.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -51,19 +52,18 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
-
         /// <summary>
-        /// Obtiene los Datos de la State por medio del Id enviado.
+        /// Obtiene los Datos de la Purch por medio del Id enviado.
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="PurchId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetStateById(Int64 Id)
+        [HttpGet("[action]/{PurchId}")]
+        public async Task<IActionResult> GetPurchById(Int64 PurchId)
         {
-            State Items = new State();
+            Purch Items = new Purch();
             try
             {
-                Items = await _context.State.Where(q => q.Id == Id).FirstOrDefaultAsync();
+                Items = await _context.Purch.Where(q => q.PurchId == PurchId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -78,18 +78,18 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva State
+        /// Inserta una nueva Purch
         /// </summary>
-        /// <param name="_State"></param>
+        /// <param name="_Purch"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<State>> Insert([FromBody]State _State)
+        public async Task<ActionResult<Purch>> Insert([FromBody]Purch _Purch)
         {
-            State _Stateq = new State();
+            Purch _Purchq = new Purch();
             try
             {
-                _Stateq = _State;
-                _context.State.Add(_Stateq);
+                _Purchq = _Purch;
+                _context.Purch.Add(_Purchq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -99,73 +99,65 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Stateq));
+            return await Task.Run(() => Ok(_Purchq));
         }
 
         /// <summary>
-        /// Actualiza la State
+        /// Actualiza la Purch
         /// </summary>
-        /// <param name="_State"></param>
+        /// <param name="_Purch"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<State>> Update([FromBody]State _State)
+        public async Task<ActionResult<Purch>> Update([FromBody]Purch _Purch)
         {
-            State _Stateq = _State;
+            Purch _Purchq = _Purch;
             try
             {
-                _Stateq = await (from c in _context.State
-                                 .Where(q => q.Id == _State.Id)
-                                 select c
+                _Purchq = await (from c in _context.Purch
+                                 .Where(q => q.PurchId == _Purch.PurchId)
+                                   select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Stateq).CurrentValues.SetValues((_State));
+                _context.Entry(_Purchq).CurrentValues.SetValues((_Purch));
 
-                //_context.State.Update(_Stateq);
-                await _context.SaveChangesAsync();
+                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Stateq));
+            return await Task.Run(() => Ok(_Purchq));
         }
 
         /// <summary>
-        /// Elimina una State       
+        /// Elimina una Purch       
         /// </summary>
-        /// <param name="_State"></param>
+        /// <param name="_Purch"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]State _State)
+        public async Task<IActionResult> Delete([FromBody]Purch _Purch)
         {
-            State _Stateq = new State();
+            Purch _Purchq = new Purch();
             try
             {
-                _Stateq = _context.State
-                .Where(x => x.Id == (Int64)_State.Id)
+                _Purchq = _context.Purch
+                .Where(x => x.PurchId == (Int64)_Purch.PurchId)
                 .FirstOrDefault();
 
-                _context.State.Remove(_Stateq);
+                _context.Purch.Remove(_Purchq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Stateq));
+            return await Task.Run(() => Ok(_Purchq));
 
         }
-
-
-
-
-
-
-
     }
 }

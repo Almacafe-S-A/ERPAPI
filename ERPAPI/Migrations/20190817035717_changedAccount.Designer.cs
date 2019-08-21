@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190817035717_changedAccount")]
+    partial class changedAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,8 +27,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AccountClasses");
-
                     b.Property<long?>("AccountClassid");
 
                     b.Property<string>("AccountCode")
@@ -36,6 +36,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("AccountName")
                         .IsRequired()
                         .HasMaxLength(200);
+
+                    b.Property<bool>("BlockedInJournal");
 
                     b.Property<long>("CompanyInfoId");
 
@@ -60,8 +62,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp")
                         .HasMaxLength(8);
-
-                    b.Property<long>("TypeAccountId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -505,8 +505,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Vigilante");
 
-                    b.Property<long>("WeightBallot");
-
                     b.HasKey("BoletaDeSalidaId");
 
                     b.ToTable("BoletaDeSalida");
@@ -870,6 +868,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Name");
 
                     b.Property<long?>("StateId");
+
+                    b.Property<long?>("State_Id");
 
                     b.HasKey("Id");
 
@@ -1728,13 +1728,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("DimCode");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -3810,137 +3806,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("PuntoEmision");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Purch", b =>
-                {
-                    b.Property<long>("PurchId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address");
-
-                    b.Property<string>("City");
-
-                    b.Property<string>("CompanyReferenceone")
-                        .IsRequired();
-
-                    b.Property<string>("CompanyReferencetwo")
-                        .IsRequired();
-
-                    b.Property<string>("ContactPerson");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<string>("GrupoEconomico");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("Identidad")
-                        .IsRequired();
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<string>("Phone");
-
-                    b.Property<string>("PhoneReferenceone");
-
-                    b.Property<string>("PhoneReferencetwo");
-
-                    b.Property<string>("PurchCode")
-                        .IsRequired();
-
-                    b.Property<string>("PurchName")
-                        .IsRequired();
-
-                    b.Property<int>("PurchTypeId");
-
-                    b.Property<string>("RTN")
-                        .IsRequired();
-
-                    b.Property<string>("State");
-
-                    b.Property<string>("ZipCode");
-
-                    b.Property<int>("taxGroup");
-
-                    b.HasKey("PurchId");
-
-                    b.ToTable("Purch");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PurchDocument", b =>
-                {
-                    b.Property<long>("PurchDocumentId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("CreatedUser");
-
-                    b.Property<string>("DocumentName");
-
-                    b.Property<long>("DocumentTypeId");
-
-                    b.Property<string>("DocumentTypeName");
-
-                    b.Property<DateTime?>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser");
-
-                    b.Property<string>("Path");
-
-                    b.Property<long>("PurchId");
-
-                    b.HasKey("PurchDocumentId");
-
-                    b.ToTable("PurchDocument");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PurchPartners", b =>
-                {
-                    b.Property<long>("PartnerId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Correo");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser");
-
-                    b.Property<string>("Identidad");
-
-                    b.Property<string>("Listados");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser");
-
-                    b.Property<string>("PartnerName");
-
-                    b.Property<long>("PurchId");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("Telefono");
-
-                    b.HasKey("PartnerId");
-
-                    b.ToTable("PurchPartners");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.RecibosCertificado", b =>
                 {
                     b.Property<long>("IdReciboCertificado")
@@ -4635,29 +4500,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdTipoDocumento");
 
                     b.ToTable("TiposDocumento");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.TypeAccount", b =>
-                {
-                    b.Property<long>("TypeAccountId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<string>("TypeAccountName");
-
-                    b.HasKey("TypeAccountId");
-
-                    b.ToTable("TypeAccount");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.UnitOfMeasure", b =>

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190818232824_PurchAndTypeAccount")]
+    partial class PurchAndTypeAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,6 +39,8 @@ namespace ERPAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(200);
 
+                    b.Property<bool>("BlockedInJournal");
+
                     b.Property<long>("CompanyInfoId");
 
                     b.Property<string>("Description")
@@ -60,8 +64,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp")
                         .HasMaxLength(8);
-
-                    b.Property<long>("TypeAccountId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -505,8 +507,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Vigilante");
 
-                    b.Property<long>("WeightBallot");
-
                     b.HasKey("BoletaDeSalidaId");
 
                     b.ToTable("BoletaDeSalida");
@@ -870,6 +870,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Name");
 
                     b.Property<long?>("StateId");
+
+                    b.Property<long?>("State_Id");
 
                     b.HasKey("Id");
 
@@ -3846,7 +3848,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Identidad")
                         .IsRequired();
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime>("ModifiedCreated");
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
@@ -3877,68 +3879,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("PurchId");
 
                     b.ToTable("Purch");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PurchDocument", b =>
-                {
-                    b.Property<long>("PurchDocumentId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("CreatedUser");
-
-                    b.Property<string>("DocumentName");
-
-                    b.Property<long>("DocumentTypeId");
-
-                    b.Property<string>("DocumentTypeName");
-
-                    b.Property<DateTime?>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser");
-
-                    b.Property<string>("Path");
-
-                    b.Property<long>("PurchId");
-
-                    b.HasKey("PurchDocumentId");
-
-                    b.ToTable("PurchDocument");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PurchPartners", b =>
-                {
-                    b.Property<long>("PartnerId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Correo");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser");
-
-                    b.Property<string>("Identidad");
-
-                    b.Property<string>("Listados");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser");
-
-                    b.Property<string>("PartnerName");
-
-                    b.Property<long>("PurchId");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("Telefono");
-
-                    b.HasKey("PartnerId");
-
-                    b.ToTable("PurchPartners");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.RecibosCertificado", b =>
@@ -4648,7 +4588,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<DateTime>("ModifiedCreated");
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
