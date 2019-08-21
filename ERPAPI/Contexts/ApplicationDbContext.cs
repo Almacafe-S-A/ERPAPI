@@ -68,6 +68,8 @@ namespace ERP.Contexts
         public DbSet<TiposDocumento> TiposDocumento { get; set; }
         public DbSet<SubProduct> SubProduct { get; set; }
         public DbSet<ProductRelation> ProductRelation { get; set; }
+        public DbSet<ProductUserRelation> ProductUserRelation { get; set; }
+
         public DbSet<Conditions> Conditions { get; set; }
         public DbSet<CustomerConditions> CustomerConditions { get; set; }
         public DbSet<ElementoConfiguracion> ElementoConfiguracion { get; set; }
