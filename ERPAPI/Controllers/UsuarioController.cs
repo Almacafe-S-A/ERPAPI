@@ -344,7 +344,7 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
-                    return await Task.Run(() => BadRequest($"La contraseña no es correcta,debe tener mayusculas y minusculas!!"));
+                    return await Task.Run(() => BadRequest($" El password debe tener mayusculas, minusculas y caracteres especiales!"));
                 }
 
             }

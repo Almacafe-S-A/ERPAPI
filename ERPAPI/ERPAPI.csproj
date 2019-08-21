@@ -19,6 +19,7 @@
   <ItemGroup>
     <Compile Remove="Controllers\CenterCosteController.cs" />
     <Compile Remove="Controllers\LedgerController.cs" />
+    <Compile Remove="Controllers\PurchDocumentsController.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.Designer.cs" />
     <Compile Remove="Migrations\20190422162817_ControllersNumeracionSAR.cs" />
@@ -77,6 +78,8 @@
     <Compile Remove="Migrations\20190815185002_alert.cs" />
     <Compile Remove="Migrations\20190815185002_alert.Designer.cs" />
     <Compile Remove="Migrations\20190816144826_ChangedAcccount.cs" />
+    <Compile Remove="Migrations\20190821155318_weightballot.cs" />
+    <Compile Remove="Migrations\20190821155318_weightballot.Designer.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup>
