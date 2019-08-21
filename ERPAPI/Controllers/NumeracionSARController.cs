@@ -160,6 +160,28 @@ namespace ERPAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Obtiene las numeraciones por Vencer del SAR       
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetNumeracionVencida()
+        {
+            List<NumeracionSAR> Items = new List<NumeracionSAR>();
+            try
+            {
+                Items = await _context.NumeracionSAR.Where(c => c.FechaLimite <= DateTime.Now).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
 
 
 

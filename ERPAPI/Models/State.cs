@@ -14,7 +14,8 @@ namespace ERPAPI.Models
         public long Id { get; set; } // bigint
         [Display(Name = "Departamento")]
         public string Name { get; set; } // text
-      
+
+        public Int64 CountryId { get; set; }
 
         [Display(Name = "Usuario de creación")]
         public string Usuariocreacion { get; set; }
