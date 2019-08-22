@@ -22,6 +22,9 @@ namespace ERPAPI.Models
         [StringLength(50)]
         [Display(Name = "Codigo Contable")]
         public string AccountCode { get; set; }
+        [Display(Name = "Saldo Contable")]
+        public double AccountBalance { get; set; }
+
         [Required]
         [StringLength(200)]
         [Display(Name = "Nombre de la cuenta")]

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190821181431_JournalEntryandJournalEntryLine")]
+    partial class JournalEntryandJournalEntryLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,8 +26,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("AccountBalance");
 
                     b.Property<int>("AccountClasses");
 
@@ -3191,20 +3191,20 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
                     b.Property<int>("DrCr");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("JournalEntryId");
 
                     b.Property<string>("Memo");
 
-                    b.Property<DateTime>("ModifiedDate");
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
 
-                    b.Property<string>("ModifiedUser")
+                    b.Property<string>("UsuarioModificacion")
                         .IsRequired();
 
                     b.HasKey("JournalEntryLineId");

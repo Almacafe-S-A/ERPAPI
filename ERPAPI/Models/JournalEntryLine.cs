@@ -27,16 +27,16 @@ namespace ERPAPI.Models
         public virtual Account Account { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]
-        public string UsuarioCreacion { get; set; }
+        public string CreatedUser { get; set; }
         [Required]
         [Display(Name = "Usuario de modificacion")]
-        public string UsuarioModificacion { get; set; }
+        public string ModifiedUser { get; set; }
         [Required]
         [Display(Name = "Fecha de creacion")]
-        public DateTime FechaCreacion { get; set; }
+        public DateTime CreatedDate { get; set; }
         [Required]
-        [Display(Name = "Fecha de modificacion")]
-        public DateTime FechaModificacion { get; set; }
+        [Display(Name = "Fecha de Modificacion")]
+        public DateTime ModifiedDate { get; set; }
 
     }
 
