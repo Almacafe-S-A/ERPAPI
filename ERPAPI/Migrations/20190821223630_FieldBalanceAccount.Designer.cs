@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190821223630_FieldBalanceAccount")]
+    partial class FieldBalanceAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -195,7 +197,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<int>("BranchId");
+                    b.Property<long>("BranchId");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -241,8 +243,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -385,11 +385,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Accion");
 
-                    b.Property<string>("ClaseInicial");
-
                     b.Property<string>("Descripcion");
-
-                    b.Property<string>("DocType");
 
                     b.Property<string>("Estado");
 
@@ -513,8 +509,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Vigilante");
 
-                    b.Property<long>("WeightBallot");
-
                     b.HasKey("BoletaDeSalidaId");
 
                     b.ToTable("BoletaDeSalida");
@@ -596,8 +590,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Address");
 
-                    b.Property<string>("BranchCode");
-
                     b.Property<string>("BranchName")
                         .IsRequired();
 
@@ -634,10 +626,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ZipCode");
 
                     b.HasKey("BranchId");
-
-                    b.HasIndex("BranchCode")
-                        .IsUnique()
-                        .HasFilter("[BranchCode] IS NOT NULL");
 
                     b.ToTable("Branch");
                 });
@@ -1157,10 +1145,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("CustomerTypeId");
 
-                    b.Property<string>("CustomerTypeName");
-
-                    b.Property<string>("Denominacion");
-
                     b.Property<string>("DireccionEnvio");
 
                     b.Property<string>("Email");
@@ -1180,13 +1164,9 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Identidad")
                         .IsRequired();
 
-                    b.Property<string>("IdentidadApoderado");
-
                     b.Property<double>("MontoActivos");
 
                     b.Property<double>("MontoIngresosAnuales");
-
-                    b.Property<string>("NombreApoderado");
 
                     b.Property<string>("PerteneceEmpresa");
 
@@ -2294,8 +2274,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("IdEstado");
-
-                    b.HasIndex("IdGrupoEstado");
 
                     b.ToTable("Estados");
                 });
@@ -3687,15 +3665,9 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("CurrencyId");
-
                     b.HasIndex("ProductCode")
                         .IsUnique()
                         .HasFilter("[ProductCode] IS NOT NULL");
-
-                    b.HasIndex("UnitOfMeasureId");
 
                     b.ToTable("Product");
                 });
@@ -3749,35 +3721,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("ProductTypeId");
 
                     b.ToTable("ProductType");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ProductUserRelation", b =>
-                {
-                    b.Property<long>("ProductUserRelationId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<string>("DocType");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("ProductUserRelationId");
-
-                    b.ToTable("ProductUserRelation");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ProformaInvoice", b =>
@@ -4639,7 +4582,7 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("CountryId");
+                    b.Property<long?>("CountryId");
 
                     b.Property<DateTime?>("FechaCreacion");
 
@@ -5646,14 +5589,6 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("ParentAccountAccountId");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.ApplicationUserClaim", b =>
                 {
                     b.HasOne("ERPAPI.Models.ApplicationUser")
@@ -5777,14 +5712,6 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Estados", b =>
-                {
-                    b.HasOne("ERPAPI.Models.GrupoConfiguracion", "GrupoConfiguracion")
-                        .WithMany()
-                        .HasForeignKey("IdGrupoEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
                 {
                     b.HasOne("ERPAPI.Models.Account", "Account")
@@ -5866,24 +5793,6 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Product", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasureId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>
                 {
                     b.HasOne("ERPAPI.Models.Product", "Product")
@@ -5929,8 +5838,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.Country")
                         .WithMany("State")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CountryId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorOfCustomer", b =>

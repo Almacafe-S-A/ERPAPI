@@ -27,6 +27,8 @@ namespace ERP.Contexts
         {
 
         }
+        public DbSet<JournalEntry> JournalEntry { get; set; }
+        public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
         public DbSet<PurchPartners> PurchPartners { get; set; }
         public DbSet<PurchDocument> PurchDocument { get; set; }
         public DbSet<Purch> Purch { get; set; }

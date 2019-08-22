@@ -30,20 +30,22 @@ namespace ERPAPI.Models
         public bool? Posted { get; set; }
         public virtual GeneralLedgerHeader GeneralLedgerHeader { get; set; }
         public virtual Party Party { get; set; }
-
+        [Display(Name = "Id de Registro Pago")]
+        public Int64 IdPaymentCode { get; set; }
+        public Int64 IdTypeofPayment { get; set; }
         public virtual ICollection<JournalEntryLine> JournalEntryLines { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]
-        public string UsuarioCreacion { get; set; }
+        public string CreatedUser { get; set; }
         [Required]
         [Display(Name = "Usuario de modificacion")]
-        public string UsuarioModificacion { get; set; }
+        public string ModifiedUser { get; set; }
         [Required]
         [Display(Name = "Fecha de creacion")]
-        public DateTime FechaCreacion { get; set; }
+        public DateTime CreatedDate { get; set; }
         [Required]
         [Display(Name = "Fecha de Modificacion")]
-        public DateTime FechaModificacion { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
     }
 

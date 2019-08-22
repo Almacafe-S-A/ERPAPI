@@ -12,10 +12,11 @@ using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
+    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Purch")]
+    [Route("api/JournalEntry")]
     [ApiController]
-    public class PurchController : Controller
+    public class JournalEntryController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
@@ -23,24 +24,24 @@ namespace ERPAPI.Controllers
         {
             _context = context;
         }*/
-        public PurchController(ILogger<PurchController> logger, ApplicationDbContext context)
+        public JournalEntryController(ILogger<JournalEntryController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la Proveedores en una lista.
+        /// Obtiene los Datos de la Diarios en una lista.
         /// </summary>
 
-        // GET: api/Purch
+        // GET: api/JournalEntry
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetPurch()
+        public async Task<IActionResult> GetJournalEntry()
 
         {
-            List<Purch> Items = new List<Purch>();
+            List<JournalEntry> Items = new List<JournalEntry>();
             try
             {
-                Items = await _context.Purch.ToListAsync();
+                Items = await _context.JournalEntry.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -53,17 +54,17 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
-        /// Obtiene los Datos de la Purch por medio del Id enviado.
+        /// Obtiene los Datos de la JournalEntry por medio del Id enviado.
         /// </summary>
-        /// <param name="PurchId"></param>
+        /// <param name="JournalEntryId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{PurchId}")]
-        public async Task<IActionResult> GetPurchById(Int64 PurchId)
+        [HttpGet("[action]/{JournalEntryId}")]
+        public async Task<IActionResult> GetJournalEntryById(Int64 JournalEntryId)
         {
-            Purch Items = new Purch();
+            JournalEntry Items = new JournalEntry();
             try
             {
-                Items = await _context.Purch.Where(q => q.PurchId == PurchId).FirstOrDefaultAsync();
+                Items = await _context.JournalEntry.Where(q => q.JournalEntryId == JournalEntryId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -78,18 +79,18 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva Purch
+        /// Inserta una nueva JournalEntry
         /// </summary>
-        /// <param name="_Purch"></param>
+        /// <param name="_JournalEntry"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Purch>> Insert([FromBody]Purch _Purch)
+        public async Task<ActionResult<JournalEntry>> Insert([FromBody]JournalEntry _JournalEntry)
         {
-            Purch _Purchq = new Purch();
+            JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
-                _Purchq = _Purch;
-                _context.Purch.Add(_Purchq);
+                _JournalEntryq = _JournalEntry;
+                _context.JournalEntry.Add(_JournalEntryq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -99,28 +100,28 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Purchq));
+            return await Task.Run(() => Ok(_JournalEntryq));
         }
 
         /// <summary>
-        /// Actualiza la Purch
+        /// Actualiza la JournalEntry
         /// </summary>
-        /// <param name="_Purch"></param>
+        /// <param name="_JournalEntry"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Purch>> Update([FromBody]Purch _Purch)
+        public async Task<ActionResult<JournalEntry>> Update([FromBody]JournalEntry _JournalEntry)
         {
-            Purch _Purchq = _Purch;
+            JournalEntry _JournalEntryq = _JournalEntry;
             try
             {
-                _Purchq = await (from c in _context.Purch
-                                 .Where(q => q.PurchId == _Purch.PurchId)
-                                   select c
+                _JournalEntryq = await (from c in _context.JournalEntry
+                                 .Where(q => q.JournalEntryId == _JournalEntry.JournalEntryId)
+                                 select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Purchq).CurrentValues.SetValues((_Purch));
+                _context.Entry(_JournalEntryq).CurrentValues.SetValues((_JournalEntry));
 
-                 await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -129,25 +130,25 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Purchq));
+            return await Task.Run(() => Ok(_JournalEntryq));
         }
 
         /// <summary>
-        /// Elimina una Purch       
+        /// Elimina una JournalEntry       
         /// </summary>
-        /// <param name="_Purch"></param>
+        /// <param name="_JournalEntry"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Purch _Purch)
+        public async Task<IActionResult> Delete([FromBody]JournalEntry _JournalEntry)
         {
-            Purch _Purchq = new Purch();
+            JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
-                _Purchq = _context.Purch
-                .Where(x => x.PurchId == (Int64)_Purch.PurchId)
+                _JournalEntryq = _context.JournalEntry
+                .Where(x => x.JournalEntryId == (Int64)_JournalEntry.JournalEntryId)
                 .FirstOrDefault();
 
-                _context.Purch.Remove(_Purchq);
+                _context.JournalEntry.Remove(_JournalEntryq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -156,7 +157,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Purchq));
+            return await Task.Run(() => Ok(_JournalEntryq));
 
         }
     }
