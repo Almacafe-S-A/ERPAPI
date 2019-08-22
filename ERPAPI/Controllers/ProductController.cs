@@ -37,7 +37,10 @@ namespace ERPAPI.Controllers
             List<Product> Items = new List<Product>();
             try
             {
-                Items = await _context.Product.ToListAsync();               
+                Items = await _context.Product.Include(c => c.Branch)
+                                              .Include(c => c.Currency)
+                                              .Include(c => c.UnitOfMeasure)
+                                              .ToListAsync();               
             }
             catch (Exception ex)
             {
@@ -58,7 +61,10 @@ namespace ERPAPI.Controllers
             Product Items = new Product();
             try
             {
-                Items = await _context.Product.Where(q=>q.ProductId== ProductId).FirstOrDefaultAsync();
+                Items = await _context.Product.Include(c => c.Branch)
+                                              .Include(c => c.Currency)
+                                              .Include(c => c.UnitOfMeasure)
+                                              .Where(q=>q.ProductId== ProductId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

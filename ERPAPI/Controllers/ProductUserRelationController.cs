@@ -11,36 +11,35 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Alert")]
+    [Route("api/ProductUserRelation")]
     [ApiController]
-    public class AlertController : Controller
+    public class ProductUserRelationController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public AlertController(ILogger<AlertController> logger, ApplicationDbContext context)
+        public ProductUserRelationController(ILogger<ProductUserRelationController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Alertes 
+        /// Obtiene el Listado de ProductUserRelationes 
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAlert()
+        public async Task<IActionResult> GetProductUserRelation()
         {
-            List<Alert> Items = new List<Alert>();
+            List<ProductUserRelation> Items = new List<ProductUserRelation>();
             try
             {
-                Items = await _context.Alert.ToListAsync();
+                Items = await _context.ProductUserRelation.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,17 +53,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la Alert por medio del Id enviado.
+        /// Obtiene los Datos de la ProductUserRelation por medio del Id enviado.
         /// </summary>
-        /// <param name="AlertId"></param>
+        /// <param name="ProductUserRelationId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AlertId}")]
-        public async Task<IActionResult> GetAlertById(Int64 AlertId)
+        [HttpGet("[action]/{ProductUserRelationId}")]
+        public async Task<IActionResult> GetProductUserRelationById(Int64 ProductUserRelationId)
         {
-            Alert Items = new Alert();
+            ProductUserRelation Items = new ProductUserRelation();
             try
             {
-                Items = await _context.Alert.Where(q => q.AlertId == AlertId).FirstOrDefaultAsync();
+                Items = await _context.ProductUserRelation.Where(q => q.ProductUserRelationId == ProductUserRelationId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -79,36 +78,19 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva Alert
+        /// Inserta una nueva ProductUserRelation
         /// </summary>
-        /// <param name="_Alert"></param>
+        /// <param name="_ProductUserRelation"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Alert>> Insert([FromBody]Alert _Alert)
+        public async Task<ActionResult<ProductUserRelation>> Insert([FromBody]ProductUserRelation _ProductUserRelation)
         {
-            Alert _Alertq = new Alert();
+            ProductUserRelation _ProductUserRelationq = new ProductUserRelation();
             try
             {
-                _Alertq = _Alert;
-                _context.Alert.Add(_Alertq);
+                _ProductUserRelationq = _ProductUserRelation;
+                _context.ProductUserRelation.Add(_ProductUserRelationq);
                 await _context.SaveChangesAsync();
-
-                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                {
-                    IdOperacion = _Alert.AlertId,
-                    DocType = "Alert",
-                    ClaseInicial = 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),                
-                    Accion = "Insertar",
-                    FechaCreacion = DateTime.Now,
-                    FechaModificacion = DateTime.Now,
-                    UsuarioCreacion = _Alert.UsuarioCreacion,
-                    UsuarioModificacion = _Alert.UsuarioModificacion,
-                    UsuarioEjecucion = _Alert.UsuarioModificacion,
-
-                });
-                await _context.SaveChangesAsync();
-
             }
             catch (Exception ex)
             {
@@ -117,28 +99,28 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Alertq));
+            return await Task.Run(() => Ok(_ProductUserRelationq));
         }
 
         /// <summary>
-        /// Actualiza la Alert
+        /// Actualiza la ProductUserRelation
         /// </summary>
-        /// <param name="_Alert"></param>
+        /// <param name="_ProductUserRelation"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Alert>> Update([FromBody]Alert _Alert)
+        public async Task<ActionResult<ProductUserRelation>> Update([FromBody]ProductUserRelation _ProductUserRelation)
         {
-            Alert _Alertq = _Alert;
+            ProductUserRelation _ProductUserRelationq = _ProductUserRelation;
             try
             {
-                _Alertq = await (from c in _context.Alert
-                                 .Where(q => q.AlertId == _Alert.AlertId)
-                                 select c
+                _ProductUserRelationq = await (from c in _context.ProductUserRelation
+                                 .Where(q => q.ProductUserRelationId == _ProductUserRelation.ProductUserRelationId)
+                                               select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Alertq).CurrentValues.SetValues((_Alert));
+                _context.Entry(_ProductUserRelationq).CurrentValues.SetValues((_ProductUserRelation));
 
-                //_context.Alert.Update(_Alertq);
+                //_context.ProductUserRelation.Update(_ProductUserRelationq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -148,25 +130,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_Alertq));
+            return await Task.Run(() => Ok(_ProductUserRelationq));
         }
 
         /// <summary>
-        /// Elimina una Alert       
+        /// Elimina una ProductUserRelation       
         /// </summary>
-        /// <param name="_Alert"></param>
+        /// <param name="_ProductUserRelation"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Alert _Alert)
+        public async Task<IActionResult> Delete([FromBody]ProductUserRelation _ProductUserRelation)
         {
-            Alert _Alertq = new Alert();
+            ProductUserRelation _ProductUserRelationq = new ProductUserRelation();
             try
             {
-                _Alertq = _context.Alert
-                .Where(x => x.AlertId == (Int64)_Alert.AlertId)
+                _ProductUserRelationq = _context.ProductUserRelation
+                .Where(x => x.ProductUserRelationId == (Int64)_ProductUserRelation.ProductUserRelationId)
                 .FirstOrDefault();
 
-                _context.Alert.Remove(_Alertq);
+                _context.ProductUserRelation.Remove(_ProductUserRelationq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -175,7 +157,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_Alertq));
+            return await Task.Run(() => Ok(_ProductUserRelationq));
 
         }
 

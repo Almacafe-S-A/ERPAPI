@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -34,6 +35,7 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.SubProduct.ToListAsync();
+                
             }
             catch (Exception ex)
             {
@@ -264,12 +266,21 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<SubProduct>> Insert([FromBody]SubProduct _Currency)
+        public async Task<ActionResult<SubProduct>> Insert([FromBody]SubProduct _subproduct)
         {
-            SubProduct subProduct = _Currency;
+            SubProduct subProduct = _subproduct;
             try
             {
+              
                 _context.SubProduct.Add(subProduct);
+                await  _context.SaveChangesAsync();
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora { IdOperacion = subProduct.SubproductId,DocType="SubProducto" ,
+                    ClaseInicial = Newtonsoft.Json.JsonConvert.SerializeObject(_subproduct, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore })
+                    , Accion="Insertar" , FechaCreacion =DateTime.Now , FechaModificacion = DateTime.Now, UsuarioCreacion = _subproduct.UsuarioCreacion, UsuarioModificacion = _subproduct.UsuarioModificacion
+                    , UsuarioEjecucion = _subproduct.UsuarioModificacion,
+                    
+                });
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

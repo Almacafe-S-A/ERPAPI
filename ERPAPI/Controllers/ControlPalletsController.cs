@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -152,6 +153,23 @@ namespace ERPAPI.Controllers
                         }
                         // await _context.SaveChangesAsync();
                         await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _ControlPallets.ControlPalletsId,
+                            DocType = "ControlPallets",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_ControlPallets, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _ControlPallets.UsuarioCreacion,
+                            UsuarioModificacion = _ControlPallets.UsuarioModificacion,
+                            UsuarioEjecucion = _ControlPallets.UsuarioModificacion,
+
+                        });
+                        await _context.SaveChangesAsync();
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
