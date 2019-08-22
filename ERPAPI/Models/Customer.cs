@@ -15,12 +15,27 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "Nombre del cliente")]
         public string CustomerName { get; set; }
+
+        [Display(Name = "Denominación social")]
+        public string Denominacion { get; set; }
+
+
+        [Display(Name = "RTN Gerente")]
+        public string IdentidadApoderado { get; set; }
+
+        [Display(Name = "Nombre Gerente")]
+        public string NombreApoderado { get; set; }
+
         [Required]
         [Display(Name = "RTN del cliente")]
         public string RTN { get; set; }        
 
         [Display(Name = "Tipo de cliente")]
         public int CustomerTypeId { get; set; }
+
+        [Display(Name = "Tipo de cliente")]
+        public string CustomerTypeName { get; set; }
+
         [Display(Name = "Dirección")]
         public string Address { get; set; }
         [Display(Name = "Ciudad")]
@@ -31,7 +46,7 @@ namespace ERPAPI.Models
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
 
-        [Display(Name = "Telefono")]
+        [Display(Name = "Teléfono")]
         public string Phone { get; set; }
 
         [Required]
