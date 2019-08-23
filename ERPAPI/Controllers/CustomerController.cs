@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -105,8 +106,48 @@ namespace ERPAPI.Controllers
             try
             {
                 Customer customer = payload;
-                _context.Customer.Add(customer);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _context.Customer.Add(customer);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = customer.CustomerId,
+                            DocType = "Customer",
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(payload, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(customer, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = payload.UsuarioCreacion,
+                            UsuarioModificacion = payload.UsuarioModificacion,
+                            UsuarioEjecucion = payload.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+
+                }
+
+               
+               
+
+
                 // return (customer);
                 return await Task.Run(() => Ok(customer));
             }

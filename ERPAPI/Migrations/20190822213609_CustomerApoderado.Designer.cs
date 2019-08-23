@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190822213609_CustomerApoderado")]
+    partial class CustomerApoderado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,8 +26,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("AccountBalance");
 
                     b.Property<int>("AccountClasses");
 
@@ -3156,90 +3156,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("InvoiceLine");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.JournalEntry", b =>
-                {
-                    b.Property<long>("JournalEntryId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<DateTime>("Date");
-
-                    b.Property<int?>("GeneralLedgerHeaderId");
-
-                    b.Property<long?>("GeneralLedgerHeaderId1");
-
-                    b.Property<long>("IdPaymentCode");
-
-                    b.Property<long>("IdTypeofPayment");
-
-                    b.Property<string>("Memo");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<int?>("PartyId");
-
-                    b.Property<long?>("PartyId1");
-
-                    b.Property<bool?>("Posted");
-
-                    b.Property<string>("ReferenceNo");
-
-                    b.Property<int?>("VoucherType");
-
-                    b.HasKey("JournalEntryId");
-
-                    b.HasIndex("GeneralLedgerHeaderId1");
-
-                    b.HasIndex("PartyId1");
-
-                    b.ToTable("JournalEntry");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.JournalEntryLine", b =>
-                {
-                    b.Property<long>("JournalEntryLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AccountId");
-
-                    b.Property<long?>("AccountId1");
-
-                    b.Property<decimal>("Amount");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<int>("DrCr");
-
-                    b.Property<long>("JournalEntryId");
-
-                    b.Property<string>("Memo");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.HasKey("JournalEntryLineId");
-
-                    b.HasIndex("AccountId1");
-
-                    b.HasIndex("JournalEntryId");
-
-                    b.ToTable("JournalEntryLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Kardex", b =>
                 {
                     b.Property<long>("KardexId")
@@ -3477,31 +3393,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("PEPSId");
 
                     b.ToTable("PEPS");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Party", b =>
-                {
-                    b.Property<long>("PartyId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Fax");
-
-                    b.Property<bool>("IsActive");
-
-                    b.Property<string>("Name");
-
-                    b.Property<int>("PartyType");
-
-                    b.Property<string>("Phone");
-
-                    b.Property<string>("Website");
-
-                    b.HasKey("PartyId");
-
-                    b.ToTable("Party");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Payroll", b =>
@@ -5832,29 +5723,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Invoice", "SalesOrder")
                         .WithMany()
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.JournalEntry", b =>
-                {
-                    b.HasOne("ERPAPI.Models.GeneralLedgerHeader", "GeneralLedgerHeader")
-                        .WithMany()
-                        .HasForeignKey("GeneralLedgerHeaderId1");
-
-                    b.HasOne("ERPAPI.Models.Party", "Party")
-                        .WithMany()
-                        .HasForeignKey("PartyId1");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.JournalEntryLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId1");
-
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany("JournalEntryLines")
-                        .HasForeignKey("JournalEntryId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
