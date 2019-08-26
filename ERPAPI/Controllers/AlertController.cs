@@ -89,27 +89,41 @@ namespace ERPAPI.Controllers
             Alert _Alertq = new Alert();
             try
             {
-                _Alertq = _Alert;
-                _context.Alert.Add(_Alertq);
-                await _context.SaveChangesAsync();
-
-                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    IdOperacion = _Alert.AlertId,
-                    DocType = "Alert",
-                    ClaseInicial = 
-                    Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),                
-                    Accion = "Insertar",
-                    FechaCreacion = DateTime.Now,
-                    FechaModificacion = DateTime.Now,
-                    UsuarioCreacion = _Alert.UsuarioCreacion,
-                    UsuarioModificacion = _Alert.UsuarioModificacion,
-                    UsuarioEjecucion = _Alert.UsuarioModificacion,
+                    try
+                    {
+                        _Alertq = _Alert;
+                        _context.Alert.Add(_Alertq);
+                        await _context.SaveChangesAsync();
 
-                });
-                await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Alert.AlertId,
+                            DocType = "Alert",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Alert.UsuarioCreacion,
+                            UsuarioModificacion = _Alert.UsuarioModificacion,
+                            UsuarioEjecucion = _Alert.UsuarioModificacion,
+                             
+                        });
 
-            }
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+             }
             catch (Exception ex)
             {
 
@@ -131,19 +145,50 @@ namespace ERPAPI.Controllers
             Alert _Alertq = _Alert;
             try
             {
-                _Alertq = await (from c in _context.Alert
-                                 .Where(q => q.AlertId == _Alert.AlertId)
-                                 select c
-                                ).FirstOrDefaultAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _Alertq = await (from c in _context.Alert
+                                         .Where(q => q.AlertId == _Alert.AlertId)
+                                         select c
+                                        ).FirstOrDefaultAsync();
 
-                _context.Entry(_Alertq).CurrentValues.SetValues((_Alert));
+                        _context.Entry(_Alertq).CurrentValues.SetValues((_Alert));
 
-                //_context.Alert.Update(_Alertq);
-                await _context.SaveChangesAsync();
+                        //_context.Alert.Update(_Alertq);
+                        await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Alert.AlertId,
+                            DocType = "Alert",
+
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_Alertq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Alert.UsuarioCreacion,
+                            UsuarioModificacion = _Alert.UsuarioModificacion,
+                            UsuarioEjecucion = _Alert.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }

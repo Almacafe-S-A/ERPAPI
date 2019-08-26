@@ -30,6 +30,8 @@ namespace ERPAPI.Models
 
         [ForeignKey("BranchId")]
         public virtual Branch Branch { get; set; }
+
+        public virtual List<PasswordHistory> PasswordHistory { get; set; } = new List<PasswordHistory>();
     }
 
     public class ApplicationUserDTO : ApplicationUser

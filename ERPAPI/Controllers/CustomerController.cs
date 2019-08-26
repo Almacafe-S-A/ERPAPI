@@ -128,7 +128,6 @@ namespace ERPAPI.Controllers
                             UsuarioCreacion = payload.UsuarioCreacion,
                             UsuarioModificacion = payload.UsuarioModificacion,
                             UsuarioEjecucion = payload.UsuarioModificacion,
-
                         });
 
                         await _context.SaveChangesAsync();
@@ -142,9 +141,7 @@ namespace ERPAPI.Controllers
                         throw ex;
                     }
 
-                }
-
-               
+                }              
                
 
 
@@ -169,18 +166,51 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                Customer customerq = (from c in _context.Customer
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        Customer customerq = (from c in _context.Customer
                                      .Where(q => q.CustomerId == _customer.CustomerId)
-                                     select c
+                                              select c
                                    ).FirstOrDefault();
 
-                _customer.FechaCreacion = customerq.FechaCreacion;
-                _customer.UsuarioCreacion = customerq.UsuarioCreacion;
+                        _customer.FechaCreacion = customerq.FechaCreacion;
+                        _customer.UsuarioCreacion = customerq.UsuarioCreacion;
 
-                //_context.Customer.Update(_customer);
+                        //_context.Customer.Update(_customer);
 
-                _context.Entry(customerq).CurrentValues.SetValues((_customer));
-                await _context.SaveChangesAsync();
+                        _context.Entry(customerq).CurrentValues.SetValues((_customer));
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _customer.CustomerId,
+                            DocType = "Alert",
+                            ClaseInicial =
+                               Newtonsoft.Json.JsonConvert.SerializeObject(customerq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_customer, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _customer.UsuarioCreacion,
+                            UsuarioModificacion = _customer.UsuarioModificacion,
+                            UsuarioEjecucion = _customer.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+        }
+
                 // return (customer);
                 return await Task.Run(() => Ok(_customer));
             }

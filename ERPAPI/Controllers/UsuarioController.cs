@@ -186,7 +186,6 @@ namespace ERPAPI.Controllers
             {
 
                 var user = new ApplicationUser { UserName = _usuario.Email, Email = _usuario.Email };
-
                 var result = await _userManager.CreateAsync(user, _usuario.PasswordHash);
 
                 if (!result.Succeeded)
@@ -199,6 +198,14 @@ namespace ERPAPI.Controllers
                     return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                 }
 
+                ApplicationUser _newpass = await _context.Users.Where(q => q.Id == _usuario.Id).FirstOrDefaultAsync();
+                _context.PasswordHistory.Add(new PasswordHistory()
+                {
+                    UserId = _usuario.Id.ToString(),
+                    PasswordHash = _newpass.PasswordHash,
+                });
+
+                await _context.SaveChangesAsync();
 
 
                 return await Task.Run(() => _usuario);
@@ -263,6 +270,15 @@ namespace ERPAPI.Controllers
                         }
                         return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
+
+                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
+                    _context.PasswordHistory.Add(new PasswordHistory()
+                    {
+                        UserId = ApplicationUserq.Id.ToString(),
+                        PasswordHash = _newpass.PasswordHash,
+                    });
+
+                    await _context.SaveChangesAsync();
                 }
 
                 return await Task.Run(() => _usuario);
@@ -322,6 +338,7 @@ namespace ERPAPI.Controllers
 
                 if (result.Succeeded)
                 {
+                    
 
                     _appdto.LastPasswordChangedDate=_usuario.LastPasswordChangedDate = DateTime.Now;
 
@@ -332,6 +349,9 @@ namespace ERPAPI.Controllers
 
                      resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
                     var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+
+                                 
+
                     if (!resultadadd.Succeeded)
                     {
                         string errores = "";
@@ -342,8 +362,23 @@ namespace ERPAPI.Controllers
                         return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
 
+                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
+                    _context.PasswordHistory.Add(new PasswordHistory()
+                    {
+                        UserId = ApplicationUserq.Id.ToString(),
+                        PasswordHash = _newpass.PasswordHash,
+                    });
+
+                    await  _context.SaveChangesAsync();
+                    //ApplicationUserq.PasswordHistory.Add(new PasswordHistory()
+                    //{
+                    //    UserId = ApplicationUserq.Id.ToString(),
+                    //    PasswordHash = _newpass.PasswordHash,
+                    //});
+
 
                     return await Task.Run(() => _usuario);
+
                 }
                 else
                 {
@@ -353,6 +388,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }

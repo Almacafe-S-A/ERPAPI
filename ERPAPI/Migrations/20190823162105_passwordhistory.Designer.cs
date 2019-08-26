@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190823162105_passwordhistory")]
+    partial class passwordhistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1154,8 +1156,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerName")
                         .IsRequired();
-
-                    b.Property<string>("CustomerRefNumber");
 
                     b.Property<int>("CustomerTypeId");
 
@@ -2642,8 +2642,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BranchName");
 
-                    b.Property<string>("Comments");
-
                     b.Property<long>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
@@ -2745,10 +2743,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("BranchName");
 
                     b.Property<string>("Comments");
-
-                    b.Property<long>("CountryId");
-
-                    b.Property<string>("CountryName");
 
                     b.Property<double>("Currency");
 

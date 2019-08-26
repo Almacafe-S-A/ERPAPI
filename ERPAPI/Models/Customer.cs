@@ -26,6 +26,9 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Gerente")]
         public string NombreApoderado { get; set; }
 
+        [Display(Name = "Número  de referencia de cliente")]
+        public string CustomerRefNumber { get; set; }
+
         [Required]
         [Display(Name = "RTN del cliente")]
         public string RTN { get; set; }        

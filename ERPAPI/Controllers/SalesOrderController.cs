@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -198,6 +199,25 @@ namespace ERPAPI.Controllers
                         }
                         await _context.SaveChangesAsync();
 
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = salesOrder.SalesOrderId,
+                            DocType = "SalesOrder",
+
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(salesorder, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(salesOrder, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = salesOrder.UsuarioCreacion,
+                            UsuarioModificacion = salesOrder.UsuarioModificacion,
+                            UsuarioEjecucion = salesOrder.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -235,6 +255,27 @@ namespace ERPAPI.Controllers
                 _context.Entry(salesOrderq).CurrentValues.SetValues((_salesorder));
                 //_context.SalesOrder.Update(_salesorder);
                 await _context.SaveChangesAsync();
+
+
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = _salesorder.SalesOrderId,
+                    DocType = "SalesOrder",
+
+                    ClaseInicial =
+                     Newtonsoft.Json.JsonConvert.SerializeObject(salesOrderq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_salesorder, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Update",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = _salesorder.UsuarioCreacion,
+                    UsuarioModificacion = _salesorder.UsuarioModificacion,
+                    UsuarioEjecucion = _salesorder.UsuarioModificacion,
+
+                });
+
+                await _context.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {
@@ -251,11 +292,30 @@ namespace ERPAPI.Controllers
             try
             {
                 SalesOrder salesOrder = _context.SalesOrder
+
               .Where(x => x.SalesOrderId == (int)payload.SalesOrderId)
               .FirstOrDefault();
                 _context.SalesOrder.Remove(salesOrder);
                 await _context.SaveChangesAsync();
-                  return Ok(salesOrder);
+
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = payload.SalesOrderId,
+                    DocType = "SalesOrder",
+                    ClaseInicial =
+                     Newtonsoft.Json.JsonConvert.SerializeObject(payload, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(salesOrder, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Update",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = payload.UsuarioCreacion,
+                    UsuarioModificacion = payload.UsuarioModificacion,
+                    UsuarioEjecucion = payload.UsuarioModificacion,
+
+                });
+                await _context.SaveChangesAsync();
+
+                return Ok(salesOrder);
             }
             catch (Exception ex)
             {

@@ -126,6 +126,7 @@ namespace ERP.Contexts
         public DbSet<CustomerDocument> CustomerDocument { get; set; }
         public DbSet<CustomerPartners> CustomerPartners { get; set; }
         public DbSet<CustomerPhones> CustomerPhones { get; set; }
+        public DbSet<PasswordHistory> PasswordHistory { get; set; }
 
         public DbSet<Boleto_Ent> Boleto_Ent { get; set; }
         public DbSet<Boleto_Sal> Boleto_Sal { get; set; }

@@ -19,6 +19,12 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
+        [Display(Name = "País de origen")]
+        public Int64 CountryId { get; set; }
+
+        [Display(Name = "País de origen")]
+        public string CountryName { get; set; }
+
         [Display(Name = "Fecha")]
         public DateTime OrderDate { get; set; }
         [Display(Name = "Fecha de documento")]

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -262,6 +263,25 @@ namespace ERPAPI.Controllers
                         }
 
                         await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _CertificadoDeposito.IdCD,
+                            DocType = "CertificadoDeposito",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion,
+                            UsuarioModificacion = _CertificadoDeposito.UsuarioModificacion,
+                            UsuarioEjecucion = _CertificadoDeposito.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
                         foreach (var item in _CertificadoDeposito.RecibosAsociados)
                         {
                             RecibosCertificado _recibocertificado =
@@ -348,6 +368,25 @@ namespace ERPAPI.Controllers
 
                         _context.Entry(_CertificadoDepositoq).CurrentValues.SetValues((_CertificadoDepositoq));
 
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _CertificadoDeposito.IdCD,
+                            DocType = "CertificadoDeposito",
+                            ClaseInicial =
+                           Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDepositoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion,
+                            UsuarioModificacion = _CertificadoDeposito.UsuarioModificacion,
+                            UsuarioEjecucion = _CertificadoDeposito.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+
                         SolicitudCertificadoDeposito _solicitud = _solicitudq;
                         _solicitud.IdEstado = 3;
                         _solicitud.Estado = "Anulado";
@@ -355,8 +394,8 @@ namespace ERPAPI.Controllers
 
                         Kardex _kardexentrada = await (from c in _context.Kardex
                                                        .Include(q => q._KardexLine)
-                                                 .Where(q => q.DocumentId == _CertificadoDeposito.IdCD)
-                                                 .Where(q => q.DocumentName == "CD")
+                                                       .Where(q => q.DocumentId == _CertificadoDeposito.IdCD)
+                                                       .Where(q => q.DocumentName == "CD")
                                                        select c).FirstOrDefaultAsync();
 
                         Kardex _kardexsalida = new Kardex
@@ -372,7 +411,6 @@ namespace ERPAPI.Controllers
                             CustomerName = _kardexentrada.CustomerName,
                             CurrencyId = _kardexentrada.CurrencyId,
                             CurrencyName = _kardexentrada.CustomerName,
-
                             DocumentDate = DateTime.Now,
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
@@ -383,8 +421,6 @@ namespace ERPAPI.Controllers
                         _kardexsalida.DocumentDate = DateTime.Now;
                         _kardexsalida.KardexDate = DateTime.Now;
                         _kardexsalida.TypeOperationName = "Salida";
-
-
                         List<KardexLine> _entradas = new List<KardexLine>();
                         _entradas.AddRange(_kardexentrada._KardexLine);
                         //  _kardexsalida._KardexLine.Clear();

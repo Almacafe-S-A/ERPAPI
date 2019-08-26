@@ -59,6 +59,9 @@ namespace ERPAPI.Models
         public double TotalCertificado { get; set; }
         public double TotalFinanciado { get; set; }
 
+        [Display(Name = "Comentarios")]
+        public string Comments { get; set; }
+
         [Display(Name = "Derechos Lps.")]
         public double DerechoLps { get; set; }
 
