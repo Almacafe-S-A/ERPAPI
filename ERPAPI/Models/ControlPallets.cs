@@ -8,7 +8,7 @@ namespace ERPAPI.Models
 {
     public class ControlPallets
     {
-        [Display(Name = "Estiba Id")]
+        [Display(Name = "Control Id")]
         public Int64 ControlPalletsId { get; set; }
         public string Motorista { get; set; }
 
@@ -45,7 +45,13 @@ namespace ERPAPI.Models
         public string Placa { get; set; }
         public string Marca { get; set; }
 
-        [Display(Name = "Id Estiba")]
+        [Display(Name = "Unidad de medida")]
+        public Int64 UnitOfMeasureId { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public string UnitOfMeasureName { get; set; }
+
+        [Display(Name = "Id Control")]
         public int PalletId { get; set; }
         public int EsIngreso { get; set; }
         public int EsSalida { get; set; }
