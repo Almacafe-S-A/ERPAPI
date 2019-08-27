@@ -11,6 +11,6 @@ Microsoft.AspNetCore.App (2.2.0) <br/>
 Microsoft.AspNetCore.Razor.Design (2.2.0) <br/>
 Microsoft.VisualStudio.Web.CodeGeneration.Design (2.2.3 ) <br/>
 morelinq (3.2.0) <br/>
-Nlog <br/>
-Nlog.Web.AspNetCore <br/>
-Swashbuckle.AspNetCore <br/>
+Nlog (4.6.7) <br/>
+Nlog.Web.AspNetCore (4.8.4) <br/>
+Swashbuckle.AspNetCore (4.0.1) <br/>
