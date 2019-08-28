@@ -48,6 +48,7 @@ namespace ERPAPI.Controllers
                            || ( q.firstName+ q.lastName ).Contains(_sdnListSdnEntryM.firstName)
                            || (q.lastName + " " + q.firstName).Contains(_sdnListSdnEntryM.lastName)  //+" "+_sdnListSdnEntryM.firstName)
                            || (  q.firstName + " " + q.lastName ).Contains(_sdnListSdnEntryM.firstName)//+" "+ _sdnListSdnEntryM.lastName)
+                         
                            );
                 _personapornombre = await query
                         .ToListAsync();
