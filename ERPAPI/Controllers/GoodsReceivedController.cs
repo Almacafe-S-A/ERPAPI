@@ -243,6 +243,24 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
+                        foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
+                        {
+                            ControlPallets _ControlPalletsq = await _context.ControlPallets.Where(q => q.ControlPalletsId == item.ControlPalletsId)
+                           .FirstOrDefaultAsync();
+
+                            if (_ControlPalletsq != null)
+                            {
+                                _ControlPalletsq.QQPesoBruto = _GoodsReceivedq.PesoBruto;
+                                _ControlPalletsq.QQPesoNeto = _GoodsReceivedq.PesoNeto;
+                                _ControlPalletsq.QQPesoFinal = _GoodsReceivedq.PesoNeto2;
+                            }
+
+
+                            _context.Entry(_ControlPalletsq).CurrentValues.SetValues((_ControlPalletsq));
+                        }
+
+                        await _context.SaveChangesAsync();
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
