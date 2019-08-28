@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190826233702_UnidadDeMedida_ControlDeIngresos")]
+    partial class UnidadDeMedida_ControlDeIngresos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,8 +40,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("AccountName")
                         .IsRequired()
                         .HasMaxLength(200);
-
-                    b.Property<bool>("BlockedInJournal");
 
                     b.Property<long>("CompanyInfoId");
 
@@ -4067,10 +4067,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.Property<int>("PurchTypeId");
-
-                    b.Property<double>("QtyMin");
-
-                    b.Property<double>("QtyMonth");
 
                     b.Property<string>("RTN")
                         .IsRequired();

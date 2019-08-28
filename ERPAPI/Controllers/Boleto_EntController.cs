@@ -62,12 +62,36 @@ namespace ERPAPI.Controllers
             try
             {
 
-                var query = _context.Boleto_Ent.AsQueryable();
+                var query = (from c in _context.Boleto_Ent
+                                 // join d in _context.Boleto_Sal on c.clave_e equals d.clave_e 
+                             select new Boleto_Ent {
+                                 clave_e = c.clave_e,
+                                 bascula_e = c.bascula_e,
+                                 clave_C = c.clave_C,
+                                 clave_o = c.clave_o,
+                                 clave_p = c.clave_p,
+                                 clave_u = c.clave_u,
+                                 fecha_e = c.fecha_e,
+                                 completo = c.completo,
+                                 hora_e = c.hora_e,
+                                 conductor = c.conductor,
+                                 nombre_oe = c.nombre_oe,
+                                 observa_e = c.observa_e,
+                                 peso_e = c.peso_e,
+                                 placas = c.placas,
+                                 turno_oe = c.turno_oe,
+                                 t_entrada = c.t_entrada,
+                                 unidad_e = c.unidad_e,
+                                 Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
+
+                            } ) .AsQueryable();
 
                 var totalRegistro = query.Count();
 
                 Items = await query
-                        .OrderByDescending(q=>q.clave_e)
+                       
+                    .OrderByDescending(q=>q.clave_e)
+                         
                              .Skip(cantidadDeRegistros*(numeroDePagina-1))
                                       .Take(cantidadDeRegistros)
                                      .ToListAsync();
