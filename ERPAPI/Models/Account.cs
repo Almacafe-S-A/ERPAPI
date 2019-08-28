@@ -44,6 +44,8 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "Nivel de Jerarquia:")]
         public Int64 HierarchyAccount { get; set; }
+        [Display(Name = "Bloqueo para Diarios:")]
+        public bool BlockedInJournal { get; set; }
 
         [Required]
         [Display(Name = "Usuario de creacion")]
