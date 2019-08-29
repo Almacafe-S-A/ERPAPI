@@ -29,7 +29,8 @@ namespace ERPAPI.Models
         [StringLength(200)]
         [Display(Name = "Nombre de la cuenta")]
         public string AccountName { get; set; }
-        [StringLength(200)]
+
+        [MaxLength(5000)]
         [Display(Name = "Descripcion de la cuenta")]
         public string Description { get; set; }
         [Display(Name = "Estado")]
