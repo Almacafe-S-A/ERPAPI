@@ -138,6 +138,9 @@ namespace ERPAPI.Controllers
                             Cargadoname = "Cargado",
                             UsuarioCreacion = _GoodsDelivered.UsuarioCreacion,
                             UsuarioModificacion = _GoodsDelivered.UsuarioModificacion,
+                            UnitOfMeasureId = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureId,
+                            UnitOfMeasureName = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureName,
+                            WeightBallot = _GoodsDelivered.WeightBallot,
                         };
 
                         _context.BoletaDeSalida.Add(_boletadesalida);

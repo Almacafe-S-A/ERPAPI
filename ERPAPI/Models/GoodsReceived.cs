@@ -100,9 +100,19 @@ namespace ERPAPI.Models
 
         [Display(Name = "Comentarios")]
         public string Comments { get; set; }
+
+        [Display(Name = "Tara de camión")]
+        public double TaraCamion { get; set; }
+
+        [Display(Name = "Fecha de creación")]
         public DateTime? FechaCreacion { get; set; }
+        [Display(Name = "Fecha de modificación")]
         public DateTime? FechaModificacion { get; set; }
+
+        [Display(Name = "Usuario de creación")]
         public string UsuarioCreacion { get; set; }
+
+        [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
 
         public string Impreso { get; set; }

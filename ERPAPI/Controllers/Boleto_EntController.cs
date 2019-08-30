@@ -63,7 +63,8 @@ namespace ERPAPI.Controllers
             {
 
                 var query = (from c in _context.Boleto_Ent
-                                 // join d in _context.Boleto_Sal on c.clave_e equals d.clave_e 
+                             join d in _context.Boleto_Sal on  c.clave_e   equals d.clave_e into ba
+                             from e in ba.DefaultIfEmpty()
                              select new Boleto_Ent {
                                  clave_e = c.clave_e,
                                  bascula_e = c.bascula_e,
@@ -82,19 +83,28 @@ namespace ERPAPI.Controllers
                                  turno_oe = c.turno_oe,
                                  t_entrada = c.t_entrada,
                                  unidad_e = c.unidad_e,
-                                 Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
+                                 Boleto_Sal = e
+                               //  Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
 
                             } ) .AsQueryable();
 
                 var totalRegistro = query.Count();
 
-                Items = await query
-                       
+                Items = await query                       
                     .OrderByDescending(q=>q.clave_e)
-                         
+                         .Include(q=>q.Boleto_Sal)
                              .Skip(cantidadDeRegistros*(numeroDePagina-1))
                                       .Take(cantidadDeRegistros)
                                      .ToListAsync();
+
+                 
+                         
+
+                //foreach (var item in Items)
+                //{
+                //   item.Boleto_Sal =  await _context.Boleto_Sal.Where(q => q.clave_e == item.clave_e).FirstOrDefaultAsync();
+                //}
+                
 
                 Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
                 Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();

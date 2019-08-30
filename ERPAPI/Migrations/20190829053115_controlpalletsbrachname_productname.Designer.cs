@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190829053115_controlpalletsbrachname_productname")]
+    partial class controlpalletsbrachname_productname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -490,8 +492,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("GoodsDeliveredId");
 
                     b.Property<long>("GoodsDeliveryAuthorizationId");
-
-                    b.Property<long>("GoodsReceivedId");
 
                     b.Property<string>("Marca");
 
@@ -2809,8 +2809,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
-
-                    b.Property<double>("TaraCamion");
 
                     b.Property<double>("TaraTransporte");
 
