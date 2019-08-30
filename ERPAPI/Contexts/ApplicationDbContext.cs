@@ -27,6 +27,10 @@ namespace ERP.Contexts
         {
 
         }
+        public DbSet<CostListItem> CostListItem { get; set; }
+
+        public DbSet<ExchangeRate> ExchangeRate { get; set; }
+
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
         public DbSet<PurchPartners> PurchPartners { get; set; }
@@ -257,6 +261,9 @@ namespace ERP.Contexts
 
         }
 
+
+
+        
         ///// <summary>
         ////////
 

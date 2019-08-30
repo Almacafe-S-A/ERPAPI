@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190828220539_DescriptionAccoutn")]
+    partial class DescriptionAccoutn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -492,8 +494,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("GoodsDeliveredId");
 
                     b.Property<long>("GoodsDeliveryAuthorizationId");
-
-                    b.Property<long>("GoodsReceivedId");
 
                     b.Property<string>("Marca");
 
@@ -976,8 +976,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("BranchId");
 
-                    b.Property<string>("BranchName");
-
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -1011,8 +1009,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Placa");
 
                     b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
 
                     b.Property<double>("QQPesoBruto");
 
@@ -1090,67 +1086,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("ControlPalletsId");
 
                     b.ToTable("ControlPalletsLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CostListItem", b =>
-                {
-                    b.Property<long>("CostListItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("ConRealBagValueInside");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<DateTime>("DayofCalcule");
-
-                    b.Property<double>("DifferencyPriceBagValue");
-
-                    b.Property<double>("EscrowExpenses");
-
-                    b.Property<long>("ExchangeRateId");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<double>("PCRealBagValueInside");
-
-                    b.Property<double>("PermiseExportExpenses");
-
-                    b.Property<double>("PorcentagePriceBagValue");
-
-                    b.Property<double>("PriceBagValue");
-
-                    b.Property<double>("PriceBagValueCurrency");
-
-                    b.Property<double>("RealBagValueCurrency");
-
-                    b.Property<double>("RealBagValueInside");
-
-                    b.Property<double>("RecipientExpenses");
-
-                    b.Property<long>("SubproductId");
-
-                    b.Property<double>("TaxesExpenses");
-
-                    b.Property<double>("TotalExpenses");
-
-                    b.Property<double>("TotalExpensesCurrency");
-
-                    b.Property<double>("TotalIncomes");
-
-                    b.Property<double>("TotalPriceBagValue");
-
-                    b.Property<double>("UtilityExpenses");
-
-                    b.HasKey("CostListItemId");
-
-                    b.ToTable("CostListItem");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Country", b =>
@@ -2375,31 +2310,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Estados");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.ExchangeRate", b =>
-                {
-                    b.Property<long>("ExchangeRateId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<DateTime>("DayofRate");
-
-                    b.Property<double>("ExchangeRateValue");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.HasKey("ExchangeRateId");
-
-                    b.ToTable("ExchangeRate");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Formula", b =>
                 {
                     b.Property<long>("IdFormula")
@@ -2897,8 +2807,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
-
-                    b.Property<double>("TaraCamion");
 
                     b.Property<double>("TaraTransporte");
 

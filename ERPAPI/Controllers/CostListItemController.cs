@@ -6,17 +6,17 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
-    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/JournalEntryLine")]
+    [Route("api/CostListItem")]
     [ApiController]
-    public class JournalEntryLineController : Controller
+    public class CostListItemController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
@@ -24,24 +24,24 @@ namespace ERPAPI.Controllers
         {
             _context = context;
         }*/
-        public JournalEntryLineController(ILogger<JournalEntryLineController> logger, ApplicationDbContext context)
+        public CostListItemController(ILogger<CostListItemController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la Diarios en una lista.
+        /// Obtiene los Datos de la Tasa de Cambio en una lista.
         /// </summary>
 
-        // GET: api/JournalEntry
+        // GET: api/CostListItem
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetJournalEntryLine()
+        public async Task<IActionResult> GetCostListItem()
 
         {
-            List<JournalEntryLine> Items = new List<JournalEntryLine>();
+            List<CostListItem> Items = new List<CostListItem>();
             try
             {
-                Items = await _context.JournalEntryLine.ToListAsync();
+                Items = await _context.CostListItem.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,17 +54,17 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
-        /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
+        /// Obtiene los Datos de la CostListItem por medio del Id enviado.
         /// </summary>
-        /// <param name="JournalEntryLineId"></param>
+        /// <param name="CostListItemId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{JournalEntryLineId}")]
-        public async Task<IActionResult> GetJournalEntryLineById(Int64 JournalEntryLineId)
+        [HttpGet("[action]/{CostListItemId}")]
+        public async Task<IActionResult> GetCostListItemById(Int64 CostListItemId)
         {
-            JournalEntryLine Items = new JournalEntryLine();
+            CostListItem Items = new CostListItem();
             try
             {
-                Items = await _context.JournalEntryLine.Where(q => q.JournalEntryLineId == JournalEntryLineId).FirstOrDefaultAsync();
+                Items = await _context.CostListItem.Where(q => q.CostListItemId == CostListItemId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -79,18 +79,18 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva JournalEntryLine
-        /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// Inserta una nueva CostListItem
+        /// /// </summary>
+        /// <param name="_CostListItem"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntryLine>> Insert([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<ActionResult<CostListItem>> Insert([FromBody]CostListItem _CostListItem)
         {
-            JournalEntryLine _JournalEntryLineq = new JournalEntryLine();
+            CostListItem _CostListItemq = new CostListItem();
             try
             {
-                _JournalEntryLineq = _JournalEntryLine;
-                _context.JournalEntryLine.Add(_JournalEntryLineq);
+                _CostListItemq = _CostListItem;
+                _context.CostListItem.Add(_CostListItemq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -100,26 +100,26 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_CostListItemq));
         }
 
         /// <summary>
-        /// Actualiza la JournalEntryLine
+        /// Actualiza la CostListItem
         /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// <param name="_CostListItem"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<JournalEntryLine>> Update([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<ActionResult<CostListItem>> Update([FromBody]CostListItem _CostListItem)
         {
-            JournalEntryLine _JournalEntryLineq = _JournalEntryLine;
+            CostListItem _CostListItemq = _CostListItem;
             try
             {
-                _JournalEntryLineq = await (from c in _context.JournalEntryLine
-                                 .Where(q => q.JournalEntryLineId == _JournalEntryLine.JournalEntryLineId)
+                _CostListItemq = await (from c in _context.CostListItem
+                                 .Where(q => q.CostListItemId == _CostListItem.CostListItemId)
                                         select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_JournalEntryLineq).CurrentValues.SetValues((_JournalEntryLine));
+                _context.Entry(_CostListItemq).CurrentValues.SetValues((_CostListItem));
 
                 await _context.SaveChangesAsync();
             }
@@ -130,25 +130,25 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_CostListItemq));
         }
 
         /// <summary>
-        /// Elimina una JournalEntryLine       
+        /// Elimina una CostListItem       
         /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// <param name="_CostListItem"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<IActionResult> Delete([FromBody]CostListItem _CostListItem)
         {
-            JournalEntryLine _JournalEntryLineq = new JournalEntryLine();
+            CostListItem _CostListItemq = new CostListItem();
             try
             {
-                _JournalEntryLineq = _context.JournalEntryLine
-                .Where(x => x.JournalEntryLineId == (Int64)_JournalEntryLine.JournalEntryLineId)
+                _CostListItemq = _context.CostListItem
+                .Where(x => x.CostListItemId == (Int64)_CostListItem.CostListItemId)
                 .FirstOrDefault();
 
-                _context.JournalEntryLine.Remove(_JournalEntryLineq);
+                _context.CostListItem.Remove(_CostListItemq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -157,7 +157,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_CostListItemq));
 
         }
     }

@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
-    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/JournalEntryLine")]
+    [Route("api/ExchangeRate")]
     [ApiController]
-    public class JournalEntryLineController : Controller
+    public class ExchangeRateController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
@@ -24,24 +26,24 @@ namespace ERPAPI.Controllers
         {
             _context = context;
         }*/
-        public JournalEntryLineController(ILogger<JournalEntryLineController> logger, ApplicationDbContext context)
+        public ExchangeRateController(ILogger<ExchangeRateController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la Diarios en una lista.
+        /// Obtiene los Datos de la Tasa de Cambio en una lista.
         /// </summary>
 
-        // GET: api/JournalEntry
+        // GET: api/ExchangeRate
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetJournalEntryLine()
+        public async Task<IActionResult> GetExchangeRate()
 
         {
-            List<JournalEntryLine> Items = new List<JournalEntryLine>();
+            List<ExchangeRate> Items = new List<ExchangeRate>();
             try
             {
-                Items = await _context.JournalEntryLine.ToListAsync();
+                Items = await _context.ExchangeRate.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,17 +56,17 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
-        /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
+        /// Obtiene los Datos de la ExchangeRate por medio del Id enviado.
         /// </summary>
-        /// <param name="JournalEntryLineId"></param>
+        /// <param name="ExchangeRateId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{JournalEntryLineId}")]
-        public async Task<IActionResult> GetJournalEntryLineById(Int64 JournalEntryLineId)
+        [HttpGet("[action]/{ExchangeRateId}")]
+        public async Task<IActionResult> GetExchangeRateById(Int64 ExchangeRateId)
         {
-            JournalEntryLine Items = new JournalEntryLine();
+            ExchangeRate Items = new ExchangeRate();
             try
             {
-                Items = await _context.JournalEntryLine.Where(q => q.JournalEntryLineId == JournalEntryLineId).FirstOrDefaultAsync();
+                Items = await _context.ExchangeRate.Where(q => q.ExchangeRateId == ExchangeRateId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -79,18 +81,18 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva JournalEntryLine
-        /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// Inserta una nueva ExchangeRate
+        /// /// </summary>
+        /// <param name="_ExchangeRate"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntryLine>> Insert([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<ActionResult<ExchangeRate>> Insert([FromBody]ExchangeRate _ExchangeRate)
         {
-            JournalEntryLine _JournalEntryLineq = new JournalEntryLine();
+            ExchangeRate _ExchangeRateq = new ExchangeRate();
             try
             {
-                _JournalEntryLineq = _JournalEntryLine;
-                _context.JournalEntryLine.Add(_JournalEntryLineq);
+                _ExchangeRateq = _ExchangeRate;
+                _context.ExchangeRate.Add(_ExchangeRateq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -100,26 +102,26 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_ExchangeRateq));
         }
 
         /// <summary>
-        /// Actualiza la JournalEntryLine
+        /// Actualiza la ExchangeRate
         /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// <param name="_ExchangeRate"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<JournalEntryLine>> Update([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<ActionResult<ExchangeRate>> Update([FromBody]ExchangeRate _ExchangeRate)
         {
-            JournalEntryLine _JournalEntryLineq = _JournalEntryLine;
+            ExchangeRate _ExchangeRateq = _ExchangeRate;
             try
             {
-                _JournalEntryLineq = await (from c in _context.JournalEntryLine
-                                 .Where(q => q.JournalEntryLineId == _JournalEntryLine.JournalEntryLineId)
+                _ExchangeRateq = await (from c in _context.ExchangeRate
+                                 .Where(q => q.ExchangeRateId == _ExchangeRate.ExchangeRateId)
                                         select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_JournalEntryLineq).CurrentValues.SetValues((_JournalEntryLine));
+                _context.Entry(_ExchangeRateq).CurrentValues.SetValues((_ExchangeRate));
 
                 await _context.SaveChangesAsync();
             }
@@ -130,25 +132,25 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_ExchangeRateq));
         }
 
         /// <summary>
-        /// Elimina una JournalEntryLine       
+        /// Elimina una ExchangeRate       
         /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// <param name="_ExchangeRate"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<IActionResult> Delete([FromBody]ExchangeRate _ExchangeRate)
         {
-            JournalEntryLine _JournalEntryLineq = new JournalEntryLine();
+            ExchangeRate _ExchangeRateq = new ExchangeRate();
             try
             {
-                _JournalEntryLineq = _context.JournalEntryLine
-                .Where(x => x.JournalEntryLineId == (Int64)_JournalEntryLine.JournalEntryLineId)
+                _ExchangeRateq = _context.ExchangeRate
+                .Where(x => x.ExchangeRateId == (Int64)_ExchangeRate.ExchangeRateId)
                 .FirstOrDefault();
 
-                _context.JournalEntryLine.Remove(_JournalEntryLineq);
+                _context.ExchangeRate.Remove(_ExchangeRateq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -157,7 +159,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_ExchangeRateq));
 
         }
     }

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\CenterCosteController.cs" />
+    <Compile Remove="Controllers\ExchangeRatesController.cs" />
     <Compile Remove="Controllers\LedgerController.cs" />
     <Compile Remove="Controllers\PurchDocumentsController.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.cs" />
