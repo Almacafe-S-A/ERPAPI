@@ -57,7 +57,7 @@ namespace ERPAPI.Controllers
             try
             {
                 
-                List<Estados> Items = await _context.Estados.Include(c => c.GrupoConfiguracion).ToListAsync();
+                Estados Items = await _context.Estados.Where(q=>q.IdEstado==IdEstado).Include(c => c.GrupoConfiguracion).FirstOrDefaultAsync();
                 return Ok(Items);
 
             }

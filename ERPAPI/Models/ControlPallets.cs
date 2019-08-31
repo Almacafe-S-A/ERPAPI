@@ -15,6 +15,9 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
 
+        [Display(Name = "Sucursal")]
+        public string BranchName { get; set; }
+
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
         [Display(Name = "Estado")]
@@ -27,6 +30,9 @@ namespace ERPAPI.Models
         public DateTime DocumentDate { get; set; }
         [Display(Name = "Producto")]
         public Int64 ProductId { get; set; }
+
+        [Display(Name = "Producto")]
+        public string ProductName { get; set; }
 
         [Display(Name = "Producto Cliente")]
         public Int64 SubProductId { get; set; }

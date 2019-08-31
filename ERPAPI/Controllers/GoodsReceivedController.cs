@@ -129,13 +129,15 @@ namespace ERPAPI.Controllers
                             Placa = _GoodsReceived.Placa,
                             Motorista = _GoodsReceived.Name,
                             Quantity = _GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
-                            SubProductId = _GoodsReceived.SubProductId,
-                            SubProductName = _GoodsReceived.SubProductName,
+                            SubProductId = _GoodsReceivedq._GoodsReceivedLine[0].SubProductId,
+                            SubProductName = _GoodsReceivedq._GoodsReceivedLine[0].SubProductName,
                             CargadoId = 14,
                             Cargadoname = "Vacío",
                             UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
                             UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
-
+                            UnitOfMeasureId = _GoodsReceivedq._GoodsReceivedLine[0].UnitOfMeasureId,
+                            UnitOfMeasureName = _GoodsReceivedq._GoodsReceivedLine[0].UnitOfMeasureName,
+                            WeightBallot = _GoodsReceivedq.WeightBallot,
 
                         };
 
@@ -258,6 +260,14 @@ namespace ERPAPI.Controllers
 
                             _context.Entry(_ControlPalletsq).CurrentValues.SetValues((_ControlPalletsq));
                         }
+
+                        await _context.SaveChangesAsync();
+
+                        BoletaDeSalida _bol = await _context.BoletaDeSalida
+                                              .Where(q => q.BoletaDeSalidaId == _boletadesalida.BoletaDeSalidaId).FirstOrDefaultAsync();
+
+                        _bol.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
+                        _context.Entry(_bol).CurrentValues.SetValues((_bol));
 
                         await _context.SaveChangesAsync();
 
