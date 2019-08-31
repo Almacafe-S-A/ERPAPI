@@ -27,6 +27,7 @@ namespace ERP.Contexts
         {
 
         }
+        public DbSet<TypeJournal> TypeJournal { get; set; }
         public DbSet<CostListItem> CostListItem { get; set; }
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }

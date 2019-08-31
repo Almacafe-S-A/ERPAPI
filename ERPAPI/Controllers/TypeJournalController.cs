@@ -13,9 +13,9 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/TypeAccount")]
+    [Route("api/TypeJournal")]
     [ApiController]
-    public class TypeAccountController : Controller
+    public class TypeJournalController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
@@ -23,24 +23,24 @@ namespace ERPAPI.Controllers
         {
             _context = context;
         }*/
-        public TypeAccountController(ILogger<TypeAccountController> logger, ApplicationDbContext context)
+        public TypeJournalController(ILogger<TypeJournalController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la TypeAccount en una lista.
+        /// Obtiene los Datos de la TypeJournal en una lista.
         /// </summary>
 
-        // GET: api/TypeAccount
+        // GET: api/TypeJournal
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetTypeAccount()
+        public async Task<IActionResult> GetTypeJournal()
 
         {
-            List<TypeAccount> Items = new List<TypeAccount>();
+            List<TypeJournal> Items = new List<TypeJournal>();
             try
             {
-                Items = await _context.TypeAccount.ToListAsync();
+                Items = await _context.TypeJournal.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,17 +54,17 @@ namespace ERPAPI.Controllers
             //return await _context.Dimensions.ToListAsync();
         }
         /// <summary>
-        /// Obtiene los Datos de la Account por medio del Id enviado.
+        /// Obtiene los Datos de la Journal por medio del Id enviado.
         /// </summary>
-        /// <param name="TypeAccountId"></param>
+        /// <param name="TypeJournalId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{TypeAccountId}")]
-        public async Task<IActionResult> GetTypeAccountById(Int64 TypeAccountId)
+        [HttpGet("[action]/{TypeJournalId}")]
+        public async Task<IActionResult> GetTypeJournalById(Int64 TypeJournalId)
         {
-            TypeAccount Items = new TypeAccount();
+            TypeJournal Items = new TypeJournal();
             try
             {
-                Items = await _context.TypeAccount.Where(q => q.TypeAccountId == TypeAccountId).FirstOrDefaultAsync();
+                Items = await _context.TypeJournal.Where(q => q.TypeJournalId == TypeJournalId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -79,18 +79,18 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva Account
+        /// Inserta una nueva Journal
         /// </summary>
-        /// <param name="_TypeAccount"></param>
+        /// <param name="_TypeJournal"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<TypeAccount>> Insert([FromBody]TypeAccount _TypeAccount)
+        public async Task<ActionResult<TypeJournal>> Insert([FromBody]TypeJournal _TypeJournal)
         {
-            TypeAccount _TypeAccountq = new TypeAccount();
+            TypeJournal _TypeJournalq = new TypeJournal();
             try
             {
-                _TypeAccountq = _TypeAccount;
-                _context.TypeAccount.Add(_TypeAccountq);
+                _TypeJournalq = _TypeJournal;
+                _context.TypeJournal.Add(_TypeJournalq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -100,26 +100,26 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_TypeAccountq));
+            return await Task.Run(() => Ok(_TypeJournalq));
         }
 
         /// <summary>
-        /// Actualiza la Account
+        /// Actualiza la Journal
         /// </summary>
-        /// <param name="_TypeAccount"></param>
+        /// <param name="_TypeJournal"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<TypeAccount>> Update([FromBody]TypeAccount _TypeAccount)
+        public async Task<ActionResult<TypeJournal>> Update([FromBody]TypeJournal _TypeJournal)
         {
-            TypeAccount _TypeAccountq = _TypeAccount;
+            TypeJournal _TypeJournalq = _TypeJournal;
             try
             {
-                _TypeAccountq = await (from c in _context.TypeAccount
-                                 .Where(q => q.TypeAccountId == _TypeAccount.TypeAccountId)
+                _TypeJournalq = await (from c in _context.TypeJournal
+                                 .Where(q => q.TypeJournalId == _TypeJournal.TypeJournalId)
                                        select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_TypeAccountq).CurrentValues.SetValues((_TypeAccount));
+                _context.Entry(_TypeJournalq).CurrentValues.SetValues((_TypeJournal));
 
                 //_context.Bank.Update(_Bankq);
                 await _context.SaveChangesAsync();
@@ -131,25 +131,25 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_TypeAccountq));
+            return await Task.Run(() => Ok(_TypeJournalq));
         }
 
         /// <summary>
-        /// Elimina una Account       
+        /// Elimina una Journal       
         /// </summary>
-        /// <param name="_TypeAccount"></param>
+        /// <param name="_TypeJournal"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]TypeAccount _TypeAccount)
+        public async Task<IActionResult> Delete([FromBody]TypeJournal _TypeJournal)
         {
-            TypeAccount _TypeAccountq = new TypeAccount();
+            TypeJournal _TypeJournalq = new TypeJournal();
             try
             {
-                _TypeAccountq = _context.TypeAccount
-                .Where(x => x.TypeAccountId == (Int64)_TypeAccount.TypeAccountId)
+                _TypeJournalq = _context.TypeJournal
+                .Where(x => x.TypeJournalId == (Int64)_TypeJournal.TypeJournalId)
                 .FirstOrDefault();
 
-                _context.TypeAccount.Remove(_TypeAccountq);
+                _context.TypeJournal.Remove(_TypeJournalq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -158,7 +158,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_TypeAccountq));
+            return await Task.Run(() => Ok(_TypeJournalq));
 
         }
     }
