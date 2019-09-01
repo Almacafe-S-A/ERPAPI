@@ -94,6 +94,29 @@ namespace ERPAPI.Controllers
          
         }
 
+
+        /// <summary>
+        /// Obtiene un cliente , filtrado por su RTN.
+        /// </summary>
+        /// <param name="RTN"></param>
+        /// <returns></returns>
+        [HttpGet("GetCustomerByRTN/{RTN}")]
+        public async Task<ActionResult> GetCustomerByRTN(string RTN)
+        {
+            try
+            {
+                Customer Items = await _context.Customer.Where(q => q.RTN == RTN).FirstOrDefaultAsync();
+                return await Task.Run(() => Ok(Items));
+                //return Ok(Items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
         /// <summary>
         /// Agrega un nuevo usuario con los datos proporcionados , el CustomerId es un identity.
         /// </summary>
