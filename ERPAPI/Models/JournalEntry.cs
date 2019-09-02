@@ -34,11 +34,11 @@ namespace ERPAPI.Models
         public string Memo { get; set; }
         public string ReferenceNo { get; set; }
         public bool? Posted { get; set; }
-       // public virtual GeneralLedgerHeader GeneralLedgerHeader { get; set; }
-        //public virtual Party Party { get; set; }
+        public virtual GeneralLedgerHeader GeneralLedgerHeader { get; set; }
+        public virtual Party Party { get; set; }
         [Display(Name = "Id de Registro Pago")]
-        public Int64 IdPaymentCode { get; set; }
-        public Int64  IdTypeofPayment { get; set; }
+        public Int32 IdPaymentCode { get; set; }
+        public Int32  IdTypeofPayment { get; set; }
         public virtual ICollection<JournalEntryLine> JournalEntryLines { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]
