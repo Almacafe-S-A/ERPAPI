@@ -15,10 +15,16 @@ namespace ERPAPI.Models
         public Int64 JournalEntryLineId { get; set; }
         [Display(Name = "Id Entrada diario")]
         public Int64 JournalEntryId { get; set; }
+        [StringLength(30)]
+        [Display(Name = "Numero de Centro de Costo")]
+        public string Num { get; set; }
+        [StringLength(60)]
+        [Display(Name = "Nombre de Centro Costo")]
+        public string Description { get; set; }
 
         [Display(Name = "Id Clase Cuenta")]
         public int AccountId { get; set; }
-        [Display(Name = "Tipo de Mvimiento")]
+        [Display(Name = "Tipo de Movimiento")]
         public DrOrCrSide DrCr { get; set; }
         [Display(Name = "Monto Moviminto")]
         public decimal Amount { get; set; }

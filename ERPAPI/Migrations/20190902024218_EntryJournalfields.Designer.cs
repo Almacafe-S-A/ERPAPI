@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190902024218_EntryJournalfields")]
+    partial class EntryJournalfields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3283,9 +3285,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("GeneralLedgerHeaderId1");
 
-                    b.Property<int>("IdPaymentCode");
+                    b.Property<long>("IdPaymentCode");
 
-                    b.Property<int>("IdTypeofPayment");
+                    b.Property<long>("IdTypeofPayment");
 
                     b.Property<string>("Memo");
 
