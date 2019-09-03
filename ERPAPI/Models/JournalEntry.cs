@@ -23,16 +23,22 @@ namespace ERPAPI.Models
         public int? PartyId { get; set; }
         [Display(Name = "Tipos de Voucher")]
         public JournalVoucherTypes? VoucherType { get; set; }
-        [Display(Name = "Fecha")]
+        [Display(Name = "Nombre de Tipo de Voucher")]
+        public string TypeJournalName { get; set; }
+
+        [Display(Name = "Fecha de creacion")]
         public DateTime Date { get; set; }
+        [Display(Name = "Fecha de Posteo")]
+        public DateTime DatePosted { get; set; }
+
         public string Memo { get; set; }
         public string ReferenceNo { get; set; }
         public bool? Posted { get; set; }
         public virtual GeneralLedgerHeader GeneralLedgerHeader { get; set; }
         public virtual Party Party { get; set; }
         [Display(Name = "Id de Registro Pago")]
-        public Int64 IdPaymentCode { get; set; }
-        public Int64 IdTypeofPayment { get; set; }
+        public Int32 IdPaymentCode { get; set; }
+        public Int32  IdTypeofPayment { get; set; }
         public virtual ICollection<JournalEntryLine> JournalEntryLines { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]

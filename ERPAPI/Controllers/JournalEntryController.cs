@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -89,9 +90,41 @@ namespace ERPAPI.Controllers
             JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
-                _JournalEntryq = _JournalEntry;
-                _context.JournalEntry.Add(_JournalEntryq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _JournalEntryq = _JournalEntry;
+                        _context.JournalEntry.Add(_JournalEntryq);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _JournalEntry.JournalEntryId,
+                            DocType = "JournalEntry",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_JournalEntry, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _JournalEntry.CreatedUser,
+                            UsuarioModificacion = _JournalEntry.ModifiedUser,
+                            UsuarioEjecucion = _JournalEntry.ModifiedUser,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+               
             }
             catch (Exception ex)
             {
