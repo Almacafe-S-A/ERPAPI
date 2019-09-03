@@ -321,6 +321,8 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
+                       
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -375,7 +377,7 @@ namespace ERPAPI.Controllers
                             ClaseInicial =
                            Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDepositoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
+                            Accion = "Anular",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
                             UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion,

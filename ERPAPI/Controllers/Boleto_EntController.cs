@@ -62,6 +62,8 @@ namespace ERPAPI.Controllers
             try
             {
 
+
+
                 var query = (from c in _context.Boleto_Ent
                              join d in _context.Boleto_Sal on  c.clave_e   equals d.clave_e into ba
                              from e in ba.DefaultIfEmpty()

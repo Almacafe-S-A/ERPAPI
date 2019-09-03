@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -122,6 +123,24 @@ namespace ERPAPI.Controllers
                             item.ProformaInvoiceId = _ProformaInvoice.ProformaId;
                             _context.ProformaInvoiceLine.Add(item);
                         }
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _ProformaInvoice.CustomerId,
+                            DocType = "ProformaInvoice",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_ProformaInvoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_ProformaInvoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _ProformaInvoice.UsuarioCreacion,
+                            UsuarioModificacion = _ProformaInvoice.UsuarioModificacion,
+                            UsuarioEjecucion = _ProformaInvoice.UsuarioModificacion,
+
+                        });
+
                         await _context.SaveChangesAsync();
 
                         transaction.Commit();

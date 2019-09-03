@@ -209,11 +209,11 @@ namespace ERPAPI.Controllers
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _customer.CustomerId,
-                            DocType = "Alert",
+                            DocType = "Customer",
                             ClaseInicial =
                                Newtonsoft.Json.JsonConvert.SerializeObject(customerq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_customer, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
+                            Accion = "Update",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
                             UsuarioCreacion = _customer.UsuarioCreacion,
