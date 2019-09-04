@@ -607,13 +607,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("City");
 
-                    b.Property<int>("CityId");
-
                     b.Property<string>("ContactPerson");
-
-                    b.Property<int>("CountryId");
-
-                    b.Property<string>("CountryName");
 
                     b.Property<int>("CurrencyId");
 
@@ -634,8 +628,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Phone");
 
                     b.Property<string>("State");
-
-                    b.Property<int>("StateId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -1227,17 +1219,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("City");
 
-                    b.Property<int>("CityId");
-
                     b.Property<bool>("ClienteRecoger");
 
                     b.Property<bool>("ConfirmacionCorreo");
 
                     b.Property<string>("ContactPerson");
-
-                    b.Property<int>("CountryId");
-
-                    b.Property<string>("CountryName");
 
                     b.Property<string>("CustomerName")
                         .IsRequired();
@@ -1289,8 +1275,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.Property<string>("State");
-
-                    b.Property<int>("StateId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
