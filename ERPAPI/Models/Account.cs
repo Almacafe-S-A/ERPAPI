@@ -18,18 +18,11 @@ namespace ERPAPI.Models
         public int? ParentAccountId { get; set; }
         [Display(Name = "Id de la Empresa")]
         public Int64 CompanyInfoId { get; set; }
-        [Required]
-        [StringLength(50)]
-        [Display(Name = "Codigo Contable")]
-        public string AccountCode { get; set; }
-        [Display(Name = "Saldo Contable")]
-        public double AccountBalance { get; set; }
+        
+       // [Display(Name = "Saldo Contable")]
+        //public double AccountBalance { get; set; }
 
-        [Required]
-        [StringLength(200)]
-        [Display(Name = "Nombre de la cuenta")]
-        public string AccountName { get; set; }
-
+        
         [MaxLength(5000)]
         [Display(Name = "Descripcion de la cuenta")]
         public string Description { get; set; }
@@ -41,12 +34,20 @@ namespace ERPAPI.Models
         public bool IsContraAccount { get; set; }
         [Display(Name = "Id")]
         public Int64 TypeAccountId { get; set; }
+        [Display(Name = "Bloqueo para Diarios:")]
+        public bool BlockedInJournal { get; set; }
+        [Required]
+        [StringLength(50)]
+        [Display(Name = "Codigo Contable")]
+        public string AccountCode { get; set; }
 
         [Required]
         [Display(Name = "Nivel de Jerarquia:")]
         public Int64 HierarchyAccount { get; set; }
-        [Display(Name = "Bloqueo para Diarios:")]
-        public bool BlockedInJournal { get; set; }
+        [Required]
+        [StringLength(200)]
+        [Display(Name = "Nombre de la cuenta")]
+        public string AccountName { get; set; }
 
         [Required]
         [Display(Name = "Usuario de creacion")]
