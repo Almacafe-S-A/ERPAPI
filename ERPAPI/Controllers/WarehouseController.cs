@@ -49,6 +49,25 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok( Items));
         }
 
+        [HttpGet("[action]/{WarehouseId}")]
+        public async Task<IActionResult> GetWarehouseById(Int64 WarehouseId)
+        {
+            Warehouse Items = new Warehouse();
+            try
+            {
+                Items = await _context.Warehouse.Where(q => q.WarehouseId == WarehouseId).FirstOrDefaultAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         [HttpGet("[action]/{BranchId}")]
         public async Task<IActionResult> GetWarehouseByBranchId(Int64 BranchId)
@@ -126,7 +145,7 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(warehouse));
         }
 
-        [HttpPost("[action]")]
+        [HttpPut("[action]")]
         public async Task<ActionResult<Warehouse>> Update([FromBody]Warehouse _Warehouse)
         {
             try
@@ -143,8 +162,8 @@ namespace coderush.Controllers.Api
 
                         _Warehouse.FechaCreacion = warehouseq.FechaCreacion;
                         _Warehouse.UsuarioCreacion = warehouseq.UsuarioCreacion;
-
-                        _context.Warehouse.Update(_Warehouse);
+                        _context.Entry(warehouseq).CurrentValues.SetValues((_Warehouse));
+                        //    _context.Warehouse.Update(_Warehouse);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
