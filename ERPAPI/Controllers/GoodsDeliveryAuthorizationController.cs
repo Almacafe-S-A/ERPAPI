@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -239,7 +240,7 @@ namespace ERPAPI.Controllers
 
                         }
 
-                  
+
 
 
                         //await _context.SaveChangesAsync();
@@ -254,6 +255,25 @@ namespace ERPAPI.Controllers
 
                         //    _context.CDGoodsDeliveryAuthorization.Add(_certificadoauthorization);
                         //}
+
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationId,
+                            DocType = "GoodsDelivered",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDeliveryAuthorization, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDeliveryAuthorization, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _GoodsDeliveryAuthorization.UsuarioCreacion,
+                            UsuarioModificacion = _GoodsDeliveryAuthorization.UsuarioModificacion,
+                            UsuarioEjecucion = _GoodsDeliveryAuthorization.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
 
 
                         await _context.SaveChangesAsync();

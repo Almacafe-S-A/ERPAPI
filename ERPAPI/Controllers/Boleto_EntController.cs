@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MoreLinq;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -61,6 +62,8 @@ namespace ERPAPI.Controllers
             List<Boleto_Ent> Items = new List<Boleto_Ent>();
             try
             {
+
+
 
                 var query = (from c in _context.Boleto_Ent
                              join d in _context.Boleto_Sal on  c.clave_e   equals d.clave_e into ba
@@ -223,7 +226,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
 
             return _entradasexistentes;
@@ -301,9 +304,43 @@ namespace ERPAPI.Controllers
             Boleto_Ent _Boleto_Entq = new Boleto_Ent();
             try
             {
-                _Boleto_Entq = _Boleto_Ent;
-                _context.Boleto_Ent.Add(_Boleto_Entq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _Boleto_Entq = _Boleto_Ent;
+                        _context.Boleto_Ent.Add(_Boleto_Entq);
+                        await _context.SaveChangesAsync();
+
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Boleto_Ent.clave_e,
+                            DocType = "Boleto_Ent",
+                            ClaseInicial =
+                           Newtonsoft.Json.JsonConvert.SerializeObject(_Boleto_Ent, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Boleto_Ent, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            //UsuarioCreacion = _Boleto_Ent.UsuarioCreacion,
+                            //UsuarioModificacion = _Boleto_Ent.UsuarioModificacion,
+                            //UsuarioEjecucion = _Boleto_Ent.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -326,15 +363,49 @@ namespace ERPAPI.Controllers
             Boleto_Ent _Boleto_Entq = _Boleto_Ent;
             try
             {
-                _Boleto_Entq = await (from c in _context.Boleto_Ent
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _Boleto_Entq = await (from c in _context.Boleto_Ent
                                  .Where(q => q.clave_e == _Boleto_Ent.clave_e)
-                                      select c
+                                              select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Boleto_Entq).CurrentValues.SetValues((_Boleto_Ent));
+                        _context.Entry(_Boleto_Entq).CurrentValues.SetValues((_Boleto_Ent));
 
-                //_context.Boleto_Ent.Update(_Boleto_Entq);
-                await _context.SaveChangesAsync();
+                        //_context.Boleto_Ent.Update(_Boleto_Entq);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Boleto_Ent.clave_e,
+                            DocType = "Boleto_Ent",
+                            ClaseInicial =
+                                   Newtonsoft.Json.JsonConvert.SerializeObject(_Boleto_Ent, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Boleto_Ent, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            //UsuarioCreacion = _Boleto_Ent.UsuarioCreacion,
+                            //UsuarioModificacion = _Boleto_Ent.UsuarioModificacion,
+                            //UsuarioEjecucion = _Boleto_Ent.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
             }
             catch (Exception ex)
             {

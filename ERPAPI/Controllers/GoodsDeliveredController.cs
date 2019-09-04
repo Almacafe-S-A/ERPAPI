@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -223,6 +224,26 @@ namespace ERPAPI.Controllers
                         _context.Kardex.Add(_GoodsDelivered.Kardex);
 
                         await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _GoodsDelivered.GoodsDeliveredId,
+                            DocType = "GoodsDelivered",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDelivered, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDelivered, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _GoodsDelivered.UsuarioCreacion,
+                            UsuarioModificacion = _GoodsDelivered.UsuarioModificacion,
+                            UsuarioEjecucion = _GoodsDelivered.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                      
 
                         _boletadesalida.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
                         _context.Entry(_boletadesalida).CurrentValues.SetValues((_boletadesalida));

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -116,8 +117,26 @@ namespace ERPAPI.Controllers
                                 };
 
                             _context.RecibosCertificado.Add(_recibocertificado);
-                        }
+                        }         
 
+
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _SolicitudCertificadoDeposito.IdSCD,
+                            DocType = "SolicitudCertificadoDeposito",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_SolicitudCertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_SolicitudCertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _SolicitudCertificadoDeposito.UsuarioCreacion,
+                            UsuarioModificacion = _SolicitudCertificadoDeposito.UsuarioModificacion,
+                            UsuarioEjecucion = _SolicitudCertificadoDeposito.UsuarioModificacion,
+
+                        });
 
                         await _context.SaveChangesAsync();
 

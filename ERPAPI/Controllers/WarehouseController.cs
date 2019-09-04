@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -72,13 +73,47 @@ namespace coderush.Controllers.Api
 
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<Warehouse>> Insert([FromBody]Warehouse payload)
+        public async Task<ActionResult<Warehouse>> Insert([FromBody]Warehouse _warehouse)
         {
-            Warehouse warehouse = payload;
+            Warehouse warehouse = _warehouse;
             try
-            {              
-                _context.Warehouse.Add(warehouse);
-               await _context.SaveChangesAsync();
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _context.Warehouse.Add(warehouse);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _warehouse.WarehouseId,
+                            DocType = "Warehouse",
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_warehouse, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_warehouse, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _warehouse.UsuarioCreacion,
+                            UsuarioModificacion = _warehouse.UsuarioModificacion,
+                            UsuarioEjecucion = _warehouse.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                    }
+
+
+                }
             }
             catch (Exception ex)
             {
@@ -93,20 +128,53 @@ namespace coderush.Controllers.Api
 
         [HttpPost("[action]")]
         public async Task<ActionResult<Warehouse>> Update([FromBody]Warehouse _Warehouse)
-        {            
+        {
             try
             {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
 
-                Warehouse warehouseq = (from c in _context.Warehouse
-                     .Where(q => q.WarehouseId == _Warehouse.WarehouseId)
-                                                   select c
-                       ).FirstOrDefault();
+                        Warehouse warehouseq = (from c in _context.Warehouse
+                        .Where(q => q.WarehouseId == _Warehouse.WarehouseId)
+                                                select c
+                         ).FirstOrDefault();
 
-                _Warehouse.FechaCreacion = warehouseq.FechaCreacion;
-                _Warehouse.UsuarioCreacion = warehouseq.UsuarioCreacion;
+                        _Warehouse.FechaCreacion = warehouseq.FechaCreacion;
+                        _Warehouse.UsuarioCreacion = warehouseq.UsuarioCreacion;
 
-                _context.Warehouse.Update(_Warehouse);
-               await _context.SaveChangesAsync();
+                        _context.Warehouse.Update(_Warehouse);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Warehouse.WarehouseId,
+                            DocType = "Warehouse",
+                            ClaseInicial =
+                                  Newtonsoft.Json.JsonConvert.SerializeObject(warehouseq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Warehouse, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Warehouse.UsuarioCreacion,
+                            UsuarioModificacion = _Warehouse.UsuarioModificacion,
+                            UsuarioEjecucion = _Warehouse.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -118,18 +186,49 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<Warehouse>> Delete([FromBody]Warehouse payload)
+        public async Task<ActionResult<Warehouse>> Delete([FromBody]Warehouse _Warehouse)
         {
             Warehouse warehouse = new Warehouse();
 
             try
             {
-                warehouse = _context.Warehouse
-               .Where(x => x.WarehouseId == (int)payload.WarehouseId)
-               .FirstOrDefault();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        warehouse = _context.Warehouse
+                         .Where(x => x.WarehouseId == (int)_Warehouse.WarehouseId)
+                          .FirstOrDefault();
 
-               _context.Warehouse.Remove(warehouse);
-               await _context.SaveChangesAsync();
+                        _context.Warehouse.Remove(warehouse);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Warehouse.WarehouseId,
+                            DocType = "Warehouse",
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_Warehouse, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Warehouse, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Delete",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Warehouse.UsuarioCreacion,
+                            UsuarioModificacion = _Warehouse.UsuarioModificacion,
+                            UsuarioEjecucion = _Warehouse.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                    }
+                }
             }
             catch (Exception ex)
             {

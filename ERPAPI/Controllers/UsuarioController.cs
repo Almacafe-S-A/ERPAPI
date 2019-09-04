@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -198,14 +199,46 @@ namespace ERPAPI.Controllers
                     return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                 }
 
-                ApplicationUser _newpass = await _context.Users.Where(q => q.Id == _usuario.Id).FirstOrDefaultAsync();
-                _context.PasswordHistory.Add(new PasswordHistory()
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    UserId = _usuario.Id.ToString(),
-                    PasswordHash = _newpass.PasswordHash,
-                });
+                    try
+                    {
+                        ApplicationUser _newpass = await _context.Users.Where(q => q.Id == _usuario.Id).FirstOrDefaultAsync();
+                        _context.PasswordHistory.Add(new PasswordHistory()
+                        {
+                            UserId = _usuario.Id.ToString(),
+                            PasswordHash = _newpass.PasswordHash,
+                        });
 
-                await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            // IdOperacion =,
+                            Descripcion = _usuario.Id.ToString(),
+                            DocType = "Usuario",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "PostUsuario",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _usuario.UsuarioCreacion,
+                            UsuarioModificacion = _usuario.UsuarioModificacion,
+                            UsuarioEjecucion = _usuario.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        return BadRequest($"Ocurrio un error: {ex.Message}");
+                    }
+                }
 
 
                 return await Task.Run(() => _usuario);
@@ -370,12 +403,33 @@ namespace ERPAPI.Controllers
                     });
 
                     await  _context.SaveChangesAsync();
+
+
                     //ApplicationUserq.PasswordHistory.Add(new PasswordHistory()
                     //{
                     //    UserId = ApplicationUserq.Id.ToString(),
                     //    PasswordHash = _newpass.PasswordHash,
                     //});
 
+
+                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                    {
+                        // IdOperacion =,
+                       Descripcion = _usuario.Id.ToString(),
+                        DocType = "Usuario",
+                        ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "ChangePassword",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = _usuario.UsuarioCreacion,
+                        UsuarioModificacion = _usuario.UsuarioModificacion,
+                        UsuarioEjecucion = _usuario.UsuarioModificacion,
+
+                    });
+
+                    await _context.SaveChangesAsync();
 
                     return await Task.Run(() => _usuario);
 

@@ -41,10 +41,23 @@ namespace ERPAPI.Models
 
         [Display(Name = "Dirección")]
         public string Address { get; set; }
+
+        [Display(Name = "País")]
+        public int CountryId { get; set; }
+
+        [Display(Name = "País")]
+        public string CountryName { get; set; }
+
+        [Display(Name = "Ciudad")]
+        public int CityId { get; set; }
+
         [Display(Name = "Ciudad")]
         public string City { get; set; }
 
-        [Display(Name = "Estado")]
+        [Display(Name = "Departamento")]
+        public int StateId { get; set; }
+
+        [Display(Name = "Departamento")]
         public string State { get; set; }
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
