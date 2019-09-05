@@ -14,6 +14,7 @@ namespace ERPAPI.Models
         public string SortName { get; set; } // text
         public string Name { get; set; } // text
         public int? PhoneCode { get; set; } // integer
+        public bool GAFI { get; set; } = false;
 
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; }
