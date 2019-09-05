@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ERPAPI.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -48,12 +49,14 @@ namespace ERPAPI.Models
         public int IdTipoContrato { get; set; }
         public int IdDepartamento { get; set; }
         public string NombreDepartamento { get; set; }
-        
 
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; } 
         public DateTime? FechaCreacion { get; set; }
-        public DateTime? FechaModificacion { get; set; } 
+        public DateTime? FechaModificacion { get; set; }
+       // [Display(Name = "Party")]
+        //public virtual Party Party { get; set; }
 
+        //public int? PartyId { get; set; }
     }
 }

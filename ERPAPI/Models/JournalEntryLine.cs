@@ -27,7 +27,7 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de Movimiento")]
         public DrOrCrSide DrCr { get; set; }
         [Display(Name = "Monto Moviminto")]
-        public decimal Amount { get; set; }
+        public double Amount { get; set; }
         public string Memo { get; set; }
         public virtual JournalEntry JournalEntry { get; set; }
         public virtual Account Account { get; set; }

@@ -19,8 +19,8 @@ namespace ERPAPI.Models
         [Display(Name = "Id de la Empresa")]
         public Int64 CompanyInfoId { get; set; }
         
-       // [Display(Name = "Saldo Contable")]
-        //public double AccountBalance { get; set; }
+        [Display(Name = "Saldo Contable")]
+        public double AccountBalance { get; set; }
 
         
         [MaxLength(5000)]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ERPAPI.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -64,6 +65,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Teléfono")]
         public string Phone { get; set; }
+        //[Display(Name = "Party")]
+        //public virtual Party Party { get; set; }
+        //public int? PartyId { get; set; }
 
         [Required]
         [Display(Name = "Identidad del contacto")]

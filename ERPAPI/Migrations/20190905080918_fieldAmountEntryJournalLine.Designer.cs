@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190905080918_fieldAmountEntryJournalLine")]
+    partial class fieldAmountEntryJournalLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,6 +26,8 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AccountBalance");
 
                     b.Property<int>("AccountClasses");
 
@@ -430,14 +434,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Alias");
 
-                    b.Property<long>("CityId");
-
-                    b.Property<string>("CityName");
-
-                    b.Property<long>("CountryId");
-
-                    b.Property<string>("CountryName");
-
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -461,10 +457,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("RTN");
 
                     b.Property<string>("Referencia");
-
-                    b.Property<long>("StateId");
-
-                    b.Property<string>("StateName");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -903,8 +895,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("CountryId");
-
                     b.Property<string>("Name");
 
                     b.Property<long?>("StateId");
@@ -1183,8 +1173,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<bool>("GAFI");
-
                     b.Property<string>("Name");
 
                     b.Property<int?>("PhoneCode");
@@ -1196,10 +1184,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Usuariomodificacion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("Country");
                 });
@@ -5055,9 +5039,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("UnitOfMeasureId");
 
-                    b.HasIndex("UnitOfMeasureName")
-                        .IsUnique();
-
                     b.ToTable("UnitOfMeasure");
                 });
 
@@ -5151,8 +5132,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("BranchId");
 
-                    b.Property<double>("CapacidadBodega");
-
                     b.Property<string>("Description");
 
                     b.Property<string>("Estado");
@@ -5162,10 +5141,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<int>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
