@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -88,13 +89,46 @@ namespace ERPAPI.Controllers
             Country _Countryq = new Country();
             try
             {
-                _Countryq = _Country;
-                _context.Country.Add(_Countryq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+
+                    try
+                    {
+                        _Countryq = _Country;
+                        _context.Country.Add(_Countryq);
+                        await _context.SaveChangesAsync();
+
+                        await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Country.Id,
+                            DocType = "Country",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Country.Usuariocreacion,
+                            UsuarioModificacion = _Country.Usuariomodificacion,
+                            UsuarioEjecucion = _Country.Usuariomodificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                }
+
             }
             catch (Exception ex)
             {
-
+                
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
@@ -113,15 +147,48 @@ namespace ERPAPI.Controllers
             Country _Countryq = _Country;
             try
             {
-                _Countryq = await (from c in _context.Country
-                                 .Where(q => q.Id == _Country.Id)
-                                   select c
-                                ).FirstOrDefaultAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _Countryq = await (from c in _context.Country
+                                  .Where(q => q.Id == _Country.Id)
+                                           select c
+                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Countryq).CurrentValues.SetValues((_Country));
+                        _context.Entry(_Countryq).CurrentValues.SetValues((_Country));
 
-                //_context.Country.Update(_Countryq);
-                await _context.SaveChangesAsync();
+                        //_context.Country.Update(_Countryq);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Country.Id,
+                            DocType = "Country",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Update",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Country.Usuariocreacion,
+                            UsuarioModificacion = _Country.Usuariomodificacion,
+                            UsuarioEjecucion = _Country.Usuariomodificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                  
+                }
             }
             catch (Exception ex)
             {
@@ -144,12 +211,47 @@ namespace ERPAPI.Controllers
             Country _Countryq = new Country();
             try
             {
-                _Countryq = _context.Country
-                .Where(x => x.Id == (Int64)_Country.Id)
-                .FirstOrDefault();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _Countryq = _context.Country
+                       .Where(x => x.Id == (Int64)_Country.Id)
+                          .FirstOrDefault();
 
-                _context.Country.Remove(_Countryq);
-                await _context.SaveChangesAsync();
+                        _context.Country.Remove(_Countryq);
+                        await _context.SaveChangesAsync();
+
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Country.Id,
+                            DocType = "Country",
+                            ClaseInicial =
+                                  Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Update",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Country.Usuariocreacion,
+                            UsuarioModificacion = _Country.Usuariomodificacion,
+                            UsuarioEjecucion = _Country.Usuariomodificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+
+                  
+                }
+
             }
             catch (Exception ex)
             {

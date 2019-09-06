@@ -13,6 +13,10 @@ namespace ERPAPI.Models
         public string Nombre { get; set; }
         [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
+
+        [Display(Name = "Estado")]
+        public long IdEstado { get; set; }
+
         [Display(Name = "Estado")]
         public string Estado { get; set; } 
         public long? Idconfiguracion { get; set; } 
