@@ -13,6 +13,9 @@ namespace ERPAPI.Models
         public long Id { get; set; } 
         public string Name { get; set; }
 
+        [Display(Name = "País")]
+        public long? CountryId { get; set; }
+
         [Display(Name = "Departamento")]
         public long? StateId { get; set; }
     }

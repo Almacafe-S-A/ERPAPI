@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190904162629_BlackListCustomer")]
+    partial class BlackListCustomer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,8 +26,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("AccountBalance");
 
                     b.Property<int>("AccountClasses");
 
@@ -905,8 +905,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("CountryId");
-
                     b.Property<string>("Name");
 
                     b.Property<long?>("StateId");
@@ -1181,49 +1179,21 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AccionId");
-
-                    b.Property<string>("AccionName");
-
-                    b.Property<DateTime>("Actualizacion");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<bool>("GAFI");
-
-                    b.Property<int>("ListaId");
-
-                    b.Property<string>("ListaName");
-
                     b.Property<string>("Name");
-
-                    b.Property<int>("NivelRiesgo");
-
-                    b.Property<string>("NivelRiesgoName");
 
                     b.Property<int?>("PhoneCode");
 
-                    b.Property<int>("SeguimientoId");
-
-                    b.Property<string>("SeguimientoName");
-
                     b.Property<string>("SortName");
-
-                    b.Property<int>("TipoAlertaId");
-
-                    b.Property<string>("TipoAlertaName");
 
                     b.Property<string>("Usuariocreacion");
 
                     b.Property<string>("Usuariomodificacion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("Country");
                 });
@@ -1917,8 +1887,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime?>("FechaModificacion");
 
                     b.Property<string>("Formula");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<long?>("Idconfiguracion");
 
@@ -3385,7 +3353,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("AccountId1");
 
-                    b.Property<double>("Amount");
+                    b.Property<decimal>("Amount");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -5081,9 +5049,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("UnitOfMeasureId");
 
-                    b.HasIndex("UnitOfMeasureName")
-                        .IsUnique();
-
                     b.ToTable("UnitOfMeasure");
                 });
 
@@ -5177,8 +5142,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("BranchId");
 
-                    b.Property<double>("CapacidadBodega");
-
                     b.Property<string>("Description");
 
                     b.Property<string>("Estado");
@@ -5188,10 +5151,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<int>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();

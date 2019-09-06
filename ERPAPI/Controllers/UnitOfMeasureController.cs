@@ -65,6 +65,27 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
+        
+        [HttpGet("[action]/{UnitOfMeasureName}")]
+        public async Task<IActionResult> GetUnitOfMeasureByName(string UnitOfMeasureName)
+        {
+            UnitOfMeasure Items = new UnitOfMeasure();
+            try
+            {
+                Items = await _context.UnitOfMeasure.Where(q => q.UnitOfMeasureName.Equals(UnitOfMeasureName)).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
         [HttpPost("[action]")]
         public async Task<ActionResult<UnitOfMeasure>> Insert([FromBody]UnitOfMeasure payload)
         {

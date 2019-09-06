@@ -208,6 +208,8 @@ namespace ERP.Contexts
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
 
+
+
            modelBuilder.Entity<Boleto_Ent>()
             .HasOne(a => a.Boleto_Sal)
             .WithOne(b => b.Boleto_Ent)
@@ -216,6 +218,14 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<Product>()
            .HasIndex(p => new { p.ProductCode })
+           .IsUnique(true);
+
+            modelBuilder.Entity<UnitOfMeasure>()
+             .HasIndex(p => new { p.UnitOfMeasureName })
+              .IsUnique(true);
+
+            modelBuilder.Entity<Country>()
+           .HasIndex(p => new { p.Name })
            .IsUnique(true);
 
             modelBuilder.Entity<SubProduct>()
