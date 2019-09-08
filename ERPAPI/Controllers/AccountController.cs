@@ -56,6 +56,33 @@ namespace ERPAPI.Controllers
             //return await _context.Dimensions.ToListAsync();
         }
         /// <summary>
+        /// Obtiene los Datos de la Account en una lista.
+        /// </summary>
+
+        // GET: api/Account
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountDiary()
+
+        {
+            List<Account> Items = new List<Account>();
+            try
+            {
+                Items = await _context.Account.Where(q => q.BlockedInJournal == false).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
+
+
+        /// <summary>
         /// Obtiene los Datos de la Account por medio del Id enviado.
         /// </summary>
         /// <param name="AccountId"></param>
