@@ -87,6 +87,29 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items.Count));
         }
 
+
+
+        [HttpGet("[action]/{codigo}")]
+        public async Task<ActionResult<SubProduct>> GetSubProductByCodigoBalanza(string codigo)
+        {
+            SubProduct Items = new SubProduct();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.ProductCode == codigo).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
         [HttpGet("[action]")]
         public async Task<ActionResult<SubProduct>> GetSubProductByCodeBalanza()
         {

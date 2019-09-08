@@ -138,7 +138,9 @@ namespace ERPAPI.Controllers
                             UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
                             UnitOfMeasureId = _GoodsReceivedq._GoodsReceivedLine[0].UnitOfMeasureId,
                             UnitOfMeasureName = _GoodsReceivedq._GoodsReceivedLine[0].UnitOfMeasureName,
-                            WeightBallot = _GoodsReceivedq.WeightBallot,
+                            WeightBallot = _GoodsReceivedq.WeightBallot,  
+                            VigilanteId = _GoodsReceivedq.VigilanteId,
+                            Vigilante = _GoodsReceivedq.VigilanteName,
 
                         };
 

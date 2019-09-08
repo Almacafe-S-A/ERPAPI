@@ -87,9 +87,12 @@ namespace ERPAPI.Controllers
             List<ControlPallets> Items = new List<ControlPallets>();
             try
             {
-                List<Int64> listayaprocesada = _context.GoodsReceivedLine
-                                              .Where(q=>q.ControlPalletsId>0)
-                                              .Select(q => q.ControlPalletsId).ToList();
+                List<Int64> listayaprocesada = _context.GoodsReceived.Where(q => q.ControlId > 0).Select(q=>q.ControlId).ToList();
+                    
+                    //_context.GoodsReceivedLine
+                    //                          .Where(q=>q.ControlPalletsId>0)
+                    //                          .Select(q => q.ControlPalletsId).ToList();
+
                 Items = await _context.ControlPallets.Where(q=> !listayaprocesada.Contains(q.ControlPalletsId) ).ToListAsync();
             }
             catch (Exception ex)

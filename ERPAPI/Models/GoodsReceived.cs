@@ -19,6 +19,9 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
+        [Display(Name = "Control Id")]
+        public Int64 ControlId { get; set; }
+
         [Display(Name = "País de origen")]
         public Int64 CountryId { get; set; }
 
@@ -69,6 +72,12 @@ namespace ERPAPI.Models
 
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
+
+        [Display(Name = "Vigilante")]
+        public Int64 VigilanteId { get; set; }
+
+        [Display(Name = "Vigilante")]
+        public string VigilanteName { get; set; }
 
         [Display(Name = "Recibimos de")]
         public string Name { get; set; }

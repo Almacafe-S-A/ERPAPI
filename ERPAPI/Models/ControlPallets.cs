@@ -23,6 +23,10 @@ namespace ERPAPI.Models
         [Display(Name = "Estado")]
         public string Estado { get; set; }
 
+      
+
+
+
         [Display(Name = "Bodega")]    
         public int WarehouseId { get; set; }
 
