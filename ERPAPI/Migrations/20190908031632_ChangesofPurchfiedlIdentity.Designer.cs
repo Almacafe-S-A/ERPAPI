@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190908031632_ChangesofPurchfiedlIdentity")]
+    partial class ChangesofPurchfiedlIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4204,8 +4206,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Identidad")
-                        .IsRequired();
+                    b.Property<string>("Identidad");
 
                     b.Property<DateTime>("ModifiedDate");
 
@@ -4222,10 +4223,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.Property<int>("PurchTypeId");
-
-                    b.Property<double>("QtyMin");
-
-                    b.Property<double>("QtyMonth");
 
                     b.Property<string>("RTN")
                         .IsRequired();
