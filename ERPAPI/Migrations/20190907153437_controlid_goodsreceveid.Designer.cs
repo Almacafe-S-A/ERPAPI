@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190907153437_controlid_goodsreceveid")]
+    partial class controlid_goodsreceveid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -528,8 +530,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.Property<string>("Vigilante");
-
-                    b.Property<long>("VigilanteId");
 
                     b.Property<long>("WeightBallot");
 
@@ -2972,10 +2972,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion");
 
-                    b.Property<long>("VigilanteId");
-
-                    b.Property<string>("VigilanteName");
-
                     b.Property<int>("WarehouseId");
 
                     b.Property<string>("WarehouseName");
@@ -4201,6 +4197,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CompanyReferencetwo")
                         .IsRequired();
 
+                    b.Property<string>("ContactPerson");
+
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("CreatedUser")
@@ -4208,7 +4206,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("CurrencyId");
 
+                    b.Property<string>("Email");
+
                     b.Property<string>("Estado");
+
+                    b.Property<string>("GrupoEconomico");
 
                     b.Property<long>("IdEstado");
 
@@ -4225,6 +4227,9 @@ namespace ERPAPI.Migrations
                     b.Property<string>("PhoneReferenceone");
 
                     b.Property<string>("PhoneReferencetwo");
+
+                    b.Property<string>("PurchCode")
+                        .IsRequired();
 
                     b.Property<string>("PurchName")
                         .IsRequired();

@@ -162,7 +162,6 @@ namespace ERPAPI.Controllers
                         {
                             IdOperacion = _Alert.AlertId,
                             DocType = "Alert",
-
                             ClaseInicial =
                               Newtonsoft.Json.JsonConvert.SerializeObject(_Alertq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
