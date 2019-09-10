@@ -26,9 +26,13 @@ namespace ERPAPI.Models
         public string Email { get; set; }
         [Display(Name = "Contact Person")]
         public string ContactPerson { get; set; }
-        //[Display(Name = "Party")]
-        //public virtual Party Party { get; set; }
-        //public int? PartyId { get; set; }
-
+        [Required]
+        public string UsuarioCreacion { get; set; }
+        [Required]
+        public string UsuarioModificacion { get; set; }
+        [Required]
+        public DateTime FechaCreacion { get; set; }
+        [Required]
+        public DateTime FechaModificacion { get; set; }
     }
 }
