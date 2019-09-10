@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190908012947_ChangesofPurchModel")]
+    partial class ChangesofPurchModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -528,8 +530,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.Property<string>("Vigilante");
-
-                    b.Property<long>("VigilanteId");
 
                     b.Property<long>("WeightBallot");
 
@@ -2448,10 +2448,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
                     b.Property<DateTime>("DayofRate");
 
                     b.Property<double>("ExchangeRateValue");
@@ -2910,8 +2906,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Comments");
 
-                    b.Property<long>("ControlId");
-
                     b.Property<long>("CountryId");
 
                     b.Property<string>("CountryName");
@@ -2976,10 +2970,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion");
 
-                    b.Property<long>("VigilanteId");
-
-                    b.Property<string>("VigilanteName");
-
                     b.Property<int>("WarehouseId");
 
                     b.Property<string>("WarehouseName");
@@ -3042,38 +3032,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("GoodsReceivedId");
 
                     b.ToTable("GoodsReceivedLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Grupo", b =>
-                {
-                    b.Property<int>("GrupoId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .IsRequired();
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<int?>("LineaId");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.HasKey("GrupoId");
-
-                    b.HasIndex("LineaId");
-
-                    b.ToTable("Grupos");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GrupoConfiguracion", b =>
@@ -3578,62 +3536,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("KardexId");
 
                     b.ToTable("KardexLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Linea", b =>
-                {
-                    b.Property<int>("LineaId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired();
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.HasKey("LineaId");
-
-                    b.ToTable("Lineas");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Marca", b =>
-                {
-                    b.Property<int>("MarcaId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description")
-                        .IsRequired();
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.HasKey("MarcaId");
-
-                    b.ToTable("Marcas");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.NumeracionSAR", b =>
@@ -4304,9 +4206,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Identidad")
-                        .IsRequired();
-
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<string>("ModifiedUser")
@@ -4322,10 +4221,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.Property<int>("PurchTypeId");
-
-                    b.Property<double>("QtyMin");
-
-                    b.Property<double>("QtyMonth");
 
                     b.Property<string>("RTN")
                         .IsRequired();
@@ -6144,13 +6039,6 @@ namespace ERPAPI.Migrations
                         .WithMany("_GoodsReceivedLine")
                         .HasForeignKey("GoodsReceivedId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Grupo", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Linea", "Linea")
-                        .WithMany()
-                        .HasForeignKey("LineaId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.HoursWorkedDetail", b =>
