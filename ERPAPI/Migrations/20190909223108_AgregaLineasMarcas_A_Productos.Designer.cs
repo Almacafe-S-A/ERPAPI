@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190909223108_AgregaLineasMarcas_A_Productos")]
+    partial class AgregaLineasMarcas_A_Productos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -644,8 +646,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<int>("Numero");
 
                     b.Property<string>("Phone");
 
@@ -2449,10 +2449,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CreatedUser")
                         .IsRequired();
-
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
 
                     b.Property<DateTime>("DayofRate");
 
@@ -5206,19 +5202,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Email");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<string>("Phone");
 
                     b.Property<string>("State");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
 
                     b.Property<string>("VendorName")
                         .IsRequired();

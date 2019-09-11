@@ -40,7 +40,7 @@ namespace ERPAPI.Controllers
 
             try
             {
-                List<Customer> Items = await _context.Customer.ToListAsync();
+                List<Customer> Items = await _context.Customer.Take(100).OrderByDescending(c => c.CustomerId).ToListAsync();
                 return await Task.Run(() => Ok(Items));
                 //  return Ok(Items);
             }

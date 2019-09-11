@@ -36,6 +36,13 @@ namespace ERPAPI.Models
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
 
+        public Marca Marca { get; set; }
+
+        public Linea Linea { get; set; }
+
+        public Grupo Grupo { get; set; }
+
+
         [Required]
         public string UsuarioCreacion { get; set; }
 

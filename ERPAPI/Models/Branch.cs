@@ -12,8 +12,10 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
         public int BranchId { get; set; }
-        [Display(Name = "Codigo Sucursal"), ]
+        [Display(Name = "Codigo Sucursal") ]
         public string BranchCode { get; set; }
+        public int Numero { get; set; }
+
         [Required]
         [Display(Name = "Nombre Sucursal")]
         public string BranchName { get; set; }

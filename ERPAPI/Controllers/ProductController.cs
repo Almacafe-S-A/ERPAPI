@@ -40,6 +40,9 @@ namespace ERPAPI.Controllers
                 Items = await _context.Product.Include(c => c.Branch)
                                               .Include(c => c.Currency)
                                               .Include(c => c.UnitOfMeasure)
+                                              .Include(c => c.Marca)
+                                              .Include(c => c.Linea)
+                                              .Include(c => c.Grupo)
                                               .ToListAsync();               
             }
             catch (Exception ex)
@@ -64,6 +67,9 @@ namespace ERPAPI.Controllers
                 Items = await _context.Product.Include(c => c.Branch)
                                               .Include(c => c.Currency)
                                               .Include(c => c.UnitOfMeasure)
+                                              .Include(c => c.Marca)
+                                              .Include(c => c.Linea)
+                                              .Include(c => c.Grupo)
                                               .Where(q=>q.ProductId== ProductId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
