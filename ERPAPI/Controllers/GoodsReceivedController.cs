@@ -250,6 +250,8 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
+
+                            if (item.ControlPalletsId == null) { item.ControlPalletsId = 0;  }
                             ControlPallets _ControlPalletsq = await _context.ControlPallets.Where(q => q.ControlPalletsId == item.ControlPalletsId)
                            .FirstOrDefaultAsync();
 
@@ -258,10 +260,12 @@ namespace ERPAPI.Controllers
                                 _ControlPalletsq.QQPesoBruto = _GoodsReceivedq.PesoBruto;
                                 _ControlPalletsq.QQPesoNeto = _GoodsReceivedq.PesoNeto;
                                 _ControlPalletsq.QQPesoFinal = _GoodsReceivedq.PesoNeto2;
+
+                                _context.Entry(_ControlPalletsq).CurrentValues.SetValues((_ControlPalletsq));
                             }
 
 
-                            _context.Entry(_ControlPalletsq).CurrentValues.SetValues((_ControlPalletsq));
+                          
                         }
 
                         await _context.SaveChangesAsync();

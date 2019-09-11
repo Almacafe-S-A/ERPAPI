@@ -88,12 +88,23 @@ namespace ERPAPI.Controllers
             try
             {
                 List<Int64> listayaprocesada = _context.GoodsReceived.Where(q => q.ControlId > 0).Select(q=>q.ControlId).ToList();
-                    
-                    //_context.GoodsReceivedLine
-                    //                          .Where(q=>q.ControlPalletsId>0)
-                    //                          .Select(q => q.ControlPalletsId).ToList();
 
-                Items = await _context.ControlPallets.Where(q=> !listayaprocesada.Contains(q.ControlPalletsId) ).ToListAsync();
+                //_context.GoodsReceivedLine
+                //                          .Where(q=>q.ControlPalletsId>0)
+                //                          .Select(q => q.ControlPalletsId).ToList();
+
+                var query =  (from s in _context.ControlPallets
+                where !_context.GoodsReceived.Any(es => (es.ControlId == s.ControlPalletsId))
+                                select s);
+
+                Items = query.ToList();
+                //var val = await _context.ControlPallets.Where(q=> !listayaprocesada.Contains(q.ControlPalletsId) ).ToListAsync();
+
+                List<Int64> _listaint = Items.Select(q => q.WeightBallot).ToList();
+                List<Boleto_Ent> _weightballot = _context.Boleto_Ent.Where(q => _listaint.Contains(q.clave_e)).ToList();
+                List<Int64> finalizados = _weightballot.Where(q => q.completo == true).Select(q=>q.clave_e).ToList();
+                Items = Items.Where(q => finalizados.Contains(q.WeightBallot)).ToList();
+
             }
             catch (Exception ex)
             {
