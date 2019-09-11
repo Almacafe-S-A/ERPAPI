@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190911143338_RemoveFieldsEmployee")]
+    partial class RemoveFieldsEmployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1951,8 +1953,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<Guid>("ApplicationUserId");
-
                     b.Property<string>("Correo");
 
                     b.Property<string>("CuentaBanco");
@@ -1979,28 +1979,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdActivoinactivo");
 
-                    b.Property<long>("IdBank");
-
-                    b.Property<int>("IdBranch");
-
-                    b.Property<long>("IdCity");
-
-                    b.Property<long>("IdCountry");
-
-                    b.Property<int>("IdCurrency");
-
-                    b.Property<long>("IdDepartamento");
-
-                    b.Property<long>("IdEscala");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<long>("IdPuesto");
-
-                    b.Property<long>("IdState");
-
-                    b.Property<long>("IdTipoContrato");
-
                     b.Property<string>("Identidad");
 
                     b.Property<string>("NombreEmpleado");
@@ -2016,30 +1994,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Usuariomodificacion");
 
                     b.HasKey("IdEmpleado");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("IdBank");
-
-                    b.HasIndex("IdBranch");
-
-                    b.HasIndex("IdCity");
-
-                    b.HasIndex("IdCountry");
-
-                    b.HasIndex("IdCurrency");
-
-                    b.HasIndex("IdDepartamento");
-
-                    b.HasIndex("IdEscala");
-
-                    b.HasIndex("IdEstado");
-
-                    b.HasIndex("IdPuesto");
-
-                    b.HasIndex("IdState");
-
-                    b.HasIndex("IdTipoContrato");
 
                     b.ToTable("Employees");
                 });
@@ -6109,69 +6063,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GrupoConfiguracion", "GrupoConfiguracion")
                         .WithMany()
                         .HasForeignKey("Idconfiguracion");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Employees", b =>
-                {
-                    b.HasOne("ERPAPI.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Bank", "Bank")
-                        .WithMany()
-                        .HasForeignKey("IdBank")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("IdBranch")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.City", "City")
-                        .WithMany()
-                        .HasForeignKey("IdCity")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("IdCountry")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("IdCurrency")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Departamento", "Departamento")
-                        .WithMany()
-                        .HasForeignKey("IdDepartamento")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Escala", "Escala")
-                        .WithMany()
-                        .HasForeignKey("IdEscala")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Puesto", "Puesto")
-                        .WithMany()
-                        .HasForeignKey("IdPuesto")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.State", "State")
-                        .WithMany()
-                        .HasForeignKey("IdState")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.TipoContrato", "TipoContrato")
-                        .WithMany()
-                        .HasForeignKey("IdTipoContrato")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EndososBonoLine", b =>
