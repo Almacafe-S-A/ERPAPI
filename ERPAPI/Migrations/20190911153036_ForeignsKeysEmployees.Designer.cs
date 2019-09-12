@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190911153036_ForeignsKeysEmployees")]
+    partial class ForeignsKeysEmployees
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -992,45 +994,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("ConditionId");
 
                     b.ToTable("Conditions");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ContactPerson", b =>
-                {
-                    b.Property<long>("ContactPersonId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ContactPersonCity");
-
-                    b.Property<int>("ContactPersonCityId");
-
-                    b.Property<string>("ContactPersonEmail");
-
-                    b.Property<string>("ContactPersonEstado");
-
-                    b.Property<long>("ContactPersonIdEstado");
-
-                    b.Property<string>("ContactPersonIdentity");
-
-                    b.Property<string>("ContactPersonName");
-
-                    b.Property<string>("ContactPersonPhone");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser");
-
-                    b.Property<long>("VendorId");
-
-                    b.HasKey("ContactPersonId");
-
-                    b.ToTable("ContactPerson");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPallets", b =>
