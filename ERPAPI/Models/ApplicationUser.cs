@@ -29,7 +29,7 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
         [ForeignKey("BranchId")]
-        public virtual Branch Branch { get; set; }
+        public  Branch Branch { get; set; }
 
         public virtual List<PasswordHistory> PasswordHistory { get; set; } = new List<PasswordHistory>();
     }
