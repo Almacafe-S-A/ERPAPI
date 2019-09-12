@@ -21,21 +21,21 @@ namespace ERPAPI.Migrations
             migrationBuilder.AlterColumn<int>(
                 name: "MarcaId",
                 table: "Product",
-                nullable: false,
+                nullable: true,
                 oldClrType: typeof(int),
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<int>(
                 name: "LineaId",
                 table: "Product",
-                nullable: false,
+                nullable: true,
                 oldClrType: typeof(int),
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<int>(
                 name: "GrupoId",
                 table: "Product",
-                nullable: false,
+                nullable: true,
                 oldClrType: typeof(int),
                 oldNullable: true);
 
