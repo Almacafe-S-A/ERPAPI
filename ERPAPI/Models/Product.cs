@@ -35,14 +35,14 @@ namespace ERPAPI.Models
         public int CurrencyId { get; set; }
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
-        public int MarcaId { get; set; }
+        public int? MarcaId { get; set; }
         [ForeignKey("MarcaId")]
         public Marca Marca { get; set; }
 
-        public int LineaId { get; set; }
+        public int? LineaId { get; set; }
         [ForeignKey("LineaId")]
         public Linea Linea { get; set; }
-        public int GrupoId { get; set; }
+        public int? GrupoId { get; set; }
         [ForeignKey("GrupoId")]
         public Grupo Grupo { get; set; }
 
