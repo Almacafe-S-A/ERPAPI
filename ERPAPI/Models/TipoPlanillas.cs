@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class Planilla
+    public class TipoPlanillas
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long IdPlanilla { get; set; }
+        public long IdTipoPlanilla { get; set; }
         public string TipoPlanilla { get; set; }
         public string Descripcion { get; set; }
         public long EstadoId { get; set; }
+        public string Estado { get; set; }
 
 
         public string Usuariocreacion { get; set; }

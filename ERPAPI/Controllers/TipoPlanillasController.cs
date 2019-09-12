@@ -17,12 +17,12 @@ namespace ERPAPI.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/Planilla")]
     [ApiController]
-    public class PlanillaController : Controller
+    public class TipoPlanillasController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public PlanillaController(ILogger<PlanillaController> logger, ApplicationDbContext context)
+        public TipoPlanillasController(ILogger<TipoPlanillasController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
@@ -36,10 +36,10 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetPlanilla()
         {
-            List<Planilla> Items = new List<Planilla>();
+            List<TipoPlanillas> Items = new List<TipoPlanillas>();
             try
             {
-                Items = await _context.Planilla.ToListAsync();
+                Items = await _context.TipoPlanillas.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -60,10 +60,10 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetPlanillaById(Int64 Id)
         {
-            Planilla Items = new Planilla();
+            TipoPlanillas Items = new TipoPlanillas();
             try
             {
-                Items = await _context.Planilla.Where(q => q.IdPlanilla == Id).FirstOrDefaultAsync();
+                Items = await _context.TipoPlanillas.Where(q => q.IdTipoPlanilla == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -83,13 +83,13 @@ namespace ERPAPI.Controllers
         /// <param name="_Planilla"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Planilla>> Insert([FromBody]Planilla _Planilla)
+        public async Task<ActionResult<TipoPlanillas>> Insert([FromBody]TipoPlanillas _TipoPlanillas)
         {
-            Planilla _Planillaq = new Planilla();
+            TipoPlanillas _TipoPlanillasq = new TipoPlanillas();
             try
             {
-                _Planillaq = _Planilla;
-                _context.Planilla.Add(_Planillaq);
+                _TipoPlanillasq = _TipoPlanillas;
+                _context.TipoPlanillas.Add(_TipoPlanillasq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -99,26 +99,26 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Planillaq));
+            return await Task.Run(() => Ok(_TipoPlanillasq));
         }
 
         /// <summary>
         /// Actualiza la Planilla
         /// </summary>
-        /// <param name="_Planilla"></param>
+        /// <param name="_TipoPlanillas"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Planilla>> Update([FromBody]Planilla _Planilla)
+        public async Task<ActionResult<TipoPlanillas>> Update([FromBody]TipoPlanillas _TipoPlanillas)
         {
-            Planilla _Planillaq = _Planilla;
+            TipoPlanillas _TipoPlanillasq = _TipoPlanillas;
             try
             {
-                _Planillaq = await (from c in _context.Planilla
-                                 .Where(q => q.IdPlanilla == _Planilla.IdPlanilla)
-                                    select c
+                _TipoPlanillasq = await (from c in _context.TipoPlanillas
+                                 .Where(q => q.IdTipoPlanilla == _TipoPlanillas.IdTipoPlanilla)
+                                         select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Planillaq).CurrentValues.SetValues((_Planilla));
+                _context.Entry(_TipoPlanillasq).CurrentValues.SetValues((_TipoPlanillas));
 
 
                 await _context.SaveChangesAsync();
@@ -130,7 +130,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Planillaq));
+            return await Task.Run(() => Ok(_TipoPlanillasq));
         }
 
 
