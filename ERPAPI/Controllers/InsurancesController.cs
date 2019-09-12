@@ -14,34 +14,30 @@ using Newtonsoft.Json;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/ContactPerson")]
+    [Route("api/Insurances")]
     [ApiController]
-    public class ContactPersonController : Controller
+    public class InsurancesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        /*public DimensionsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }*/
-        public ContactPersonController(ILogger<ContactPersonController> logger, ApplicationDbContext context)
+        public InsurancesController(ILogger<InsurancesController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la ContactPerson en una lista.
+        /// Obtiene los Datos de la Insurances en una lista.
         /// </summary>
 
-        // GET: api/ContactPerson
-        [HttpGet("[action]/{VendorId}")]
-        public async Task<IActionResult> GetContactPerson(Int64 VendorId)
+        // GET: api/Insurances
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetInsurances()
 
         {
-            List<ContactPerson> Items = new List<ContactPerson>();
+            List<Insurances> Items = new List<Insurances>();
             try
             {
-                Items = await _context.ContactPerson.Where(q => q.VendorId == VendorId).ToListAsync();
+                Items = await _context.Insurances.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,45 +50,19 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
 
         }
+
         /// <summary>
-        /// Obtiene los Datos de la ContactPerson en una lista.
+        /// Obtiene los Datos de la Insurances por medio del Id enviado.
         /// </summary>
-
-        // GET: api/ContactPerson
-        /*[HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountDiary()
-
-        {
-            List<Account> Items = new List<Account>();
-            try
-            {
-                Items = await _context.Account.Where(q => q.BlockedInJournal == false).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
-        }
-
-        */
-        /// <summary>
-        /// Obtiene los Datos de la ContactPerson por medio del Id enviado.
-        /// </summary>
-        /// <param name="ContactPersonId"></param>
+        /// <param name="InsurancesId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ContactPersonId}")]
-        public async Task<IActionResult> GetContactPersonById(Int64 ContactPersonId)
+        [HttpGet("[action]/{InsurancesId}")]
+        public async Task<IActionResult> GetInsurancesById(Int64 InsurancesId)
         {
-            ContactPerson Items = new ContactPerson();
+            Insurances Items = new Insurances();
             try
             {
-                Items = await _context.ContactPerson.Where(q => q.ContactPersonId == ContactPersonId).FirstOrDefaultAsync();
+                Items = await _context.Insurances.Where(q => q.InsurancesId == InsurancesId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -110,14 +80,14 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva ContactPerson
+        /// Inserta una nueva Insurances
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_Insurances"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<ContactPerson>> Insert([FromBody]ContactPerson _ContactPerson)
+        public async Task<ActionResult<Insurances>> Insert([FromBody]Insurances _Insurances)
         {
-            ContactPerson _ContactPersonq = new ContactPerson();
+            Insurances _Insurancesq = new Insurances();
             // Alert _Alertq = new Alert();
             try
             {
@@ -125,22 +95,22 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _ContactPersonq = _ContactPerson;
-                        _context.ContactPerson.Add(_ContactPersonq);
+                        _Insurancesq = _Insurances;
+                        _context.Insurances.Add(_Insurancesq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _ContactPerson.ContactPersonId,
-                            DocType = "ContactPerson",
+                            IdOperacion = _Insurances.InsurancesId,
+                            DocType = "Insurances",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPerson, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Insurances, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _ContactPerson.CreatedUser,
-                            UsuarioModificacion = _ContactPerson.ModifiedUser,
-                            UsuarioEjecucion = _ContactPerson.ModifiedUser,
+                            UsuarioCreacion = _Insurances.CreatedUser,
+                            UsuarioModificacion = _Insurances.ModifiedUser,
+                            UsuarioEjecucion = _Insurances.ModifiedUser,
 
                         });
 
@@ -163,46 +133,46 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_Insurancesq));
         }
 
         /// <summary>
-        /// Actualiza la ContactPerson
+        /// Actualiza la Insurances
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_Insurances"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<ContactPerson>> Update([FromBody]ContactPerson _ContactPerson)
+        public async Task<ActionResult<Insurances>> Update([FromBody]Insurances _Insurances)
         {
-            ContactPerson _ContactPersonq = _ContactPerson;
+            Insurances _Insurancesq = _Insurances;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _ContactPersonq = await (from c in _context.ContactPerson
-                                         .Where(q => q.ContactPersonId == _ContactPerson.ContactPersonId)
+                        _Insurancesq = await (from c in _context.Insurances
+                                         .Where(q => q.InsurancesId == _Insurances.InsurancesId)
                                                  select c
                                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_ContactPersonq).CurrentValues.SetValues((_ContactPerson));
+                        _context.Entry(_Insurancesq).CurrentValues.SetValues((_Insurances));
 
                         //_context.Alert.Update(_Alertq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _ContactPerson.ContactPersonId,
-                            DocType = "ContactPerson",
+                            IdOperacion = _Insurances.InsurancesId,
+                            DocType = "Insurances",
                             ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPersonq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPerson, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_Insurancesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Insurances, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _ContactPerson.CreatedUser,
-                            UsuarioModificacion = _ContactPerson.ModifiedUser,
-                            UsuarioEjecucion = _ContactPerson.ModifiedUser,
+                            UsuarioCreacion = _Insurances.CreatedUser,
+                            UsuarioModificacion = _Insurances.ModifiedUser,
+                            UsuarioEjecucion = _Insurances.ModifiedUser,
 
                         });
 
@@ -224,25 +194,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_Insurancesq));
         }
 
         /// <summary>
-        /// Elimina una ContactPerson       
+        /// Elimina una Insurances       
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_Insurances"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]ContactPerson _ContactPerson)
+        public async Task<IActionResult> Delete([FromBody]Insurances _Insurances)
         {
-            ContactPerson _ContactPersonq = new ContactPerson();
+            Insurances _Insurancesq = new Insurances();
             try
             {
-                _ContactPersonq = _context.ContactPerson
-                .Where(x => x.ContactPersonId == (Int64)_ContactPerson.ContactPersonId)
+                _Insurancesq = _context.Insurances
+                .Where(x => x.InsurancesId == (Int64)_Insurances.InsurancesId)
                 .FirstOrDefault();
 
-                _context.ContactPerson.Remove(_ContactPersonq);
+                _context.Insurances.Remove(_Insurancesq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -251,7 +221,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_Insurancesq));
 
         }
        

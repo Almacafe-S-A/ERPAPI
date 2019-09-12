@@ -13,35 +13,39 @@ using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
+    /*public class ConfigurationVendorController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+    }*/
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/ContactPerson")]
+    [Route("api/ConfigurationVendor")]
     [ApiController]
-    public class ContactPersonController : Controller
+    public class ConfigurationVendorController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        /*public DimensionsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }*/
-        public ContactPersonController(ILogger<ContactPersonController> logger, ApplicationDbContext context)
+        
+        public ConfigurationVendorController(ILogger<ConfigurationVendorController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la ContactPerson en una lista.
+        /// Obtiene los Datos de la ConfigurationVendor en una lista.
         /// </summary>
 
-        // GET: api/ContactPerson
-        [HttpGet("[action]/{VendorId}")]
-        public async Task<IActionResult> GetContactPerson(Int64 VendorId)
+        // GET: api/ConfigurationVendor
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetConfigurationVendor()
 
         {
-            List<ContactPerson> Items = new List<ContactPerson>();
+            List<ConfigurationVendor> Items = new List<ConfigurationVendor>();
             try
             {
-                Items = await _context.ContactPerson.Where(q => q.VendorId == VendorId).ToListAsync();
+                Items = await _context.ConfigurationVendor.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -55,44 +59,23 @@ namespace ERPAPI.Controllers
 
         }
         /// <summary>
-        /// Obtiene los Datos de la ContactPerson en una lista.
+        /// Obtiene los Datos de la ConfigurationVendor en una lista.
         /// </summary>
 
-        // GET: api/ContactPerson
-        /*[HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountDiary()
+        // GET: api/ConfigurationVendor
 
-        {
-            List<Account> Items = new List<Account>();
-            try
-            {
-                Items = await _context.Account.Where(q => q.BlockedInJournal == false).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
-        }
-
-        */
         /// <summary>
         /// Obtiene los Datos de la ContactPerson por medio del Id enviado.
         /// </summary>
-        /// <param name="ContactPersonId"></param>
+        /// <param name="ConfigurationVendorId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ContactPersonId}")]
-        public async Task<IActionResult> GetContactPersonById(Int64 ContactPersonId)
+        [HttpGet("[action]/{ConfigurationVendorId}")]
+        public async Task<IActionResult> GetConfigurationVendorById(Int64 ConfigurationVendorId)
         {
-            ContactPerson Items = new ContactPerson();
+            ConfigurationVendor Items = new ConfigurationVendor();
             try
             {
-                Items = await _context.ContactPerson.Where(q => q.ContactPersonId == ContactPersonId).FirstOrDefaultAsync();
+                Items = await _context.ConfigurationVendor.Where(q => q.ConfigurationVendorId == ConfigurationVendorId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -110,14 +93,14 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva ContactPerson
+        /// Inserta una nueva ConfigurationVendor
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_ConfigurationVendor"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<ContactPerson>> Insert([FromBody]ContactPerson _ContactPerson)
+        public async Task<ActionResult<ConfigurationVendor>> Insert([FromBody]ConfigurationVendor _ConfigurationVendor)
         {
-            ContactPerson _ContactPersonq = new ContactPerson();
+            ConfigurationVendor _ConfigurationVendorq = new ConfigurationVendor();
             // Alert _Alertq = new Alert();
             try
             {
@@ -125,22 +108,22 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _ContactPersonq = _ContactPerson;
-                        _context.ContactPerson.Add(_ContactPersonq);
+                        _ConfigurationVendorq = _ConfigurationVendor;
+                        _context.ConfigurationVendor.Add(_ConfigurationVendorq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _ContactPerson.ContactPersonId,
-                            DocType = "ContactPerson",
+                            IdOperacion = _ConfigurationVendor.ConfigurationVendorId,
+                            DocType = "ConfigurationVendor",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPerson, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_ConfigurationVendor, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _ContactPerson.CreatedUser,
-                            UsuarioModificacion = _ContactPerson.ModifiedUser,
-                            UsuarioEjecucion = _ContactPerson.ModifiedUser,
+                            UsuarioCreacion = _ConfigurationVendor.CreatedUser,
+                            UsuarioModificacion = _ConfigurationVendor.ModifiedUser,
+                            UsuarioEjecucion = _ConfigurationVendor.ModifiedUser,
 
                         });
 
@@ -163,46 +146,46 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_ConfigurationVendorq));
         }
 
         /// <summary>
-        /// Actualiza la ContactPerson
+        /// Actualiza la ConfigurationVendor
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_ConfigurationVendor"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<ContactPerson>> Update([FromBody]ContactPerson _ContactPerson)
+        public async Task<ActionResult<ConfigurationVendor>> Update([FromBody]ConfigurationVendor _ConfigurationVendor)
         {
-            ContactPerson _ContactPersonq = _ContactPerson;
+            ConfigurationVendor _ConfigurationVendorq = _ConfigurationVendor;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _ContactPersonq = await (from c in _context.ContactPerson
-                                         .Where(q => q.ContactPersonId == _ContactPerson.ContactPersonId)
+                        _ConfigurationVendorq = await (from c in _context.ConfigurationVendor
+                                         .Where(q => q.ConfigurationVendorId == _ConfigurationVendor.ConfigurationVendorId)
                                                  select c
                                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_ContactPersonq).CurrentValues.SetValues((_ContactPerson));
+                        _context.Entry(_ConfigurationVendorq).CurrentValues.SetValues((_ConfigurationVendor));
 
                         //_context.Alert.Update(_Alertq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _ContactPerson.ContactPersonId,
-                            DocType = "ContactPerson",
+                            IdOperacion = _ConfigurationVendor.ConfigurationVendorId,
+                            DocType = "ConfigurationVendor",
                             ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPersonq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPerson, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_ConfigurationVendorq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_ConfigurationVendor, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _ContactPerson.CreatedUser,
-                            UsuarioModificacion = _ContactPerson.ModifiedUser,
-                            UsuarioEjecucion = _ContactPerson.ModifiedUser,
+                            UsuarioCreacion = _ConfigurationVendor.CreatedUser,
+                            UsuarioModificacion = _ConfigurationVendor.ModifiedUser,
+                            UsuarioEjecucion = _ConfigurationVendor.ModifiedUser,
 
                         });
 
@@ -224,25 +207,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_ConfigurationVendorq));
         }
 
         /// <summary>
         /// Elimina una ContactPerson       
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_ConfigurationVendor"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]ContactPerson _ContactPerson)
+        public async Task<IActionResult> Delete([FromBody]ConfigurationVendor _ConfigurationVendor)
         {
-            ContactPerson _ContactPersonq = new ContactPerson();
+            ConfigurationVendor _ConfigurationVendorq = new ConfigurationVendor();
             try
             {
-                _ContactPersonq = _context.ContactPerson
-                .Where(x => x.ContactPersonId == (Int64)_ContactPerson.ContactPersonId)
+                _ConfigurationVendorq = _context.ConfigurationVendor
+                .Where(x => x.ConfigurationVendorId == (Int64)_ConfigurationVendor.ConfigurationVendorId)
                 .FirstOrDefault();
 
-                _context.ContactPerson.Remove(_ContactPersonq);
+                _context.ConfigurationVendor.Remove(_ConfigurationVendorq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -251,9 +234,9 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_ConfigurationVendorq));
 
         }
-       
+
     }
 }
