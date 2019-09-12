@@ -27,6 +27,7 @@ namespace ERP.Contexts
         {
 
         }
+        public DbSet<ContactPerson> ContactPerson { get; set; }
         public DbSet<TypeJournal> TypeJournal { get; set; }
         public DbSet<CostListItem> CostListItem { get; set; }
 
@@ -149,7 +150,7 @@ namespace ERP.Contexts
         public DbSet<ERPAPI.Models.Dependientes> Dependientes { get; set; }
 
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
-
+        public DbSet<ERPAPI.Models.Planilla> Planilla { get; set; }
         public DbSet<Linea> Lineas { get; set; }
         public DbSet<Marca> Marcas { get; set; }
         public DbSet<Grupo> Grupos { get; set; }

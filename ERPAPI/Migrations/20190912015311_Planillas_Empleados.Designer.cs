@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190912015311_Planillas_Empleados")]
+    partial class Planillas_Empleados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4049,13 +4051,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<int>("GrupoId");
+                    b.Property<int?>("GrupoId");
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<int>("LineaId");
+                    b.Property<int?>("LineaId");
 
-                    b.Property<int>("MarcaId");
+                    b.Property<int?>("MarcaId");
 
                     b.Property<string>("ProductCode");
 
@@ -5356,15 +5358,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
                     b.Property<string>("VendorTypeName")
                         .IsRequired();
 
@@ -6396,18 +6389,15 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.Grupo", "Grupo")
                         .WithMany()
-                        .HasForeignKey("GrupoId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GrupoId");
 
                     b.HasOne("ERPAPI.Models.Linea", "Linea")
                         .WithMany()
-                        .HasForeignKey("LineaId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("LineaId");
 
                     b.HasOne("ERPAPI.Models.Marca", "Marca")
                         .WithMany()
-                        .HasForeignKey("MarcaId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("MarcaId");
 
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
