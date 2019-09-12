@@ -81,10 +81,10 @@
     <Compile Remove="Migrations\20190816144826_ChangedAcccount.cs" />
     <Compile Remove="Migrations\20190821155318_weightballot.cs" />
     <Compile Remove="Migrations\20190821155318_weightballot.Designer.cs" />
-    <Compile Remove="Migrations\20190911150030_DescripcionCiudad.cs" />
-    <Compile Remove="Migrations\20190911150030_DescripcionCiudad.Designer.cs" />
-    <Compile Remove="Migrations\20190911150714_DescripcionCiudad.cs" />
-    <Compile Remove="Migrations\20190911150714_DescripcionCiudad.Designer.cs" />
+    <Compile Remove="Migrations\20190911170342_a.cs" />
+    <Compile Remove="Migrations\20190911170342_a.Designer.cs" />
+    <Compile Remove="Migrations\20190911171138_as.cs" />
+    <Compile Remove="Migrations\20190911171138_as.Designer.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup>

@@ -15,31 +15,31 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Tax")]
+    [Route("api/Planilla")]
     [ApiController]
-    public class TaxController : Controller
+    public class TipoPlanillasController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public TaxController(ILogger<TaxController> logger, ApplicationDbContext context)
+        public TipoPlanillasController(ILogger<TipoPlanillasController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Taxes
+        /// Obtiene el Listado de Planillas
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetTax()
+        public async Task<IActionResult> GetPlanilla()
         {
-            List<Tax> Items = new List<Tax>();
+            List<TipoPlanillas> Items = new List<TipoPlanillas>();
             try
             {
-                Items = await _context.Tax.ToListAsync();
+                Items = await _context.TipoPlanillas.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -53,17 +53,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la Tax por medio del Id enviado.
+        /// Obtiene los Datos de la Planilla por medio del Id enviado.
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
         [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetTaxById(Int64 Id)
+        public async Task<IActionResult> GetPlanillaById(Int64 Id)
         {
-            Tax Items = new Tax();
+            TipoPlanillas Items = new TipoPlanillas();
             try
             {
-                Items = await _context.Tax.Where(q => q.TaxId == Id).FirstOrDefaultAsync();
+                Items = await _context.TipoPlanillas.Where(q => q.IdTipoPlanilla == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -78,18 +78,18 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva Tax
+        /// Inserta una nueva Planilla
         /// </summary>
-        /// <param name="_Tax"></param>
+        /// <param name="_Planilla"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Tax>> Insert([FromBody]Tax _Tax)
+        public async Task<ActionResult<TipoPlanillas>> Insert([FromBody]TipoPlanillas _TipoPlanillas)
         {
-            Tax _Taxq = new Tax();
+            TipoPlanillas _TipoPlanillasq = new TipoPlanillas();
             try
             {
-                _Taxq = _Tax;
-                _context.Tax.Add(_Taxq);
+                _TipoPlanillasq = _TipoPlanillas;
+                _context.TipoPlanillas.Add(_TipoPlanillasq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -99,26 +99,26 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Taxq));
+            return await Task.Run(() => Ok(_TipoPlanillasq));
         }
 
         /// <summary>
-        /// Actualiza la Tax
+        /// Actualiza la Planilla
         /// </summary>
-        /// <param name="_Tax"></param>
+        /// <param name="_TipoPlanillas"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Tax>> Update([FromBody]Tax _Tax)
+        public async Task<ActionResult<TipoPlanillas>> Update([FromBody]TipoPlanillas _TipoPlanillas)
         {
-            Tax _Taxq = _Tax;
+            TipoPlanillas _TipoPlanillasq = _TipoPlanillas;
             try
             {
-                _Taxq = await (from c in _context.Tax
-                                 .Where(q => q.TaxId == _Tax.TaxId)
-                               select c
+                _TipoPlanillasq = await (from c in _context.TipoPlanillas
+                                 .Where(q => q.IdTipoPlanilla == _TipoPlanillas.IdTipoPlanilla)
+                                         select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Taxq).CurrentValues.SetValues((_Tax));
+                _context.Entry(_TipoPlanillasq).CurrentValues.SetValues((_TipoPlanillas));
 
 
                 await _context.SaveChangesAsync();
@@ -130,7 +130,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Taxq));
+            return await Task.Run(() => Ok(_TipoPlanillasq));
         }
 
 

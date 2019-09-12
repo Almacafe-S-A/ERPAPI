@@ -18,6 +18,9 @@ namespace ERPAPI.Models
         public string Direccion { get; set; }
         public long? IdEmpleado { get; set; }
 
+        public int Edad { get; set; }
+        public DateTime FechaNacimiento { get; set; }
+
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; }
         public DateTime? FechaCreacion { get; set; }

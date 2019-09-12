@@ -24,24 +24,27 @@ namespace ERPAPI.Models
         [Display(Name = "UOM")]
         public int UnitOfMeasureId { get; set; }
         [ForeignKey("UnitOfMeasureId")]
-        public virtual UnitOfMeasure UnitOfMeasure { get; set; }
+        public  UnitOfMeasure UnitOfMeasure { get; set; }
         public double DefaultBuyingPrice { get; set; } = 0.0;
         public double DefaultSellingPrice { get; set; } = 0.0;
         [Display(Name = "Branch")]
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
-        public virtual Branch Branch { get; set; }
+        public  Branch Branch { get; set; }
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
-
+        public int? MarcaId { get; set; }
+        [ForeignKey("MarcaId")]
         public Marca Marca { get; set; }
 
+        public int? LineaId { get; set; }
+        [ForeignKey("LineaId")]
         public Linea Linea { get; set; }
-
+        public int? GrupoId { get; set; }
+        [ForeignKey("GrupoId")]
         public Grupo Grupo { get; set; }
-
 
         [Required]
         public string UsuarioCreacion { get; set; }
