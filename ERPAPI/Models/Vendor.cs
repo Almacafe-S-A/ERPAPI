@@ -14,8 +14,10 @@ namespace ERPAPI.Models
         public Int64 VendorId { get; set; }
         [Required]
         public string VendorName { get; set; }
-        [Display(Name = "Vendor Type")]
-        public int VendorTypeId { get; set; }
+        [Display(Name = "Vendor Type")]        
+        public Int64 VendorTypeId { get; set; }
+        [ForeignKey("VendorTypeId")]
+        public VendorType VendorType { get; set; }
         [Display(Name = "Street Address")]
         public string Address { get; set; }
         public string City { get; set; }

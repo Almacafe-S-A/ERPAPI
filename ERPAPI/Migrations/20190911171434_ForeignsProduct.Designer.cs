@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190911171434_ForeignsProduct")]
+    partial class ForeignsProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -994,45 +996,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Conditions");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.ContactPerson", b =>
-                {
-                    b.Property<long>("ContactPersonId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ContactPersonCity");
-
-                    b.Property<int>("ContactPersonCityId");
-
-                    b.Property<string>("ContactPersonEmail");
-
-                    b.Property<string>("ContactPersonEstado");
-
-                    b.Property<long>("ContactPersonIdEstado");
-
-                    b.Property<string>("ContactPersonIdentity");
-
-                    b.Property<string>("ContactPersonName");
-
-                    b.Property<string>("ContactPersonPhone");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser");
-
-                    b.Property<long>("VendorId");
-
-                    b.HasKey("ContactPersonId");
-
-                    b.ToTable("ContactPerson");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.ControlPallets", b =>
                 {
                     b.Property<long>("ControlPalletsId")
@@ -1894,13 +1857,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Direccion");
 
-                    b.Property<int>("Edad");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaNacimiento");
 
                     b.Property<long?>("IdEmpleado");
 
@@ -2038,8 +1997,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<int>("IdPlanilla");
-
                     b.Property<long>("IdPuesto");
 
                     b.Property<long>("IdState");
@@ -2048,8 +2005,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Identidad");
 
-                    b.Property<string>("NombreContacto");
-
                     b.Property<string>("NombreEmpleado");
 
                     b.Property<string>("Notas");
@@ -2057,10 +2012,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal?>("Salario");
 
                     b.Property<string>("Telefono");
-
-                    b.Property<string>("TelefonoContacto");
-
-                    b.Property<string>("TipoSangre");
 
                     b.Property<string>("Usuariocreacion");
 
@@ -3920,31 +3871,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("PayrollEmployee");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Planilla", b =>
-                {
-                    b.Property<long>("IdPlanilla")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Descripcion");
-
-                    b.Property<long>("EstadoId");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<string>("TipoPlanilla");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("IdPlanilla");
-
-                    b.ToTable("Planilla");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Policy", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5307,13 +5233,11 @@ namespace ERPAPI.Migrations
                     b.Property<string>("VendorName")
                         .IsRequired();
 
-                    b.Property<long>("VendorTypeId");
+                    b.Property<int>("VendorTypeId");
 
                     b.Property<string>("ZipCode");
 
                     b.HasKey("VendorId");
-
-                    b.HasIndex("VendorTypeId");
 
                     b.ToTable("Vendor");
                 });
@@ -5361,15 +5285,6 @@ namespace ERPAPI.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
 
                     b.Property<string>("VendorTypeName")
                         .IsRequired();
@@ -6467,14 +6382,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Country")
                         .WithMany("State")
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Vendor", b =>
-                {
-                    b.HasOne("ERPAPI.Models.VendorType", "VendorType")
-                        .WithMany()
-                        .HasForeignKey("VendorTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
