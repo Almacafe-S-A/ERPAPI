@@ -68,6 +68,11 @@ namespace ERPAPI.Models
         public int Extension { get; set; }
         public string Notas { get; set; }
 
+        public string TipoSangre { get; set; }
+        public string NombreContacto { get; set; }
+        public string TelefonoContacto { get; set; }
+        public int IdPlanilla { get; set; }
+
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; } 
         public DateTime? FechaCreacion { get; set; }
