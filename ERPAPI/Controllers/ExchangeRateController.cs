@@ -80,6 +80,26 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{fecha}")]
+        public async Task<IActionResult> GetExchangeRateByFecha(DateTime fecha)
+        {
+            ExchangeRate Items = new ExchangeRate();
+            try
+            {
+                Items = await _context.ExchangeRate.Where(q => q.CreatedDate == fecha).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Inserta una nueva ExchangeRate
         /// /// </summary>

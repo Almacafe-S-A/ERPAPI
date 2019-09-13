@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -89,12 +90,59 @@ namespace coderush.Controllers.Api
         [HttpPost("[action]")]
         public async Task<ActionResult<Vendor>> Insert([FromBody]Vendor payload)
         {
-            Vendor Vendor = payload;
+            /* Vendor Vendor = payload;
 
+             try
+             {
+                 _context.Vendor.Add(Vendor);
+                 await _context.SaveChangesAsync();
+             }
+             catch (Exception ex)
+             {
+
+                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                 return BadRequest($"Ocurrio un error:{ex.Message}");
+             }
+
+             return await Task.Run(() => Ok(Vendor));*/
+            Vendor _Vendorq = new Vendor();
+            // Alert _Alertq = new Alert();
             try
             {
-                _context.Vendor.Add(Vendor);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _Vendorq = payload;
+                        _context.Vendor.Add(_Vendorq);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Vendorq.VendorId,
+                            DocType = "Vendor",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Vendorq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Vendorq.UsuarioCreacion,
+                            UsuarioModificacion = _Vendorq.UsuarioModificacion,
+                            UsuarioEjecucion = _Vendorq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -103,13 +151,14 @@ namespace coderush.Controllers.Api
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(Vendor));
+            return await Task.Run(() => Ok(_Vendorq));
+
         }
 
         [HttpPut("[action]")]
         public async Task<ActionResult<Vendor>> Update([FromBody]Vendor _Vendor)
         {
-
+            /*
             try
             {
                 Vendor Vendorq = (from c in _context.Vendor
@@ -131,7 +180,59 @@ namespace coderush.Controllers.Api
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_Vendor));
+            return await Task.Run(() => Ok(_Vendor));*/
+            Vendor _Vendorq = _Vendor;
+            try
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _Vendorq = await (from c in _context.Vendor
+                                         .Where(q => q.VendorId == _Vendor.VendorId)
+                                                  select c
+                                        ).FirstOrDefaultAsync();
+
+                        _context.Entry(_Vendorq).CurrentValues.SetValues((_Vendor));
+
+                        //_context.Alert.Update(_Alertq);
+                        await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Vendor.VendorId,
+                            DocType = "Vendor",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_Vendorq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Vendor, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Actualizar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Vendor.UsuarioCreacion,
+                            UsuarioModificacion = _Vendor.UsuarioModificacion,
+                            UsuarioEjecucion = _Vendor.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_Vendorq));
+
         }
 
         [HttpPost("[action]")]

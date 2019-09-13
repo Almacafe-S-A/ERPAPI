@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190912220001_ProductNUlls")]
+    partial class ProductNUlls
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -645,8 +647,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<decimal?>("LimitCNBS");
-
                     b.Property<int>("Numero");
 
                     b.Property<string>("Phone");
@@ -994,35 +994,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("ConditionId");
 
                     b.ToTable("Conditions");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ConfigurationVendor", b =>
-                {
-                    b.Property<long>("ConfigurationVendorId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<string>("Estado");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<double>("QtyMin");
-
-                    b.Property<double>("QtyMonth");
-
-                    b.HasKey("ConfigurationVendorId");
-
-                    b.ToTable("ConfigurationVendor");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ContactPerson", b =>
@@ -2017,40 +1988,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("Idconfiguracion");
 
                     b.ToTable("ElementoConfiguracion");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EmployeeSalary", b =>
-                {
-                    b.Property<long>("EmployeeSalaryId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<DateTime>("DayApplication");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<long>("IdEmpleado");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<long>("IdFrequency");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<decimal?>("QtySalary")
-                        .IsRequired();
-
-                    b.HasKey("EmployeeSalaryId");
-
-                    b.ToTable("EmployeeSalary");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Employees", b =>
@@ -3310,31 +3247,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdIncidencia");
 
                     b.ToTable("Incidencias");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Insurances", b =>
-                {
-                    b.Property<int>("InsurancesId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<string>("InsurancesName");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<string>("PhotoInsurances");
-
-                    b.HasKey("InsurancesId");
-
-                    b.ToTable("Insurances");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Invoice", b =>
@@ -5372,41 +5284,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("City");
 
-                    b.Property<string>("CompanyReferenceone")
-                        .IsRequired();
-
-                    b.Property<string>("CompanyReferencetwo")
-                        .IsRequired();
-
                     b.Property<string>("ContactPerson");
 
-                    b.Property<int>("CurrencyId");
-
                     b.Property<string>("Email");
-
-                    b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("Identidad")
-                        .IsRequired();
-
                     b.Property<string>("Phone");
-
-                    b.Property<string>("PhoneReferenceone");
-
-                    b.Property<string>("PhoneReferencetwo");
-
-                    b.Property<double>("QtyMin");
-
-                    b.Property<double>("QtyMonth");
-
-                    b.Property<string>("RTN")
-                        .IsRequired();
 
                     b.Property<string>("State");
 

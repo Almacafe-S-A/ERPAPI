@@ -10,8 +10,12 @@ namespace ERPAPI.Models
     public class City
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; } 
+        public long Id { get; set; }
+        [Display(Name = "Ciudad")]
         public string Name { get; set; }
+
+        [Display(Name = "Descripción")]
+        public string Description { get; set; }
 
         [Display(Name = "País")]
         public long? CountryId { get; set; }

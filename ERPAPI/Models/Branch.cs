@@ -42,7 +42,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "País")]
         public string CountryName { get; set; }
-
+        [Display(Name = "Limite de CNBS")]
+        public decimal? LimitCNBS { get; set; }
 
         [Display(Name = "Estado")]
         public int StateId { get; set; }

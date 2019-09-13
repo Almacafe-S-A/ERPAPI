@@ -13,35 +13,32 @@ using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
+    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/ContactPerson")]
+    [Route("api/EmployeeSalary")]
     [ApiController]
-    public class ContactPersonController : Controller
+    public class EmployeeSalaryController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        /*public DimensionsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }*/
-        public ContactPersonController(ILogger<ContactPersonController> logger, ApplicationDbContext context)
+        public EmployeeSalaryController(ILogger<EmployeeSalaryController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
         /// <summary>
-        /// Obtiene los Datos de la ContactPerson en una lista.
+        /// Obtiene los Datos de la EmployeeSalary en una lista.
         /// </summary>
 
-        // GET: api/ContactPerson
-        [HttpGet("[action]/{VendorId}")]
-        public async Task<IActionResult> GetContactPerson(Int64 VendorId)
+        // GET: api/EmployeeSalary
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetEmployeeSalary()
 
         {
-            List<ContactPerson> Items = new List<ContactPerson>();
+            List<EmployeeSalary> Items = new List<EmployeeSalary>();
             try
             {
-                Items = await _context.ContactPerson.Where(q => q.VendorId == VendorId).ToListAsync();
+                Items = await _context.EmployeeSalary.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,45 +51,19 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
 
         }
+
         /// <summary>
-        /// Obtiene los Datos de la ContactPerson en una lista.
+        /// Obtiene los Datos de la EmployeeSalary por medio del Id enviado.
         /// </summary>
-
-        // GET: api/ContactPerson
-        /*[HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountDiary()
-
-        {
-            List<Account> Items = new List<Account>();
-            try
-            {
-                Items = await _context.Account.Where(q => q.BlockedInJournal == false).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
-        }
-
-        */
-        /// <summary>
-        /// Obtiene los Datos de la ContactPerson por medio del Id enviado.
-        /// </summary>
-        /// <param name="ContactPersonId"></param>
+        /// <param name="EmployeeSalaryId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ContactPersonId}")]
-        public async Task<IActionResult> GetContactPersonById(Int64 ContactPersonId)
+        [HttpGet("[action]/{EmployeeSalaryId}")]
+        public async Task<IActionResult> GetEmployeeSalaryById(Int64 EmployeeSalaryId)
         {
-            ContactPerson Items = new ContactPerson();
+            EmployeeSalary Items = new EmployeeSalary();
             try
             {
-                Items = await _context.ContactPerson.Where(q => q.ContactPersonId == ContactPersonId).FirstOrDefaultAsync();
+                Items = await _context.EmployeeSalary.Where(q => q.EmployeeSalaryId == EmployeeSalaryId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -110,14 +81,14 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva ContactPerson
+        /// Inserta una nueva EmployeeSalary
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_EmployeeSalary"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<ContactPerson>> Insert([FromBody]ContactPerson _ContactPerson)
+        public async Task<ActionResult<EmployeeSalary>> Insert([FromBody]EmployeeSalary _EmployeeSalary)
         {
-            ContactPerson _ContactPersonq = new ContactPerson();
+            EmployeeSalary _EmployeeSalaryq = new EmployeeSalary();
             // Alert _Alertq = new Alert();
             try
             {
@@ -125,22 +96,22 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _ContactPersonq = _ContactPerson;
-                        _context.ContactPerson.Add(_ContactPersonq);
+                        _EmployeeSalaryq = _EmployeeSalary;
+                        _context.EmployeeSalary.Add(_EmployeeSalaryq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _ContactPerson.ContactPersonId,
-                            DocType = "ContactPerson",
+                            IdOperacion = _EmployeeSalary.EmployeeSalaryId,
+                            DocType = "EmployeeSalary",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPerson, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeSalary, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _ContactPerson.CreatedUser,
-                            UsuarioModificacion = _ContactPerson.ModifiedUser,
-                            UsuarioEjecucion = _ContactPerson.ModifiedUser,
+                            UsuarioCreacion = _EmployeeSalary.CreatedUser,
+                            UsuarioModificacion = _EmployeeSalary.ModifiedUser,
+                            UsuarioEjecucion = _EmployeeSalary.ModifiedUser,
 
                         });
 
@@ -163,46 +134,46 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_EmployeeSalaryq));
         }
 
         /// <summary>
-        /// Actualiza la ContactPerson
+        /// Actualiza la EmployeeSalary
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_EmployeeSalary"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<ContactPerson>> Update([FromBody]ContactPerson _ContactPerson)
+        public async Task<ActionResult<EmployeeSalary>> Update([FromBody]EmployeeSalary _EmployeeSalary)
         {
-            ContactPerson _ContactPersonq = _ContactPerson;
+            EmployeeSalary _EmployeeSalaryq = _EmployeeSalary;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _ContactPersonq = await (from c in _context.ContactPerson
-                                         .Where(q => q.ContactPersonId == _ContactPerson.ContactPersonId)
-                                                 select c
+                        _EmployeeSalaryq = await (from c in _context.EmployeeSalary
+                                         .Where(q => q.EmployeeSalaryId == _EmployeeSalary.EmployeeSalaryId)
+                                              select c
                                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_ContactPersonq).CurrentValues.SetValues((_ContactPerson));
+                        _context.Entry(_EmployeeSalaryq).CurrentValues.SetValues((_EmployeeSalary));
 
                         //_context.Alert.Update(_Alertq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _ContactPerson.ContactPersonId,
-                            DocType = "ContactPerson",
+                            IdOperacion = _EmployeeSalary.EmployeeSalaryId,
+                            DocType = "EmployeeSalary",
                             ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPersonq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_ContactPerson, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeSalaryq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeSalary, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _ContactPerson.CreatedUser,
-                            UsuarioModificacion = _ContactPerson.ModifiedUser,
-                            UsuarioEjecucion = _ContactPerson.ModifiedUser,
+                            UsuarioCreacion = _EmployeeSalary.CreatedUser,
+                            UsuarioModificacion = _EmployeeSalary.ModifiedUser,
+                            UsuarioEjecucion = _EmployeeSalary.ModifiedUser,
 
                         });
 
@@ -224,25 +195,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_EmployeeSalaryq));
         }
 
         /// <summary>
-        /// Elimina una ContactPerson       
+        /// Elimina una EmployeeSalary       
         /// </summary>
-        /// <param name="_ContactPerson"></param>
+        /// <param name="_EmployeeSalary"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]ContactPerson _ContactPerson)
+        public async Task<IActionResult> Delete([FromBody]EmployeeSalary _EmployeeSalary)
         {
-            ContactPerson _ContactPersonq = new ContactPerson();
+            EmployeeSalary _EmployeeSalaryq = new EmployeeSalary();
             try
             {
-                _ContactPersonq = _context.ContactPerson
-                .Where(x => x.ContactPersonId == (Int64)_ContactPerson.ContactPersonId)
+                _EmployeeSalaryq = _context.EmployeeSalary
+                .Where(x => x.EmployeeSalaryId == (Int64)_EmployeeSalary.EmployeeSalaryId)
                 .FirstOrDefault();
 
-                _context.ContactPerson.Remove(_ContactPersonq);
+                _context.EmployeeSalary.Remove(_EmployeeSalaryq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -251,9 +222,9 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_ContactPersonq));
+            return await Task.Run(() => Ok(_EmployeeSalaryq));
 
         }
-       
+
     }
 }
