@@ -150,7 +150,7 @@ namespace ERP.Contexts
         public DbSet<ERPAPI.Models.Departamento> Departamento { get; set; }
         public DbSet<ERPAPI.Models.TipoContrato> TipoContrato { get; set; }
         public DbSet<ERPAPI.Models.Dependientes> Dependientes { get; set; }
-
+        public DbSet<ERPAPI.Models.CuentaBancoEmpleados> CuentaBancoEmpleados { get; set; }
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
         public DbSet<ERPAPI.Models.TipoPlanillas> TipoPlanillas { get; set; }
         public DbSet<Linea> Lineas { get; set; }
