@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190913164446_EliminarEmpresa")]
+    partial class EliminarEmpresa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1304,35 +1306,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Country");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.CuentaBancoEmpleados", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BankId");
-
-                    b.Property<string>("BankName");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long>("IdEmpleado");
-
-                    b.Property<string>("NombreEmpleado");
-
-                    b.Property<string>("NumeroCuenta");
-
-                    b.Property<string>("Usuariocreacion");
-
-                    b.Property<string>("Usuariomodificacion");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CuentaBancoEmpleados");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Currency", b =>
                 {
                     b.Property<int>("CurrencyId")
@@ -2572,7 +2545,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<int?>("CurrencyId");
+                    b.Property<long>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
 
@@ -2586,8 +2559,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ExchangeRateId");
-
-                    b.HasIndex("CurrencyId");
 
                     b.ToTable("ExchangeRate");
                 });
@@ -6403,13 +6374,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("IdGrupoEstado")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ExchangeRate", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>

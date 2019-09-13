@@ -39,7 +39,13 @@ namespace ERPAPI.Controllers
             List<Employees> Items = new List<Employees>();
             try
             {
-                Items = await _context.Employees.ToListAsync();
+                Items = await _context.Employees.Include(c => c.Bank)
+                                                .Include(c => c.Branch)
+                                                .Include(c =>c.City)
+                                                .Include(c =>c.Country)
+                                                .Include(c => c.Departamento)
+                                                .Include(c => c.ApplicationUser)
+                                                .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -63,7 +69,13 @@ namespace ERPAPI.Controllers
             Employees Items = new Employees();
             try
             {
-                Items = await _context.Employees.Where(q => q.IdEmpleado == IdEmpleado).FirstOrDefaultAsync();
+                Items = await _context.Employees.Include(c => c.Bank)
+                                                .Include(c => c.Branch)
+                                                .Include(c => c.City)
+                                                .Include(c => c.Country)
+                                                .Include(c => c.Departamento)
+                                                .Include(c => c.ApplicationUser)
+                                                .Where(q => q.IdEmpleado == IdEmpleado).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

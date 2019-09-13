@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190913180805_CuentaBancoEmpleados")]
+    partial class CuentaBancoEmpleados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2572,7 +2574,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<int?>("CurrencyId");
+                    b.Property<long>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
 
@@ -2586,8 +2588,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ExchangeRateId");
-
-                    b.HasIndex("CurrencyId");
 
                     b.ToTable("ExchangeRate");
                 });
@@ -6403,13 +6403,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("IdGrupoEstado")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ExchangeRate", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
