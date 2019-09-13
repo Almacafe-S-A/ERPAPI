@@ -81,12 +81,13 @@ namespace ERPAPI.Controllers
 
 
         [HttpGet("[action]/{fecha}")]
-        public async Task<IActionResult> GetExchangeRateByFecha(DateTime fecha)
+        public async Task<IActionResult> GetExchangeRateByFecha(string fecha)
         {
             ExchangeRate Items = new ExchangeRate();
             try
             {
-                Items = await _context.ExchangeRate.Where(q => q.CreatedDate == fecha).FirstOrDefaultAsync();
+                DateTime filtro = Convert.ToDateTime(fecha);
+                Items = await _context.ExchangeRate.Where(q => q.CreatedDate == filtro).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

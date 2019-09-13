@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Planilla")]
+    [Route("api/TipoPlanillas")]
     [ApiController]
     public class TipoPlanillasController : Controller
     {
@@ -34,7 +34,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetPlanilla()
+        public async Task<IActionResult> GetTipoPlanillas()
         {
             List<TipoPlanillas> Items = new List<TipoPlanillas>();
             try
@@ -58,7 +58,7 @@ namespace ERPAPI.Controllers
         /// <param name="Id"></param>
         /// <returns></returns>
         [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetPlanillaById(Int64 Id)
+        public async Task<IActionResult> GetTipoPlanillasById(Int64 Id)
         {
             TipoPlanillas Items = new TipoPlanillas();
             try
@@ -80,7 +80,7 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Inserta una nueva Planilla
         /// </summary>
-        /// <param name="_Planilla"></param>
+        /// <param name="_TipoPlanillas"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<TipoPlanillas>> Insert([FromBody]TipoPlanillas _TipoPlanillas)
