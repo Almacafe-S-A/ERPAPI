@@ -12,11 +12,11 @@ namespace ERPAPI.Migrations
                 nullable: true,
                 oldClrType: typeof(long));
 
-            migrationBuilder.AddColumn<string>(
+           /* migrationBuilder.AddColumn<string>(
                 name: "Description",
                 table: "City",
                 nullable: true);
-
+                */
             migrationBuilder.CreateIndex(
                 name: "IX_ExchangeRate_CurrencyId",
                 table: "ExchangeRate",
@@ -41,10 +41,10 @@ namespace ERPAPI.Migrations
                 name: "IX_ExchangeRate_CurrencyId",
                 table: "ExchangeRate");
 
-            migrationBuilder.DropColumn(
+          /*  migrationBuilder.DropColumn(
                 name: "Description",
                 table: "City");
-
+                */
             migrationBuilder.AlterColumn<long>(
                 name: "CurrencyId",
                 table: "ExchangeRate",
