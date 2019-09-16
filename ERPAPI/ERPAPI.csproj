@@ -85,6 +85,8 @@
     <Compile Remove="Migrations\20190911170342_a.Designer.cs" />
     <Compile Remove="Migrations\20190911171138_as.cs" />
     <Compile Remove="Migrations\20190911171138_as.Designer.cs" />
+    <Compile Remove="Migrations\20190913194906_ExchangeCurrencyId.cs" />
+    <Compile Remove="Migrations\20190913194906_ExchangeCurrencyId.Designer.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup>

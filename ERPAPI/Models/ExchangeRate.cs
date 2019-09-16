@@ -17,10 +17,14 @@ namespace ERPAPI.Models
         [Display(Name = "Monto")]
         public double ExchangeRateValue { get; set; }
 
-        [Display(Name = "Moneda")]
-        public Int64 CurrencyId { get; set; }
+        public Currency Currency { get; set; }
+
+        //[Display(Name = "Moneda")]
+        //[ForeignKey("CurrencyId")]
+        //public Int64 CurrencyId { get; set; }
 
         [Display(Name = "Moneda")]
+       
         public string CurrencyName { get; set; }
 
         [Required]
