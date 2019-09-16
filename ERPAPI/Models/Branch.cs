@@ -24,21 +24,25 @@ namespace ERPAPI.Models
         public string Description { get; set; }
         [Display(Name = "Moneda")]
         public int CurrencyId { get; set; }
-
+        [ForeignKey("CurrencyId")]
+        public Currency Currency { get; set; }
         [Display(Name = "Moneda")]
         public string CurrencyName { get; set; }
-
         [Display(Name = "Direccion")]
         public string Address { get; set; }
 
         [Display(Name = "Ciudad")]
-        public int CityId { get; set; }
+        public long CityId { get; set; }
+        [ForeignKey("CityId")]
+        public City Ciudad { get; set; }
 
         [Display(Name = "Ciudad")]
         public string City { get; set; }
 
         [Display(Name = "País")]
-        public int CountryId { get; set; }
+        public long CountryId { get; set; }
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
 
         [Display(Name = "País")]
         public string CountryName { get; set; }
@@ -46,7 +50,9 @@ namespace ERPAPI.Models
         public decimal? LimitCNBS { get; set; }
 
         [Display(Name = "Estado")]
-        public int StateId { get; set; }
+        public long StateId { get; set; }
+        [ForeignKey("StateId")]
+        public State Departamento { get; set; }
 
         [Display(Name = "Departamento")]
         public string State { get; set; }
@@ -65,6 +71,8 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
        
         public Int64 IdEstado { get; set; }
+        [ForeignKey("IdEstado")]
+        public Estados Estados { get; set; }
         public string Estado { get; set; }
 
         [Required]

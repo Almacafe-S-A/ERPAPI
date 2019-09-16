@@ -35,7 +35,9 @@ namespace ERPAPI.Models
         public string RTN { get; set; }        
 
         [Display(Name = "Tipo de cliente")]
-        public int CustomerTypeId { get; set; }
+        public long CustomerTypeId { get; set; }
+        [ForeignKey("CustomerTypeId")]
+        public CustomerType CustomerType { get; set; }
 
         [Display(Name = "Tipo de cliente")]
         public string CustomerTypeName { get; set; }
@@ -44,19 +46,25 @@ namespace ERPAPI.Models
         public string Address { get; set; }
 
         [Display(Name = "País")]
-        public int CountryId { get; set; }
+        public long CountryId { get; set; }
+        [ForeignKey("CountryId")]
+        public Country Country { get; set; }
 
         [Display(Name = "País")]
         public string CountryName { get; set; }
 
         [Display(Name = "Ciudad")]
-        public int CityId { get; set; }
+        public long CityId { get; set; }
+        [ForeignKey("CityId")]
+        public City Ciudad { get; set; }
 
         [Display(Name = "Ciudad")]
         public string City { get; set; }
 
         [Display(Name = "Departamento")]
-        public int StateId { get; set; }
+        public long StateId { get; set; }
+        [ForeignKey("StateId")]
+        public State Departamento { get; set; }
 
         [Display(Name = "Departamento")]
         public string State { get; set; }
@@ -78,6 +86,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Activo/Inactivo ")]
         public Int64 IdEstado { get; set; }
+        [ForeignKey("IdEstado")]
+        public Estados Estados { get; set; }
         public string Estado { get; set; }
 
 
