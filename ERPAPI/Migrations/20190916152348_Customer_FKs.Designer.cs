@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190916152348_Customer_FKs")]
+    partial class Customer_FKs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2592,13 +2594,11 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<int?>("CurrencyId");
+                    b.Property<long>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
 
                     b.Property<DateTime>("DayofRate");
-
-                    b.Property<decimal>("ExchangeRateDecimal");
 
                     b.Property<double>("ExchangeRateValue");
 
@@ -2608,8 +2608,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ExchangeRateId");
-
-                    b.HasIndex("CurrencyId");
 
                     b.ToTable("ExchangeRate");
                 });
@@ -3351,12 +3349,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<string>("DocumentName");
-
-                    b.Property<long>("DocumentTypeId");
-
-                    b.Property<string>("DocumentTypeName");
-
                     b.Property<string>("InsurancesName");
 
                     b.Property<DateTime>("ModifiedDate");
@@ -3364,7 +3356,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
 
-                    b.Property<string>("Path");
+                    b.Property<string>("PhotoInsurances");
 
                     b.HasKey("InsurancesId");
 
@@ -6499,13 +6491,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("IdGrupoEstado")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ExchangeRate", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
