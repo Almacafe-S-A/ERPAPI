@@ -27,6 +27,38 @@ namespace ERPAPI.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Obtiene el Listado de ProductType paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProductTypePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<ProductType> Items = new List<ProductType>();
+            try
+            {
+                var query = _context.ProductType.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         // GET: api/ProductType
         /// <summary>
         /// Obtiene el listado de tipos de producto.

@@ -30,6 +30,38 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene el Listado de CustomerDocument paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCustomerPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<Customer> Items = new List<Customer>();
+            try
+            {
+                var query = _context.Customer.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+           
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
         /// Obtiente el listado de todos los clientes.
         /// </summary>
         /// <returns></returns>

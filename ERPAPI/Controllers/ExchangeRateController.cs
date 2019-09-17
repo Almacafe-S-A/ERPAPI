@@ -102,7 +102,7 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva ExchangeRate
+        /// Inserta una nueva ExchangeRate 
         /// /// </summary>
         /// <param name="_ExchangeRate"></param>
         /// <returns></returns>

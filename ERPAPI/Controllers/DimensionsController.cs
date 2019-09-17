@@ -28,6 +28,39 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
+
+        /// <summary>
+        /// Obtiene el Listado de Dimensions paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDimensionsPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<Dimensions> Items = new List<Dimensions>();
+            try
+            {
+                var query = _context.Dimensions.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+           
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         // GET: api/Dimensions
         [HttpGet("[action]")]
         public async Task<IActionResult> GetDimensions()

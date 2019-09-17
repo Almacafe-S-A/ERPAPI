@@ -16,6 +16,8 @@ namespace ERPAPI.Models
         public DateTime DayofRate { get; set; }
         [Display(Name = "Monto")]
         public double ExchangeRateValue { get; set; }
+        [Display(Name = "Monto Decinal")]
+        public decimal ExchangeRateDecimal { get; set; }
 
         public Currency Currency { get; set; }
 

@@ -26,7 +26,38 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
-        
+
+        /// <summary>
+        /// Obtiene el Listado de Branch paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetBranchPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<Branch> Items = new List<Branch>();
+            try
+            {
+                var query = _context.Branch.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+           
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Obtiene el Listado de sucursales.

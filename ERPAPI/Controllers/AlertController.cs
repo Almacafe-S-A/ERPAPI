@@ -29,13 +29,40 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAlertPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<Alert> Items = new List<Alert>();
+            try
+            {
+                var query =  _context.Alert.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene el Listado de Alertes 
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAlert()
+        public async Task<ActionResult<List<Alert>>> GetAlert()
         {
             List<Alert> Items = new List<Alert>();
             try
@@ -59,7 +86,7 @@ namespace ERPAPI.Controllers
         /// <param name="AlertId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{AlertId}")]
-        public async Task<IActionResult> GetAlertById(Int64 AlertId)
+        public async Task<ActionResult<Alert>> GetAlertById(Int64 AlertId)
         {
             Alert Items = new Alert();
             try
@@ -201,7 +228,7 @@ namespace ERPAPI.Controllers
         /// <param name="_Alert"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Alert _Alert)
+        public async Task<ActionResult<Alert>> Delete([FromBody]Alert _Alert)
         {
             Alert _Alertq = new Alert();
             try

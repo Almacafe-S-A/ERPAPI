@@ -26,6 +26,36 @@ namespace coderush.Controllers.Api
             _logger = logger;
         }
 
+        /// <summary>
+        /// Obtiene el Listado de Marcas paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetMarcasPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<Marca> Items = new List<Marca>();
+            try
+            {
+                var query = _context.Marcas.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+                       
+            return await Task.Run(() => Ok(Items));
+        }
+
         // GET: api/Marca
         [HttpGet("[action]")]
         public async Task<IActionResult> GetMarca()

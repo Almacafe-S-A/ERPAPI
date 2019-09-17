@@ -206,6 +206,13 @@ namespace ERPAPI
 
             });
 
+            app.UseCors(b => b.AllowAnyOrigin()
+            .AllowAnyHeader().AllowAnyMethod()
+                           
+            )
+                           
+                ;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
