@@ -36,7 +36,7 @@ namespace coderush.Controllers.Api
             List<Grupo> Items = new List<Grupo>();
             try
             {
-                var query = _context.Grupos.AsQueryable();
+                var query = _context.Grupo.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query

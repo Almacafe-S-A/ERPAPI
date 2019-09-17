@@ -37,7 +37,7 @@ namespace ERPAPI.Controllers
             List<Linea> Items = new List<Linea>();
             try
             {
-                var query = _context.Lineas.AsQueryable();
+                var query = _context.Linea.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query

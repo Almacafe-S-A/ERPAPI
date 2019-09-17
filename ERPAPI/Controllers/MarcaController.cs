@@ -36,7 +36,7 @@ namespace coderush.Controllers.Api
             List<Marca> Items = new List<Marca>();
             try
             {
-                var query = _context.Marcas.AsQueryable();
+                var query = _context.Marca.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query

@@ -29,5 +29,10 @@ namespace ERPAPI.Models
         public DateTime? FechaModificacion { get; set; }
 
         public List<City> City { get; set; }
+
+        public virtual Customer Customer { get; set; }
+        public virtual Branch Branch { get; set; }
+        public virtual Vendor Vendor { get; set; }
+        public virtual Employees Employees { get; set; }
     }
 }

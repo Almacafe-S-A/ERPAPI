@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ERPAPI.Migrations
 {
-    public partial class DbInitial : Migration
+    public partial class dbInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -75,38 +75,6 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    IsEnabled = table.Column<bool>(nullable: true),
-                    BranchId = table.Column<long>(nullable: false),
-                    LastPasswordChangedDate = table.Column<DateTime>(nullable: false),
-                    FechaCreacion = table.Column<DateTime>(nullable: false),
-                    FechaModificacion = table.Column<DateTime>(nullable: false),
-                    UsuarioCreacion = table.Column<string>(nullable: true),
-                    UsuarioModificacion = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Bank",
                 columns: table => new
                 {
@@ -131,6 +99,7 @@ namespace ERPAPI.Migrations
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IdOperacion = table.Column<long>(nullable: true),
+                    DocType = table.Column<string>(nullable: true),
                     HoraInicio = table.Column<DateTime>(nullable: true),
                     HoraFin = table.Column<DateTime>(nullable: true),
                     Accion = table.Column<string>(nullable: true),
@@ -144,6 +113,7 @@ namespace ERPAPI.Migrations
                     FechaCreacion = table.Column<DateTime>(nullable: true),
                     IdEstado = table.Column<long>(nullable: false),
                     Estado = table.Column<string>(nullable: true),
+                    ClaseInicial = table.Column<string>(nullable: true),
                     ResultadoSerializado = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -168,6 +138,12 @@ namespace ERPAPI.Migrations
                     Origen = table.Column<string>(nullable: true),
                     IdEstado = table.Column<long>(nullable: false),
                     Estado = table.Column<string>(nullable: true),
+                    CountryId = table.Column<long>(nullable: false),
+                    CountryName = table.Column<string>(nullable: true),
+                    StateId = table.Column<long>(nullable: false),
+                    StateName = table.Column<string>(nullable: true),
+                    CityId = table.Column<long>(nullable: false),
+                    CityName = table.Column<string>(nullable: true),
                     FechaCreacion = table.Column<DateTime>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     UsuarioCreacion = table.Column<string>(nullable: true),
@@ -186,6 +162,8 @@ namespace ERPAPI.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     GoodsDeliveredId = table.Column<long>(nullable: false),
                     GoodsDeliveryAuthorizationId = table.Column<long>(nullable: false),
+                    GoodsReceivedId = table.Column<long>(nullable: false),
+                    VigilanteId = table.Column<long>(nullable: false),
                     Vigilante = table.Column<string>(nullable: true),
                     DocumentDate = table.Column<DateTime>(nullable: false),
                     BranchId = table.Column<long>(nullable: false),
@@ -201,6 +179,7 @@ namespace ERPAPI.Migrations
                     SubProductName = table.Column<string>(nullable: true),
                     UnitOfMeasureId = table.Column<long>(nullable: false),
                     UnitOfMeasureName = table.Column<string>(nullable: true),
+                    WeightBallot = table.Column<long>(nullable: false),
                     Quantity = table.Column<double>(nullable: false),
                     FechaCreacion = table.Column<DateTime>(nullable: true),
                     FechaModificacion = table.Column<DateTime>(nullable: true),
@@ -237,35 +216,6 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Boleto_Ent", x => x.clave_e);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Branch",
-                columns: table => new
-                {
-                    BranchId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    BranchName = table.Column<string>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    CurrencyId = table.Column<int>(nullable: false),
-                    CurrencyName = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    State = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    ContactPerson = table.Column<string>(nullable: true),
-                    UsuarioCreacion = table.Column<string>(nullable: false),
-                    IdEstado = table.Column<long>(nullable: false),
-                    Estado = table.Column<string>(nullable: true),
-                    UsuarioModificacion = table.Column<string>(nullable: false),
-                    FechaCreacion = table.Column<DateTime>(nullable: false),
-                    FechaModificacion = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Branch", x => x.BranchId);
                 });
 
             migrationBuilder.CreateTable(
@@ -442,6 +392,26 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConfigurationVendor",
+                columns: table => new
+                {
+                    ConfigurationVendorId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    QtyMin = table.Column<double>(nullable: false),
+                    QtyMonth = table.Column<double>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConfigurationVendor", x => x.ConfigurationVendorId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CONSOLIDATED_LISTM",
                 columns: table => new
                 {
@@ -455,6 +425,32 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactPerson",
+                columns: table => new
+                {
+                    ContactPersonId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ContactPersonName = table.Column<string>(nullable: true),
+                    VendorId = table.Column<long>(nullable: false),
+                    CustomerId = table.Column<long>(nullable: false),
+                    ContactPersonIdentity = table.Column<string>(nullable: true),
+                    ContactPersonPhone = table.Column<string>(nullable: true),
+                    ContactPersonCityId = table.Column<int>(nullable: false),
+                    ContactPersonCity = table.Column<string>(nullable: true),
+                    ContactPersonEmail = table.Column<string>(nullable: true),
+                    ContactPersonIdEstado = table.Column<long>(nullable: false),
+                    ContactPersonEstado = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: true),
+                    ModifiedUser = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactPerson", x => x.ContactPersonId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ControlPallets",
                 columns: table => new
                 {
@@ -462,11 +458,13 @@ namespace ERPAPI.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Motorista = table.Column<string>(nullable: true),
                     BranchId = table.Column<long>(nullable: false),
+                    BranchName = table.Column<string>(nullable: true),
                     IdEstado = table.Column<long>(nullable: false),
                     Estado = table.Column<string>(nullable: true),
                     WarehouseId = table.Column<int>(nullable: false),
                     DocumentDate = table.Column<DateTime>(nullable: false),
                     ProductId = table.Column<long>(nullable: false),
+                    ProductName = table.Column<string>(nullable: true),
                     SubProductId = table.Column<long>(nullable: false),
                     SubProductName = table.Column<string>(nullable: true),
                     CustomerId = table.Column<long>(nullable: false),
@@ -474,6 +472,8 @@ namespace ERPAPI.Migrations
                     DescriptionProduct = table.Column<string>(nullable: true),
                     Placa = table.Column<string>(nullable: true),
                     Marca = table.Column<string>(nullable: true),
+                    UnitOfMeasureId = table.Column<long>(nullable: false),
+                    UnitOfMeasureName = table.Column<string>(nullable: true),
                     PalletId = table.Column<int>(nullable: false),
                     EsIngreso = table.Column<int>(nullable: false),
                     EsSalida = table.Column<int>(nullable: false),
@@ -500,6 +500,42 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CostListItem",
+                columns: table => new
+                {
+                    CostListItemId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    SubproductId = table.Column<long>(nullable: false),
+                    ExchangeRateId = table.Column<long>(nullable: false),
+                    DayofCalcule = table.Column<DateTime>(nullable: false),
+                    PriceBagValue = table.Column<double>(nullable: false),
+                    DifferencyPriceBagValue = table.Column<double>(nullable: false),
+                    TotalPriceBagValue = table.Column<double>(nullable: false),
+                    PriceBagValueCurrency = table.Column<double>(nullable: false),
+                    PorcentagePriceBagValue = table.Column<double>(nullable: false),
+                    RealBagValueCurrency = table.Column<double>(nullable: false),
+                    ConRealBagValueInside = table.Column<double>(nullable: false),
+                    PCRealBagValueInside = table.Column<double>(nullable: false),
+                    RealBagValueInside = table.Column<double>(nullable: false),
+                    TotalIncomes = table.Column<double>(nullable: false),
+                    RecipientExpenses = table.Column<double>(nullable: false),
+                    EscrowExpenses = table.Column<double>(nullable: false),
+                    UtilityExpenses = table.Column<double>(nullable: false),
+                    PermiseExportExpenses = table.Column<double>(nullable: false),
+                    TaxesExpenses = table.Column<double>(nullable: false),
+                    TotalExpenses = table.Column<double>(nullable: false),
+                    TotalExpensesCurrency = table.Column<double>(nullable: false),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CostListItem", x => x.CostListItemId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Country",
                 columns: table => new
                 {
@@ -508,6 +544,18 @@ namespace ERPAPI.Migrations
                     SortName = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     PhoneCode = table.Column<int>(nullable: true),
+                    GAFI = table.Column<bool>(nullable: false),
+                    ListaId = table.Column<int>(nullable: false),
+                    ListaName = table.Column<string>(nullable: true),
+                    Actualizacion = table.Column<DateTime>(nullable: false),
+                    NivelRiesgo = table.Column<int>(nullable: false),
+                    NivelRiesgoName = table.Column<string>(nullable: true),
+                    TipoAlertaId = table.Column<int>(nullable: false),
+                    TipoAlertaName = table.Column<string>(nullable: true),
+                    AccionId = table.Column<int>(nullable: false),
+                    AccionName = table.Column<string>(nullable: true),
+                    SeguimientoId = table.Column<int>(nullable: false),
+                    SeguimientoName = table.Column<string>(nullable: true),
                     Usuariocreacion = table.Column<string>(nullable: true),
                     Usuariomodificacion = table.Column<string>(nullable: true),
                     FechaCreacion = table.Column<DateTime>(nullable: true),
@@ -516,6 +564,27 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Country", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CuentaBancoEmpleados",
+                columns: table => new
+                {
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    BankId = table.Column<long>(nullable: false),
+                    BankName = table.Column<string>(nullable: true),
+                    NumeroCuenta = table.Column<string>(nullable: true),
+                    IdEmpleado = table.Column<long>(nullable: false),
+                    NombreEmpleado = table.Column<string>(nullable: true),
+                    Usuariocreacion = table.Column<string>(nullable: true),
+                    Usuariomodificacion = table.Column<string>(nullable: true),
+                    FechaCreacion = table.Column<DateTime>(nullable: true),
+                    FechaModificacion = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CuentaBancoEmpleados", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -537,45 +606,6 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Currency", x => x.CurrencyId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Customer",
-                columns: table => new
-                {
-                    CustomerId = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CustomerName = table.Column<string>(nullable: false),
-                    RTN = table.Column<string>(nullable: false),
-                    CustomerTypeId = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    State = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Identidad = table.Column<string>(nullable: false),
-                    Email = table.Column<string>(nullable: true),
-                    ContactPerson = table.Column<string>(nullable: true),
-                    IdEstado = table.Column<long>(nullable: false),
-                    Estado = table.Column<string>(nullable: true),
-                    GrupoEconomico = table.Column<string>(nullable: true),
-                    MontoActivos = table.Column<double>(nullable: false),
-                    MontoIngresosAnuales = table.Column<double>(nullable: false),
-                    Proveedor1 = table.Column<string>(nullable: true),
-                    Proveedor2 = table.Column<string>(nullable: true),
-                    ClienteRecoger = table.Column<bool>(nullable: false),
-                    EnviarlaMensajero = table.Column<bool>(nullable: false),
-                    DireccionEnvio = table.Column<string>(nullable: true),
-                    PerteneceEmpresa = table.Column<string>(nullable: true),
-                    ConfirmacionCorreo = table.Column<bool>(nullable: false),
-                    UsuarioCreacion = table.Column<string>(nullable: false),
-                    UsuarioModificacion = table.Column<string>(nullable: false),
-                    FechaCreacion = table.Column<DateTime>(nullable: false),
-                    FechaModificacion = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customer", x => x.CustomerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -875,6 +905,8 @@ namespace ERPAPI.Migrations
                     Telefono = table.Column<string>(nullable: true),
                     Direccion = table.Column<string>(nullable: true),
                     IdEmpleado = table.Column<long>(nullable: true),
+                    Edad = table.Column<int>(nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(nullable: false),
                     Usuariocreacion = table.Column<string>(nullable: true),
                     Usuariomodificacion = table.Column<string>(nullable: true),
                     FechaCreacion = table.Column<DateTime>(nullable: true),
@@ -905,6 +937,8 @@ namespace ERPAPI.Migrations
                     Num = table.Column<string>(maxLength: 30, nullable: false),
                     DimCode = table.Column<int>(nullable: false),
                     Description = table.Column<string>(maxLength: 60, nullable: true),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
                     UsuarioCreacion = table.Column<string>(nullable: false),
                     UsuarioModificacion = table.Column<string>(nullable: false),
                     FechaCreacion = table.Column<DateTime>(nullable: false),
@@ -916,75 +950,25 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employees",
+                name: "EmployeeSalary",
                 columns: table => new
                 {
-                    IdEmpleado = table.Column<long>(nullable: false)
+                    EmployeeSalaryId = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    NombreEmpleado = table.Column<string>(nullable: true),
-                    Correo = table.Column<string>(nullable: true),
-                    Puesto = table.Column<long>(nullable: true),
-                    FechaNacimiento = table.Column<DateTime>(nullable: true),
-                    FechaIngreso = table.Column<DateTime>(nullable: true),
-                    Salario = table.Column<decimal>(nullable: true),
+                    IdEmpleado = table.Column<long>(nullable: false),
+                    QtySalary = table.Column<decimal>(nullable: false),
+                    IdFrequency = table.Column<long>(nullable: false),
+                    DayApplication = table.Column<DateTime>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
                     Estado = table.Column<string>(nullable: true),
-                    Identidad = table.Column<string>(nullable: true),
-                    FechaEgreso = table.Column<DateTime>(nullable: true),
-                    Direccion = table.Column<string>(nullable: true),
-                    Genero = table.Column<string>(nullable: true),
-                    IdEstado = table.Column<long>(nullable: true),
-                    NombreEstado = table.Column<string>(nullable: true),
-                    Ciudad = table.Column<string>(nullable: true),
-                    IdPais = table.Column<long>(nullable: true),
-                    NombrePais = table.Column<string>(nullable: true),
-                    IdCiudad = table.Column<long>(nullable: true),
-                    NombreCiudad = table.Column<string>(nullable: true),
-                    MonedaSalario = table.Column<long>(nullable: true),
-                    Userid = table.Column<string>(nullable: true),
-                    Idsescalas = table.Column<long>(nullable: false),
-                    IdActivoinactivo = table.Column<long>(nullable: true),
-                    Foto = table.Column<string>(nullable: true),
-                    IdBanco = table.Column<long>(nullable: true),
-                    CuentaBanco = table.Column<string>(nullable: true),
-                    FechaFinContrato = table.Column<DateTime>(nullable: false),
-                    Telefono = table.Column<string>(nullable: true),
-                    Extension = table.Column<int>(nullable: false),
-                    Notas = table.Column<string>(nullable: true),
-                    IdPuesto = table.Column<int>(nullable: false),
-                    NombrePuesto = table.Column<string>(nullable: true),
-                    IdSucursal = table.Column<int>(nullable: false),
-                    NombreSucursal = table.Column<string>(nullable: true),
-                    IdTipoContrato = table.Column<int>(nullable: false),
-                    IdDepartamento = table.Column<int>(nullable: false),
-                    NombreDepartamento = table.Column<string>(nullable: true),
-                    Usuariocreacion = table.Column<string>(nullable: true),
-                    Usuariomodificacion = table.Column<string>(nullable: true),
-                    FechaCreacion = table.Column<DateTime>(nullable: true),
-                    FechaModificacion = table.Column<DateTime>(nullable: true)
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employees", x => x.IdEmpleado);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Empresa",
-                columns: table => new
-                {
-                    IdEmpresa = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    NombreEmpresa = table.Column<string>(nullable: true),
-                    NombreContacto = table.Column<string>(nullable: true),
-                    Telefono = table.Column<string>(nullable: true),
-                    Direccion = table.Column<string>(nullable: true),
-                    Usuariocreacion = table.Column<string>(nullable: true),
-                    Usuariomodificacion = table.Column<string>(nullable: true),
-                    FechaCreacion = table.Column<DateTime>(nullable: true),
-                    FechaModificacion = table.Column<DateTime>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Empresa", x => x.IdEmpresa);
+                    table.PrimaryKey("PK_EmployeeSalary", x => x.EmployeeSalaryId);
                 });
 
             migrationBuilder.CreateTable(
@@ -1161,25 +1145,6 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Escala", x => x.IdEscala);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Estados",
-                columns: table => new
-                {
-                    IdEstado = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    NombreEstado = table.Column<string>(nullable: false),
-                    DescripcionEstado = table.Column<string>(nullable: true),
-                    IdGrupoEstado = table.Column<long>(nullable: false),
-                    UsuarioCreacion = table.Column<string>(nullable: false),
-                    UsuarioModificacion = table.Column<string>(nullable: false),
-                    FechaCreacion = table.Column<DateTime>(nullable: false),
-                    FechaModificacion = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Estados", x => x.IdEstado);
                 });
 
             migrationBuilder.CreateTable(
@@ -1360,6 +1325,7 @@ namespace ERPAPI.Migrations
                     WareHouseName = table.Column<string>(nullable: true),
                     TotalCertificado = table.Column<double>(nullable: false),
                     TotalFinanciado = table.Column<double>(nullable: false),
+                    Comments = table.Column<string>(nullable: true),
                     DerechoLps = table.Column<double>(nullable: false),
                     NoPoliza = table.Column<long>(nullable: false),
                     DelegadoFiscal = table.Column<string>(nullable: true),
@@ -1382,6 +1348,9 @@ namespace ERPAPI.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     CustomerId = table.Column<long>(nullable: false),
                     CustomerName = table.Column<string>(nullable: true),
+                    ControlId = table.Column<long>(nullable: false),
+                    CountryId = table.Column<long>(nullable: false),
+                    CountryName = table.Column<string>(nullable: true),
                     OrderDate = table.Column<DateTime>(nullable: false),
                     DocumentDate = table.Column<DateTime>(nullable: false),
                     ExpirationDate = table.Column<DateTime>(nullable: false),
@@ -1398,6 +1367,8 @@ namespace ERPAPI.Migrations
                     SubProductName = table.Column<string>(nullable: true),
                     ProductId = table.Column<long>(nullable: false),
                     ProductName = table.Column<string>(nullable: true),
+                    VigilanteId = table.Column<long>(nullable: false),
+                    VigilanteName = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     Reference = table.Column<string>(nullable: true),
                     ExitTicket = table.Column<long>(nullable: false),
@@ -1410,6 +1381,7 @@ namespace ERPAPI.Migrations
                     TaraUnidadMedida = table.Column<double>(nullable: false),
                     PesoNeto2 = table.Column<double>(nullable: false),
                     Comments = table.Column<string>(nullable: true),
+                    TaraCamion = table.Column<double>(nullable: false),
                     FechaCreacion = table.Column<DateTime>(nullable: true),
                     FechaModificacion = table.Column<DateTime>(nullable: true),
                     UsuarioCreacion = table.Column<string>(nullable: true),
@@ -1494,6 +1466,27 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_INDIVIDUALSM", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Insurances",
+                columns: table => new
+                {
+                    InsurancesId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    InsurancesName = table.Column<string>(nullable: true),
+                    DocumentTypeId = table.Column<long>(nullable: false),
+                    DocumentTypeName = table.Column<string>(nullable: true),
+                    DocumentName = table.Column<string>(nullable: true),
+                    Path = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Insurances", x => x.InsurancesId);
                 });
 
             migrationBuilder.CreateTable(
@@ -1607,6 +1600,25 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Linea",
+                columns: table => new
+                {
+                    LineaId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Descripcion = table.Column<string>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Linea", x => x.LineaId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LIST_TYPEM",
                 columns: table => new
                 {
@@ -1617,6 +1629,25 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LIST_TYPEM", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Marca",
+                columns: table => new
+                {
+                    MarcaId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Description = table.Column<string>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Marca", x => x.MarcaId);
                 });
 
             migrationBuilder.CreateTable(
@@ -1681,6 +1712,25 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrdenFormula", x => x.Idordenformula);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Party",
+                columns: table => new
+                {
+                    PartyId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    PartyType = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    Website = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Fax = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Party", x => x.PartyId);
                 });
 
             migrationBuilder.CreateTable(
@@ -1810,34 +1860,6 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
-                columns: table => new
-                {
-                    ProductId = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ProductName = table.Column<string>(nullable: false),
-                    ProductCode = table.Column<string>(nullable: true),
-                    Barcode = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    ProductImageUrl = table.Column<string>(nullable: true),
-                    IdEstado = table.Column<long>(nullable: false),
-                    Estado = table.Column<string>(nullable: true),
-                    UnitOfMeasureId = table.Column<int>(nullable: false),
-                    DefaultBuyingPrice = table.Column<double>(nullable: false),
-                    DefaultSellingPrice = table.Column<double>(nullable: false),
-                    BranchId = table.Column<int>(nullable: false),
-                    CurrencyId = table.Column<int>(nullable: false),
-                    UsuarioCreacion = table.Column<string>(nullable: false),
-                    UsuarioModificacion = table.Column<string>(nullable: false),
-                    FechaCreacion = table.Column<DateTime>(nullable: false),
-                    FechaModificacion = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Product", x => x.ProductId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProductType",
                 columns: table => new
                 {
@@ -1851,6 +1873,27 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductType", x => x.ProductTypeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductUserRelation",
+                columns: table => new
+                {
+                    ProductUserRelationId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CustomerId = table.Column<long>(nullable: false),
+                    CustomerName = table.Column<string>(nullable: true),
+                    ProductId = table.Column<long>(nullable: false),
+                    ProductName = table.Column<string>(nullable: true),
+                    DocType = table.Column<string>(nullable: true),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false),
+                    UsuarioCreacion = table.Column<string>(nullable: true),
+                    UsuarioModificacion = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductUserRelation", x => x.ProductUserRelationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -1942,6 +1985,85 @@ namespace ERPAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PuntoEmision", x => x.IdPuntoEmision);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Purch",
+                columns: table => new
+                {
+                    PurchId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    PurchName = table.Column<string>(nullable: false),
+                    RTN = table.Column<string>(nullable: false),
+                    Identidad = table.Column<string>(nullable: false),
+                    PurchTypeId = table.Column<int>(nullable: false),
+                    Address = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    CurrencyId = table.Column<int>(nullable: false),
+                    taxGroup = table.Column<int>(nullable: false),
+                    State = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    QtyMin = table.Column<double>(nullable: false),
+                    QtyMonth = table.Column<double>(nullable: false),
+                    PhoneReferenceone = table.Column<string>(nullable: true),
+                    CompanyReferenceone = table.Column<string>(nullable: false),
+                    PhoneReferencetwo = table.Column<string>(nullable: true),
+                    CompanyReferencetwo = table.Column<string>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Purch", x => x.PurchId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PurchDocument",
+                columns: table => new
+                {
+                    PurchDocumentId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    PurchId = table.Column<long>(nullable: false),
+                    DocumentTypeId = table.Column<long>(nullable: false),
+                    DocumentTypeName = table.Column<string>(nullable: true),
+                    DocumentName = table.Column<string>(nullable: true),
+                    Path = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: true),
+                    ModifiedUser = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchDocument", x => x.PurchDocumentId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PurchPartners",
+                columns: table => new
+                {
+                    PartnerId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    PartnerName = table.Column<string>(nullable: true),
+                    PurchId = table.Column<long>(nullable: false),
+                    Identidad = table.Column<string>(nullable: true),
+                    RTN = table.Column<string>(nullable: true),
+                    Telefono = table.Column<string>(nullable: true),
+                    Listados = table.Column<string>(nullable: true),
+                    Correo = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: true),
+                    ModifiedUser = table.Column<string>(nullable: true),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchPartners", x => x.PartnerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -2346,6 +2468,26 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TipoPlanillas",
+                columns: table => new
+                {
+                    IdTipoPlanilla = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    TipoPlanilla = table.Column<string>(nullable: true),
+                    Descripcion = table.Column<string>(nullable: true),
+                    EstadoId = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    Usuariocreacion = table.Column<string>(nullable: true),
+                    Usuariomodificacion = table.Column<string>(nullable: true),
+                    FechaCreacion = table.Column<DateTime>(nullable: true),
+                    FechaModificacion = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TipoPlanillas", x => x.IdTipoPlanilla);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TiposDocumento",
                 columns: table => new
                 {
@@ -2379,6 +2521,40 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TypeAccount",
+                columns: table => new
+                {
+                    TypeAccountId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    TypeAccountName = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TypeAccount", x => x.TypeAccountId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TypeJournal",
+                columns: table => new
+                {
+                    TypeJournalId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    TypeJournalName = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TypeJournal", x => x.TypeJournalId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UnitOfMeasure",
                 columns: table => new
                 {
@@ -2399,34 +2575,17 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vendor",
-                columns: table => new
-                {
-                    VendorId = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    VendorName = table.Column<string>(nullable: false),
-                    VendorTypeId = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    State = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    ContactPerson = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Vendor", x => x.VendorId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "VendorType",
                 columns: table => new
                 {
                     VendorTypeId = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     VendorTypeName = table.Column<string>(nullable: false),
-                    Description = table.Column<string>(nullable: true)
+                    Description = table.Column<string>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: true),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -2444,6 +2603,9 @@ namespace ERPAPI.Migrations
                     IdEstado = table.Column<long>(nullable: false),
                     Estado = table.Column<string>(nullable: true),
                     BranchId = table.Column<int>(nullable: false),
+                    CapacidadBodega = table.Column<double>(nullable: false),
+                    UnitOfMeasureId = table.Column<int>(nullable: false),
+                    UnitOfMeasureName = table.Column<string>(nullable: true),
                     UsuarioCreacion = table.Column<string>(nullable: false),
                     UsuarioModificacion = table.Column<string>(nullable: false),
                     FechaCreacion = table.Column<DateTime>(nullable: false),
@@ -2471,98 +2633,6 @@ namespace ERPAPI.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UserId = table.Column<Guid>(nullable: false),
-                    ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true),
-                    PolicyId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(nullable: false),
-                    ProviderKey = table.Column<string>(nullable: false),
-                    ProviderDisplayName = table.Column<string>(nullable: true),
-                    UserId = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(nullable: false),
-                    RoleId = table.Column<Guid>(nullable: false),
-                    UserName = table.Column<string>(nullable: true),
-                    RoleName = table.Column<string>(nullable: true),
-                    UsuarioCreacion = table.Column<string>(nullable: false),
-                    UsuarioModificacion = table.Column<string>(nullable: false),
-                    FechaCreacion = table.Column<DateTime>(nullable: false),
-                    FechaModificacion = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
-                columns: table => new
-                {
-                    UserId = table.Column<Guid>(nullable: false),
-                    LoginProvider = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    Value = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -2631,12 +2701,16 @@ namespace ERPAPI.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     ParentAccountId = table.Column<int>(nullable: true),
                     CompanyInfoId = table.Column<long>(nullable: false),
-                    AccountCode = table.Column<string>(maxLength: 50, nullable: false),
-                    AccountName = table.Column<string>(maxLength: 200, nullable: false),
-                    Description = table.Column<string>(maxLength: 200, nullable: true),
+                    AccountBalance = table.Column<double>(nullable: false),
+                    Description = table.Column<string>(maxLength: 5000, nullable: true),
                     IsCash = table.Column<bool>(nullable: false),
+                    AccountClasses = table.Column<int>(nullable: false),
                     IsContraAccount = table.Column<bool>(nullable: false),
+                    TypeAccountId = table.Column<long>(nullable: false),
+                    BlockedInJournal = table.Column<bool>(nullable: false),
+                    AccountCode = table.Column<string>(maxLength: 50, nullable: false),
                     HierarchyAccount = table.Column<long>(nullable: false),
+                    AccountName = table.Column<string>(maxLength: 200, nullable: false),
                     UsuarioCreacion = table.Column<string>(nullable: false),
                     UsuarioModificacion = table.Column<string>(nullable: false),
                     FechaCreacion = table.Column<DateTime>(nullable: false),
@@ -2706,11 +2780,11 @@ namespace ERPAPI.Migrations
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
+                    CountryId = table.Column<long>(nullable: false),
                     Usuariocreacion = table.Column<string>(nullable: true),
                     Usuariomodificacion = table.Column<string>(nullable: true),
                     FechaCreacion = table.Column<DateTime>(nullable: true),
-                    FechaModificacion = table.Column<DateTime>(nullable: true),
-                    CountryId = table.Column<long>(nullable: true)
+                    FechaModificacion = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -2720,65 +2794,33 @@ namespace ERPAPI.Migrations
                         column: x => x.CountryId,
                         principalTable: "Country",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CustomersOfCustomer",
-                columns: table => new
-                {
-                    CustomerOfId = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CustomerId = table.Column<long>(nullable: false),
-                    CustomerName = table.Column<string>(nullable: false),
-                    RTN = table.Column<string>(nullable: false),
-                    CustomerTypeId = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    State = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Identidad = table.Column<string>(nullable: false),
-                    Email = table.Column<string>(nullable: true),
-                    ContactPerson = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CustomersOfCustomer", x => x.CustomerOfId);
-                    table.ForeignKey(
-                        name: "FK_CustomersOfCustomer_Customer_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customer",
-                        principalColumn: "CustomerId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "VendorOfCustomer",
+                name: "ExchangeRate",
                 columns: table => new
                 {
-                    VendorOfId = table.Column<long>(nullable: false)
+                    ExchangeRateId = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    VendorId = table.Column<long>(nullable: false),
-                    VendorName = table.Column<string>(nullable: false),
-                    VendorTypeId = table.Column<int>(nullable: false),
-                    Address = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    State = table.Column<string>(nullable: true),
-                    ZipCode = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true),
-                    ContactPerson = table.Column<string>(nullable: true),
-                    CustomerId = table.Column<long>(nullable: true)
+                    DayofRate = table.Column<DateTime>(nullable: false),
+                    ExchangeRateValue = table.Column<double>(nullable: false),
+                    ExchangeRateDecimal = table.Column<decimal>(nullable: false),
+                    CurrencyId = table.Column<int>(nullable: true),
+                    CurrencyName = table.Column<string>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VendorOfCustomer", x => x.VendorOfId);
+                    table.PrimaryKey("PK_ExchangeRate", x => x.ExchangeRateId);
                     table.ForeignKey(
-                        name: "FK_VendorOfCustomer_Customer_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Customer",
-                        principalColumn: "CustomerId",
+                        name: "FK_ExchangeRate_Currency_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currency",
+                        principalColumn: "CurrencyId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -3000,6 +3042,7 @@ namespace ERPAPI.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Nombre = table.Column<string>(nullable: true),
                     Descripcion = table.Column<string>(nullable: true),
+                    IdEstado = table.Column<long>(nullable: false),
                     Estado = table.Column<string>(nullable: true),
                     Idconfiguracion = table.Column<long>(nullable: true),
                     Valordecimal = table.Column<double>(nullable: true),
@@ -3020,6 +3063,31 @@ namespace ERPAPI.Migrations
                         principalTable: "GrupoConfiguracion",
                         principalColumn: "IdConfiguracion",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Estados",
+                columns: table => new
+                {
+                    IdEstado = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    NombreEstado = table.Column<string>(nullable: false),
+                    DescripcionEstado = table.Column<string>(nullable: true),
+                    IdGrupoEstado = table.Column<long>(nullable: false),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Estados", x => x.IdEstado);
+                    table.ForeignKey(
+                        name: "FK_Estados_GrupoConfiguracion_IdGrupoEstado",
+                        column: x => x.IdGrupoEstado,
+                        principalTable: "GrupoConfiguracion",
+                        principalColumn: "IdConfiguracion",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -3135,6 +3203,32 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Grupo",
+                columns: table => new
+                {
+                    GrupoId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Description = table.Column<string>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    LineaId = table.Column<int>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Grupo", x => x.GrupoId);
+                    table.ForeignKey(
+                        name: "FK_Grupo_Linea_LineaId",
+                        column: x => x.LineaId,
+                        principalTable: "Linea",
+                        principalColumn: "LineaId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ENTITYM",
                 columns: table => new
                 {
@@ -3234,6 +3328,47 @@ namespace ERPAPI.Migrations
                         column: x => x.LIST_TYPEId,
                         principalTable: "LIST_TYPEM",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JournalEntry",
+                columns: table => new
+                {
+                    JournalEntryId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    GeneralLedgerHeaderId = table.Column<int>(nullable: true),
+                    PartyId = table.Column<int>(nullable: true),
+                    VoucherType = table.Column<int>(nullable: true),
+                    TypeJournalName = table.Column<string>(nullable: true),
+                    Date = table.Column<DateTime>(nullable: false),
+                    DatePosted = table.Column<DateTime>(nullable: false),
+                    Memo = table.Column<string>(nullable: true),
+                    ReferenceNo = table.Column<string>(nullable: true),
+                    Posted = table.Column<bool>(nullable: true),
+                    GeneralLedgerHeaderId1 = table.Column<long>(nullable: true),
+                    PartyId1 = table.Column<long>(nullable: true),
+                    IdPaymentCode = table.Column<int>(nullable: false),
+                    IdTypeofPayment = table.Column<int>(nullable: false),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JournalEntry", x => x.JournalEntryId);
+                    table.ForeignKey(
+                        name: "FK_JournalEntry_GeneralLedgerHeader_GeneralLedgerHeaderId1",
+                        column: x => x.GeneralLedgerHeaderId1,
+                        principalTable: "GeneralLedgerHeader",
+                        principalColumn: "GeneralLedgerHeaderId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JournalEntry_Party_PartyId1",
+                        column: x => x.PartyId1,
+                        principalTable: "Party",
+                        principalColumn: "PartyId",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -3368,38 +3503,6 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProductRelation",
-                columns: table => new
-                {
-                    RelationProductId = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ProductId = table.Column<long>(nullable: false),
-                    SubProductId = table.Column<long>(nullable: false),
-                    IdEstado = table.Column<long>(nullable: false),
-                    Estado = table.Column<string>(nullable: true),
-                    FechaCreacion = table.Column<DateTime>(nullable: false),
-                    FechaModificacion = table.Column<DateTime>(nullable: false),
-                    UsuarioCreacion = table.Column<string>(nullable: true),
-                    UsuarioModificacion = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductRelation", x => x.RelationProductId);
-                    table.ForeignKey(
-                        name: "FK_ProductRelation_Product_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Product",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ProductRelation_SubProduct_SubProductId",
-                        column: x => x.SubProductId,
-                        principalTable: "SubProduct",
-                        principalColumn: "SubproductId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "GeneralLedgerLine",
                 columns: table => new
                 {
@@ -3439,7 +3542,8 @@ namespace ERPAPI.Migrations
                     Id = table.Column<long>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
-                    State_Id = table.Column<long>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    CountryId = table.Column<long>(nullable: true),
                     StateId = table.Column<long>(nullable: true)
                 },
                 constraints: table =>
@@ -3623,6 +3727,42 @@ namespace ERPAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "JournalEntryLine",
+                columns: table => new
+                {
+                    JournalEntryLineId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    JournalEntryId = table.Column<long>(nullable: false),
+                    Num = table.Column<string>(maxLength: 30, nullable: true),
+                    Description = table.Column<string>(maxLength: 60, nullable: true),
+                    AccountId = table.Column<int>(nullable: false),
+                    DrCr = table.Column<int>(nullable: false),
+                    Amount = table.Column<double>(nullable: false),
+                    Memo = table.Column<string>(nullable: true),
+                    AccountId1 = table.Column<long>(nullable: true),
+                    CreatedUser = table.Column<string>(nullable: false),
+                    ModifiedUser = table.Column<string>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JournalEntryLine", x => x.JournalEntryLineId);
+                    table.ForeignKey(
+                        name: "FK_JournalEntryLine_Account_AccountId1",
+                        column: x => x.AccountId1,
+                        principalTable: "Account",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JournalEntryLine_JournalEntry_JournalEntryId",
+                        column: x => x.JournalEntryId,
+                        principalTable: "JournalEntry",
+                        principalColumn: "JournalEntryId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "sdnListSdnEntry",
                 columns: table => new
                 {
@@ -3653,6 +3793,223 @@ namespace ERPAPI.Migrations
                         principalTable: "sdnListSdnEntryVesselInfo",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Branch",
+                columns: table => new
+                {
+                    BranchId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    BranchCode = table.Column<string>(nullable: true),
+                    Numero = table.Column<int>(nullable: false),
+                    BranchName = table.Column<string>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    CurrencyId = table.Column<int>(nullable: false),
+                    CurrencyName = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    CityId = table.Column<long>(nullable: false),
+                    City = table.Column<string>(nullable: true),
+                    CountryId = table.Column<long>(nullable: false),
+                    CountryName = table.Column<string>(nullable: true),
+                    LimitCNBS = table.Column<decimal>(nullable: true),
+                    StateId = table.Column<long>(nullable: true),
+                    State = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    ContactPerson = table.Column<string>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Branch", x => x.BranchId);
+                    table.ForeignKey(
+                        name: "FK_Branch_City_CityId",
+                        column: x => x.CityId,
+                        principalTable: "City",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Branch_Country_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Country",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Branch_Currency_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currency",
+                        principalColumn: "CurrencyId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Branch_Estados_IdEstado",
+                        column: x => x.IdEstado,
+                        principalTable: "Estados",
+                        principalColumn: "IdEstado",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Branch_State_StateId",
+                        column: x => x.StateId,
+                        principalTable: "State",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customer",
+                columns: table => new
+                {
+                    CustomerId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CustomerName = table.Column<string>(nullable: false),
+                    Denominacion = table.Column<string>(nullable: true),
+                    IdentidadApoderado = table.Column<string>(nullable: true),
+                    NombreApoderado = table.Column<string>(nullable: true),
+                    CustomerRefNumber = table.Column<string>(nullable: true),
+                    RTN = table.Column<string>(nullable: false),
+                    CustomerTypeId = table.Column<long>(nullable: false),
+                    CustomerTypeName = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    CountryId = table.Column<long>(nullable: false),
+                    CountryName = table.Column<string>(nullable: true),
+                    CityId = table.Column<long>(nullable: false),
+                    City = table.Column<string>(nullable: true),
+                    StateId = table.Column<long>(nullable: false),
+                    State = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Identidad = table.Column<string>(nullable: false),
+                    Email = table.Column<string>(nullable: true),
+                    ContactPerson = table.Column<string>(nullable: true),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    GrupoEconomico = table.Column<string>(nullable: true),
+                    MontoActivos = table.Column<double>(nullable: false),
+                    MontoIngresosAnuales = table.Column<double>(nullable: false),
+                    Proveedor1 = table.Column<string>(nullable: true),
+                    Proveedor2 = table.Column<string>(nullable: true),
+                    ClienteRecoger = table.Column<bool>(nullable: false),
+                    EnviarlaMensajero = table.Column<bool>(nullable: false),
+                    DireccionEnvio = table.Column<string>(nullable: true),
+                    PerteneceEmpresa = table.Column<string>(nullable: true),
+                    ConfirmacionCorreo = table.Column<bool>(nullable: false),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customer", x => x.CustomerId);
+                    table.ForeignKey(
+                        name: "FK_Customer_City_CityId",
+                        column: x => x.CityId,
+                        principalTable: "City",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customer_Country_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Country",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customer_CustomerType_CustomerTypeId",
+                        column: x => x.CustomerTypeId,
+                        principalTable: "CustomerType",
+                        principalColumn: "CustomerTypeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customer_Estados_IdEstado",
+                        column: x => x.IdEstado,
+                        principalTable: "Estados",
+                        principalColumn: "IdEstado",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customer_State_StateId",
+                        column: x => x.StateId,
+                        principalTable: "State",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Vendor",
+                columns: table => new
+                {
+                    VendorId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    VendorName = table.Column<string>(nullable: false),
+                    VendorTypeId = table.Column<long>(nullable: false),
+                    Address = table.Column<string>(nullable: true),
+                    CountryId = table.Column<long>(nullable: false),
+                    StateId = table.Column<long>(nullable: false),
+                    CityId = table.Column<long>(nullable: false),
+                    ZipCode = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    ContactPerson = table.Column<string>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false),
+                    RTN = table.Column<string>(nullable: false),
+                    Identidad = table.Column<string>(nullable: false),
+                    CurrencyId = table.Column<int>(nullable: false),
+                    QtyMin = table.Column<double>(nullable: false),
+                    QtyMonth = table.Column<double>(nullable: false),
+                    PhoneReferenceone = table.Column<string>(nullable: true),
+                    CompanyReferenceone = table.Column<string>(nullable: false),
+                    PhoneReferencetwo = table.Column<string>(nullable: true),
+                    CompanyReferencetwo = table.Column<string>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vendor", x => x.VendorId);
+                    table.ForeignKey(
+                        name: "FK_Vendor_City_CityId",
+                        column: x => x.CityId,
+                        principalTable: "City",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vendor_Country_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Country",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vendor_Currency_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currency",
+                        principalColumn: "CurrencyId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vendor_Estados_IdEstado",
+                        column: x => x.IdEstado,
+                        principalTable: "Estados",
+                        principalColumn: "IdEstado",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Vendor_State_StateId",
+                        column: x => x.StateId,
+                        principalTable: "State",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Vendor_VendorType_VendorTypeId",
+                        column: x => x.VendorTypeId,
+                        principalTable: "VendorType",
+                        principalColumn: "VendorTypeId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -3819,6 +4176,428 @@ namespace ERPAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    IsEnabled = table.Column<bool>(nullable: true),
+                    BranchId = table.Column<int>(nullable: false),
+                    LastPasswordChangedDate = table.Column<DateTime>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false),
+                    UsuarioCreacion = table.Column<string>(nullable: true),
+                    UsuarioModificacion = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    ProductId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ProductName = table.Column<string>(nullable: false),
+                    ProductCode = table.Column<string>(nullable: true),
+                    Barcode = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    ProductImageUrl = table.Column<string>(nullable: true),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    UnitOfMeasureId = table.Column<int>(nullable: false),
+                    DefaultBuyingPrice = table.Column<double>(nullable: false),
+                    DefaultSellingPrice = table.Column<double>(nullable: false),
+                    BranchId = table.Column<int>(nullable: false),
+                    CurrencyId = table.Column<int>(nullable: false),
+                    MarcaId = table.Column<int>(nullable: true),
+                    LineaId = table.Column<int>(nullable: true),
+                    GrupoId = table.Column<int>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.ProductId);
+                    table.ForeignKey(
+                        name: "FK_Product_Branch_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Product_Currency_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currency",
+                        principalColumn: "CurrencyId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Product_Grupo_GrupoId",
+                        column: x => x.GrupoId,
+                        principalTable: "Grupo",
+                        principalColumn: "GrupoId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Product_Linea_LineaId",
+                        column: x => x.LineaId,
+                        principalTable: "Linea",
+                        principalColumn: "LineaId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Product_Marca_MarcaId",
+                        column: x => x.MarcaId,
+                        principalTable: "Marca",
+                        principalColumn: "MarcaId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Product_UnitOfMeasure_UnitOfMeasureId",
+                        column: x => x.UnitOfMeasureId,
+                        principalTable: "UnitOfMeasure",
+                        principalColumn: "UnitOfMeasureId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CustomersOfCustomer",
+                columns: table => new
+                {
+                    CustomerOfId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CustomerId = table.Column<long>(nullable: false),
+                    CustomerName = table.Column<string>(nullable: false),
+                    RTN = table.Column<string>(nullable: false),
+                    CustomerTypeId = table.Column<int>(nullable: false),
+                    Address = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    State = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Identidad = table.Column<string>(nullable: false),
+                    Email = table.Column<string>(nullable: true),
+                    ContactPerson = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomersOfCustomer", x => x.CustomerOfId);
+                    table.ForeignKey(
+                        name: "FK_CustomersOfCustomer_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "CustomerId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VendorOfCustomer",
+                columns: table => new
+                {
+                    VendorOfId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    VendorId = table.Column<long>(nullable: false),
+                    VendorName = table.Column<string>(nullable: false),
+                    VendorTypeId = table.Column<int>(nullable: false),
+                    Address = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    State = table.Column<string>(nullable: true),
+                    ZipCode = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    ContactPerson = table.Column<string>(nullable: true),
+                    CustomerId = table.Column<long>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VendorOfCustomer", x => x.VendorOfId);
+                    table.ForeignKey(
+                        name: "FK_VendorOfCustomer_Customer_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customer",
+                        principalColumn: "CustomerId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<Guid>(nullable: false),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true),
+                    PolicyId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserLogins",
+                columns: table => new
+                {
+                    LoginProvider = table.Column<string>(nullable: false),
+                    ProviderKey = table.Column<string>(nullable: false),
+                    ProviderDisplayName = table.Column<string>(nullable: true),
+                    UserId = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(nullable: false),
+                    RoleId = table.Column<Guid>(nullable: false),
+                    UserName = table.Column<string>(nullable: true),
+                    RoleName = table.Column<string>(nullable: true),
+                    UsuarioCreacion = table.Column<string>(nullable: false),
+                    UsuarioModificacion = table.Column<string>(nullable: false),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUserTokens",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(nullable: false),
+                    LoginProvider = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    Value = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.ForeignKey(
+                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    IdEmpleado = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    NombreEmpleado = table.Column<string>(nullable: true),
+                    Correo = table.Column<string>(nullable: true),
+                    FechaNacimiento = table.Column<DateTime>(nullable: true),
+                    FechaIngreso = table.Column<DateTime>(nullable: true),
+                    Salario = table.Column<decimal>(nullable: true),
+                    Identidad = table.Column<string>(nullable: true),
+                    FechaEgreso = table.Column<DateTime>(nullable: true),
+                    Direccion = table.Column<string>(nullable: true),
+                    Genero = table.Column<string>(nullable: true),
+                    IdActivoinactivo = table.Column<long>(nullable: true),
+                    Foto = table.Column<string>(nullable: true),
+                    IdPuesto = table.Column<long>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    IdCity = table.Column<long>(nullable: false),
+                    IdState = table.Column<long>(nullable: false),
+                    IdCountry = table.Column<long>(nullable: false),
+                    IdCurrency = table.Column<int>(nullable: false),
+                    ApplicationUserId = table.Column<Guid>(nullable: true),
+                    IdBank = table.Column<long>(nullable: false),
+                    IdBranch = table.Column<int>(nullable: false),
+                    IdTipoContrato = table.Column<long>(nullable: false),
+                    IdDepartamento = table.Column<long>(nullable: false),
+                    CuentaBanco = table.Column<string>(nullable: true),
+                    FechaFinContrato = table.Column<DateTime>(nullable: false),
+                    Telefono = table.Column<string>(nullable: true),
+                    Extension = table.Column<int>(nullable: false),
+                    Notas = table.Column<string>(nullable: true),
+                    TipoSangre = table.Column<string>(nullable: true),
+                    NombreContacto = table.Column<string>(nullable: true),
+                    TelefonoContacto = table.Column<string>(nullable: true),
+                    Usuariocreacion = table.Column<string>(nullable: true),
+                    Usuariomodificacion = table.Column<string>(nullable: true),
+                    FechaCreacion = table.Column<DateTime>(nullable: true),
+                    FechaModificacion = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.IdEmpleado);
+                    table.ForeignKey(
+                        name: "FK_Employees_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Employees_Bank_IdBank",
+                        column: x => x.IdBank,
+                        principalTable: "Bank",
+                        principalColumn: "BankId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employees_Branch_IdBranch",
+                        column: x => x.IdBranch,
+                        principalTable: "Branch",
+                        principalColumn: "BranchId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employees_City_IdCity",
+                        column: x => x.IdCity,
+                        principalTable: "City",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Employees_Country_IdCountry",
+                        column: x => x.IdCountry,
+                        principalTable: "Country",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Employees_Currency_IdCurrency",
+                        column: x => x.IdCurrency,
+                        principalTable: "Currency",
+                        principalColumn: "CurrencyId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Employees_Departamento_IdDepartamento",
+                        column: x => x.IdDepartamento,
+                        principalTable: "Departamento",
+                        principalColumn: "IdDepartamento",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employees_Estados_IdEstado",
+                        column: x => x.IdEstado,
+                        principalTable: "Estados",
+                        principalColumn: "IdEstado",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Employees_Puesto_IdPuesto",
+                        column: x => x.IdPuesto,
+                        principalTable: "Puesto",
+                        principalColumn: "IdPuesto",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employees_State_IdState",
+                        column: x => x.IdState,
+                        principalTable: "State",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Employees_TipoContrato_IdTipoContrato",
+                        column: x => x.IdTipoContrato,
+                        principalTable: "TipoContrato",
+                        principalColumn: "IdTipoContrato",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PasswordHistory",
+                columns: table => new
+                {
+                    PasswordHistoryId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: true),
+                    UserId1 = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PasswordHistory", x => x.PasswordHistoryId);
+                    table.ForeignKey(
+                        name: "FK_PasswordHistory_AspNetUsers_UserId1",
+                        column: x => x.UserId1,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductRelation",
+                columns: table => new
+                {
+                    RelationProductId = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    ProductId = table.Column<long>(nullable: false),
+                    SubProductId = table.Column<long>(nullable: false),
+                    IdEstado = table.Column<long>(nullable: false),
+                    Estado = table.Column<string>(nullable: true),
+                    FechaCreacion = table.Column<DateTime>(nullable: false),
+                    FechaModificacion = table.Column<DateTime>(nullable: false),
+                    UsuarioCreacion = table.Column<string>(nullable: true),
+                    UsuarioModificacion = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductRelation", x => x.RelationProductId);
+                    table.ForeignKey(
+                        name: "FK_ProductRelation_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Product",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ProductRelation_SubProduct_SubProductId",
+                        column: x => x.SubProductId,
+                        principalTable: "SubProduct",
+                        principalColumn: "SubproductId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Account_AccountClassid",
                 table: "Account",
@@ -3862,6 +4641,11 @@ namespace ERPAPI.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_BranchId",
+                table: "AspNetUsers",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
@@ -3872,6 +4656,40 @@ namespace ERPAPI.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_BranchCode",
+                table: "Branch",
+                column: "BranchCode",
+                unique: true,
+                filter: "[BranchCode] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_CityId",
+                table: "Branch",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_CountryId",
+                table: "Branch",
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_CurrencyId",
+                table: "Branch",
+                column: "CurrencyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_IdEstado",
+                table: "Branch",
+                column: "IdEstado");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Branch_StateId",
+                table: "Branch",
+                column: "StateId",
+                unique: true,
+                filter: "[StateId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CertificadoLine_IdCD",
@@ -3889,9 +4707,42 @@ namespace ERPAPI.Migrations
                 column: "ControlPalletsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Country_Name",
+                table: "Country",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customer_CityId",
+                table: "Customer",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customer_CountryId",
+                table: "Customer",
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customer_CustomerTypeId",
+                table: "Customer",
+                column: "CustomerTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customer_IdEstado",
+                table: "Customer",
+                column: "IdEstado");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Customer_RTN",
                 table: "Customer",
                 column: "RTN",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customer_StateId",
+                table: "Customer",
+                column: "StateId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -3908,6 +4759,66 @@ namespace ERPAPI.Migrations
                 name: "IX_ElementoConfiguracion_Idconfiguracion",
                 table: "ElementoConfiguracion",
                 column: "Idconfiguracion");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_ApplicationUserId",
+                table: "Employees",
+                column: "ApplicationUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdBank",
+                table: "Employees",
+                column: "IdBank");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdBranch",
+                table: "Employees",
+                column: "IdBranch");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdCity",
+                table: "Employees",
+                column: "IdCity",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdCountry",
+                table: "Employees",
+                column: "IdCountry",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdCurrency",
+                table: "Employees",
+                column: "IdCurrency",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdDepartamento",
+                table: "Employees",
+                column: "IdDepartamento");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdEstado",
+                table: "Employees",
+                column: "IdEstado",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdPuesto",
+                table: "Employees",
+                column: "IdPuesto");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdState",
+                table: "Employees",
+                column: "IdState",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_IdTipoContrato",
+                table: "Employees",
+                column: "IdTipoContrato");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EndososBonoLine_EndososBonoId",
@@ -3950,6 +4861,16 @@ namespace ERPAPI.Migrations
                 column: "LIST_TYPEId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Estados_IdGrupoEstado",
+                table: "Estados",
+                column: "IdGrupoEstado");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExchangeRate_CurrencyId",
+                table: "ExchangeRate",
+                column: "CurrencyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GeneralLedgerLine_AccountId1",
                 table: "GeneralLedgerLine",
                 column: "AccountId1");
@@ -3973,6 +4894,11 @@ namespace ERPAPI.Migrations
                 name: "IX_GoodsReceivedLine_GoodsReceivedId",
                 table: "GoodsReceivedLine",
                 column: "GoodsReceivedId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Grupo_LineaId",
+                table: "Grupo",
+                column: "LineaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HoursWorkedDetail_IdHorasTrabajadas",
@@ -4025,9 +4951,60 @@ namespace ERPAPI.Migrations
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_JournalEntry_GeneralLedgerHeaderId1",
+                table: "JournalEntry",
+                column: "GeneralLedgerHeaderId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JournalEntry_PartyId1",
+                table: "JournalEntry",
+                column: "PartyId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JournalEntryLine_AccountId1",
+                table: "JournalEntryLine",
+                column: "AccountId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JournalEntryLine_JournalEntryId",
+                table: "JournalEntryLine",
+                column: "JournalEntryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_KardexLine_KardexId",
                 table: "KardexLine",
                 column: "KardexId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PasswordHistory_UserId1",
+                table: "PasswordHistory",
+                column: "UserId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_BranchId",
+                table: "Product",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_CurrencyId",
+                table: "Product",
+                column: "CurrencyId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_GrupoId",
+                table: "Product",
+                column: "GrupoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_LineaId",
+                table: "Product",
+                column: "LineaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_MarcaId",
+                table: "Product",
+                column: "MarcaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Product_ProductCode",
@@ -4035,6 +5012,11 @@ namespace ERPAPI.Migrations
                 column: "ProductCode",
                 unique: true,
                 filter: "[ProductCode] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_UnitOfMeasureId",
+                table: "Product",
+                column: "UnitOfMeasureId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductRelation_ProductId",
@@ -4129,6 +5111,43 @@ namespace ERPAPI.Migrations
                 filter: "[ProductCode] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UnitOfMeasure_UnitOfMeasureName",
+                table: "UnitOfMeasure",
+                column: "UnitOfMeasureName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendor_CityId",
+                table: "Vendor",
+                column: "CityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendor_CountryId",
+                table: "Vendor",
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendor_CurrencyId",
+                table: "Vendor",
+                column: "CurrencyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendor_IdEstado",
+                table: "Vendor",
+                column: "IdEstado");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendor_StateId",
+                table: "Vendor",
+                column: "StateId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vendor_VendorTypeId",
+                table: "Vendor",
+                column: "VendorTypeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VendorOfCustomer_CustomerId",
                 table: "VendorOfCustomer",
                 column: "CustomerId");
@@ -4155,9 +5174,6 @@ namespace ERPAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Bank");
-
-            migrationBuilder.DropTable(
                 name: "Bitacora");
 
             migrationBuilder.DropTable(
@@ -4168,9 +5184,6 @@ namespace ERPAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Boleto_Sal");
-
-            migrationBuilder.DropTable(
-                name: "Branch");
 
             migrationBuilder.DropTable(
                 name: "CAI");
@@ -4185,16 +5198,22 @@ namespace ERPAPI.Migrations
                 name: "CertificadoLine");
 
             migrationBuilder.DropTable(
-                name: "City");
+                name: "Conditions");
 
             migrationBuilder.DropTable(
-                name: "Conditions");
+                name: "ConfigurationVendor");
+
+            migrationBuilder.DropTable(
+                name: "ContactPerson");
 
             migrationBuilder.DropTable(
                 name: "ControlPalletsLine");
 
             migrationBuilder.DropTable(
-                name: "Currency");
+                name: "CostListItem");
+
+            migrationBuilder.DropTable(
+                name: "CuentaBancoEmpleados");
 
             migrationBuilder.DropTable(
                 name: "CustomerAreaProduct");
@@ -4227,12 +5246,6 @@ namespace ERPAPI.Migrations
                 name: "CustomersOfCustomer");
 
             migrationBuilder.DropTable(
-                name: "CustomerType");
-
-            migrationBuilder.DropTable(
-                name: "Departamento");
-
-            migrationBuilder.DropTable(
                 name: "Dependientes");
 
             migrationBuilder.DropTable(
@@ -4248,7 +5261,7 @@ namespace ERPAPI.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "Empresa");
+                name: "EmployeeSalary");
 
             migrationBuilder.DropTable(
                 name: "EndososBonoLine");
@@ -4272,7 +5285,7 @@ namespace ERPAPI.Migrations
                 name: "Escala");
 
             migrationBuilder.DropTable(
-                name: "Estados");
+                name: "ExchangeRate");
 
             migrationBuilder.DropTable(
                 name: "Formula");
@@ -4320,7 +5333,13 @@ namespace ERPAPI.Migrations
                 name: "INDIVIDUAL_PLACE_OF_BIRTHM");
 
             migrationBuilder.DropTable(
+                name: "Insurances");
+
+            migrationBuilder.DropTable(
                 name: "InvoiceLine");
+
+            migrationBuilder.DropTable(
+                name: "JournalEntryLine");
 
             migrationBuilder.DropTable(
                 name: "KardexLine");
@@ -4336,6 +5355,9 @@ namespace ERPAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrdenFormula");
+
+            migrationBuilder.DropTable(
+                name: "PasswordHistory");
 
             migrationBuilder.DropTable(
                 name: "Payroll");
@@ -4362,13 +5384,22 @@ namespace ERPAPI.Migrations
                 name: "ProductType");
 
             migrationBuilder.DropTable(
+                name: "ProductUserRelation");
+
+            migrationBuilder.DropTable(
                 name: "ProformaInvoiceLine");
 
             migrationBuilder.DropTable(
-                name: "Puesto");
+                name: "PuntoEmision");
 
             migrationBuilder.DropTable(
-                name: "PuntoEmision");
+                name: "Purch");
+
+            migrationBuilder.DropTable(
+                name: "PurchDocument");
+
+            migrationBuilder.DropTable(
+                name: "PurchPartners");
 
             migrationBuilder.DropTable(
                 name: "RecibosCertificado");
@@ -4425,10 +5456,10 @@ namespace ERPAPI.Migrations
                 name: "Tax");
 
             migrationBuilder.DropTable(
-                name: "TipoContrato");
+                name: "TipoDocumento");
 
             migrationBuilder.DropTable(
-                name: "TipoDocumento");
+                name: "TipoPlanillas");
 
             migrationBuilder.DropTable(
                 name: "TiposDocumento");
@@ -4437,7 +5468,10 @@ namespace ERPAPI.Migrations
                 name: "TITLEM");
 
             migrationBuilder.DropTable(
-                name: "UnitOfMeasure");
+                name: "TypeAccount");
+
+            migrationBuilder.DropTable(
+                name: "TypeJournal");
 
             migrationBuilder.DropTable(
                 name: "Vendor");
@@ -4446,16 +5480,10 @@ namespace ERPAPI.Migrations
                 name: "VendorOfCustomer");
 
             migrationBuilder.DropTable(
-                name: "VendorType");
-
-            migrationBuilder.DropTable(
                 name: "Warehouse");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Boleto_Ent");
@@ -4464,16 +5492,22 @@ namespace ERPAPI.Migrations
                 name: "CertificadoDeposito");
 
             migrationBuilder.DropTable(
-                name: "State");
-
-            migrationBuilder.DropTable(
                 name: "ControlPallets");
 
             migrationBuilder.DropTable(
                 name: "CustomerArea");
 
             migrationBuilder.DropTable(
-                name: "GrupoConfiguracion");
+                name: "Bank");
+
+            migrationBuilder.DropTable(
+                name: "Departamento");
+
+            migrationBuilder.DropTable(
+                name: "Puesto");
+
+            migrationBuilder.DropTable(
+                name: "TipoContrato");
 
             migrationBuilder.DropTable(
                 name: "EndososBono");
@@ -4486,12 +5520,6 @@ namespace ERPAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "ENTITYM");
-
-            migrationBuilder.DropTable(
-                name: "Account");
-
-            migrationBuilder.DropTable(
-                name: "GeneralLedgerHeader");
 
             migrationBuilder.DropTable(
                 name: "GoodsDelivered");
@@ -4509,7 +5537,16 @@ namespace ERPAPI.Migrations
                 name: "INDIVIDUALM");
 
             migrationBuilder.DropTable(
+                name: "Account");
+
+            migrationBuilder.DropTable(
+                name: "JournalEntry");
+
+            migrationBuilder.DropTable(
                 name: "Kardex");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Product");
@@ -4533,19 +5570,13 @@ namespace ERPAPI.Migrations
                 name: "SolicitudCertificadoDeposito");
 
             migrationBuilder.DropTable(
+                name: "VendorType");
+
+            migrationBuilder.DropTable(
                 name: "Customer");
 
             migrationBuilder.DropTable(
-                name: "Country");
-
-            migrationBuilder.DropTable(
                 name: "ENTITIESM");
-
-            migrationBuilder.DropTable(
-                name: "AccountClass");
-
-            migrationBuilder.DropTable(
-                name: "CompanyInfo");
 
             migrationBuilder.DropTable(
                 name: "CONSOLIDATED_LISTM");
@@ -4557,13 +5588,61 @@ namespace ERPAPI.Migrations
                 name: "LIST_TYPEM");
 
             migrationBuilder.DropTable(
+                name: "AccountClass");
+
+            migrationBuilder.DropTable(
+                name: "CompanyInfo");
+
+            migrationBuilder.DropTable(
+                name: "GeneralLedgerHeader");
+
+            migrationBuilder.DropTable(
+                name: "Party");
+
+            migrationBuilder.DropTable(
+                name: "Branch");
+
+            migrationBuilder.DropTable(
+                name: "Grupo");
+
+            migrationBuilder.DropTable(
+                name: "Marca");
+
+            migrationBuilder.DropTable(
+                name: "UnitOfMeasure");
+
+            migrationBuilder.DropTable(
                 name: "sdnList");
 
             migrationBuilder.DropTable(
                 name: "sdnListSdnEntryVesselInfo");
 
             migrationBuilder.DropTable(
+                name: "CustomerType");
+
+            migrationBuilder.DropTable(
+                name: "City");
+
+            migrationBuilder.DropTable(
+                name: "Currency");
+
+            migrationBuilder.DropTable(
+                name: "Estados");
+
+            migrationBuilder.DropTable(
+                name: "Linea");
+
+            migrationBuilder.DropTable(
                 name: "sdnListPublshInformation");
+
+            migrationBuilder.DropTable(
+                name: "State");
+
+            migrationBuilder.DropTable(
+                name: "GrupoConfiguracion");
+
+            migrationBuilder.DropTable(
+                name: "Country");
         }
     }
 }

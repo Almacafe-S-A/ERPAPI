@@ -210,7 +210,7 @@ namespace ERP.Contexts
             //};
 
             //modelBuilder.Entity<Customer>().HasData(Customers);         
-          
+
 
             base.OnModelCreating(modelBuilder);
 
@@ -219,10 +219,10 @@ namespace ERP.Contexts
 
 
 
-           modelBuilder.Entity<Boleto_Ent>()
-            .HasOne(a => a.Boleto_Sal)
-            .WithOne(b => b.Boleto_Ent)
-           .HasForeignKey<Boleto_Sal>(b => b.clave_e);
+            modelBuilder.Entity<Boleto_Ent>()
+             .HasOne(a => a.Boleto_Sal)
+             .WithOne(b => b.Boleto_Ent)
+            .HasForeignKey<Boleto_Sal>(b => b.clave_e);
 
 
             modelBuilder.Entity<Product>()
@@ -241,9 +241,9 @@ namespace ERP.Contexts
            .HasIndex(p => new { p.ProductCode })
            .IsUnique(true);
 
-             modelBuilder.Entity<Customer>()
-            .HasIndex(p => new { p.RTN })
-            .IsUnique(true);
+            modelBuilder.Entity<Customer>()
+           .HasIndex(p => new { p.RTN })
+           .IsUnique(true);
 
 
 
@@ -259,7 +259,63 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<Branch>()
             .HasIndex(e => e.BranchCode)
-            .IsUnique(true); 
+            .IsUnique(true);
+
+            modelBuilder.Entity<Customer>()
+                 .HasOne(i => i.Departamento)
+                 .WithOne(c => c.Customer)
+                 //.IsRequired()
+                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Branch>()
+                .HasOne(i => i.Departamento)
+                .WithOne(c => c.Branch)
+                //.IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Product>()
+              .HasOne(i => i.Currency)
+              .WithOne(c => c.Product)
+              //.IsRequired()
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Vendor>()
+              .HasOne(i => i.State)
+              .WithOne(c => c.Vendor)
+              //.IsRequired()
+              .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<Employees>()
+           .HasOne(i => i.City)
+           .WithOne(c => c.Employees)
+           //.IsRequired()
+           .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Employees>()
+              .HasOne(i => i.Country)
+              .WithOne(c => c.Employees)
+                //.IsRequired()
+             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Employees>()
+             .HasOne(i => i.Currency)
+             .WithOne(c => c.Employees)
+             //.IsRequired()
+             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Employees>()
+            .HasOne(i => i.Estados)
+            .WithOne(c => c.Employees)
+            //.IsRequired()
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Employees>()
+          .HasOne(i => i.State)
+          .WithOne(c => c.Employees)
+          //.IsRequired()
+          .OnDelete(DeleteBehavior.Restrict);
+
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })
             //    .IsUnique(true);

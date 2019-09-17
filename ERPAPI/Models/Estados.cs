@@ -28,5 +28,7 @@ namespace ERPAPI.Models
         [Required]
         public DateTime FechaModificacion { get; set; }
 
+        public virtual Employees Employees { get; set; }
+
     }
 }

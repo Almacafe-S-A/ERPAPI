@@ -30,5 +30,9 @@ namespace ERPAPI.Models
         public DateTime FechaCreacion { get; set; }
         [Display(Name = "Fecha de modificación")]
         public DateTime FechaModificacion { get; set; }
+
+        public virtual Product Product { get; set; }
+
+        public virtual Employees Employees { get; set; }
     }
 }

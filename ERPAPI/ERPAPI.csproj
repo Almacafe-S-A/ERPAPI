@@ -87,6 +87,24 @@
     <Compile Remove="Migrations\20190911171138_as.Designer.cs" />
     <Compile Remove="Migrations\20190913194906_ExchangeCurrencyId.cs" />
     <Compile Remove="Migrations\20190913194906_ExchangeCurrencyId.Designer.cs" />
+    <Compile Remove="Migrations\20190917011953_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917011953_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917034435_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917034435_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917034955_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917034955_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917035507_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917035507_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917035924_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917035924_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917040651_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917040651_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917041241_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917041241_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917041606_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917041606_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917042045_dbInitial.cs" />
+    <Compile Remove="Migrations\20190917042045_dbInitial.Designer.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup>

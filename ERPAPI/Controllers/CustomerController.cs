@@ -72,7 +72,7 @@ namespace ERPAPI.Controllers
 
             try
             {
-                List<Customer> Items = await _context.Customer.Take(100).OrderByDescending(c => c.CustomerId).ToListAsync();
+                List<Customer> Items = await _context.Customer.OrderByDescending(c => c.CustomerId).ToListAsync();
                 return await Task.Run(() => Ok(Items));
                 //  return Ok(Items);
             }
@@ -264,17 +264,17 @@ namespace ERPAPI.Controllers
                         throw ex;
                         // return BadRequest($"Ocurrio un error:{ex.Message}");
                     }
-        }
+                }
 
                 // return (customer);
                 return await Task.Run(() => Ok(_customer));
             }
             catch (Exception ex)
-            { 
-               _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-           
+
         }
 
         /// <summary>
