@@ -33,7 +33,7 @@ namespace coderush.Controllers.Api
             List<Grupo> Items = new List<Grupo>();
             try
             {
-                Items = await _context.Grupos.Include(c => c.Linea).ToListAsync();
+                Items = await _context.Grupo.Include(c => c.Linea).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace coderush.Controllers.Api
             Grupo Items = new Grupo();
             try
             {
-                Items = await _context.Grupos.Include(c => c.Linea).Where(q => q.GrupoId.Equals(Id)).FirstOrDefaultAsync();
+                Items = await _context.Grupo.Include(c => c.Linea).Where(q => q.GrupoId.Equals(Id)).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -72,7 +72,7 @@ namespace coderush.Controllers.Api
 
             try
             {
-                _context.Grupos.Add(Grupo);
+                _context.Grupo.Add(Grupo);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -91,7 +91,7 @@ namespace coderush.Controllers.Api
 
             try
             {
-                Grupo Grupoq = (from c in _context.Grupos
+                Grupo Grupoq = (from c in _context.Grupo
                    .Where(q => q.GrupoId == _Grupo.GrupoId)
                                                 select c
                      ).FirstOrDefault();
@@ -119,10 +119,10 @@ namespace coderush.Controllers.Api
             Grupo Grupo = new Grupo();
             try
             {
-                Grupo = _context.Grupos
+                Grupo = _context.Grupo
                 .Where(x => x.GrupoId == (int)payload.GrupoId)
                 .FirstOrDefault();
-                _context.Grupos.Remove(Grupo);
+                _context.Grupo.Remove(Grupo);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

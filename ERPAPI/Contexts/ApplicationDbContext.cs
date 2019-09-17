@@ -153,9 +153,9 @@ namespace ERP.Contexts
         public DbSet<ERPAPI.Models.CuentaBancoEmpleados> CuentaBancoEmpleados { get; set; }
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
         public DbSet<ERPAPI.Models.TipoPlanillas> TipoPlanillas { get; set; }
-        public DbSet<Linea> Lineas { get; set; }
-        public DbSet<Marca> Marcas { get; set; }
-        public DbSet<Grupo> Grupos { get; set; }
+        public DbSet<Linea> Linea { get; set; }
+        public DbSet<Marca> Marca { get; set; }
+        public DbSet<Grupo> Grupo { get; set; }
 
 
         //  public DbSet<CDGoodsDeliveryAuthorization> CDGoodsDeliveryAuthorization { get; set; }

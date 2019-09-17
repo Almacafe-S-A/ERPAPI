@@ -34,7 +34,7 @@ namespace ERPAPI.Controllers
             List<Linea> Items = new List<Linea>();
             try
             {
-                Items = await _context.Lineas.ToListAsync();
+                Items = await _context.Linea.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace ERPAPI.Controllers
             Linea Items = new Linea();
             try
             {
-                Items = await _context.Lineas.Where(q => q.LineaId.Equals(Id)).FirstOrDefaultAsync();
+                Items = await _context.Linea.Where(q => q.LineaId.Equals(Id)).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -73,7 +73,7 @@ namespace ERPAPI.Controllers
 
             try
             {
-                _context.Lineas.Add(Linea);
+                _context.Linea.Add(Linea);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace ERPAPI.Controllers
 
             try
             {
-                Linea Lineaq = (from c in _context.Lineas
+                Linea Lineaq = (from c in _context.Linea
                    .Where(q => q.LineaId == _Linea.LineaId)
                                                 select c
                      ).FirstOrDefault();
@@ -120,10 +120,10 @@ namespace ERPAPI.Controllers
             Linea Linea = new Linea();
             try
             {
-                Linea = _context.Lineas
+                Linea = _context.Linea
                 .Where(x => x.LineaId == (int)payload.LineaId)
                 .FirstOrDefault();
-                _context.Lineas.Remove(Linea);
+                _context.Linea.Remove(Linea);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

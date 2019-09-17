@@ -33,7 +33,7 @@ namespace coderush.Controllers.Api
             List<Marca> Items = new List<Marca>();
             try
             {
-                Items = await _context.Marcas.ToListAsync();
+                Items = await _context.Marca.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace coderush.Controllers.Api
             Marca Items = new Marca();
             try
             {
-                Items = await _context.Marcas.Where(q => q.MarcaId.Equals(Id)).FirstOrDefaultAsync();
+                Items = await _context.Marca.Where(q => q.MarcaId.Equals(Id)).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -72,7 +72,7 @@ namespace coderush.Controllers.Api
 
             try
             {
-                _context.Marcas.Add(Marca);
+                _context.Marca.Add(Marca);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -91,7 +91,7 @@ namespace coderush.Controllers.Api
 
             try
             {
-                Marca Marcaq = (from c in _context.Marcas
+                Marca Marcaq = (from c in _context.Marca
                    .Where(q => q.MarcaId == _Marca.MarcaId)
                                                 select c
                      ).FirstOrDefault();
@@ -119,10 +119,10 @@ namespace coderush.Controllers.Api
             Marca Marca = new Marca();
             try
             {
-                Marca = _context.Marcas
+                Marca = _context.Marca
                 .Where(x => x.MarcaId == (int)payload.MarcaId)
                 .FirstOrDefault();
-                _context.Marcas.Remove(Marca);
+                _context.Marca.Remove(Marca);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
