@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190917192526_AceptarNulos_LlavesForaneas")]
+    partial class AceptarNulos_LlavesForaneas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,8 +40,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("AccountName")
                         .IsRequired()
                         .HasMaxLength(200);
-
-                    b.Property<long?>("AccountingAccountId");
 
                     b.Property<bool>("BlockedInJournal");
 
@@ -78,8 +78,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("AccountId");
 
                     b.HasIndex("AccountClassid");
-
-                    b.HasIndex("AccountingAccountId");
 
                     b.HasIndex("CompanyInfoId");
 
@@ -111,71 +109,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("AccountClassid");
 
                     b.ToTable("AccountClass");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Accounting", b =>
-                {
-                    b.Property<long>("AccountId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("AccountBalance");
-
-                    b.Property<int>("AccountClasses");
-
-                    b.Property<long?>("AccountClassid");
-
-                    b.Property<string>("AccountCode")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AccountName")
-                        .IsRequired()
-                        .HasMaxLength(200);
-
-                    b.Property<bool>("BlockedInJournal");
-
-                    b.Property<long>("CompanyInfoId");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(5000);
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("HierarchyAccount");
-
-                    b.Property<bool>("IsCash");
-
-                    b.Property<bool>("IsContraAccount");
-
-                    b.Property<long?>("ParentAccountAccountId");
-
-                    b.Property<int?>("ParentAccountId");
-
-                    b.Property<byte[]>("RowVersion")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp")
-                        .HasMaxLength(8);
-
-                    b.Property<long>("TypeAccountId");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion")
-                        .IsRequired();
-
-                    b.HasKey("AccountId");
-
-                    b.HasIndex("AccountClassid");
-
-                    b.HasIndex("CompanyInfoId");
-
-                    b.HasIndex("ParentAccountAccountId");
-
-                    b.ToTable("Accounting");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Alert", b =>
@@ -722,7 +655,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("State");
 
-                    b.Property<long>("StateId");
+                    b.Property<long?>("StateId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -746,7 +679,9 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("IdEstado");
 
-                    b.HasIndex("StateId");
+                    b.HasIndex("StateId")
+                        .IsUnique()
+                        .HasFilter("[StateId] IS NOT NULL");
 
                     b.ToTable("Branch");
                 });
@@ -1539,7 +1474,9 @@ namespace ERPAPI.Migrations
                     b.HasIndex("RTN")
                         .IsUnique();
 
-                    b.HasIndex("StateId");
+                    b.HasIndex("StateId")
+                        .IsUnique()
+                        .HasFilter("[StateId] IS NOT NULL");
 
                     b.ToTable("Customer");
                 });
@@ -2255,19 +2192,24 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("IdBranch");
 
-                    b.HasIndex("IdCity");
+                    b.HasIndex("IdCity")
+                        .IsUnique();
 
-                    b.HasIndex("IdCountry");
+                    b.HasIndex("IdCountry")
+                        .IsUnique();
 
-                    b.HasIndex("IdCurrency");
+                    b.HasIndex("IdCurrency")
+                        .IsUnique();
 
                     b.HasIndex("IdDepartamento");
 
-                    b.HasIndex("IdEstado");
+                    b.HasIndex("IdEstado")
+                        .IsUnique();
 
                     b.HasIndex("IdPuesto");
 
-                    b.HasIndex("IdState");
+                    b.HasIndex("IdState")
+                        .IsUnique();
 
                     b.HasIndex("IdTipoContrato");
 
@@ -2667,7 +2609,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("DayofRate");
 
-                    b.Property<decimal>("ExchangeRateValue");
+                    b.Property<decimal>("ExchangeRateDecimal");
+
+                    b.Property<double>("ExchangeRateValue");
 
                     b.Property<DateTime>("ModifiedDate");
 
@@ -2838,8 +2782,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("AccountId1");
 
-                    b.Property<long?>("AccountingAccountId");
-
                     b.Property<decimal>("Amount");
 
                     b.Property<int>("DrCr");
@@ -2859,8 +2801,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("GeneralLedgerHeaderId");
 
                     b.HasIndex("AccountId1");
-
-                    b.HasIndex("AccountingAccountId");
 
                     b.HasIndex("GeneralLedgerHeaderId1");
 
@@ -4244,7 +4184,8 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("CurrencyId");
+                    b.HasIndex("CurrencyId")
+                        .IsUnique();
 
                     b.HasIndex("GrupoId");
 
@@ -5540,7 +5481,8 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("IdEstado");
 
-                    b.HasIndex("StateId");
+                    b.HasIndex("StateId")
+                        .IsUnique();
 
                     b.HasIndex("VendorTypeId");
 
@@ -6310,10 +6252,6 @@ namespace ERPAPI.Migrations
                         .WithMany("Accounts")
                         .HasForeignKey("AccountClassid");
 
-                    b.HasOne("ERPAPI.Models.Accounting")
-                        .WithMany("ChildAccounts")
-                        .HasForeignKey("AccountingAccountId");
-
                     b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyInfoId")
@@ -6321,22 +6259,6 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.Account", "ParentAccount")
                         .WithMany("ChildAccounts")
-                        .HasForeignKey("ParentAccountAccountId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Accounting", b =>
-                {
-                    b.HasOne("ERPAPI.Models.AccountClass", "AccountClass")
-                        .WithMany()
-                        .HasForeignKey("AccountClassid");
-
-                    b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyInfoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Account", "ParentAccount")
-                        .WithMany()
                         .HasForeignKey("ParentAccountAccountId");
                 });
 
@@ -6424,8 +6346,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.State", "Departamento")
-                        .WithMany("Branch")
-                        .HasForeignKey("StateId")
+                        .WithOne("Branch")
+                        .HasForeignKey("ERPAPI.Models.Branch", "StateId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -6471,8 +6393,8 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("IdEstado");
 
                     b.HasOne("ERPAPI.Models.State", "Departamento")
-                        .WithMany("Customer")
-                        .HasForeignKey("StateId")
+                        .WithOne("Customer")
+                        .HasForeignKey("ERPAPI.Models.Customer", "StateId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -6516,18 +6438,18 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.City", "City")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdCity")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdCity")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Country", "Country")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdCountry")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdCountry")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdCurrency")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdCurrency")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Departamento", "Departamento")
@@ -6536,8 +6458,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdEstado")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdEstado")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Puesto", "Puesto")
@@ -6546,8 +6468,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.State", "State")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdState")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdState")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.TipoContrato", "TipoContrato")
@@ -6600,10 +6522,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Account", "Account")
                         .WithMany("GeneralLedgerLines")
                         .HasForeignKey("AccountId1");
-
-                    b.HasOne("ERPAPI.Models.Accounting")
-                        .WithMany("GeneralLedgerLines")
-                        .HasForeignKey("AccountingAccountId");
 
                     b.HasOne("ERPAPI.Models.GeneralLedgerHeader", "GeneralLedgerHeader")
                         .WithMany()
@@ -6702,8 +6620,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany("Product")
-                        .HasForeignKey("CurrencyId")
+                        .WithOne("Product")
+                        .HasForeignKey("ERPAPI.Models.Product", "CurrencyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Grupo", "Grupo")
@@ -6796,8 +6714,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.State", "State")
-                        .WithMany("Vendor")
-                        .HasForeignKey("StateId")
+                        .WithOne("Vendor")
+                        .HasForeignKey("ERPAPI.Models.Vendor", "StateId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.VendorType", "VendorType")
