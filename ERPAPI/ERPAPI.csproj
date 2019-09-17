@@ -105,6 +105,10 @@
     <Compile Remove="Migrations\20190917041606_dbInitial.Designer.cs" />
     <Compile Remove="Migrations\20190917042045_dbInitial.cs" />
     <Compile Remove="Migrations\20190917042045_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917192336_AceptarNulos_LlavesForaneas.cs" />
+    <Compile Remove="Migrations\20190917192336_AceptarNulos_LlavesForaneas.Designer.cs" />
+    <Compile Remove="Migrations\20190917193532_AceptarNulos_LlavesForaneas2.cs" />
+    <Compile Remove="Migrations\20190917193532_AceptarNulos_LlavesForaneas2.Designer.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup>

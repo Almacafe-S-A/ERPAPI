@@ -165,7 +165,14 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        payload.CityId = payload.CityId == 0 ? null : payload.CityId;
+                        payload.CountryId = payload.CountryId == 0 ? null : payload.CountryId;
+                        payload.StateId = payload.StateId == 0 ? null : payload.StateId;
+                        payload.IdEstado = payload.IdEstado == 0 ? null : payload.IdEstado;
+                        payload.CustomerTypeId = payload.CustomerTypeId == 0 ? null : payload.CustomerTypeId;
 
+                        payload.FechaCreacion = DateTime.Now;
+                        payload.FechaModificacion = DateTime.Now;
                         _context.Customer.Add(customer);
                         await _context.SaveChangesAsync();
 
@@ -225,6 +232,13 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+
+                        _customer.CityId = _customer.CityId == 0 ? null : _customer.CityId;
+                        _customer.CountryId = _customer.CountryId == 0 ? null : _customer.CountryId;
+                        _customer.StateId = _customer.StateId == 0 ? null : _customer.StateId;
+                        _customer.IdEstado = _customer.IdEstado == 0 ? null : _customer.IdEstado;
+                        _customer.CustomerTypeId = _customer.CustomerTypeId == 0 ? null : _customer.CustomerTypeId;
+
                         Customer customerq = (from c in _context.Customer
                                      .Where(q => q.CustomerId == _customer.CustomerId)
                                               select c
