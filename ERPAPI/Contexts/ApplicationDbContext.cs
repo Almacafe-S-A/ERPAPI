@@ -263,56 +263,56 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<Customer>()
                  .HasOne(i => i.Departamento)
-                 .WithOne(c => c.Customer)
+                 .WithMany(c => c.Customer)
                  //.IsRequired()
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Branch>()
                 .HasOne(i => i.Departamento)
-                .WithOne(c => c.Branch)
+                .WithMany(c => c.Branch)
                 //.IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
               .HasOne(i => i.Currency)
-              .WithOne(c => c.Product)
+              .WithMany(c => c.Product)
               //.IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Vendor>()
               .HasOne(i => i.State)
-              .WithOne(c => c.Vendor)
+              .WithMany(c => c.Vendor)
               //.IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
 
 
             modelBuilder.Entity<Employees>()
            .HasOne(i => i.City)
-           .WithOne(c => c.Employees)
+           .WithMany(c => c.Employees)
            //.IsRequired()
            .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Employees>()
               .HasOne(i => i.Country)
-              .WithOne(c => c.Employees)
+              .WithMany(c => c.Employees)
                 //.IsRequired()
              .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Employees>()
              .HasOne(i => i.Currency)
-             .WithOne(c => c.Employees)
+             .WithMany(c => c.Employees)
              //.IsRequired()
              .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Employees>()
             .HasOne(i => i.Estados)
-            .WithOne(c => c.Employees)
+            .WithMany(c => c.Employees)
             //.IsRequired()
             .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Employees>()
           .HasOne(i => i.State)
-          .WithOne(c => c.Employees)
+          .WithMany(c => c.Employees)
           //.IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
 

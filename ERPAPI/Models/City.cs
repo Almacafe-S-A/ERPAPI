@@ -24,7 +24,7 @@ namespace ERPAPI.Models
         public long? StateId { get; set; }
 
         [Display(Name = "Empleados")]
-        public virtual Employees Employees { get; set; }
+        public virtual List<Employees> Employees { get; set; }
     }
 
 

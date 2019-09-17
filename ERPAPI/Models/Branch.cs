@@ -50,7 +50,7 @@ namespace ERPAPI.Models
         public decimal? LimitCNBS { get; set; }
 
         [Display(Name = "Estado")]
-     //   public long StateId { get; set; }
+        public long StateId { get; set; }
         [ForeignKey("StateId")]
         public State Departamento { get; set; }
 

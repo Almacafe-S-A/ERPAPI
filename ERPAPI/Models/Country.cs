@@ -61,7 +61,7 @@ namespace ERPAPI.Models
         public DateTime? FechaModificacion { get; set; }
         public List<State> State { get; set; }
 
-        public virtual Employees Employees { get;set;}
+        public virtual List<Employees> Employees { get;set;}
     }
 
 

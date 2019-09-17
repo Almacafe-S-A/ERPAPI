@@ -30,9 +30,9 @@ namespace ERPAPI.Models
 
         public List<City> City { get; set; }
 
-        public virtual Customer Customer { get; set; }
-        public virtual Branch Branch { get; set; }
-        public virtual Vendor Vendor { get; set; }
-        public virtual Employees Employees { get; set; }
+        public virtual List<Customer> Customer { get; set; }
+        public virtual List<Branch> Branch { get; set; }
+        public virtual List<Vendor>Vendor { get; set; }
+        public virtual List<Employees> Employees { get; set; }
     }
 }
