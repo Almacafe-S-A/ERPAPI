@@ -28,6 +28,37 @@ namespace coderush.Controllers.Api
         }
 
 
+        /// <summary>
+        /// Obtiene el Listado de Warehouse paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetWarehousePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<Warehouse> Items = new List<Warehouse>();
+            try
+            {
+                var query = _context.Warehouse.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
         // GET: api/Warehouse
         [HttpGet]
         public async Task<IActionResult> GetWarehouse()

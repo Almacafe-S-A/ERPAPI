@@ -30,6 +30,38 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
+
+        /// <summary>
+        /// Obtiene el Listado de JournalEntry paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetJournalEntryPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<JournalEntry> Items = new List<JournalEntry>();
+            try
+            {
+                var query = _context.JournalEntry.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la Diarios en una lista.
         /// </summary>

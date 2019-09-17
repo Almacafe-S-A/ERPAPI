@@ -29,6 +29,39 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de ProformaInvoice paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetProformaInvoicePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<ProformaInvoice> Items = new List<ProformaInvoice>();
+            try
+            {
+                var query = _context.ProformaInvoice.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+           
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene el Listado de ProformaInvoicees 
         /// El estado define cuales son los cai activos

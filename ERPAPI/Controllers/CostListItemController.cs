@@ -29,6 +29,42 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
+
+
+
+        /// <summary>
+        /// Obtiene el Listado de CostListItem paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCostListItemPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<CostListItem> Items = new List<CostListItem>();
+            try
+            {
+                var query = _context.CostListItem.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la Tasa de Cambio en una lista.
         /// </summary>
@@ -49,8 +85,7 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            //  int Count = Items.Count();
+          
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>

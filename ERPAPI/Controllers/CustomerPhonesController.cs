@@ -29,6 +29,38 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene el Listado de CustomerPhones paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCustomerPhonesPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<CustomerPhones> Items = new List<CustomerPhones>();
+            try
+            {
+                var query = _context.CustomerPhones.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
         /// Obtiene el Listado de CustomerPhoneses 
         /// El estado define cuales son los cai activos
         /// </summary>
