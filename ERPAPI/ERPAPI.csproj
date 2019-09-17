@@ -105,6 +105,7 @@
     <Compile Remove="Migrations\20190917041606_dbInitial.Designer.cs" />
     <Compile Remove="Migrations\20190917042045_dbInitial.cs" />
     <Compile Remove="Migrations\20190917042045_dbInitial.Designer.cs" />
+    <Compile Remove="Migrations\20190917230357_Accounting.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
   </ItemGroup>
