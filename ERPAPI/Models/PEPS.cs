@@ -37,7 +37,7 @@ namespace ERPAPI.Models
         [Display(Name = "País")]
         public string CountryName { get; set; }
 
-        [Display(Name = "Observación")]
+        [Display(Name = "Comentario")]
         public string Comments { get; set; }
 
         public string Periodo { get; set; }
