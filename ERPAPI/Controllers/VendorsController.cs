@@ -118,8 +118,12 @@ namespace coderush.Controllers.Api
         }
 
 
-
-        [HttpPost("[action]")]
+        /// <summary>
+        /// Inserta una nueva 
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
+         [HttpPost("[action]")]
         public async Task<ActionResult<Vendor>> Insert([FromBody]Vendor payload)
         {
             /* Vendor Vendor = payload;

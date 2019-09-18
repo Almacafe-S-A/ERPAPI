@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190918031547_fieldexchangerate")]
+    partial class fieldexchangerate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,6 +40,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("AccountName")
                         .IsRequired()
                         .HasMaxLength(200);
+
+                    b.Property<long?>("AccountingAccountId");
 
                     b.Property<bool>("BlockedInJournal");
 
@@ -76,6 +80,8 @@ namespace ERPAPI.Migrations
                     b.HasKey("AccountId");
 
                     b.HasIndex("AccountClassid");
+
+                    b.HasIndex("AccountingAccountId");
 
                     b.HasIndex("CompanyInfoId");
 
@@ -1338,8 +1344,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("Actualizacion");
 
-                    b.Property<string>("Comments");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
@@ -1855,8 +1859,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CargoPublico");
-
                     b.Property<string>("Correo");
 
                     b.Property<long>("CustomerId");
@@ -1864,8 +1866,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<bool>("FuncionarioPublico");
 
                     b.Property<string>("Identidad");
 
@@ -2841,6 +2841,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("AccountId1");
 
+                    b.Property<long?>("AccountingAccountId");
+
                     b.Property<decimal>("Amount");
 
                     b.Property<int>("DrCr");
@@ -2860,6 +2862,8 @@ namespace ERPAPI.Migrations
                     b.HasKey("GeneralLedgerHeaderId");
 
                     b.HasIndex("AccountId1");
+
+                    b.HasIndex("AccountingAccountId");
 
                     b.HasIndex("GeneralLedgerHeaderId1");
 
@@ -3973,8 +3977,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CityName");
 
-                    b.Property<string>("Comments");
-
                     b.Property<long>("CountryId");
 
                     b.Property<string>("CountryName");
@@ -3991,13 +3993,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
+                    b.Property<string>("Observacion");
+
                     b.Property<string>("Official");
-
-                    b.Property<long>("PartidoPoliticoId");
-
-                    b.Property<string>("PartidoPoliticoName");
-
-                    b.Property<string>("Periodo");
 
                     b.Property<long>("StateId");
 

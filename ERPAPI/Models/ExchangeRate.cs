@@ -17,6 +17,7 @@ namespace ERPAPI.Models
         //[Display(Name = "Monto")]
         //public double ExchangeRateValue { get; set; }
         [Display(Name = "Monto Decimal")]
+        [Column(TypeName = "decimal(18,4)")]
         public decimal ExchangeRateValue { get; set; }
 
         public Currency Currency { get; set; }
