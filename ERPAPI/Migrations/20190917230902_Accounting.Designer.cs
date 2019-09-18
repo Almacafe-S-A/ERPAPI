@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190917230902_Accounting")]
+    partial class Accounting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -722,7 +724,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("State");
 
-                    b.Property<long>("StateId");
+                    b.Property<long?>("StateId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -746,7 +748,9 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("IdEstado");
 
-                    b.HasIndex("StateId");
+                    b.HasIndex("StateId")
+                        .IsUnique()
+                        .HasFilter("[StateId] IS NOT NULL");
 
                     b.ToTable("Branch");
                 });
@@ -1342,8 +1346,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("Actualizacion");
 
-                    b.Property<string>("Comments");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
@@ -1455,7 +1457,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("City");
 
-                    b.Property<long?>("CityId");
+                    b.Property<long>("CityId");
 
                     b.Property<bool>("ClienteRecoger");
 
@@ -1463,7 +1465,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ContactPerson");
 
-                    b.Property<long?>("CountryId");
+                    b.Property<long>("CountryId");
 
                     b.Property<string>("CountryName");
 
@@ -1472,7 +1474,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerRefNumber");
 
-                    b.Property<long?>("CustomerTypeId");
+                    b.Property<long>("CustomerTypeId");
 
                     b.Property<string>("CustomerTypeName");
 
@@ -1492,7 +1494,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("GrupoEconomico");
 
-                    b.Property<long?>("IdEstado");
+                    b.Property<long>("IdEstado");
 
                     b.Property<string>("Identidad")
                         .IsRequired();
@@ -1518,7 +1520,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("State");
 
-                    b.Property<long?>("StateId");
+                    b.Property<long>("StateId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -1541,7 +1543,8 @@ namespace ERPAPI.Migrations
                     b.HasIndex("RTN")
                         .IsUnique();
 
-                    b.HasIndex("StateId");
+                    b.HasIndex("StateId")
+                        .IsUnique();
 
                     b.ToTable("Customer");
                 });
@@ -1859,8 +1862,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CargoPublico");
-
                     b.Property<string>("Correo");
 
                     b.Property<long>("CustomerId");
@@ -1868,8 +1869,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<bool>("FuncionarioPublico");
 
                     b.Property<string>("Identidad");
 
@@ -2261,19 +2260,24 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("IdBranch");
 
-                    b.HasIndex("IdCity");
+                    b.HasIndex("IdCity")
+                        .IsUnique();
 
-                    b.HasIndex("IdCountry");
+                    b.HasIndex("IdCountry")
+                        .IsUnique();
 
-                    b.HasIndex("IdCurrency");
+                    b.HasIndex("IdCurrency")
+                        .IsUnique();
 
                     b.HasIndex("IdDepartamento");
 
-                    b.HasIndex("IdEstado");
+                    b.HasIndex("IdEstado")
+                        .IsUnique();
 
                     b.HasIndex("IdPuesto");
 
-                    b.HasIndex("IdState");
+                    b.HasIndex("IdState")
+                        .IsUnique();
 
                     b.HasIndex("IdTipoContrato");
 
@@ -3980,8 +3984,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CityName");
 
-                    b.Property<string>("Comments");
-
                     b.Property<long>("CountryId");
 
                     b.Property<string>("CountryName");
@@ -3998,13 +4000,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
+                    b.Property<string>("Observacion");
+
                     b.Property<string>("Official");
-
-                    b.Property<long>("PartidoPoliticoId");
-
-                    b.Property<string>("PartidoPoliticoName");
-
-                    b.Property<string>("Periodo");
 
                     b.Property<long>("StateId");
 
@@ -4256,7 +4254,8 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("CurrencyId");
+                    b.HasIndex("CurrencyId")
+                        .IsUnique();
 
                     b.HasIndex("GrupoId");
 
@@ -5552,7 +5551,8 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("IdEstado");
 
-                    b.HasIndex("StateId");
+                    b.HasIndex("StateId")
+                        .IsUnique();
 
                     b.HasIndex("VendorTypeId");
 
@@ -6436,8 +6436,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.State", "Departamento")
-                        .WithMany("Branch")
-                        .HasForeignKey("StateId")
+                        .WithOne("Branch")
+                        .HasForeignKey("ERPAPI.Models.Branch", "StateId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -6468,23 +6468,27 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.City", "Ciudad")
                         .WithMany()
-                        .HasForeignKey("CityId");
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Country", "Country")
                         .WithMany()
-                        .HasForeignKey("CountryId");
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.CustomerType", "CustomerType")
                         .WithMany()
-                        .HasForeignKey("CustomerTypeId");
+                        .HasForeignKey("CustomerTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
                         .WithMany()
-                        .HasForeignKey("IdEstado");
+                        .HasForeignKey("IdEstado")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.State", "Departamento")
-                        .WithMany("Customer")
-                        .HasForeignKey("StateId")
+                        .WithOne("Customer")
+                        .HasForeignKey("ERPAPI.Models.Customer", "StateId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -6528,18 +6532,18 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.City", "City")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdCity")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdCity")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Country", "Country")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdCountry")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdCountry")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdCurrency")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdCurrency")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Departamento", "Departamento")
@@ -6548,8 +6552,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdEstado")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdEstado")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Puesto", "Puesto")
@@ -6558,8 +6562,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.State", "State")
-                        .WithMany("Employees")
-                        .HasForeignKey("IdState")
+                        .WithOne("Employees")
+                        .HasForeignKey("ERPAPI.Models.Employees", "IdState")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.TipoContrato", "TipoContrato")
@@ -6714,8 +6718,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany("Product")
-                        .HasForeignKey("CurrencyId")
+                        .WithOne("Product")
+                        .HasForeignKey("ERPAPI.Models.Product", "CurrencyId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Grupo", "Grupo")
@@ -6808,8 +6812,8 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.State", "State")
-                        .WithMany("Vendor")
-                        .HasForeignKey("StateId")
+                        .WithOne("Vendor")
+                        .HasForeignKey("ERPAPI.Models.Vendor", "StateId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.VendorType", "VendorType")

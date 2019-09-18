@@ -14,10 +14,10 @@ namespace ERPAPI.Models
         public Int64 ExchangeRateId { get; set; }
         [Display(Name = "Dia de Tasa")]
         public DateTime DayofRate { get; set; }
-        [Display(Name = "Monto")]
-        public double ExchangeRateValue { get; set; }
-        [Display(Name = "Monto Decinal")]
-        public decimal ExchangeRateDecimal { get; set; }
+        //[Display(Name = "Monto")]
+        //public double ExchangeRateValue { get; set; }
+        [Display(Name = "Monto Decimal")]
+        public decimal ExchangeRateValue { get; set; }
 
         public Currency Currency { get; set; }
 
