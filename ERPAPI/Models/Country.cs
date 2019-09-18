@@ -51,6 +51,9 @@ namespace ERPAPI.Models
         [Display(Name = "Seguimiento o monitoreo")]
         public string SeguimientoName { get; set; }
 
+        [Display(Name = "Comentarios")]
+        public string Comments { get; set; }
+
         [Display(Name = "Usuario de creación")]
         public string Usuariocreacion { get; set; }
         [Display(Name = "Usuario de modificación")]
