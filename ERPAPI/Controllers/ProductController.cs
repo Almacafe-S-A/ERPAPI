@@ -70,8 +70,8 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.Product.Include(c => c.Branch)
-                                              .Include(c => c.Currency)
-                                              .Include(c => c.UnitOfMeasure)
+                                              //.Include(c => c.Currency)
+                                              //.Include(c => c.UnitOfMeasure)
                                               .Include(c => c.Marca)
                                               .Include(c => c.Linea)
                                               .Include(c => c.Grupo)
@@ -97,8 +97,8 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.Product.Include(c => c.Branch)
-                                              .Include(c => c.Currency)
-                                              .Include(c => c.UnitOfMeasure)
+                                              //.Include(c => c.Currency)
+                                              //.Include(c => c.UnitOfMeasure)
                                               .Include(c => c.Marca)
                                               .Include(c => c.Linea)
                                               .Include(c => c.Grupo)
