@@ -35,6 +35,23 @@ namespace ERPAPI.Models
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
 
+        [Display(Name = "Numero de poliza")]
+        public string NoPoliza { get; set; }
+
+        [Display(Name = "Moneda")]
+        public Int64 CurrencyId { get; set; }
+        [Display(Name = "Moneda")]
+        public string CurrencyName { get; set; }
+
+        [Display(Name = "Cantidad de la póliza")]
+        public double CantidadPoliza { get; set; }
+
+        [Display(Name = "Fecha de emisión poliza")]
+        public DateTime FechaEmisionPoliza { get; set; }
+        [Display(Name = "Fecha de vencimiento poliza")]
+        public DateTime FechaVencimientoPoliza { get; set; }
+
+
 
         [Required]
         [Display(Name = "Usuario de creación")]
