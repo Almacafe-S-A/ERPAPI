@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190918004535_CustomerPartners")]
+    partial class CustomerPartners
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1272,8 +1274,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("AccionName");
 
                     b.Property<DateTime>("Actualizacion");
-
-                    b.Property<string>("Comments");
 
                     b.Property<DateTime?>("FechaCreacion");
 
@@ -3909,8 +3909,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CityName");
 
-                    b.Property<string>("Comments");
-
                     b.Property<long>("CountryId");
 
                     b.Property<string>("CountryName");
@@ -3927,13 +3925,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
+                    b.Property<string>("Observacion");
+
                     b.Property<string>("Official");
-
-                    b.Property<long>("PartidoPoliticoId");
-
-                    b.Property<string>("PartidoPoliticoName");
-
-                    b.Property<string>("Periodo");
 
                     b.Property<long>("StateId");
 

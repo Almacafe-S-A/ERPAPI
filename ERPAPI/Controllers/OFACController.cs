@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +58,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
                 throw ex;
             }
 
@@ -78,6 +80,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
                 throw ex;
             }
 
@@ -91,10 +94,36 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                sdnListM customerType = payload;
-                _context.sdnList.Add(customerType);
-                await _context.SaveChangesAsync();
-                return await Task.Run(() => Ok(customerType));
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {                     
+
+                        sdnListM customerType = payload;
+                        _context.Database.SetCommandTimeout(TimeSpan.FromMinutes(70));
+                        // List<sdnListPublshInformationM> _publis = new List<sdnListPublshInformationM>();
+                        // _publis.Add( customerType.publshInformation);
+                        //_context.BulkInsert(_publis);
+                        // _context.BulkInsert(customerType.sdnEntry);
+
+                        List<sdnListM> rangelist = _context.sdnList.ToList();
+                        _context.sdnList.RemoveRange(rangelist);
+                       // _context.Database.ExecuteSqlCommand("TRUNCATE TABLE [TableName]");
+                        await _context.SaveChangesAsync();
+
+                        _context.sdnList.Add(customerType);
+                        await _context.SaveChangesAsync();                      
+
+                        transaction.Commit();
+                        return await Task.Run(() => Ok(customerType));
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                  
+                }
                 // return Ok(customerType);
             }
             catch (Exception ex)
@@ -104,6 +133,30 @@ namespace ERPAPI.Controllers
             }
 
         }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]sdnListM payload)
+        {
+            try
+            {
+                List<sdnListM> rangelist = _context.sdnList.ToList();
+                _context.sdnList.RemoveRange(rangelist);
+               // _context.Database.ExecuteSqlCommand("TRUNCATE TABLE [TableName]");
+                await _context.SaveChangesAsync();
+                return await Task.Run(() => Ok(rangelist.Count));
+                // return Ok(customerType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: { ex.Message }"));
+            }
+
+        }
+
+
+
 
 
     }

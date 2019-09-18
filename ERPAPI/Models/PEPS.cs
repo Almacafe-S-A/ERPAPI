@@ -38,9 +38,19 @@ namespace ERPAPI.Models
         public string CountryName { get; set; }
 
         [Display(Name = "Observación")]
-        public string Observacion { get; set; }
+        public string Comments { get; set; }
+
+        public string Periodo { get; set; }
+
         [Display(Name = "Oficial")]
         public string Official { get; set; }
+
+        [Display(Name = "Partido Politico")]
+        public Int64 PartidoPoliticoId { get; set; }
+        [Display(Name = "Partido Politico")]
+        public string PartidoPoliticoName { get; set; }
+
+
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
         [Display(Name = "Estado")]

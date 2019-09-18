@@ -43,7 +43,7 @@ namespace OFAC
 
         }
 
-      
+
 
         public async static Task<int> Ejecutar()
         {
@@ -51,7 +51,8 @@ namespace OFAC
             var data = GetData();
 
 
-            var config = new MapperConfiguration(cfg => {
+            var config = new MapperConfiguration(cfg =>
+            {
                 cfg.CreateMap<sdnList, sdnListM>();
                 cfg.CreateMap<sdnListPublshInformation, sdnListPublshInformationM>();
                 cfg.CreateMap<sdnListSdnEntry, sdnListSdnEntryM>()
@@ -68,9 +69,9 @@ namespace OFAC
 
             IMapper mapper = config.CreateMapper();
             //var source = new Source();
-           // var dest = mapper.Map<Source, Dest>(source);
+            // var dest = mapper.Map<Source, Dest>(source);
             // **** convert data to entity framework models ****
-            sdnListM sdnListM = mapper.Map<sdnList,sdnListM>(data);
+            sdnListM sdnListM = mapper.Map<sdnList, sdnListM>(data);
 
             // **** setup db and insert data ****
             Console.WriteLine("Inserting data to db.. Please wait");
@@ -86,11 +87,20 @@ namespace OFAC
                 _client = new HttpClient();
                 _client.Timeout = TimeSpan.FromMinutes(60);
                 _client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _userToken.Token);
+                //sdnListM _sdn = new sdnListM();
+                //var delete = await _client.PostAsJsonAsync(baseadress + "api/OFAC/Delete", _sdn);
+                //if (delete.IsSuccessStatusCode)
+                //{
+                //_client = new HttpClient();
+                //_client.Timeout = TimeSpan.FromMinutes(60);
+                //_client.DefaultRequestHeaders.Add("Authorization", "Bearer " + _userToken.Token);
+
                 var insertresult = await _client.PostAsJsonAsync(baseadress + "api/OFAC/Insert", sdnListM);
                 if (insertresult.IsSuccessStatusCode)
                 {
 
                 }
+                // }
             }
 
             return 1;
