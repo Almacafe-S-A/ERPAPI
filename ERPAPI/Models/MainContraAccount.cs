@@ -16,8 +16,8 @@ namespace ERPAPI.Models
 
         [ForeignKey("MainAccountId")]
         [InverseProperty("ContraAccounts")]
-        public virtual Account MainAccount { get; set; }
+        public virtual Accounting MainAccount { get; set; }
         [ForeignKey("RelatedContraAccountId")]
-        public virtual Account RelatedContraAccount { get; set; }
+        public virtual Accounting RelatedContraAccount { get; set; }
     }
 }

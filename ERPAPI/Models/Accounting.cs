@@ -68,13 +68,13 @@ namespace ERPAPI.Models
         [Display(Name = "Version Fila")]
         public byte[] RowVersion { get; set; }
         [Display(Name = "Padre de la cuenta")]
-        public virtual Account ParentAccount { get; set; }
+        public virtual Accounting ParentAccount { get; set; }
 
         public virtual AccountClass AccountClass { get; set; }
 
         public virtual CompanyInfo Company { get; set; }
 
-        public virtual ICollection<Account> ChildAccounts { get; set; }
+        public virtual ICollection<Accounting> ChildAccounts { get; set; }
 
         [NotMapped]
         public virtual ICollection<MainContraAccount> ContraAccounts { get; set; }

@@ -11,7 +11,7 @@ namespace ERPAPI.Models
     {
         public AccountClass()
         {
-            Accounts = new HashSet<Account>();
+            Accounts = new HashSet<Accounting>();
         }
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id Clase Cuenta")]
@@ -19,7 +19,7 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre")]
         public string Name { get; set; }
         public string NormalBalance { get; set; }
-        public virtual ICollection<Account> Accounts { get; set; }
+        public virtual ICollection<Accounting> Accounts { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]
         public string UsuarioCreacion { get; set; }

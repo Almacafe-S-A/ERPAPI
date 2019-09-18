@@ -30,7 +30,7 @@ namespace ERPAPI.Models
         public double Amount { get; set; }
         public string Memo { get; set; }
         public virtual JournalEntry JournalEntry { get; set; }
-        public virtual Account Account { get; set; }
+        public virtual Accounting Account { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]
         public string CreatedUser { get; set; }

@@ -19,12 +19,12 @@ namespace ERPAPI.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ILogger _logger;
-        /*public DimensionsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }*/
+        /*   private readonly ApplicationDbContext _context;
+           private readonly ILogger _logger;
+           public DimensionsController(ApplicationDbContext context)
+           {
+               _context = context;
+           }
         public AccountController(ILogger<AccountController> logger, ApplicationDbContext context)
         {
             _context = context;
@@ -42,7 +42,7 @@ namespace ERPAPI.Controllers
             List<Account> Items = new List<Account>();
             try
             {
-                Items = await _context.Account.ToListAsync();
+             //   Items = await _context.Account.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace ERPAPI.Controllers
             List<Account> Items = new List<Account>();
             try
             {
-                Items = await _context.Account.Where(q => q.BlockedInJournal == false).ToListAsync();
+              //  Items = await _context.Account.Where(q => q.BlockedInJournal == false).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -93,7 +93,7 @@ namespace ERPAPI.Controllers
             Account Items = new Account();
             try
             {
-                Items = await _context.Account.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
+             //   Items = await _context.Account.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -122,7 +122,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _Accountq = _Account;
-                _context.Account.Add(_Accountq);
+               // _context.Account.Add(_Accountq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -150,7 +150,7 @@ namespace ERPAPI.Controllers
                                  .Where(q => q.AccountId == _Account.AccountId)
                                    select c
                                 ).FirstOrDefaultAsync();
-
+                                
                 _context.Entry(_Accountq).CurrentValues.SetValues((_Account));
 
                 await _context.SaveChangesAsync();

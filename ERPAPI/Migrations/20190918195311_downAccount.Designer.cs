@@ -4,20 +4,91 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190918195311_downAccount")]
+    partial class downAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("ERPAPI.Models.Account", b =>
+                {
+                    b.Property<long>("AccountId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AccountBalance");
+
+                    b.Property<int>("AccountClasses");
+
+                    b.Property<long?>("AccountClassid");
+
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasMaxLength(200);
+
+                    b.Property<long?>("AccountingAccountId");
+
+                    b.Property<bool>("BlockedInJournal");
+
+                    b.Property<long>("CompanyInfoId");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(5000);
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("HierarchyAccount");
+
+                    b.Property<bool>("IsCash");
+
+                    b.Property<bool>("IsContraAccount");
+
+                    b.Property<long?>("ParentAccountAccountId");
+
+                    b.Property<int?>("ParentAccountId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasMaxLength(8);
+
+                    b.Property<long>("TypeAccountId");
+
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
+
+                    b.HasKey("AccountId");
+
+                    b.HasIndex("AccountClassid");
+
+                    b.HasIndex("AccountingAccountId");
+
+                    b.HasIndex("CompanyInfoId");
+
+                    b.HasIndex("ParentAccountAccountId");
+
+                    b.ToTable("Account");
+                });
 
             modelBuilder.Entity("ERPAPI.Models.AccountClass", b =>
                 {
@@ -2776,6 +2847,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("AccountId1");
 
+                    b.Property<long?>("AccountingAccountId");
+
                     b.Property<decimal>("Amount");
 
                     b.Property<int>("DrCr");
@@ -2795,6 +2868,8 @@ namespace ERPAPI.Migrations
                     b.HasKey("GeneralLedgerHeaderId");
 
                     b.HasIndex("AccountId1");
+
+                    b.HasIndex("AccountingAccountId");
 
                     b.HasIndex("GeneralLedgerHeaderId1");
 
@@ -6244,10 +6319,30 @@ namespace ERPAPI.Migrations
                     b.ToTable("TITLEM");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Accounting", b =>
+            modelBuilder.Entity("ERPAPI.Models.Account", b =>
                 {
                     b.HasOne("ERPAPI.Models.AccountClass", "AccountClass")
                         .WithMany("Accounts")
+                        .HasForeignKey("AccountClassid");
+
+                    b.HasOne("ERPAPI.Models.Accounting")
+                        .WithMany("ChildAccounts")
+                        .HasForeignKey("AccountingAccountId");
+
+                    b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyInfoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.Account", "ParentAccount")
+                        .WithMany("ChildAccounts")
+                        .HasForeignKey("ParentAccountAccountId");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Accounting", b =>
+                {
+                    b.HasOne("ERPAPI.Models.AccountClass", "AccountClass")
+                        .WithMany()
                         .HasForeignKey("AccountClassid");
 
                     b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
@@ -6255,8 +6350,8 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("CompanyInfoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.Accounting", "ParentAccount")
-                        .WithMany("ChildAccounts")
+                    b.HasOne("ERPAPI.Models.Account", "ParentAccount")
+                        .WithMany()
                         .HasForeignKey("ParentAccountAccountId");
                 });
 
@@ -6517,9 +6612,13 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "Account")
+                    b.HasOne("ERPAPI.Models.Account", "Account")
                         .WithMany("GeneralLedgerLines")
                         .HasForeignKey("AccountId1");
+
+                    b.HasOne("ERPAPI.Models.Accounting")
+                        .WithMany("GeneralLedgerLines")
+                        .HasForeignKey("AccountingAccountId");
 
                     b.HasOne("ERPAPI.Models.GeneralLedgerHeader", "GeneralLedgerHeader")
                         .WithMany()
@@ -6585,7 +6684,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.JournalEntryLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "Account")
+                    b.HasOne("ERPAPI.Models.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId1");
 
