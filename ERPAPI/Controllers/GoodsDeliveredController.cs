@@ -212,6 +212,15 @@ namespace ERPAPI.Controllers
                                                       select c
                                                       ).FirstOrDefaultAsync();
 
+                            if (_KardexLine.Total > item.Quantity)
+                            {
+                                item.Total = _KardexLine.Total - item.Quantity;
+                            }
+                            else
+                            {
+                                return BadRequest("Inventario insuficiente!");
+                            }
+
                             _GoodsDelivered.Kardex._KardexLine.Add(new KardexLine
                             {
                                 DocumentDate = _GoodsDeliveredq.DocumentDate,

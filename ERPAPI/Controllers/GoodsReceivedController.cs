@@ -239,8 +239,8 @@ namespace ERPAPI.Controllers
                             _GoodsReceived.Kardex._KardexLine.Add(new KardexLine
                             {
                                 DocumentDate = _GoodsReceivedq.DocumentDate,
-                                ProducId = _GoodsReceivedq.ProductId,
-                                ProductName = _GoodsReceivedq.ProductName,
+                                ProducId = item.ProducId,
+                                ProductName = item.ProductName,
                                 SubProducId = item.SubProductId,
                                 SubProductName = item.SubProductName,
                                 QuantityEntry = item.Quantity,
