@@ -29,6 +29,7 @@ namespace ERP.Contexts
         }
         public DbSet<Accounting> Accounting { get; set; }
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
+        public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
         public DbSet<Insurances> Insurances { get; set; }
         public DbSet<ContactPerson> ContactPerson { get; set; }

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190918202912_WarehousePoliza")]
+    partial class WarehousePoliza
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2074,39 +2076,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("Idconfiguracion");
 
                     b.ToTable("ElementoConfiguracion");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EmployeeDocument", b =>
-                {
-                    b.Property<long>("EmployeeDocumentId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("DocumentName");
-
-                    b.Property<long>("DocumentTypeId");
-
-                    b.Property<string>("DocumentTypeName");
-
-                    b.Property<long>("EmployeeId");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaIngreso");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaVencimiento");
-
-                    b.Property<string>("Path");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("EmployeeDocumentId");
-
-                    b.ToTable("EmployeeDocument");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EmployeeSalary", b =>
