@@ -12,14 +12,21 @@ namespace ERPAPI.Models
     public class Bitacora
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; } 
-        public long? IdOperacion { get; set; } 
+        public long Id { get; set; }
+        [Display(Name = "Id Operación")]
+        public long? IdOperacion { get; set; }
+        [Display(Name = "Tipo de documento")]
         public string DocType { get; set; }
-        public DateTime? HoraInicio { get; set; } 
+        [Display(Name = "Hora de inicio")]
+        public DateTime? HoraInicio { get; set; }
+        [Display(Name = "Hora de Fin")]
         public DateTime? HoraFin { get; set; } 
-        public string Accion { get; set; } 
-        public string NoReferencia { get; set; } 
+        public string Accion { get; set; }
+        [Display(Name = "Número de referencia")]
+        public string NoReferencia { get; set; }
+        [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
+        [Display(Name = "Consulta ejecutada")]
         public string QueryEjecuto { get; set; }
         public string UsuarioEjecucion { get; set; }
         public string UsuarioModificacion { get; set; } 

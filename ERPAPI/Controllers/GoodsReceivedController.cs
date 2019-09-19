@@ -322,7 +322,7 @@ namespace ERPAPI.Controllers
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _GoodsReceivedq.GoodsReceivedId,
-                            DocType = "GoodsDelivered",
+                            DocType = "GoodsReceived",
                             ClaseInicial =
                             Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsReceivedq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsReceivedq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),

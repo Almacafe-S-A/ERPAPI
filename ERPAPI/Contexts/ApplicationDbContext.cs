@@ -176,13 +176,14 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryDateOfBirthItemM> sdnListSdnEntryDateOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryPlaceOfBirthItemM> sdnListSdnEntryPlaceOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
+        public DbSet<CheckAccount> CheckAccount { get; set; }
 
         ///// <summary>
         ////////
         /// <summary>
         /// ONU 
         /// </summary>
-       
+
         public DbSet<CONSOLIDATED_LISTM> CONSOLIDATED_LISTM { get; set; }
         public DbSet<INDIVIDUALM> INDIVIDUALM { get; set; }
         public DbSet<LIST_TYPEM> LIST_TYPEM { get; set; }

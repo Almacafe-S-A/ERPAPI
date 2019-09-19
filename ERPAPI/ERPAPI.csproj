@@ -111,6 +111,8 @@
     <Compile Remove="Migrations\20190917193532_AceptarNulos_LlavesForaneas2.Designer.cs" />
     <Compile Remove="Migrations\20190918062706_test.cs" />
     <Compile Remove="Migrations\20190918062706_test.Designer.cs" />
+    <Compile Remove="Migrations\20190919194307_CheckAccount.cs" />
+    <Compile Remove="Migrations\20190919194307_CheckAccount.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
