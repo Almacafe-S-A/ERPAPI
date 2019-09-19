@@ -201,6 +201,8 @@ namespace ERPAPI.Controllers
                             KardexLine _KardexLine = await _context.KardexLine
                                                                          .Where(q => q.KardexId == _kardexmax.KardexId)
                                                                          .Where(q => q.SubProducId == item.SubProductId)
+                                                                          .Where(q => q.WareHouseId == item.WareHouseId)
+                                                                         .Where(q => q.BranchId == _GoodsDeliveredq.BranchId)
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();
@@ -215,8 +217,8 @@ namespace ERPAPI.Controllers
                                 DocumentDate = _GoodsDeliveredq.DocumentDate,
                                 ProducId = _GoodsDeliveredq.ProductId,
                                 ProductName = _GoodsDeliveredq.ProductName,
-                                SubProducId = _GoodsDeliveredq.SubProductId,
-                                SubProductName = _GoodsDeliveredq.SubProductName,
+                                SubProducId = item.SubProductId,
+                                SubProductName = item.SubProductName,
                                 QuantityEntry = 0,
                                 QuantityOut = item.Quantity,
                                 BranchId = _GoodsDeliveredq.BranchId,

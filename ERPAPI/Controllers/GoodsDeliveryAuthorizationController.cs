@@ -198,6 +198,7 @@ namespace ERPAPI.Controllers
                                                            // .Take(1)
                                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
                                                        where c.CustomerId == _GoodsDeliveryAuthorization.CustomerId && d.SubProducId == item.SubProductId
+                                                        
                                                        select c
                                                           )
                                                           .FirstOrDefaultAsync();
@@ -208,6 +209,8 @@ namespace ERPAPI.Controllers
                             KardexLine _KardexLine = await _context.KardexLine
                                                                          .Where(q => q.KardexId == _kardexmax.KardexId)
                                                                          .Where(q => q.SubProducId == item.SubProductId)
+                                                                       //  .Where(q => q.WareHouseId == _GoodsDeliveryAuthorizationq.WareHouseId)
+                                                                         //.Where(q => q.BranchId == _GoodsDeliveryAuthorizationq.BranchId)
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();

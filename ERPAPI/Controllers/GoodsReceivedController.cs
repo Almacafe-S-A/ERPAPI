@@ -189,23 +189,24 @@ namespace ERPAPI.Controllers
                         {
                             item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
 
-                            //Kardex _kardexmax = await (from c in  _context.Kardex
-                            //                                        .OrderByDescending(q => q.DocumentDate)
-                            //                                       // .Take(1)
-                            //                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
-                            //                                        where c.CustomerId == _GoodsReceivedq.CustomerId && d.SubProducId==item.SubProductId                                                                   
-                            //                                        select c                                                                    
-                            //                                     )                                                             
-                            //                                     .FirstOrDefaultAsync();
 
+                            Kardex _kardexmax = await (from c in _context.Kardex
+                                                        .OrderByDescending(q => q.DocumentDate)
+                                                           // .Take(1)
+                                                       join d in _context.KardexLine on c.KardexId equals d.KardexId
+                                                       where c.CustomerId == _GoodsReceivedq.CustomerId && d.SubProducId == item.SubProductId
+                                                       select c
+                                                      ).FirstOrDefaultAsync();
 
-                            Kardex _kardexmax = await (from kdx in _context.Kardex
-                                        .Where(q => q.CustomerId == _GoodsReceivedq.CustomerId)
-                                        from kdxline in _context.KardexLine
-                                          .Where(q => q.KardexId == kdx.KardexId)
-                                            .Where(o => o.SubProducId == item.SubProductId)
-                                            .OrderByDescending(o => o.DocumentDate).Take(1)
-                                        select kdx).FirstOrDefaultAsync();
+                            //Kardex _kardexmax = await (from kdx in _context.Kardex
+                            //            .Where(q => q.CustomerId == _GoodsReceivedq.CustomerId)
+                            //            from kdxline in _context.KardexLine
+                            //                .Where(q => q.KardexId == kdx.KardexId)
+                            //                .Where(o => o.SubProducId == item.SubProductId)
+                            //                //.Where(q=>q.BranchId ==  _GoodsReceivedq.BranchId)
+                            //                //.Where(q => q.WareHouseId == _GoodsReceivedq.WarehouseId)
+                            //                .OrderByDescending(o => o.DocumentDate).Take(1)
+                            //            select kdx).FirstOrDefaultAsync();
 
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
 
@@ -213,6 +214,8 @@ namespace ERPAPI.Controllers
                             KardexLine _KardexLine = await _context.KardexLine
                                                                          .Where(q=>q.KardexId== _kardexmax.KardexId)
                                                                          .Where(q => q.SubProducId == item.SubProductId)
+                                                                         .Where(q=>q.WareHouseId==item.WareHouseId)
+                                                                         .Where(q => q.BranchId == _GoodsReceivedq.BranchId)
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();
@@ -231,14 +234,15 @@ namespace ERPAPI.Controllers
                             _context.GoodsReceivedLine.Add(item);
 
                             item.Total = item.Quantity + _KardexLine.Total;
+                           
 
                             _GoodsReceived.Kardex._KardexLine.Add(new KardexLine
                             {
                                 DocumentDate = _GoodsReceivedq.DocumentDate,
                                 ProducId = _GoodsReceivedq.ProductId,
                                 ProductName = _GoodsReceivedq.ProductName,
-                                SubProducId = _GoodsReceivedq.SubProductId,
-                                SubProductName = _GoodsReceivedq.SubProductName,
+                                SubProducId = item.SubProductId,
+                                SubProductName = item.SubProductName,
                                 QuantityEntry = item.Quantity,
                                 QuantityOut = 0,
                                 QuantityEntryBags = item.QuantitySacos,
@@ -275,6 +279,10 @@ namespace ERPAPI.Controllers
                         _GoodsReceived.Kardex.DocumentId = _GoodsReceivedq.GoodsReceivedId;
                         _GoodsReceived.Kardex.UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion;
                         _GoodsReceived.Kardex.UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion;
+
+
+                     
+                        
 
                         _context.Kardex.Add(_GoodsReceived.Kardex);
 
