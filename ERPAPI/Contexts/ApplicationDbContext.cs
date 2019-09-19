@@ -201,6 +201,8 @@ namespace ERP.Contexts
         public DbSet<ENTITIESM> ENTITIESM { get; set; }
         public DbSet<LAST_DAY_UPDATEDM> LAST_DAY_UPDATEDM { get; set; }
 
+        public DbSet<FundingInterestRate> FundingInterestRate { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
