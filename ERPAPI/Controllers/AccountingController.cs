@@ -104,7 +104,31 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Inserta una nueva Account
+        /// </summary>
+        /// <param name="_TypeAcountId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetHightLevelHierarchy(Int64 _TypeAcountId)
+        {
 
+            try
+            {
+                Accounting _Accounting = new Accounting();
+                _Accounting= _context.Accounting.Where(a => a.TypeAccountId == _TypeAcountId)
+                    .OrderByDescending(b => b.HierarchyAccount).FirstOrDefault();
+                var Items = _Accounting.HierarchyAccount;
+                return await Task.Run(() => Ok(Items));
+                //  return Ok(Items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
 
 
 
