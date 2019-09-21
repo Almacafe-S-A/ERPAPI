@@ -75,6 +75,10 @@ namespace ERP.Contexts
         public virtual DbSet<UnitOfMeasure> UnitOfMeasure { get; set; }
         public DbSet<ProformaInvoice> ProformaInvoice { get; set; }
         public DbSet<ProformaInvoiceLine> ProformaInvoiceLine { get; set; }
+
+        public DbSet<JournalEntryConfiguration> JournalEntryConfiguration { get; set; }
+        public DbSet<JournalEntryConfigurationLine> JournalEntryConfigurationLine { get; set; }
+
         public DbSet<CertificadoDeposito> CertificadoDeposito { get; set; }
         public DbSet<CertificadoLine> CertificadoLine { get; set; }
         public DbSet<CAI> CAI { get; set; }

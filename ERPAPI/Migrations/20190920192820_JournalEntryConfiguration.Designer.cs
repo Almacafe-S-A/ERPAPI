@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190920192820_JournalEntryConfiguration")]
+    partial class JournalEntryConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,58 +109,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("ParentAccountAccountId");
 
                     b.ToTable("Accounting");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.AccountingChilds", b =>
-                {
-                    b.Property<long>("AccountingChildsId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AccountClasses");
-
-                    b.Property<string>("AccountCode")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<string>("AccountName")
-                        .IsRequired()
-                        .HasMaxLength(200);
-
-                    b.Property<long?>("AccountingAccountId");
-
-                    b.Property<bool>("BlockedInJournal");
-
-                    b.Property<long>("CompanyInfoId");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(5000);
-
-                    b.Property<long>("HierarchyAccount");
-
-                    b.Property<bool>("IsCash");
-
-                    b.Property<bool>("IsContraAccount");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<long>("ParentAccountId");
-
-                    b.Property<long>("TypeAccountId");
-
-                    b.HasKey("AccountingChildsId");
-
-                    b.HasIndex("AccountingAccountId");
-
-                    b.ToTable("AccountingChilds");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Alert", b =>
@@ -6475,13 +6425,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Accounting", "ParentAccount")
                         .WithMany("ChildAccounts")
                         .HasForeignKey("ParentAccountAccountId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.AccountingChilds", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Accounting", "Accounting")
-                        .WithMany("AccountingChilds")
-                        .HasForeignKey("AccountingAccountId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ApplicationUser", b =>
