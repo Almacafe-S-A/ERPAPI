@@ -11,7 +11,7 @@ namespace ERPAPI.Models
         public Int64 JournalEntryConfigurationLineId { get; set; }
 
         [Display(Name = "Fecha de creación")]
-        public string JournalEntryConfigurationId { get; set; }
+        public Int64 JournalEntryConfigurationId { get; set; }
 
         [Display(Name = "Cuenta Contable")]
         public Int64 AccountId { get; set; }
