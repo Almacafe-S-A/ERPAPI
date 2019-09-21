@@ -15,8 +15,10 @@ namespace ERPAPI.Models
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
         public string Barcode { get; set; }
+        public string Correlative { get; set; }
         public string Description { get; set; }
         public string ProductImageUrl { get; set; }
+
 
         public Int64 IdEstado { get; set; }
         public string Estado { get; set; }

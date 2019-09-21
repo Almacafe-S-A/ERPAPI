@@ -212,6 +212,8 @@ namespace ERP.Contexts
 
         public DbSet<FundingInterestRate> FundingInterestRate { get; set; }
 
+        public DbSet<VendorProduct> VendorProduct { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -224,6 +226,9 @@ namespace ERP.Contexts
 
             //modelBuilder.Entity<Customer>().HasData(Customers);         
 
+            modelBuilder.Entity<VendorProduct>()
+           .HasIndex(p => new { p.ProductId,p.VendorId })
+           .IsUnique(true);
 
             base.OnModelCreating(modelBuilder);
 
