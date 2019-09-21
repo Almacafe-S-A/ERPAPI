@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190921183654_EmployeeAbsence")]
+    partial class EmployeeAbsence
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3666,8 +3668,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<DateTime>("ExpirationDate");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaLimiteEmision");
@@ -5209,6 +5209,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("DiscountPercentage");
 
+                    b.Property<int?>("InvoiceId");
+
                     b.Property<double>("Price");
 
                     b.Property<long>("ProductId");
@@ -5238,6 +5240,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UnitOfMeasureName");
 
                     b.HasKey("SalesOrderLineId");
+
+                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("SalesOrderId");
 
@@ -6888,7 +6892,7 @@ namespace ERPAPI.Migrations
             modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
                 {
                     b.HasOne("ERPAPI.Models.Invoice", "SalesOrder")
-                        .WithMany("InvoiceLine")
+                        .WithMany()
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -6984,6 +6988,10 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>
                 {
+                    b.HasOne("ERPAPI.Models.Invoice")
+                        .WithMany("SalesOrderLines")
+                        .HasForeignKey("InvoiceId");
+
                     b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
                         .HasForeignKey("SalesOrderId")

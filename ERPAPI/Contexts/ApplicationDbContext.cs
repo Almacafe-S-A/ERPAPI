@@ -166,7 +166,7 @@ namespace ERP.Contexts
         public DbSet<Grupo> Grupo { get; set; }
         public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
         public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
-
+        public DbSet<EmployeeAbsence> EmployeeAbsence { get; set; }
 
         //  public DbSet<CDGoodsDeliveryAuthorization> CDGoodsDeliveryAuthorization { get; set; }
 
