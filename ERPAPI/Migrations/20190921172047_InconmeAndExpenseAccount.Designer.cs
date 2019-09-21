@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190921172047_InconmeAndExpenseAccount")]
+    partial class InconmeAndExpenseAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3506,8 +3508,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DebitCredit");
 
-                    b.Property<string>("Description");
-
                     b.Property<DateTime>("DocumentDate");
 
                     b.Property<long>("DocumentId");
@@ -3533,27 +3533,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BankName");
 
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
                     b.Property<long>("EstadoId");
 
                     b.Property<string>("EstadoName");
 
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
                     b.Property<long>("TypeAccountId");
 
                     b.Property<string>("TypeAccountName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioEjecucion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("IncomeAndExpensesAccountId");
 
@@ -4411,8 +4397,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Barcode");
 
                     b.Property<int>("BranchId");
-
-                    b.Property<string>("Correlative");
 
                     b.Property<int>("CurrencyId");
 
@@ -5792,24 +5776,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("VendorOfCustomer");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.VendorProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<long>("VendorId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId", "VendorId")
-                        .IsUnique();
-
-                    b.ToTable("VendorProduct");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorType", b =>
