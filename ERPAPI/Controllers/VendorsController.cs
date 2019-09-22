@@ -294,6 +294,42 @@ namespace coderush.Controllers.Api
 
         }
 
+        // GET: api/Vendors/GetProductVendorsByVendorID
+        /// <summary>
+        ///   Obtiene el listado de Productos por Proveedor.        
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{VendorId}")]
+        public async Task<IActionResult> GetProductVendorsByVendorID(Int64 VendorId)
+        {
+            try
+            {
+                //Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
+                var Items = await (from c in _context.VendorProduct
+                                   join e in _context.Product on c.ProductId equals e.ProductId
+                                   //join d in _context.Vendor on c.VendorId equals d.VendorId
+                                   where c.VendorId == VendorId
+
+                                   select new Product
+                                   {
+                                       ProductName =e.ProductName
+
+
+                                   }
+                               ).ToListAsync();
+
+                return await Task.Run(() => Ok(Items));
+                // Items = await _context.ProductRelation.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+        }
+
 
 
     }

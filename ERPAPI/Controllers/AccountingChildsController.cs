@@ -26,20 +26,20 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
-        /*
+
         /// <summary>
         /// Obtiene los Datos de la AccountingChilds en una lista.
         /// </summary>
-        // <param name="AccountId"></param>
+        /// <param name="AccountingChildsId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{AccountingChildsId}")]
-        public async Task<IActionResult> GetAccountingChilds(Int64 AccountId)
+        public async Task<IActionResult> GetAccountingCByAccountingCId(Int64 AccountingChildsId)
 
         {
             List<AccountingChilds> Items = new List<AccountingChilds>();
             try
             {
-                Items = await _context.AccountingChilds.Where(p => p.ParentAccountId == AccountId)
+                Items = await _context.AccountingChilds.Where(p => p.AccountingChildsId == AccountingChildsId)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -53,27 +53,23 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
             //return await _context.Dimensions.ToListAsync();
         }
-        */
-        /// <summary>
-        /// Obtiene los Datos de la Account en una lista.
-        /// </summary>
 
 
 
         /// <summary>
-        /// Obtiene los Datos de la Account por medio del Id enviado.
+        /// Obtiene los Datos de lod hijos contables por medio del Id del padre enviado.
         /// </summary>
-        /// <param name="AccountingChildsId"></param>
+        /// <param name="ParentId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{AccountingChildsId}")]
-        public async Task<IActionResult> GetAccountingChildsById(Int64 AccountingChildsId)
+        public async Task<IActionResult> GetAccountingChildsByParentId(Int64 ParentId)
         {
             List<AccountingChilds> Items = new List<AccountingChilds>();
 
            // AccountingChilds Items = new AccountingChilds();
             try
             {
-                Items = await _context.AccountingChilds.Where(q => q.ParentAccountId == AccountingChildsId).ToListAsync();
+                Items = await _context.AccountingChilds.Where(q => q.ParentAccountId == ParentId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -92,7 +88,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        /*
+        
 
         /// <summary>
         /// Inserta una nueva Account
@@ -102,7 +98,7 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<AccountingChilds>> Insert([FromBody]AccountingChilds _AccountingChilds)
         {
-            AccountingChilds _Accountq = new AccountingChilds();
+            AccountingChilds _AccountingChildsq = new AccountingChilds();
 
 
             try
@@ -111,22 +107,22 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _Accountq = _AccountingChilds;
-                        _context.AccountingChilds.Add(_Accountq);
+                        _AccountingChildsq = _AccountingChilds;
+                        _context.AccountingChilds.Add(_AccountingChildsq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Accountq.AccountingChildsId,
-                            DocType = "Accounting",
+                            IdOperacion = _AccountingChildsq.AccountingChildsId,
+                            DocType = "AccountingChilds",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Accountq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountingChildsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Accountq.CreatedUser,
-                            UsuarioModificacion = _Accountq.ModifiedUser,
-                            UsuarioEjecucion = _Accountq.ModifiedUser,
+                            UsuarioCreacion = _AccountingChildsq.CreatedUser,
+                            UsuarioModificacion = _AccountingChildsq.ModifiedUser,
+                            UsuarioEjecucion = _AccountingChildsq.ModifiedUser,
 
                         });
 
@@ -149,10 +145,9 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Accountq));
+            return await Task.Run(() => Ok(_AccountingChildsq));
             
-            return await Task.Run(() => Ok(_ConfigurationVendorq));
-       
+          
         }
 
         /// <summary>
@@ -163,28 +158,28 @@ namespace ERPAPI.Controllers
         [HttpPut("[action]")]
         public async Task<ActionResult<AccountingChilds>> Update([FromBody]AccountingChilds _AccountingChilds)
         {
-            AccountingChilds _Accountq = _AccountingChilds;
+            AccountingChilds _AccountingChildsq = _AccountingChilds;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Accountq = await (from c in _context.AccountingChilds
-                                         .Where(q => q.AccountingChildsId == _Accountq.AccountingChildsId)
+                        _AccountingChildsq = await (from c in _context.AccountingChilds
+                                         .Where(q => q.AccountingChildsId == _AccountingChildsq.AccountingChildsId)
                                            select c
                                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_Accountq).CurrentValues.SetValues((_AccountingChilds));
+                        _context.Entry(_AccountingChildsq).CurrentValues.SetValues((_AccountingChilds));
 
                         //_context.Alert.Update(_Alertq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Accountq.AccountingChildsId,
+                            IdOperacion = _AccountingChildsq.AccountingChildsId,
                             DocType = "AccountingChilds",
                             ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_Accountq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_AccountingChildsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_AccountingChilds, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
@@ -214,7 +209,7 @@ namespace ERPAPI.Controllers
             }
 
 
-            return await Task.Run(() => Ok(_Accountq));
+            return await Task.Run(() => Ok(_AccountingChildsq));
         }
 
         /// <summary>
@@ -225,14 +220,14 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody]AccountingChilds _AccountingChilds)
         {
-            AccountingChilds _Accountq = new AccountingChilds();
+            AccountingChilds _AccountingChildsq = new AccountingChilds();
             try
             {
-                _Accountq = _context.AccountingChilds
+                _AccountingChildsq = _context.AccountingChilds
                 .Where(x => x.AccountingChildsId == (Int64)_AccountingChilds.AccountingChildsId)
                 .FirstOrDefault();
 
-                _context.AccountingChilds.Remove(_Accountq);
+                _context.AccountingChilds.Remove(_AccountingChildsq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -241,7 +236,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Accountq));
+            return await Task.Run(() => Ok(_AccountingChildsq));
 
         }
         /*[HttpGet("[action]")]

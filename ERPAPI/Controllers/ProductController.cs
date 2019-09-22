@@ -193,5 +193,40 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(product));
 
         }
+
+        // GET: api/Product/GetProductVendorsByProductID
+        /// <summary>
+        ///   Obtiene el listado de Proveedores por Producto.        
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{ProductId}")]
+        public async Task<IActionResult> GetProductVendorsByProductID(Int64 ProductId)
+        {
+            
+            try
+            {
+                //Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
+                var Items = await (from c in _context.VendorProduct
+                               join d in _context.Vendor on c.VendorId equals d.VendorId where c.ProductId == ProductId
+                                   //join e in _context.Product on c.ProductId equals e.ProductId 
+                                   select new Vendor
+                               {                                   
+                                   VendorName = d.VendorName
+
+
+                               }
+                               ).ToListAsync();
+
+                return await Task.Run(() => Ok(Items));
+                // Items = await _context.ProductRelation.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            
+        }
     }
 }
