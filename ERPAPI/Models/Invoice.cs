@@ -19,6 +19,9 @@ namespace ERPAPI.Models
         [Display(Name = "Cotizacion")]
         public int OrderId { get; set; }
 
+        [Display(Name = "Punto de emisión")]
+        public Int64 IdPuntoEmision { get; set; }
+       
         [Display(Name = "Fecha de Factura")]
         public DateTime InvoiceDate { get; set; }
         [Display(Name = "Fecha de vencimiento")]
@@ -38,7 +41,7 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
 
-        [Display(Name = "Sucursal")]
+        [Display(Name = "Caja")]
         public string Caja { get; set; }
 
         [Display(Name = "Numero de Factura")]

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190922204054_IdPuntoEmisionInvoice")]
+    partial class IdPuntoEmisionInvoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4473,8 +4475,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<int?>("FundingInterestRateId");
-
                     b.Property<int?>("GrupoId");
 
                     b.Property<long>("IdEstado");
@@ -4482,8 +4482,6 @@ namespace ERPAPI.Migrations
                     b.Property<int?>("LineaId");
 
                     b.Property<int?>("MarcaId");
-
-                    b.Property<decimal?>("Prima");
 
                     b.Property<string>("ProductCode");
 
@@ -4505,8 +4503,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("BranchId");
 
                     b.HasIndex("CurrencyId");
-
-                    b.HasIndex("FundingInterestRateId");
 
                     b.HasIndex("GrupoId");
 
@@ -6976,10 +6972,6 @@ namespace ERPAPI.Migrations
                         .WithMany("Product")
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("ERPAPI.Models.FundingInterestRate", "FundingInterestRate")
-                        .WithMany()
-                        .HasForeignKey("FundingInterestRateId");
 
                     b.HasOne("ERPAPI.Models.Grupo", "Grupo")
                         .WithMany()

@@ -17,7 +17,7 @@ namespace ERPAPI.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/InvoiceLine")]
     [ApiController]
-    public class InvoiceLineController : Controller
+    public class InvoiceLineController : Controller 
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
@@ -59,6 +59,28 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+
+        [HttpGet("[action]/{InvoiceId}")]
+        public async Task<IActionResult> GetInvoiceLineByInvoiceId(Int64 InvoiceId)
+        {
+            List<InvoiceLine> Items = new List<InvoiceLine>();
+            try
+            {
+                Items = await _context.InvoiceLine
+                             .Where(q => q.InvoiceId == InvoiceId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
 
 
         /// <summary>
