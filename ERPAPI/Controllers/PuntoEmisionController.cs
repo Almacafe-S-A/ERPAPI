@@ -82,6 +82,25 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        
+       [HttpGet("[action]/{BranchId}")]
+        public async Task<IActionResult> GetPuntoEmisionByBranchId(Int64 BranchId)
+        {
+            List<PuntoEmision> Items = new List<PuntoEmision>();
+            try
+            {
+                Items = await _context.PuntoEmision.Where(q=>q.BranchId== BranchId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene el punto de emision por medio del Id Enviado.
         /// </summary>

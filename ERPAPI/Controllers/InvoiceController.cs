@@ -128,15 +128,20 @@ namespace ERPAPI.Controllers
 
                         _Invoiceq = _Invoice;
 
-                        _Invoiceq.NumeroDEI = _context.Invoice.Max(q => q.NumeroDEI);
+                        _Invoiceq.NumeroDEI = _context.Invoice.Where(q=>q.BranchId==_Invoice.BranchId)
+                                              .Where(q=>q.IdPuntoEmision==_Invoice.IdPuntoEmision).Max(q => q.NumeroDEI);
                         _Invoiceq.NumeroDEI += 1;
 
                         
                       //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_Invoiceq.UsuarioCreacion).Select(q=>q.)
 
-                        _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
-                      //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
+                        Int64 IdCai =await  _context.NumeracionSAR.Where(q=>q.IdPuntoEmision==_Invoiceq.IdPuntoEmision)
+                                            // .Where(q=>q.)
+                                             .Where(q => q.Estado == "A").Select(q => q.IdCAI).FirstOrDefaultAsync();
 
+                        _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                        //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
+                        _Invoiceq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
                         _context.Invoice.Add(_Invoiceq);
                         //await _context.SaveChangesAsync();
                         foreach (var item in _Invoice.InvoiceLine)
