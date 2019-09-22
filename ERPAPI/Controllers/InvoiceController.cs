@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -120,9 +121,59 @@ namespace ERPAPI.Controllers
             Invoice _Invoiceq = new Invoice();
             try
             {
-                _Invoiceq = _Invoice;
-                _context.Invoice.Add(_Invoiceq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _Invoiceq = _Invoice;
+
+                        _Invoiceq.NumeroDEI = _context.Invoice.Max(q => q.NumeroDEI);
+                        _Invoiceq.NumeroDEI += 1;
+
+                        
+                      //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_Invoiceq.UsuarioCreacion).Select(q=>q.)
+
+                        _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                      //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
+
+                        _context.Invoice.Add(_Invoiceq);
+                        //await _context.SaveChangesAsync();
+                        foreach (var item in _Invoice.InvoiceLine)
+                        {
+                            item.InvoiceId = _Invoiceq.InvoiceId;
+                            _context.InvoiceLine.Add(item);
+                        }                       
+
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Invoice.CustomerId,
+                            DocType = "Invoice",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Invoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Invoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Invoice.UsuarioCreacion,
+                            UsuarioModificacion = _Invoice.UsuarioModificacion,
+                            UsuarioEjecucion = _Invoice.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                    }
+                }
             }
             catch (Exception ex)
             {
