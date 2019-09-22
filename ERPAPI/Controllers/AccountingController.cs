@@ -105,6 +105,33 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
+        /// Obtiene los Datos de la Account por medio del Id enviado.
+        /// </summary>
+        /// <param name="TypeAccounting"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{TypeAccounting}")]
+        public async Task<IActionResult> GetFatherAccountById(Int64 TypeAccounting)
+        {
+            Accounting Items = new Accounting();
+            try
+            {
+                Items = await _context.Accounting.Where(
+                                q => q.TypeAccountId == TypeAccounting && 
+                                     q.ParentAccountId == null
+                                   
+                ).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
         /// Inserta una nueva Account
         /// </summary>
         /// <param name="_TypeAcountId"></param>
@@ -129,8 +156,61 @@ namespace ERPAPI.Controllers
             }
 
         }
+        /// <summary>
+        /// Inserta una nueva Account
+        /// </summary>
+        /// <param name="_TypeAcountId"></param>
+        /// <returns></returns>
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountingByTypeAccount(Int64 _TypeAcountId)
 
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await _context.Accounting.Where(p => p.TypeAccountId == _TypeAcountId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
+
+        /// <summary>
+        /// Retorna los nodos padres de un padre contable 
+        /// </summary>
+        /// <param name="_ParentAcountId"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetFathersAccounting(Int64 _ParentAcountId)
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await _context.Accounting.Where(p => p.ParentAccountId == _ParentAcountId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
 
 
         /// <summary>
