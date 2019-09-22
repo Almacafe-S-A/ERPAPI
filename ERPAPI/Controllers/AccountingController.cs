@@ -187,17 +187,17 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Retorna los nodos padres de un padre contable 
         /// </summary>
-        /// <param name="_ParentAcountId"></param>
+        /// <param name="ParentAcountId"></param>
         /// <returns></returns>
 
         [HttpGet("[action]/{ParentAcountId}")]
-        public async Task<IActionResult> GetFathers(Int64 _ParentAcountId)
+        public async Task<IActionResult> GetFathers(Int64 ParentAcountId)
 
         {
             List<Accounting> Items = new List<Accounting>();
             try
             {
-                Items = await _context.Accounting.Where(p => p.ParentAccountId == _ParentAcountId)
+                Items = await _context.Accounting.Where(p => p.ParentAccountId == ParentAcountId)
                     .ToListAsync();
             }
             catch (Exception ex)
