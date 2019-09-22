@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190921173814_InconmeAndExpenseAccount2")]
+    partial class InconmeAndExpenseAccount2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2163,41 +2165,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("ElementoConfiguracion");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.EmployeeAbsence", b =>
-                {
-                    b.Property<long>("EmployeeAbsenceId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("AbsenceTypeId");
-
-                    b.Property<string>("AbsenceTypeName");
-
-                    b.Property<string>("DeductionIndicator");
-
-                    b.Property<long>("EmployeeId");
-
-                    b.Property<string>("EmployeeName");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaFinal");
-
-                    b.Property<DateTime>("FechaInicial");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("QuantityDays");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("EmployeeAbsenceId");
-
-                    b.ToTable("EmployeeAbsence");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.EmployeeDocument", b =>
                 {
                     b.Property<long>("EmployeeDocumentId")
@@ -3541,8 +3508,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DebitCredit");
 
-                    b.Property<string>("Description");
-
                     b.Property<DateTime>("DocumentDate");
 
                     b.Property<long>("DocumentId");
@@ -3567,10 +3532,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("BankId");
 
                     b.Property<string>("BankName");
-
-                    b.Property<long>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
 
                     b.Property<long>("EstadoId");
 
@@ -3665,8 +3626,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Discount");
 
                     b.Property<string>("Estado");
-
-                    b.Property<DateTime>("ExpirationDate");
 
                     b.Property<DateTime>("FechaCreacion");
 
@@ -3865,8 +3824,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CurrencyName");
 
-                    b.Property<string>("Description");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -3893,10 +3850,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountId");
 
                     b.Property<string>("AccountName");
-
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
 
                     b.Property<string>("DebitCredit");
 
@@ -4454,8 +4407,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Barcode");
 
                     b.Property<int>("BranchId");
-
-                    b.Property<string>("Correlative");
 
                     b.Property<int>("CurrencyId");
 
@@ -5217,6 +5168,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("DiscountPercentage");
 
+                    b.Property<int?>("InvoiceId");
+
                     b.Property<double>("Price");
 
                     b.Property<long>("ProductId");
@@ -5246,6 +5199,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UnitOfMeasureName");
 
                     b.HasKey("SalesOrderLineId");
+
+                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("SalesOrderId");
 
@@ -5831,24 +5786,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("VendorOfCustomer");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.VendorProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<long>("VendorId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId", "VendorId")
-                        .IsUnique();
-
-                    b.ToTable("VendorProduct");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorType", b =>
@@ -6913,8 +6850,8 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Invoice", "Invoice")
-                        .WithMany("InvoiceLine")
+                    b.HasOne("ERPAPI.Models.Invoice", "SalesOrder")
+                        .WithMany()
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -7010,6 +6947,10 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>
                 {
+                    b.HasOne("ERPAPI.Models.Invoice")
+                        .WithMany("SalesOrderLines")
+                        .HasForeignKey("InvoiceId");
+
                     b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
                         .HasForeignKey("SalesOrderId")

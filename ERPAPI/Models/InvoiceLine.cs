@@ -10,11 +10,12 @@ namespace ERPAPI.Models
     public class InvoiceLine
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Display(Name = "Linea Id")]
         public Int64 InvoiceLineId { get; set; }
-        [Display(Name = "Sales Order")]
+        [Display(Name = "Factura")]
         public int InvoiceId { get; set; }
-        [Display(Name = "Cotizacion")]
-        public Invoice SalesOrder { get; set; }
+        [Display(Name = "Factura")]
+        public Invoice Invoice { get; set; }
         [Display(Name = "Product Item")]
         public Int64 ProductId { get; set; }
 

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190921220401_Invoice_InvoiceLines")]
+    partial class Invoice_InvoiceLines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3865,8 +3867,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CurrencyName");
 
-                    b.Property<string>("Description");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -3893,10 +3893,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountId");
 
                     b.Property<string>("AccountName");
-
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
 
                     b.Property<string>("DebitCredit");
 
@@ -4454,8 +4450,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Barcode");
 
                     b.Property<int>("BranchId");
-
-                    b.Property<string>("Correlative");
 
                     b.Property<int>("CurrencyId");
 
@@ -5833,24 +5827,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("VendorOfCustomer");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.VendorProduct", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<long>("VendorId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId", "VendorId")
-                        .IsUnique();
-
-                    b.ToTable("VendorProduct");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.VendorType", b =>
                 {
                     b.Property<long>("VendorTypeId")
@@ -6913,7 +6889,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Invoice", "Invoice")
+                    b.HasOne("ERPAPI.Models.Invoice", "SalesOrder")
                         .WithMany("InvoiceLine")
                         .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);

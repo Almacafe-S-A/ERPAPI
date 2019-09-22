@@ -23,6 +23,9 @@ namespace ERPAPI.Models
         public DateTime InvoiceDate { get; set; }
         [Display(Name = "Fecha de vencimiento")]
         public DateTime InvoiceDueDate { get; set; }
+
+        [Display(Name = "Fecha de vencimiento")]
+        public DateTime ExpirationDate { get; set; }
         [Display(Name = "Tipo de Factura")]
         public int InvoiceTypeId { get; set; }
 
@@ -157,7 +160,7 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
         public string Impreso { get; set; }
-        public List<SalesOrderLine> SalesOrderLines { get; set; } = new List<SalesOrderLine>();
+        public List<InvoiceLine> InvoiceLine { get; set; } = new List<InvoiceLine>();
 
     }
 }

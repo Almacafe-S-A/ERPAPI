@@ -164,7 +164,9 @@ namespace ERP.Contexts
         public DbSet<Linea> Linea { get; set; }
         public DbSet<Marca> Marca { get; set; }
         public DbSet<Grupo> Grupo { get; set; }
-
+        public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
+        public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
+        public DbSet<EmployeeAbsence> EmployeeAbsence { get; set; }
 
         //  public DbSet<CDGoodsDeliveryAuthorization> CDGoodsDeliveryAuthorization { get; set; }
 
@@ -210,6 +212,8 @@ namespace ERP.Contexts
 
         public DbSet<FundingInterestRate> FundingInterestRate { get; set; }
 
+        public DbSet<VendorProduct> VendorProduct { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -222,6 +226,9 @@ namespace ERP.Contexts
 
             //modelBuilder.Entity<Customer>().HasData(Customers);         
 
+            modelBuilder.Entity<VendorProduct>()
+           .HasIndex(p => new { p.ProductId,p.VendorId })
+           .IsUnique(true);
 
             base.OnModelCreating(modelBuilder);
 

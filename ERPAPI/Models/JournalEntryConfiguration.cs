@@ -15,6 +15,9 @@ namespace ERPAPI.Models
          [Display(Name = "Transacción")]
          public string Transaction { get; set; }
 
+        [Display(Name = "Descripción")]
+        public string Description { get; set; }
+
         [Display(Name = "Moneda")]
         public Int64 CurrencyId { get; set; }
 
@@ -31,8 +34,6 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
-
-
      
 
 
