@@ -190,8 +190,8 @@ namespace ERPAPI.Controllers
         /// <param name="_ParentAcountId"></param>
         /// <returns></returns>
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetFathersAccounting(Int64 _ParentAcountId)
+        [HttpGet("[action]/{ParentAcountId}")]
+        public async Task<IActionResult> GetFathers(Int64 _ParentAcountId)
 
         {
             List<Accounting> Items = new List<Accounting>();
