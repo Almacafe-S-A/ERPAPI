@@ -48,6 +48,15 @@ namespace ERPAPI.Models
         [ForeignKey("GrupoId")]
         public Grupo Grupo { get; set; }
 
+        public int? FundingInterestRateId { get; set; }
+        [ForeignKey("FundingInterestRateId")]
+        public FundingInterestRate FundingInterestRate { get; set; }
+
+        public decimal? Prima { get; set; }
+
+
+
+
         [Required]
         public string UsuarioCreacion { get; set; }
 
