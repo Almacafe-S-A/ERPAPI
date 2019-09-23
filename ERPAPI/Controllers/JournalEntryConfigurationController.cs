@@ -122,11 +122,17 @@ namespace ERPAPI.Controllers
             {
                 _JournalEntryConfigurationq = _JournalEntryConfiguration;
                 _context.JournalEntryConfiguration.Add(_JournalEntryConfigurationq);
+
+                foreach (var item in _JournalEntryConfigurationq.JournalEntryConfigurationLine)
+                {
+                    item.JournalEntryConfigurationId = _JournalEntryConfigurationq.JournalEntryConfigurationId;
+                    _context.JournalEntryConfigurationLine.Add(item);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
