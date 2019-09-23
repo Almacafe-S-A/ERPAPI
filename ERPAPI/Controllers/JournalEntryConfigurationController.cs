@@ -95,7 +95,7 @@ namespace ERPAPI.Controllers
             JournalEntryConfiguration Items = new JournalEntryConfiguration();
             try
             {
-                Items = await _context.JournalEntryConfiguration.Where(q => q.JournalEntryConfigurationId == JournalEntryConfigurationId).FirstOrDefaultAsync();
+                Items = await _context.JournalEntryConfiguration.Where(q => q.JournalEntryConfigurationId == JournalEntryConfigurationId).Include(q=>q.JournalEntryConfigurationLine).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
