@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190922212621_PuntoEmision")]
+    partial class PuntoEmision
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1543,8 +1545,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion")
                         .IsRequired();
-
-                    b.Property<string>("WorkPhone");
 
                     b.Property<string>("ZipCode");
 
@@ -3929,25 +3929,17 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("AccountId1");
 
+                    b.Property<double>("Amount");
+
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("CreatedUser")
                         .IsRequired();
 
-                    b.Property<double>("Credit");
-
-                    b.Property<double>("CreditME");
-
-                    b.Property<double>("CreditSy");
-
-                    b.Property<double>("Debit");
-
-                    b.Property<double>("DebitME");
-
-                    b.Property<double>("DebitSy");
-
                     b.Property<string>("Description")
                         .HasMaxLength(60);
+
+                    b.Property<int>("DrCr");
 
                     b.Property<long>("JournalEntryId");
 

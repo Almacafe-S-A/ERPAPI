@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -120,9 +121,100 @@ namespace ERPAPI.Controllers
             Invoice _Invoiceq = new Invoice();
             try
             {
-                _Invoiceq = _Invoice;
-                _context.Invoice.Add(_Invoiceq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _Invoiceq = _Invoice;
+                        _Invoiceq.NumeroDEI = _context.Invoice.Where(q=>q.BranchId==_Invoice.BranchId)
+                                              .Where(q=>q.IdPuntoEmision==_Invoice.IdPuntoEmision).Max(q => q.NumeroDEI);
+                        _Invoiceq.NumeroDEI += 1;
+
+                        
+                      //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_Invoiceq.UsuarioCreacion).Select(q=>q.)
+
+                        Int64 IdCai =await  _context.NumeracionSAR
+                                                 .Where(q=>q.BranchId==_Invoiceq.BranchId)
+                                                 .Where(q=>q.IdPuntoEmision==_Invoiceq.IdPuntoEmision)                                           
+                                                 .Where(q => q.Estado == "A").Select(q => q.IdCAI).FirstOrDefaultAsync();
+
+                        _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                        //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
+                        _Invoiceq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+                        _context.Invoice.Add(_Invoiceq);
+                        //await _context.SaveChangesAsync();
+                        foreach (var item in _Invoice.InvoiceLine)
+                        {
+                            item.InvoiceId = _Invoiceq.InvoiceId;
+                            _context.InvoiceLine.Add(item);
+                        }                       
+
+                        await _context.SaveChangesAsync();
+
+                        JournalEntryConfiguration _journalentryconfiguration = await _context.JournalEntryConfiguration
+                                                                       .Where(q => q.TransactionId == 1)
+                                                                       .Include(q => q.JournalEntryConfigurationLine).FirstOrDefaultAsync();
+
+                        if(_journalentryconfiguration!=null)
+                        {
+                            //Crear el asiento contable configurado
+                            //.............................///////
+                            JournalEntry _je = new JournalEntry
+                            {
+                                Date = _Invoiceq.InvoiceDate,
+                                Memo = "Factura de ventas",
+                                DatePosted = _Invoiceq.InvoiceDate,
+                                ModifiedDate = DateTime.Now,
+                                CreatedDate = DateTime.Now,
+                                ModifiedUser = _Invoiceq.UsuarioModificacion,
+                            };
+
+                            foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
+                            {
+                                _je.JournalEntryLines.Add(new JournalEntryLine
+                                {
+                                    AccountId = Convert.ToInt32(item.AccountId),
+                                    Description = item.AccountName,
+                                    Credit = item.DebitCredit =="Credito"? _Invoiceq.Total : 0,
+                                    Debit = item.DebitCredit == "Debito" ? _Invoiceq.Total : 0,
+                                    CreatedDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now,
+                                    
+                                    Memo = "",
+                                });
+
+
+                            }  
+                        }
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Invoice.CustomerId,
+                            DocType = "Invoice",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Invoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Invoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Invoice.UsuarioCreacion,
+                            UsuarioModificacion = _Invoice.UsuarioModificacion,
+                            UsuarioEjecucion = _Invoice.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                    }
+                }
             }
             catch (Exception ex)
             {
