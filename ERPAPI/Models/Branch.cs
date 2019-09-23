@@ -83,5 +83,7 @@ namespace ERPAPI.Models
         public DateTime FechaCreacion { get; set; }
         [Required]
         public DateTime FechaModificacion { get; set; }
+
+        List<PuntoEmision> PuntoEmision = new List<PuntoEmision>();
     }
 }

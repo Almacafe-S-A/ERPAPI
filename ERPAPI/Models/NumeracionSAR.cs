@@ -14,11 +14,18 @@ namespace ERPAPI.Models
         public Int64 IdNumeracion { get; set; }
 
         public Int64 IdCAI { get; set; }
+
+        public string _cai { get; set; }
+
         public string NoInicio { get; set; }
         public string NoFin { get; set; }
         public DateTime FechaLimite { get; set; }
         public int CantidadOtorgada { get; set; }
         public string SiguienteNumero { get; set; }
+
+        public Int64 BranchId { get; set; }
+        public string BranchName { get; set; }
+
         public Int64 IdPuntoEmision { get; set; }
         public string PuntoEmision { get; set; }
         public Int64 DocTypeId { get; set; }

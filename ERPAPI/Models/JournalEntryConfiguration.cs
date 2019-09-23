@@ -10,9 +10,9 @@ namespace ERPAPI.Models
     {
          [Display(Name = "Id")]
          public Int64 JournalEntryConfigurationId { get; set; }
-         [Display(Name = "Transacción")]
-         public Int64 TransactionId { get; set; }
-         [Display(Name = "Transacción")]
+        [Display(Name = "Transacción/Tipo Documento")]
+        public Int64 TransactionId { get; set; }
+         [Display(Name = "Transacción/Tipo Documento")]
          public string Transaction { get; set; }
 
         [Display(Name = "Descripción")]
@@ -37,7 +37,7 @@ namespace ERPAPI.Models
      
 
 
-        List<JournalEntryConfigurationLine> JournalEntryConfigurationLine = new List<JournalEntryConfigurationLine>();
+       public List<JournalEntryConfigurationLine> JournalEntryConfigurationLine = new List<JournalEntryConfigurationLine>();
 
     }
 }
