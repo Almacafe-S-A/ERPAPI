@@ -210,8 +210,11 @@ namespace ERPAPI.Controllers
                                join d in _context.Vendor on c.VendorId equals d.VendorId where c.ProductId == ProductId
                                    //join e in _context.Product on c.ProductId equals e.ProductId 
                                    select new Vendor
-                               {                                   
-                                   VendorName = d.VendorName
+                               {                  
+                                   VendorId = d.VendorId,
+                                   VendorName = d.VendorName,
+                                   Phone = d.Phone,
+                                   Address = d.Address,
 
 
                                }
