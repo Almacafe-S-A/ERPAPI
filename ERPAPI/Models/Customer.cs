@@ -73,6 +73,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Teléfono")]
         public string Phone { get; set; }
+
+        [Display(Name = "Teléfono de trabajo")]
+        public string WorkPhone { get; set; }
         //[Display(Name = "Party")]
         //public virtual Party Party { get; set; }
         //public int? PartyId { get; set; }
