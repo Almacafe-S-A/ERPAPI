@@ -214,7 +214,7 @@ namespace ERPAPI.Controllers
                                    VendorId = d.VendorId,
                                    VendorName = d.VendorName,
                                    Phone = d.Phone,
-                                   Address = d.Address,
+                                   Address = d.Address
 
 
                                }

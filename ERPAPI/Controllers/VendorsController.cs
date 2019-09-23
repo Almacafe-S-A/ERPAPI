@@ -312,6 +312,7 @@ namespace coderush.Controllers.Api
 
                                    select new Product
                                    {
+                                       ProductId = e.ProductId,
                                        ProductCode = e.ProductCode,
                                        ProductName =e.ProductName,
                                        DefaultBuyingPrice = e.DefaultBuyingPrice,
