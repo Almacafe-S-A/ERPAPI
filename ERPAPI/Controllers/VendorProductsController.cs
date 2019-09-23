@@ -97,44 +97,7 @@ namespace coderush.Controllers.Api
 
             return await Task.Run(() => Ok(Items));
         }
-
-        // api/VendorProductGetVendorProductById
-        [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetVendorProductsByVendorId(int Id)
-        {
-            VendorProduct Items = new VendorProduct();
-            try
-            {
-                Items = await _context.VendorProduct.Include(x => x.Product).Where(q => q.VendorId.Equals(Id)).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-        // api/VendorProductGetVendorProductById
-        [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetVendorProductsByProductId(int Id)
-        {
-            VendorProduct Items = new VendorProduct();
-            try
-            {
-                Items = await _context.VendorProduct.Include(x => x.Vendor).Where(q => q.ProductId.Equals(Id)).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            return await Task.Run(() => Ok(Items));
-        }
+        
 
         [HttpPost("[action]")]
         public async Task<ActionResult<VendorProduct>> Insert([FromBody]VendorProduct payload)

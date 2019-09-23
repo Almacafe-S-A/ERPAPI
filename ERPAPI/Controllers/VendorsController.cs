@@ -312,9 +312,12 @@ namespace coderush.Controllers.Api
 
                                    select new Product
                                    {
-                                       ProductName =e.ProductName
-
-
+                                       ProductId = e.ProductId,
+                                       ProductCode = e.ProductCode,
+                                       ProductName =e.ProductName,
+                                       DefaultBuyingPrice = e.DefaultBuyingPrice,
+                                       DefaultSellingPrice = e.DefaultSellingPrice,
+                                       Description = e.Description
                                    }
                                ).ToListAsync();
 
