@@ -24,10 +24,23 @@ namespace ERPAPI.Models
 
         [Display(Name = "Id Clase Cuenta")]
         public int AccountId { get; set; }
-        [Display(Name = "Tipo de Movimiento")]
-        public DrOrCrSide DrCr { get; set; }
-        [Display(Name = "Monto Moviminto")]
-        public double Amount { get; set; }
+        //[Display(Name = "Tipo de Movimiento")]
+       // public DrOrCrSide DrCr { get; set; }
+        [Display(Name = "Débito")]
+        public double Debit { get; set; }
+        [Display(Name = "Crédito")]
+        public double Credit { get; set; }
+
+        [Display(Name = "Débito moneda del sistema ")]
+        public double DebitSy { get; set; }
+        [Display(Name = "Crédito moneda del sistema")]
+        public double CreditSy { get; set; }
+
+        [Display(Name = "Débito moneda extranjera ")]
+        public double DebitME { get; set; }
+        [Display(Name = "Crédito moneda extranjera")]
+        public double CreditME { get; set; }
+
         public string Memo { get; set; }
         public virtual JournalEntry JournalEntry { get; set; }
         public virtual Accounting Account { get; set; }
@@ -38,10 +51,10 @@ namespace ERPAPI.Models
         [Display(Name = "Usuario de modificacion")]
         public string ModifiedUser { get; set; }
         [Required]
-        [Display(Name = "Fecha de creacion")]
+        [Display(Name = "Fecha de creación")]
         public DateTime CreatedDate { get; set; }
         [Required]
-        [Display(Name = "Fecha de Modificacion")]
+        [Display(Name = "Fecha de Modificación")]
         public DateTime ModifiedDate { get; set; }
 
     }
