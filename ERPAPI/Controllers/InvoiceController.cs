@@ -127,8 +127,16 @@ namespace ERPAPI.Controllers
                     {
 
                         _Invoiceq = _Invoice;
-                        _Invoiceq.NumeroDEI = _context.Invoice.Where(q=>q.BranchId==_Invoice.BranchId)
-                                              .Where(q=>q.IdPuntoEmision==_Invoice.IdPuntoEmision).Max(q => q.NumeroDEI);
+
+                        Invoice _invoice = await      _context.Invoice.Where(q => q.BranchId == _Invoice.BranchId)
+                                             .Where(q => q.IdPuntoEmision == _Invoice.IdPuntoEmision)
+                                             .FirstOrDefaultAsync();
+                        if (_invoice != null)
+                        {
+                            _Invoiceq.NumeroDEI = _context.Invoice.Where(q => q.BranchId == _Invoice.BranchId)
+                                                  .Where(q => q.IdPuntoEmision == _Invoice.IdPuntoEmision).Max(q => q.NumeroDEI);
+                        }
+
                         _Invoiceq.NumeroDEI += 1;
 
                         
@@ -137,7 +145,13 @@ namespace ERPAPI.Controllers
                         Int64 IdCai =await  _context.NumeracionSAR
                                                  .Where(q=>q.BranchId==_Invoiceq.BranchId)
                                                  .Where(q=>q.IdPuntoEmision==_Invoiceq.IdPuntoEmision)                                           
-                                                 .Where(q => q.Estado == "A").Select(q => q.IdCAI).FirstOrDefaultAsync();
+                                                 .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
+
+                         
+                        if(IdCai==0)
+                        {
+                            return BadRequest("No existe un CAI activo para el punto de emisión");
+                        }
 
                         _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                         //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
@@ -152,9 +166,10 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
-                        JournalEntryConfiguration _journalentryconfiguration = await _context.JournalEntryConfiguration
+                        JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
                                                                        .Where(q => q.TransactionId == 1)
-                                                                       .Include(q => q.JournalEntryConfigurationLine).FirstOrDefaultAsync();
+                                                                       .Include(q => q.JournalEntryConfigurationLine)
+                                                                       ).FirstOrDefaultAsync();
 
                         if(_journalentryconfiguration!=null)
                         {
@@ -168,7 +183,10 @@ namespace ERPAPI.Controllers
                                 ModifiedDate = DateTime.Now,
                                 CreatedDate = DateTime.Now,
                                 ModifiedUser = _Invoiceq.UsuarioModificacion,
+                                CreatedUser = _Invoiceq.UsuarioCreacion,
                             };
+
+                           
 
                             foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
                             {
@@ -180,12 +198,18 @@ namespace ERPAPI.Controllers
                                     Debit = item.DebitCredit == "Debito" ? _Invoiceq.Total : 0,
                                     CreatedDate = DateTime.Now,
                                     ModifiedDate = DateTime.Now,
-                                    
+                                    CreatedUser = _Invoiceq.UsuarioCreacion,
+                                    ModifiedUser = _Invoiceq.UsuarioModificacion,
                                     Memo = "",
                                 });
 
+                               // _context.JournalEntryLine.Add(_je);
 
-                            }  
+                            }
+
+                            _context.JournalEntry.Add(_je);
+
+                            await  _context.SaveChangesAsync();
                         }
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora

@@ -37,7 +37,7 @@ namespace ERPAPI.Models
      
 
 
-       public List<JournalEntryConfigurationLine> JournalEntryConfigurationLine = new List<JournalEntryConfigurationLine>();
+       public List<JournalEntryConfigurationLine> JournalEntryConfigurationLine { get; set; } = new List<JournalEntryConfigurationLine>();
 
     }
 }
