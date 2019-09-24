@@ -69,13 +69,16 @@ namespace ERPAPI.Controllers
             List<Product> Items = new List<Product>();
             try
             {
-                Items = await _context.Product.Include(c => c.Branch)
+                Items = await _context.Product
+                                             .Include(c => c.Branch)
                                               //.Include(c => c.Currency)
                                               //.Include(c => c.UnitOfMeasure)
                                               .Include(c => c.Marca)
                                               .Include(c => c.Linea)
                                               .Include(c => c.Grupo)
-                                              .ToListAsync();               
+                                              .ToListAsync();    
+               
+                 
             }
             catch (Exception ex)
             {
