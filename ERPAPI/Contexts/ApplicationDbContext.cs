@@ -214,7 +214,8 @@ namespace ERP.Contexts
 
         public DbSet<VendorProduct> VendorProduct { get; set; }
 
-
+        public DbSet<Conciliacion> Conciliacion { get; set; }
+        public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
