@@ -321,7 +321,6 @@ namespace coderush.Controllers.Api
                                        MarcaId = e.MarcaId,
                                        LineaId = e.LineaId,
                                        GrupoId = e.GrupoId,
-                                       s
                                        
                                    }
                                ).ToListAsync();
