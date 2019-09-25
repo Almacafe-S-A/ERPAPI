@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190924175339_Conciliacion_ConciliacionLinea")]
+    partial class Conciliacion_ConciliacionLinea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -736,33 +738,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Branch");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.BranchPorDepartamento", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdDepartamento");
-
-                    b.Property<string>("NombreDepartamento");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BranchPorDepartamento");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.CAI", b =>
                 {
                     b.Property<long>("IdCAI")
@@ -1050,31 +1025,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("City");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Comision", b =>
-                {
-                    b.Property<long>("ComisionId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description");
-
-                    b.Property<long>("EstadoId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("TipoComision");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("ComisionId");
-
-                    b.ToTable("Comision");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.CompanyInfo", b =>
                 {
                     b.Property<long>("CompanyInfoId")
@@ -1238,6 +1188,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
+
+                    b.Property<double>("QtyMin");
 
                     b.Property<double>("QtyMonth");
 
@@ -2168,10 +2120,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool?>("AplicaComision");
-
-                    b.Property<long?>("ComisionId");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
@@ -2179,8 +2127,6 @@ namespace ERPAPI.Migrations
                     b.Property<long?>("IdEstado");
 
                     b.Property<string>("NombreDepartamento");
-
-                    b.Property<long?>("PeridicidadId");
 
                     b.Property<string>("Usuariocreacion");
 
@@ -2197,15 +2143,15 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("DireccionDependientes");
+                    b.Property<string>("Direccion");
 
-                    b.Property<int?>("Edad");
+                    b.Property<int>("Edad");
 
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<DateTime?>("FechaNacimiento");
+                    b.Property<DateTime>("FechaNacimiento");
 
                     b.Property<long?>("IdEmpleado");
 
@@ -2213,7 +2159,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Parentezco");
 
-                    b.Property<string>("TelefonoDependientes");
+                    b.Property<string>("Telefono");
 
                     b.Property<string>("Usuariocreacion");
 
@@ -4032,8 +3978,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DebitCredit");
 
-                    b.Property<long>("DebitCreditId");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -4509,31 +4453,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdPlanillaempleado");
 
                     b.ToTable("PayrollEmployee");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PeriodicidadPago", b =>
-                {
-                    b.Property<long>("PeriodicidadId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description");
-
-                    b.Property<long>("EstadoId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("Nombre");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("PeriodicidadId");
-
-                    b.ToTable("PeriodicidadPago");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Policy", b =>
@@ -5937,22 +5856,18 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Identidad")
                         .IsRequired();
 
-                    b.Property<string>("IdentityRepresentative");
-
                     b.Property<string>("Phone");
 
                     b.Property<string>("PhoneReferenceone");
 
                     b.Property<string>("PhoneReferencetwo");
 
+                    b.Property<double>("QtyMin");
+
                     b.Property<double>("QtyMonth");
 
                     b.Property<string>("RTN")
                         .IsRequired();
-
-                    b.Property<string>("RTNRepresentative");
-
-                    b.Property<string>("RepresentativeName");
 
                     b.Property<long>("StateId");
 

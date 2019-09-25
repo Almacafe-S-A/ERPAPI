@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190924210117_PeriodicidadComisionBranch")]
+    partial class PeriodicidadComisionBranch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1238,6 +1240,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
+
+                    b.Property<double>("QtyMin");
 
                     b.Property<double>("QtyMonth");
 
@@ -4032,8 +4036,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DebitCredit");
 
-                    b.Property<long>("DebitCreditId");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -5937,22 +5939,18 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Identidad")
                         .IsRequired();
 
-                    b.Property<string>("IdentityRepresentative");
-
                     b.Property<string>("Phone");
 
                     b.Property<string>("PhoneReferenceone");
 
                     b.Property<string>("PhoneReferencetwo");
 
+                    b.Property<double>("QtyMin");
+
                     b.Property<double>("QtyMonth");
 
                     b.Property<string>("RTN")
                         .IsRequired();
-
-                    b.Property<string>("RTNRepresentative");
-
-                    b.Property<string>("RepresentativeName");
 
                     b.Property<long>("StateId");
 
