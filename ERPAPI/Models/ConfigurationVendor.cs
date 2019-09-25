@@ -14,9 +14,6 @@ namespace ERPAPI.Models
         public Int64 ConfigurationVendorId { get; set; }
 
         [Required]
-        [Display(Name = "Monto Minimo")]
-        public double QtyMin { get; set; }
-        [Required]
         [Display(Name = "Monto Mensual")]
         public double QtyMonth { get; set; }
         [Display(Name = "Id de estado")]

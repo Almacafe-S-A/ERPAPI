@@ -59,9 +59,6 @@ namespace ERPAPI.Models
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
         [Required]
-        [Display(Name = "Monto Minimo")]
-        public double QtyMin { get; set; }
-        [Required]
         [Display(Name = "Monto Mensual")]
         public double QtyMonth { get; set; }
         [Display(Name = "Telefono Referencia")]
@@ -82,7 +79,13 @@ namespace ERPAPI.Models
         public Estados Estados { get; set; }
         public string Estado { get; set; }
 
-
+        [Display(Name = "Identidad del repressentante Legal")]
+        public string IdentityRepresentative { get; set; }
+        [Display(Name = "RTN del Proveedor")]
+        public string RTNRepresentative { get; set; }
+        [Display(Name = "Nombre del Repreentante")]
+        public string RepresentativeName { get; set; }
+        
 
 
     }
