@@ -167,6 +167,80 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityCustomers()
+        {
+            try
+            {
+                var Items = await _context.Customer.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityProduct()
+        {
+            try
+            {
+                var Items = await _context.Product.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityVendor()
+        {
+            try
+            {
+                var Items = await _context.Vendor.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityEmployees()
+        {
+            try
+            {
+                var Items = await _context.Employees.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+
+
+
 
 
     }
