@@ -128,4 +128,13 @@ namespace ERPAPI.Models
 
         public List<ProformaInvoiceLine> ProformaInvoiceLine { get; set; } = new List<ProformaInvoiceLine>();
     }
+
+
+    public class ProformaInvoiceDTO : ProformaInvoice
+    {
+        public Kardex Kardex { get; set; } = new Kardex();
+    }
+
+
+
 }

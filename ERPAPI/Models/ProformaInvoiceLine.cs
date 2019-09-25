@@ -36,18 +36,26 @@ namespace ERPAPI.Models
 
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
-          [Display(Name = "Cantidad")]
+
+        [Display(Name = "Cantidad")]
         public double Quantity { get; set; }
         [Display(Name = "Precio")]
         public double Price { get; set; }
         [Display(Name = "Monto")]
         public double Amount { get; set; }
-          [Display(Name = "Porcentaje descuento")]
+
+        [Display(Name = "Porcentaje descuento")]
         public double DiscountPercentage { get; set; }
-          [Display(Name = "Monto descuento")]
+
+        [Display(Name = "Monto descuento")]
         public double DiscountAmount { get; set; }
 
+        [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
+
+        [Display(Name = "Bodega")]
+        public string WareHouseName { get; set; }
+
         [Display(Name = "Centro de costos")]
         public Int64 CenterCostId { get; set; }
 
