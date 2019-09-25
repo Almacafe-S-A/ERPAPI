@@ -20,6 +20,9 @@ namespace ERPAPI.Models
         public string AccountName { get; set; }
 
         [Display(Name = "Indicador Débito o Crédito")]
+        public Int64 DebitCreditId { get; set; }
+
+        [Display(Name = "Indicador Débito o Crédito")]
         public string DebitCredit { get; set; }
 
 
