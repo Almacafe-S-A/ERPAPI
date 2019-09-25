@@ -117,6 +117,7 @@
     <Compile Remove="Migrations\20190922171722_InvoiceLineIdentity.Designer.cs" />
     <Compile Remove="Migrations\20190924170817_Conciliacion_ConciliacionLinea.cs" />
     <Compile Remove="Migrations\20190924170817_Conciliacion_ConciliacionLinea.Designer.cs" />
+    <Compile Remove="Migrations\20190925145204_Prueba.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />

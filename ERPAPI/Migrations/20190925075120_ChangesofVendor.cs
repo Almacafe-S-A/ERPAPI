@@ -29,18 +29,6 @@ namespace ERPAPI.Migrations
                 table: "Vendor",
                 nullable: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_JournalEntryConfigurationLine_JournalEntryConfigurationId",
-                table: "JournalEntryConfigurationLine",
-                column: "JournalEntryConfigurationId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_JournalEntryConfigurationLine_JournalEntryConfiguration_JournalEntryConfigurationId",
-                table: "JournalEntryConfigurationLine",
-                column: "JournalEntryConfigurationId",
-                principalTable: "JournalEntryConfiguration",
-                principalColumn: "JournalEntryConfigurationId",
-                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
