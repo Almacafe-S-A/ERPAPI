@@ -128,7 +128,17 @@ namespace ERPAPI.Controllers
                     {
                         _JournalEntryq = _JournalEntry;
                         _context.JournalEntry.Add(_JournalEntryq);
+                        // await _context.SaveChangesAsync();
+
+                        foreach (var item in _JournalEntry.JournalEntryLines)
+                        {
+                            item.JournalEntryId = _JournalEntry.JournalEntryId;
+                            _context.JournalEntryLine.Add(item);
+                        }
+
                         await _context.SaveChangesAsync();
+
+
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
