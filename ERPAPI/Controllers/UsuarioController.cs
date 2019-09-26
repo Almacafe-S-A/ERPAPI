@@ -262,11 +262,12 @@ namespace ERPAPI.Controllers
         {
             try
             {
+               
                 ApplicationUser ApplicationUserq = (from c in _context.Users
                   .Where(q => q.Id == _usuario.Id)
                                                 select c
                     ).FirstOrDefault();
-
+                _usuario.BranchId = _usuario.Branch.BranchId;
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;
 
