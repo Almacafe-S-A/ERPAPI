@@ -176,4 +176,18 @@ namespace ERPAPI.Models
         }
 
     }
+
+
+    public class AccountingDTO : Accounting
+    {
+        public AccountingDTO()
+        {
+            Children = new List<AccountingDTO>();
+        }
+        public List<AccountingDTO> Children { get; set; } 
+
+        //public List<AccountingDTO> Children = new List<AccountingDTO>();
+    }
+
+
 }
