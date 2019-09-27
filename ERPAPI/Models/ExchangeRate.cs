@@ -22,9 +22,9 @@ namespace ERPAPI.Models
 
         public Currency Currency { get; set; }
 
-        //[Display(Name = "Moneda")]
-        //[ForeignKey("CurrencyId")]
-        //public Int64 CurrencyId { get; set; }
+        [Display(Name = "Moneda")]
+        [ForeignKey("CurrencyId")]
+        public int CurrencyId { get; set; }
 
         [Display(Name = "Moneda")]
        

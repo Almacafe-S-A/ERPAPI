@@ -74,7 +74,7 @@ namespace ERPAPI.Models
 
         public virtual CompanyInfo Company { get; set; }
 
-        public virtual ICollection<Accounting> ChildAccounts { get; set; }
+        public virtual List<Accounting> ChildAccounts { get; set; }
         public virtual List<AccountingChilds> AccountingChilds { get; set; }
         [NotMapped]
         public virtual ICollection<MainContraAccount> ContraAccounts { get; set; }
@@ -182,11 +182,14 @@ namespace ERPAPI.Models
     {
         public AccountingDTO()
         {
-            Children = new List<AccountingDTO>();
+            
         }
-        public List<AccountingDTO> Children { get; set; } 
+    
+        public double Debit { get; set; }
 
-        //public List<AccountingDTO> Children = new List<AccountingDTO>();
+        public double Credit { get; set; }
+
+        public List<AccountingDTO> Children { get; set; } = new List<AccountingDTO>();
     }
 
 

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190926173522_currency")]
+    partial class currency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5106,140 +5108,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("PurchPartners");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.PurchaseOrder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int?>("BranchId");
-
-                    b.Property<int?>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<DateTime>("DatePlaced");
-
-                    b.Property<double>("Discount");
-
-                    b.Property<long?>("EstadoId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double?>("Freight");
-
-                    b.Property<string>("PONumber");
-
-                    b.Property<long?>("POTypeId");
-
-                    b.Property<string>("Remarks");
-
-                    b.Property<string>("Requisitioner");
-
-                    b.Property<long?>("ShippingTypeId");
-
-                    b.Property<string>("ShippingTypeName");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("Tax18");
-
-                    b.Property<double>("TaxAmount");
-
-                    b.Property<long?>("TaxId");
-
-                    b.Property<string>("TaxName");
-
-                    b.Property<decimal>("TaxRate");
-
-                    b.Property<string>("Terms");
-
-                    b.Property<string>("Title");
-
-                    b.Property<double>("Total");
-
-                    b.Property<double>("TotalExento");
-
-                    b.Property<double>("TotalExonerado");
-
-                    b.Property<double>("TotalGravado");
-
-                    b.Property<double>("TotalGravado18");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long?>("VendorId");
-
-                    b.Property<string>("VendorName");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("EstadoId");
-
-                    b.HasIndex("ShippingTypeId");
-
-                    b.HasIndex("TaxId");
-
-                    b.HasIndex("VendorId");
-
-                    b.ToTable("PurchaseOrder");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PurchaseOrderLine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("LineNumber");
-
-                    b.Property<double?>("Price");
-
-                    b.Property<string>("ProductDescription");
-
-                    b.Property<long?>("ProductId");
-
-                    b.Property<int>("PurchaseOrderId");
-
-                    b.Property<double?>("QtyOrdered");
-
-                    b.Property<double?>("QtyReceived");
-
-                    b.Property<double?>("QtyReceivedToDate");
-
-                    b.Property<long?>("TaxId");
-
-                    b.Property<string>("TaxName");
-
-                    b.Property<decimal>("TaxRate");
-
-                    b.Property<int>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("PurchaseOrderId");
-
-                    b.HasIndex("TaxId");
-
-                    b.HasIndex("UnitOfMeasureId");
-
-                    b.ToTable("PurchaseOrderLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.RecibosCertificado", b =>
                 {
                     b.Property<long>("IdReciboCertificado")
@@ -7361,58 +7229,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ProformaInvoice", "ProformaInvoice")
                         .WithMany("ProformaInvoiceLine")
                         .HasForeignKey("ProformaInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PurchaseOrder", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId");
-
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId");
-
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "POType")
-                        .WithMany()
-                        .HasForeignKey("EstadoId");
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("EstadoId");
-
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "ShippingType")
-                        .WithMany()
-                        .HasForeignKey("ShippingTypeId");
-
-                    b.HasOne("ERPAPI.Models.Tax", "Tax")
-                        .WithMany()
-                        .HasForeignKey("TaxId");
-
-                    b.HasOne("ERPAPI.Models.Vendor", "Vendor")
-                        .WithMany()
-                        .HasForeignKey("VendorId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PurchaseOrderLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("ERPAPI.Models.PurchaseOrder", "PurchaseOrder")
-                        .WithMany("PurchaseOrderLines")
-                        .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Tax", "Tax")
-                        .WithMany()
-                        .HasForeignKey("TaxId");
-
-                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasureId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
