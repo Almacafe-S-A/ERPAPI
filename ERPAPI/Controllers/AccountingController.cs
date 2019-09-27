@@ -29,6 +29,69 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
+
+
+
+        /// <summary>
+        /// Obtiene los Datos de la tabla Accounting por clasificacion de cuenta.
+        /// </summary>
+        [HttpGet("[action]/{TypeAccountId}")]
+        public async Task<IActionResult> GetAccountingType(Int64 TypeAccountId)
+
+        {
+            List<AccountingDTO> Items = new List<AccountingDTO>();
+            try
+            {
+                List<Accounting> _cuentas = new List<Accounting>();
+
+                if (TypeAccountId == 0)
+                {
+                    _cuentas = await _context.Accounting.ToListAsync();
+                }
+                else
+                {
+                    _cuentas =  await _context.Accounting
+                        .Where(q => q.TypeAccountId == TypeAccountId).ToListAsync();
+                }
+
+                Items = (from c in _cuentas
+                         select new AccountingDTO
+                         {
+                             AccountId = c.AccountId,
+                             AccountName = c.AccountCode + "--" + c.AccountName,
+                             ParentAccountId = c.ParentAccountId,
+                             Credit = Credit(c.AccountId),
+                             Debit = Debit(c.AccountId),
+                             AccountBalance = c.AccountBalance
+                         }
+                               )
+                               .ToList();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+
+        }
+
+
+        private double Debit(Int64 AccountId)
+        {
+            return _context.JournalEntryLine
+                    .Where(q => q.AccountId == AccountId).Sum(q => q.Debit);
+        }
+
+        private double Credit(Int64 AccountId)
+        {
+            return _context.JournalEntryLine
+                    .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
+        }
+
         /// <summary>
         /// Obtiene los Datos de la Account en una lista.
         /// </summary>
