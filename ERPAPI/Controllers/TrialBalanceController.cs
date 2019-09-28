@@ -141,20 +141,67 @@ namespace ERPAPI.Controllers
             List<AccountingDTO> Items = new List<AccountingDTO>();
             try
             {
-                List<Accounting> _cuentas = await _context.Accounting.ToListAsync();
-                Items =  (from c in _cuentas
-                          let tieneSaldo = _cuentas.Where(o => o.IsCash == true).Any()
-                          select new AccountingDTO
-                               {
-                                   AccountId = c.AccountId,
-                                   AccountName = c.AccountCode + "--" + c.AccountName,
-                                   ParentAccountId = c.ParentAccountId,
-                                   Credit = tieneSaldo? Credit(c.AccountId,_Fecha):0,
-                                   Debit = tieneSaldo?Debit(c.AccountId, _Fecha):0,
-                                   AccountBalance = Balance(c.AccountId,_Fecha)
-                               }
-                          )
-                               .ToList();
+                string trialbalance = "";
+
+                  trialbalance = "SELECT a.AccountId,a.AccountName,a.ParentAccountId,a.AccountCode "
+                    + $" , dbo.[SumaCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) as Credit"
+                    + $" , dbo.[SumaDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) as Debit"              
+                    + $", dbo.[SumaDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) -  "
+                    + $" dbo.[SumaCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) AccountBalance "
+                    + $" FROM Accounting a       "
+                   + " GROUP BY a.AccountId, a.AccountName,a.ParentAccountId,a.AccountCode ";
+
+
+                using (var dr = await _context.Database.ExecuteSqlQueryAsync(trialbalance))
+                {
+                    // Output rows.
+                    var reader = dr.DbDataReader;
+                    while (reader.Read())
+                    {
+                        Items.Add(new AccountingDTO
+                        {
+                            AccountId = reader["AccountId"]== DBNull.Value ?0: Convert.ToInt64(reader["AccountId"]),
+                            AccountName = reader["AccountName"]==DBNull.Value?"": Convert.ToString(reader["AccountName"]),
+                            AccountCode = reader["AccountCode"] == DBNull.Value ? "" : Convert.ToString(reader["AccountCode"]),
+                            ParentAccountId = reader["ParentAccountId"]==DBNull.Value ? 0 : Convert.ToInt32(reader["ParentAccountId"]),
+                            Credit = reader["Credit"]==DBNull.Value?0 : Convert.ToDouble(reader["Credit"]),
+                            Debit = reader["Debit"]==DBNull.Value ? 0: Convert.ToDouble(reader["Debit"]),
+                            AccountBalance = reader["AccountBalance"]==DBNull.Value?0: Convert.ToDouble(reader["AccountBalance"]),
+                        });
+                       //Console.Write("{0}\t{1}\t{2} \n", reader[0], reader[1], reader[2]);
+                    }
+                }
+
+
+                Items = (from c in Items
+                       
+                         select new AccountingDTO
+                         {
+                             AccountId = c.AccountId,
+                             AccountName = c.AccountCode + "--" + c.AccountName,
+                             ParentAccountId = c.ParentAccountId==0? null : c.ParentAccountId,
+                             Credit = c.Credit,
+                             Debit = c.Debit,
+                             AccountBalance = c.AccountBalance
+
+                         }).ToList();
+
+             
+
+                //List<Accounting> _cuentas = await _context.Accounting.ToListAsync();
+                //Items =  (from c in _cuentas
+                //          let tieneSaldo = _cuentas.Where(o => o.IsCash == true).Any()
+                //          select new AccountingDTO
+                //               {
+                //                   AccountId = c.AccountId,
+                //                   AccountName = c.AccountCode + "--" + c.AccountName,
+                //                   ParentAccountId = c.ParentAccountId,
+                //                   Credit = tieneSaldo? Credit(c.AccountId,_Fecha):0,
+                //                   Debit = tieneSaldo?Debit(c.AccountId, _Fecha):0,
+                //                   AccountBalance = Balance(c.AccountId,_Fecha)
+                //               }
+                //          )
+                //               .ToList();
             }
             catch (Exception ex)
             {
