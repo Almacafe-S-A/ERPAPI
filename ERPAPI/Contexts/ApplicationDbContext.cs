@@ -219,6 +219,11 @@ namespace ERP.Contexts
         public DbSet<Conciliacion> Conciliacion { get; set; }
         public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
 
+        public DbSet<PurchaseOrder> PurchaseOrder { get; set; }
+
+        public DbSet<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
