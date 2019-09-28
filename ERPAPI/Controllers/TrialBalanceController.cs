@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Helpers;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -91,8 +92,8 @@ namespace ERPAPI.Controllers
                                           ParentAccountId = c.ParentAccountId,
                                           // ChildAccounts = tieneHijos ? ObtenerHijos(c.AccountId, categoriasList) : null,
                                           Children = ObtenerHijos(c.AccountId, categoriasList),
-                                          Debit = Debit(c.AccountId),
-                                          Credit = Credit(c.AccountId),
+                                         // Debit = Debit(c.AccountId),
+                                         // Credit = Credit(c.AccountId),
 
                                       }).ToList();
 
@@ -133,8 +134,8 @@ namespace ERPAPI.Controllers
             return material;
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccounting()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetAccounting([FromBody]Fechas _Fecha)
 
         {
             List<AccountingDTO> Items = new List<AccountingDTO>();
@@ -142,16 +143,17 @@ namespace ERPAPI.Controllers
             {
                 List<Accounting> _cuentas = await _context.Accounting.ToListAsync();
                 Items =  (from c in _cuentas
-                               select new AccountingDTO
+                          let tieneSaldo = _cuentas.Where(o => o.IsCash == true).Any()
+                          select new AccountingDTO
                                {
                                    AccountId = c.AccountId,
                                    AccountName = c.AccountCode + "--" + c.AccountName,
                                    ParentAccountId = c.ParentAccountId,
-                                   Credit = Credit(c.AccountId),
-                                   Debit = Debit(c.AccountId),
-                                   AccountBalance = c.AccountBalance
+                                   Credit = tieneSaldo? Credit(c.AccountId,_Fecha):0,
+                                   Debit = tieneSaldo?Debit(c.AccountId, _Fecha):0,
+                                   AccountBalance = Balance(c.AccountId,_Fecha)
                                }
-                               )
+                          )
                                .ToList();
             }
             catch (Exception ex)
@@ -167,16 +169,49 @@ namespace ERPAPI.Controllers
         }
 
 
-        private double Debit(Int64 AccountId)
+        private double Debit(Int64 AccountId,Fechas fechas)
         {
-            return _context.JournalEntryLine
-                    .Where(q => q.AccountId == AccountId).Sum(q => q.Debit);
+
+            //return _context.JournalEntryLine
+            //        .Where(q => q.AccountId == AccountId).Sum(q => q.Debit);
+            double debito = 0;
+            debito = (from c in _context.JournalEntryLine
+                     join d in _context.JournalEntry on c.JournalEntryId equals d.JournalEntryId
+                     where c.AccountId == AccountId && (Convert.ToDateTime(d.Date.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(fechas.FechaInicio.ToString("dd/MM/yyyy")) 
+                      && Convert.ToDateTime(d.Date.ToString("dd/MM/yyyy")) <= Convert.ToDateTime(fechas.FechaInicio.ToString("dd/MM/yyyy")))
+                     select c.Debit
+                    ).Sum();
+
+            return debito; 
+                    
+                   
         }
 
-        private double Credit(Int64 AccountId)
+        private double Credit(Int64 AccountId, Fechas fechas)
         {
-            return _context.JournalEntryLine
-                    .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
+            //return _context.JournalEntryLine
+            //        .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
+            double credito = 0;
+            credito = (from c in _context.JournalEntryLine
+             join d in _context.JournalEntry on c.JournalEntryId equals d.JournalEntryId
+                       where c.AccountId == AccountId && (Convert.ToDateTime(d.Date.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(fechas.FechaInicio.ToString("dd/MM/yyyy"))
+                                && Convert.ToDateTime(d.Date.ToString("dd/MM/yyyy")) <= Convert.ToDateTime(fechas.FechaInicio.ToString("dd/MM/yyyy")))
+                       select c.Credit
+                    ).Sum();
+            return credito;
+        }
+
+        private double Balance(Int64 AccountId, Fechas fechas)
+        {
+            //return _context.JournalEntryLine
+            //        .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
+
+            return (from c in _context.JournalEntryLine
+                    join d in _context.JournalEntry on c.JournalEntryId equals d.JournalEntryId
+                    where c.AccountId == AccountId && (Convert.ToDateTime(d.Date.ToString("dd/MM/yyyy")) >= Convert.ToDateTime(fechas.FechaInicio.ToString("dd/MM/yyyy"))
+                              && Convert.ToDateTime(d.Date.ToString("dd/MM/yyyy")) <= Convert.ToDateTime(fechas.FechaInicio.ToString("dd/MM/yyyy")))
+                    select c.Debit - c.Credit
+                    ).Sum();
         }
 
 

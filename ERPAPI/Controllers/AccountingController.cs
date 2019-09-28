@@ -55,17 +55,18 @@ namespace ERPAPI.Controllers
                 }
 
                 Items = (from c in _cuentas
+                         let tieneSaldo = _cuentas.Where(o => o.IsCash == true).Any()
                          select new AccountingDTO
                          {
                              AccountId = c.AccountId,
                              AccountName = c.AccountCode + "--" + c.AccountName,
                              ParentAccountId = c.ParentAccountId,
-                             Credit = Credit(c.AccountId),
-                             Debit = Debit(c.AccountId),
+                            // Credit = tieneSaldo==true? Credit(c.AccountId):0,
+                            // Debit = tieneSaldo==true?Debit(c.AccountId):0,
                              AccountBalance = c.AccountBalance
                          }
-                               )
-                               .ToList();
+                       )
+                      .ToList();
             }
             catch (Exception ex)
             {
@@ -82,7 +83,7 @@ namespace ERPAPI.Controllers
 
         private double Debit(Int64 AccountId)
         {
-            return _context.JournalEntryLine
+            return  _context.JournalEntryLine
                     .Where(q => q.AccountId == AccountId).Sum(q => q.Debit);
         }
 
