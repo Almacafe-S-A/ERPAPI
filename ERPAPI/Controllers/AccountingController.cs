@@ -62,7 +62,14 @@ namespace ERPAPI.Controllers
                              ParentAccountId = c.ParentAccountId,
                              Credit = Credit(c.AccountId),
                              Debit = Debit(c.AccountId),
-                             AccountBalance = c.AccountBalance
+                             AccountBalance = c.AccountBalance,
+                             IsCash = c.IsCash,
+                             Description =c.Description,
+                             TypeAccountId = c.TypeAccountId,
+                             BlockedInJournal =c.BlockedInJournal,
+                             AccountCode=c.AccountCode,
+                             HierarchyAccount =c.HierarchyAccount,
+                             
                          }
                                )
                                .ToList();
