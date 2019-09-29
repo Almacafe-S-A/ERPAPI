@@ -57,6 +57,7 @@ namespace ERPAPI.Controllers
                 Items = (from c in _cuentas
                          select new AccountingDTO
                          {
+                             CompanyInfoId=c.CompanyInfoId,
                              AccountId = c.AccountId,
                              AccountName = c.AccountCode + "--" + c.AccountName,
                              ParentAccountId = c.ParentAccountId,
@@ -69,7 +70,10 @@ namespace ERPAPI.Controllers
                              BlockedInJournal =c.BlockedInJournal,
                              AccountCode=c.AccountCode,
                              HierarchyAccount =c.HierarchyAccount,
-                             
+                             UsuarioCreacion=c.UsuarioCreacion,
+                             UsuarioModificacion=c.UsuarioModificacion,
+                             FechaCreacion=c.FechaCreacion,
+                             FechaModificacion=c.FechaModificacion
                          }
                                )
                                .ToList();
