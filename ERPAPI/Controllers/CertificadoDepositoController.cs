@@ -67,7 +67,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de CertificadoDepositoes 
+        /// Obtiene el Listado de Certificado Deposito 
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
@@ -89,10 +89,44 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            //  int Count = Items.Count();
             return await Task.Run(()=> Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los certificados liberados
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCertificadoDepositoLiberados()
+        {
+            List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
+            try
+            {
+                List<Int64> IdCD = await _context.EndososCertificados
+                                     .Select(q => q.IdCD).ToListAsync();
+
+
+
+                Items = await _context.CertificadoDeposito
+                    .ToListAsync();
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Obtiene los certificados de deposito por cliente.
+        /// </summary>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
         [HttpGet("[action]/{CustomerId}")]
         public async Task<IActionResult> GetCertificadoDepositoByCustomer(Int64 CustomerId)
         {
@@ -108,7 +142,6 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            //  int Count = Items.Count();
             return await Task.Run(()=> Ok(Items));
         }
 

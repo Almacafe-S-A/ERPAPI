@@ -1,4 +1,4 @@
-﻿ALTER FUNCTION [dbo].[SumaCredito]
+﻿CREATE FUNCTION [dbo].[SumaCredito]
 (  
 	 @FechaInicio DATETIME,
    @FechaFin DATETIME,
@@ -21,7 +21,7 @@ END
 GO
 
 
-ALTER FUNCTION [dbo].[SumaDebito]
+CREATE FUNCTION [dbo].[SumaDebito]
 (  
    @FechaInicio DATETIME,
    @FechaFin DATETIME,
@@ -53,14 +53,16 @@ LEFT JOIN  JournalEntryLine jel
   GROUP BY a.AccountId,a.AccountName,a.ParentAccountId
 
 
+SELECT a.AccountId,a.AccountName,a.ParentAccountId 
+  , dbo.[SumaCredito]('2019-01-01','2019-09-28',a.AccountId) as Credit 
+  , dbo.[SumaDebito]('2019-01-01','2019-09-28',a.AccountId) as Debit
+  ,dbo.[SumaDebito]('2019-001-01','2019-09-28',a.AccountId) -  
+  dbo.[SumaCredito]('2019-01-01','2019-09-28',a.AccountId) AccountBalance  FROM Accounting a     
+  GROUP BY a.AccountId, a.AccountName,a.ParentAccountId
+
   SELECT a.AccountId,a.AccountName,a.ParentAccountId 
-    , SUM(jel.Credit) AS Credit, SUM(jel.Debit) AS Debit 
-    , SUM(jel.Debit) - SUM(jel.Credit) AS AccountBalance 
-    FROM Accounting a                                        
-    LEFT JOIN  JournalEntryLine jel              
-    ON a.AccountId = jel.AccountId  
-     LEFT JOIN JournalEntry je  
-       ON jel.JournalEntryId = je.JournalEntryId                   
-    WHERE je.Date>= '2019-09-28' 
-    and je.Date<='2019-09-28' GROUP BY a.AccountId, a.AccountName,a.ParentAccountId
+    , dbo.[SumaCredito]('2019-09-28','2019-09-28',a.AccountId) as Credit
+    , dbo.[SumaDebito]('2019-09-28','2019-09-28',a.AccountId) as Debit
+    , dbo.[SumaDebito]('2019-09-28','2019-09-28',a.AccountId) -   dbo.[SumaCredito]('2019-09-28','2019-09-28',a.AccountId) AccountBalance 
+    FROM Accounting a        GROUP BY a.AccountId, a.AccountName,a.ParentAccountId
 
