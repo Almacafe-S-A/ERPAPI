@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -120,9 +121,41 @@ namespace ERPAPI.Controllers
             CostCenter _CostCenterq = new CostCenter();
             try
             {
-                _CostCenterq = _CostCenter;
-                _context.CostCenter.Add(_CostCenterq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _CostCenterq = _CostCenter;
+                         _context.CostCenter.Add(_CostCenterq);
+                            await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _CostCenterq.CostCenterId,
+                            DocType = "CostCenter",
+                            ClaseInicial =
+                           Newtonsoft.Json.JsonConvert.SerializeObject(_CostCenterq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _CostCenterq.UsuarioCreacion,
+                            UsuarioModificacion = _CostCenterq.UsuarioModificacion,
+                            UsuarioEjecucion = _CostCenterq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -145,7 +178,12 @@ namespace ERPAPI.Controllers
             CostCenter _CostCenterq = _CostCenter;
             try
             {
-                _CostCenterq = await (from c in _context.CostCenter
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _CostCenterq = await (from c in _context.CostCenter
                                  .Where(q => q.CostCenterId == _CostCenter.CostCenterId)
                                       select c
                                 ).FirstOrDefaultAsync();
@@ -154,6 +192,33 @@ namespace ERPAPI.Controllers
 
                 //_context.CostCenter.Update(_CostCenterq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _CostCenterq.CostCenterId,
+                            DocType = "CostCenter",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_CostCenterq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CostCenterq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Actualizar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _CostCenterq.UsuarioCreacion,
+                            UsuarioModificacion = _CostCenterq.UsuarioModificacion,
+                            UsuarioEjecucion = _CostCenterq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -176,12 +241,44 @@ namespace ERPAPI.Controllers
             CostCenter _CostCenterq = new CostCenter();
             try
             {
-                _CostCenterq = _context.CostCenter
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _CostCenterq = _context.CostCenter
                 .Where(x => x.CostCenterId == (Int64)_CostCenter.CostCenterId)
                 .FirstOrDefault();
 
                 _context.CostCenter.Remove(_CostCenterq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _CostCenterq.CostCenterId,
+                            DocType = "ContactPerson",
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_CostCenterq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CostCenterq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Eliminar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _CostCenterq.UsuarioCreacion,
+                            UsuarioModificacion = _CostCenterq.UsuarioModificacion,
+                            UsuarioEjecucion = _CostCenterq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
             }
             catch (Exception ex)
             {
