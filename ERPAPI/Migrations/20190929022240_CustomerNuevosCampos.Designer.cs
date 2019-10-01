@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190929022240_CustomerNuevosCampos")]
+    partial class CustomerNuevosCampos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -872,8 +874,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Aduana");
-
                     b.Property<string>("Almacenaje");
 
                     b.Property<long>("BankId");
@@ -919,8 +919,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Impreso");
 
                     b.Property<string>("LugarFirma");
-
-                    b.Property<string>("ManifiestoNo");
 
                     b.Property<double>("MontoGarantia");
 
@@ -1413,35 +1411,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("ControlPalletsLine");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.CostCenter", b =>
-                {
-                    b.Property<long>("CostCenterId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<string>("CostCenterName");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("CostCenterId");
-
-                    b.ToTable("CostCenter");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.CostListItem", b =>
                 {
                     b.Property<long>("CostListItemId")
@@ -1758,10 +1727,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Impreso");
 
                     b.Property<double>("Largo");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
 
                     b.Property<long>("TypeId");
 
@@ -3253,9 +3218,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("ControlPalletsId");
+                    b.Property<long>("CenterCostId");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("ControlPalletsId");
 
                     b.Property<string>("Description");
 
@@ -3513,9 +3478,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("ControlPalletsId");
+                    b.Property<long>("CenterCostId");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("ControlPalletsId");
 
                     b.Property<string>("Description");
 
@@ -3936,9 +3901,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("CenterCostId");
 
-                    b.Property<string>("CostCenterName");
+                    b.Property<string>("CenterCostName");
 
                     b.Property<string>("Description");
 
@@ -4073,9 +4038,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("AccountName");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("CenterCostId");
 
-                    b.Property<string>("CostCenterName");
+                    b.Property<string>("CenterCostName");
 
                     b.Property<string>("DebitCredit");
 
@@ -4108,11 +4073,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("AccountId1");
 
-                    b.Property<long>("CostCenterId")
-                        .HasMaxLength(30);
-
-                    b.Property<long>("CostCenterName");
-
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("CreatedUser")
@@ -4141,6 +4101,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
+
+                    b.Property<string>("Num")
+                        .HasMaxLength(30);
 
                     b.HasKey("JournalEntryLineId");
 
@@ -4208,13 +4171,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BranchName");
 
+                    b.Property<long>("CenterCostId");
+
+                    b.Property<string>("CenterCostName");
+
                     b.Property<long>("ControlEstibaId");
 
                     b.Property<string>("ControlEstibaName");
-
-                    b.Property<long>("CostCenterId");
-
-                    b.Property<string>("CostCenterName");
 
                     b.Property<DateTime>("DocumentDate");
 
@@ -4926,9 +4889,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("CenterCostId");
 
-                    b.Property<string>("CostCenterName");
+                    b.Property<string>("CenterCostName");
 
                     b.Property<string>("Description");
 
@@ -5693,8 +5656,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Aduana");
-
                     b.Property<string>("Almacenaje");
 
                     b.Property<long>("BankId");
@@ -5736,8 +5697,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Impreso");
 
                     b.Property<string>("LugarFirma");
-
-                    b.Property<string>("ManifiestoNo");
 
                     b.Property<double>("MontoGarantia");
 

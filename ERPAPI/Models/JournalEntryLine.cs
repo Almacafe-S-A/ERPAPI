@@ -17,7 +17,11 @@ namespace ERPAPI.Models
         public Int64 JournalEntryId { get; set; }
         [StringLength(30)]
         [Display(Name = "Numero de Centro de Costo")]
-        public string Num { get; set; }
+        public Int64 CostCenterId { get; set; }
+
+        [Display(Name = "Centro de Costos")]
+        public Int64 CostCenterName { get; set; }
+
         [StringLength(60)]
         [Display(Name = "Nombre de Centro Costo")]
         public string Description { get; set; }

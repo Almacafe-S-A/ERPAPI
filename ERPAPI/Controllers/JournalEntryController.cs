@@ -133,6 +133,7 @@ namespace ERPAPI.Controllers
                         foreach (var item in _JournalEntry.JournalEntryLines)
                         {
                             item.JournalEntryId = _JournalEntry.JournalEntryId;
+                            item.JournalEntryLineId = 0;
                             _context.JournalEntryLine.Add(item);
                         }
 

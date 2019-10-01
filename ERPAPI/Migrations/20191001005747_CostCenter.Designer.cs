@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191001005747_CostCenter")]
+    partial class CostCenter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1419,19 +1421,11 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
                     b.Property<string>("CostCenterName");
-
-                    b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -3253,9 +3247,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("ControlPalletsId");
+                    b.Property<long>("CenterCostId");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("ControlPalletsId");
 
                     b.Property<string>("Description");
 
@@ -3513,9 +3507,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("ControlPalletsId");
+                    b.Property<long>("CenterCostId");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("ControlPalletsId");
 
                     b.Property<string>("Description");
 
@@ -4208,13 +4202,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BranchName");
 
+                    b.Property<long>("CenterCostId");
+
+                    b.Property<string>("CenterCostName");
+
                     b.Property<long>("ControlEstibaId");
 
                     b.Property<string>("ControlEstibaName");
-
-                    b.Property<long>("CostCenterId");
-
-                    b.Property<string>("CostCenterName");
 
                     b.Property<DateTime>("DocumentDate");
 
