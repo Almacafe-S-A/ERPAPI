@@ -37,6 +37,7 @@ namespace ERP.Contexts
         public DbSet<ContactPerson> ContactPerson { get; set; }
         public DbSet<TypeJournal> TypeJournal { get; set; }
         public DbSet<CostListItem> CostListItem { get; set; }
+        public DbSet<CostCenter> CostCenter { get; set; }
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 

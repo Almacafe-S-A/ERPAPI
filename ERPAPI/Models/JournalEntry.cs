@@ -21,7 +21,7 @@ namespace ERPAPI.Models
         [Display(Name = "Id Libro Mayor")]
         public int? GeneralLedgerHeaderId { get; set; }
         public int? PartyId { get; set; }
-        [Display(Name = "Tipos de Voucher")]
+        [Display(Name = "Tipos de Voucher/Documentos")]
         public JournalVoucherTypes? VoucherType { get; set; }
         [Display(Name = "Nombre de Tipo de Voucher")]
         public string TypeJournalName { get; set; }
