@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191001010131_CostCenterBranch")]
+    [Migration("20191001010426_CostCenterBranch")]
     partial class CostCenterBranch
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1427,9 +1427,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CostCenterName");
 
+                    b.Property<string>("Estado");
+
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
 
                     b.Property<string>("UsuarioCreacion");
 

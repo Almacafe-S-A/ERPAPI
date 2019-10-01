@@ -16,6 +16,17 @@ namespace ERPAPI.Migrations
                 name: "BranchName",
                 table: "CostCenter",
                 nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Estado",
+                table: "CostCenter",
+                nullable: true);
+
+            migrationBuilder.AddColumn<long>(
+                name: "IdEstado",
+                table: "CostCenter",
+                nullable: false,
+                defaultValue: 0L);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -26,6 +37,14 @@ namespace ERPAPI.Migrations
 
             migrationBuilder.DropColumn(
                 name: "BranchName",
+                table: "CostCenter");
+
+            migrationBuilder.DropColumn(
+                name: "Estado",
+                table: "CostCenter");
+
+            migrationBuilder.DropColumn(
+                name: "IdEstado",
                 table: "CostCenter");
         }
     }

@@ -1425,9 +1425,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CostCenterName");
 
+                    b.Property<string>("Estado");
+
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
 
                     b.Property<string>("UsuarioCreacion");
 
