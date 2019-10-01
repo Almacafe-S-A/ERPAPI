@@ -189,6 +189,10 @@ namespace ERPAPI.Models
 
         public double Credit { get; set; }
 
+        public double TotalDebit { get; set; }
+
+        public double TotalCredit { get; set; }
+
         public List<AccountingDTO> Children { get; set; } = new List<AccountingDTO>();
     }
 

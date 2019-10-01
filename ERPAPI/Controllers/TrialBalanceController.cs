@@ -215,6 +215,70 @@ namespace ERPAPI.Controllers
 
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Totales([FromBody]Fechas _Fecha)
+
+        {
+            List<AccountingDTO> Items = new List<AccountingDTO>();
+            try
+            {
+                string trialbalance = "";
+
+                trialbalance = "SELECT  "
+                  + $"  COALESCE(dbo.[TotalCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) as TotalCredit"
+                  + $" , COALESCE(dbo.[TotalDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) as TotalDebit"
+                  + $", COALESCE(dbo.[TotalDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) -  "
+                  + $" COALESCE(dbo.[TotalCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) AccountBalance "
+                  + $"       "
+                 + "  ";
+
+
+                using (var dr = await _context.Database.ExecuteSqlQueryAsync(trialbalance))
+                {
+                    // Output rows.
+                    var reader = dr.DbDataReader;
+                    while (reader.Read())
+                    {
+                        Items.Add(new AccountingDTO
+                        {
+                            //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
+                            TotalCredit = reader["TotalCredit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalCredit"]),
+                            TotalDebit = reader["TotalDebit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalDebit"]),                      
+                            AccountBalance = reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]),
+                        });
+                        //Console.Write("{0}\t{1}\t{2} \n", reader[0], reader[1], reader[2]);
+                    }
+                }
+
+
+                //Items = (from c in Items
+
+                //         select new AccountingDTO
+                //         {
+                //             AccountId = c.AccountId,
+                //             AccountName = c.AccountCode + "--" + c.AccountName,
+                //             ParentAccountId = c.ParentAccountId == 0 ? null : c.ParentAccountId,
+                //             Credit = c.Credit,
+                //             Debit = c.Debit,
+                //             AccountBalance = c.AccountBalance
+
+                //         }).ToList();
+
+         
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+
+        }
+
+
 
         private double Debit(Int64 AccountId,Fechas fechas)
         {
