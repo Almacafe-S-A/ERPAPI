@@ -246,23 +246,9 @@ namespace ERPAPI.Controllers
                             TotalDebit = reader["TotalDebit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalDebit"]),                      
                             AccountBalance = reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]),
                         });
-                        //Console.Write("{0}\t{1}\t{2} \n", reader[0], reader[1], reader[2]);
+                       
                     }
-                }
-
-
-                //Items = (from c in Items
-
-                //         select new AccountingDTO
-                //         {
-                //             AccountId = c.AccountId,
-                //             AccountName = c.AccountCode + "--" + c.AccountName,
-                //             ParentAccountId = c.ParentAccountId == 0 ? null : c.ParentAccountId,
-                //             Credit = c.Credit,
-                //             Debit = c.Debit,
-                //             AccountBalance = c.AccountBalance
-
-                //         }).ToList();
+                }        
 
          
             }

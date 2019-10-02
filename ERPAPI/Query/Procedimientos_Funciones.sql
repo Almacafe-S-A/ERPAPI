@@ -2,7 +2,7 @@
 (  
 	 @FechaInicio DATETIME,
    @FechaFin DATETIME,
-	 @cuenta int 
+	 @cuenta INT 
 )
 RETURNS decimal(18,4)-- or whatever length you need
 AS
@@ -92,9 +92,5 @@ GO
 
 
 
-  SELECT a.AccountId,a.AccountName,a.ParentAccountId 
-    , dbo.[SumaCredito]('2019-09-28','2019-09-28',a.AccountId) as Credit
-    , dbo.[SumaDebito]('2019-09-28','2019-09-28',a.AccountId) as Debit
-    , dbo.[SumaDebito]('2019-09-28','2019-09-28',a.AccountId) -   dbo.[SumaCredito]('2019-09-28','2019-09-28',a.AccountId) AccountBalance 
-    FROM Accounting a        GROUP BY a.AccountId, a.AccountName,a.ParentAccountId
-
+SELECT    COALESCE(dbo.[TotalCredito]('2019-10-01','2019-10-01'),0) as TotalCredit , COALESCE(dbo.[TotalDebito]('2019-10-01','2019-10-01'),0) as TotalDebit
+  , COALESCE(dbo.[TotalDebito]('2019-10-01','2019-10-01'),0) -   COALESCE(dbo.[TotalCredito]('2019-10-01','2019-10-01'),0) AccountBalance      
