@@ -17,6 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\AccountController.cs" />
+    <Compile Remove="Controllers\AccountingChildsController.cs" />
     <Compile Remove="Controllers\CenterCosteController.cs" />
     <Compile Remove="Controllers\ExchangeRatesController.cs" />
     <Compile Remove="Controllers\LedgerController.cs" />
@@ -124,6 +126,7 @@
     <Compile Remove="Migrations\20190926172428_currency.Designer.cs" />
     <Compile Remove="Migrations\20191002024040_Prueba.cs" />
     <Compile Remove="Models\Account.cs" />
+    <Compile Remove="Models\AccountingChilds.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
     <Compile Remove="Models\Purch.cs" />

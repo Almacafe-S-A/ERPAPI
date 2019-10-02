@@ -75,7 +75,6 @@ namespace ERPAPI.Models
         public virtual CompanyInfo Company { get; set; }
 
         public virtual List<Accounting> ChildAccounts { get; set; }
-        public virtual List<AccountingChilds> AccountingChilds { get; set; }
         [NotMapped]
         public virtual ICollection<MainContraAccount> ContraAccounts { get; set; }
         public virtual ICollection<GeneralLedgerLine> GeneralLedgerLines { get; set; }
