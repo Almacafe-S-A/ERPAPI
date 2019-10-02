@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191002025058_DeletePurchPartners")]
+    partial class DeletePurchPartners
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4021,15 +4023,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ReferenceNo");
 
-                    b.Property<double>("TotalCredit");
-
-                    b.Property<double>("TotalDebit");
-
                     b.Property<string>("TypeJournalName");
-
-                    b.Property<int>("TypeOfAdjustmentId");
-
-                    b.Property<string>("TypeOfAdjustmentName");
 
                     b.Property<int?>("VoucherType");
 
@@ -4115,8 +4109,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("AccountId");
 
                     b.Property<long?>("AccountId1");
-
-                    b.Property<string>("AccountName");
 
                     b.Property<long>("CostCenterId")
                         .HasMaxLength(30);
@@ -5037,6 +5029,70 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdPuntoEmision");
 
                     b.ToTable("PuntoEmision");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Purch", b =>
+                {
+                    b.Property<long>("PurchId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address");
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("CompanyReferenceone")
+                        .IsRequired();
+
+                    b.Property<string>("CompanyReferencetwo")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("CreatedUser")
+                        .IsRequired();
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<string>("Estado");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<string>("Identidad")
+                        .IsRequired();
+
+                    b.Property<DateTime>("ModifiedDate");
+
+                    b.Property<string>("ModifiedUser")
+                        .IsRequired();
+
+                    b.Property<string>("Phone");
+
+                    b.Property<string>("PhoneReferenceone");
+
+                    b.Property<string>("PhoneReferencetwo");
+
+                    b.Property<string>("PurchName")
+                        .IsRequired();
+
+                    b.Property<int>("PurchTypeId");
+
+                    b.Property<double>("QtyMin");
+
+                    b.Property<double>("QtyMonth");
+
+                    b.Property<string>("RTN")
+                        .IsRequired();
+
+                    b.Property<string>("State");
+
+                    b.Property<string>("ZipCode");
+
+                    b.Property<int>("taxGroup");
+
+                    b.HasKey("PurchId");
+
+                    b.ToTable("Purch");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.PurchDocument", b =>
