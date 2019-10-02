@@ -8,12 +8,12 @@
     <ProviderVersion>5.7.31.0</ProviderVersion>
     <SchemaVersion>2.0</SchemaVersion>
   </Properties>
-  <Connection Name="des.canbbevbcgld.us-west-2.rds.amazonaws.com">
+  <Connection Name="ERP_20190813V2.DESKTOP-RFQ3R0I">
     <Category>00000000-0000-0000-0000-000000000000</Category>
-    <ConnectionString>Data Source=des.canbbevbcgld.us-west-2.rds.amazonaws.com;Encrypt=False;Integrated Security=False;User ID=bidss</ConnectionString>
-    <Database>master</Database>
+    <ConnectionString>Data Source=DESKTOP-RFQ3R0I;Encrypt=False;Initial Catalog=ERP_20190813V2;Integrated Security=False;User ID=sa</ConnectionString>
+    <Database>ERP</Database>
   </Connection>
-  <Views ShowAdditionalViews="False" IsLayoutActiveAttribute="True" MainViewAttribute="Code" MainViewScale="67">
+  <Views ShowAdditionalViews="False" IsLayoutActiveAttribute="True" MainViewAttribute="Code" MainViewScale="50">
     <View Name="Design" Visible="False" />
     <View Name="Code" Active="True" Visible="True">
       <Data />
