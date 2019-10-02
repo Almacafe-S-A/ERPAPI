@@ -70,7 +70,7 @@ namespace ERPAPI.Models
         [Display(Name = "Padre de la cuenta")]
         public virtual Accounting ParentAccount { get; set; }
 
-        public virtual AccountClass AccountClass { get; set; }
+       // public virtual AccountClass AccountClass { get; set; }
 
         public virtual CompanyInfo Company { get; set; }
 
@@ -118,16 +118,17 @@ namespace ERPAPI.Models
 
             decimal drAmount = dr.Sum(d => d.Amount);
             decimal crAmount = cr.Sum(c => c.Amount);
-
-            if (AccountClass.NormalBalance == "Dr")
-            {
-                balance = drAmount - crAmount;
-            }
-            else
-            {
-                balance = crAmount - drAmount;
-            }
-
+            balance = drAmount - crAmount;
+             /*  if (NormalBalance == "Dr")
+               {
+                
+                   balance = drAmount - crAmount;
+               }
+               else
+               {
+                   balance = crAmount - drAmount;
+               }
+               */
             return balance;
         }
 
