@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191001230910_JournalEntryTypeAdjustment")]
+    partial class JournalEntryTypeAdjustment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5130,6 +5132,39 @@ namespace ERPAPI.Migrations
                     b.HasKey("PurchDocumentId");
 
                     b.ToTable("PurchDocument");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.PurchPartners", b =>
+                {
+                    b.Property<long>("PartnerId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Correo");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<string>("CreatedUser");
+
+                    b.Property<string>("Identidad");
+
+                    b.Property<string>("Listados");
+
+                    b.Property<DateTime>("ModifiedDate");
+
+                    b.Property<string>("ModifiedUser");
+
+                    b.Property<string>("PartnerName");
+
+                    b.Property<long>("PurchId");
+
+                    b.Property<string>("RTN");
+
+                    b.Property<string>("Telefono");
+
+                    b.HasKey("PartnerId");
+
+                    b.ToTable("PurchPartners");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.PurchaseOrder", b =>
