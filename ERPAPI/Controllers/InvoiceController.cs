@@ -156,6 +156,14 @@ namespace ERPAPI.Controllers
                         _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                         //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
                         _Invoiceq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+
+                        Numalet let;
+                        let = new Numalet();
+                        let.SeparadorDecimalSalida = "Lempiras";
+                        let.MascaraSalidaDecimal = "00/100 ";
+                        let.ApocoparUnoParteEntera = true;
+                        _Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
+
                         _context.Invoice.Add(_Invoiceq);
                         //await _context.SaveChangesAsync();
                         foreach (var item in _Invoice.InvoiceLine)
