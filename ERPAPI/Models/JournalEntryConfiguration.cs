@@ -24,11 +24,11 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
-        [Display(Name = "Centro de costos")]
-        public Int64 CostCenterId { get; set; }
+        [Display(Name = "Sucursal")]
+        public Int64 BranchId { get; set; }
 
-        [Display(Name = "Centro de costos")]
-        public string CostCenterName { get; set; }
+        [Display(Name = "Sucursal")]
+        public string BranchName { get; set; }
 
         [Display(Name = "Moneda")]
         public Int64 CurrencyId { get; set; }
