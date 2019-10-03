@@ -18,6 +18,18 @@ namespace ERPAPI.Models
         [Display(Name = "Descripción")]
         public string Description { get; set; }
 
+        [Display(Name = "Producto")]
+        public Int64 ProductId { get; set; }
+
+        [Display(Name = "Producto")]
+        public string ProductName { get; set; }
+
+        [Display(Name = "Centro de costos")]
+        public Int64 CostCenterId { get; set; }
+
+        [Display(Name = "Centro de costos")]
+        public string CostCenterName { get; set; }
+
         [Display(Name = "Moneda")]
         public Int64 CurrencyId { get; set; }
 
