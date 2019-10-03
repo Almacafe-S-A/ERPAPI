@@ -176,10 +176,29 @@ namespace ERPAPI.Controllers
 
                         JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
                                                                        .Where(q => q.TransactionId == 1)
+                                                                       .Where(q=>q.BranchId==_Invoiceq.BranchId)                                                                     
                                                                        .Include(q => q.JournalEntryConfigurationLine)
                                                                        ).FirstOrDefaultAsync();
 
-                        if(_journalentryconfiguration!=null)
+                        BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Invoice.CustomerId,
+                            DocType = "JournalEntryConfiguration",
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "InsertInvoice",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Invoice.UsuarioCreacion,
+                            UsuarioModificacion = _Invoice.UsuarioModificacion,
+                            UsuarioEjecucion = _Invoice.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        if (_journalentryconfiguration!=null)
                         {
                             //Crear el asiento contable configurado
                             //.............................///////
@@ -198,12 +217,16 @@ namespace ERPAPI.Controllers
 
                             foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
                             {
+
+                                InvoiceLine _iline = new InvoiceLine();
+                                _iline = _Invoiceq.InvoiceLine.Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
+
                                 _je.JournalEntryLines.Add(new JournalEntryLine
                                 {
                                     AccountId = Convert.ToInt32(item.AccountId),
                                     Description = item.AccountName,
-                                    Credit = item.DebitCredit =="Credito"? _Invoiceq.Total : 0,
-                                    Debit = item.DebitCredit == "Debito" ? _Invoiceq.Total : 0,
+                                    Credit = item.DebitCredit =="Credito"? _iline.Total : 0,
+                                    Debit = item.DebitCredit == "Debito" ? _iline.Total : 0,
                                     CreatedDate = DateTime.Now,
                                     ModifiedDate = DateTime.Now,
                                     CreatedUser = _Invoiceq.UsuarioCreacion,

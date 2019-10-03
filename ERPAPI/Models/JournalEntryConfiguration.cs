@@ -24,6 +24,12 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
+        [Display(Name = "Estado")]
+        public Int64 EstadoId { get; set; }
+
+        [Display(Name = "Estado")]
+        public string EstadoName { get; set; }
+
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
 
