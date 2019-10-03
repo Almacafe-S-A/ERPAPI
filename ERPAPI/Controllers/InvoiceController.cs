@@ -176,7 +176,8 @@ namespace ERPAPI.Controllers
 
                         JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
                                                                        .Where(q => q.TransactionId == 1)
-                                                                       .Where(q=>q.BranchId==_Invoiceq.BranchId)                                                                     
+                                                                       .Where(q=>q.BranchId==_Invoiceq.BranchId)
+                                                                       .Where(q => q.EstadoName == "Activo")
                                                                        .Include(q => q.JournalEntryConfigurationLine)
                                                                        ).FirstOrDefaultAsync();
 
@@ -196,8 +197,9 @@ namespace ERPAPI.Controllers
 
                         });
 
-                        await _context.SaveChangesAsync();
+                        // await _context.SaveChangesAsync();
 
+                        double sumacreditos=0, sumadebitos = 0;
                         if (_journalentryconfiguration!=null)
                         {
                             //Crear el asiento contable configurado
@@ -220,24 +222,61 @@ namespace ERPAPI.Controllers
 
                                 InvoiceLine _iline = new InvoiceLine();
                                 _iline = _Invoiceq.InvoiceLine.Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
-
-                                _je.JournalEntryLines.Add(new JournalEntryLine
+                                if (_iline != null || item.SubProductName.ToUpper().Contains(("Impuesto").ToUpper()))
                                 {
-                                    AccountId = Convert.ToInt32(item.AccountId),
-                                    Description = item.AccountName,
-                                    Credit = item.DebitCredit =="Credito"? _iline.Total : 0,
-                                    Debit = item.DebitCredit == "Debito" ? _iline.Total : 0,
-                                    CreatedDate = DateTime.Now,
-                                    ModifiedDate = DateTime.Now,
-                                    CreatedUser = _Invoiceq.UsuarioCreacion,
-                                    ModifiedUser = _Invoiceq.UsuarioModificacion,
-                                    Memo = "",
-                                });
+                                    if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
+                                           && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
+                                    {
+                                        _je.JournalEntryLines.Add(new JournalEntryLine
+                                        {
+                                            AccountId = Convert.ToInt32(item.AccountId),
+                                            Description = item.AccountName,
+                                            Credit = item.DebitCredit == "Credito" ? _iline.SubTotal : 0,
+                                            Debit = item.DebitCredit == "Debito" ? _iline.SubTotal : 0,
+                                            CreatedDate = DateTime.Now,
+                                            ModifiedDate = DateTime.Now,
+                                            CreatedUser = _Invoiceq.UsuarioCreacion,
+                                            ModifiedUser = _Invoiceq.UsuarioModificacion,
+                                            Memo = "",
+                                        });
+
+                                        sumacreditos +=  item.DebitCredit == "Credito" ? _iline.SubTotal : 0;
+                                        sumadebitos += item.DebitCredit == "Debito" ? _iline.SubTotal : 0;
+                                    }
+                                    else
+                                    {
+                                        _je.JournalEntryLines.Add(new JournalEntryLine
+                                        {
+                                            AccountId = Convert.ToInt32(item.AccountId),
+                                            Description = item.AccountName,
+                                            Credit = item.DebitCredit == "Credito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0,
+                                            Debit = item.DebitCredit == "Debito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0,
+                                            CreatedDate = DateTime.Now,
+                                            ModifiedDate = DateTime.Now,
+                                            CreatedUser = _Invoiceq.UsuarioCreacion,
+                                            ModifiedUser = _Invoiceq.UsuarioModificacion,
+                                            Memo = "",
+                                        });
+
+                                        sumacreditos +=  item.DebitCredit == "Credito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
+                                        sumadebitos += item.DebitCredit == "Debito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
+                                    }
+                                }
 
                                // _context.JournalEntryLine.Add(_je);
 
                             }
 
+
+                            if(sumacreditos!=sumadebitos)
+                            {
+                                transaction.Rollback();
+                                _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                                return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            }
+
+                            _je.TotalCredit = sumacreditos;
+                            _je.TotalDebit = sumadebitos;
                             _context.JournalEntry.Add(_je);
 
                             await  _context.SaveChangesAsync();
@@ -258,6 +297,8 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _Invoice.UsuarioModificacion,
 
                         });
+
+                        
 
                         await _context.SaveChangesAsync();
 

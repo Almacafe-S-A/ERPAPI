@@ -129,12 +129,22 @@ namespace ERPAPI.Controllers
                         _JournalEntryq = _JournalEntry;
                         _context.JournalEntry.Add(_JournalEntryq);
                         // await _context.SaveChangesAsync();
-
+                        double sumacreditos = 0, sumadebitos = 0;
                         foreach (var item in _JournalEntry.JournalEntryLines)
                         {
                             item.JournalEntryId = _JournalEntry.JournalEntryId;
                             item.JournalEntryLineId = 0;
                             _context.JournalEntryLine.Add(item);
+                            sumacreditos += item.Credit > 0 ? item.Credit : 0;
+                            sumadebitos += item.Debit>0 ? item.Debit : 0;
+                        }
+
+
+                        if (sumacreditos != sumadebitos)
+                        {
+                            transaction.Rollback();
+                            _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
                         }
 
                         await _context.SaveChangesAsync();
