@@ -197,12 +197,11 @@ namespace ERPAPI.Controllers
                                     {
                                         Price = linea.Price,
                                         SubProductId = linea.SubProductId,
-                                        SubProductName = linea.SubProductName
-                                        ,
+                                        SubProductName = linea.SubProductName,
                                         UnitOfMeasureId = linea.UnitOfMeasureId,
-                                        UnitOfMeasureName = linea.UnitOfMeasureName
-                                        ,
-                                        ValorEndoso = linea.ValorEndoso
+                                        UnitOfMeasureName = linea.UnitOfMeasureName,
+                                        ValorEndoso = linea.ValorEndoso,
+                                        Quantity = linea.Quantity,
                                     });
 
                                 }
@@ -251,12 +250,11 @@ namespace ERPAPI.Controllers
                                     {
                                         Price = linea.Price,
                                         SubProductId = linea.SubProductId,
-                                        SubProductName = linea.SubProductName
-                                        ,
+                                        SubProductName = linea.SubProductName,
                                         UnitOfMeasureId = linea.UnitOfMeasureId,
-                                        UnitOfMeasureName = linea.UnitOfMeasureName
-                                        ,
-                                        ValorEndoso = linea.ValorEndoso
+                                        UnitOfMeasureName = linea.UnitOfMeasureName,
+                                        ValorEndoso = linea.ValorEndoso,
+                                        Quantity = linea.Quantity,
                                     });
 
                                 }
