@@ -102,38 +102,45 @@ namespace ERPAPI.Controllers
             List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
             try
             {
+                if (CustomerId > 0)
+                {
+                    List<Int64> Liberados = new List<long>();
 
-                 List<Int64> Liberados = new List<long>();               
-               
 
-                List<Int64> CertId = await _context.CertificadoDeposito
-                                       .Where(q => q.CustomerId == CustomerId).Select(q => q.IdCD).ToListAsync();
+                    List<Int64> CertId = await _context.CertificadoDeposito
+                                           .Where(q => q.CustomerId == CustomerId).Select(q => q.IdCD).ToListAsync();
 
-                List<Int64> EndosoId = new List<long>();
+                    List<Int64> EndosoId = new List<long>();
 
-                EndosoId =  await _context.EndososCertificados
-                    .Where(q=>q.CustomerId==CustomerId)
-                    .Where(q => CertId.Contains(q.IdCD))
-                    .Select(q => q.EndososCertificadosId).ToListAsync();
+                    EndosoId = await _context.EndososCertificados
+                        .Where(q => q.CustomerId == CustomerId)
+                        .Where(q => CertId.Contains(q.IdCD))
+                        .Select(q => q.EndososCertificadosId).ToListAsync();
 
-                Liberados = await _context.EndososLiberacion
-                       .Where(q=> EndosoId.Contains(q.EndososId))                      
-                          .Select(q => q.EndososId)
-                          .ToListAsync();
+                    Liberados = await _context.EndososLiberacion
+                           .Where(q => EndosoId.Contains(q.EndososId))
+                              .Select(q => q.EndososId)
+                              .ToListAsync();
 
-                List<Int64>   PendientesLiberacion = EndosoId.Where(q => !Liberados.Contains(q)).ToList();
+                    List<Int64> PendientesLiberacion = EndosoId.Where(q => !Liberados.Contains(q)).ToList();
 
-                List<Int64> cdidpendientes = await _context.EndososCertificados
-                                   .Where(q => PendientesLiberacion.Contains(q.EndososCertificadosId))
-                                   .Select(q => q.IdCD).ToListAsync();
+                    List<Int64> cdidpendientes = await _context.EndososCertificados
+                                       .Where(q => PendientesLiberacion.Contains(q.EndososCertificadosId))
+                                       .Select(q => q.IdCD).ToListAsync();
 
-                List<Int64> NoEndosadosYLiberados = CertId.Except(cdidpendientes).ToList();
+                    List<Int64> NoEndosadosYLiberados = CertId.Except(cdidpendientes).ToList();
 
-//                NoEndosadosYLiberados.AddRange(EndosoId);
+                    //                NoEndosadosYLiberados.AddRange(EndosoId);
 
-                Items = await _context.CertificadoDeposito
-                    .Where(q=> NoEndosadosYLiberados.Contains(q.IdCD))
-                    .ToListAsync();
+                    Items = await _context.CertificadoDeposito
+                        .Where(q => NoEndosadosYLiberados.Contains(q.IdCD))
+                        .ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.CertificadoDeposito                     
+                      .ToListAsync();
+                }
 
 
             }
