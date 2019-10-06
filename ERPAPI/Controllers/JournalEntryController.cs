@@ -117,11 +117,14 @@ namespace ERPAPI.Controllers
         /// <param name="_JournalEntry"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntry>> Insert([FromBody]JournalEntry _JournalEntry)
+        public async Task<ActionResult<JournalEntry>> Insert([FromBody]dynamic dto)
+        //public async Task<ActionResult<JournalEntry>> Insert([FromBody]JournalEntry _JournalEntry)
         {
+           JournalEntry _JournalEntry = new JournalEntry();
             JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
+                _JournalEntry = JsonConvert.DeserializeObject<JournalEntry>(dto.ToString());
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try

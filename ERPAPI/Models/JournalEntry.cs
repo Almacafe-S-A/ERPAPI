@@ -25,7 +25,10 @@ namespace ERPAPI.Models
         public int? PartyId { get; set; }
 
         [Display(Name = "Tipos de Voucher/Documento")]
-        public JournalVoucherTypes? VoucherType { get; set; }
+        //  public JournalVoucherTypes? VoucherType { get; set; }
+        public int? VoucherType { get; set; }
+
+
         [Display(Name = "Tipos de Voucher/Documento")]
         public string TypeJournalName { get; set; }
 
