@@ -20,7 +20,7 @@ namespace ERPAPI.Models
         public Int64 CostCenterId { get; set; }
 
         [Display(Name = "Centro de Costos")]
-        public Int64 CostCenterName { get; set; }
+        public string CostCenterName { get; set; }
 
         [StringLength(60)]
         [Display(Name = "Nombre de Centro Costo")]
