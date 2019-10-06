@@ -104,7 +104,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la PurchDocument por medio del Id enviado.
+        /// Obtiene los Datos de la VendorDocument por medio del Id enviado.
         /// </summary>
         /// <param name="VendorDocumentId"></param>
         /// <returns></returns>
