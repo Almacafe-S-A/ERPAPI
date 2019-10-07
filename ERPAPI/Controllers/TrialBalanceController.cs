@@ -142,12 +142,13 @@ namespace ERPAPI.Controllers
             try
             {
                 string trialbalance = "";
-
+                string horainicio = " 00:00:00";
+                string horafin = " 23:59:59";
                   trialbalance = "SELECT a.AccountId,a.AccountName,a.ParentAccountId,a.AccountCode "
-                    + $" , dbo.[SumaCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) as Credit"
-                    + $" , dbo.[SumaDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) as Debit"              
-                    + $", dbo.[SumaDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) -  "
-                    + $" dbo.[SumaCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}',a.AccountId) AccountBalance "
+                    + $" , dbo.[SumaCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}',a.AccountId) as Credit"
+                    + $" , dbo.[SumaDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}',a.AccountId) as Debit"              
+                    + $", dbo.[SumaDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}',a.AccountId) -  "
+                    + $" dbo.[SumaCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}',a.AccountId) AccountBalance "
                     + $" FROM Accounting a       "
                    + " GROUP BY a.AccountId, a.AccountName,a.ParentAccountId,a.AccountCode ";
 
@@ -223,12 +224,14 @@ namespace ERPAPI.Controllers
             try
             {
                 string trialbalance = "";
+                string horainicio = " 00:00:00";
+                string horafin = " 23:59:59";
 
                 trialbalance = "SELECT  "
-                  + $"  COALESCE(dbo.[TotalCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) as TotalCredit"
-                  + $" , COALESCE(dbo.[TotalDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) as TotalDebit"
-                  + $", COALESCE(dbo.[TotalDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) -  "
-                  + $" COALESCE(dbo.[TotalCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}'),0) AccountBalance "
+                  + $"  COALESCE(dbo.[TotalCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}'),0) as TotalCredit"
+                  + $" , COALESCE(dbo.[TotalDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}'),0) as TotalDebit"
+                  + $", COALESCE(dbo.[TotalDebito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}'),0) -  "
+                  + $" COALESCE(dbo.[TotalCredito]('{_Fecha.FechaInicio.ToString("yyyy-MM-dd")}{horainicio}','{_Fecha.FechaFin.ToString("yyyy-MM-dd")}{horafin}'),0) AccountBalance "
                   + $"       "
                  + "  ";
 
