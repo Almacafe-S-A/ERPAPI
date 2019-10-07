@@ -121,6 +121,14 @@ namespace ERPAPI.Models
         [Display(Name = "Pertenece a la empresa u otra organización")]
         public string PerteneceEmpresa { get; set; }
 
+        
+        public string Fax { get; set; }
+        public long? TaxId { get; set; }
+        public string SolicitadoPor { get; set; }
+        public bool? EsExonerado { get; set; }
+        public string Observaciones { get; set; }
+
+
         [Display(Name = "Confirmación por correo")]
         public bool ConfirmacionCorreo { get; set; }
 

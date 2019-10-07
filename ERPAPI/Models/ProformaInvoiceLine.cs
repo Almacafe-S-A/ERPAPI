@@ -57,10 +57,10 @@ namespace ERPAPI.Models
         public string WareHouseName { get; set; }
 
         [Display(Name = "Centro de costos")]
-        public Int64 CenterCostId { get; set; }
+        public Int64 CostCenterId { get; set; }
 
         [Display(Name = "Centro de costos")]
-        public string CenterCostName { get; set; }
+        public string CostCenterName { get; set; }
 
         [Display(Name = "Subtotal")]
         public double SubTotal { get; set; }

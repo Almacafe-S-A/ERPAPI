@@ -142,6 +142,8 @@ namespace ERPAPI.Controllers
             try
             {
                 _JournalEntryConfigurationLineq = _JournalEntryConfigurationLine;
+                _JournalEntryConfigurationLineq.FechaCreacion = DateTime.Now;
+                _JournalEntryConfigurationLineq.FechaModificacion = DateTime.Now;
                 _context.JournalEntryConfigurationLine.Add(_JournalEntryConfigurationLineq);
                 await _context.SaveChangesAsync();
             }
