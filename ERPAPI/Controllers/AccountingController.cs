@@ -57,12 +57,23 @@ namespace ERPAPI.Controllers
                 Items = (from c in _cuentas
                          select new AccountingDTO
                          {
+                             CompanyInfoId=c.CompanyInfoId,
                              AccountId = c.AccountId,
                              AccountName = c.AccountCode + "--" + c.AccountName,
                              ParentAccountId = c.ParentAccountId,
-                             Credit = Credit(c.AccountId),
-                             Debit = Debit(c.AccountId),
-                             AccountBalance = c.AccountBalance
+                            // Credit = Credit(c.AccountId),
+                            // Debit = Debit(c.AccountId),
+                             AccountBalance = c.AccountBalance,
+                             IsCash = c.IsCash,
+                             Description =c.Description,
+                             TypeAccountId = c.TypeAccountId,
+                             BlockedInJournal =c.BlockedInJournal,
+                             AccountCode=c.AccountCode,
+                             HierarchyAccount =c.HierarchyAccount,
+                             UsuarioCreacion=c.UsuarioCreacion,
+                             UsuarioModificacion=c.UsuarioModificacion,
+                             FechaCreacion=c.FechaCreacion,
+                             FechaModificacion=c.FechaModificacion
                          }
                                )
                                .ToList();
@@ -156,6 +167,24 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.Accounting.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+        [HttpGet("[action]/{AccountCode}")]
+        public async Task<IActionResult> GetAccountingByAccountCode(String AccountCode)
+        {
+            Accounting Items = new Accounting();
+            try
+            {
+                Items = await _context.Accounting.Where(q => q.AccountCode == AccountCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

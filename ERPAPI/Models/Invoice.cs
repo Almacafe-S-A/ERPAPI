@@ -153,6 +153,8 @@ namespace ERPAPI.Models
 
         public double Total { get; set; }
 
+        public string TotalLetras { get; set; }
+
         public Int64 IdEstado { get; set; }
 
         public string Estado { get; set; }

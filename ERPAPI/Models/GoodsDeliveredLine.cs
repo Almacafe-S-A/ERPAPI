@@ -59,7 +59,7 @@ namespace ERPAPI.Models
         public string WareHouseName { get; set; }
 
         [Display(Name = "Centro de costos")]
-        public Int64 CenterCostId { get; set; }
+        public Int64 CostCenterId { get; set; }
 
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }

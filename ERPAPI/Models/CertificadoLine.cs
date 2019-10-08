@@ -36,6 +36,9 @@ namespace ERPAPI.Models
         [Display(Name = "Total Cantidad")]
         public double TotalCantidad { get; set; }
 
+        [Display(Name = "Saldo endoso")]
+        public double SaldoEndoso { get; set; }
+
         [Display(Name = "Centro de costos")]
         public Int64 CenterCostId { get; set; }
 

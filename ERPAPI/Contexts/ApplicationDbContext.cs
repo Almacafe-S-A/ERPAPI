@@ -28,7 +28,7 @@ namespace ERP.Contexts
 
         }
         public DbSet<Accounting> Accounting { get; set; }
-        public DbSet<AccountingChilds> AccountingChilds { get; set; }
+       // public DbSet<AccountingChilds> AccountingChilds { get; set; }
 
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
@@ -37,14 +37,15 @@ namespace ERP.Contexts
         public DbSet<ContactPerson> ContactPerson { get; set; }
         public DbSet<TypeJournal> TypeJournal { get; set; }
         public DbSet<CostListItem> CostListItem { get; set; }
+        public DbSet<CostCenter> CostCenter { get; set; }
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-        public DbSet<PurchPartners> PurchPartners { get; set; }
-        public DbSet<PurchDocument> PurchDocument { get; set; }
-        public DbSet<Purch> Purch { get; set; }
+      //  public DbSet<PurchPartners> PurchPartners { get; set; }
+        public DbSet<VendorDocument> VendorDocument { get; set; }
+       // public DbSet<PurchDocument> PurchDocument { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
         //public DbSet<Account> Account { get; set; }
         public DbSet<Dimensions> Dimensions { get; set; }

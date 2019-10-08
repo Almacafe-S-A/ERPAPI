@@ -97,6 +97,31 @@ namespace ERPAPI.Controllers
         /// </summary>
 
         // GET: api/ConfigurationVendor
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetConfigurationVendorActive()
+
+        {
+            ConfigurationVendor Items = new ConfigurationVendor();
+            try
+            {
+                Items = await _context.ConfigurationVendor.Where(p =>p.Estado == "Activo").FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+
+        }
+        /// <summary>
+        /// Obtiene los Datos de la ConfigurationVendor en una lista.
+        /// </summary>
+
+        // GET: api/ConfigurationVendor
 
         /// <summary>
         /// Obtiene los Datos de la ContactPerson por medio del Id enviado.

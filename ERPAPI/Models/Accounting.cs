@@ -70,12 +70,11 @@ namespace ERPAPI.Models
         [Display(Name = "Padre de la cuenta")]
         public virtual Accounting ParentAccount { get; set; }
 
-        public virtual AccountClass AccountClass { get; set; }
+       // public virtual AccountClass AccountClass { get; set; }
 
         public virtual CompanyInfo Company { get; set; }
 
         public virtual List<Accounting> ChildAccounts { get; set; }
-        public virtual List<AccountingChilds> AccountingChilds { get; set; }
         [NotMapped]
         public virtual ICollection<MainContraAccount> ContraAccounts { get; set; }
         public virtual ICollection<GeneralLedgerLine> GeneralLedgerLines { get; set; }
@@ -119,16 +118,17 @@ namespace ERPAPI.Models
 
             decimal drAmount = dr.Sum(d => d.Amount);
             decimal crAmount = cr.Sum(c => c.Amount);
-
-            if (AccountClass.NormalBalance == "Dr")
-            {
-                balance = drAmount - crAmount;
-            }
-            else
-            {
-                balance = crAmount - drAmount;
-            }
-
+            balance = drAmount - crAmount;
+             /*  if (NormalBalance == "Dr")
+               {
+                
+                   balance = drAmount - crAmount;
+               }
+               else
+               {
+                   balance = crAmount - drAmount;
+               }
+               */
             return balance;
         }
 
@@ -188,6 +188,10 @@ namespace ERPAPI.Models
         public double Debit { get; set; }
 
         public double Credit { get; set; }
+
+        public double TotalDebit { get; set; }
+
+        public double TotalCredit { get; set; }
 
         public List<AccountingDTO> Children { get; set; } = new List<AccountingDTO>();
     }
