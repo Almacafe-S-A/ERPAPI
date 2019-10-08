@@ -108,6 +108,25 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{IncomeAndExpensesAccountId}")]
+        public async Task<IActionResult> GetIncomeAndExpensesAccountIdByIncomeAndExpenseAccountLineId(Int64 IncomeAndExpensesAccountId)
+        {
+            List<IncomeAndExpenseAccountLine> Items = new List<IncomeAndExpenseAccountLine>();
+            try
+            {
+                Items = await _context.IncomeAndExpenseAccountLine.Where(q => q.IncomeAndExpensesAccountId == IncomeAndExpensesAccountId).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Inserta una nueva IncomeAndExpenseAccountLine

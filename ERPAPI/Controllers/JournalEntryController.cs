@@ -146,8 +146,8 @@ namespace ERPAPI.Controllers
                         if (sumacreditos != sumadebitos)
                         {
                             transaction.Rollback();
-                            _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                            return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos:{sumacreditos}");
+                            return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos:{sumacreditos}");
                         }
 
                         await _context.SaveChangesAsync();

@@ -21,7 +21,15 @@ namespace ERPAPI.Models
         [Display(Name = "Id Libro Mayor")]
         public int? GeneralLedgerHeaderId { get; set; }
 
+
         [Display(Name = "Tipo de Socio de negocios")]
+        public int PartyTypeId { get; set; }
+
+        [Display(Name = "Tipo de Socio de negocios")]
+        public int PartyTypeName { get; set; }
+
+
+        [Display(Name = "Id de Socio de negocios")]
         public int? PartyId { get; set; }
 
         [Display(Name = "Tipos de Voucher/Documento")]
