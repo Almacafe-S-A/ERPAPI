@@ -178,6 +178,24 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]/{AccountCode}")]
+        public async Task<IActionResult> GetAccountingByAccountCode(String AccountCode)
+        {
+            Accounting Items = new Accounting();
+            try
+            {
+                Items = await _context.Accounting.Where(q => q.AccountCode == AccountCode).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene los Datos de la Account por medio del Id enviado.
         /// </summary>

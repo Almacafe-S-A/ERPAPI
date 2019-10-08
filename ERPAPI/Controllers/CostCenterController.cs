@@ -108,6 +108,24 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]/{CostCenterName}")]
+        public async Task<IActionResult> GetCostCenterByCostCenterName(String CostCenterName)
+        {
+            CostCenter Items = new CostCenter();
+            try
+            {
+                Items = await _context.CostCenter.Where(q => q.CostCenterName == CostCenterName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
 
         /// <summary>
