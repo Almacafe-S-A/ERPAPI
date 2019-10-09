@@ -227,7 +227,6 @@ namespace ERPAPI.Controllers
                         foreach (var item in salesorder.SalesOrderLines)
                         {
                             item.SalesOrderId = salesorder.SalesOrderId;
-                            item.SalesOrderLineId = 0;
                             _context.SalesOrderLine.Add(item);
                         }
                         await _context.SaveChangesAsync();
