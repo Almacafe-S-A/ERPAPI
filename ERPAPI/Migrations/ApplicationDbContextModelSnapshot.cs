@@ -1111,6 +1111,8 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("ConciliacionId1");
+
                     b.Property<long?>("ElementoConfiguracion");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -1134,6 +1136,8 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ConciliacionLineaId");
+
+                    b.HasIndex("ConciliacionId1");
 
                     b.HasIndex("ElementoConfiguracion");
 
@@ -6822,6 +6826,10 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
                 {
+                    b.HasOne("ERPAPI.Models.Conciliacion", "ConciliacionId")
+                        .WithMany()
+                        .HasForeignKey("ConciliacionId1");
+
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
                         .HasForeignKey("ElementoConfiguracion");

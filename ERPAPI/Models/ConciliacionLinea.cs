@@ -18,6 +18,9 @@ namespace ERPAPI.Models
         [ForeignKey("ElementoConfiguracion")]
         public ElementoConfiguracion TipoTransaccion { get; set; }
 
+
+
+
         [Required]
         [Display(Name = "Monto")]
         public Double Monto { get; set; }
