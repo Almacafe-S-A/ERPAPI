@@ -26,7 +26,7 @@ namespace ERPAPI.Models
         [MaxLength(5000)]
         [Display(Name = "Descripcion de la cuenta")]
         public string Description { get; set; }
-        [Display(Name = "Estado")]
+        [Display(Name = "Mostar Saldos")]
         public bool IsCash { get; set; }
         [Display(Name = "Tipo de Cuenta")]
         public AccountClasses AccountClasses { get; set; }
@@ -40,6 +40,10 @@ namespace ERPAPI.Models
         [StringLength(50)]
         [Display(Name = "Codigo Contable")]
         public string AccountCode { get; set; }
+        [Display(Name = "Id de estado")]
+        public Int64 IdEstado { get; set; }
+        [Display(Name = "Estado")]
+        public string Estado { get; set; }
 
         [Required]
         [Display(Name = "Nivel de Jerarquia:")]
