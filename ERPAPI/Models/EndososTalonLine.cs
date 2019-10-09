@@ -25,7 +25,8 @@ namespace ERPAPI.Models
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
 
-      
+        [Display(Name = "Linea de certificado")]
+        public Int64 CertificadoLineId { get; set; }
 
         [Display(Name = "Producto")]
         public Int64 SubProductId { get; set; }

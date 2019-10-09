@@ -118,7 +118,7 @@ namespace ERPAPI.Controllers
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
-                 _users = await _context.Users.ToListAsync();
+                 _users = await _context.Users.Include(c => c.Branch).ToListAsync();
                     
                   //  .Include(c => c.Branch)
                // _users = await _context.Users.ToListAsync();
@@ -186,7 +186,7 @@ namespace ERPAPI.Controllers
             try
             {
 
-                var user = new ApplicationUser { UserName = _usuario.Email, Email = _usuario.Email };
+                var user = new ApplicationUser { UserName = _usuario.Email, Email = _usuario.Email, BranchId = _usuario.BranchId };
                 var result = await _userManager.CreateAsync(user, _usuario.PasswordHash);
 
                 if (!result.Succeeded)
@@ -206,8 +206,8 @@ namespace ERPAPI.Controllers
                         ApplicationUser _newpass = await _context.Users.Where(q => q.Id == _usuario.Id).FirstOrDefaultAsync();
                         _context.PasswordHistory.Add(new PasswordHistory()
                         {
-                            UserId = _usuario.Id.ToString(),
-                            PasswordHash = _newpass.PasswordHash,
+                            UserId = user.Id.ToString(),
+                            PasswordHash = user.PasswordHash,
                         });
 
                         await _context.SaveChangesAsync();
@@ -262,11 +262,12 @@ namespace ERPAPI.Controllers
         {
             try
             {
+               
                 ApplicationUser ApplicationUserq = (from c in _context.Users
                   .Where(q => q.Id == _usuario.Id)
                                                 select c
                     ).FirstOrDefault();
-
+                _usuario.BranchId = _usuario.Branch.BranchId;
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;
 

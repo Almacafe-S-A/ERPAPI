@@ -28,7 +28,7 @@ namespace ERP.Contexts
 
         }
         public DbSet<Accounting> Accounting { get; set; }
-        public DbSet<AccountingChilds> AccountingChilds { get; set; }
+       // public DbSet<AccountingChilds> AccountingChilds { get; set; }
 
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
@@ -37,14 +37,15 @@ namespace ERP.Contexts
         public DbSet<ContactPerson> ContactPerson { get; set; }
         public DbSet<TypeJournal> TypeJournal { get; set; }
         public DbSet<CostListItem> CostListItem { get; set; }
+        public DbSet<CostCenter> CostCenter { get; set; }
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-        public DbSet<PurchPartners> PurchPartners { get; set; }
-        public DbSet<PurchDocument> PurchDocument { get; set; }
-        public DbSet<Purch> Purch { get; set; }
+      //  public DbSet<PurchPartners> PurchPartners { get; set; }
+        public DbSet<VendorDocument> VendorDocument { get; set; }
+       // public DbSet<PurchDocument> PurchDocument { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
         //public DbSet<Account> Account { get; set; }
         public DbSet<Dimensions> Dimensions { get; set; }
@@ -75,6 +76,7 @@ namespace ERP.Contexts
         public virtual DbSet<UnitOfMeasure> UnitOfMeasure { get; set; }
         public DbSet<ProformaInvoice> ProformaInvoice { get; set; }
         public DbSet<ProformaInvoiceLine> ProformaInvoiceLine { get; set; }
+        public DbSet<InvoiceCalculation> InvoiceCalculation { get; set; }
 
         public DbSet<JournalEntryConfiguration> JournalEntryConfiguration { get; set; }
         public DbSet<JournalEntryConfigurationLine> JournalEntryConfigurationLine { get; set; }
@@ -167,7 +169,9 @@ namespace ERP.Contexts
         public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
         public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
         public DbSet<EmployeeAbsence> EmployeeAbsence { get; set; }
-
+        public DbSet<PeriodicidadPago> PeriodicidadPago { get; set; }
+        public DbSet<BranchPorDepartamento> BranchPorDepartamento { get; set; }
+        public DbSet<Comision> Comision { get; set; }
         //  public DbSet<CDGoodsDeliveryAuthorization> CDGoodsDeliveryAuthorization { get; set; }
 
         /// <summary>
@@ -216,6 +220,11 @@ namespace ERP.Contexts
 
         public DbSet<Conciliacion> Conciliacion { get; set; }
         public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
+
+        public DbSet<PurchaseOrder> PurchaseOrder { get; set; }
+
+        public DbSet<PurchaseOrderLine> PurchaseOrderLine { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

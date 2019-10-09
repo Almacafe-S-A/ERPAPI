@@ -109,6 +109,27 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{IdHorasTrabajadas}")]
+        public async Task<IActionResult> GetHoursWorkedDetailByIdHorasTrabajadas(Int64 IdHorasTrabajadas)
+        {
+            List<HoursWorkedDetail> Items = new List<HoursWorkedDetail>();
+            try
+            {
+                Items = await _context.HoursWorkedDetail.Where(q => q.IdHorasTrabajadas == IdHorasTrabajadas).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return Ok(Items);
+        }
+
+
+
         /// <summary>
         /// Inserta una nueva HoursWorkedDetail
         /// </summary>

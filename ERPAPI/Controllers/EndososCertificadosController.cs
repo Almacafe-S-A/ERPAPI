@@ -88,6 +88,57 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{IdCD}")]
+        public async Task<IActionResult> GetEndososCertificadosByIdCD(Int64 IdCD)
+        {
+            EndososCertificados Items = new EndososCertificados();
+            try
+            {
+                Items = await _context.EndososCertificados
+                    .Where(q=>q.IdCD == IdCD).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetEndososSaldoByLineByIdCD(EndososCertificadosLine _EndososCertificadosLine)
+        {
+            EndososLiberacion Items = new EndososLiberacion();
+            try
+            {
+                Items = await _context.EndososLiberacion
+                         .OrderByDescending(q=>q.EndososLiberacionId)
+                         .Where(q => q.EndososLineId == _EndososCertificadosLine.EndososCertificadosLineId)
+                         .FirstOrDefaultAsync();
+
+                EndososCertificadosLine _endosoline = await
+                           _context.EndososCertificadosLine
+                           .Where(q => q.EndososCertificadosLineId == _EndososCertificadosLine.EndososCertificadosLineId).FirstOrDefaultAsync();
+
+                if (Items == null)
+                {
+                    Items = new EndososLiberacion { EndososId=0, EndososLineId=0, Saldo = _endosoline.Quantity };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetEndososCertificadosByCustomer()
         {
@@ -197,12 +248,11 @@ namespace ERPAPI.Controllers
                                     {
                                         Price = linea.Price,
                                         SubProductId = linea.SubProductId,
-                                        SubProductName = linea.SubProductName
-                                        ,
+                                        SubProductName = linea.SubProductName,
                                         UnitOfMeasureId = linea.UnitOfMeasureId,
-                                        UnitOfMeasureName = linea.UnitOfMeasureName
-                                        ,
-                                        ValorEndoso = linea.ValorEndoso
+                                        UnitOfMeasureName = linea.UnitOfMeasureName,
+                                        ValorEndoso = linea.ValorEndoso,
+                                        Quantity = linea.Quantity,
                                     });
 
                                 }
@@ -251,12 +301,11 @@ namespace ERPAPI.Controllers
                                     {
                                         Price = linea.Price,
                                         SubProductId = linea.SubProductId,
-                                        SubProductName = linea.SubProductName
-                                        ,
+                                        SubProductName = linea.SubProductName,
                                         UnitOfMeasureId = linea.UnitOfMeasureId,
-                                        UnitOfMeasureName = linea.UnitOfMeasureName
-                                        ,
-                                        ValorEndoso = linea.ValorEndoso
+                                        UnitOfMeasureName = linea.UnitOfMeasureName,
+                                        ValorEndoso = linea.ValorEndoso,
+                                        Quantity = linea.Quantity,
                                     });
 
                                 }

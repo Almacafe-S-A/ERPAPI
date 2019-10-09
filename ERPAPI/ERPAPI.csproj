@@ -17,10 +17,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\AccountController.cs" />
+    <Compile Remove="Controllers\AccountingChildsController.cs" />
     <Compile Remove="Controllers\CenterCosteController.cs" />
     <Compile Remove="Controllers\ExchangeRatesController.cs" />
     <Compile Remove="Controllers\LedgerController.cs" />
+    <Compile Remove="Controllers\PurchController.cs" />
+    <Compile Remove="Controllers\PurchDocumentController.cs" />
     <Compile Remove="Controllers\PurchDocumentsController.cs" />
+    <Compile Remove="Controllers\PurchPartnersController.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.cs" />
     <Compile Remove="Migrations\20190319213029_addtable.Designer.cs" />
     <Compile Remove="Migrations\20190422162817_ControllersNumeracionSAR.cs" />
@@ -117,9 +122,18 @@
     <Compile Remove="Migrations\20190922171722_InvoiceLineIdentity.Designer.cs" />
     <Compile Remove="Migrations\20190924170817_Conciliacion_ConciliacionLinea.cs" />
     <Compile Remove="Migrations\20190924170817_Conciliacion_ConciliacionLinea.Designer.cs" />
+    <Compile Remove="Migrations\20190925145204_Prueba.cs" />
+    <Compile Remove="Migrations\20190926172428_currency.cs" />
+    <Compile Remove="Migrations\20190926172428_currency.Designer.cs" />
+    <Compile Remove="Migrations\20191002024040_Prueba.cs" />
     <Compile Remove="Models\Account.cs" />
+    <Compile Remove="Models\AccountClass.cs" />
+    <Compile Remove="Models\AccountingChilds.cs" />
     <Compile Remove="Models\CenterCoste.cs" />
     <Compile Remove="Models\Ledger.cs" />
+    <Compile Remove="Models\Purch.cs" />
+    <Compile Remove="Models\PurchDocument.cs" />
+    <Compile Remove="Models\PurchPartners.cs" />
   </ItemGroup>
 
   <ItemGroup>

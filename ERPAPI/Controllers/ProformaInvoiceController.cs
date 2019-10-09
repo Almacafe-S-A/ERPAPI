@@ -133,6 +133,152 @@ namespace ERPAPI.Controllers
         }
 
 
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ProformaInvoice>> InsertWithInventory([FromBody]ProformaInvoiceDTO _ProformaInvoice)
+        {
+            ProformaInvoice _ProformaInvoiceq = new ProformaInvoice();
+            try
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _context.ProformaInvoice.Add(_ProformaInvoice);
+                        //await _context.SaveChangesAsync();
+
+                        foreach (var item in _ProformaInvoice.ProformaInvoiceLine)
+                        {
+                            item.ProformaInvoiceId = _ProformaInvoice.ProformaId;
+                            _context.ProformaInvoiceLine.Add(item);
+
+                            Kardex _kardexmax = await (from c in _context.Kardex
+                                                 .OrderByDescending(q => q.DocumentDate)
+                                                           // .Take(1)
+                                                       join d in _context.KardexLine on c.KardexId equals d.KardexId
+                                                       where   d.ProducId == item.SubProductId
+                                                       select c
+                                                )
+                                                .FirstOrDefaultAsync();
+
+                            if (_kardexmax == null) { _kardexmax = new Kardex(); }
+                            KardexLine _KardexLine = await _context.KardexLine
+                                                                         .Where(q => q.KardexId == _kardexmax.KardexId)
+                                                                         .Where(q => q.SubProducId == item.SubProductId)
+                                                                         //.Where(q => q.WareHouseId == item.WareHouseId)
+                                                                          //.Where(q => q.BranchId == _GoodsDeliveredq.BranchId)
+                                                                         .OrderByDescending(q => q.KardexLineId)
+                                                                         .Take(1)
+                                                                        .FirstOrDefaultAsync();
+
+                            Product _subproduct = await (from c in _context.Product
+                                                      .Where(q => q.ProductId == item.SubProductId)
+                                                            select c
+                                                      ).FirstOrDefaultAsync();
+
+                            if (_KardexLine.Total > item.Quantity)
+                            {
+                                item.Total = _KardexLine.Total - item.Quantity;
+                            }
+                            else
+                            {
+                                return BadRequest("Inventario insuficiente!");
+                            }
+
+
+                            _ProformaInvoice.Kardex._KardexLine.Add(new KardexLine
+                            {
+                                DocumentDate = _ProformaInvoice.OrderDate,
+                                ProducId = item.ProductId,
+                                ProductName = item.ProductName,
+                                SubProducId = item.SubProductId,
+                                SubProductName = item.SubProductName,
+                                QuantityEntry = 0,
+                                QuantityOut = item.Quantity,
+                                BranchId = _ProformaInvoice.BranchId,
+                                BranchName = _ProformaInvoice.BranchName,
+                                WareHouseId = item.WareHouseId,
+                                WareHouseName = item.WareHouseName,
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                TypeOperationId = 1,
+                                TypeOperationName = "Salida",
+                                Total = item.Total,
+                               // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                                //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                                //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                            });
+
+
+                        }
+                        await _context.SaveChangesAsync();
+
+                        _ProformaInvoice.Kardex.DocType = 0;
+                        _ProformaInvoice.Kardex.DocName = "FacturaProforma/ProformaInvoice";
+                        _ProformaInvoice.Kardex.DocumentDate = _ProformaInvoice.OrderDate;
+                        _ProformaInvoice.Kardex.FechaCreacion = DateTime.Now;
+                        _ProformaInvoice.Kardex.FechaModificacion = DateTime.Now;
+                        _ProformaInvoice.Kardex.TypeOperationId = 1;
+                        _ProformaInvoice.Kardex.TypeOperationName = "Salida";
+                        _ProformaInvoice.Kardex.KardexDate = DateTime.Now;
+
+                        _ProformaInvoice.Kardex.DocumentName = "FacturaProforma";
+
+                        _ProformaInvoice.Kardex.CustomerId = _ProformaInvoice.CustomerId;
+                        _ProformaInvoice.Kardex.CustomerName = _ProformaInvoice.CustomerName;
+                        _ProformaInvoice.Kardex.CurrencyId = _ProformaInvoice.CurrencyId;
+                        _ProformaInvoice.Kardex.CurrencyName = _ProformaInvoice.CurrencyName;
+                        _ProformaInvoice.Kardex.DocumentId = _ProformaInvoice.ProformaId;
+                        _ProformaInvoice.Kardex.UsuarioCreacion = _ProformaInvoice.UsuarioCreacion;
+                        _ProformaInvoice.Kardex.UsuarioModificacion = _ProformaInvoice.UsuarioModificacion;
+                        _context.Kardex.Add(_ProformaInvoice.Kardex);
+
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _ProformaInvoice.CustomerId,
+                            DocType = "ProformaInvoice",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_ProformaInvoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_ProformaInvoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _ProformaInvoice.UsuarioCreacion,
+                            UsuarioModificacion = _ProformaInvoice.UsuarioModificacion,
+                            UsuarioEjecucion = _ProformaInvoice.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+
+                }
+                //_ProformaInvoiceq = _ProformaInvoice;
+                //_context.ProformaInvoice.Add(_ProformaInvoiceq);
+                //await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_ProformaInvoiceq));
+        }
+
+
+
+
         /// <summary>
         /// Inserta una nueva ProformaInvoice
         /// </summary>

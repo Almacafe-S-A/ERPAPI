@@ -117,18 +117,42 @@ namespace ERPAPI.Controllers
         /// <param name="_JournalEntry"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntry>> Insert([FromBody]JournalEntry _JournalEntry)
+        public async Task<ActionResult<JournalEntry>> Insert([FromBody]dynamic dto)
+        //public async Task<ActionResult<JournalEntry>> Insert([FromBody]JournalEntry _JournalEntry)
         {
+           JournalEntry _JournalEntry = new JournalEntry();
             JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
+                _JournalEntry = JsonConvert.DeserializeObject<JournalEntry>(dto.ToString());
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
                         _JournalEntryq = _JournalEntry;
                         _context.JournalEntry.Add(_JournalEntryq);
+                        // await _context.SaveChangesAsync();
+                        double sumacreditos = 0, sumadebitos = 0;
+                        foreach (var item in _JournalEntry.JournalEntryLines)
+                        {
+                            item.JournalEntryId = _JournalEntry.JournalEntryId;
+                            item.JournalEntryLineId = 0;
+                            _context.JournalEntryLine.Add(item);
+                            sumacreditos += item.Credit > 0 ? item.Credit : 0;
+                            sumadebitos += item.Debit>0 ? item.Debit : 0;
+                        }
+
+
+                        if (sumacreditos != sumadebitos)
+                        {
+                            transaction.Rollback();
+                            _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos:{sumacreditos}");
+                            return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos:{sumacreditos}");
+                        }
+
                         await _context.SaveChangesAsync();
+
+
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {

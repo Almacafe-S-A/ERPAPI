@@ -15,6 +15,10 @@ namespace ERPAPI.Models
         public string NombreDepartamento { get; set; }
         public long? IdEstado { get; set; }
 
+        public bool? AplicaComision { get; set; }
+        public long? ComisionId { get; set; }
+        public long? PeridicidadId { get; set; }
+
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; }
         public DateTime? FechaCreacion { get; set; }

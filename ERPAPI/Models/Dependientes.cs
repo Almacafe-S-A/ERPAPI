@@ -14,12 +14,12 @@ namespace ERPAPI.Models
         public long IdDependientes { get; set; }
         public string NombreDependientes { get; set; }
         public string Parentezco { get; set; }
-        public string Telefono { get; set; }
-        public string Direccion { get; set; }
+        public string TelefonoDependientes { get; set; }
+        public string DireccionDependientes { get; set; }
         public long? IdEmpleado { get; set; }
 
-        public int Edad { get; set; }
-        public DateTime FechaNacimiento { get; set; }
+        public int? Edad { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
 
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; }
