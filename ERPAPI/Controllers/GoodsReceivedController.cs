@@ -280,11 +280,12 @@ namespace ERPAPI.Controllers
                         _GoodsReceived.Kardex.UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion;
                         _GoodsReceived.Kardex.UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion;
 
-
-                     
                         
 
-                        _context.Kardex.Add(_GoodsReceived.Kardex);
+                        if (_GoodsReceived.ControlId > 0)
+                        {
+                            _context.Kardex.Add(_GoodsReceived.Kardex);
+                        }
 
                         await _context.SaveChangesAsync();
 

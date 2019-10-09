@@ -26,7 +26,7 @@ namespace ERPAPI.Models
         public int PartyTypeId { get; set; }
 
         [Display(Name = "Tipo de Socio de negocios")]
-        public int PartyTypeName { get; set; }
+        public string PartyTypeName { get; set; }
 
 
         [Display(Name = "Id de Socio de negocios")]

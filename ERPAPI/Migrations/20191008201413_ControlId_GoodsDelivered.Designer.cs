@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191008201413_ControlId_GoodsDelivered")]
+    partial class ControlId_GoodsDelivered
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3865,61 +3867,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Invoice");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InvoiceCalculation", b =>
-                {
-                    b.Property<long>("InvoiceCalculationId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<int>("Dias");
-
-                    b.Property<int>("Dias2");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdCD");
-
-                    b.Property<double>("IngresoMercadería");
-
-                    b.Property<long>("InvoiceId");
-
-                    b.Property<double>("MercaderiaCertificada");
-
-                    b.Property<long>("NoCD");
-
-                    b.Property<double>("PorcentajeMerma");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<long>("ProformaInvoiceId");
-
-                    b.Property<double>("UnitPrice");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("ValorAFacturarMerma");
-
-                    b.Property<double>("ValorFacturar");
-
-                    b.Property<double>("ValorLps");
-
-                    b.Property<double>("ValorLpsMerma");
-
-                    b.HasKey("InvoiceCalculationId");
-
-                    b.ToTable("InvoiceCalculation");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
                 {
                     b.Property<long>("InvoiceLineId")
@@ -4011,7 +3958,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("PartyTypeId");
 
-                    b.Property<string>("PartyTypeName");
+                    b.Property<int>("PartyTypeName");
 
                     b.Property<bool?>("Posted");
 
