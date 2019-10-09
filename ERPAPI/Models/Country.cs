@@ -54,6 +54,11 @@ namespace ERPAPI.Models
         [Display(Name = "Comentarios")]
         public string Comments { get; set; }
 
+        [Display(Name = "Estado")]
+        public long IdEstado { get; set; } // bigint
+        [Display(Name = "Estado")]
+        public string Estado { get; set; } // text
+
         [Display(Name = "Usuario de creación")]
         public string Usuariocreacion { get; set; }
         [Display(Name = "Usuario de modificación")]

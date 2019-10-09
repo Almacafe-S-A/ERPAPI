@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191009164414_EstadoCountry")]
+    partial class EstadoCountry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,15 +46,11 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(5000);
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("HierarchyAccount");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<bool>("IsCash");
 
@@ -1092,8 +1090,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ConciliacionId1");
-
                     b.Property<long?>("ElementoConfiguracion");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -1117,8 +1113,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ConciliacionLineaId");
-
-                    b.HasIndex("ConciliacionId1");
 
                     b.HasIndex("ElementoConfiguracion");
 
@@ -1352,8 +1346,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BranchName");
 
-                    b.Property<string>("CostCenterName")
-                        .IsRequired();
+                    b.Property<string>("CostCenterName");
 
                     b.Property<string>("Estado");
 
@@ -6034,7 +6027,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Identidad");
+                    b.Property<string>("Identidad")
+                        .IsRequired();
 
                     b.Property<string>("IdentityRepresentative");
 
@@ -7026,10 +7020,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Conciliacion", "ConciliacionId")
-                        .WithMany()
-                        .HasForeignKey("ConciliacionId1");
-
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
                         .HasForeignKey("ElementoConfiguracion");
