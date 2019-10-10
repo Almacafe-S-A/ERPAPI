@@ -24,17 +24,23 @@ namespace ERPAPI.Models
         public string Estado { get; set; }
 
         [Display(Name = "UOM")]
-        public int UnitOfMeasureId { get; set; }
+        public int? UnitOfMeasureId { get; set; } = null;
         [ForeignKey("UnitOfMeasureId")]
         public  UnitOfMeasure UnitOfMeasure { get; set; }
         public double DefaultBuyingPrice { get; set; } = 0.0;
         public double DefaultSellingPrice { get; set; } = 0.0;
-        [Display(Name = "Branch")]
+        [Display(Name = "Sucursal")]
         public int BranchId { get; set; }
+        [Display(Name = "Sucursal")]
+        public string BranchName { get; set; }
         [ForeignKey("BranchId")]
         public  Branch Branch { get; set; }
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
+
+        [Display(Name = "Moneda")]
+        public string CurrencyName { get; set; }
+
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
         public int? MarcaId { get; set; }

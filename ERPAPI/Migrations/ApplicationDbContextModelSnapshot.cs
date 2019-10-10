@@ -1092,8 +1092,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ConciliacionId1");
-
                     b.Property<long?>("ElementoConfiguracion");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -1117,8 +1115,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ConciliacionLineaId");
-
-                    b.HasIndex("ConciliacionId1");
 
                     b.HasIndex("ElementoConfiguracion");
 
@@ -4005,6 +4001,10 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("DocumentId");
 
+                    b.Property<int>("EstadoId");
+
+                    b.Property<int>("EstadoName");
+
                     b.Property<int?>("GeneralLedgerHeaderId");
 
                     b.Property<long?>("GeneralLedgerHeaderId1");
@@ -4716,9 +4716,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("BranchId");
 
+                    b.Property<string>("BranchName");
+
                     b.Property<string>("Correlative");
 
                     b.Property<int>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
 
                     b.Property<double>("DefaultBuyingPrice");
 
@@ -4751,7 +4755,7 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ProductName")
                         .IsRequired();
 
-                    b.Property<int>("UnitOfMeasureId");
+                    b.Property<int?>("UnitOfMeasureId");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -7026,10 +7030,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Conciliacion", "ConciliacionId")
-                        .WithMany()
-                        .HasForeignKey("ConciliacionId1");
-
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
                         .HasForeignKey("ElementoConfiguracion");
@@ -7324,8 +7324,7 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
-                        .HasForeignKey("UnitOfMeasureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UnitOfMeasureId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>

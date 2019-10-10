@@ -58,8 +58,10 @@ namespace ERPAPI.Models
         [Display(Name = "Id de Registro Pago")]
         public Int32 IdPaymentCode { get; set; }
         public Int32  IdTypeofPayment { get; set; }
-
-     
+        [Display(Name = "Estado")]
+        public Int32 EstadoId { get; set; }
+        [Display(Name = "Estado")]
+        public Int32 EstadoName { get; set; }
 
         [Display(Name = "Total Débito")]
         public double TotalDebit { get; set; }
