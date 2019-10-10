@@ -176,7 +176,7 @@ namespace ERPAPI.Controllers
                                                             select c
                                                       ).FirstOrDefaultAsync();
 
-                            if (_KardexLine.Total > item.Quantity)
+                            if (_KardexLine!= null && _KardexLine.Total > item.Quantity)
                             {
                                 item.Total = _KardexLine.Total - item.Quantity;
                             }
