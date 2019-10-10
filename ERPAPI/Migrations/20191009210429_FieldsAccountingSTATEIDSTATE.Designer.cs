@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191009210429_FieldsAccountingSTATEIDSTATE")]
+    partial class FieldsAccountingSTATEIDSTATE
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1092,8 +1094,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ConciliacionId1");
-
                     b.Property<long?>("ElementoConfiguracion");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -1117,8 +1117,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ConciliacionLineaId");
-
-                    b.HasIndex("ConciliacionId1");
 
                     b.HasIndex("ElementoConfiguracion");
 
@@ -1447,15 +1445,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Comments");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
 
                     b.Property<bool>("GAFI");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<int>("ListaId");
 
@@ -4002,8 +3996,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("Date");
 
                     b.Property<DateTime>("DatePosted");
-
-                    b.Property<long>("DocumentId");
 
                     b.Property<int?>("GeneralLedgerHeaderId");
 
@@ -7026,10 +7018,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Conciliacion", "ConciliacionId")
-                        .WithMany()
-                        .HasForeignKey("ConciliacionId1");
-
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
                         .HasForeignKey("ElementoConfiguracion");

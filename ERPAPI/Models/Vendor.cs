@@ -51,7 +51,7 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "RTN del Proveedor")]
         public string RTN { get; set; }
-        [Required]
+     
         [Display(Name = "Identidad del contacto")]
         public string Identidad { get; set; }
         [Display(Name = "Moneda")]

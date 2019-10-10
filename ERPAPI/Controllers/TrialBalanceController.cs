@@ -177,6 +177,7 @@ namespace ERPAPI.Controllers
                 Items = (from c in Items
                        
                          select new AccountingDTO
+
                          {
                              AccountId = c.AccountId,
                              AccountName = c.AccountCode + "--" + c.AccountName,

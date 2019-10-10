@@ -22,11 +22,16 @@ namespace ERPAPI.Models
         public int? GeneralLedgerHeaderId { get; set; }
 
 
+
+
         [Display(Name = "Tipo de Socio de negocios")]
         public int PartyTypeId { get; set; }
 
         [Display(Name = "Tipo de Socio de negocios")]
         public string PartyTypeName { get; set; }
+
+        [Display(Name = "Id Documento")]
+        public Int64 DocumentId { get; set; }
 
 
         [Display(Name = "Id de Socio de negocios")]
