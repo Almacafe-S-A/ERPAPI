@@ -4001,9 +4001,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("DocumentId");
 
-                    b.Property<long>("EstadoId");
+                    b.Property<int>("EstadoId");
 
-                    b.Property<string>("EstadoName");
+                    b.Property<int>("EstadoName");
 
                     b.Property<int?>("GeneralLedgerHeaderId");
 
