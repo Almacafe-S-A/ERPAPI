@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191012023703_veendorIdestado")]
+    partial class veendorIdestado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1488,186 +1490,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Country");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.CreditNote", b =>
-                {
-                    b.Property<int>("CreditNoteId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<string>("CAI");
-
-                    b.Property<string>("Caja");
-
-                    b.Property<long>("CertificadoDepositoId");
-
-                    b.Property<string>("Correo");
-
-                    b.Property<DateTime>("CreditNoteDate");
-
-                    b.Property<DateTime>("CreditNoteDueDate");
-
-                    b.Property<string>("CreditNoteName");
-
-                    b.Property<int>("CreditNoteTypeId");
-
-                    b.Property<double>("Currency");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<string>("CustomerRefNumber");
-
-                    b.Property<DateTime>("DeliveryDate");
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<double>("Discount");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaLimiteEmision");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Freight");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<long>("IdPuntoEmision");
-
-                    b.Property<string>("Impreso");
-
-                    b.Property<string>("NoConstanciadeRegistro");
-
-                    b.Property<string>("NoFin");
-
-                    b.Property<string>("NoInicio");
-
-                    b.Property<string>("NoOCExenta");
-
-                    b.Property<string>("NoSAG");
-
-                    b.Property<int>("NúmeroDEI");
-
-                    b.Property<DateTime>("OrderDate");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("Remarks");
-
-                    b.Property<long>("SalesOrderId");
-
-                    b.Property<int>("SalesTypeId");
-
-                    b.Property<int>("ShipmentId");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<string>("Sucursal");
-
-                    b.Property<double>("Tax");
-
-                    b.Property<double>("Tax18");
-
-                    b.Property<string>("Tefono");
-
-                    b.Property<string>("TipoDocumento");
-
-                    b.Property<double>("Total");
-
-                    b.Property<double>("TotalExento");
-
-                    b.Property<double>("TotalExonerado");
-
-                    b.Property<double>("TotalGravado");
-
-                    b.Property<double>("TotalGravado18");
-
-                    b.Property<string>("TotalLetras");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("CreditNoteId");
-
-                    b.ToTable("CreditNote");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CreditNoteLine", b =>
-                {
-                    b.Property<long>("CreditNoteLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<long>("CostCenterId");
-
-                    b.Property<string>("CostCenterName");
-
-                    b.Property<int>("CreditNoteId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<double>("DiscountAmount");
-
-                    b.Property<double>("DiscountPercentage");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("TaxAmount");
-
-                    b.Property<string>("TaxCode");
-
-                    b.Property<double>("TaxPercentage");
-
-                    b.Property<double>("Total");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.HasKey("CreditNoteLineId");
-
-                    b.HasIndex("CreditNoteId");
-
-                    b.ToTable("CreditNoteLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.CuentaBancoEmpleados", b =>
                 {
                     b.Property<long>("Id")
@@ -2319,188 +2141,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("CustomersOfCustomer");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.DebitNote", b =>
-                {
-                    b.Property<long>("DebitNoteId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<string>("CAI");
-
-                    b.Property<string>("Caja");
-
-                    b.Property<long>("CertificadoDepositoId");
-
-                    b.Property<string>("Correo");
-
-                    b.Property<double>("Currency");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<string>("CustomerRefNumber");
-
-                    b.Property<DateTime>("DebitNoteDate");
-
-                    b.Property<DateTime>("DebitNoteDueDate");
-
-                    b.Property<string>("DebitNoteName");
-
-                    b.Property<int>("DebitNoteTypeId");
-
-                    b.Property<DateTime>("DeliveryDate");
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<double>("Discount");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaLimiteEmision");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Freight");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<long>("IdPuntoEmision");
-
-                    b.Property<string>("Impreso");
-
-                    b.Property<string>("NoConstanciadeRegistro");
-
-                    b.Property<string>("NoFin");
-
-                    b.Property<string>("NoInicio");
-
-                    b.Property<string>("NoOCExenta");
-
-                    b.Property<string>("NoSAG");
-
-                    b.Property<int>("NúmeroDEI");
-
-                    b.Property<DateTime>("OrderDate");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("Remarks");
-
-                    b.Property<long>("SalesOrderId");
-
-                    b.Property<int>("SalesTypeId");
-
-                    b.Property<int>("ShipmentId");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<string>("Sucursal");
-
-                    b.Property<double>("Tax");
-
-                    b.Property<double>("Tax18");
-
-                    b.Property<string>("Tefono");
-
-                    b.Property<string>("TipoDocumento");
-
-                    b.Property<double>("Total");
-
-                    b.Property<double>("TotalExento");
-
-                    b.Property<double>("TotalExonerado");
-
-                    b.Property<double>("TotalGravado");
-
-                    b.Property<double>("TotalGravado18");
-
-                    b.Property<string>("TotalLetras");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("DebitNoteId");
-
-                    b.ToTable("DebitNote");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.DebitNoteLine", b =>
-                {
-                    b.Property<long>("DebitNoteLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<long>("CostCenterId");
-
-                    b.Property<string>("CostCenterName");
-
-                    b.Property<int>("DebitNoteId");
-
-                    b.Property<long?>("DebitNoteId1");
-
-                    b.Property<string>("Description");
-
-                    b.Property<double>("DiscountAmount");
-
-                    b.Property<double>("DiscountPercentage");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("TaxAmount");
-
-                    b.Property<string>("TaxCode");
-
-                    b.Property<double>("TaxPercentage");
-
-                    b.Property<double>("Total");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.HasKey("DebitNoteLineId");
-
-                    b.HasIndex("DebitNoteId1");
-
-                    b.ToTable("DebitNoteLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Departamento", b =>
@@ -7415,14 +7055,6 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.CreditNoteLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CreditNote", "CreditNote")
-                        .WithMany("CreditNoteLine")
-                        .HasForeignKey("CreditNoteId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Customer", b =>
                 {
                     b.HasOne("ERPAPI.Models.City", "Ciudad")
@@ -7461,13 +7093,6 @@ namespace ERPAPI.Migrations
                         .WithMany("_Customers")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.DebitNoteLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.DebitNote", "DebitNote")
-                        .WithMany("DebitNoteLine")
-                        .HasForeignKey("DebitNoteId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ElementoConfiguracion", b =>

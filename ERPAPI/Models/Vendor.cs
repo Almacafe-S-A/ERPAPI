@@ -32,7 +32,11 @@ namespace ERPAPI.Models
         public long CityId { get; set; }
         [ForeignKey("CityId")]
         public City City { get; set; }
-        
+        [Display(Name = "Id de estado")]
+        public Int64? IdEstadoVendorConfi { get; set; }
+        [Display(Name = "Estado")]
+        public string EstadoVendorConfi { get; set; }
+
         [Display(Name = "Zip Code")]
         public string ZipCode { get; set; }
         [Display(Name = "Telefono")]
