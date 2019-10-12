@@ -61,6 +61,16 @@ namespace ERP.Contexts
         public DbSet<ShipmentType> ShipmentType { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<InvoiceLine> InvoiceLine { get; set; }
+
+
+        public DbSet<CreditNote> CreditNote { get; set; }
+        public DbSet<CreditNoteLine> CreditNoteLine { get; set; }
+
+        public DbSet<DebitNote> DebitNote { get; set; }
+        public DbSet<DebitNoteLine> DebitNoteLine { get; set; }
+
+
+
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
