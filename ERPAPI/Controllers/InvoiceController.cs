@@ -213,6 +213,7 @@ namespace ERPAPI.Controllers
                                 CreatedDate = DateTime.Now,
                                 ModifiedUser = _Invoiceq.UsuarioModificacion,
                                 CreatedUser = _Invoiceq.UsuarioCreacion,
+                                DocumentId = _Invoiceq.InvoiceId,
                             };
 
                            

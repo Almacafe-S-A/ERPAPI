@@ -19,6 +19,12 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de producto")]
         public string ProductTypeName { get; set; }
 
+        [Display(Name = "Tipo de prohibición")]
+        public Int64 TipoProhibidoId { get; set; }
+
+        [Display(Name = "Tipo prohibición")]
+        public string TipoProhibidoName { get; set; }
+
         [Display(Name = "Saldo Quintales")]
         public double Balance { get; set; }
 

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191012034232_Creditnote_DebitNote")]
+    partial class Creditnote_DebitNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1619,10 +1621,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("AccountId");
-
-                    b.Property<string>("AccountName");
-
                     b.Property<double>("Amount");
 
                     b.Property<long>("CostCenterId");
@@ -2455,10 +2453,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("DebitNoteLineId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("AccountId");
-
-                    b.Property<string>("AccountName");
 
                     b.Property<double>("Amount");
 
@@ -6153,10 +6147,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ProductTypeName");
 
-                    b.Property<long>("TipoProhibidoId");
-
-                    b.Property<string>("TipoProhibidoName");
-
                     b.Property<int?>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
@@ -6408,15 +6398,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<string>("EstadoVendorConfi");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("IdEstado");
-
-                    b.Property<long?>("IdEstadoVendorConfi");
 
                     b.Property<string>("Identidad");
 
