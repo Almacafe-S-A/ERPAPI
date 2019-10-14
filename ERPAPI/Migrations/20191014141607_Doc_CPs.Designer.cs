@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191014141607_Doc_CPs")]
+    partial class Doc_CPs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6600,182 +6602,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("VendorDocument");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.VendorInvoice", b =>
-                {
-                    b.Property<int>("VendorInvoiceId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<string>("CAI");
-
-                    b.Property<string>("Correo");
-
-                    b.Property<double>("Currency");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<string>("CurrencyName");
-
-                    b.Property<string>("Direccion");
-
-                    b.Property<double>("Discount");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("ExpirationDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaLimiteEmision");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Freight");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("Impreso");
-
-                    b.Property<string>("NoConstanciadeRegistro");
-
-                    b.Property<string>("NoFin");
-
-                    b.Property<string>("NoInicio");
-
-                    b.Property<string>("NoOCExenta");
-
-                    b.Property<string>("NoSAG");
-
-                    b.Property<int>("NumeroDEI");
-
-                    b.Property<DateTime>("OrderDate");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<int>("PurchaseOrderId");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<DateTime>("ReceivedDate");
-
-                    b.Property<string>("Remarks");
-
-                    b.Property<int>("SalesTypeId");
-
-                    b.Property<int>("ShipmentId");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<string>("Sucursal");
-
-                    b.Property<double>("Tax");
-
-                    b.Property<double>("Tax18");
-
-                    b.Property<string>("Tefono");
-
-                    b.Property<string>("TipoDocumento");
-
-                    b.Property<double>("Total");
-
-                    b.Property<double>("TotalExento");
-
-                    b.Property<double>("TotalExonerado");
-
-                    b.Property<double>("TotalGravado");
-
-                    b.Property<double>("TotalGravado18");
-
-                    b.Property<string>("TotalLetras");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("VendorId");
-
-                    b.Property<DateTime>("VendorInvoiceDate");
-
-                    b.Property<DateTime>("VendorInvoiceDueDate");
-
-                    b.Property<string>("VendorInvoiceName");
-
-                    b.Property<int>("VendorInvoiceTypeId");
-
-                    b.Property<string>("VendorName");
-
-                    b.Property<string>("VendorRefNumber");
-
-                    b.HasKey("VendorInvoiceId");
-
-                    b.HasIndex("PurchaseOrderId");
-
-                    b.HasIndex("VendorId");
-
-                    b.ToTable("VendorInvoice");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.VendorInvoiceLine", b =>
-                {
-                    b.Property<long>("InvoiceLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("AccountId");
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("Description");
-
-                    b.Property<double>("DiscountAmount");
-
-                    b.Property<double>("DiscountPercentage");
-
-                    b.Property<int>("InvoiceId");
-
-                    b.Property<string>("ItemName");
-
-                    b.Property<double>("Price");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("TaxAmount");
-
-                    b.Property<string>("TaxCode");
-
-                    b.Property<double>("TaxPercentage");
-
-                    b.Property<double>("Total");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<int?>("VendorInvoiceId");
-
-                    b.HasKey("InvoiceLineId");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("InvoiceId");
-
-                    b.HasIndex("VendorInvoiceId");
-
-                    b.ToTable("VendorInvoiceLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.VendorOfCustomer", b =>
                 {
                     b.Property<long>("VendorOfId")
@@ -8159,36 +7985,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("VendorTypeId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.VendorInvoice", b =>
-                {
-                    b.HasOne("ERPAPI.Models.PurchaseOrder", "PurchaseOrder")
-                        .WithMany()
-                        .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Vendor", "Vendor")
-                        .WithMany()
-                        .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.VendorInvoiceLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Accounting", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Invoice", "Invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.VendorInvoice")
-                        .WithMany("VendorInvoiceLine")
-                        .HasForeignKey("VendorInvoiceId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorOfCustomer", b =>

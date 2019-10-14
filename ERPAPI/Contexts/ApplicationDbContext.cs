@@ -235,6 +235,12 @@ namespace ERP.Contexts
 
         public DbSet<PurchaseOrderLine> PurchaseOrderLine { get; set; }
 
+        public DbSet<Doc_CP> Doc_CP { get; set; }
+
+        public DbSet<VendorInvoice> VendorInvoice { get; set; }
+
+        public DbSet<VendorInvoiceLine> VendorInvoiceLine { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

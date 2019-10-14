@@ -60,6 +60,11 @@ namespace ERPAPI.Models
 
         public decimal? Prima { get; set; }
 
+        public long? ProductTypeId { get; set; }
+
+        [ForeignKey("ProductTypeId")]
+        public ElementoConfiguracion ProductType { get; set; }
+
 
 
 
