@@ -36,7 +36,7 @@ namespace ERPAPI.Models
         public string TypeOperationName { get; set; }
 
         [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
+        public Int64 CurrencyId { get; set; }
 
         [Display(Name = "Moneda")]
         public string CurrencyName { get; set; }
