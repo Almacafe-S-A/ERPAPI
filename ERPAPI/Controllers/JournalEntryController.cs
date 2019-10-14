@@ -197,12 +197,16 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_JournalEntry"></param>
         /// <returns></returns>
-        [HttpPut("[action]")]
-        public async Task<ActionResult<JournalEntry>> Update([FromBody]JournalEntry _JournalEntry)
+        [HttpPost("[action]")]
+       // public async Task<ActionResult<JournalEntry>> Update([FromBody]JournalEntry _JournalEntry)
+        public async Task<ActionResult<JournalEntry>> Update([FromBody]dynamic dto)
         {
-            JournalEntry _JournalEntryq = _JournalEntry;
+            //JournalEntry _JournalEntryq = _JournalEntry;
+            JournalEntry _JournalEntry = new JournalEntry();
+            JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
+                _JournalEntry = JsonConvert.DeserializeObject<JournalEntry>(dto.ToString());
                 _JournalEntryq = await (from c in _context.JournalEntry
                                  .Where(q => q.JournalEntryId == _JournalEntry.JournalEntryId)
                                  select c
