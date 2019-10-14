@@ -195,6 +195,7 @@ namespace ERPAPI.Controllers
                                                            // .Take(1)
                                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
                                                        where c.CustomerId == _GoodsReceivedq.CustomerId && d.SubProducId == item.SubProductId
+                                                        && c.DocumentName != "CD" && d.WareHouseId == item.WareHouseId
                                                        select c
                                                       ).FirstOrDefaultAsync();
 

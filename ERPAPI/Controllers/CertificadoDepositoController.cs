@@ -311,6 +311,7 @@ namespace ERPAPI.Controllers
                                                            // .Take(1)
                                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
                                                        where c.CustomerId == _CertificadoDepositoq.CustomerId && d.SubProducId == item.SubProductId
+                                                       && c.DocumentName =="CD"
                                                        select c
                                                        )
                                                        .FirstOrDefaultAsync();
@@ -324,6 +325,9 @@ namespace ERPAPI.Controllers
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();
+
+                            if(_KardexLine==null)
+                            { _KardexLine = new KardexLine(); }
 
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                      .Where(q => q.SubproductId == item.SubProductId)
@@ -353,7 +357,7 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = item.UnitMeasurName,
                                 TypeOperationId = 1,
                                 TypeOperationName = "Entrada",
-                                Total = item.Amount,
+                               // Total = item.Amount,
                                 //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
                                 //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
                                 QuantityEntryCD = item.Quantity,
@@ -381,8 +385,10 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
+                         
                         foreach (var item in _CertificadoDeposito.RecibosAsociados)
                         {
+                          //  GoodsReceivedLine _gr = await _context.GoodsReceivedLine.Where(q => q.GoodsReceivedId == item).FirstOrDefaultAsync();
                             RecibosCertificado _recibocertificado =
                                 new RecibosCertificado
                                 {
@@ -390,6 +396,9 @@ namespace ERPAPI.Controllers
                                     IdRecibo = item,
                                     productocantidadbultos = _CertificadoDeposito.Quantitysum,
                                     productorecibolempiras = _CertificadoDeposito.Total,
+                                  //  WareHouseId = _gr.WareHouseId,
+                                   // WareHouseName = _gr.WareHouseName,
+                                    
                                     // UnitMeasureId =_CertificadoDeposito.
                                 };
 
@@ -408,7 +417,7 @@ namespace ERPAPI.Controllers
                         
                         _CertificadoDeposito.Kardex.CustomerId = _CertificadoDeposito.CustomerId;
                         _CertificadoDeposito.Kardex.CustomerName = _CertificadoDeposito.CustomerName;
-                        //_CertificadoDeposito.Kardex.CurrencyId = _CertificadoDeposito.CurrencyId;
+                        _CertificadoDeposito.Kardex.CurrencyId = _CertificadoDeposito.CurrencyId;
                         _CertificadoDeposito.Kardex.CurrencyName = _CertificadoDeposito.CurrencyName;
                         _CertificadoDeposito.Kardex.DocumentId = _CertificadoDeposito.IdCD;
                         _CertificadoDeposito.Kardex.UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion;

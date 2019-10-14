@@ -184,7 +184,7 @@ namespace ERPAPI.Controllers
                             item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
                             _context.GoodsDeliveryAuthorizationLine.Add(item);
 
-
+                            Int64 IdCD = await _context.CertificadoDeposito.Where(q => q.NoCD == item.NoCertificadoDeposito).Select(q => q.IdCD).FirstOrDefaultAsync();
                             //Kardex _kardexmax = await (from kdx in _context.Kardex
                             //      .Where(q => q.CustomerId == _GoodsDeliveryAuthorization.CustomerId)
                             //                           from kdxline in _context.KardexLine
@@ -198,19 +198,20 @@ namespace ERPAPI.Controllers
                                                            // .Take(1)
                                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
                                                        where c.CustomerId == _GoodsDeliveryAuthorization.CustomerId && d.SubProducId == item.SubProductId
-                                                        
+                                                             && c.DocumentId == IdCD && c.DocumentName =="CD"
                                                        select c
                                                           )
                                                           .FirstOrDefaultAsync();
 
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
 
+                          
 
                             KardexLine _KardexLine = await _context.KardexLine
                                                                          .Where(q => q.KardexId == _kardexmax.KardexId)
                                                                          .Where(q => q.SubProducId == item.SubProductId)
-                                                                       //  .Where(q => q.WareHouseId == _GoodsDeliveryAuthorizationq.WareHouseId)
-                                                                         //.Where(q => q.BranchId == _GoodsDeliveryAuthorizationq.BranchId)
+                                                                        // .Where(q => q.WareHouseId == item.WarehouseId)
+                                                                        // .Where(q => q.BranchId == _GoodsDeliveryAuthorizationq.BranchId)
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();
@@ -220,9 +221,12 @@ namespace ERPAPI.Controllers
                                                             select c
                                                      ).FirstOrDefaultAsync();
 
+                            if(_KardexLine.TotalCD< item.Quantity)
+                            {
+                                return await Task.Run(() => BadRequest($"La cantidad a retirar no puede ser superior al total del ciertificado"));
+                            }
 
                             //  _context.GoodsReceivedLine.Add(item);
-
                             //item. = item.Quantity + _KardexLine.Total;
 
                             //Por cada linea de certificado , se agrega un Kardex de salida del tipo CD
@@ -244,7 +248,7 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = item.UnitOfMeasureName,
                                 TypeOperationId = 1,
                                 TypeOperationName = "Salida",
-                                Total = item.valorcertificado,
+                                //Total = item.valorcertificado,
                                 //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
                                 //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
                                 QuantityOutCD = item.Quantity,
@@ -266,7 +270,7 @@ namespace ERPAPI.Controllers
                             _GoodsDeliveryAuthorization.Kardex.CustomerName = _GoodsDeliveryAuthorization.CustomerName;
                             //_CertificadoDeposito.Kardex.CurrencyId = _CertificadoDeposito.CurrencyId;
                             _GoodsDeliveryAuthorization.Kardex.CurrencyName = _GoodsDeliveryAuthorization.CurrencyName;
-                            _GoodsDeliveryAuthorization.Kardex.DocumentId = await _context.CertificadoDeposito.Where(q => q.NoCD == item.NoCertificadoDeposito).Select(q => q.IdCD).FirstOrDefaultAsync(); ;
+                            _GoodsDeliveryAuthorization.Kardex.DocumentId = IdCD;
                             _GoodsDeliveryAuthorization.Kardex.UsuarioCreacion = _GoodsDeliveryAuthorization.UsuarioCreacion;
                             _GoodsDeliveryAuthorization.Kardex.UsuarioModificacion = _GoodsDeliveryAuthorization.UsuarioModificacion;
 
@@ -295,7 +299,7 @@ namespace ERPAPI.Controllers
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationId,
-                            DocType = "GoodsDelivered",
+                            DocType = "GoodsDeliveryAuthorization",
                             ClaseInicial =
                               Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDeliveryAuthorization, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDeliveryAuthorization, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
@@ -326,7 +330,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(()=> BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return Ok(_GoodsDeliveryAuthorizationq);

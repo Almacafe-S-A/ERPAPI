@@ -112,45 +112,40 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GetSaldoProductoByCertificado([FromBody]Kardex _Kardexq)
         {
-            //List<KardexLine> _kardexproduct = new List<KardexLine>();
-            List<Kardex> _kardexproduct = new List<Kardex>();
+            List<KardexLine> _kardexproduct = new List<KardexLine>();
+          //  List<Kardex> _kardexproduct = new List<Kardex>();
             try
             {
-                //Int64 KardexId = await _context.Kardex
-                //                              .Where(q => q.DocumentId == _Kardexq.DocumentId)
-                //                              .Where(q => q.DocumentName == _Kardexq.DocumentName)
-                //                              .Select(q => q.KardexId)
-                //                              .MaxAsync();
-
-                //_kardexproduct = await (_context.KardexLine
-                //                              .Where(q => q.KardexId == KardexId)                                              
-                //                             )
-                //                              .ToListAsync();
-
-
-                string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01" ;
-                string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-30";
-
-                _kardexproduct = await _context.Kardex
+                Int64 KardexId = await _context.Kardex
                                               .Where(q => q.DocumentId == _Kardexq.DocumentId)
-                                              .Where(q => q.DocumentName == _Kardexq.DocumentName)                                             
-                                              .Where(q => q.DocumentDate >=Convert.ToDateTime(fechainicio))
-                                              .Where(q => q.DocumentDate <=Convert.ToDateTime(fechafin))
-                                              //.Select(q => q.KardexId)
+                                              .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                              .Select(q => q.KardexId)
+                                              .MaxAsync();
+
+                _kardexproduct = await (_context.KardexLine
+                                              .Where(q => q.KardexId == KardexId)
+                                             )
                                               .ToListAsync();
 
 
+                //string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01" ;
+                //string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-30";
 
+                //_kardexproduct = await _context.Kardex
+                //                              .Where(q => q.DocumentId == _Kardexq.DocumentId)
+                //                              .Where(q => q.DocumentName == _Kardexq.DocumentName)                                             
+                //                              .Where(q => q.DocumentDate >=Convert.ToDateTime(fechainicio))
+                //                              .Where(q => q.DocumentDate <=Convert.ToDateTime(fechafin))
+                //                              //.Select(q => q.KardexId)
+                //                              .ToListAsync();
 
-               // _kardexproduct = await _context.KardexLine.Where(q => q.SubProducId == _Kardexq.CurrencyId).FirstOrDefaultAsync();
-                
 
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
            

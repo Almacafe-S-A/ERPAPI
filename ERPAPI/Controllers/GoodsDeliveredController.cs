@@ -193,6 +193,7 @@ namespace ERPAPI.Controllers
                                                         // .Take(1)
                                                         join d in _context.KardexLine on c.KardexId equals d.KardexId
                                                         where c.CustomerId == _GoodsDeliveredq.CustomerId && d.SubProducId == item.SubProductId
+                                                        && c.DocumentName !="CD"  && d.WareHouseId == item.WareHouseId
                                                         select c
                                                       )
                                                       .FirstOrDefaultAsync();
@@ -214,11 +215,11 @@ namespace ERPAPI.Controllers
 
                             if (_KardexLine.Total > item.Quantity)
                             {
-                                item.Total = _KardexLine.Total - item.Quantity;
+                                item.Total = _KardexLine.TotalCD - item.Quantity;
                             }
                             else
                             {
-                                return BadRequest("Inventario insuficiente!");
+                                return await Task.Run(() => BadRequest("Inventario insuficiente!"));
                             }
 
                             _GoodsDelivered.Kardex._KardexLine.Add(new KardexLine
@@ -239,7 +240,7 @@ namespace ERPAPI.Controllers
                                 TypeOperationId = 1,
                                 TypeOperationName = "Salida",
                                 Total = item.Total,
-                                TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                                TotalBags = _KardexLine.TotalBags-item.QuantitySacos  ,
                                 QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
                                 TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
                             });
@@ -304,7 +305,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(()=> BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return await Task.Run(() => Ok(_GoodsDeliveredq));

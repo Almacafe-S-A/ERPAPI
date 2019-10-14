@@ -20,6 +20,13 @@ namespace ERPAPI.Models
         [Display(Name = "Unidad de medida")]
         public Int64 UnitMeasureId { get; set; }
 
+        //[Display(Name = "Bodega")]
+        //public Int64 WareHouseId { get; set; }
+
+        //[Display(Name = "Bodega")]
+        //public string WareHouseName { get; set; }
+
+
         [Display(Name = "Total lempiras")]
         public double productorecibolempiras { get; set; }
         [Display(Name = "Unidad")]
