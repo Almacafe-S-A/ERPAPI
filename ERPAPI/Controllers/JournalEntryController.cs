@@ -112,6 +112,35 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
+        /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
+        /// </summary>
+        /// 
+        /// <param name="Date"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{Date}")]
+        public async Task<IActionResult> GetJournalEntryByDate(DateTime Date)
+        {
+            //string fecha = Date.ToString("yyyy-MM-dd");
+            JournalEntry Items = new JournalEntry();
+
+            try
+            {
+                Items = await _context.JournalEntry.Where(q => q.JournalEntryId == 8).FirstOrDefaultAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
         /// Inserta una nueva JournalEntry
         /// </summary>
         /// <param name="_JournalEntry"></param>
