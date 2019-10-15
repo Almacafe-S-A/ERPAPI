@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191015221152_FixedAsset")]
+    partial class FixedAsset
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5135,52 +5137,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("PasswordHistory");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.PaymentTerms", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long?>("AccountingAccountId");
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("ChekingAccount");
-
-                    b.Property<string>("CustomerPayIn");
-
-                    b.Property<int>("Days");
-
-                    b.Property<int>("Default");
-
-                    b.Property<string>("Description");
-
-                    b.Property<double>("EarlyPaymentDiscount");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("Fees");
-
-                    b.Property<double>("FirstPayment");
-
-                    b.Property<long>("PaymentTypesId");
-
-                    b.Property<string>("UsuarioCreacion")
-                        .IsRequired();
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountingAccountId");
-
-                    b.HasIndex("PaymentTypesId");
-
-                    b.ToTable("PaymentTerms");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.PaymentTypes", b =>
                 {
                     b.Property<long>("PaymentTypesId")
@@ -8196,18 +8152,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationUser", "User")
                         .WithMany("PasswordHistory")
                         .HasForeignKey("UserId1");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PaymentTerms", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Accounting", "Accounting")
-                        .WithMany()
-                        .HasForeignKey("AccountingAccountId");
-
-                    b.HasOne("ERPAPI.Models.PaymentTypes", "PaymentTypes")
-                        .WithMany()
-                        .HasForeignKey("PaymentTypesId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Product", b =>

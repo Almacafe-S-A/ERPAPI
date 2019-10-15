@@ -81,15 +81,16 @@ namespace ERPAPI.Controllers
         /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
         /// </summary>
         /// 
-        /// <param name="AccountId"></param>
+        /// <param name="Date"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AccountId}")]
-        public async Task<IActionResult> GetJournalEntryLineByAccountId(Int64 AccountId)
+        [HttpGet("[action]/{Date}")]
+        public async Task<IActionResult> GetJournalEntryLineByDate(DateTime Date)
         {
+            string fecha = Date.ToString("yyyy-MM-dd");
             JournalEntryLine Items = new JournalEntryLine();
             try
             {
-                Items = await _context.JournalEntryLine.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
+                Items = await _context.JournalEntryLine.Where(q => q.CreatedDate == Convert.ToDateTime(fecha)).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

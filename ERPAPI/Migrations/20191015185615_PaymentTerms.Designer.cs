@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191015185615_PaymentTerms")]
+    partial class PaymentTerms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2573,55 +2575,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Dependientes");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.DepreciationFixedAsset", b =>
-                {
-                    b.Property<long>("DepreciationFixedAssetId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("April");
-
-                    b.Property<double>("August");
-
-                    b.Property<double>("December");
-
-                    b.Property<double>("February");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("FixedAssetId");
-
-                    b.Property<double>("January");
-
-                    b.Property<double>("July");
-
-                    b.Property<double>("June");
-
-                    b.Property<double>("March");
-
-                    b.Property<double>("May");
-
-                    b.Property<double>("November");
-
-                    b.Property<double>("October");
-
-                    b.Property<double>("September");
-
-                    b.Property<double>("TotalDepreciated");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<int>("Year");
-
-                    b.HasKey("DepreciationFixedAssetId");
-
-                    b.ToTable("DepreciationFixedAsset");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Dimensions", b =>
                 {
                     b.Property<string>("Num")
@@ -3385,96 +3338,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("CurrencyId");
 
                     b.ToTable("ExchangeRate");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.FixedAsset", b =>
-                {
-                    b.Property<long>("FixedAssetId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<DateTime>("AssetDate");
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<long>("CenterCostId");
-
-                    b.Property<string>("CenterCostName");
-
-                    b.Property<double>("Cost");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("FixedActiveLife");
-
-                    b.Property<string>("FixedAssetCode");
-
-                    b.Property<string>("FixedAssetDescription");
-
-                    b.Property<long>("FixedAssetGroupId");
-
-                    b.Property<string>("FixedAssetName");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<double>("ResidualValue");
-
-                    b.Property<double>("ToDepreciate");
-
-                    b.Property<double>("TotalDepreciated");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
-
-                    b.HasKey("FixedAssetId");
-
-                    b.ToTable("FixedAsset");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.FixedAssetGroup", b =>
-                {
-                    b.Property<long>("FixedAssetGroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("FixedAssetGroupDescription");
-
-                    b.Property<long?>("FixedAssetGroupId1");
-
-                    b.Property<string>("FixedAssetGroupName");
-
-                    b.Property<string>("FixedGroupCode");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("FixedAssetGroupId");
-
-                    b.HasIndex("FixedAssetGroupId1");
-
-                    b.ToTable("FixedAssetGroup");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Formula", b =>
@@ -6434,13 +6297,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<double>("Merma");
 
@@ -8086,13 +7945,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.FixedAssetGroup", b =>
-                {
-                    b.HasOne("ERPAPI.Models.FixedAssetGroup")
-                        .WithMany("_FixedAssetGroup")
-                        .HasForeignKey("FixedAssetGroupId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>

@@ -59,7 +59,7 @@ namespace ERPAPI.Models
         public Int32 IdPaymentCode { get; set; }
         public Int32  IdTypeofPayment { get; set; }
         [Display(Name = "Estado")]
-        public Int64 EstadoId { get; set; }
+        public Int64? EstadoId { get; set; }
         [Display(Name = "Estado")]
         public string EstadoName { get; set; }
 

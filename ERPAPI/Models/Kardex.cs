@@ -62,4 +62,11 @@ namespace ERPAPI.Models
         public List<KardexLine> _KardexLine { get; set; } = new List<KardexLine>();
     }
 
+
+    public class KardexDTO : Kardex
+    {
+       public List<Int64> Ids { get; set; } = new List<long>();
+    }
+
+
 }

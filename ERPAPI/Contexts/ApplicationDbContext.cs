@@ -68,9 +68,10 @@ namespace ERP.Contexts
 
         public DbSet<DebitNote> DebitNote { get; set; }
         public DbSet<DebitNoteLine> DebitNoteLine { get; set; }
-
-
-
+        public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
+        public DbSet<FixedAsset> FixedAsset { get; set; }
+        public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
+        
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
@@ -240,6 +241,8 @@ namespace ERP.Contexts
         public DbSet<VendorInvoice> VendorInvoice { get; set; }
 
         public DbSet<VendorInvoiceLine> VendorInvoiceLine { get; set; }
+
+        public DbSet<PaymentTerms> PaymentTerms { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
