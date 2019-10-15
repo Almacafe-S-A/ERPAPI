@@ -164,61 +164,136 @@ namespace ERPAPI.Controllers
                 string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01";
                 string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-30";
 
-                foreach (var CertificadoId in _Kardexq.Ids)
+                Guid Identificador = Guid.NewGuid();
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    _kardexproduct = await _context.Kardex
-                                                  .Where(q => q.DocumentId == CertificadoId)
-                                                  .Where(q => q.DocumentName == _Kardexq.DocumentName)
-                                                  .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
-                                                  .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
-                                                  //.Select(q => q.KardexId)
-                                                  .Include(q=>q._KardexLine)
-                                                  .ToListAsync();
-
-                    foreach (var item in _kardexproduct)
+                    try
                     {
-                        CertificadoDeposito _cd = new CertificadoDeposito();
-                        _cd = await _context.CertificadoDeposito
-                                     .Where(q => q.IdCD == item.DocumentId)
-                                     .Include(q=>q._CertificadoLine)
-                                     .FirstOrDefaultAsync();
-
-                        //GoodsDeliveryAuthorization _GoodsDeliveryAuthorization = new GoodsDeliveryAuthorization();
-                        //if (_cd==null)
-                        //{
-                        //    //Si es nulo buscar en la tabla Autorización
-                        //    _GoodsDeliveryAuthorization = await _context.GoodsDeliveryAuthorization
-                        //                                    .Where(q=>q.id)
-                        //}
-
-                        foreach (var linea in item._KardexLine)
+                        foreach (var CertificadoId in _Kardexq.Ids)
                         {
-                            CertificadoLine cdline = _cd._CertificadoLine
-                                       .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
+                            _kardexproduct = await _context.Kardex
+                                                          .Where(q => q.DocumentId == CertificadoId)
+                                                          .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                                          .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                                          .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                                                          //.Select(q => q.KardexId)
+                                                          .Include(q => q._KardexLine)
+                                                          .ToListAsync();
 
-                                                  
-                            _context.InvoiceCalculation.Add(new InvoiceCalculation
+
+                            foreach (var item in _kardexproduct)
                             {
-                                DocumentDate = item.DocumentDate,
-                                NoCD = _cd.NoCD,
-                                Dias = item.DocumentDate.Day < 15 ? 15 : 30,
-                                ProductId = linea.SubProducId,
-                                ProductName = linea.SubProductName,
-                                UnitPrice = cdline.Price,
-                                Quantity = item.TypeOperationName== "Entrada" ? linea.QuantityEntry:linea.QuantityOut,
-                                ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut)
+                                CertificadoDeposito _cd = new CertificadoDeposito();
+                                _cd = await _context.CertificadoDeposito
+                                             .Where(q => q.IdCD == item.DocumentId)
+                                             .Include(q => q._CertificadoLine)
+                                             .FirstOrDefaultAsync();
 
-                            });
-                        }                      
+                                SalesOrder _so = await _context.SalesOrder
+                                                       .Where(q => q.CustomerId == _cd.CustomerId)
+                                                       .OrderByDescending(q => q.SalesOrderId).FirstOrDefaultAsync();
 
+                                List<CustomerConditions> _cc = await _context.CustomerConditions
+                                    .Where(q => q.CustomerId == _so.CustomerId)
+                                    .Where(q => q.IdTipoDocumento == 12)
+                                    .Where(q => q.DocumentId == _so.SalesOrderId)
+                                    .ToListAsync();
+
+                                int dias = item.DocumentDate.Day <= 15 ? 30 : 15;
+
+                                double totalfacturar = 0;
+                                foreach (var condicion in _cc)
+                                {
+                                    foreach (var lineascertificadas in _cd._CertificadoLine)
+                                    {
+
+                                        switch (condicion.LogicalCondition)
+                                        {
+                                            case ">=":
+                                                if (lineascertificadas.Price >= Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price)) / 30) * dias;
+                                                break;
+                                            case "<=":
+                                                if (lineascertificadas.Price <= Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price)) / 30) * dias;
+                                                break;
+                                            case ">":
+                                                if (lineascertificadas.Price > Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price)) / 30) * dias;
+                                                break;
+                                            case "<":
+                                                if (lineascertificadas.Price < Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price)) / 30) * dias;
+                                                break;
+                                            case "=":
+                                                if (lineascertificadas.Price == Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price)) / 30) * dias;
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
+
+                                //GoodsDeliveryAuthorization _GoodsDeliveryAuthorization = new GoodsDeliveryAuthorization();
+                                //if (_cd==null)
+                                //{
+                                //    //Si es nulo buscar en la tabla Autorización
+                                //    _GoodsDeliveryAuthorization = await _context.GoodsDeliveryAuthorization
+                                //                                    .Where(q=>q.id)
+                                //}
+
+                                foreach (var linea in item._KardexLine)
+                                {
+                                    CertificadoLine cdline = _cd._CertificadoLine
+                                               .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
+
+                                    _context.InvoiceCalculation.Add(new InvoiceCalculation
+                                    {
+                                        DocumentDate = item.DocumentDate,
+                                        NoCD = _cd.NoCD,
+                                        Dias = dias,
+                                        ProductId = linea.SubProducId,
+                                        ProductName = linea.SubProductName,
+                                        UnitPrice = cdline.Price,
+                                        Quantity = item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut,
+                                        ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut),
+                                        ValorFacturar = totalfacturar,
+                                        Identificador = Identificador,
+                                    });
+                                }
+
+
+
+                            }
+
+
+
+                        }
+
+                        transaction.Commit();
+                        //Retornar la proforma con calculos(Resumen: Almacenaje,Bascula,Banda Transportadora)
+
+                        List<InvoiceCalculation> _InvoiceCalculationlist = await  _context.InvoiceCalculation
+                                                                                    .Where(q=>q.Identificador==Identificador)  
+                                                                                    .ToListAsync();
+
+                        ProformaInvoice _proforma = new ProformaInvoice {
+
+                        };
+
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        transaction.Rollback();
+                        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
                     }
 
 
-
                 }
-
-
-            }
+             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
