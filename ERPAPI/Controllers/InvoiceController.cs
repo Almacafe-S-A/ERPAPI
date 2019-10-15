@@ -109,6 +109,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{InvoiceId}")]
+        public async Task<IActionResult> GetInvoiceLineById(Int64 InvoiceId)
+        {
+            Invoice Items = new Invoice();
+            try
+            {
+                Items = await _context.Invoice.Include(q=>q.InvoiceLine).Where(q => q.InvoiceId == InvoiceId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
         /// Inserta una nueva Invoice
