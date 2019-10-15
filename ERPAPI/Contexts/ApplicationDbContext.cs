@@ -242,6 +242,8 @@ namespace ERP.Contexts
 
         public DbSet<VendorInvoiceLine> VendorInvoiceLine { get; set; }
 
+        public DbSet<PaymentTerms> PaymentTerms { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
