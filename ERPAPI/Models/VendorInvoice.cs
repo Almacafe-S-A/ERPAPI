@@ -28,9 +28,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de vencimiento")]
         public DateTime ExpirationDate { get; set; }
         [Display(Name = "Tipo de Factura")]
-        public int VendorInvoiceTypeId { get; set; }
-        
-        
+        public int VendorInvoiceTypeId { get; set; }    
 
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
