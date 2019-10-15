@@ -152,6 +152,85 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_kardexproduct));
         }
 
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetMovimientosCertificados([FromBody]KardexDTO _Kardexq)
+        {
+            //List<KardexLine> _kardexproduct = new List<KardexLine>();
+            List<Kardex> _kardexproduct = new List<Kardex>();
+            try
+            {                
+
+                string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01";
+                string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-30";
+
+                foreach (var CertificadoId in _Kardexq.Ids)
+                {
+                    _kardexproduct = await _context.Kardex
+                                                  .Where(q => q.DocumentId == CertificadoId)
+                                                  .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                                  .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                                  .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                                                  //.Select(q => q.KardexId)
+                                                  .Include(q=>q._KardexLine)
+                                                  .ToListAsync();
+
+                    foreach (var item in _kardexproduct)
+                    {
+                        CertificadoDeposito _cd = new CertificadoDeposito();
+                        _cd = await _context.CertificadoDeposito
+                                     .Where(q => q.IdCD == item.DocumentId)
+                                     .Include(q=>q._CertificadoLine)
+                                     .FirstOrDefaultAsync();
+
+                        //GoodsDeliveryAuthorization _GoodsDeliveryAuthorization = new GoodsDeliveryAuthorization();
+                        //if (_cd==null)
+                        //{
+                        //    //Si es nulo buscar en la tabla Autorización
+                        //    _GoodsDeliveryAuthorization = await _context.GoodsDeliveryAuthorization
+                        //                                    .Where(q=>q.id)
+                        //}
+
+                        foreach (var linea in item._KardexLine)
+                        {
+                            CertificadoLine cdline = _cd._CertificadoLine
+                                       .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
+
+                                                  
+                            _context.InvoiceCalculation.Add(new InvoiceCalculation
+                            {
+                                DocumentDate = item.DocumentDate,
+                                NoCD = _cd.NoCD,
+                                Dias = item.DocumentDate.Day < 15 ? 15 : 30,
+                                ProductId = linea.SubProducId,
+                                ProductName = linea.SubProductName,
+                                UnitPrice = cdline.Price,
+                                Quantity = item.TypeOperationName== "Entrada" ? linea.QuantityEntry:linea.QuantityOut,
+                                ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut)
+
+                            });
+                        }                      
+
+                    }
+
+
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return await Task.Run(() => Ok(_kardexproduct));
+        }
+
+
+
         /// <summary>
         /// Inserta una nueva Kardex
         /// </summary>

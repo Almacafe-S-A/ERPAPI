@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191015140334_calculofactura")]
+    partial class calculofactura
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4454,7 +4456,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("DocumentId");
 
-                    b.Property<long?>("EstadoId");
+                    b.Property<long>("EstadoId");
 
                     b.Property<string>("EstadoName");
 
@@ -6502,9 +6504,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CityId");
 
-                    b.Property<string>("CompanyReferenceone");
+                    b.Property<string>("CompanyReferenceone")
+                        .IsRequired();
 
-                    b.Property<string>("CompanyReferencetwo");
+                    b.Property<string>("CompanyReferencetwo")
+                        .IsRequired();
 
                     b.Property<string>("ContactPerson");
 
@@ -6557,8 +6561,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.Property<long>("VendorTypeId");
-
-                    b.Property<string>("VendorTypeName");
 
                     b.Property<string>("ZipCode");
 

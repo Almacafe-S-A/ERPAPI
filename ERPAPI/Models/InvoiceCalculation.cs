@@ -41,6 +41,9 @@ namespace ERPAPI.Models
         [Display(Name = "Precio unitario")]
         public double UnitPrice { get; set; }
 
+        [Display(Name = "Cantidad")]
+        public double Quantity { get; set; }
+
         [Display(Name = "Valor en Lps.")]
         public double ValorLps { get; set; }
 
@@ -65,11 +68,20 @@ namespace ERPAPI.Models
         [Display(Name = "Valor a Facturar")]
         public double ValorAFacturarMerma { get; set; }
 
+        [Display(Name = "Estado")]
+        public Int64 IdEstado { get; set; }
+
+        [Display(Name = "Estado")]
+        public string Estado { get; set; }
+
+        [Display(Name = "Identificador")]
+        public Guid? Identificador { get; set; } 
+
         [Display(Name = "Usuario de creación")]
         public string UsuarioCreacion { get; set; }
 
         [Display(Name = "Usuario de modificación")]
-        public string UsuarioModificacion { get; set; }
+        public string UsuarioModificacion { get; set; }    
 
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
