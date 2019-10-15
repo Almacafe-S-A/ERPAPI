@@ -47,9 +47,17 @@ namespace ERPAPI.Models
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
         public double Merma { get; set; }
+
+        [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
+
+        [Display(Name = "Fecha de modificación")]
         public DateTime FechaModificacion { get; set; }
+
+        [Display(Name = "Usuario de creación")]
         public string UsuarioCreacion { get; set; }
+
+        [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
 
         public List<ProductRelation> ProductRelation { get; set; }
