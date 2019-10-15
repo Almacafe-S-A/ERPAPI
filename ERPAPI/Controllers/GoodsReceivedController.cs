@@ -319,7 +319,112 @@ namespace ERPAPI.Controllers
                         _context.Entry(_bol).CurrentValues.SetValues((_bol));
 
                         await _context.SaveChangesAsync();
+                        JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                                       .Where(q => q.TransactionId == 1)
+                                                                       .Where(q => q.BranchId == _GoodsReceivedq.BranchId)
+                                                                       .Where(q => q.EstadoName == "Activo")
+                                                                       .Include(q => q.JournalEntryConfigurationLine)
+                                                                       ).FirstOrDefaultAsync();
 
+                        BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _GoodsReceived.CustomerId,
+                            DocType = "JournalEntryConfiguration",
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "InsertGoodsReceived",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
+                            UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
+                            UsuarioEjecucion = _GoodsReceived.UsuarioModificacion,
+
+                        });
+
+                        // await _context.SaveChangesAsync();
+
+                        double sumacreditos = 0, sumadebitos = 0;
+                        if (_journalentryconfiguration != null)
+                        {
+                            //Crear el asiento contable configurado
+                            //.............................///////
+                            JournalEntry _je = new JournalEntry
+                            {
+                                Date = _GoodsReceivedq.OrderDate,
+                                Memo = "Bienes Recibidos",
+                                DatePosted = _GoodsReceivedq.OrderDate,
+                                ModifiedDate = DateTime.Now,
+                                CreatedDate = DateTime.Now,
+                                ModifiedUser = _GoodsReceivedq.UsuarioModificacion,
+                                CreatedUser = _GoodsReceivedq.UsuarioCreacion,
+                                DocumentId = _GoodsReceivedq.GoodsReceivedId,
+                            };
+
+
+
+                            foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
+                            {
+
+                                GoodsReceivedLine _iline = new GoodsReceivedLine();
+                                _iline = _GoodsReceivedq._GoodsReceivedLine.Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
+                                if (_iline != null || item.SubProductName.ToUpper().Contains(("Impuesto").ToUpper()))
+                                {
+                                    if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
+                                           && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
+                                    {
+                                        _je.JournalEntryLines.Add(new JournalEntryLine
+                                        {
+                                            AccountId = Convert.ToInt32(item.AccountId),
+                                            Description = item.AccountName,
+                                            Credit = item.DebitCredit == "Credito" ? _iline.Total : 0,
+                                            Debit = item.DebitCredit == "Debito" ? _iline.Total : 0,
+                                            CreatedDate = DateTime.Now,
+                                            ModifiedDate = DateTime.Now,
+                                            CreatedUser = _GoodsReceivedq.UsuarioCreacion,
+                                            ModifiedUser = _GoodsReceivedq.UsuarioModificacion,
+                                            Memo = "",
+                                        });
+
+                                        sumacreditos += item.DebitCredit == "Credito" ? _iline.Total : 0;
+                                        sumadebitos += item.DebitCredit == "Debito" ? _iline.Total : 0;
+                                    }
+                                    else
+                                    {
+                                        _je.JournalEntryLines.Add(new JournalEntryLine
+                                        {
+                                            AccountId = Convert.ToInt32(item.AccountId),
+                                            Description = item.AccountName,
+                                            CreatedDate = DateTime.Now,
+                                            ModifiedDate = DateTime.Now,
+                                            CreatedUser = _GoodsReceivedq.UsuarioCreacion,
+                                            ModifiedUser = _GoodsReceivedq.UsuarioModificacion,
+                                            Memo = "",
+                                        });
+
+                                        //sumacreditos += item.DebitCredit == "Credito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
+                                        //sumadebitos += item.DebitCredit == "Debito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
+                                    }
+                                }
+
+                                // _context.JournalEntryLine.Add(_je);
+
+                            }
+
+
+                            if (sumacreditos != sumadebitos)
+                            {
+                                transaction.Rollback();
+                                _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                                return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            }
+
+                            _je.TotalCredit = sumacreditos;
+                            _je.TotalDebit = sumadebitos;
+                            _context.JournalEntry.Add(_je);
+
+                            await _context.SaveChangesAsync();
+                        }
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
