@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191015153731_permitirnulosJournalEntry")]
+    partial class permitirnulosJournalEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4333,17 +4335,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("DocumentDate");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<long>("IdCD");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<Guid?>("Identificador");
 
                     b.Property<double>("IngresoMercadería");
 
@@ -4360,8 +4356,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ProductName");
 
                     b.Property<long>("ProformaInvoiceId");
-
-                    b.Property<double>("Quantity");
 
                     b.Property<double>("UnitPrice");
 
@@ -6249,13 +6243,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<double>("Merma");
 
@@ -6506,9 +6496,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CityId");
 
-                    b.Property<string>("CompanyReferenceone");
+                    b.Property<string>("CompanyReferenceone")
+                        .IsRequired();
 
-                    b.Property<string>("CompanyReferencetwo");
+                    b.Property<string>("CompanyReferencetwo")
+                        .IsRequired();
 
                     b.Property<string>("ContactPerson");
 
@@ -6561,8 +6553,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.Property<long>("VendorTypeId");
-
-                    b.Property<string>("VendorTypeName");
 
                     b.Property<string>("ZipCode");
 
