@@ -156,7 +156,8 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GetMovimientosCertificados([FromBody]KardexDTO _Kardexq)
         {
-            //List<KardexLine> _kardexproduct = new List<KardexLine>();
+            ProformaInvoice _proforma = new ProformaInvoice();
+            //<KardexLine> _kardexproduct = new List<KardexLine>();
             List<Kardex> _kardexproduct = new List<Kardex>();
             try
             {                
@@ -165,10 +166,15 @@ namespace ERPAPI.Controllers
                 string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-30";
 
                 Guid Identificador = Guid.NewGuid();
+               
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
+                        Customer _customer = new Customer();
+                        _customer = _context.Customer
+                            .Where(q => q.CustomerId == _Kardexq.CustomerId).FirstOrDefault();
+
                         foreach (var CertificadoId in _Kardexq.Ids)
                         {
                             _kardexproduct = await _context.Kardex
@@ -179,7 +185,6 @@ namespace ERPAPI.Controllers
                                                           //.Select(q => q.KardexId)
                                                           .Include(q => q._KardexLine)
                                                           .ToListAsync();
-
 
                             foreach (var item in _kardexproduct)
                             {
@@ -263,11 +268,7 @@ namespace ERPAPI.Controllers
                                     });
                                 }
 
-
-
                             }
-
-
 
                         }
 
@@ -278,7 +279,22 @@ namespace ERPAPI.Controllers
                                                                                     .Where(q=>q.Identificador==Identificador)  
                                                                                     .ToListAsync();
 
-                        ProformaInvoice _proforma = new ProformaInvoice {
+                        List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
+                        ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                        {
+                             SubProductId = 1,
+                             SubProductName = "Almacenaje",
+                             Price = _InvoiceCalculationlist[0].UnitPrice,
+                             Quantity = _InvoiceCalculationlist[0].Quantity,
+                            
+                        });
+
+                        _proforma = new ProformaInvoice
+                        {
+                             CustomerId = _customer.CustomerId,
+                             CustomerName = _customer.CustomerName,
+                             ProformaInvoiceLine = ProformaInvoiceLineT,
+                             SubTotal = _InvoiceCalculationlist.Sum(q=>q.ValorFacturar),
 
                         };
 
@@ -301,7 +317,7 @@ namespace ERPAPI.Controllers
             }
 
 
-            return await Task.Run(() => Ok(_kardexproduct));
+            return await Task.Run(() => Ok(_proforma));
         }
 
 

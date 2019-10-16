@@ -33,7 +33,7 @@ namespace ERPAPI.Models
         public string BranchName { get; set; }
 
         [Display(Name = "Customer")]
-        public int CustomerId { get; set; }
+        public Int64 CustomerId { get; set; }
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }

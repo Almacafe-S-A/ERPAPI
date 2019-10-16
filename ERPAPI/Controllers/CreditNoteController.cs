@@ -54,7 +54,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             //  int Count = Items.Count();
@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             //  int Count = Items.Count();
@@ -127,7 +127,19 @@ namespace ERPAPI.Controllers
                     {
                         _CreditNoteq = _CreditNote;
                         _context.CreditNote.Add(_CreditNoteq);
+
+                        foreach (var item in _CreditNote.CreditNoteLine)
+                        {
+                            item.CreditNoteId = _CreditNote.CreditNoteId;
+                            _context.CreditNoteLine.Add(item);
+                        }
+
+
+
                         await _context.SaveChangesAsync();
+
+
+
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -158,7 +170,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return await Task.Run(() => Ok(_CreditNoteq));
