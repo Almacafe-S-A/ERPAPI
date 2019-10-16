@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
-using Microsoft.Extensions.Logging; 
-
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -109,12 +109,13 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Inserta una nueva VendorInvoice
         /// </summary>
-        /// <param name="_VendorInvoice"></param>
+        /// <param name="_pVendorInvoice"></param>
         /// <returns></returns>
-    /*    [HttpPost("[action]")]
-        public async Task<ActionResult<VendorInvoice>> Insert([FromBody]VendorInvoice _VendorInvoice)
+        [HttpPost("[action]")]
+        public async Task<ActionResult<VendorInvoice>> Insert([FromBody]VendorInvoice pVendorInvoice)
         {
             VendorInvoice _VendorInvoiceq = new VendorInvoice();
+            _VendorInvoiceq = pVendorInvoice;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -122,16 +123,16 @@ namespace ERPAPI.Controllers
                     try
                     {
 
-                        _VendorInvoiceq = _VendorInvoice;
+                        
 
-                        VendorInvoice _VendorInvoice = await _context.VendorInvoice.Where(q => q.BranchId == _VendorInvoice.BranchId)
-                                            //.Where(q => q.IdPuntoEmision == _VendorInvoice.IdPuntoEmision)
+                        VendorInvoice _VendorInvoice = await _context.VendorInvoice.Where(q => q.BranchId == _VendorInvoiceq.BranchId)
+                                             //.Where(q => q.IdPuntoEmision == _VendorInvoice.IdPuntoEmision)
                                              .FirstOrDefaultAsync();
-                        if (_VendorInvoice != null)
-                        {
-                            _VendorInvoiceq.NumeroDEI = _context.VendorInvoice.Where(q => q.BranchId == _VendorInvoice.BranchId)
-                                                  .Where(q => q.IdPuntoEmision == _VendorInvoice.IdPuntoEmision).Max(q => q.NumeroDEI);
-                        }
+                        //if (_VendorInvoice != null)
+                        //{
+                        //    _VendorInvoiceq.NumeroDEI = _context.VendorInvoice.Where(q => q.BranchId == _VendorInvoice.BranchId)
+                        //                          .Where(q => q.IdPuntoEmision == _VendorInvoice.IdPuntoEmision).Max(q => q.NumeroDEI);
+                        //}
 
                         _VendorInvoiceq.NumeroDEI += 1;
 
@@ -164,7 +165,7 @@ namespace ERPAPI.Controllers
                         //await _context.SaveChangesAsync();
                         foreach (var item in _VendorInvoice.VendorInvoiceLine)
                         {
-                            item.VendorInvoiceId = _VendorInvoiceq.VendorInvoiceId;
+                            item.InvoiceId = _VendorInvoiceq.VendorInvoiceId;
                             _context.VendorInvoiceLine.Add(item);
                         }
 
@@ -179,7 +180,7 @@ namespace ERPAPI.Controllers
 
                         BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _VendorInvoice.CustomerId,
+                            IdOperacion = _VendorInvoice.VendorId,
                             DocType = "JournalEntryConfiguration",
                             ClaseInicial =
                              Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
@@ -218,7 +219,7 @@ namespace ERPAPI.Controllers
                             {
 
                                 VendorInvoiceLine _iline = new VendorInvoiceLine();
-                                _iline = _VendorInvoiceq.VendorInvoiceLine.Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
+                                _iline = _VendorInvoiceq.VendorInvoiceLine.Where(q => q.ItemName == item.SubProductName).FirstOrDefault();
                                 if (_iline != null || item.SubProductName.ToUpper().Contains(("Impuesto").ToUpper()))
                                 {
                                     if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
@@ -281,7 +282,7 @@ namespace ERPAPI.Controllers
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _VendorInvoice.CustomerId,
+                            IdOperacion = _VendorInvoice.VendorId,
                             DocType = "VendorInvoice",
                             ClaseInicial =
                             Newtonsoft.Json.JsonConvert.SerializeObject(_VendorInvoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
@@ -318,7 +319,7 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_VendorInvoiceq));
         }
-        */
+
         /// <summary>
         /// Actualiza la VendorInvoice
         /// </summary>
