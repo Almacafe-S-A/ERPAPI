@@ -152,6 +152,12 @@ namespace ERPAPI.Models
 
         public string Estado { get; set; }
 
+        public Int64 AccountId { get; set; }
+
+        [ForeignKey("AccountId")]
+        public Accounting  Account { get; set; }
+
+
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
