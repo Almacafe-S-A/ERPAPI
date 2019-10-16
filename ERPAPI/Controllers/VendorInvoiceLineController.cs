@@ -64,7 +64,7 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.VendorInvoiceLine
-                             .Where(q => q.InvoiceId == InvoiceId).ToListAsync();
+                             .Where(q => q.VendorInvoiceId == InvoiceId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace ERPAPI.Controllers
             VendorInvoiceLine Items = new VendorInvoiceLine();
             try
             {
-                Items = await _context.VendorInvoiceLine.Where(q => q.InvoiceLineId == VendorInvoiceLineId).FirstOrDefaultAsync();
+                Items = await _context.VendorInvoiceLine.Where(q => q.VendorInvoiceLineId == VendorInvoiceLineId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -164,7 +164,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _VendorInvoiceLineq = await (from c in _context.VendorInvoiceLine
-                                 .Where(q => q.InvoiceLineId == _VendorInvoiceLine.InvoiceLineId)
+                                 .Where(q => q.VendorInvoiceLineId == _VendorInvoiceLine.VendorInvoiceLineId)
                                        select c
                                 ).FirstOrDefaultAsync();
 
@@ -195,7 +195,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _VendorInvoiceLineq = _context.VendorInvoiceLine
-                .Where(x => x.InvoiceLineId == (Int64)_VendorInvoiceLine.InvoiceLineId)
+                .Where(x => x.VendorInvoiceLineId == (Int64)_VendorInvoiceLine.VendorInvoiceLineId)
                 .FirstOrDefault();
 
                 _context.VendorInvoiceLine.Remove(_VendorInvoiceLineq);

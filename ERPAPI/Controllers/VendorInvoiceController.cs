@@ -165,7 +165,7 @@ namespace ERPAPI.Controllers
                         //await _context.SaveChangesAsync();
                         foreach (var item in _VendorInvoice.VendorInvoiceLine)
                         {
-                            item.InvoiceId = _VendorInvoiceq.VendorInvoiceId;
+                            item.VendorInvoiceId = _VendorInvoiceq.VendorInvoiceId;
                             _context.VendorInvoiceLine.Add(item);
                         }
 
