@@ -258,6 +258,8 @@ namespace ERPAPI.Controllers
 
                                     _context.InvoiceCalculation.Add(new InvoiceCalculation
                                     {
+                                        CustomerId = item.CustomerId,
+                                        CustomerName = item.CustomerName,
                                         DocumentDate = item.DocumentDate,
                                         NoCD = _cd.NoCD,
                                         Dias = dias,
@@ -268,6 +270,10 @@ namespace ERPAPI.Controllers
                                         ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut),
                                         ValorFacturar = totalfacturar,
                                         Identificador = Identificador,
+                                        FechaCreacion = DateTime.Now,
+                                        FechaModificacion = DateTime.Now,
+                                        UsuarioCreacion = _Kardexq.UsuarioCreacion,
+                                        UsuarioModificacion = _Kardexq.UsuarioModificacion,
                                     });
                                 }
 
@@ -275,12 +281,18 @@ namespace ERPAPI.Controllers
 
                         }
 
+
+                        await _context.SaveChangesAsync();
                         transaction.Commit();
                         //Retornar la proforma con calculos(Resumen: Almacenaje,Bascula,Banda Transportadora)
 
                         List<InvoiceCalculation> _InvoiceCalculationlist = await  _context.InvoiceCalculation
                                                                                     .Where(q=>q.Identificador==Identificador)  
                                                                                     .ToListAsync();
+
+                        Tax _tax = await _context.Tax
+                            .Where(q=>q.TaxCode=="I.S.V")
+                            .FirstOrDefaultAsync();
 
                         List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
                         ProformaInvoiceLineT.Add(new ProformaInvoiceLine
@@ -289,16 +301,21 @@ namespace ERPAPI.Controllers
                              SubProductName = "Almacenaje",
                              Price = _InvoiceCalculationlist[0].UnitPrice,
                              Quantity = _InvoiceCalculationlist[0].Quantity,
-                            
+                             SubTotal = _InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist[0].Quantity,
+                             TaxAmount = (_InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist[0].Quantity) * (_tax.TaxPercentage/100),
+                             TaxCode = _tax.TaxCode,                              
+                             Total = _InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist[0].Quantity,
+
                         });
 
-                        _proforma = new ProformaInvoice
+                        _proforma = new ProformaInvoiceDTO
                         {
                              CustomerId = _customer.CustomerId,
                              CustomerName = _customer.CustomerName,
-                             ProformaInvoiceLine = ProformaInvoiceLineT,
+                         
                              SubTotal = _InvoiceCalculationlist.Sum(q=>q.ValorFacturar),
-
+                             Identificador = Identificador,
+                             ProformaInvoiceLine = ProformaInvoiceLineT,
                         };
 
 
