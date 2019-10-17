@@ -294,6 +294,7 @@ namespace ERPAPI.Controllers
                             .Where(q=>q.TaxCode=="I.S.V")
                             .FirstOrDefaultAsync();
 
+                        double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar);
                         List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
                         ProformaInvoiceLineT.Add(new ProformaInvoiceLine
                         {
@@ -301,10 +302,10 @@ namespace ERPAPI.Controllers
                              SubProductName = "Almacenaje",
                              Price = _InvoiceCalculationlist[0].UnitPrice,
                              Quantity = _InvoiceCalculationlist[0].Quantity,
-                             SubTotal = _InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist[0].Quantity,
-                             TaxAmount = (_InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist[0].Quantity) * (_tax.TaxPercentage/100),
+                             SubTotal = valfacturar,
+                             TaxAmount = valfacturar * (_tax.TaxPercentage/100),
                              TaxCode = _tax.TaxCode,                              
-                             Total = _InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist[0].Quantity,
+                             Total = valfacturar + (valfacturar * (_tax.TaxPercentage / 100)),
 
                         });
 
