@@ -160,7 +160,9 @@ namespace ERPAPI.Controllers
             //<KardexLine> _kardexproduct = new List<KardexLine>();
             List<Kardex> _kardexproduct = new List<Kardex>();
             try
-            {                
+            {
+                CertificadoDeposito _tcd = await _context.CertificadoDeposito
+                                                       .Where(q => q.IdCD == _Kardexq.Ids[0]).FirstOrDefaultAsync();
 
                 string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01";
                 string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-30";
@@ -171,8 +173,7 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        CertificadoDeposito _tcd = await _context.CertificadoDeposito
-                                                        .Where(q => q.IdCD == _Kardexq.Ids[0]).FirstOrDefaultAsync();
+                       
 
                         Customer _customer = new Customer();
                         _customer = _context.Customer
@@ -260,7 +261,7 @@ namespace ERPAPI.Controllers
                                     {
                                         CustomerId = item.CustomerId,
                                         CustomerName = item.CustomerName,
-                                        DocumentDate = item.DocumentDate,
+                                        DocumentDate = item.DocumentDate,                                        
                                         NoCD = _cd.NoCD,
                                         Dias = dias,
                                         ProductId = linea.SubProducId,
@@ -302,8 +303,11 @@ namespace ERPAPI.Controllers
                              SubProductName = "Almacenaje",
                              Price = _InvoiceCalculationlist[0].UnitPrice,
                              Quantity = _InvoiceCalculationlist[0].Quantity,
+                            // UnitOfMeasureId = _tcd._CertificadoLine[0].UnitMeasureId,
+                           //  UnitOfMeasureName = _tcd._CertificadoLine[0].UnitMeasurName,
                              SubTotal = valfacturar,
                              TaxAmount = valfacturar * (_tax.TaxPercentage/100),
+                             TaxId = _tax.TaxId,
                              TaxCode = _tax.TaxCode,                              
                              Total = valfacturar + (valfacturar * (_tax.TaxPercentage / 100)),
 
@@ -313,7 +317,14 @@ namespace ERPAPI.Controllers
                         {
                              CustomerId = _customer.CustomerId,
                              CustomerName = _customer.CustomerName,
-                         
+                             CustomerRefNumber = _customer.CustomerRefNumber,
+                             Correo = _customer.Email,
+                             Direccion = _customer.Address,
+                             Tefono = _customer.Phone,
+                             RTN = _customer.RTN,
+                             ProformaName = _customer.CustomerName,
+                             BranchId = _tcd.BranchId,
+                             BranchName = _tcd.BranchName,
                              SubTotal = _InvoiceCalculationlist.Sum(q=>q.ValorFacturar),
                              Identificador = Identificador,
                              ProformaInvoiceLine = ProformaInvoiceLineT,

@@ -27,7 +27,7 @@ namespace ERPAPI.Models
         public string Direccion { get; set; }
 
         [Display(Name = "Sucursal")]
-        public int BranchId { get; set; }
+        public Int64 BranchId { get; set; }
 
         [Display(Name = "Sucursal Nombre")]
         public string BranchName { get; set; }

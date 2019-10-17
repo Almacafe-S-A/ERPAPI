@@ -15,6 +15,10 @@ namespace ERPAPI.Models
         public string DebitNoteName { get; set; }
         [Display(Name = "Envío")]
         public int ShipmentId { get; set; }
+
+
+        [Display(Name = "Fiscal")]
+        public bool Fiscal { get; set; }
              
 
         [Display(Name = "Punto de emisión")]
