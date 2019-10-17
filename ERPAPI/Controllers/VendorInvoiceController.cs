@@ -109,7 +109,7 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Inserta una nueva VendorInvoice
         /// </summary>
-        /// <param name="_pVendorInvoice"></param>
+        /// <param name="pVendorInvoice"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<VendorInvoice>> Insert([FromBody]VendorInvoice pVendorInvoice)
@@ -134,25 +134,21 @@ namespace ERPAPI.Controllers
                         //                          .Where(q => q.IdPuntoEmision == _VendorInvoice.IdPuntoEmision).Max(q => q.NumeroDEI);
                         //}
 
-                        _VendorInvoiceq.NumeroDEI += 1;
+                        //_VendorInvoiceq.NumeroDEI += 1;
 
 
                         //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_VendorInvoiceq.UsuarioCreacion).Select(q=>q.)
 
-                        Int64 IdCai = await _context.NumeracionSAR
-                                                 .Where(q => q.BranchId == _VendorInvoiceq.BranchId)
-                                                 //.Where(q => q.IdPuntoEmision == _VendorInvoiceq.IdPuntoEmision)
-                                                 .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
+                        //Int64 IdCai = await _context.NumeracionSAR
+                        //                         .Where(q => q.BranchId == _VendorInvoiceq.BranchId)
+                        //                         //.Where(q => q.IdPuntoEmision == _VendorInvoiceq.IdPuntoEmision)
+                        //                         .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
 
-
-                        if (IdCai == 0)
-                        {
-                            return BadRequest("No existe un CAI activo para el punto de emisión");
-                        }
+                        
 
                         _VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                         //  _VendorInvoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _VendorInvoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
-                        _VendorInvoiceq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+                        //_VendorInvoiceq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
 
                         Numalet let;
                         let = new Numalet();
@@ -204,7 +200,7 @@ namespace ERPAPI.Controllers
                             JournalEntry _je = new JournalEntry
                             {
                                 Date = _VendorInvoiceq.VendorInvoiceDate,
-                                Memo = "Factura de ventas",
+                                Memo = "Factura de Compra a Proveedores",
                                 DatePosted = _VendorInvoiceq.VendorInvoiceDate,
                                 ModifiedDate = DateTime.Now,
                                 CreatedDate = DateTime.Now,
