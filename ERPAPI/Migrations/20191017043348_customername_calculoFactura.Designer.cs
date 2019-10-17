@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191017043348_customername_calculoFactura")]
+    partial class customername_calculoFactura
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1655,8 +1657,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("TaxCode");
 
-                    b.Property<long>("TaxId");
-
                     b.Property<double>("TaxPercentage");
 
                     b.Property<double>("Total");
@@ -2495,8 +2495,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("TaxAmount");
 
                     b.Property<string>("TaxCode");
-
-                    b.Property<long>("TaxId");
 
                     b.Property<double>("TaxPercentage");
 
@@ -4565,8 +4563,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("TaxCode");
 
-                    b.Property<long>("TaxId");
-
                     b.Property<double>("TaxPercentage");
 
                     b.Property<double>("Total");
@@ -5672,8 +5668,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("TaxCode");
 
-                    b.Property<long>("TaxId");
-
                     b.Property<double>("TaxPercentage");
 
                     b.Property<double>("Total");
@@ -6198,8 +6192,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("TaxAmount");
 
                     b.Property<string>("TaxCode");
-
-                    b.Property<long>("TaxId");
 
                     b.Property<double>("TaxPercentage");
 

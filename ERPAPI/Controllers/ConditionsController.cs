@@ -125,9 +125,8 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return await Task.Run(() => Ok(_Conditionsq));
@@ -148,7 +147,9 @@ namespace ERPAPI.Controllers
                                  .Where(q => q.ConditionId == _conditions.ConditionId)
                                   select c
                                 ).FirstOrDefault();
-                
+
+                _conditions.UsuarioCreacion = _conditionsq.UsuarioCreacion;
+                _conditions.FechaCreacion = _conditionsq.FechaCreacion;
                 _context.Entry(_conditionsq).CurrentValues.SetValues((_conditions));
 
                 //_context.Conditions.Update(_conditionsq);

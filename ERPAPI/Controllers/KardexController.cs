@@ -171,9 +171,12 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        CertificadoDeposito _tcd = await _context.CertificadoDeposito
+                                                        .Where(q => q.IdCD == _Kardexq.Ids[0]).FirstOrDefaultAsync();
+
                         Customer _customer = new Customer();
                         _customer = _context.Customer
-                            .Where(q => q.CustomerId == _Kardexq.CustomerId).FirstOrDefault();
+                            .Where(q => q.CustomerId == _tcd.CustomerId).FirstOrDefault();
 
                         foreach (var CertificadoId in _Kardexq.Ids)
                         {
@@ -255,6 +258,8 @@ namespace ERPAPI.Controllers
 
                                     _context.InvoiceCalculation.Add(new InvoiceCalculation
                                     {
+                                        CustomerId = item.CustomerId,
+                                        CustomerName = item.CustomerName,
                                         DocumentDate = item.DocumentDate,
                                         NoCD = _cd.NoCD,
                                         Dias = dias,
@@ -265,6 +270,10 @@ namespace ERPAPI.Controllers
                                         ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut),
                                         ValorFacturar = totalfacturar,
                                         Identificador = Identificador,
+                                        FechaCreacion = DateTime.Now,
+                                        FechaModificacion = DateTime.Now,
+                                        UsuarioCreacion = _Kardexq.UsuarioCreacion,
+                                        UsuarioModificacion = _Kardexq.UsuarioModificacion,
                                     });
                                 }
 
@@ -272,6 +281,8 @@ namespace ERPAPI.Controllers
 
                         }
 
+
+                        await _context.SaveChangesAsync();
                         transaction.Commit();
                         //Retornar la proforma con calculos(Resumen: Almacenaje,Bascula,Banda Transportadora)
 
@@ -279,6 +290,11 @@ namespace ERPAPI.Controllers
                                                                                     .Where(q=>q.Identificador==Identificador)  
                                                                                     .ToListAsync();
 
+                        Tax _tax = await _context.Tax
+                            .Where(q=>q.TaxCode=="I.S.V")
+                            .FirstOrDefaultAsync();
+
+                        double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar);
                         List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
                         ProformaInvoiceLineT.Add(new ProformaInvoiceLine
                         {
@@ -286,16 +302,21 @@ namespace ERPAPI.Controllers
                              SubProductName = "Almacenaje",
                              Price = _InvoiceCalculationlist[0].UnitPrice,
                              Quantity = _InvoiceCalculationlist[0].Quantity,
-                            
+                             SubTotal = valfacturar,
+                             TaxAmount = valfacturar * (_tax.TaxPercentage/100),
+                             TaxCode = _tax.TaxCode,                              
+                             Total = valfacturar + (valfacturar * (_tax.TaxPercentage / 100)),
+
                         });
 
-                        _proforma = new ProformaInvoice
+                        _proforma = new ProformaInvoiceDTO
                         {
                              CustomerId = _customer.CustomerId,
                              CustomerName = _customer.CustomerName,
-                             ProformaInvoiceLine = ProformaInvoiceLineT,
+                         
                              SubTotal = _InvoiceCalculationlist.Sum(q=>q.ValorFacturar),
-
+                             Identificador = Identificador,
+                             ProformaInvoiceLine = ProformaInvoiceLineT,
                         };
 
 
