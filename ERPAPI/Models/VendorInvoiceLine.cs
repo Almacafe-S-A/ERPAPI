@@ -11,11 +11,12 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Linea Id")]
-        public Int64 InvoiceLineId { get; set; }
+        public Int64 VendorInvoiceLineId { get; set; }
         [Display(Name = "Factura Proveedor")]
-        public int InvoiceId { get; set; }
+        public int VendorInvoiceId { get; set; }
         [Display(Name = "Factura Proveedor")]
-        public Invoice Invoice { get; set; }
+        [ForeignKey("VendorInvoiceId")]
+        public VendorInvoice VendorInvoice { get; set; }
         [Display(Name = "Product Item")]
         public Int64 ProductId { get; set; }
 

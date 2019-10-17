@@ -106,6 +106,23 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{BranchName}")]
+        public async Task<IActionResult> GetBranchByName(String BranchName)
+        {
+            Branch Items = new Branch();
+            try
+            {
+                Items = await _context.Branch.Where(q => q.BranchName == BranchName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Inserta una sucursal
         /// </summary>

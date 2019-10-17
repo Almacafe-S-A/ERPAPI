@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191016225652_Add_field_Account_to_VendorInvoice")]
+    partial class Add_field_Account_to_VendorInvoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6924,7 +6926,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.VendorInvoiceLine", b =>
                 {
-                    b.Property<long>("VendorInvoiceLineId")
+                    b.Property<long>("InvoiceLineId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -6937,6 +6939,8 @@ namespace ERPAPI.Migrations
                     b.Property<double>("DiscountAmount");
 
                     b.Property<double>("DiscountPercentage");
+
+                    b.Property<int>("InvoiceId");
 
                     b.Property<string>("ItemName");
 
@@ -6960,11 +6964,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UnitOfMeasureName");
 
-                    b.Property<int>("VendorInvoiceId");
+                    b.Property<int?>("VendorInvoiceId");
 
-                    b.HasKey("VendorInvoiceLineId");
+                    b.HasKey("InvoiceLineId");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("VendorInvoiceId");
 
@@ -8401,10 +8407,14 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.VendorInvoice", "VendorInvoice")
-                        .WithMany("VendorInvoiceLine")
-                        .HasForeignKey("VendorInvoiceId")
+                    b.HasOne("ERPAPI.Models.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.VendorInvoice")
+                        .WithMany("VendorInvoiceLine")
+                        .HasForeignKey("VendorInvoiceId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorOfCustomer", b =>
