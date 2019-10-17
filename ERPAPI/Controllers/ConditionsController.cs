@@ -148,7 +148,9 @@ namespace ERPAPI.Controllers
                                  .Where(q => q.ConditionId == _conditions.ConditionId)
                                   select c
                                 ).FirstOrDefault();
-                
+
+                _conditions.UsuarioCreacion = _conditionsq.UsuarioCreacion;
+                _conditions.FechaCreacion = _conditionsq.FechaCreacion;
                 _context.Entry(_conditionsq).CurrentValues.SetValues((_conditions));
 
                 //_context.Conditions.Update(_conditionsq);

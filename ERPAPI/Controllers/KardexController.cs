@@ -171,9 +171,12 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        CertificadoDeposito _tcd = await _context.CertificadoDeposito
+                                                        .Where(q => q.IdCD == _Kardexq.Ids[0]).FirstOrDefaultAsync();
+
                         Customer _customer = new Customer();
                         _customer = _context.Customer
-                            .Where(q => q.CustomerId == _Kardexq.CustomerId).FirstOrDefault();
+                            .Where(q => q.CustomerId == _tcd.CustomerId).FirstOrDefault();
 
                         foreach (var CertificadoId in _Kardexq.Ids)
                         {
