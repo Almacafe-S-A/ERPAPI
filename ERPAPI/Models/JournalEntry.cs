@@ -15,7 +15,7 @@ namespace ERPAPI.Models
 
         public JournalEntry()
         {
-            JournalEntryLines = new HashSet<JournalEntryLine>();
+          //  JournalEntryLines = new HashSet<JournalEntryLine>();
         }
 
         [Display(Name = "Id Libro Mayor")]
@@ -75,7 +75,7 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de ajuste")]
         public string TypeOfAdjustmentName { get; set; }
 
-        public virtual ICollection<JournalEntryLine> JournalEntryLines { get; set; }
+        public List<JournalEntryLine> JournalEntryLines { get; set; } = new List<JournalEntryLine>();
         [Required]
         [Display(Name = "Usuario de creacion")]
         public string CreatedUser { get; set; }
