@@ -17,10 +17,9 @@ namespace ERPAPI.Models
         [Display(Name = "Factura Proveedor")]
         [ForeignKey("VendorInvoiceId")]
         public VendorInvoice VendorInvoice { get; set; }
-        [Display(Name = "Product Item")]
-        public Int64 ProductId { get; set; }
+        
 
-        [Display(Name = "Nombre producto")]
+        [Display(Name = "Nombre producto de Cosnumo/Servicio")]
         public string ItemName { get; set; }
         
 
