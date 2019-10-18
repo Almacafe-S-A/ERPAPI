@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191018175412_VendorInvoice-RemoveFields")]
+    partial class VendorInvoiceRemoveFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1544,8 +1546,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<bool>("Fiscal");
-
                     b.Property<double>("Freight");
 
                     b.Property<long>("IdEstado");
@@ -2386,8 +2386,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaLimiteEmision");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<bool>("Fiscal");
 
                     b.Property<double>("Freight");
 
@@ -5553,7 +5551,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Amount");
 
-                    b.Property<long>("BranchId");
+                    b.Property<int>("BranchId");
 
                     b.Property<string>("BranchName");
 
@@ -6955,6 +6953,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ItemName");
 
                     b.Property<double>("Price");
+
+                    b.Property<long>("ProductId");
 
                     b.Property<double>("Quantity");
 

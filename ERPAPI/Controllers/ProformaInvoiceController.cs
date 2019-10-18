@@ -125,12 +125,32 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
 
             return await Task.Run(() => Ok(Items));
         }
+
+
+        [HttpGet("[action]/{ProformaInvoiceId}")]
+        public async Task<IActionResult> GetInvoiceCalculation(Int64 ProformaInvoiceId)
+        {
+            List< InvoiceCalculation> Items = new List<InvoiceCalculation>();
+            try
+            {
+                Items = await _context.InvoiceCalculation.Where(q => q.ProformaInvoiceId == ProformaInvoiceId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
 
 
@@ -270,7 +290,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return await Task.Run(() => Ok(_ProformaInvoiceq));
@@ -285,7 +305,7 @@ namespace ERPAPI.Controllers
         /// <param name="_ProformaInvoice"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<ProformaInvoice>> Insert([FromBody]ProformaInvoice _ProformaInvoice)
+        public async Task<ActionResult<ProformaInvoice>> Insert([FromBody]ProformaInvoiceDTO _ProformaInvoice)
         {
             ProformaInvoice _ProformaInvoiceq = new ProformaInvoice();
             try
@@ -302,7 +322,19 @@ namespace ERPAPI.Controllers
                             item.ProformaInvoiceId = _ProformaInvoice.ProformaId;
                             _context.ProformaInvoiceLine.Add(item);
                         }
+
+                      
+
+                        _context.Entry(_ProformaInvoiceq).CurrentValues.SetValues((_ProformaInvoice));
+
                         await _context.SaveChangesAsync();
+
+                        //   if(_ProformaInvoice.Identificador!="")
+                        var calculo =await _context.InvoiceCalculation.Where(q => q.Identificador == _ProformaInvoice.Identificador).ToListAsync();
+                         calculo.ForEach(q => q.ProformaInvoiceId = _ProformaInvoice.ProformaId);
+
+                        await _context.SaveChangesAsync();
+
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -339,10 +371,10 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-
-            return await Task.Run(() => Ok(_ProformaInvoiceq));
+        
+            return await Task.Run(() => Ok(_ProformaInvoice));
         }
 
         /// <summary>
@@ -370,7 +402,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return await Task.Run(() => Ok(_ProformaInvoiceq));
@@ -397,7 +429,7 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return await Task.Run(() => Ok(_ProformaInvoiceq));
