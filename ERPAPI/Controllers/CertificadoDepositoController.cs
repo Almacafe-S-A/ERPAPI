@@ -176,6 +176,30 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(()=> Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los certificados de deposito por cliente.
+        /// </summary>
+        /// <param name="_CertificadoDeposito"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSumCertificadoDepositoByCustomer([FromBody]CertificadoDepositoDTO _CertificadoDeposito)
+        {
+            List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
+            try
+            {
+               // Items = await _context.CertificadoDeposito.Where(q => q.CustomerId == CustomerId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
 
         /// <summary>
         /// Obtiene los Datos de la CertificadoDeposito por medio del Id enviado.
