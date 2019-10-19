@@ -130,6 +130,8 @@
     <Compile Remove="Migrations\20191011145335_EstadoName_JournalEntryString.Designer.cs" />
     <Compile Remove="Migrations\20191018175725_JournalEntryList.cs" />
     <Compile Remove="Migrations\20191018175725_JournalEntryList.Designer.cs" />
+    <Compile Remove="Migrations\20191019190831_KardexSaldoAnterior.cs" />
+    <Compile Remove="Migrations\20191019190831_KardexSaldoAnterior.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />

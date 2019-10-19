@@ -152,6 +152,26 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{Identificador}")]
+        public async Task<IActionResult> GetInvoiceCalculationByIdentificador(Guid Identificador)
+        {
+            List<InvoiceCalculation> Items = new List<InvoiceCalculation>();
+            try
+            {
+                Items = await _context.InvoiceCalculation.Where(q => q.Identificador == Identificador).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
 
 
         [HttpPost("[action]")]
