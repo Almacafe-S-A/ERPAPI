@@ -148,6 +148,17 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _EmployeeSalary.ModifiedUser,
 
                         });
+                        List<EmployeeSalary> _EmployeeSalaryU = new List<EmployeeSalary>();
+                        _EmployeeSalaryU = await (from c in _context.EmployeeSalary
+                                         .Where(q => q.IdEmpleado == _EmployeeSalary.IdEmpleado && q.EmployeeSalaryId != _EmployeeSalary.EmployeeSalaryId) select c ).ToListAsync();
+                        //_EmployeeSalaryU = await _context.EmployeeSalary.Where(q => q.IdEmpleado == _EmployeeSalary.IdEmpleado && q.EmployeeSalaryId != _EmployeeSalary.EmployeeSalaryId).FirstOrDefaultAsync();
+                        foreach (EmployeeSalary p in _EmployeeSalaryU)
+                        {
+                            p.IdEstado = 2;
+                            _context.Entry(p).CurrentValues.SetValues((p));
+                        }
+                        
+
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
@@ -259,6 +270,23 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_EmployeeSalaryq));
 
         }
+        [HttpGet("[action]/{IdEmployees}")]
+        public async Task<IActionResult> GetEmployeeSalaryByIdEmployees(Int64 IdEmployees)
+        {
+            List<EmployeeSalary> Items = new List<EmployeeSalary>();
+            try
+            {
+                Items = await _context.EmployeeSalary.Where(q => q.IdEmpleado == IdEmployees).ToListAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return Ok(Items);
+        }
     }
 }

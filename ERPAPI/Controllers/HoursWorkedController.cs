@@ -144,7 +144,7 @@ namespace ERPAPI.Controllers
                             ClaseInicial =
                              Newtonsoft.Json.JsonConvert.SerializeObject(hoursworked, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(HoursWorked, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
+                            Accion = "Insert",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
                             UsuarioCreacion = HoursWorked.UsuarioCreacion,

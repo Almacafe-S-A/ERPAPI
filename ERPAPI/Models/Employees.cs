@@ -79,5 +79,10 @@ namespace ERPAPI.Models
         //public  Party Party { get; set; }
 
         //public int? PartyId { get; set; }
+        #region Associations
+
+        public List<EmployeeSalary> _EmployeeSalary { get; set; } = new List<EmployeeSalary>();
+        #endregion
+
     }
 }

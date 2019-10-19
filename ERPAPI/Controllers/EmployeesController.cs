@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -127,24 +128,83 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_Employees"></param>
         /// <returns></returns>
+        //[HttpPost("[action]")]
+        //public async Task<ActionResult<Employees>> Insert([FromBody]Employees _Employees)
+        //{
+        //    Employees _Employeesq = new Employees();
+        //    try
+        //    {
+        //        _Employeesq = _Employees;
+        //        _context.Employees.Add(_Employeesq);
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+        //        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+        //    }
+
+        //    return await Task.Run(() => Ok(_Employeesq));
+        //}
+
         [HttpPost("[action]")]
         public async Task<ActionResult<Employees>> Insert([FromBody]Employees _Employees)
         {
-            Employees _Employeesq = new Employees();
+            Employees Employees = _Employees;
             try
             {
-                _Employeesq = _Employees;
-                _context.Employees.Add(_Employeesq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _context.Employees.Add(Employees);
+                        //await _context.SaveChangesAsync();
+
+                        foreach (var item in _Employees._EmployeeSalary)
+                        {
+                            item.IdEmpleado = _Employees.IdEmpleado;
+                            _context.EmployeeSalary.Add(item);
+                        }
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = Employees.IdEmpleado,
+                            DocType = "Employees",
+
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_Employees, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(Employees, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = Employees.Usuariocreacion,
+                            UsuarioModificacion = Employees.Usuariomodificacion,
+                            UsuarioEjecucion = Employees.Usuariomodificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+
+                }
+                // this.UpdateSalesOrder(salesOrder.SalesOrderId);
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Employeesq));
+            return await Task.Run(() => Ok(Employees));
         }
 
         /// <summary>
