@@ -13,30 +13,31 @@ using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
+    
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Insurances")]
+    [Route("api/InsurancesCertificate")]
     [ApiController]
-    public class InsurancesController : Controller
+    public class InsurancesCertificateController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        public InsurancesController(ILogger<InsurancesController> logger, ApplicationDbContext context)
+        public InsurancesCertificateController(ILogger<InsurancesCertificate> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Insurances paginado
+        /// Obtiene el Listado de InsurancesCertificate paginado
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetInsurancesPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetInsurancesCertificatePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<Insurances> Items = new List<Insurances>();
+            List<InsurancesCertificate> Items = new List<InsurancesCertificate>();
             try
             {
-                var query = _context.Insurances.AsQueryable();
+                var query = _context.InsurancesCertificate.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -54,24 +55,24 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            
+
             return await Task.Run(() => Ok(Items));
         }
 
 
         /// <summary>
-        /// Obtiene los Datos de la Insurances en una lista.
+        /// Obtiene los Datos de la InsurancesCertificate en una lista.
         /// </summary>
 
-        // GET: api/Insurances
+        // GET: api/InsurancesCertificate
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetInsurances()
+        public async Task<IActionResult> GetInsurancesCertificate()
 
         {
-            List<Insurances> Items = new List<Insurances>();
+            List<InsurancesCertificate> Items = new List<InsurancesCertificate>();
             try
             {
-                Items = await _context.Insurances.ToListAsync();
+                Items = await _context.InsurancesCertificate.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -86,41 +87,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la Insurances por medio del Id enviado.
+        /// Obtiene los Datos de la InsurancesCertificate por medio del Id enviado.
         /// </summary>
-        /// <param name="InsurancesId"></param>
+        /// <param name="InsurancesCertificateId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{InsurancesId}")]
-        public async Task<IActionResult> GetInsurancesById(Int64 InsurancesId)
+        [HttpGet("[action]/{InsurancesCertificateId}")]
+        public async Task<IActionResult> GetInsurancesCertificateById(Int64 InsurancesCertificateId)
         {
-            Insurances Items = new Insurances();
+            InsurancesCertificate Items = new InsurancesCertificate();
             try
             {
-                Items = await _context.Insurances.Where(q => q.InsurancesId == InsurancesId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-        /// <summary>
-        /// Obtiene los Datos de la Insurances por medio del Nombre enviado.
-        /// </summary>
-        /// <param name="InsurancesName"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{InsurancesName}")]
-        public async Task<IActionResult> GetInsurancesById(String InsurancesName)
-        {
-            Insurances Items = new Insurances();
-            try
-            {
-                Items = await _context.Insurances.Where(q => q.InsurancesName == InsurancesName).FirstOrDefaultAsync();
+                Items = await _context.InsurancesCertificate.Where(q => q.InsurancesCertificateId == InsurancesCertificateId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -135,15 +112,17 @@ namespace ERPAPI.Controllers
 
 
 
+
+
         /// <summary>
-        /// Inserta una nueva Insurances
+        /// Inserta una nueva InsurancesCertificate
         /// </summary>
-        /// <param name="_Insurances"></param>
+        /// <param name="_InsurancesCertificateP"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Insurances>> Insert([FromBody]Insurances _Insurances)
+        public async Task<ActionResult<InsurancesCertificate>> Insert([FromBody]InsurancesCertificate _InsurancesCertificateP)
         {
-            Insurances _Insurancesq = new Insurances();
+            InsurancesCertificate _InsurancesCertificateq = new InsurancesCertificate();
             // Alert _Alertq = new Alert();
             try
             {
@@ -151,22 +130,22 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _Insurancesq = _Insurances;
-                        _context.Insurances.Add(_Insurancesq);
+                        _InsurancesCertificateq = _InsurancesCertificateP;
+                        _context.InsurancesCertificate.Add(_InsurancesCertificateq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Insurances.InsurancesId,
-                            DocType = "Insurances",
+                            IdOperacion = _InsurancesCertificateq.InsurancesCertificateId,
+                            DocType = "InsurancesCertificate",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Insurances, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_InsurancesCertificateq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Insurances.CreatedUser,
-                            UsuarioModificacion = _Insurances.ModifiedUser,
-                            UsuarioEjecucion = _Insurances.ModifiedUser,
+                            UsuarioCreacion = _InsurancesCertificateP.CreatedUser,
+                            UsuarioModificacion = _InsurancesCertificateP.ModifiedUser,
+                            UsuarioEjecucion = _InsurancesCertificateP.ModifiedUser,
 
                         });
 
@@ -189,46 +168,46 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Insurancesq));
+            return await Task.Run(() => Ok(_InsurancesCertificateq));
         }
 
         /// <summary>
         /// Actualiza la Insurances
         /// </summary>
-        /// <param name="_Insurances"></param>
+        /// <param name="_InsurancesCertificateP"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Insurances>> Update([FromBody]Insurances _Insurances)
+        public async Task<ActionResult<InsurancesCertificate>> Update([FromBody]InsurancesCertificate _InsurancesCertificateP)
         {
-            Insurances _Insurancesq = _Insurances;
+            InsurancesCertificate _InsurancesCertificateq = _InsurancesCertificateP;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Insurancesq = await (from c in _context.Insurances
-                                         .Where(q => q.InsurancesId == _Insurances.InsurancesId)
-                                                 select c
+                        _InsurancesCertificateq = await (from c in _context.InsurancesCertificate
+                                         .Where(q => q.InsurancesCertificateId == _InsurancesCertificateP.InsurancesCertificateId)
+                                              select c
                                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_Insurancesq).CurrentValues.SetValues((_Insurances));
+                        _context.Entry(_InsurancesCertificateq).CurrentValues.SetValues((_InsurancesCertificateP));
 
                         //_context.Alert.Update(_Alertq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Insurances.InsurancesId,
+                            IdOperacion = _InsurancesCertificateq.InsurancesCertificateId,
                             DocType = "Insurances",
                             ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_Insurancesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Insurances, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_InsurancesCertificateq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_InsurancesCertificateq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Insurances.CreatedUser,
-                            UsuarioModificacion = _Insurances.ModifiedUser,
-                            UsuarioEjecucion = _Insurances.ModifiedUser,
+                            UsuarioCreacion = _InsurancesCertificateP.CreatedUser,
+                            UsuarioModificacion = _InsurancesCertificateP.ModifiedUser,
+                            UsuarioEjecucion = _InsurancesCertificateP.ModifiedUser,
 
                         });
 
@@ -250,25 +229,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_Insurancesq));
+            return await Task.Run(() => Ok(_InsurancesCertificateq));
         }
 
         /// <summary>
-        /// Elimina una Insurances       
+        /// Elimina una InsurancesCertificate       
         /// </summary>
-        /// <param name="_Insurances"></param>
+        /// <param name="_InsurancesCertificateP"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Insurances _Insurances)
+        public async Task<IActionResult> Delete([FromBody]InsurancesCertificate _InsurancesCertificateP)
         {
-            Insurances _Insurancesq = new Insurances();
+            InsurancesCertificate _InsurancesCertificateq = new InsurancesCertificate();
             try
             {
-                _Insurancesq = _context.Insurances
-                .Where(x => x.InsurancesId == (Int64)_Insurances.InsurancesId)
+                _InsurancesCertificateq = _context.InsurancesCertificate
+                .Where(x => x.InsurancesCertificateId == (Int64)_InsurancesCertificateP.InsurancesCertificateId)
                 .FirstOrDefault();
 
-                _context.Insurances.Remove(_Insurancesq);
+                _context.InsurancesCertificate.Remove(_InsurancesCertificateq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -277,9 +256,9 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Insurancesq));
+            return await Task.Run(() => Ok(_InsurancesCertificateq));
 
         }
-       
+
     }
 }

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191019092824_InsurancesCertificate")]
+    partial class InsurancesCertificate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4347,8 +4349,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Address");
 
-                    b.Property<DateTime>("BeginDateofInsurance");
-
                     b.Property<int>("BranchId");
 
                     b.Property<DateTime>("CreatedDate");
@@ -4359,8 +4359,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("CustomerId");
 
                     b.Property<DateTime>("DateofInsurance");
-
-                    b.Property<DateTime>("EndDateofInsurance");
 
                     b.Property<DateTime>("FechaFirma");
 
