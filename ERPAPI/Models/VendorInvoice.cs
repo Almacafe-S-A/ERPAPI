@@ -88,11 +88,8 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Proveedor")]
         public string VendorName { get; set; }
 
-        [Display(Name = "Id")]
-        public Int64 ProductId { get; set; }
+   
 
-        [Display(Name = "Nombre Producto")]
-        public string ProductName { get; set; }
 
         public DateTime OrderDate { get; set; }
         public DateTime ReceivedDate { get; set; }

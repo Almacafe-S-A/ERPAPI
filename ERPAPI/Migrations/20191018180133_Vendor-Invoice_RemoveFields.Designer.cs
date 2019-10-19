@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191018180133_Vendor-Invoice_RemoveFields")]
+    partial class VendorInvoice_RemoveFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4337,56 +4339,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("InsurancesId");
 
                     b.ToTable("Insurances");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InsurancesCertificate", b =>
-                {
-                    b.Property<int>("InsurancesCertificateId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address");
-
-                    b.Property<DateTime>("BeginDateofInsurance");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<DateTime>("DateofInsurance");
-
-                    b.Property<DateTime>("EndDateofInsurance");
-
-                    b.Property<DateTime>("FechaFirma");
-
-                    b.Property<long?>("GrupoEconomicoId");
-
-                    b.Property<long>("IdCertificated");
-
-                    b.Property<int>("InsurancesId");
-
-                    b.Property<string>("LugarFirma");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<string>("NoPoliza");
-
-                    b.Property<decimal>("TotalInsurances")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<string>("TotalLetras");
-
-                    b.HasKey("InsurancesCertificateId");
-
-                    b.ToTable("InsurancesCertificate");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Invoice", b =>
