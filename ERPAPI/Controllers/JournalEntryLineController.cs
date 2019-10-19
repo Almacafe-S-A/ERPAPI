@@ -81,10 +81,13 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{JournalEntryId}")]
         public async Task<IActionResult> GetJournalEntryLineByJournalId(Int64 JournalEntryId)
         {
-            JournalEntryLine Items = new JournalEntryLine();
+
+            //JournalEntryLine Items = new JournalEntryLine();
+            List<JournalEntryLine> Items = new List<JournalEntryLine>();
             try
             {
-                Items = await _context.JournalEntryLine.Where(q => q.JournalEntryId == JournalEntryId).FirstOrDefaultAsync();
+                //Items = await _context.JournalEntryLine.Where(q => q.JournalEntryId == JournalEntryId).FirstOrDefaultAsync();
+                Items = await _context.JournalEntryLine.Where(q => q.JournalEntryId == JournalEntryId).ToListAsync();
             }
             catch (Exception ex)
             {
