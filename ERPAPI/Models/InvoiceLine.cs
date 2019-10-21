@@ -44,6 +44,15 @@ namespace ERPAPI.Models
         [Display(Name = "Monto")]
         public double Amount { get; set; }
 
+
+        [Display(Name = "Cuenta Contable")]
+        public Int64 AccountId { get; set; }
+
+        [Display(Name = "Cuenta Contable")]
+        public string AccountName { get; set; }
+
+
+
         public Int64 WareHouseId { get; set; }
         [Display(Name = "Centro de costos")]
         public Int64 CostCenterId { get; set; }

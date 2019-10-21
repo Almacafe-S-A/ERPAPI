@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191021221119_Accounts")]
+    partial class Accounts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4404,68 +4406,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("InsurancesCertificate");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InsurancesCertificateLine", b =>
-                {
-                    b.Property<long>("InsurancesCertificateLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<decimal>("DifferenceTotalofProductInsuranceLine")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<DateTime>("FechaFirma");
-
-                    b.Property<long?>("GrupoEconomicoId");
-
-                    b.Property<int>("InsurancesCertificateId");
-
-                    b.Property<string>("LugarFirma");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<decimal>("TotalInsurancesLine")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("TotalInsurancesofProductLine")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<string>("TotalLetras");
-
-                    b.Property<decimal>("TotaldeductibleLine")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("TotaldeductibleofProduct")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<decimal>("TotalofProductLine")
-                        .HasColumnType("decimal(18,4)");
-
-                    b.Property<int>("WarehouseId");
-
-                    b.Property<string>("WarehouseName")
-                        .IsRequired();
-
-                    b.HasKey("InsurancesCertificateLineId");
-
-                    b.HasIndex("InsurancesCertificateId");
-
-                    b.ToTable("InsurancesCertificateLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Invoice", b =>
                 {
                     b.Property<int>("InvoiceId")
@@ -8294,14 +8234,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.HoursWorked")
                         .WithMany("idhorastrabajadasconstrains")
                         .HasForeignKey("IdHorasTrabajadas");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InsurancesCertificateLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.InsurancesCertificate")
-                        .WithMany("_InsurancesCertificateLine")
-                        .HasForeignKey("InsurancesCertificateId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
