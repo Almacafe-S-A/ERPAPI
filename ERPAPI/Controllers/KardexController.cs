@@ -165,7 +165,7 @@ namespace ERPAPI.Controllers
                                                        .Where(q => q.IdCD == _Kardexq.Ids[0]).FirstOrDefaultAsync();
 
                 string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01";
-                string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-30";
+                string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-"+ DateTime.DaysInMonth(DateTime.Now.Year,DateTime.Now.Month);
 
                 Guid Identificador = Guid.NewGuid();
                
@@ -189,136 +189,132 @@ namespace ERPAPI.Controllers
                                                       //.Select(q => q.KardexId)
                                                       .Include(q => q._KardexLine)
                                                       .ToListAsync();
-                           
 
-                            //await (from c in _context.Kardex
-                            //       join d in _context.KardexLine on c.KardexId equals d.KardexId
-                            //       where c.DocumentId == CertificadoId && c.DocumentName == _Kardexq.DocumentName
-                            //       && c.DocumentDate >= Convert.ToDateTime(fechainicio)
-                            //       && c.DocumentDate <= Convert.ToDateTime(fechafin)
-                            //       && d.TotalCD > 0
-                            //       select new Kardex
-                            //       {
-                            //           DocumentId = c.DocumentId,
-                            //           DocName = c.DocName,
-                            //           DocType = c.DocType,
-                            //           DocumentName = c.DocumentName,
-                            //           DocumentDate = c.DocumentDate,
-                            //           CustomerId = c.CustomerId,
-                            //           CurrencyId = c.CurrencyId,
-                            //           TypeOperationId = c.TypeOperationId,
-                            //           TypeOperationName = c.TypeOperationName,
+                            //Si no hubo movimientos de kardex durante el mes , y sigue estando activo
+                            //buscamos el ultimo movimiento
+                            if (_kardexproduct.Count == 0)
+                            {
+                                _kardexproduct = await _context.Kardex
+                                     .Where(q => q.DocumentId == CertificadoId)
+                                     .Where(q => q.DocumentName == _Kardexq.DocumentName)  
+                                     .OrderByDescending(q=>q.DocumentDate) 
+                                     .Include(q => q._KardexLine)
+                                     .ToListAsync();
+                            }
 
 
-
-                            //       }).ToListAsync();
-
-
-
+                            bool facturo = false;
                             //Despues de buscar todos los movimientos que tiene el certificado en inventario
                             //se calculan los valores
                             foreach (var item in _kardexproduct)
                             {
-
-                                item._KardexLine = item._KardexLine.Where(q => q.TotalCD > 0).ToList();
-
-                                CertificadoDeposito _cd = new CertificadoDeposito();
-                                _cd = await _context.CertificadoDeposito
-                                             .Where(q => q.IdCD == item.DocumentId)
-                                             .Include(q => q._CertificadoLine)
-                                             .FirstOrDefaultAsync();
-
-                                SalesOrder _so = await _context.SalesOrder
-                                                       .Where(q => q.CustomerId == _cd.CustomerId)
-                                                       .OrderByDescending(q => q.SalesOrderId).FirstOrDefaultAsync();
-
-                                List<CustomerConditions> _cc = await _context.CustomerConditions
-                                    .Where(q => q.CustomerId == _so.CustomerId)
-                                    .Where(q => q.IdTipoDocumento == 12)
-                                    .Where(q => q.DocumentId == _so.SalesOrderId)
-                                    .ToListAsync();
-
-                                int dias = item.DocumentDate.Day <= 15 ? 30 : 15;
-
-                                double totalfacturar = 0;
-                                foreach (var condicion in _cc)
+                                //  item._KardexLine = item._KardexLine.Where(q => q.TotalCD > 0).ToList();
+                                if (!facturo)
                                 {
-                                    foreach (var lineascertificadas in _cd._CertificadoLine)
-                                    {
-                                        double cantidad = 0;
-                                        cantidad = item.TypeOperationName == "Entrada" ? (item._KardexLine
-                                                  .Where(q => q.SubProducId == lineascertificadas.SubProductId)
-                                                    .Select(q=>q.QuantityEntry + q.SaldoAnterior )
-                                                   ).FirstOrDefault()  :
-                                                   ( item._KardexLine
-                                                  .Where(q => q.SubProducId == lineascertificadas.SubProductId)
-                                                    .Select(q => q.QuantityOut)).FirstOrDefault()
-                                                   ;
-                                                    
 
-                                        switch (condicion.LogicalCondition)
+                                    CertificadoDeposito _cd = new CertificadoDeposito();
+                                    _cd = await _context.CertificadoDeposito
+                                                 .Where(q => q.IdCD == item.DocumentId)
+                                                 .Include(q => q._CertificadoLine)
+                                                 .FirstOrDefaultAsync();
+
+                                    SalesOrder _so = await _context.SalesOrder
+                                                           .Where(q => q.CustomerId == _cd.CustomerId)
+                                                           .OrderByDescending(q => q.SalesOrderId).FirstOrDefaultAsync();
+
+                                    List<CustomerConditions> _cc = await _context.CustomerConditions
+                                        .Where(q => q.CustomerId == _so.CustomerId)
+                                        .Where(q => q.IdTipoDocumento == 12)
+                                        .Where(q => q.DocumentId == _so.SalesOrderId)
+                                        .ToListAsync();
+
+                                    int dias = item.DocumentDate.Day <= 15 ? 30 : 15;
+
+                                    double totalfacturar = 0;
+                                    foreach (var condicion in _cc)
+                                    {
+                                        foreach (var lineascertificadas in _cd._CertificadoLine)
                                         {
-                                            case ">=":
-                                                if (lineascertificadas.Price >= Convert.ToDouble(condicion.ValueToEvaluate))
-                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                break;
-                                            case "<=":
-                                                if (lineascertificadas.Price <= Convert.ToDouble(condicion.ValueToEvaluate))
-                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                break;
-                                            case ">":
-                                                if (lineascertificadas.Price > Convert.ToDouble(condicion.ValueToEvaluate))
-                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                break;
-                                            case "<":
-                                                if (lineascertificadas.Price < Convert.ToDouble(condicion.ValueToEvaluate))
-                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price* cantidad)) / 30) * dias;
-                                                break;
-                                            case "=":
-                                                if (lineascertificadas.Price == Convert.ToDouble(condicion.ValueToEvaluate))
-                                                    totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                break;
-                                            default:
-                                                break;
+                                            double cantidad = 0;
+                                            cantidad = item.TypeOperationName == "Entrada" ? (item._KardexLine
+                                                      .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                        .Select(q => q.QuantityEntry)
+                                                       ).FirstOrDefault() :
+                                                       (item._KardexLine
+                                                      .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                        .Select(q => q.QuantityOut).FirstOrDefault()
+                                                       );
+
+
+                                            switch (condicion.LogicalCondition)
+                                            {
+                                                case ">=":
+                                                    if (lineascertificadas.Price >= Convert.ToDouble(condicion.ValueToEvaluate))
+                                                        totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                    break;
+                                                case "<=":
+                                                    if (lineascertificadas.Price <= Convert.ToDouble(condicion.ValueToEvaluate))
+                                                        totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                    break;
+                                                case ">":
+                                                    if (lineascertificadas.Price > Convert.ToDouble(condicion.ValueToEvaluate))
+                                                        totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                    break;
+                                                case "<":
+                                                    if (lineascertificadas.Price < Convert.ToDouble(condicion.ValueToEvaluate))
+                                                        totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                    break;
+                                                case "=":
+                                                    if (lineascertificadas.Price == Convert.ToDouble(condicion.ValueToEvaluate))
+                                                        totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
                                         }
                                     }
-                                }
 
-                                //GoodsDeliveryAuthorization _GoodsDeliveryAuthorization = new GoodsDeliveryAuthorization();
-                                //if (_cd==null)
-                                //{
-                                //    //Si es nulo buscar en la tabla Autorización
-                                //    _GoodsDeliveryAuthorization = await _context.GoodsDeliveryAuthorization
-                                //                                    .Where(q=>q.id)
-                                //}
 
-                                foreach (var linea in item._KardexLine)
-                                {
-                                    CertificadoLine cdline = _cd._CertificadoLine
-                                               .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
-
-                                    _context.InvoiceCalculation.Add(new InvoiceCalculation
+                                    foreach (var linea in item._KardexLine)
                                     {
-                                        CustomerId = item.CustomerId,
-                                        CustomerName = item.CustomerName,
-                                        DocumentDate = item.DocumentDate,                                        
-                                        NoCD = _cd.NoCD,
-                                        Dias = dias,
-                                        ProductId = linea.SubProducId,
-                                        ProductName = linea.SubProductName,
-                                        UnitPrice = cdline.Price,
-                                        Quantity = item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut,
-                                        ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut),
-                                        ValorFacturar = totalfacturar,
-                                        Identificador = Identificador,
-                                        FechaCreacion = DateTime.Now,
-                                        FechaModificacion = DateTime.Now,
-                                        UsuarioCreacion = _Kardexq.UsuarioCreacion,
-                                        UsuarioModificacion = _Kardexq.UsuarioModificacion,
-                                    });
+                                        CertificadoLine cdline = _cd._CertificadoLine
+                                                   .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
+
+                                        _context.InvoiceCalculation.Add(new InvoiceCalculation
+                                        {
+                                            CustomerId = item.CustomerId,
+                                            CustomerName = item.CustomerName,
+                                            DocumentDate = item.DocumentDate,
+                                            NoCD = _cd.NoCD,
+                                            Dias = dias,
+                                            ProductId = linea.SubProducId,
+                                            ProductName = linea.SubProductName,
+                                            UnitPrice = cdline.Price,
+                                            Quantity = item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut,
+                                            ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut),
+                                            ValorFacturar = totalfacturar,
+                                            Identificador = Identificador,
+                                            FechaCreacion = DateTime.Now,
+                                            FechaModificacion = DateTime.Now,
+                                            UsuarioCreacion = _Kardexq.UsuarioCreacion,
+                                            UsuarioModificacion = _Kardexq.UsuarioModificacion,
+                                        });
+
+
+                                        if (item.TypeOperationName == "Entrada")
+                                        {
+                                            facturo = true;
+                                        }
+                                    }
+
+
                                 }
 
-                            }
+
+                            }                      
+
+
+
 
                         }
 
