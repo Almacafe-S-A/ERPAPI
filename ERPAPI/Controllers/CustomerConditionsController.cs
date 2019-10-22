@@ -117,6 +117,7 @@ namespace ERPAPI.Controllers
             {
                 Items = await _context.CustomerConditions
                     .Where(q=>q.IdTipoDocumento==_Ccq.IdTipoDocumento)
+                    .Where(q => q.SubProductId == _Ccq.SubProductId)
                     .Where(q => q.DocumentId == _Ccq.DocumentId).ToListAsync();
             }
             catch (Exception ex)
