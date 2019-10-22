@@ -44,6 +44,15 @@ namespace ERPAPI.Models
         [Display(Name = "Monto")]
         public double Amount { get; set; }
 
+
+        [Display(Name = "Cuenta Contable")]
+        public Int64 AccountId { get; set; }
+
+        [Display(Name = "Cuenta Contable")]
+        public string AccountName { get; set; }
+
+
+
         public Int64 WareHouseId { get; set; }
         [Display(Name = "Centro de costos")]
         public Int64 CostCenterId { get; set; }
@@ -59,6 +68,10 @@ namespace ERPAPI.Models
         public double SubTotal { get; set; }
          [Display(Name = "% Impuesto")]
         public double TaxPercentage { get; set; }
+
+        [Display(Name = "Código Impuesto")]
+        public Int64 TaxId { get; set; }
+
         [Display(Name = "Código Impuesto")]
         public string TaxCode { get; set; }
 

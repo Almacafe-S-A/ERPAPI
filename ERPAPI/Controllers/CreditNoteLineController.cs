@@ -108,6 +108,25 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{CreditNoteId}")]
+        public async Task<IActionResult> GetCreditNoteLineByCreditNoteId(Int64 CreditNoteId)
+        {
+            List<CreditNoteLine> Items = new List<CreditNoteLine>();
+            try
+            {
+                Items = await _context.CreditNoteLine
+                             .Where(q => q.CreditNoteId == CreditNoteId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
         /// Inserta una nueva CreditNoteLine

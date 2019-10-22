@@ -224,10 +224,10 @@ namespace ERPAPI.Controllers
                         _context.JournalEntry.Add(_JournalEntryq);
                         // await _context.SaveChangesAsync();
                         double sumacreditos = 0, sumadebitos = 0;
-                        foreach (var item in _JournalEntry.JournalEntryLines)
+                        foreach (var item in _JournalEntryq.JournalEntryLines)
                         {
-                            item.JournalEntryId = _JournalEntry.JournalEntryId;
-                            item.JournalEntryLineId = 0;
+                            item.JournalEntryId = _JournalEntryq.JournalEntryId;
+                           // item.JournalEntryLineId = 0;
                             _context.JournalEntryLine.Add(item);
                             sumacreditos += item.Credit > 0 ? item.Credit : 0;
                             sumadebitos += item.Debit>0 ? item.Debit : 0;

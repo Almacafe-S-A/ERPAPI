@@ -77,6 +77,29 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <returns></returns>
+        [HttpGet("[action]/{JournalEntryId}")]
+        public async Task<IActionResult> GetJournalEntryLineByJournalId(Int64 JournalEntryId)
+        {
+
+            //JournalEntryLine Items = new JournalEntryLine();
+            List<JournalEntryLine> Items = new List<JournalEntryLine>();
+            try
+            {
+                //Items = await _context.JournalEntryLine.Where(q => q.JournalEntryId == JournalEntryId).FirstOrDefaultAsync();
+                Items = await _context.JournalEntryLine.Where(q => q.JournalEntryId == JournalEntryId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
         /// </summary>

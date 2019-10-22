@@ -28,7 +28,7 @@ namespace ERP.Contexts
 
         }
         public DbSet<Accounting> Accounting { get; set; }
-       // public DbSet<AccountingChilds> AccountingChilds { get; set; }
+        public DbSet<InsurancesCertificate> InsurancesCertificate { get; set; }
 
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
@@ -38,6 +38,8 @@ namespace ERP.Contexts
         public DbSet<TypeJournal> TypeJournal { get; set; }
         public DbSet<CostListItem> CostListItem { get; set; }
         public DbSet<CostCenter> CostCenter { get; set; }
+
+        public DbSet<Concept> Concept { get; set; }
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 
@@ -68,9 +70,10 @@ namespace ERP.Contexts
 
         public DbSet<DebitNote> DebitNote { get; set; }
         public DbSet<DebitNoteLine> DebitNoteLine { get; set; }
-
-
-
+        public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
+        public DbSet<FixedAsset> FixedAsset { get; set; }
+        public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
+        
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
@@ -240,6 +243,8 @@ namespace ERP.Contexts
         public DbSet<VendorInvoice> VendorInvoice { get; set; }
 
         public DbSet<VendorInvoiceLine> VendorInvoiceLine { get; set; }
+
+        public DbSet<PaymentTerms> PaymentTerms { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

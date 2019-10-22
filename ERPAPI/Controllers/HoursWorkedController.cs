@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -113,26 +114,65 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Inserta una nueva HoursWorked
         /// </summary>
-        /// <param name="_HoursWorked"></param>
+        /// <param name="hoursworked"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<HoursWorked>> Insert([FromBody]HoursWorked _HoursWorked)
+        public async Task<IActionResult> Insert([FromBody]HoursWorked hoursworked)
         {
-            HoursWorked _HoursWorkedq = new HoursWorked();
+            HoursWorked HoursWorked = hoursworked;
             try
             {
-                _HoursWorkedq = _HoursWorked;
-                _context.HoursWorked.Add(_HoursWorkedq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _context.HoursWorked.Add(HoursWorked);
+                        //await _context.SaveChangesAsync();
+
+                        foreach (var item in hoursworked.idhorastrabajadasconstrains)
+                        {
+                            item.IdHorasTrabajadas = hoursworked.IdHorastrabajadas;
+                            _context.HoursWorkedDetail.Add(item);
+                        }
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = HoursWorked.IdHorastrabajadas,
+                            DocType = "HoursWorked",
+
+                            ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(hoursworked, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(HoursWorked, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insert",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = HoursWorked.UsuarioCreacion,
+                            UsuarioModificacion = HoursWorked.UsuarioModificacion,
+                            UsuarioEjecucion = HoursWorked.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+
+                }
+                // this.UpdateSalesOrder(salesOrder.SalesOrderId);
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_HoursWorkedq));
+            return await Task.Run(() => Ok(HoursWorked));
         }
 
         /// <summary>

@@ -109,7 +109,29 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la Insurances por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="InsurancesName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{InsurancesName}")]
+        public async Task<IActionResult> GetInsurancesById(String InsurancesName)
+        {
+            Insurances Items = new Insurances();
+            try
+            {
+                Items = await _context.Insurances.Where(q => q.InsurancesName == InsurancesName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
 
 

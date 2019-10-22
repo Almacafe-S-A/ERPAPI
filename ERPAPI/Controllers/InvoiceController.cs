@@ -109,6 +109,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{InvoiceId}")]
+        public async Task<IActionResult> GetInvoiceLineById(Int64 InvoiceId)
+        {
+            Invoice Items = new Invoice();
+            try
+            {
+                Items = await _context.Invoice.Include(q=>q.InvoiceLine).Where(q => q.InvoiceId == InvoiceId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
         /// Inserta una nueva Invoice
@@ -228,6 +246,11 @@ namespace ERPAPI.Controllers
                                     if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
                                            && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
                                     {
+
+                                        _iline.AccountId = Convert.ToInt32(item.AccountId);
+                                        _iline.AccountName = item.AccountName;
+                                        _context.Entry(_iline).CurrentValues.SetValues((_iline));                                   
+
                                         _je.JournalEntryLines.Add(new JournalEntryLine
                                         {
                                             AccountId = Convert.ToInt32(item.AccountId),

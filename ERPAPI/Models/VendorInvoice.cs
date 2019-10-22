@@ -28,9 +28,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de vencimiento")]
         public DateTime ExpirationDate { get; set; }
         [Display(Name = "Tipo de Factura")]
-        public int VendorInvoiceTypeId { get; set; }
-        
-        
+        public int VendorInvoiceTypeId { get; set; }    
 
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
@@ -90,11 +88,8 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Proveedor")]
         public string VendorName { get; set; }
 
-        [Display(Name = "Id")]
-        public Int64 ProductId { get; set; }
+   
 
-        [Display(Name = "Nombre Producto")]
-        public string ProductName { get; set; }
 
         public DateTime OrderDate { get; set; }
         public DateTime ReceivedDate { get; set; }
@@ -153,6 +148,12 @@ namespace ERPAPI.Models
         public Int64 IdEstado { get; set; }
 
         public string Estado { get; set; }
+
+        public Int64 AccountId { get; set; }
+
+        [ForeignKey("AccountId")]
+        public Accounting  Account { get; set; }
+
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

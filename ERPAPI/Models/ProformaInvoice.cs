@@ -27,13 +27,13 @@ namespace ERPAPI.Models
         public string Direccion { get; set; }
 
         [Display(Name = "Sucursal")]
-        public int BranchId { get; set; }
+        public Int64 BranchId { get; set; }
 
         [Display(Name = "Sucursal Nombre")]
         public string BranchName { get; set; }
 
         [Display(Name = "Customer")]
-        public int CustomerId { get; set; }
+        public Int64 CustomerId { get; set; }
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
@@ -133,6 +133,8 @@ namespace ERPAPI.Models
     public class ProformaInvoiceDTO : ProformaInvoice
     {
         public Kardex Kardex { get; set; } = new Kardex();
+
+        public Guid Identificador { get; set; } 
     }
 
 

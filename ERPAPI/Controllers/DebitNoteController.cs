@@ -127,6 +127,13 @@ namespace ERPAPI.Controllers
                     {
                         _DebitNoteq = _DebitNote;
                         _context.DebitNote.Add(_DebitNoteq);
+
+                        foreach (var item in _DebitNote.DebitNoteLine)
+                        {
+                            item.DebitNoteId = _DebitNote.DebitNoteId;
+                            _context.DebitNoteLine.Add(item);
+                        }
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora

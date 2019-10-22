@@ -21,6 +21,9 @@ namespace ERPAPI.Models
         public string Estado { get; set; }
         public string CustomerConditionName { get; set; }
         public string Description { get; set; }
+
+        [Display(Name = "Condición logica")]
+        public Int64 LogicalConditionId { get; set; }
         public string LogicalCondition { get; set; }
         public string ValueToEvaluate { get; set; }
         public double ValueDecimal { get; set; }

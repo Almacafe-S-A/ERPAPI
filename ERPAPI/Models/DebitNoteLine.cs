@@ -13,7 +13,7 @@ namespace ERPAPI.Models
         [Display(Name = "Linea Id")]
         public Int64 DebitNoteLineId { get; set; }
         [Display(Name = "Nota de débito")]
-        public int DebitNoteId { get; set; }
+        public Int64 DebitNoteId { get; set; }
         [Display(Name = "Nota de débito")]
         public DebitNote DebitNote { get; set; }
 
@@ -66,6 +66,10 @@ namespace ERPAPI.Models
         public double SubTotal { get; set; }
          [Display(Name = "% Impuesto")]
         public double TaxPercentage { get; set; }
+
+        [Display(Name = "Código Impuesto")]
+        public Int64 TaxId { get; set; }
+
         [Display(Name = "Código Impuesto")]
         public string TaxCode { get; set; }
 
