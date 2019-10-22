@@ -22,6 +22,12 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de Concepto")]
         public string TypeName { get; set; }
 
+        [Display(Name = "Valor del concepto")]
+        public double Value { get; set; }
+
+        [Display(Name = "Calculo del concepto")]
+        public string Calculation { get; set; }
+
         [Display(Name = "Usuario de creación")]
         public string UsuarioCreacion { get; set; }
 
