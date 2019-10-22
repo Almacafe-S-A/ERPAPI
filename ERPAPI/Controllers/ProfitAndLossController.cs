@@ -84,19 +84,21 @@ namespace ERPAPI.Controllers
                 }
 
                 //Cuentas principales
-                foreach (var padre in typeaccountsprofitandloss.Split(","))
-                {
-                    Accounting _ac = await _context.Accounting.Where(q => q.AccountCode == padre).FirstOrDefaultAsync();
-                    Items.Add(new AccountingDTO
-                    {
-                       AccountId = _ac.AccountId,
-                       AccountName = _ac.AccountName,
-                       AccountCode = _ac.AccountCode,
-                       AccountBalance = _ac.AccountBalance,
-                       ParentAccountId = _ac.ParentAccountId
-                    });
-                }
+                //foreach (var padre in typeaccountsprofitandloss.Split(","))
+                //{
+                //    Accounting _ac = await _context.Accounting.Where(q => q.AccountCode == padre).FirstOrDefaultAsync();
+                //    Items.Add(new AccountingDTO
+                //    {
+                //       AccountId = _ac.AccountId,
+                //       AccountName = _ac.AccountName,
+                //       AccountCode = _ac.AccountCode,
+                //       AccountBalance = _ac.AccountBalance,
+                //       ParentAccountId = _ac.ParentAccountId
+                //    });
+                //}
 
+                query = null;
+                query = new List<AccountingDTO>();
                 //Padres de las cuentas con saldo
                 List<AccountingDTO> _categoria = new List<AccountingDTO>();
                 _categoria = ObtenerCategoriarJerarquia(Parents);
@@ -104,6 +106,7 @@ namespace ERPAPI.Controllers
 
 
                 Items = (from c in Items
+                         .OrderBy(q=>q.AccountId)
                          select new AccountingDTO
                          {
                              AccountId = c.AccountId,
@@ -114,11 +117,7 @@ namespace ERPAPI.Controllers
                              Debit = c.Debit,
                              AccountBalance = c.AccountBalance
 
-                         }).ToList();
-
-              
-
-
+                         }).ToList();            
 
 
             }
@@ -132,18 +131,24 @@ namespace ERPAPI.Controllers
         }
 
 
-    
+
+        List<AccountingDTO> query = new List<AccountingDTO>();
+
 
         private List<AccountingDTO> ObtenerCategoriarJerarquia(List<Int64> Parents)
         {
 
             List<AccountingDTO> Items = new List<AccountingDTO>();
-
+            List<Int64> _padre = new List<Int64>();
             foreach (var padre in Parents)
             {
                 Accounting _ac =  _context.Accounting.Where(q => q.AccountId == padre).FirstOrDefault();
-                List<Int64> _padre = new List<Int64>();
-                _padre.Add(_ac.ParentAccountId.Value);
+              
+                if (_ac.ParentAccountId != null)
+                {
+                    _padre.Add(_ac.ParentAccountId.Value);
+                }
+
                 Items.Add(new AccountingDTO
                 {
                     AccountId = _ac.AccountId,
@@ -166,48 +171,44 @@ namespace ERPAPI.Controllers
 
                                                 ).ToList();
 
-            List<AccountingDTO> query = (from c in categoriasList
-                                        // where c.ParentAccountId == null || c.ParentAccountId == 0
-                                         select new AccountingDTO
-                                         {
-                                             AccountId = c.AccountId,
-                                             AccountName = c.AccountName,
-                                             AccountBalance = c.AccountBalance,
-                                             AccountCode = c.AccountCode,
-                                             ParentAccountId = c.ParentAccountId,                                        
-                                             Children = ObtenerHijos(c.AccountId, categoriasList)
-                                         }).ToList();
+
+            var res = (from c in categoriasList
+                           // where c.ParentAccountId == null || c.ParentAccountId == 0
+                       select new AccountingDTO
+                       {
+                           AccountId = c.AccountId,
+                           AccountName = c.AccountName,
+                           AccountBalance = c.AccountBalance,
+                           AccountCode = c.AccountCode,
+                           ParentAccountId = c.ParentAccountId,
+                        //   Children = ObtenerHijos(c.AccountId, categoriasList)
+                       }).ToList();
+
+           if(res.Count>0)
+            {
+                foreach (var item in res)
+                {
+                    var existe =   query.Where(q => q.AccountId == item.AccountId).ToList();
+                    if(existe.Count==0)
+                    {
+                        query.Add(item);
+                    }
+                }
+               
+            }
+         
+                                         
+                                      
+            if (_padre.Count > 0)
+            {
+                ObtenerCategoriarJerarquia(_padre);
+            }
 
             return query;
         }
 
 
-        private List<AccountingDTO> ObtenerHijos(Int64 idCategoria, List<Accounting> categoriasList)
-        {
-            List<Accounting> categoriasList2 = _context.Accounting.ToList();
-            List<AccountingDTO> query = (from c in categoriasList2
-                                         let tieneHijos = categoriasList.Where(o => o.ParentAccountId == c.AccountId).Any()
-                                         where c.ParentAccountId == idCategoria
-                                         select new AccountingDTO
-                                         {
-                                             AccountId = c.AccountId,
-                                             AccountName = c.AccountName,
-                                             AccountBalance = c.AccountBalance,
-                                             AccountCode = c.AccountCode,
-                                             ParentAccountId = c.ParentAccountId,
-                                             // ChildAccounts = tieneHijos ? ObtenerHijos(c.AccountId, categoriasList) : null,
-                                             Children = ObtenerHijos(c.AccountId, categoriasList),
-                                             // Debit = Debit(c.AccountId),
-                                             // Credit = Credit(c.AccountId),
-
-                                         }).ToList();
-
-
-
-            return query;
-
-        }
-
+     
 
 
 

@@ -246,6 +246,11 @@ namespace ERPAPI.Controllers
                                     if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
                                            && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
                                     {
+
+                                        _iline.AccountId = Convert.ToInt32(item.AccountId);
+                                        _iline.AccountName = item.AccountName;
+                                        _context.Entry(_iline).CurrentValues.SetValues((_iline));                                   
+
                                         _je.JournalEntryLines.Add(new JournalEntryLine
                                         {
                                             AccountId = Convert.ToInt32(item.AccountId),
