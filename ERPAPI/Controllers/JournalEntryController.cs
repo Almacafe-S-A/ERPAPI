@@ -116,16 +116,78 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// 
         /// <param name="Date"></param>
+        /// <param name="FechaInicio"></param>
+        /// <param name="FechaFinal"></param>
         /// <returns></returns>
         [HttpGet("[action]/{Date}")]
-        public async Task<IActionResult> GetJournalEntryByDate(DateTime Date)
+        public async Task<IActionResult> GetJournalEntryByDate(string FechaInicio,string FechaFinal)
         {
             //string fecha = Date.ToString("yyyy-MM-dd");
-            JournalEntry Items = new JournalEntry();
+            DateTime fechainicio = Convert.ToDateTime(FechaInicio);
+            DateTime fechafinal = Convert.ToDateTime(FechaFinal);
+            //List<JournalEntry> Items = new List<JournalEntry>();
+            //var Items;
+            //List<JournalEntry> Items = new List<JournalEntry>();
+
+            //var Items = new List<double>();
+
+            //var Items = new List<double>();
+
+            List<ConciliacionDTO> Items = new List<ConciliacionDTO>();
+
+
 
             try
             {
-                Items = await _context.JournalEntry.Where(q => q.JournalEntryId == 8).FirstOrDefaultAsync();
+
+
+                //Items = await (from je in _context.JournalEntry
+                //               join jel in _context.JournalEntryLine on je.JournalEntryId equals jel.JournalEntryId
+
+                //               where (je.Date > fechainicio) && (je.Date < fechafinal) && (jel.AccountId == 10050)
+                //               group jel by jel.Debit into g
+                //               //select sum(debit), sum(credit)).Sum(e => e.Salary).ToListAsync();
+                //               select new { credit = g.Sum(x => x.Credit) });
+
+
+
+
+                //string trialbalance = "";
+                //string horainicio = " 00:00:00";
+                //string horafin = " 23:59:59";
+
+                var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
+                  + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
+                  + $"where JE.[DATE] >= '2019-08-01' and JE.[DATE] < ='2019-08-31' and jel.AccountId = 10050"
+                 + "  ";
+
+
+                using (var dr = await _context.Database.ExecuteSqlQueryAsync(query))
+                {
+                    // Output rows.
+                    var reader = dr.DbDataReader;
+                    while (reader.Read())
+                    {
+                        //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
+
+                        Items.Add(new ConciliacionDTO
+                        {
+                            Debit = Convert.ToDouble(reader["Debito"]),
+                            Credit = Convert.ToDouble(reader["Credito"])
+                        });
+
+                        //Items.Add(Convert.ToDouble(reader["CREDITO"]));
+                        //Items.Add(
+                        //{
+                        //    //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
+                        //DEBITO = reader["DEBITO"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalCredit"]),
+                        //CREDITO = reader["CREDITO"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalDebit"]),
+                        //});
+
+                    }
+                }
+
+               
 
             }
             catch (Exception ex)
