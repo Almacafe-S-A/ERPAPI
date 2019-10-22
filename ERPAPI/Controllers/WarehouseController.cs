@@ -119,7 +119,21 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
-
+        [HttpGet("[action]/{WarehouseName}")]
+        public async Task<IActionResult> GetWarehouseByName(String WarehouseName)
+        {
+            Warehouse Items = new Warehouse();
+            try
+            {
+                Items = await _context.Warehouse.Where(q => q.WarehouseName == WarehouseName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
 
 
         [HttpPost("[action]")]
