@@ -73,12 +73,12 @@ namespace ERPAPI.Controllers
             List<Employees> Items = new List<Employees>();
             try
             {
-                Items = await _context.Employees.Include(c => c.Bank)
-                                                .Include(c => c.Branch)
-                                                .Include(c =>c.City)
-                                                .Include(c =>c.Country)
-                                                .Include(c => c.Departamento)
-                                                .Include(c => c.ApplicationUser)
+                Items = await _context.Employees//0.Include(c => c.Bank)
+                                                //.Include(c => c.Branch)
+                                                //.Include(c =>c.City)
+                                                //.Include(c =>c.Country)
+                                                //.Include(c => c.Departamento)
+                                                //.Include(c => c.ApplicationUser)
                                                 .ToListAsync();
             }
             catch (Exception ex)
