@@ -67,7 +67,15 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<TipoDocumento>>> GetTipoDocumento()
         {
-            return await Task.Run(() =>  _context.TipoDocumento.ToListAsync());
+            List<TipoDocumento> _tipodocumento = await _context.TipoDocumento.ToListAsync();
+            _tipodocumento = (from c in _tipodocumento
+                              select new TipoDocumento {
+                                   IdTipoDocumento = c.IdTipoDocumento,
+                                   IdEstado = c.IdEstado,
+                                   NombreTipoDocumento = c.NombreTipoDocumento,
+                                    FechaCreacion = c.FechaCreacion,
+                              }).ToList();
+            return await Task.Run(() => Ok(_tipodocumento));
         }
 
         // GET: api/TipoDocumento/5
