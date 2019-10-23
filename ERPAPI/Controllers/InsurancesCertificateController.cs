@@ -91,7 +91,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_InsurancesCertificate"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{InsurancesCertificate}")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> GetInsurancesCertificateByBeginDate([FromBody]InsurancesCertificate _InsurancesCertificate)
         {
             InsurancesCertificate Items = new InsurancesCertificate();
