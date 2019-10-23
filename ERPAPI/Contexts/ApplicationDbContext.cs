@@ -45,7 +45,7 @@ namespace ERP.Contexts
 
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-      //  public DbSet<PurchPartners> PurchPartners { get; set; }
+          public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
        // public DbSet<PurchDocument> PurchDocument { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
@@ -73,7 +73,11 @@ namespace ERP.Contexts
         public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
         public DbSet<FixedAsset> FixedAsset { get; set; }
         public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
-        
+
+        public DbSet<CierreContable> CierreContable { get; set; }
+        public DbSet<CierreContableLinea> CierreContableLinea { get; set; }
+
+
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }

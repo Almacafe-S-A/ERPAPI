@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191022155754_Concept_ValueCalculation")]
+    partial class Concept_ValueCalculation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -956,64 +958,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("CheckAccountId");
 
                     b.ToTable("CheckAccount");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CierreContable", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Estatus");
-
-                    b.Property<long>("EstatusId");
-
-                    b.Property<DateTime>("FechaCierre");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("Mensaje");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CierreContable");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CierreContableLinea", b =>
-                {
-                    b.Property<int>("IdLinea")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Estatus");
-
-                    b.Property<DateTime>("FechaCierre");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("IdBitacoracierreContable");
-
-                    b.Property<int>("PasoCierre");
-
-                    b.Property<string>("Proceso");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("IdLinea");
-
-                    b.HasIndex("IdBitacoracierreContable");
-
-                    b.ToTable("CierreContableLinea");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.City", b =>
@@ -8096,14 +8040,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CertificadoDeposito")
                         .WithMany("_CertificadoLine")
                         .HasForeignKey("IdCD")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CierreContableLinea", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CierreContable", "BitacoraCierresContable")
-                        .WithMany()
-                        .HasForeignKey("IdBitacoracierreContable")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

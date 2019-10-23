@@ -228,7 +228,16 @@ namespace ERPAPI.Controllers
                                         .Where(q => q.DocumentId == _so.SalesOrderId)
                                         .ToListAsync();
 
-                                    int dias = item.DocumentDate.Day <= 15 ? 30 : 15;
+                                    int dias = 0;
+
+                                    if (item.TypeOperationName == "Entrada")
+                                    {
+                                        dias = item.DocumentDate.Day <= 15 ? 30 : 15;
+                                    }
+                                    else if(item.TypeOperationName=="Salida")
+                                    {
+                                        dias = item.DocumentDate.Day <= 15 ? 15 : 30;
+                                    }
 
                                     double totalfacturar = 0;
                                     foreach (var condicion in _cc)
@@ -240,6 +249,7 @@ namespace ERPAPI.Controllers
                                                       .Where(q => q.SubProducId == lineascertificadas.SubProductId)
                                                         .Select(q => q.QuantityEntry)
                                                        ).FirstOrDefault() :
+                                                      
                                                        (item._KardexLine
                                                       .Where(q => q.SubProducId == lineascertificadas.SubProductId)
                                                         .Select(q => q.QuantityOut).FirstOrDefault()
@@ -294,6 +304,7 @@ namespace ERPAPI.Controllers
                                             ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut),
                                             ValorFacturar = totalfacturar,
                                             Identificador = Identificador,
+                                            //ValorAFacturarMerma = 
                                             FechaCreacion = DateTime.Now,
                                             FechaModificacion = DateTime.Now,
                                             UsuarioCreacion = _Kardexq.UsuarioCreacion,

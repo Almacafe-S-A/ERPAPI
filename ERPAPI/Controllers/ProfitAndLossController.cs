@@ -62,12 +62,24 @@ namespace ERPAPI.Controllers
 
 
                 List<Int64> Parents = new List<long>();
+                double ingresos = 0 , gastos = 0;
                 using (var dr = await _context.Database.ExecuteSqlQueryAsync(profitandloss))
                 {                   
                     var reader = dr.DbDataReader;
                     while (reader.Read())
                     {
-                        Items.Add(new AccountingDTO
+                        string _ParentAccountId = reader["AccountCode"] == DBNull.Value ? "" : Convert.ToString(reader["AccountCode"]);
+                        string parentaccount = _ParentAccountId.Substring(0, 1);
+                        if (parentaccount == "5")
+                        {
+                            ingresos += ingresos + (reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]));
+                        }
+                        else if (parentaccount == "6")
+                        {
+                            gastos += gastos + (reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]));
+                        }
+
+                            Items.Add(new AccountingDTO
                         {
                             AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
                             AccountName = reader["AccountName"] == DBNull.Value ? "" : Convert.ToString(reader["AccountName"]),
@@ -82,6 +94,17 @@ namespace ERPAPI.Controllers
                         
                     }
                 }
+
+                ingresos = Math.Abs(ingresos);
+                gastos = Math.Abs(gastos);
+                Items.Add(new AccountingDTO
+                {
+                    AccountId = 9999999999,
+                    AccountName = "Utilidades o perdidas",
+                    AccountCode = "99999999",
+                    AccountBalance = ingresos - gastos,
+                    ParentAccountId = null
+                });
 
                 //Cuentas principales
                 //foreach (var padre in typeaccountsprofitandloss.Split(","))
