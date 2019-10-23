@@ -73,7 +73,11 @@ namespace ERP.Contexts
         public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
         public DbSet<FixedAsset> FixedAsset { get; set; }
         public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
-        
+
+        public DbSet<CierreContable> CierreContable { get; set; }
+        public DbSet<CierreContableLinea> CierreContableLinea { get; set; }
+
+
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
