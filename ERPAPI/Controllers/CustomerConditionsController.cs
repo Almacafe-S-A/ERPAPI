@@ -115,10 +115,37 @@ namespace ERPAPI.Controllers
             List<CustomerConditions> Items = new List<CustomerConditions>();
             try
             {
-                Items = await _context.CustomerConditions
+                Items = await   _context.CustomerConditions
                     .Where(q=>q.IdTipoDocumento==_Ccq.IdTipoDocumento)
                     .Where(q => q.SubProductId == _Ccq.SubProductId)
                     .Where(q => q.DocumentId == _Ccq.DocumentId).ToListAsync();
+
+                Items = (from c in Items
+                         select new CustomerConditions
+                         {
+                              LogicalConditionId = c.LogicalConditionId,
+                              ConditionId = c.ConditionId,
+                              CustomerConditionName = c.CustomerConditionName,
+                              CustomerConditionId = c.CustomerConditionId,
+                              Description = c.Description,
+                              CustomerId = c.CustomerId,
+                              SubProductId = c.SubProductId,
+                              DocumentId = c.DocumentId,
+                              Estado = c.Estado,
+                              IdEstado = c.IdEstado,
+                              IdTipoDocumento= c.IdTipoDocumento,
+                              LogicalCondition = c.LogicalCondition,
+                              ValueDecimal = c.ValueDecimal,
+                              ValueToEvaluate =c.ValueToEvaluate !=null && c.ValueToEvaluate!="" ? Convert.ToDouble(c.ValueToEvaluate).ToString("n2") : "0",
+                              ProductId = c.ProductId,
+                              ValueString = c.ValueString,
+                              FechaCreacion = c.FechaCreacion,
+                              FechaModificacion = c.FechaModificacion,
+                              UsuarioCreacion = c.UsuarioCreacion,
+                              UsuarioModificacion = c.UsuarioModificacion,
+
+                         }
+                         ).ToList();
             }
             catch (Exception ex)
             {
