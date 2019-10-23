@@ -36,10 +36,10 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetPolicyPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<Policy> Items = new List<Policy>();
+            List<PolicyRoles> Items = new List<PolicyRoles>();
             try
             {
-                var query = _context.Policy.AsQueryable();
+                var query = _context.PolicyRoles.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
