@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
                                                 //.Include(c =>c.City)
                                                 //.Include(c =>c.Country)
                                                 //.Include(c => c.Departamento)
-                                                .Include(c => c.ApplicationUser)
+                                                //.Include(c => c.ApplicationUser)
                                                 .Include(c=> c.Puesto)
                                                 .ToListAsync();
             }
