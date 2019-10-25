@@ -240,6 +240,7 @@ namespace ERPAPI.Controllers
                                     }
 
                                     double totalfacturar = 0;
+                                    double totalfacturarmerma = 0;
                                     foreach (var condicion in _cc)
                                     {
                                         foreach (var lineascertificadas in _cd._CertificadoLine)
@@ -275,30 +276,37 @@ namespace ERPAPI.Controllers
                                                              ).FirstOrDefault();
 
                                                 cantidad = entrada - cantidad;
-                                            }                                                     
+                                            }
 
 
+                                            SubProduct _subproduct = await _context.SubProduct
+                                                                  .Where(q => q.SubproductId == lineascertificadas.SubProductId).FirstOrDefaultAsync();
                                             switch (condicion.LogicalCondition)
                                             {
                                                 case ">=":
                                                     if (lineascertificadas.Price >= Convert.ToDouble(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "<=":
                                                     if (lineascertificadas.Price <= Convert.ToDouble(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case ">":
                                                     if (lineascertificadas.Price > Convert.ToDouble(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "<":
                                                     if (lineascertificadas.Price < Convert.ToDouble(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "=":
                                                     if (lineascertificadas.Price == Convert.ToDouble(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
+                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 default:
                                                     break;
@@ -348,6 +356,9 @@ namespace ERPAPI.Controllers
                                         SubProduct _subproduct = await _context.SubProduct
                                                                       .Where(q => q.SubproductId == linea.SubProducId).FirstOrDefaultAsync();
 
+
+                                        double valormerma = ((cantidad / (1 - _subproduct.Merma)) * _subproduct.Merma) * cdline.Price;
+
                                         _context.InvoiceCalculation.Add(new InvoiceCalculation
                                         {
                                             CustomerId = item.CustomerId,
@@ -359,12 +370,14 @@ namespace ERPAPI.Controllers
                                             ProductName = linea.SubProductName,
                                             UnitPrice = cdline.Price,
                                             Quantity = cantidad,
+                                            IngresoMercadería = cantidad/_subproduct.Merma,
+                                            MercaderiaCertificada = cantidad,
                                             ValorLps = cdline.Price * cantidad,
                                             ValorFacturar = totalfacturar,
                                             Identificador = Identificador,                                           
                                             PorcentajeMerma = _subproduct.Merma,
-                                            ValorLpsMerma = (cantidad * cdline.Price) * _subproduct.Merma,
-                                            ValorAFacturarMerma = (totalfacturar* (_subproduct.Merma +1) ) * _subproduct.Merma,
+                                            ValorLpsMerma = valormerma,
+                                            ValorAFacturarMerma = (totalfacturar / (1 - _subproduct.Merma)) * _subproduct.Merma,
                                             FechaCreacion = DateTime.Now,
                                             FechaModificacion = DateTime.Now,
                                             UsuarioCreacion = _Kardexq.UsuarioCreacion,
