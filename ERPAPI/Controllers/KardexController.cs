@@ -245,15 +245,37 @@ namespace ERPAPI.Controllers
                                         foreach (var lineascertificadas in _cd._CertificadoLine)
                                         {
                                             double cantidad = 0;
-                                            cantidad = item.TypeOperationName == "Entrada" ? (item._KardexLine
-                                                      .Where(q => q.SubProducId == lineascertificadas.SubProductId)
-                                                        .Select(q => q.QuantityEntry)
-                                                       ).FirstOrDefault() :
-                                                      
-                                                       (item._KardexLine
-                                                      .Where(q => q.SubProducId == lineascertificadas.SubProductId)
-                                                        .Select(q => q.QuantityOut).FirstOrDefault()
-                                                       );
+                                            if (item.TypeOperationName == "Entrada")
+                                            {
+                                                cantidad =   (item._KardexLine
+                                                                .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                                .Select(q => q.QuantityEntry)
+                                                             ).FirstOrDefault() ;
+
+
+                                            }
+                                            else if(item.TypeOperationName == "Salida")
+                                            {
+                                                List<Kardex> salidas = await (_context.Kardex.Where(q => q.DocumentId == _cd.IdCD)
+                                                                             .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                                                             .Where(q=>q.TypeOperationName=="Salida")
+                                                                             ).ToListAsync();
+
+                                                foreach (var salida in salidas)
+                                                {
+                                                   cantidad += (salida._KardexLine
+                                                                .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                                .Select(q => q.QuantityOut)
+                                                               ).FirstOrDefault();
+                                                }
+
+                                               double entrada =  (item._KardexLine
+                                                                .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                                .Select(q => q.QuantityEntry)
+                                                             ).FirstOrDefault();
+
+                                                cantidad = entrada - cantidad;
+                                            }                                                     
 
 
                                             switch (condicion.LogicalCondition)
@@ -290,6 +312,42 @@ namespace ERPAPI.Controllers
                                         CertificadoLine cdline = _cd._CertificadoLine
                                                    .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
 
+                                        double cantidad = 0;
+                                        if (item.TypeOperationName == "Entrada")
+                                        {
+                                            cantidad = (item._KardexLine
+                                                            .Where(q => q.SubProducId == cdline.SubProductId)
+                                                            .Select(q => q.QuantityEntry)
+                                                         ).FirstOrDefault();
+
+
+                                        }
+                                        else if (item.TypeOperationName == "Salida")
+                                        {
+                                            List<Kardex> salidas = await (_context.Kardex.Where(q => q.DocumentId == _cd.IdCD)
+                                                                         .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                                                         .Where(q => q.TypeOperationName == "Salida")
+                                                                         ).ToListAsync();
+
+                                            foreach (var salida in salidas)
+                                            {
+                                                cantidad += (salida._KardexLine
+                                                             .Where(q => q.SubProducId == cdline.SubProductId)
+                                                             .Select(q => q.QuantityOut)
+                                                            ).FirstOrDefault();
+                                            }
+
+                                            double entrada = (item._KardexLine
+                                                             .Where(q => q.SubProducId == cdline.SubProductId)
+                                                             .Select(q => q.QuantityEntry)
+                                                          ).FirstOrDefault();
+
+                                            cantidad = entrada - cantidad;
+                                        }
+
+                                        SubProduct _subproduct = await _context.SubProduct
+                                                                      .Where(q => q.SubproductId == linea.SubProducId).FirstOrDefaultAsync();
+
                                         _context.InvoiceCalculation.Add(new InvoiceCalculation
                                         {
                                             CustomerId = item.CustomerId,
@@ -300,11 +358,13 @@ namespace ERPAPI.Controllers
                                             ProductId = linea.SubProducId,
                                             ProductName = linea.SubProductName,
                                             UnitPrice = cdline.Price,
-                                            Quantity = item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut,
-                                            ValorLps = cdline.Price * (item.TypeOperationName == "Entrada" ? linea.QuantityEntry : linea.QuantityOut),
+                                            Quantity = cantidad,
+                                            ValorLps = cdline.Price * cantidad,
                                             ValorFacturar = totalfacturar,
-                                            Identificador = Identificador,
-                                            //ValorAFacturarMerma = 
+                                            Identificador = Identificador,                                           
+                                            PorcentajeMerma = _subproduct.Merma,
+                                            ValorLpsMerma = (cantidad * cdline.Price) * _subproduct.Merma,
+                                            ValorAFacturarMerma = (totalfacturar* (_subproduct.Merma +1) ) * _subproduct.Merma,
                                             FechaCreacion = DateTime.Now,
                                             FechaModificacion = DateTime.Now,
                                             UsuarioCreacion = _Kardexq.UsuarioCreacion,
@@ -342,16 +402,17 @@ namespace ERPAPI.Controllers
                             .Where(q=>q.TaxCode=="I.S.V")
                             .FirstOrDefaultAsync();
 
-                        double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar);
+                        double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q=>q.ValorAFacturarMerma);
                         List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
                         ProformaInvoiceLineT.Add(new ProformaInvoiceLine
                         {
                              SubProductId = 1,
                              SubProductName = "Almacenaje",
                              Price = _InvoiceCalculationlist[0].UnitPrice,
-                             Quantity = _InvoiceCalculationlist[0].Quantity,
-                            // UnitOfMeasureId = _tcd._CertificadoLine[0].UnitMeasureId,
-                           //  UnitOfMeasureName = _tcd._CertificadoLine[0].UnitMeasurName,
+                             Quantity = _InvoiceCalculationlist.Sum(q=>q.Quantity),
+                             Amount = _InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist.Sum(q => q.Quantity),
+                             // UnitOfMeasureId = _tcd._CertificadoLine[0].UnitMeasureId,
+                             //  UnitOfMeasureName = _tcd._CertificadoLine[0].UnitMeasurName,
                              SubTotal = valfacturar,
                              TaxAmount = valfacturar * (_tax.TaxPercentage/100),
                              TaxId = _tax.TaxId,
@@ -369,6 +430,7 @@ namespace ERPAPI.Controllers
                              Direccion = _customer.Address,
                              Tefono = _customer.Phone,
                              RTN = _customer.RTN,
+                            
                              ProformaName = _customer.CustomerName,
                              BranchId = _tcd.BranchId,
                              BranchName = _tcd.BranchName,
