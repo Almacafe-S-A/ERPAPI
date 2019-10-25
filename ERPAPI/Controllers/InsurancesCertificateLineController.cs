@@ -54,11 +54,11 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetInsurancesCertificateLineById(int Id)
         {
-            List<InsurancesCertificateLine> Items = new List<InsurancesCertificateLine>();
+            InsurancesCertificateLine Items = new InsurancesCertificateLine();
             try
             {
                 Items = await _context.InsurancesCertificateLine
-                             .Where(q => q.InsurancesCertificateLineId == Id).ToListAsync();
+                             .Where(q => q.InsurancesCertificateLineId == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
