@@ -442,8 +442,7 @@ namespace ERPAPI.Controllers
                              Correo = _customer.Email,
                              Direccion = _customer.Address,
                              Tefono = _customer.Phone,
-                             RTN = _customer.RTN,
-                            
+                             RTN = _customer.RTN,                            
                              ProformaName = _customer.CustomerName,
                              BranchId = _tcd.BranchId,
                              BranchName = _tcd.BranchName,
