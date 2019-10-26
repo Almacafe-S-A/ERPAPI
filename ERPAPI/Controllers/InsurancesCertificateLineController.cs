@@ -72,31 +72,6 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la CertificadoLine por medio del Id enviado.
-        /// </summary>
-        /// <param name="CertificadoLineId"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{CertificadoLineId}")]
-        public async Task<IActionResult> GetCertificadoLineById(Int64 CertificadoLineId)
-        {
-            CertificadoLine Items = new CertificadoLine();
-            try
-            {
-                Items = await _context.CertificadoLine.Where(q => q.CertificadoLineId == CertificadoLineId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-
-        /// <summary>
         /// Inserta una nueva InsurancesCertificateLine
         /// </summary>
         /// <param name="_InsurancesCertificateLine"></param>
