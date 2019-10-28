@@ -74,8 +74,16 @@ namespace ERP.Contexts
         public DbSet<FixedAsset> FixedAsset { get; set; }
         public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
 
+        /// <summary>
+        /// ///Cierres
+        /// </summary>
+
         public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
         public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
+
+        public CierresAccounting CierresAccounting { get; set; }
+
+        public CierresJournal CierresJournal { get; set; }
 
 
         public DbSet<Estados> Estados { get; set; }
@@ -389,6 +397,9 @@ namespace ERP.Contexts
 
 
         }
+
+
+        public DbSet<ERPAPI.Models.CierresAccounting> CierresAccounting_1 { get; set; }
 
 
 
