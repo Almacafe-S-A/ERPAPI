@@ -14,28 +14,28 @@ namespace ERPAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CierreContableLineaController : ControllerBase
+    public class BitacoraCierreProcesosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public CierreContableLineaController(ILogger<CierreContableLineaController> logger, ApplicationDbContext context)
+        public BitacoraCierreProcesosController(ILogger<BitacoraCierreProcesosController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de CierreContableLinea paginado
+        /// Obtiene el Listado de BitacoraCierreProcesos paginado
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetCierreContableLineaPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetBitacoraCierreProcesosPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<CierreContableLinea> Items = new List<CierreContableLinea>();
-            try
+            List<BitacoraCierreProcesos> Items = new List<BitacoraCierreProcesos>();
+            try 
             {
-                var query = _context.CierreContableLinea.AsQueryable();
+                var query = _context.BitacoraCierreProceso.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -59,16 +59,16 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Obtiene el Listado de CierreContableLineaes 
+        /// Obtiene el Listado de BitacoraCierreProcesoses 
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetCierreContableLinea()
+        public async Task<IActionResult> GetBitacoraCierreProcesos()
         {
-            List<CierreContableLinea> Items = new List<CierreContableLinea>();
+            List<BitacoraCierreProcesos> Items = new List<BitacoraCierreProcesos>();
             try
             {
-                Items = await _context.CierreContableLinea.ToListAsync();
+                Items = await _context.BitacoraCierreProceso.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -82,17 +82,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la CierreContableLinea por medio del Id enviado.
+        /// Obtiene los Datos de la BitacoraCierreProcesos por medio del Id enviado.
         /// </summary>
-        /// <param name="CierreContableLineaId"></param>
+        /// <param name="BitacoraCierreProcesosId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{CierreContableLineaId}")]
-        public async Task<IActionResult> GetCierreContableLineaById(Int64 CierreContableLineaId)
+        [HttpGet("[action]/{BitacoraCierreProcesosId}")]
+        public async Task<IActionResult> GetBitacoraCierreProcesosById(Int64 BitacoraCierreProcesosId)
         {
-            CierreContableLinea Items = new CierreContableLinea();
+            BitacoraCierreProcesos Items = new BitacoraCierreProcesos();
             try
             {
-                Items = await _context.CierreContableLinea.Where(q => q.IdLinea == CierreContableLineaId).FirstOrDefaultAsync();
+                Items = await _context.BitacoraCierreProceso.Where(q => q.IdProceso == BitacoraCierreProcesosId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,31 +107,31 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva CierreContableLinea
+        /// Inserta una nueva BitacoraCierreProcesos
         /// </summary>
-        /// <param name="_CierreContableLinea"></param>
+        /// <param name="_BitacoraCierreProcesos"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<CierreContableLinea>> Insert([FromBody]CierreContableLinea _CierreContableLinea)
+        public async Task<ActionResult<BitacoraCierreProcesos>> Insert([FromBody]BitacoraCierreProcesos _BitacoraCierreProcesos)
         {
-            CierreContableLinea _CierreContableLineaq = new CierreContableLinea();
+            BitacoraCierreProcesos _BitacoraCierreProcesosq = new BitacoraCierreProcesos();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _CierreContableLineaq = _CierreContableLinea;
-                        _context.CierreContableLinea.Add(_CierreContableLineaq);
+                        _BitacoraCierreProcesosq = _BitacoraCierreProcesos;
+                        _context.BitacoraCierreProceso.Add(_BitacoraCierreProcesosq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _CierreContableLinea.IdLinea,
-                            DocType = "CierreContableLinea",
+                            IdOperacion = _BitacoraCierreProcesos.IdProceso,
+                            DocType = "BitacoraCierreProcesos",
                             ClaseInicial =
-                                  Newtonsoft.Json.JsonConvert.SerializeObject(_CierreContableLinea, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CierreContableLinea, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                  Newtonsoft.Json.JsonConvert.SerializeObject(_BitacoraCierreProcesos, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_BitacoraCierreProcesos, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insert",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
@@ -161,28 +161,28 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_CierreContableLineaq));
+            return await Task.Run(() => Ok(_BitacoraCierreProcesosq));
         }
 
         /// <summary>
-        /// Actualiza la CierreContableLinea
+        /// Actualiza la BitacoraCierreProcesos
         /// </summary>
-        /// <param name="_CierreContableLinea"></param>
+        /// <param name="_BitacoraCierreProcesos"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<CierreContableLinea>> Update([FromBody]CierreContableLinea _CierreContableLinea)
+        public async Task<ActionResult<BitacoraCierreProcesos>> Update([FromBody]BitacoraCierreProcesos _BitacoraCierreProcesos)
         {
-            CierreContableLinea _CierreContableLineaq = _CierreContableLinea;
+            BitacoraCierreProcesos _BitacoraCierreProcesosq = _BitacoraCierreProcesos;
             try
             {
-                _CierreContableLineaq = await (from c in _context.CierreContableLinea
-                                 .Where(q => q.IdLinea == _CierreContableLinea.IdLinea)
-                                         select c
+                _BitacoraCierreProcesosq = await (from c in _context.BitacoraCierreProceso
+                                 .Where(q => q.IdProceso == _BitacoraCierreProcesos.IdProceso)
+                                               select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_CierreContableLineaq).CurrentValues.SetValues((_CierreContableLinea));
+                _context.Entry(_BitacoraCierreProcesosq).CurrentValues.SetValues((_BitacoraCierreProcesos));
 
-                //_context.CierreContableLinea.Update(_CierreContableLineaq);
+                //_context.BitacoraCierreProcesos.Update(_BitacoraCierreProcesosq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -192,25 +192,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_CierreContableLineaq));
+            return await Task.Run(() => Ok(_BitacoraCierreProcesosq));
         }
 
         /// <summary>
-        /// Elimina una CierreContableLinea       
+        /// Elimina una BitacoraCierreProcesos       
         /// </summary>
-        /// <param name="_CierreContableLinea"></param>
+        /// <param name="_BitacoraCierreProcesos"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]CierreContableLinea _CierreContableLinea)
+        public async Task<IActionResult> Delete([FromBody]BitacoraCierreProcesos _BitacoraCierreProcesos)
         {
-            CierreContableLinea _CierreContableLineaq = new CierreContableLinea();
+            BitacoraCierreProcesos _BitacoraCierreProcesosq = new BitacoraCierreProcesos();
             try
             {
-                _CierreContableLineaq = _context.CierreContableLinea
-                .Where(x => x.IdLinea == (Int64)_CierreContableLinea.IdLinea)
+                _BitacoraCierreProcesosq = _context.BitacoraCierreProceso
+                .Where(x => x.IdProceso == (Int64)_BitacoraCierreProcesos.IdProceso)
                 .FirstOrDefault();
 
-                _context.CierreContableLinea.Remove(_CierreContableLineaq);
+                _context.BitacoraCierreProceso.Remove(_BitacoraCierreProcesosq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -219,7 +219,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_CierreContableLineaq));
+            return await Task.Run(() => Ok(_BitacoraCierreProcesosq));
 
         }
 

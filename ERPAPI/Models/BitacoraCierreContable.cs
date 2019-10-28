@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class CierreContable
+    public class BitacoraCierreContable
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -28,6 +28,6 @@ namespace ERPAPI.Models
 
         public string UsuarioModificacion { get; set; }
 
-        public List<CierreContableLinea> CierreContableLineas { get; set; }
+        public List<BitacoraCierreProcesos> CierreContableLineas { get; set; }
     }
 }

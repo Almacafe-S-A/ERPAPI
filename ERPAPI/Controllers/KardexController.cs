@@ -179,6 +179,8 @@ namespace ERPAPI.Controllers
                         _customer = _context.Customer
                             .Where(q => q.CustomerId == _tcd.CustomerId).FirstOrDefault();
 
+                        SalesOrder _so = new SalesOrder();
+
                         foreach (var CertificadoId in _Kardexq.Ids)
                         {
                             _kardexproduct =await _context.Kardex
@@ -218,8 +220,9 @@ namespace ERPAPI.Controllers
                                                  .Include(q => q._CertificadoLine)
                                                  .FirstOrDefaultAsync();
 
-                                    SalesOrder _so = await _context.SalesOrder
+                                   _so = await _context.SalesOrder
                                                            .Where(q => q.CustomerId == _cd.CustomerId)
+                                                           .Include(q=>q.SalesOrderLines)
                                                            .OrderByDescending(q => q.SalesOrderId).FirstOrDefaultAsync();
 
                                     List<CustomerConditions> _cc = await _context.CustomerConditions
@@ -410,9 +413,8 @@ namespace ERPAPI.Controllers
                         List<InvoiceCalculation> _InvoiceCalculationlist = await  _context.InvoiceCalculation
                                                                                     .Where(q=>q.Identificador==Identificador)  
                                                                                     .ToListAsync();
-
                         Tax _tax = await _context.Tax
-                            .Where(q=>q.TaxCode=="I.S.V")
+                            .Where(q => q.TaxCode == "I.S.V")
                             .FirstOrDefaultAsync();
 
                         double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q=>q.ValorAFacturarMerma);
@@ -433,6 +435,111 @@ namespace ERPAPI.Controllers
                              Total = valfacturar + (valfacturar * (_tax.TaxPercentage / 100)),
 
                         });
+
+                        SubProduct _su = await _context.SubProduct.Where(q => q.SubproductId == 2).FirstOrDefaultAsync();
+                        SalesOrderLine _soline = await _context.SalesOrderLine.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefaultAsync();
+
+                        double preciocot = 0;
+                        double quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
+                        double taxamount = ((preciocot * valfacturar) / 1000) * _tax.TaxPercentage;
+                        if (_soline != null)
+                        {
+                             preciocot = _soline.Price;                           
+                             taxamount = ((preciocot * valfacturar) / 1000) * _tax.TaxPercentage;
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = preciocot * quantitycot,
+                                SubTotal = (preciocot * valfacturar)/1000,
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                Total = (preciocot * quantitycot) + taxamount,
+
+                            });
+                        }
+
+                        _su = new SubProduct();
+                        _su = await _context.SubProduct.Where(q => q.SubproductId == 4).FirstOrDefaultAsync();
+                        _soline = new SalesOrderLine();
+                        _soline = await _context.SalesOrderLine.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefaultAsync();
+
+                        if (_soline != null)
+                        {
+
+                            preciocot = _soline.Price ;
+                           
+
+                            List<GoodsReceived> _entradas = await _context.GoodsReceived
+                                                                   .Include(q=>q._GoodsReceivedLine)
+                                                                   .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                                                   .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
+                            double sumaentradas = 0;
+                            foreach (var entrada in _entradas)
+                            {
+                                sumaentradas += entrada._GoodsReceivedLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
+                            }
+
+                            List<GoodsDelivered> _salidas = await _context.GoodsDelivered
+                                                                  .Include(q => q._GoodsDeliveredLine)
+                                                                  .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                                                  .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
+                            double sumasalidas = 0;
+                            foreach (var _salida in _salidas)
+                            {
+                                sumasalidas += _salida._GoodsDeliveredLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
+                            }
+
+                            double totalentradassalidas = 0;
+                            totalentradassalidas = sumaentradas + sumasalidas;
+                            quantitycot = totalentradassalidas;
+                            taxamount = ((preciocot * totalentradassalidas)) * _tax.TaxPercentage;
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = totalentradassalidas * preciocot ,
+                                SubTotal = (preciocot * quantitycot) ,
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                Total = (preciocot * quantitycot) + taxamount,
+
+                            });
+                        }
+
+
+                        _su = new SubProduct();
+                        _su = await _context.SubProduct.Where(q => q.SubproductId == 8).FirstOrDefaultAsync();
+                        _soline = new SalesOrderLine();
+                        _soline = await _context.SalesOrderLine.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefaultAsync();
+
+                        if(_soline!=null)
+                        {
+                            preciocot = _soline.Price/ 100;
+                            taxamount = ((preciocot * valfacturar) ) * _tax.TaxPercentage;
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = preciocot * quantitycot,
+                                SubTotal = ((preciocot) * valfacturar) ,
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                Total = (preciocot * quantitycot) + taxamount,
+                            });
+
+                        }
+
+                    
 
                         _proforma = new ProformaInvoiceDTO
                         {
