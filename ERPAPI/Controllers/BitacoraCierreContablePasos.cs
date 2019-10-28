@@ -32,10 +32,10 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetBitacoraCierreProcesosPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            try { 
             List<BitacoraCierreProcesos> Items = new List<BitacoraCierreProcesos>();
+            try 
             {
-                var query = _context.BitacoraCierreProcesos.AsQueryable();
+                var query = _context.BitacoraCierreProceso.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -68,7 +68,7 @@ namespace ERPAPI.Controllers
             List<BitacoraCierreProcesos> Items = new List<BitacoraCierreProcesos>();
             try
             {
-                Items = await _context.BitacoraCierreProcesos.ToListAsync();
+                Items = await _context.BitacoraCierreProceso.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -92,7 +92,7 @@ namespace ERPAPI.Controllers
             BitacoraCierreProcesos Items = new BitacoraCierreProcesos();
             try
             {
-                Items = await _context.BitacoraCierreProcesos.Where(q => q.IdLinea == BitacoraCierreProcesosId).FirstOrDefaultAsync();
+                Items = await _context.BitacoraCierreProceso.Where(q => q.IdProceso == BitacoraCierreProcesosId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -122,12 +122,12 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _BitacoraCierreProcesosq = _BitacoraCierreProcesos;
-                        _context.BitacoraCierreProcesos.Add(_BitacoraCierreProcesosq);
+                        _context.BitacoraCierreProceso.Add(_BitacoraCierreProcesosq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _BitacoraCierreProcesos.IdLinea,
+                            IdOperacion = _BitacoraCierreProcesos.IdProceso,
                             DocType = "BitacoraCierreProcesos",
                             ClaseInicial =
                                   Newtonsoft.Json.JsonConvert.SerializeObject(_BitacoraCierreProcesos, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
@@ -175,8 +175,8 @@ namespace ERPAPI.Controllers
             BitacoraCierreProcesos _BitacoraCierreProcesosq = _BitacoraCierreProcesos;
             try
             {
-                _BitacoraCierreProcesosq = await (from c in _context.BitacoraCierreProcesos
-                                 .Where(q => q.IdLinea == _BitacoraCierreProcesos.IdLinea)
+                _BitacoraCierreProcesosq = await (from c in _context.BitacoraCierreProceso
+                                 .Where(q => q.IdProceso == _BitacoraCierreProcesos.IdProceso)
                                                select c
                                 ).FirstOrDefaultAsync();
 
@@ -206,11 +206,11 @@ namespace ERPAPI.Controllers
             BitacoraCierreProcesos _BitacoraCierreProcesosq = new BitacoraCierreProcesos();
             try
             {
-                _BitacoraCierreProcesosq = _context.BitacoraCierreProcesos
-                .Where(x => x.IdLinea == (Int64)_BitacoraCierreProcesos.IdLinea)
+                _BitacoraCierreProcesosq = _context.BitacoraCierreProceso
+                .Where(x => x.IdProceso == (Int64)_BitacoraCierreProcesos.IdProceso)
                 .FirstOrDefault();
 
-                _context.BitacoraCierreProcesos.Remove(_BitacoraCierreProcesosq);
+                _context.BitacoraCierreProceso.Remove(_BitacoraCierreProcesosq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
