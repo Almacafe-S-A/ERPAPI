@@ -115,13 +115,12 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<VendorInvoice>> Insert([FromBody]VendorInvoice pVendorInvoice)
         {
             VendorInvoice _VendorInvoiceq = new VendorInvoice();
-            _VendorInvoiceq = pVendorInvoice;
-            try
-            {
+            _VendorInvoiceq = pVendorInvoice;            
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
+                    _VendorInvoiceq.PurchaseOrderId = null;
                         _VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoiceq.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                         Numalet let;
                         let = new Numalet();
@@ -145,11 +144,12 @@ namespace ERPAPI.Controllers
                             DocumentId = _VendorInvoiceq.VendorInvoiceId,
                         };
 
-
+                        Accounting account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountId).FirstOrDefaultAsync();
                         _je.JournalEntryLines.Add(new JournalEntryLine
                         {
                             AccountId = Convert.ToInt32(_VendorInvoiceq.AccountId),
-                            Description = _VendorInvoiceq.Account.AccountName,
+                            //Description = _VendorInvoiceq.Account.AccountName,
+                            Description = account.AccountName,
                             Credit =  0,
                             Debit = _VendorInvoiceq.Total ,
                             CreatedDate = DateTime.Now,
@@ -160,12 +160,13 @@ namespace ERPAPI.Controllers
                         });
                         foreach (var item in _VendorInvoiceq.VendorInvoiceLine)
                         {
+                            account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountId).FirstOrDefaultAsync();
                             item.VendorInvoiceId = _VendorInvoiceq.VendorInvoiceId;
                             _context.VendorInvoiceLine.Add(item);
                             _je.JournalEntryLines.Add(new JournalEntryLine
                             {
                                 AccountId = Convert.ToInt32(item.AccountId),
-                                Description = item.Account.AccountName,
+                                Description = account.AccountName,
                                 Credit = item.Total,
                                 Debit = 0,
                                 CreatedDate = DateTime.Now,
@@ -218,13 +219,7 @@ namespace ERPAPI.Controllers
                         throw ex;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
+            
 
             return await Task.Run(() => Ok(_VendorInvoiceq));
         }
