@@ -122,34 +122,7 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-
-                        
-
-                        VendorInvoice _VendorInvoice = await _context.VendorInvoice.Where(q => q.BranchId == _VendorInvoiceq.BranchId)
-                                             //.Where(q => q.IdPuntoEmision == _VendorInvoice.IdPuntoEmision)
-                                             .FirstOrDefaultAsync();
-                        //if (_VendorInvoice != null)
-                        //{
-                        //    _VendorInvoiceq.NumeroDEI = _context.VendorInvoice.Where(q => q.BranchId == _VendorInvoice.BranchId)
-                        //                          .Where(q => q.IdPuntoEmision == _VendorInvoice.IdPuntoEmision).Max(q => q.NumeroDEI);
-                        //}
-
-                        //_VendorInvoiceq.NumeroDEI += 1;
-
-
-                        //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_VendorInvoiceq.UsuarioCreacion).Select(q=>q.)
-
-                        //Int64 IdCai = await _context.NumeracionSAR
-                        //                         .Where(q => q.BranchId == _VendorInvoiceq.BranchId)
-                        //                         //.Where(q => q.IdPuntoEmision == _VendorInvoiceq.IdPuntoEmision)
-                        //                         .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
-
-                        
-
-                        _VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
-                        //  _VendorInvoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _VendorInvoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
-                        //_VendorInvoiceq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
-
+                        _VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoiceq.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                         Numalet let;
                         let = new Numalet();
                         let.SeparadorDecimalSalida = "Lempiras";
@@ -159,141 +132,81 @@ namespace ERPAPI.Controllers
 
                         _context.VendorInvoice.Add(_VendorInvoiceq);
                         //await _context.SaveChangesAsync();
-                        foreach (var item in _VendorInvoice.VendorInvoiceLine)
+
+                        JournalEntry _je = new JournalEntry
+                        {
+                            Date = _VendorInvoiceq.VendorInvoiceDate,
+                            Memo = "Factura de Compra a Proveedores",
+                            DatePosted = _VendorInvoiceq.VendorInvoiceDate,
+                            ModifiedDate = DateTime.Now,
+                            CreatedDate = DateTime.Now,
+                            ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
+                            CreatedUser = _VendorInvoiceq.UsuarioCreacion,
+                            DocumentId = _VendorInvoiceq.VendorInvoiceId,
+                        };
+
+
+                        _je.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = Convert.ToInt32(_VendorInvoiceq.AccountId),
+                            Description = _VendorInvoiceq.Account.AccountName,
+                            Credit =  0,
+                            Debit = _VendorInvoiceq.Total ,
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now,
+                            CreatedUser = _VendorInvoiceq.UsuarioCreacion,
+                            ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
+                            Memo = "",
+                        });
+                        foreach (var item in _VendorInvoiceq.VendorInvoiceLine)
                         {
                             item.VendorInvoiceId = _VendorInvoiceq.VendorInvoiceId;
                             _context.VendorInvoiceLine.Add(item);
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                AccountId = Convert.ToInt32(item.AccountId),
+                                Description = item.Account.AccountName,
+                                Credit = item.Total,
+                                Debit = 0,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedUser = _VendorInvoiceq.UsuarioCreacion,
+                                ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
+                                Memo = "",
+                            });
                         }
 
                         await _context.SaveChangesAsync();
 
-                        JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                                       .Where(q => q.TransactionId == 1)
-                                                                       .Where(q => q.BranchId == _VendorInvoiceq.BranchId)
-                                                                       .Where(q => q.EstadoName == "Activo")
-                                                                       .Include(q => q.JournalEntryConfigurationLine)
-                                                                       ).FirstOrDefaultAsync();
-
-                        BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _VendorInvoice.VendorId,
-                            DocType = "JournalEntryConfiguration",
-                            ClaseInicial =
-                             Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "InsertVendorInvoice",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _VendorInvoice.UsuarioCreacion,
-                            UsuarioModificacion = _VendorInvoice.UsuarioModificacion,
-                            UsuarioEjecucion = _VendorInvoice.UsuarioModificacion,
-
-                        });
-
-                        // await _context.SaveChangesAsync();
-
                         double sumacreditos = 0, sumadebitos = 0;
-                        if (_journalentryconfiguration != null)
+                        if (sumacreditos != sumadebitos)
                         {
-                            //Crear el asiento contable configurado
-                            //.............................///////
-                            JournalEntry _je = new JournalEntry
-                            {
-                                Date = _VendorInvoiceq.VendorInvoiceDate,
-                                Memo = "Factura de Compra a Proveedores",
-                                DatePosted = _VendorInvoiceq.VendorInvoiceDate,
-                                ModifiedDate = DateTime.Now,
-                                CreatedDate = DateTime.Now,
-                                ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                                CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                                DocumentId = _VendorInvoiceq.VendorInvoiceId,
-                            };
-
-
-
-                            foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
-                            {
-
-                                VendorInvoiceLine _iline = new VendorInvoiceLine();
-                                _iline = _VendorInvoiceq.VendorInvoiceLine.Where(q => q.ItemName == item.SubProductName).FirstOrDefault();
-                                if (_iline != null || item.SubProductName.ToUpper().Contains(("Impuesto").ToUpper()))
-                                {
-                                    if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
-                                           && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
-                                    {
-                                        _je.JournalEntryLines.Add(new JournalEntryLine
-                                        {
-                                            AccountId = Convert.ToInt32(item.AccountId),
-                                            Description = item.AccountName,
-                                            Credit = item.DebitCredit == "Credito" ? _iline.SubTotal : 0,
-                                            Debit = item.DebitCredit == "Debito" ? _iline.SubTotal : 0,
-                                            CreatedDate = DateTime.Now,
-                                            ModifiedDate = DateTime.Now,
-                                            CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                                            ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                                            Memo = "",
-                                        });
-
-                                        sumacreditos += item.DebitCredit == "Credito" ? _iline.SubTotal : 0;
-                                        sumadebitos += item.DebitCredit == "Debito" ? _iline.SubTotal : 0;
-                                    }
-                                    else
-                                    {
-                                        _je.JournalEntryLines.Add(new JournalEntryLine
-                                        {
-                                            AccountId = Convert.ToInt32(item.AccountId),
-                                            Description = item.AccountName,
-                                            Credit = item.DebitCredit == "Credito" ? _VendorInvoiceq.Tax + _VendorInvoiceq.Tax18 : 0,
-                                            Debit = item.DebitCredit == "Debito" ? _VendorInvoiceq.Tax + _VendorInvoiceq.Tax18 : 0,
-                                            CreatedDate = DateTime.Now,
-                                            ModifiedDate = DateTime.Now,
-                                            CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                                            ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                                            Memo = "",
-                                        });
-
-                                        sumacreditos += item.DebitCredit == "Credito" ? _VendorInvoiceq.Tax + _VendorInvoiceq.Tax18 : 0;
-                                        sumadebitos += item.DebitCredit == "Debito" ? _VendorInvoiceq.Tax + _VendorInvoiceq.Tax18 : 0;
-                                    }
-                                }
-
-                                // _context.JournalEntryLine.Add(_je);
-
-                            }
-
-
-                            if (sumacreditos != sumadebitos)
-                            {
-                                transaction.Rollback();
-                                _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                            }
-
-                            _je.TotalCredit = sumacreditos;
-                            _je.TotalDebit = sumadebitos;
-                            _context.JournalEntry.Add(_je);
-
-                            await _context.SaveChangesAsync();
+                            transaction.Rollback();
+                            _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
                         }
+
+                        _je.TotalCredit = sumacreditos;
+                        _je.TotalDebit = sumadebitos;
+                        _context.JournalEntry.Add(_je);
+
+                        await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _VendorInvoice.VendorId,
+                            IdOperacion = 4, ///////Falta definir los Id de las Operaciones
                             DocType = "VendorInvoice",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_VendorInvoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_VendorInvoice, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_VendorInvoiceq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_VendorInvoiceq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insert",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _VendorInvoice.UsuarioCreacion,
-                            UsuarioModificacion = _VendorInvoice.UsuarioModificacion,
-                            UsuarioEjecucion = _VendorInvoice.UsuarioModificacion,
+                            UsuarioCreacion = _VendorInvoiceq.UsuarioCreacion,
+                            UsuarioModificacion = _VendorInvoiceq.UsuarioModificacion,
+                            UsuarioEjecucion = _VendorInvoiceq.UsuarioModificacion,
 
                         });
-
-
-
                         await _context.SaveChangesAsync();
 
                         transaction.Commit();
@@ -315,6 +228,9 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_VendorInvoiceq));
         }
+
+
+
 
         /// <summary>
         /// Actualiza la VendorInvoice
