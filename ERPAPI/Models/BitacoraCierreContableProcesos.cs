@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class CierreContableLinea
+    public class BitacoraCierreProcesos
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdLinea { get; set; }
+        public int IdProceso { get; set; }
 
-        public int IdBitacoracierreContable { get; set; }
+        public int IdBitacoraCierre { get; set; }
 
-        [ForeignKey("IdBitacoracierreContable")]
-        public CierreContable BitacoraCierresContable { get; set; }
+        [ForeignKey("IdBitacoraCierre")]
+        public BitacoraCierreContable BitacoraCierresContable { get; set; }
 
         public DateTime FechaCierre { get; set; }
 
