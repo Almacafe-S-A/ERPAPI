@@ -232,6 +232,9 @@ namespace ERPAPI.Controllers
                                 ModifiedUser = _Invoiceq.UsuarioModificacion,
                                 CreatedUser = _Invoiceq.UsuarioCreacion,
                                 DocumentId = _Invoiceq.InvoiceId,
+                                TypeOfAdjustmentId = 65,                               
+                                VoucherType = 1,
+                               
                             };
 
                            
@@ -254,6 +257,7 @@ namespace ERPAPI.Controllers
                                         _je.JournalEntryLines.Add(new JournalEntryLine
                                         {
                                             AccountId = Convert.ToInt32(item.AccountId),
+                                            AccountName = item.AccountName,
                                             Description = item.AccountName,
                                             Credit = item.DebitCredit == "Credito" ? _iline.SubTotal : 0,
                                             Debit = item.DebitCredit == "Debito" ? _iline.SubTotal : 0,
@@ -272,6 +276,7 @@ namespace ERPAPI.Controllers
                                         _je.JournalEntryLines.Add(new JournalEntryLine
                                         {
                                             AccountId = Convert.ToInt32(item.AccountId),
+                                            AccountName = item.AccountName,
                                             Description = item.AccountName,
                                             Credit = item.DebitCredit == "Credito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0,
                                             Debit = item.DebitCredit == "Debito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0,

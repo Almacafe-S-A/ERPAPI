@@ -147,7 +147,8 @@ namespace ERPAPI.Controllers
                             ModifiedUser = _DebitNoteq.UsuarioModificacion,
                             CreatedUser = _DebitNoteq.UsuarioCreacion,
                             DocumentId = _DebitNoteq.DebitNoteId,
-                        };
+                            VoucherType = 4,
+                    };
 
                         Accounting account = new Accounting();
 
@@ -159,6 +160,7 @@ namespace ERPAPI.Controllers
                             _je.JournalEntryLines.Add(new JournalEntryLine
                             {
                                 AccountId = Convert.ToInt32(item.AccountId),
+                                AccountName = account.AccountName,
                                 Description = account.AccountName,
                                 Credit = item.Total,
                                 Debit = 0,
