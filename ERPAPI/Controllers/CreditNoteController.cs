@@ -138,8 +138,57 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
+                      
+                        JournalEntry _je = new JournalEntry
+                        {
+                            Date = _CreditNoteq.CreditNoteDate,
+                            Memo = "Nota de credito de clientes",
+                            DatePosted = _CreditNoteq.CreditNoteDueDate,
+                            ModifiedDate = DateTime.Now,
+                            CreatedDate = DateTime.Now,
+                            ModifiedUser = _CreditNoteq.UsuarioModificacion,
+                            CreatedUser = _CreditNoteq.UsuarioCreacion,
+                            DocumentId = _CreditNoteq.CreditNoteId,
+                        };
+
+                        Accounting account = new Accounting();
+                             // account = await _context.Accounting.Where(acc => acc.AccountId == _CreditNote.AccountId).FirstOrDefaultAsync();
+                        //_je.JournalEntryLines.Add(new JournalEntryLine
+                        //{
+                        //    AccountId = Convert.ToInt32(_CreditNote.AccountId),
+                        //    //Description = _VendorInvoiceq.Account.AccountName,
+                        //    Description = account.AccountName,
+                        //    Credit = 0,
+                        //    Debit = _VendorInvoiceq.Total,
+                        //    CreatedDate = DateTime.Now,
+                        //    ModifiedDate = DateTime.Now,
+                        //    CreatedUser = _VendorInvoiceq.UsuarioCreacion,
+                        //    ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
+                        //    Memo = "",
+                        //});
 
 
+                        foreach (var item in _CreditNoteq.CreditNoteLine)
+                        {
+                            account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
+
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                AccountId = Convert.ToInt32(item.AccountId),
+                                Description = account.AccountName,
+                                Credit = item.Total,
+                                Debit = 0,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedUser = _CreditNote.UsuarioCreacion,
+                                ModifiedUser = _CreditNote.UsuarioModificacion,
+                                Memo = "Nota de crédito",
+                            });
+
+                        }
+
+
+                        await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
