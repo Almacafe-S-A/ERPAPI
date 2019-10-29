@@ -87,7 +87,7 @@ namespace ERPAPI.Controllers
             try
             {
                // DateTime filtro = Convert.ToDateTime(fecha);
-                Items = await _context.ExchangeRate.Where(q => q.DayofRate.ToString("yyyy-MM-dd") == _ExchangeRate.DayofRate.ToString("yyyy-MM-dd")).FirstOrDefaultAsync();
+                Items = await _context.ExchangeRate.Where(q => q.DayofRate.ToString("yyyy-MM-dd") == _ExchangeRate.DayofRate.ToString("yyyy-MM-dd") && q.CurrencyId== _ExchangeRate.CurrencyId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
