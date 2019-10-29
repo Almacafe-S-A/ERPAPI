@@ -335,6 +335,7 @@ namespace ERPAPI.Controllers
             try
             {
                 ApplicationUser ApplicationUserq = (from c in _context.Users
+                                                    .Include(q=>q.Branch)
                   .Where(q => q.Id == _usuario.Id)
                        select c
                     ).FirstOrDefault();
@@ -363,7 +364,8 @@ namespace ERPAPI.Controllers
                      UsuarioModificacion = ApplicationUserq.UsuarioModificacion,
                      PasswordHash = ApplicationUserq.PasswordHash,
                      UserName = ApplicationUserq.UserName,
-                     
+                     Branch = ApplicationUserq.Branch,
+
                 };
 
                 string password = _usuario.PasswordHash;
