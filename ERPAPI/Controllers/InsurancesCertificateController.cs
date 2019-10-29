@@ -21,7 +21,7 @@ namespace ERPAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        public InsurancesCertificateController(ILogger<InsurancesCertificate> logger, ApplicationDbContext context)
+        public InsurancesCertificateController(ILogger<InsurancesCertificateController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
@@ -89,15 +89,16 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la InsurancesCertificate por medio del Id enviado.
         /// </summary>
-        /// <param name="_InsurancesCertificate"></param>
+        /// <param name="_InsurancesCertificateP"></param>
+
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetInsurancesCertificateByBeginDate([FromBody]InsurancesCertificate _InsurancesCertificate)
+        public async Task<IActionResult> GetInsurancesCertificateByFecha([FromBody]InsurancesCertificate _InsurancesCertificateP)
         {
             InsurancesCertificate Items = new InsurancesCertificate();
             try
             {//_ExchangeRate.DayofRate.ToString("yyyy-MM-dd")
-                Items = await _context.InsurancesCertificate.Where(q => q.BeginDateofInsurance.ToString("yyyy-MM-dd") == _InsurancesCertificate.BeginDateofInsurance.ToString("yyyy-MM-dd")).FirstOrDefaultAsync();
+                Items = await _context.InsurancesCertificate.Where(q => q.BeginDateofInsurance.ToString("yyyy-MM-dd") == _InsurancesCertificateP.BeginDateofInsurance.ToString("yyyy-MM-dd")).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

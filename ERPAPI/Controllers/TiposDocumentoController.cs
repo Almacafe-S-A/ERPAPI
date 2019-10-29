@@ -65,6 +65,19 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.TiposDocumento.ToListAsync();
+
+                Items = (from c in Items
+                                  select new TiposDocumento
+                                  {
+                                      IdTipoDocumento = c.IdTipoDocumento,
+                                      IdEstado = c.IdEstado,
+                                      Estado = c.Estado,
+                                      UsuarioCreacion = c.UsuarioCreacion,
+                                      FechaModificacion = c.FechaModificacion,
+                                      Codigo = c.Codigo + "--" + c.Descripcion,
+                                      Descripcion = c.Descripcion,
+                                      FechaCreacion = c.FechaCreacion,
+                                  }).ToList();
             }
             catch (Exception ex)
             {

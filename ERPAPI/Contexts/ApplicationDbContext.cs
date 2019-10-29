@@ -73,7 +73,22 @@ namespace ERP.Contexts
         public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
         public DbSet<FixedAsset> FixedAsset { get; set; }
         public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
-        
+
+        /// <summary>
+        /// ///Cierres
+        /// </summary>
+
+        public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
+        public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
+
+        public DbSet<CierresAccounting> CierresAccounting { get; set; }
+
+        public DbSet<CierresJournal> CierresJournal { get; set; }
+
+        public DbSet<InsuranceEndorsement> InsuranceEndorsement { get; set; }
+
+        public DbSet<InsuranceEndorsementLine> InsuranceEndorsementLine { get; set; }
+
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }

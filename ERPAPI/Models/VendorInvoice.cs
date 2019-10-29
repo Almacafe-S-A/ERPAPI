@@ -16,7 +16,7 @@ namespace ERPAPI.Models
         [Display(Name = "Envio")]
         public int ShipmentId { get; set; }
 
-        public int PurchaseOrderId { get; set; }
+        public int? PurchaseOrderId { get; set; }
         [ForeignKey("PurchaseOrderId")]
         public PurchaseOrder PurchaseOrder { get; set; }
 

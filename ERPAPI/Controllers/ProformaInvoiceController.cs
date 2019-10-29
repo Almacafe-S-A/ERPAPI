@@ -133,6 +133,28 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetProformaInvoiceLineById([FromBody]ProformaInvoice _ProformaInvoice)
+        {
+            ProformaInvoice Items = new ProformaInvoice();
+            try
+            {
+                    Items = await _context.ProformaInvoice.Include(q => q.ProformaInvoiceLine).Where(q => q.ProformaId == _ProformaInvoice.ProformaId).FirstOrDefaultAsync();
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         [HttpGet("[action]/{ProformaInvoiceId}")]
         public async Task<IActionResult> GetInvoiceCalculation(Int64 ProformaInvoiceId)
         {

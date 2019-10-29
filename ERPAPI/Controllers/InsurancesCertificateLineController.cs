@@ -50,15 +50,40 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
-
         [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetInsurancesCertificateLineById(int Id)
+        public async Task<IActionResult> GetSumInsurancesCertificateLine(int id)
         {
             List<InsurancesCertificateLine> Items = new List<InsurancesCertificateLine>();
             try
             {
-                Items = await _context.InsurancesCertificateLine
-                             .Where(q => q.InsurancesCertificateLineId == Id).ToListAsync();
+                /*List<InsurancesCertificateLine> CertificadosSeguros = new List<InsurancesCertificateLine>();
+
+                CertificadosSeguros = await _context.InsurancesCertificateLine.ToListAsync();
+
+                Items = ( from c in CertificadosSeguros
+                          select new InsurancesCertificateLine
+                          {
+                               TotalInsurancesLine=  CertificadosSeguros.Sum(p =>p.TotalInsurancesLine),
+
+                          }
+                    
+                    ).ToList();*/
+
+                var consulta = from c in _context.InsurancesCertificateLine
+                               where c.InsurancesCertificateId == id
+                               group c by c.WarehouseId into c
+                               select new InsurancesCertificateLine
+                               {
+                                   TotalInsurancesLine=c.Sum(z=>z.TotalInsurancesLine),
+                                   TotaldeductibleLine=c.Sum(z=>z.TotaldeductibleLine),
+                                   TotalofProductLine = c.Sum(z=>z.TotalofProductLine),
+                                   TotalInsurancesofProductLine=c.Sum(z=>z.TotalInsurancesofProductLine),
+                                   DifferenceTotalofProductInsuranceLine=c.Sum(z=> z.DifferenceTotalofProductInsuranceLine),
+                                   TotaldeductibleofProduct=c.Sum(z => z.TotaldeductibleofProduct),
+                                   WarehouseId = c.Key
+
+                               };
+                Items = consulta.ToList();
             }
             catch (Exception ex)
             {
@@ -71,18 +96,14 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        /// <summary>
-        /// Obtiene los Datos de la CertificadoLine por medio del Id enviado.
-        /// </summary>
-        /// <param name="CertificadoLineId"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{CertificadoLineId}")]
-        public async Task<IActionResult> GetCertificadoLineById(Int64 CertificadoLineId)
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetInsurancesCertificateLineById(int Id)
         {
-            CertificadoLine Items = new CertificadoLine();
+            InsurancesCertificateLine Items = new InsurancesCertificateLine();
             try
             {
-                Items = await _context.CertificadoLine.Where(q => q.CertificadoLineId == CertificadoLineId).FirstOrDefaultAsync();
+                Items = await _context.InsurancesCertificateLine
+                             .Where(q => q.InsurancesCertificateLineId == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -91,10 +112,28 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-
+            //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetInsurancesCertificateLineByCounter()
+        {
+            InsurancesCertificateLine Items = new InsurancesCertificateLine();
+            try
+            {
+                Items = await _context.InsurancesCertificateLine
+                             .OrderBy(p =>p.CounterInsurancesCertificate).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
         /// Inserta una nueva InsurancesCertificateLine

@@ -1,45 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/DebitNoteLine")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class DebitNoteLineController : Controller
+    public class BitacoraCierreProcesosController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public DebitNoteLineController(ILogger<DebitNoteLineController> logger, ApplicationDbContext context)
+        public BitacoraCierreProcesosController(ILogger<BitacoraCierreProcesosController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de DebitNoteLine paginado
+        /// Obtiene el Listado de BitacoraCierreProcesos paginado
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetDebitNoteLinePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetBitacoraCierreProcesosPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<DebitNoteLine> Items = new List<DebitNoteLine>();
-            try
+            List<BitacoraCierreProcesos> Items = new List<BitacoraCierreProcesos>();
+            try 
             {
-                var query = _context.DebitNoteLine.AsQueryable();
+                var query = _context.BitacoraCierreProceso.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -63,36 +59,16 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Obtiene el Listado de DebitNoteLinees 
+        /// Obtiene el Listado de BitacoraCierreProcesoses 
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetDebitNoteLine()
+        public async Task<IActionResult> GetBitacoraCierreProcesos()
         {
-            List<DebitNoteLine> Items = new List<DebitNoteLine>();
+            List<BitacoraCierreProcesos> Items = new List<BitacoraCierreProcesos>();
             try
             {
-                Items = await _context.DebitNoteLine.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-        }
-
-        [HttpGet("[action]/{DebitNoteId}")]
-        public async Task<IActionResult> GetDebitNoteLineByDebitNoteId(Int64 DebitNoteId)
-        {
-            List<DebitNoteLine> Items = new List<DebitNoteLine>();
-            try
-            {
-                Items = await _context.DebitNoteLine
-                             .Where(q => q.DebitNoteId == DebitNoteId).ToListAsync();
+                Items = await _context.BitacoraCierreProceso.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -106,17 +82,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la DebitNoteLine por medio del Id enviado.
+        /// Obtiene los Datos de la BitacoraCierreProcesos por medio del Id enviado.
         /// </summary>
-        /// <param name="DebitNoteLineId"></param>
+        /// <param name="BitacoraCierreProcesosId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{DebitNoteLineId}")]
-        public async Task<IActionResult> GetDebitNoteLineById(Int64 DebitNoteLineId)
+        [HttpGet("[action]/{BitacoraCierreProcesosId}")]
+        public async Task<IActionResult> GetBitacoraCierreProcesosById(Int64 BitacoraCierreProcesosId)
         {
-            DebitNoteLine Items = new DebitNoteLine();
+            BitacoraCierreProcesos Items = new BitacoraCierreProcesos();
             try
             {
-                Items = await _context.DebitNoteLine.Where(q => q.DebitNoteLineId == DebitNoteLineId).FirstOrDefaultAsync();
+                Items = await _context.BitacoraCierreProceso.Where(q => q.IdProceso == BitacoraCierreProcesosId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -131,35 +107,35 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva DebitNoteLine
+        /// Inserta una nueva BitacoraCierreProcesos
         /// </summary>
-        /// <param name="_DebitNoteLine"></param>
+        /// <param name="_BitacoraCierreProcesos"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<DebitNoteLine>> Insert([FromBody]DebitNoteLine _DebitNoteLine)
+        public async Task<ActionResult<BitacoraCierreProcesos>> Insert([FromBody]BitacoraCierreProcesos _BitacoraCierreProcesos)
         {
-            DebitNoteLine _DebitNoteLineq = new DebitNoteLine();
+            BitacoraCierreProcesos _BitacoraCierreProcesosq = new BitacoraCierreProcesos();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _DebitNoteLineq = _DebitNoteLine;
-                        _context.DebitNoteLine.Add(_DebitNoteLineq);
+                        _BitacoraCierreProcesosq = _BitacoraCierreProcesos;
+                        _context.BitacoraCierreProceso.Add(_BitacoraCierreProcesosq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _DebitNoteLine.DebitNoteLineId,
-                            DocType = "DebitNoteLine",
+                            IdOperacion = _BitacoraCierreProcesos.IdProceso,
+                            DocType = "BitacoraCierreProcesos",
                             ClaseInicial =
-                                  Newtonsoft.Json.JsonConvert.SerializeObject(_DebitNoteLine, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_DebitNoteLine, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                  Newtonsoft.Json.JsonConvert.SerializeObject(_BitacoraCierreProcesos, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_BitacoraCierreProcesos, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insert",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                           
+
 
                         });
 
@@ -176,7 +152,7 @@ namespace ERPAPI.Controllers
 
                 }
 
-                  
+
             }
             catch (Exception ex)
             {
@@ -185,28 +161,28 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_DebitNoteLineq));
+            return await Task.Run(() => Ok(_BitacoraCierreProcesosq));
         }
 
         /// <summary>
-        /// Actualiza la DebitNoteLine
+        /// Actualiza la BitacoraCierreProcesos
         /// </summary>
-        /// <param name="_DebitNoteLine"></param>
+        /// <param name="_BitacoraCierreProcesos"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<DebitNoteLine>> Update([FromBody]DebitNoteLine _DebitNoteLine)
+        public async Task<ActionResult<BitacoraCierreProcesos>> Update([FromBody]BitacoraCierreProcesos _BitacoraCierreProcesos)
         {
-            DebitNoteLine _DebitNoteLineq = _DebitNoteLine;
+            BitacoraCierreProcesos _BitacoraCierreProcesosq = _BitacoraCierreProcesos;
             try
             {
-                _DebitNoteLineq = await (from c in _context.DebitNoteLine
-                                 .Where(q => q.DebitNoteLineId == _DebitNoteLine.DebitNoteLineId)
-                                         select c
+                _BitacoraCierreProcesosq = await (from c in _context.BitacoraCierreProceso
+                                 .Where(q => q.IdProceso == _BitacoraCierreProcesos.IdProceso)
+                                               select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_DebitNoteLineq).CurrentValues.SetValues((_DebitNoteLine));
+                _context.Entry(_BitacoraCierreProcesosq).CurrentValues.SetValues((_BitacoraCierreProcesos));
 
-                //_context.DebitNoteLine.Update(_DebitNoteLineq);
+                //_context.BitacoraCierreProcesos.Update(_BitacoraCierreProcesosq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -216,25 +192,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_DebitNoteLineq));
+            return await Task.Run(() => Ok(_BitacoraCierreProcesosq));
         }
 
         /// <summary>
-        /// Elimina una DebitNoteLine       
+        /// Elimina una BitacoraCierreProcesos       
         /// </summary>
-        /// <param name="_DebitNoteLine"></param>
+        /// <param name="_BitacoraCierreProcesos"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]DebitNoteLine _DebitNoteLine)
+        public async Task<IActionResult> Delete([FromBody]BitacoraCierreProcesos _BitacoraCierreProcesos)
         {
-            DebitNoteLine _DebitNoteLineq = new DebitNoteLine();
+            BitacoraCierreProcesos _BitacoraCierreProcesosq = new BitacoraCierreProcesos();
             try
             {
-                _DebitNoteLineq = _context.DebitNoteLine
-                .Where(x => x.DebitNoteLineId == (Int64)_DebitNoteLine.DebitNoteLineId)
+                _BitacoraCierreProcesosq = _context.BitacoraCierreProceso
+                .Where(x => x.IdProceso == (Int64)_BitacoraCierreProcesos.IdProceso)
                 .FirstOrDefault();
 
-                _context.DebitNoteLine.Remove(_DebitNoteLineq);
+                _context.BitacoraCierreProceso.Remove(_BitacoraCierreProcesosq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -243,11 +219,9 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_DebitNoteLineq));
+            return await Task.Run(() => Ok(_BitacoraCierreProcesosq));
 
         }
-
-
 
 
 

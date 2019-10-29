@@ -11,35 +11,34 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/PolicyRoles")]
+    [Route("api/OrdenFormula")]
     [ApiController]
-    public class PolicyRolesController : Controller
+    public class OrdenFormulaController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public PolicyRolesController(ILogger<PolicyRolesController> logger, ApplicationDbContext context)
+        public OrdenFormulaController(ILogger<OrdenFormulaController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Policy paginado
+        /// Obtiene el Listado de OrdenFormula paginado
         /// </summary>
-        /// <returns></returns>    
+        /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetPolicyPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetOrdenFormulaPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<PolicyRoles> Items = new List<PolicyRoles>();
+            List<OrdenFormula> Items = new List<OrdenFormula>();
             try
             {
-                var query = _context.PolicyRoles.AsQueryable();
+                var query = _context.OrdenFormula.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -54,25 +53,25 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
 
+
         /// <summary>
-        /// Obtiene el Listado de PolicyRoleses 
-        /// El estado define cuales son los cai activos
+        /// Obtiene el Listado de OrdenFormulaes 
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetPolicyRoles()
+        public async Task<IActionResult> GetOrdenFormula()
         {
-            List<PolicyRoles> Items = new List<PolicyRoles>();
+            List<OrdenFormula> Items = new List<OrdenFormula>();
             try
             {
-                Items = await _context.PolicyRoles.ToListAsync();
+                Items = await _context.OrdenFormula.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -86,23 +85,23 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la PolicyRoles por medio del Id enviado.
+        /// Obtiene los Datos de la OrdenFormula por medio del Id enviado.
         /// </summary>
-        /// <param name="PolicyRolesId"></param>
+        /// <param name="Idordenformula"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{PolicyRolesId}")]
-        public async Task<IActionResult> GetPolicyRolesById(Guid PolicyRolesId)
+        [HttpGet("[action]/{Idordenformula}")]
+        public async Task<IActionResult> GetOrdenFormulaById(Int64 Idordenformula)
         {
-            PolicyRoles Items = new PolicyRoles();
+            OrdenFormula Items = new OrdenFormula();
             try
             {
-                Items = await _context.PolicyRoles.Where(q => q.Id == PolicyRolesId).FirstOrDefaultAsync();
+                Items = await _context.OrdenFormula.Where(q => q.Idordenformula == Idordenformula).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
 
@@ -111,89 +110,86 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva PolicyRoles
+        /// Inserta una nueva OrdenFormula
         /// </summary>
-        /// <param name="_PolicyRoles"></param>
+        /// <param name="_OrdenFormula"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<PolicyRoles>> Insert([FromBody]PolicyRoles _PolicyRoles)
+        public async Task<ActionResult<OrdenFormula>> Insert([FromBody]OrdenFormula _OrdenFormula)
         {
-            PolicyRoles _PolicyRolesq = new PolicyRoles();
+            OrdenFormula _OrdenFormulaq = new OrdenFormula();
             try
             {
-                _PolicyRolesq = _PolicyRoles;
-                _context.PolicyRoles.Add(_PolicyRolesq);
+                _OrdenFormulaq = _OrdenFormula;
+                _context.OrdenFormula.Add(_OrdenFormulaq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_PolicyRolesq));
+            return await Task.Run(() => Ok(_OrdenFormulaq));
         }
 
         /// <summary>
-        /// Actualiza la PolicyRoles
+        /// Actualiza la OrdenFormula
         /// </summary>
-        /// <param name="_PolicyRoles"></param>
+        /// <param name="_OrdenFormula"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<PolicyRoles>> Update([FromBody]PolicyRoles _PolicyRoles)
-       // public async Task<ActionResult<PolicyRoles>> Update([FromBody]dynamic dto)
+        public async Task<ActionResult<OrdenFormula>> Update([FromBody]OrdenFormula _OrdenFormula)
         {
-            //PolicyRoles _PolicyRoles = new PolicyRoles();
-            PolicyRoles _PolicyRolesq = _PolicyRoles;
+            OrdenFormula _OrdenFormulaq = _OrdenFormula;
             try
             {
-              //  _PolicyRoles = JsonConvert.DeserializeObject<PolicyRoles>(dto.ToString());
-                _PolicyRolesq = await (from c in _context.PolicyRoles
-                                 .Where(q => q.Id == _PolicyRoles.Id)
-                                       select c
+                _OrdenFormulaq = await (from c in _context.OrdenFormula
+                                 .Where(q => q.Idordenformula == _OrdenFormula.Idordenformula)
+                                        select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_PolicyRolesq).CurrentValues.SetValues((_PolicyRoles));
+                _context.Entry(_OrdenFormulaq).CurrentValues.SetValues((_OrdenFormula));
 
-                //_context.PolicyRoles.Update(_PolicyRolesq);
+                //_context.OrdenFormula.Update(_OrdenFormulaq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_PolicyRolesq));
+            return await Task.Run(() => Ok(_OrdenFormulaq));
         }
 
         /// <summary>
-        /// Elimina una PolicyRoles       
+        /// Elimina una OrdenFormula       
         /// </summary>
-        /// <param name="_PolicyRoles"></param>
+        /// <param name="_OrdenFormula"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]PolicyRoles _PolicyRoles)
+        public async Task<IActionResult> Delete([FromBody]OrdenFormula _OrdenFormula)
         {
-            PolicyRoles _PolicyRolesq = new PolicyRoles();
+            OrdenFormula _OrdenFormulaq = new OrdenFormula();
             try
             {
-                _PolicyRolesq = _context.PolicyRoles
-                .Where(x => x.Id == _PolicyRoles.Id)
+                _OrdenFormulaq = _context.OrdenFormula
+                .Where(x => x.Idordenformula == (Int64)_OrdenFormula.Idordenformula)
                 .FirstOrDefault();
 
-                _context.PolicyRoles.Remove(_PolicyRolesq);
+                _context.OrdenFormula.Remove(_OrdenFormulaq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_PolicyRolesq));
+            return await Task.Run(() => Ok(_OrdenFormulaq));
 
         }
 
