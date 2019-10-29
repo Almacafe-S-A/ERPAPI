@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191028202956_CierresTables")]
+    partial class CierresTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4537,80 +4539,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("IncomeAndExpensesAccount");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsement", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("AssuredDifernce");
-
-                    b.Property<double>("CertificateBalalnce");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("Customername");
-
-                    b.Property<DateTime>("DateGenerated");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("InsurancePolicyId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<int>("ProductdId");
-
-                    b.Property<double>("TotalAmountDl");
-
-                    b.Property<double>("TotalAmountLp");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<int>("WarehouseID");
-
-                    b.Property<string>("WarehouseName");
-
-                    b.Property<string>("WarehouseTypeName");
-
-                    b.Property<int>("WharehouseTypeId");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("InsuranceEndorsement");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsementLine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("AmountDl");
-
-                    b.Property<double>("AmountLp");
-
-                    b.Property<double>("AssuredDiference");
-
-                    b.Property<double>("CertificateBalance");
-
-                    b.Property<int>("InsuranceEndorsementId");
-
-                    b.Property<int>("WareHouseId");
-
-                    b.Property<string>("WarehouseName");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InsuranceEndorsementId");
-
-                    b.ToTable("InsuranceEndorsementLine");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Insurances", b =>
                 {
                     b.Property<int>("InsurancesId")
@@ -8632,14 +8560,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.HoursWorked")
                         .WithMany("idhorastrabajadasconstrains")
                         .HasForeignKey("IdHorasTrabajadas");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsementLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.InsuranceEndorsement")
-                        .WithMany("InsuranceEndorsementLines")
-                        .HasForeignKey("InsuranceEndorsementId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InsurancesCertificateLine", b =>

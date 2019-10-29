@@ -11,11 +11,8 @@ namespace ERPAPI.Models
     public class CierresAccounting
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Display(Name = "Id")]
-
-        public DateTime FechaCierre { get; set; }
+        public int CierreAccountingId { get; set; }
         public Int64 AccountId { get; set; }
-
         [Display(Name = "Id Jerarquia Contable")]
         public int? ParentAccountId { get; set; }
         [Display(Name = "Id de la Empresa")]
@@ -76,110 +73,112 @@ namespace ERPAPI.Models
         [Display(Name = "Padre de la cuenta")]
         public virtual Accounting ParentAccount { get; set; }
 
+        public DateTime FechaCierre { get; set; }
+
         // public virtual AccountClass AccountClass { get; set; }
 
         public virtual CompanyInfo Company { get; set; }
 
-        public virtual List<Accounting> ChildAccounts { get; set; }
-        [NotMapped]
-        public virtual ICollection<MainContraAccount> ContraAccounts { get; set; }
-        public virtual ICollection<GeneralLedgerLine> GeneralLedgerLines { get; set; }
+        //public virtual List<Accounting> ChildAccounts { get; set; }
+        //[NotMapped]
+        //public virtual ICollection<MainContraAccount> ContraAccounts { get; set; }
+        //public virtual ICollection<GeneralLedgerLine> GeneralLedgerLines { get; set; }
 
 
-        private decimal GetDebitCreditBalance(DrOrCrSide side)
-        {
-            decimal balance = 0;
+        //private decimal GetDebitCreditBalance(DrOrCrSide side)
+        //{
+        //    decimal balance = 0;
 
-            if (side == DrOrCrSide.Dr)
-            {
-                var dr = from d in GeneralLedgerLines
-                         where d.DrCr == DrOrCrSide.Dr
-                         select d;
+        //    if (side == DrOrCrSide.Dr)
+        //    {
+        //        var dr = from d in GeneralLedgerLines
+        //                 where d.DrCr == DrOrCrSide.Dr
+        //                 select d;
 
-                balance = dr.Sum(d => d.Amount);
-            }
-            else
-            {
-                var cr = from d in GeneralLedgerLines
-                         where d.DrCr == DrOrCrSide.Cr
-                         select d;
+        //        balance = dr.Sum(d => d.Amount);
+        //    }
+        //    else
+        //    {
+        //        var cr = from d in GeneralLedgerLines
+        //                 where d.DrCr == DrOrCrSide.Cr
+        //                 select d;
 
-                balance = cr.Sum(d => d.Amount);
-            }
+        //        balance = cr.Sum(d => d.Amount);
+        //    }
 
-            return balance;
-        }
+        //    return balance;
+        //}
 
-        public decimal GetBalance()
-        {
-            decimal balance = 0;
+        //public decimal GetBalance()
+        //{
+        //    decimal balance = 0;
 
-            var dr = from d in GeneralLedgerLines
-                     where d.DrCr == DrOrCrSide.Dr
-                     select d;
+        //    var dr = from d in GeneralLedgerLines
+        //             where d.DrCr == DrOrCrSide.Dr
+        //             select d;
 
-            var cr = from c in GeneralLedgerLines
-                     where c.DrCr == DrOrCrSide.Cr
-                     select c;
+        //    var cr = from c in GeneralLedgerLines
+        //             where c.DrCr == DrOrCrSide.Cr
+        //             select c;
 
-            decimal drAmount = dr.Sum(d => d.Amount);
-            decimal crAmount = cr.Sum(c => c.Amount);
-            balance = drAmount - crAmount;
-            /*  if (NormalBalance == "Dr")
-              {
+        //    decimal drAmount = dr.Sum(d => d.Amount);
+        //    decimal crAmount = cr.Sum(c => c.Amount);
+        //    balance = drAmount - crAmount;
+        //    /*  if (NormalBalance == "Dr")
+        //      {
 
-                  balance = drAmount - crAmount;
-              }
-              else
-              {
-                  balance = crAmount - drAmount;
-              }
-              */
-            return balance;
-        }
+        //          balance = drAmount - crAmount;
+        //      }
+        //      else
+        //      {
+        //          balance = crAmount - drAmount;
+        //      }
+        //      */
+        //    return balance;
+        //}
 
-        public bool CanPost()
-        {
-            if (ChildAccounts != null && ChildAccounts.Count > 0)
-                return false;
-            return true;
-        }
+        //public bool CanPost()
+        //{
+        //    if (ChildAccounts != null && ChildAccounts.Count > 0)
+        //        return false;
+        //    return true;
+        //}
 
         /// <summary>
         /// Used to indicate the increase or decrease on account. When there is a change in an account, that change is indicated by either debiting or crediting that account.
         /// </summary>
         /// <param name="amount">The amount to enter on account.</param>
         /// <returns></returns>
-        public DrOrCrSide DebitOrCredit(decimal amount)
-        {
-            var side = DrOrCrSide.Dr;
+        //public DrOrCrSide DebitOrCredit(decimal amount)
+        //{
+        //    var side = DrOrCrSide.Dr;
 
-            if (this.AccountId == (int)AccountClasses.Assets || this.AccountId == (int)AccountClasses.Expense)
-            {
-                if (amount > 0)
-                    side = DrOrCrSide.Dr;
-                else
-                    side = DrOrCrSide.Cr;
-            }
+        //    if (this.AccountId == (int)AccountClasses.Assets || this.AccountId == (int)AccountClasses.Expense)
+        //    {
+        //        if (amount > 0)
+        //            side = DrOrCrSide.Dr;
+        //        else
+        //            side = DrOrCrSide.Cr;
+        //    }
 
-            if (this.AccountId == (int)AccountClasses.Liabilities || this.AccountId == (int)AccountClasses.Equity || this.AccountId == (int)AccountClasses.Revenue)
-            {
-                if (amount < 0)
-                    side = DrOrCrSide.Dr;
-                else
-                    side = DrOrCrSide.Cr;
-            }
+        //    if (this.AccountId == (int)AccountClasses.Liabilities || this.AccountId == (int)AccountClasses.Equity || this.AccountId == (int)AccountClasses.Revenue)
+        //    {
+        //        if (amount < 0)
+        //            side = DrOrCrSide.Dr;
+        //        else
+        //            side = DrOrCrSide.Cr;
+        //    }
 
-            if (this.IsContraAccount)
-            {
-                if (side == DrOrCrSide.Dr)
-                    return DrOrCrSide.Cr;
-                if (side == DrOrCrSide.Cr)
-                    return DrOrCrSide.Dr;
-            }
+        //    if (this.IsContraAccount)
+        //    {
+        //        if (side == DrOrCrSide.Dr)
+        //            return DrOrCrSide.Cr;
+        //        if (side == DrOrCrSide.Cr)
+        //            return DrOrCrSide.Dr;
+        //    }
 
-            return side;
-        }
+        //    return side;
+        //}
 
     }
 
@@ -199,7 +198,7 @@ namespace ERPAPI.Models
 
         public double TotalCredit { get; set; }
 
-        public List<AccountingDTO> Children { get; set; } = new List<AccountingDTO>();
+        //public List<AccountingDTO> Children { get; set; } = new List<AccountingDTO>();
     }
 
 }

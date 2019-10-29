@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
@@ -15,13 +18,15 @@ namespace ERPAPI.Controllers
     public class CierreController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ILogger _logger;
 
-        public CierreController(ApplicationDbContext context)
+        public CierreController(ILogger<CierreController> logger, ApplicationDbContext context)
         {
             _context = context;
+            _logger = logger;
         }
 
-       
         
+
     }
 }

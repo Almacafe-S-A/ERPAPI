@@ -9,10 +9,12 @@ namespace ERPAPI.Models
 {
     public class CierresJournal
     {
-        public DateTime FechaCierre { get; set; }
+        
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 JournalEntryId { get; set; }
+
+        public DateTime FechaCierre { get; set; }
 
         public CierresJournal()
         {
@@ -76,7 +78,7 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de ajuste")]
         public string TypeOfAdjustmentName { get; set; }
 
-        public List<JournalEntryLine> JournalEntryLines { get; set; } = new List<JournalEntryLine>();
+        //public List<JournalEntryLine> JournalEntryLines { get; set; } = new List<JournalEntryLine>();
         [Required]
         [Display(Name = "Usuario de creacion")]
         public string CreatedUser { get; set; }
