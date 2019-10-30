@@ -138,8 +138,8 @@ namespace ERPAPI.Controllers
                              AccountName = _TypeAccountq.TypeAccountName,  
                              AccountCode= _TypeAccountq.TypeAccountName,
                              IsCash =false,
-                            
-                             // AccountCode = _TypeAccountq.
+                             Description = _TypeAccountq.TypeAccountName,
+                            // AccountCode = _TypeAccountq.
                              UsuarioCreacion = _TypeAccountq.CreatedUser,
                              UsuarioModificacion = _TypeAccountq.ModifiedUser,
                              FechaCreacion = DateTime.Now,
@@ -149,6 +149,10 @@ namespace ERPAPI.Controllers
                              Estado="Activo",
                         };
 
+
+                        _context.Accounting.Add(_padreaccount);
+
+                        await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -164,6 +168,8 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _TypeAccountq.ModifiedUser,
 
                         });
+
+                        await _context.SaveChangesAsync();
 
                         transaction.Commit();
                     }
