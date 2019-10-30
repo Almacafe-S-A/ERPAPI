@@ -154,12 +154,12 @@ namespace ERPAPI.Controllers
         /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
         /// </summary>
         /// 
-        /// <param name="Date"></param>
         /// <param name="FechaInicio"></param>
         /// <param name="FechaFinal"></param>
+        /// <param name="AccountId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{Date}")]
-        public async Task<IActionResult> GetJournalEntryByDate(string FechaInicio,string FechaFinal)
+        [HttpGet("[action]/{FechaInicio}/{FechaFinal}/{AccountId}")]
+        public async Task<IActionResult> GetJournalEntryByDateAccount(string FechaInicio,string FechaFinal, Int64 AccountId)
         {
             //string fecha = Date.ToString("yyyy-MM-dd");
             DateTime fechainicio = Convert.ToDateTime(FechaInicio);
@@ -180,24 +180,11 @@ namespace ERPAPI.Controllers
             {
 
 
-                //Items = await (from je in _context.JournalEntry
-                //               join jel in _context.JournalEntryLine on je.JournalEntryId equals jel.JournalEntryId
-
-                //               where (je.Date > fechainicio) && (je.Date < fechafinal) && (jel.AccountId == 10050)
-                //               group jel by jel.Debit into g
-                //               //select sum(debit), sum(credit)).Sum(e => e.Salary).ToListAsync();
-                //               select new { credit = g.Sum(x => x.Credit) });
-
-
-
-
-                //string trialbalance = "";
-                //string horainicio = " 00:00:00";
-                //string horafin = " 23:59:59";
+               
 
                 var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
                   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
-                  + $"where JE.[DATE] >= '2019-08-01' and JE.[DATE] < ='2019-08-31' and jel.AccountId = 10050"
+                  + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
                  + "  ";
 
 

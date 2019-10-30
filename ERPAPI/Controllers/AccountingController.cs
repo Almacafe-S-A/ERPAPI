@@ -33,24 +33,50 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la tabla Accounting por clasificacion de cuenta.
         /// </summary>
-        [HttpGet("[action]/{TypeAccountId}")]
-        public async Task<IActionResult> GetAccountingActive(Int64 TypeAccountId)
+        List<Int32> Parents = new List<Int32>();
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetAccountingType([FromBody]AccountingFilter _AccountingDTO)
 
         {
             List<AccountingDTO> Items = new List<AccountingDTO>();
+            List<Int32> _parents = new List<int>();
             try
             {
                 List<Accounting> _cuentas = new List<Accounting>();
 
-                if (TypeAccountId == 0)
+                if (_AccountingDTO.TypeAccountId == 0 && _AccountingDTO.estadocuenta==true)
                 {
                     _cuentas = await _context.Accounting.Where(m => m.IdEstado ==1).ToListAsync();
                 }
-                else
+                if (_AccountingDTO.TypeAccountId == 0 && _AccountingDTO.estadocuenta == false)
+                {
+                    _cuentas = await _context.Accounting.Where(m => m.IdEstado == 2).ToListAsync();
+                    _parents = _cuentas.Select(q => q.ParentAccountId==null?0 : q.ParentAccountId.Value).ToList();
+                    _cuentas.AddRange( ObtenerCategoriarJerarquia(_parents));
+                }
+                else  if (_AccountingDTO.TypeAccountId == 0 && _AccountingDTO.estadocuenta == null)
+                {
+                    _cuentas = await _context.Accounting .ToListAsync();
+                }
+                else if (_AccountingDTO.TypeAccountId > 0 && _AccountingDTO.estadocuenta == true)
                 {
                     _cuentas = await _context.Accounting
-                        .Where(q => q.TypeAccountId == TypeAccountId
-                        && q.IdEstado ==1 )
+                        .Where(q => q.TypeAccountId == _AccountingDTO.TypeAccountId)
+                        .Where(m => m.IdEstado == 1)                        
+                        .ToListAsync();
+                }
+                else if (_AccountingDTO.TypeAccountId > 0 && _AccountingDTO.estadocuenta == false)
+                {
+                    _cuentas = await _context.Accounting
+                        .Where(q => q.TypeAccountId == _AccountingDTO.TypeAccountId)
+                        .Where(m => m.IdEstado == 2)
+                        .ToListAsync();
+                }
+                else if (_AccountingDTO.TypeAccountId> 0 && _AccountingDTO.estadocuenta == null)
+                {
+                    _cuentas = await _context.Accounting
+                        .Where(q => q.TypeAccountId == _AccountingDTO.TypeAccountId
+                        )
                         .ToListAsync();
                 }
 
@@ -92,66 +118,78 @@ namespace ERPAPI.Controllers
 
         }
 
-        /// <summary>
-        /// Obtiene los Datos de la tabla Accounting por clasificacion de cuenta.
-        /// </summary>
-        [HttpGet("[action]/{TypeAccountId}")]
-        public async Task<IActionResult> GetAccountingType(Int64 TypeAccountId)
-
+        List<AccountingDTO> query = new List<AccountingDTO>();
+        private List<AccountingDTO> ObtenerCategoriarJerarquia(List<Int32> Parents)
         {
+
             List<AccountingDTO> Items = new List<AccountingDTO>();
-            try
+            List<Int32> _padre = new List<Int32>();
+            foreach (var padre in Parents)
             {
-                List<Accounting> _cuentas = new List<Accounting>();
+                Accounting _ac = _context.Accounting.Where(q => q.AccountId == padre).FirstOrDefault();
 
-                if (TypeAccountId == 0)
+                if (_ac.ParentAccountId != null)
                 {
-                    _cuentas = await _context.Accounting.ToListAsync();
-                }
-                else
-                {
-                    _cuentas =  await _context.Accounting
-                        .Where(q => q.TypeAccountId == TypeAccountId).ToListAsync();
+                    _padre.Add(_ac.ParentAccountId.Value);
                 }
 
-                Items = (from c in _cuentas
-                         select new AccountingDTO
-                         {
-                             CompanyInfoId=c.CompanyInfoId,
-                             AccountId = c.AccountId,
-                             AccountName = c.AccountCode + "--" + c.AccountName,
-                             ParentAccountId = c.ParentAccountId,
-                             // Credit = Credit(c.AccountId),
-                             // Debit = Debit(c.AccountId),
-                             IdEstado=c.IdEstado,
-                             Estado=c.Estado,
-                             AccountBalance = c.AccountBalance,
-                             IsCash = c.IsCash,
-                             Description =c.Description,
-                             TypeAccountId = c.TypeAccountId,
-                             BlockedInJournal =c.BlockedInJournal,
-                             AccountCode=c.AccountCode,
-                             HierarchyAccount =c.HierarchyAccount,
-                             UsuarioCreacion=c.UsuarioCreacion,
-                             UsuarioModificacion=c.UsuarioModificacion,
-                             FechaCreacion=c.FechaCreacion,
-                             FechaModificacion=c.FechaModificacion
-                         }
-                               )
-                               .ToList();
+                Items.Add(new AccountingDTO
+                {
+                    AccountId = _ac.AccountId,
+                    AccountName = _ac.AccountName,
+                    AccountCode = _ac.AccountCode,
+                    AccountBalance = _ac.AccountBalance,
+                    ParentAccountId = _ac.ParentAccountId,
+                });
             }
-            catch (Exception ex)
+
+            List<Accounting> categoriasList = (from c in Items
+                                               select new Accounting
+                                               {
+                                                   AccountId = c.AccountId,
+                                                   AccountBalance = c.AccountBalance,
+                                                   AccountCode = c.AccountCode,
+                                                   AccountName = c.AccountName,
+                                                   ParentAccountId = c.ParentAccountId,
+                                               }
+
+                                                ).ToList();
+
+
+            var res = (from c in categoriasList
+                           // where c.ParentAccountId == null || c.ParentAccountId == 0
+                       select new AccountingDTO
+                       {
+                           AccountId = c.AccountId,
+                           AccountName = c.AccountName,
+                           AccountBalance = c.AccountBalance,
+                           AccountCode = c.AccountCode,
+                           ParentAccountId = c.ParentAccountId,
+                           //   Children = ObtenerHijos(c.AccountId, categoriasList)
+                       }).ToList();
+
+            if (res.Count > 0)
             {
+                foreach (var item in res)
+                {
+                    var existe = query.Where(q => q.AccountId == item.AccountId).ToList();
+                    if (existe.Count == 0)
+                    {
+                        query.Add(item);
+                    }
+                }
 
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
 
-            return await Task.Run(() => Ok(Items));
 
+            if (_padre.Count > 0)
+            {
+                ObtenerCategoriarJerarquia(_padre);
+            }
+
+            return query;
         }
-
 
         private double Debit(Int64 AccountId)
         {
