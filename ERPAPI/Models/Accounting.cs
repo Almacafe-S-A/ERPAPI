@@ -197,7 +197,16 @@ namespace ERPAPI.Models
 
         public double TotalCredit { get; set; }
 
+        public bool? estadocuenta { get; set; }
+
         public List<AccountingDTO> Children { get; set; } = new List<AccountingDTO>();
+    }
+
+    public class AccountingFilter
+    {
+        public Int64 TypeAccountId { get; set; }
+        public bool? estadocuenta { get; set; }
+
     }
 
 

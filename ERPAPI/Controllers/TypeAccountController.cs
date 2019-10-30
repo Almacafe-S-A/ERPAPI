@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -123,9 +124,57 @@ namespace ERPAPI.Controllers
             TypeAccount _TypeAccountq = new TypeAccount();
             try
             {
-                _TypeAccountq = _TypeAccount;
-                _context.TypeAccount.Add(_TypeAccountq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _TypeAccountq = _TypeAccount;
+                        _context.TypeAccount.Add(_TypeAccountq);
+                        await _context.SaveChangesAsync();
+
+                        Accounting _padreaccount = new Accounting
+                        {
+                             AccountName = _TypeAccountq.TypeAccountName,  
+                             AccountCode= _TypeAccountq.TypeAccountName,
+                             IsCash =false,
+                            
+                             // AccountCode = _TypeAccountq.
+                             UsuarioCreacion = _TypeAccountq.CreatedUser,
+                             UsuarioModificacion = _TypeAccountq.ModifiedUser,
+                             FechaCreacion = DateTime.Now,
+                             FechaModificacion = DateTime.Now,
+                             ParentAccountId = null,
+                             IdEstado = 1,
+                             Estado="Activo",
+                        };
+
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _TypeAccount.TypeAccountId,
+                            DocType = "TypeAccount",
+                            ClaseInicial =
+                           Newtonsoft.Json.JsonConvert.SerializeObject(_TypeAccountq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _TypeAccountq.CreatedUser,
+                            UsuarioModificacion = _TypeAccountq.ModifiedUser,
+                            UsuarioEjecucion = _TypeAccountq.ModifiedUser,
+
+                        });
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        return await Task.Run(()=> BadRequest($"Ocurrio un error:{ex.Message}"));
+                    }
+                  
+                }
             }
             catch (Exception ex)
             {
