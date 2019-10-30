@@ -136,7 +136,7 @@ namespace ERPAPI.Controllers
                         Accounting _padreaccount = new Accounting
                         {
                              AccountName = _TypeAccountq.TypeAccountName,  
-                             AccountCode= _TypeAccountq.TypeAccountName,
+                             AccountCode= _TypeAccountq.TypeAccountId.ToString(),
                              IsCash =false,
                              Description = _TypeAccountq.TypeAccountName,
                             // AccountCode = _TypeAccountq.
