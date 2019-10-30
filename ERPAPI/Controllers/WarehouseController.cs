@@ -60,7 +60,7 @@ namespace coderush.Controllers.Api
         }
 
         // GET: api/Warehouse
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetWarehouse()
         {
             List<Warehouse> Items = new List<Warehouse>();
