@@ -120,11 +120,16 @@ namespace ERPAPI.Controllers
 
         private UserToken BuildToken(UserInfo userInfo)
         {
+            ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
+            ApplicationUserRole _approle = _context.UserRoles.Where(q => q.UserId == _appuser.Id).FirstOrDefault();
+            Branch _branch = _context.Branch.Where(b => b.BranchId == _appuser.BranchId).FirstOrDefault();
             var claims = new[]
              {
-                new Claim(JwtRegisteredClaimNames.UniqueName, userInfo.Email),
-                new Claim("miValor", "Lo que yo quiera"),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim("UserEmail", userInfo.Email),
+                new Claim("UserName", _appuser.UserName),
+                new Claim("BranchName", _branch.BranchName),
+                new Claim("Role", _approle.RoleName),
+                //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
              };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
@@ -140,7 +145,7 @@ namespace ERPAPI.Controllers
                expires: expiration,
                signingCredentials: creds);
 
-             ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
+             
              Int32? cambiopassworddias = Convert.ToInt32(_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q=>q.Valordecimal).FirstOrDefault());
              if (cambiopassworddias == null) { cambiopassworddias = 0; }
 
