@@ -133,12 +133,15 @@ namespace ERPAPI.Controllers
                         _context.TypeAccount.Add(_TypeAccountq);
                         await _context.SaveChangesAsync();
 
+                      CompanyInfo _co =  await  _context.CompanyInfo.FirstOrDefaultAsync();
                         Accounting _padreaccount = new Accounting
                         {
                              AccountName = _TypeAccountq.TypeAccountName,  
                              AccountCode= _TypeAccountq.TypeAccountId.ToString(),
                              IsCash =false,
                              Description = _TypeAccountq.TypeAccountName,
+                             CompanyInfoId = _co.CompanyInfoId,
+
                             // AccountCode = _TypeAccountq.
                              UsuarioCreacion = _TypeAccountq.CreatedUser,
                              UsuarioModificacion = _TypeAccountq.ModifiedUser,
