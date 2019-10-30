@@ -135,10 +135,15 @@ namespace ERPAPI.Controllers
 
                         Accounting _padreaccount = new Accounting
                         {
-                             AccountName = _TypeAccountq.TypeAccountName,                             
+                             AccountName = _TypeAccountq.TypeAccountName,  
+                             AccountCode= _TypeAccountq.TypeAccountName,
+                             IsCash =false,
+                            
                              // AccountCode = _TypeAccountq.
                              UsuarioCreacion = _TypeAccountq.CreatedUser,
                              UsuarioModificacion = _TypeAccountq.ModifiedUser,
+                             FechaCreacion = DateTime.Now,
+                             FechaModificacion = DateTime.Now,
                              ParentAccountId = null,
                              IdEstado = 1,
                              Estado="Activo",
