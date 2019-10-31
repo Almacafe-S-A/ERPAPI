@@ -48,6 +48,8 @@ namespace ERPAPI.Models
         [Display(Name = "UsuarioModificacion")]
         public string UsuarioModificacion { get; set; }
 
+        public List<ConciliacionLinea> ConciliacionLinea { get; set; }
+
     }
 
     public class ConciliacionDTO : Conciliacion

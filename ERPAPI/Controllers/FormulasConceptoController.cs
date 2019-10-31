@@ -86,7 +86,7 @@ namespace ERPAPI.Controllers
             FormulasConcepto Items = new FormulasConcepto();
             try
             {
-                Items = await _context.FormulasConcepto.Where(q => q.IdConcepto.Equals(Id)).FirstOrDefaultAsync();
+                Items = await _context.FormulasConcepto.Where(q => q.IdformulaConcepto.Equals(Id)).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
