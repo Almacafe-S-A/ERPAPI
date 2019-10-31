@@ -146,15 +146,15 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Formula payload)
+        public async Task<IActionResult> Delete([FromBody]Formula _Formula)
         {
-            Formula Formula = new Formula();
+            Formula _Formulaq = new Formula();
             try
             {
-                Formula = _context.Formula
-                .Where(x => x.IdFormula == (int)payload.IdFormula)
+                _Formulaq = _context.Formula
+                .Where(x => x.IdFormula == (Int64)_Formula.IdFormula)
                 .FirstOrDefault();
-                _context.Formula.Remove(Formula);
+                _context.Formula.Remove(_Formulaq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -164,7 +164,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(Formula));
+            return await Task.Run(() => Ok(_Formulaq));
 
         }
     }
