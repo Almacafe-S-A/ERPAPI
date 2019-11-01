@@ -420,7 +420,7 @@ namespace ERPAPI.Controllers
                         SalesOrderLine _soline = new SalesOrderLine();
                         SubProduct _su = new SubProduct();
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 1).FirstOrDefaultAsync();
-                        _soline = await _context.SalesOrderLine.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefaultAsync();
+                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
                         double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q=>q.ValorAFacturarMerma);
                         List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
                         ProformaInvoiceLineT.Add(new ProformaInvoiceLine
@@ -429,13 +429,14 @@ namespace ERPAPI.Controllers
                              SubProductName = "Almacenaje",
                              Price = _InvoiceCalculationlist[0].UnitPrice,
                              Quantity = _InvoiceCalculationlist.Sum(q=>q.Quantity),
-                             Amount = _InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist.Sum(q => q.Quantity),
+                             Amount = valfacturar,//_InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist.Sum(q => q.Quantity),
                              UnitOfMeasureId = _soline.UnitOfMeasureId,
                              UnitOfMeasureName = _soline.UnitOfMeasureName,
                              SubTotal = valfacturar,
                              TaxAmount = valfacturar * (_tax.TaxPercentage/100),
                              TaxId = _tax.TaxId,
-                             TaxCode = _tax.TaxCode,                              
+                             TaxCode = _tax.TaxCode,      
+                             TaxPercentage = _tax.TaxPercentage,
                              Total = valfacturar + (valfacturar * (_tax.TaxPercentage / 100)),
 
                         });
@@ -443,7 +444,7 @@ namespace ERPAPI.Controllers
                         _su = new SubProduct();
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 2).FirstOrDefaultAsync();
                         _soline = new SalesOrderLine();
-                        _soline = await _context.SalesOrderLine.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefaultAsync();
+                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
 
                         double preciocot = 0;
                         double quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
@@ -458,14 +459,15 @@ namespace ERPAPI.Controllers
                                 SubProductName = _su.ProductName,
                                 Price = preciocot,
                                 Quantity = quantitycot,
-                                Amount = preciocot * quantitycot,
+                                Amount = (preciocot * valfacturar) / 1000, //preciocot * quantitycot,
                                 SubTotal = (preciocot * valfacturar)/1000,
                                 TaxAmount = taxamount,
                                 TaxId = _tax.TaxId,
                                 UnitOfMeasureId = _soline.UnitOfMeasureId,
                                 UnitOfMeasureName = _soline.UnitOfMeasureName,
                                 TaxCode = _tax.TaxCode,
-                                Total = (preciocot * quantitycot) + taxamount,
+                                TaxPercentage = _tax.TaxPercentage,
+                                Total = (preciocot * valfacturar) / 1000 + taxamount,
 
                             });
                         }
@@ -473,17 +475,19 @@ namespace ERPAPI.Controllers
                         _su = new SubProduct();
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 4).FirstOrDefaultAsync();
                         _soline = new SalesOrderLine();
-                        _soline = await _context.SalesOrderLine.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefaultAsync();
+                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
 
                         if (_soline != null)
                         {
 
                             preciocot = _soline.Price ;
-                           
+
+                            List<Int64> IdsRecibos = await _context.RecibosCertificado.Where(q => _Kardexq.Ids.Contains(q.IdCD)).Select(q=>q.IdRecibo).ToListAsync();
 
                             List<GoodsReceived> _entradas = await _context.GoodsReceived
                                                                    .Include(q=>q._GoodsReceivedLine)
                                                                    .Where(q => q.CustomerId == _customer.CustomerId)
+                                                                   .Where(q=> IdsRecibos.Contains(q.GoodsReceivedId))
                                                                    .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
                                                                    .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
                             double sumaentradas = 0;
@@ -492,10 +496,12 @@ namespace ERPAPI.Controllers
                                 sumaentradas += entrada._GoodsReceivedLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
                             }
 
+                            List<Int64> IdsEntregas = await _context.RecibosCertificado.Where(q => _Kardexq.Ids.Contains(q.IdCD)).Select(q => q.IdRecibo).ToListAsync();
                             List<GoodsDelivered> _salidas = await _context.GoodsDelivered
 
                                                                   .Include(q => q._GoodsDeliveredLine)
                                                                   .Where(q=>q.CustomerId== _customer.CustomerId)
+                                                                    .Where(q => IdsEntregas.Contains(q.GoodsDeliveredId))
                                                                   .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
                                                                   .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
                             double sumasalidas = 0;
@@ -516,11 +522,12 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = _soline.UnitOfMeasureName,
                                 Price = preciocot,
                                 Quantity = quantitycot,
-                                Amount = totalentradassalidas * preciocot ,
+                                Amount = (preciocot * quantitycot), //totalentradassalidas * preciocot ,
                                 SubTotal = (preciocot * quantitycot) ,
                                 TaxAmount = taxamount,
                                 TaxId = _tax.TaxId,
                                 TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
                                 Total = (preciocot * quantitycot) + taxamount,
 
                             });
@@ -530,7 +537,7 @@ namespace ERPAPI.Controllers
                         _su = new SubProduct();
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 8).FirstOrDefaultAsync();
                         _soline = new SalesOrderLine();
-                        _soline = await _context.SalesOrderLine.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefaultAsync();
+                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
 
                         if(_soline!=null)
                         {
@@ -545,11 +552,12 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = _soline.UnitOfMeasureName,
                                 Price = preciocot,
                                 Quantity = quantitycot,
-                                Amount = preciocot * quantitycot,
+                                Amount = ((preciocot) * valfacturar), //preciocot * quantitycot,
                                 SubTotal = ((preciocot) * valfacturar) ,
                                 TaxAmount = taxamount,
                                 TaxId = _tax.TaxId,
                                 TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
                                 Total = (preciocot * valfacturar) + taxamount,
                             });
 
