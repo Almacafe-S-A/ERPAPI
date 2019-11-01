@@ -138,6 +138,7 @@ namespace ERPAPI.Controllers
                         {
                              AccountName = _TypeAccountq.TypeAccountName,  
                              AccountCode= _TypeAccountq.TypeAccountId.ToString(),
+                             TypeAccountId = _TypeAccountq.TypeAccountId,
                              IsCash =false,
                              Description = _TypeAccountq.TypeAccountName,
                              CompanyInfoId = _co.CompanyInfoId,

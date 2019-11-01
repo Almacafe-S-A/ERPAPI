@@ -86,6 +86,45 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+
+        // GET: api/JournalEntry
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetJournalEntryAsientos()
+        {
+            List<JournalEntry> Items = new List<JournalEntry>();
+            try
+            {
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 65).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        // GET: api/JournalEntry
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetJournalEntryAjustes()
+
+        {
+            List<JournalEntry> Items = new List<JournalEntry>();
+            try
+            {
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 66).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la JournalEntry por medio del Id enviado.
         /// </summary>
