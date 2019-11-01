@@ -113,7 +113,7 @@ namespace ERPAPI.Controllers
             InsuranceEndorsementLine Items = new InsuranceEndorsementLine();
             try
             {
-                Items = await _context.InsuranceEndorsementLine.Where(q => q.Id == InsuranceEndorsementLineId).FirstOrDefaultAsync();
+                Items = await _context.InsuranceEndorsementLine.Where(q => q.InsuranceEndorsementLineId == InsuranceEndorsementLineId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -164,7 +164,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _InsuranceEndorsementLineq = await (from c in _context.InsuranceEndorsementLine
-                                 .Where(q => q.Id == _InsuranceEndorsementLine.Id)
+                                 .Where(q => q.InsuranceEndorsementLineId == _InsuranceEndorsementLine.InsuranceEndorsementLineId)
                                              select c
                                 ).FirstOrDefaultAsync();
 
@@ -195,7 +195,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _InsuranceEndorsementLineq = _context.InsuranceEndorsementLine
-                .Where(x => x.Id == (Int64)_InsuranceEndorsementLine.Id)
+                .Where(x => x.InsuranceEndorsementLineId == (Int64)_InsuranceEndorsementLine.InsuranceEndorsementLineId)
                 .FirstOrDefault();
 
                 _context.InsuranceEndorsementLine.Remove(_InsuranceEndorsementLineq);

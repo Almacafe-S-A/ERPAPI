@@ -92,7 +92,7 @@ namespace ERPAPI.Controllers
             InsuranceEndorsement Items = new InsuranceEndorsement();
             try
             {
-                Items = await _context.InsuranceEndorsement.Where(q => q.Id == InsuranceEndorsementId).FirstOrDefaultAsync();
+                Items = await _context.InsuranceEndorsement.Where(q => q.InsuranceEndorsementId == InsuranceEndorsementId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -238,7 +238,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _InsuranceEndorsementq = await (from c in _context.InsuranceEndorsement
-                                 .Where(q => q.Id == _InsuranceEndorsement.Id)
+                                 .Where(q => q.InsuranceEndorsementId == _InsuranceEndorsement.InsuranceEndorsementId)
                                          select c
                                 ).FirstOrDefaultAsync();
 
@@ -269,7 +269,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _InsuranceEndorsementq = _context.InsuranceEndorsement
-                .Where(x => x.Id == (Int64)_InsuranceEndorsement.Id)
+                .Where(x => x.InsuranceEndorsementId == (Int64)_InsuranceEndorsement.InsuranceEndorsementId)
                 .FirstOrDefault();
 
                 _context.InsuranceEndorsement.Remove(_InsuranceEndorsementq);

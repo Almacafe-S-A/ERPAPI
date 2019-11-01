@@ -23,9 +23,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Crédito")]
         public double Credit { get; set; }
-        [Display(Name = "Dédito")]
+        [Display(Name = "Debito")]
 
-        public double Dedit { get; set; }
+        public double Debit { get; set; }
         [Required]
         [Display(Name = "Monto")]
         public Double Monto { get; set; }

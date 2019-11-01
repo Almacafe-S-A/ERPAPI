@@ -157,8 +157,43 @@ namespace ERPAPI.Controllers
                             p.IdEstado = 2;
                             _context.Entry(p).CurrentValues.SetValues((p));
                         }
-                        
 
+
+                        Employees _Employee = new Employees();
+                        _Employee = await _context.Employees.Where(q => q.IdEmpleado == _EmployeeSalary.IdEmpleado).FirstOrDefaultAsync();
+
+                        var Salario = _EmployeeSalary.QtySalary;
+                        _Employee.Salario = Salario;
+                        _context.Entry(_Employee).CurrentValues.SetValues((_Employee));
+
+
+
+                        //await _context.SaveChangesAsync();
+
+                        
+                        //_Employee = await (from c in _context.Employees
+                        //                 .Where(q => q.IdEmpleado == _EmployeeSalary.IdEmpleado)
+                        //                          select c
+                        //                ).FirstOrDefaultAsync();
+                       
+
+                        //_context.Alert.Update(_Alertq);
+                        //await _context.SaveChangesAsync();
+                        BitacoraWrite _writeejec = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _EmployeeSalary.EmployeeSalaryId,
+                            DocType = "Employeed",
+                            ClaseInicial =
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeSalaryq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeSalary, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Actualizar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _EmployeeSalary.CreatedUser,
+                            UsuarioModificacion = _EmployeeSalary.ModifiedUser,
+                            UsuarioEjecucion = _EmployeeSalary.ModifiedUser,
+
+                        });
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
@@ -221,7 +256,36 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _EmployeeSalary.ModifiedUser,
 
                         });
+                        
+                        //await _context.SaveChangesAsync();
 
+                        if (_EmployeeSalary.IdEstado == 1)
+                        {
+                            Employees _Employee = new Employees();
+                            _Employee = await _context.Employees.Where(q => q.IdEmpleado == _EmployeeSalary.IdEmpleado).FirstOrDefaultAsync();
+
+                            var Salario = _EmployeeSalary.QtySalary;
+                            _Employee.Salario = Salario;
+                            _context.Entry(_Employee).CurrentValues.SetValues((_Employee));
+
+                            //_context.Alert.Update(_Alertq);
+                            //await _context.SaveChangesAsync();
+                            BitacoraWrite _writeejec = new BitacoraWrite(_context, new Bitacora
+                            {
+                                IdOperacion = _EmployeeSalary.EmployeeSalaryId,
+                                DocType = "Employeed",
+                                ClaseInicial =
+                                  Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeSalaryq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeSalary, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                Accion = "Actualizar",
+                                FechaCreacion = DateTime.Now,
+                                FechaModificacion = DateTime.Now,
+                                UsuarioCreacion = _EmployeeSalary.CreatedUser,
+                                UsuarioModificacion = _EmployeeSalary.ModifiedUser,
+                                UsuarioEjecucion = _EmployeeSalary.ModifiedUser,
+
+                            });
+                        }
                         await _context.SaveChangesAsync();
                         transaction.Commit();
                     }

@@ -18,6 +18,14 @@ namespace ERPAPI.Models
         public DateTime? FechaIngreso { get; set; }
         public decimal? Salario { get; set; }
         public string Identidad { get; set; }
+
+        public string RTN { get; set; }
+
+        public long? IdTipoPlanilla { get; set; }
+        [ForeignKey("IdTipoPlanilla")]
+        public TipoPlanillas TipoPlanilla { get; set; }
+
+        public string Profesion { get; set; }
         public DateTime? FechaEgreso { get; set; }
         public string Direccion { get; set; }
         public string Genero { get; set; }
@@ -62,7 +70,7 @@ namespace ERPAPI.Models
 
         public string CuentaBanco { get; set; }
 
-        public DateTime FechaFinContrato { get; set; }
+        public DateTime? FechaFinContrato { get; set; }
         public string Telefono { get; set; }
         public int Extension { get; set; }
         public string Notas { get; set; }
