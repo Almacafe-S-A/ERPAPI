@@ -187,6 +187,10 @@ namespace ERPAPI.Controllers
             {
 
                 var user = new ApplicationUser { UserName = _usuario.Email, Email = _usuario.Email, BranchId = _usuario.BranchId };
+                user.FechaCreacion = DateTime.Now;
+                user.FechaModificacion = DateTime.Now;
+                user.UsuarioCreacion = _usuario.UsuarioCreacion;
+                user.UsuarioModificacion = _usuario.UsuarioModificacion;
                 var result = await _userManager.CreateAsync(user, _usuario.PasswordHash);
 
                 if (!result.Succeeded)
@@ -269,14 +273,16 @@ namespace ERPAPI.Controllers
                     ).FirstOrDefault();
                 _usuario.BranchId = _usuario.Branch.BranchId;
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
-                _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;
+                _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
+                _usuario.FechaModificacion = DateTime.Now;
 
                 string password = "";
 
                 if (_usuario.cambiarpassword) { password= _usuario.PasswordHash; }
                 else
                 {
-                    _context.Entry(ApplicationUserq).Property(x => x.PasswordHash).IsModified = false;
+                    _usuario.PasswordHash = ApplicationUserq.PasswordHash;
+                    //_context.Entry(ApplicationUserq).Property(x => x.PasswordHash).IsModified = false;
                     //_context.Entry(ApplicationUserq).Property(x => x.PhoneNumber).IsModified = true;
                     //_context.Entry(ApplicationUserq).Property(x => x.IsEnabled).IsModified = true;
 
