@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191101165755_WareHouseName_ContollPallets")]
+    partial class WareHouseName_ContollPallets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1327,7 +1329,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Credit");
 
-                    b.Property<double>("Debit");
+                    b.Property<double>("Dedit");
 
                     b.Property<long?>("ElementoConfiguracion");
 
@@ -3139,7 +3141,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaEgreso");
 
-                    b.Property<DateTime?>("FechaFinContrato");
+                    b.Property<DateTime>("FechaFinContrato");
 
                     b.Property<DateTime?>("FechaIngreso");
 
@@ -3173,8 +3175,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdTipoContrato");
 
-                    b.Property<long?>("IdTipoPlanilla");
-
                     b.Property<string>("Identidad");
 
                     b.Property<string>("NombreContacto");
@@ -3182,10 +3182,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("NombreEmpleado");
 
                     b.Property<string>("Notas");
-
-                    b.Property<string>("Profesion");
-
-                    b.Property<string>("RTN");
 
                     b.Property<decimal?>("Salario");
 
@@ -3222,8 +3218,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("IdState");
 
                     b.HasIndex("IdTipoContrato");
-
-                    b.HasIndex("IdTipoPlanilla");
 
                     b.ToTable("Employees");
                 });
@@ -4561,9 +4555,13 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsement", b =>
                 {
-                    b.Property<int>("InsuranceEndorsementId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AssuredDifernce");
+
+                    b.Property<double>("CertificateBalalnce");
 
                     b.Property<long>("CustomerId");
 
@@ -4585,30 +4583,26 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("TotalAmountLp");
 
-                    b.Property<double>("TotalAssuredDifernce");
-
-                    b.Property<double>("TotalCertificateBalalnce");
-
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
 
-                    b.Property<int>("WarehouseId");
+                    b.Property<int>("WarehouseID");
 
                     b.Property<string>("WarehouseName");
 
-                    b.Property<int>("WarehouseTypeId");
-
                     b.Property<string>("WarehouseTypeName");
 
-                    b.HasKey("InsuranceEndorsementId");
+                    b.Property<int>("WharehouseTypeId");
+
+                    b.HasKey("Id");
 
                     b.ToTable("InsuranceEndorsement");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsementLine", b =>
                 {
-                    b.Property<int>("InsuranceEndorsementLineId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -4626,7 +4620,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("WarehouseName");
 
-                    b.HasKey("InsuranceEndorsementLineId");
+                    b.HasKey("Id");
 
                     b.HasIndex("InsuranceEndorsementId");
 
@@ -8562,10 +8556,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("IdTipoContrato")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.TipoPlanillas", "TipoPlanilla")
-                        .WithMany()
-                        .HasForeignKey("IdTipoPlanilla");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EndososBonoLine", b =>
