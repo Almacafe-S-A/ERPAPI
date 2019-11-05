@@ -56,7 +56,7 @@ namespace ERPAPI.Controllers
             //guardar[0].AccountId ;
             guardar[0].UsuarioModificacion = "aguilar";
             guardar[0].AccountId = 1;
-            guardar[0].Moneda = 1;
+            guardar[0].Moneda = new Currency { CurrencyId = 1}; /////prueba conciliacion
             try
             {
                 //using (var transaction = _context.Database.BeginTransaction())
