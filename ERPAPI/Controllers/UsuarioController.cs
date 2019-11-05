@@ -186,7 +186,7 @@ namespace ERPAPI.Controllers
             try
             {
 
-                var user = new ApplicationUser { UserName = _usuario.Email, Email = _usuario.Email, BranchId = _usuario.BranchId };
+                var user = new ApplicationUser { UserName = _usuario.Email, Email = _usuario.Email, BranchId = _usuario.BranchId,PhoneNumber = _usuario.PhoneNumber };
                 user.FechaCreacion = DateTime.Now;
                 user.FechaModificacion = DateTime.Now;
                 user.UsuarioCreacion = _usuario.UsuarioCreacion;
