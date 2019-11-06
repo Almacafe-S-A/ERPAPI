@@ -85,6 +85,33 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene el Listado de DepreciationFixedAssets por Id de FixedAsset
+        /// </summary>
+        /// <param name="FixedAssetId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{FixedAssetId}")]
+        public async Task<IActionResult> GetDepreciationFixedAssetByFixedAssetId(Int64 FixedAssetId)
+        {
+            var query = _context.DepreciationFixedAsset.AsQueryable();
+            List<DepreciationFixedAsset> Items = new List<DepreciationFixedAsset>();
+            try
+            {
+                Items = await query.Where(dep => dep.FixedAssetId == FixedAssetId)
+                    .ToListAsync();
+                //Items = await _context.DepreciationFixedAsset.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
         /// Obtiene los Datos de la DepreciationFixedAsset por medio del Id enviado.
         /// </summary>
         /// <param name="DepreciationFixedAssetId"></param>
@@ -189,15 +216,54 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_DepreciationFixedAssetq));
+            return await Task.Run(() => Ok());
 
         }
 
+        /// <summary>
+        /// Elimina Todos los DepreciationFixedAsset por FixedAssetID       
+        /// </summary>
+        /// <param name="_DepreciationFixedAsset"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DeleteAll([FromBody]DepreciationFixedAsset _DepreciationFixedAsset)
+        {
+            try
+            {
+                _context.Database.ExecuteSqlCommand($"DELETE FROM DepreciationFixedAsset WHERE FixedAssetId={_DepreciationFixedAsset.FixedAssetId}");
 
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+            return await Task.Run(() => Ok());
 
+        }
 
+        /// <summary>
+        /// Elimina Todos los DepreciationFixedAsset por FixedAssetID       
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DeleteByFixedAssetId([FromBody]Int64 _id)
+        {
+            try
+            {
+                _context.Database.ExecuteSqlCommand($"DELETE FROM DepreciationFixedAsset WHERE FixedAssetId={_id}");
 
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+            return await Task.Run(() => Ok());
 
+        }
 
     }
 }
