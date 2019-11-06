@@ -110,6 +110,22 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{Name}")]
+        public async Task<IActionResult> GetCountryByName(String Name)
+        {
+            Country Items = new Country();
+            try
+            {
+                Items = await _context.Country.Where(q => q.Name == Name).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Inserta una nueva Country
