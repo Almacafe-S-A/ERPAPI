@@ -122,7 +122,7 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.InsurancesCertificateLine
-                             .OrderBy(p =>p.CounterInsurancesCertificate).FirstOrDefaultAsync();
+                             .OrderByDescending(p =>p.CounterInsurancesCertificate).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -148,6 +148,12 @@ namespace ERPAPI.Controllers
             {
                 _InsurancesCertificateLineq = _InsurancesCertificateLine;
                 _context.InsurancesCertificateLine.Add(_InsurancesCertificateLineq);
+                Numalet let;
+                let = new Numalet();
+                let.SeparadorDecimalSalida = "Lempiras";
+                let.MascaraSalidaDecimal = "00/100 ";
+                let.ApocoparUnoParteEntera = true;
+                _InsurancesCertificateLineq.TotalLetras = let.ToCustomCardinal((_InsurancesCertificateLineq.TotalofProductLine)).ToUpper();
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
