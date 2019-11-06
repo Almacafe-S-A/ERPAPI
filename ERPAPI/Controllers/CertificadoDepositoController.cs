@@ -281,8 +281,8 @@ namespace ERPAPI.Controllers
                             WarehouseName = _CertificadoDeposito.WarehouseName,
                             Aduana = _CertificadoDeposito.Aduana,
                             ManifiestoNo = _CertificadoDeposito.ManifiestoNo,
-
-
+                            
+                             
                         };
 
                         _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);

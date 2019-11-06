@@ -33,7 +33,11 @@ namespace ERPAPI.Models
         public int InvoiceTypeId { get; set; }
 
         [Display(Name = "Cotización Asociada")]
-        public Int64 SalesOrderId { get; set; }     
+        public Int64 SalesOrderId { get; set; }
+
+        [Display(Name = "Proforma Asociada")]
+        public Int64 ProformaInvoiceId { get; set; }
+
 
         [Display(Name = "Certificado depósito")]
         public Int64 CertificadoDepositoId { get; set; }

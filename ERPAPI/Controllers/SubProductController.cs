@@ -326,7 +326,11 @@ namespace ERPAPI.Controllers
             SubProduct subProduct = _subproduct;
             try
             {
-              
+                subProduct.ProductTypeName = await _context.ProductType
+                                            .Where(q => q.ProductTypeId == _subproduct.ProductTypeId)
+                                            .Select(q=>q.ProductTypeName)
+                                            .FirstOrDefaultAsync();
+
                 _context.SubProduct.Add(subProduct);
                 await  _context.SaveChangesAsync();
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora { IdOperacion = subProduct.SubproductId,DocType="SubProducto" ,
@@ -388,6 +392,11 @@ namespace ERPAPI.Controllers
                                    .Where(q => q.SubproductId == _Subproduct.SubproductId)
                                           select c
                                     ).FirstOrDefault();
+
+                _Subproduct.ProductTypeName = await _context.ProductType
+                                          .Where(q => q.ProductTypeId == _Subproduct.ProductTypeId)
+                                          .Select(q => q.ProductTypeName)
+                                          .FirstOrDefaultAsync();
 
                 _Subproduct.FechaCreacion = subproductq.FechaCreacion;
                 _Subproduct.UsuarioCreacion = subproductq.UsuarioCreacion;

@@ -134,6 +134,45 @@ namespace ERPAPI.Controllers
                             _context.DebitNoteLine.Add(item);
                         }
 
+
+                        await _context.SaveChangesAsync();
+
+                        JournalEntry _je = new JournalEntry
+                        {
+                            Date = _DebitNoteq.DebitNoteDate,
+                            Memo = "Nota de débito de clientes",
+                            DatePosted = _DebitNoteq.DebitNoteDueDate,
+                            ModifiedDate = DateTime.Now,
+                            CreatedDate = DateTime.Now,
+                            ModifiedUser = _DebitNoteq.UsuarioModificacion,
+                            CreatedUser = _DebitNoteq.UsuarioCreacion,
+                            DocumentId = _DebitNoteq.DebitNoteId,
+                            VoucherType = 4,
+                    };
+
+                        Accounting account = new Accounting();
+
+
+                        foreach (var item in _DebitNoteq.DebitNoteLine)
+                        {
+                            account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
+
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                AccountId = Convert.ToInt32(item.AccountId),
+                                AccountName = account.AccountName,
+                                Description = account.AccountName,
+                                Credit = item.Total,
+                                Debit = 0,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedUser = _DebitNoteq.UsuarioCreacion,
+                                ModifiedUser = _DebitNoteq.UsuarioModificacion,
+                                Memo = "Nota de débito",
+                            });
+
+                        }
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora

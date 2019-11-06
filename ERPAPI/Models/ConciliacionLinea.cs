@@ -13,14 +13,19 @@ namespace ERPAPI.Models
         [Display(Name = "Id")]
         public int ConciliacionLineaId { get; set; }
 
-
-
         [ForeignKey("ElementoConfiguracion")]
         public ElementoConfiguracion TipoTransaccion { get; set; }
 
+        [Display(Name = "Cuenta")]
+        public Int64 AccountId { get; set; }
+        [Display(Name = "Cuenta")]
+        public string AccountName { get; set; }
 
+        [Display(Name = "Crédito")]
+        public double Credit { get; set; }
+        [Display(Name = "Debito")]
 
-
+        public double Debit { get; set; }
         [Required]
         [Display(Name = "Monto")]
         public Double Monto { get; set; }

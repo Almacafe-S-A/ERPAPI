@@ -16,8 +16,12 @@ namespace ERPAPI.Models
         [Required]
         public Guid IdPolicy { get; set; }
 
+        public string PolicyName { get; set; }
+
         [Required]
         public Guid IdRol { get; set; }
+
+        public string RolName { get; set; }
 
         [Required]
         public string UsuarioCreacion { get; set; }

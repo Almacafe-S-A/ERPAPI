@@ -84,6 +84,30 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => dependientes);
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la EmployeeDocument por medio del Id enviado.
+        /// </summary>
+        /// <param name="EmployeeId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{EmployeeId}")]
+        public async Task<IActionResult> GetDependientesByEmployeeId(Int64 EmployeeId)
+        {
+            List<Dependientes> Items = new List<Dependientes>();
+            try
+            {
+                Items = await _context.Dependientes.Where(q => q.IdEmpleado == EmployeeId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return Ok(Items);
+        }
+
         // PUT: api/Dependientes/5
         [HttpPut("[action]")]
         public async Task<ActionResult<Dependientes>> Update([FromBody]Dependientes _Dependientes)

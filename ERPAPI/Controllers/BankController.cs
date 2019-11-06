@@ -109,6 +109,23 @@ namespace ERPAPI.Controllers
         }
 
 
+
+        [HttpGet("[action]/{BankName}")]
+        public async Task<IActionResult> GetBankByName(String BankName)
+        {
+            Bank Items = new Bank();
+            try
+            {
+                Items = await _context.Bank.Where(q => q.BankName == BankName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Inserta una nueva Bank
         /// </summary>

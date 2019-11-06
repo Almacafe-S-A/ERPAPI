@@ -86,6 +86,45 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+
+        // GET: api/JournalEntry
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetJournalEntryAsientos()
+        {
+            List<JournalEntry> Items = new List<JournalEntry>();
+            try
+            {
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 65).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        // GET: api/JournalEntry
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetJournalEntryAjustes()
+
+        {
+            List<JournalEntry> Items = new List<JournalEntry>();
+            try
+            {
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 66).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la JournalEntry por medio del Id enviado.
         /// </summary>
@@ -115,17 +154,66 @@ namespace ERPAPI.Controllers
         /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
         /// </summary>
         /// 
-        /// <param name="Date"></param>
+        /// <param name="FechaInicio"></param>
+        /// <param name="FechaFinal"></param>
+        /// <param name="AccountId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{Date}")]
-        public async Task<IActionResult> GetJournalEntryByDate(DateTime Date)
+        [HttpGet("[action]/{FechaInicio}/{FechaFinal}/{AccountId}")]
+        public async Task<IActionResult> GetJournalEntryByDateAccount(string FechaInicio,string FechaFinal, Int64 AccountId)
         {
             //string fecha = Date.ToString("yyyy-MM-dd");
-            JournalEntry Items = new JournalEntry();
+            DateTime fechainicio = Convert.ToDateTime(FechaInicio);
+            DateTime fechafinal = Convert.ToDateTime(FechaFinal);
+            //List<JournalEntry> Items = new List<JournalEntry>();
+            //var Items;
+            //List<JournalEntry> Items = new List<JournalEntry>();
+
+            //var Items = new List<double>();
+
+            //var Items = new List<double>();
+
+            List<ConciliacionDTO> Items = new List<ConciliacionDTO>();
+
+
 
             try
             {
-                Items = await _context.JournalEntry.Where(q => q.JournalEntryId == 8).FirstOrDefaultAsync();
+
+
+               
+
+                var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
+                  + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
+                  + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
+                 + "  ";
+
+
+                using (var dr = await _context.Database.ExecuteSqlQueryAsync(query))
+                {
+                    // Output rows.
+                    var reader = dr.DbDataReader;
+                    while (reader.Read())
+                    {
+                        //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
+
+                        Items.Add(new ConciliacionDTO
+                        {
+                            Debit = Convert.ToDouble(reader["Debito"]),
+                            Credit = Convert.ToDouble(reader["Credito"])
+                        });
+
+                        //Items.Add(Convert.ToDouble(reader["CREDITO"]));
+                        //Items.Add(
+                        //{
+                        //    //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
+                        //DEBITO = reader["DEBITO"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalCredit"]),
+                        //CREDITO = reader["CREDITO"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalDebit"]),
+                        //});
+
+                    }
+                }
+
+               
 
             }
             catch (Exception ex)

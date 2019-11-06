@@ -39,11 +39,13 @@ namespace ERP.Contexts
         public DbSet<CostListItem> CostListItem { get; set; }
         public DbSet<CostCenter> CostCenter { get; set; }
 
+        public DbSet<Concept> Concept { get; set; }
+
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-      //  public DbSet<PurchPartners> PurchPartners { get; set; }
+          public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
        // public DbSet<PurchDocument> PurchDocument { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
@@ -71,7 +73,22 @@ namespace ERP.Contexts
         public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
         public DbSet<FixedAsset> FixedAsset { get; set; }
         public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
-        
+
+        /// <summary>
+        /// ///Cierres
+        /// </summary>
+
+        public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
+        public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
+
+        public DbSet<CierresAccounting> CierresAccounting { get; set; }
+
+        public DbSet<CierresJournal> CierresJournal { get; set; }
+
+        public DbSet<InsuranceEndorsement> InsuranceEndorsement { get; set; }
+
+        public DbSet<InsuranceEndorsementLine> InsuranceEndorsementLine { get; set; }
+
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }

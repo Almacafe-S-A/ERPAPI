@@ -109,13 +109,14 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        [HttpGet("[action]/{InvoiceId}")]
-        public async Task<IActionResult> GetInvoiceLineById(Int64 InvoiceId)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetInvoiceLineById([FromBody]Invoice _Invoice)
         {
             Invoice Items = new Invoice();
             try
             {
-                Items = await _context.Invoice.Include(q=>q.InvoiceLine).Where(q => q.InvoiceId == InvoiceId).FirstOrDefaultAsync();
+                    Items = await _context.Invoice.Include(q => q.InvoiceLine).Where(q => q.Sucursal==_Invoice.Sucursal && q.Caja==_Invoice.Caja && q.NumeroDEI==_Invoice.NumeroDEI).FirstOrDefaultAsync();
+                
             }
             catch (Exception ex)
             {
@@ -232,6 +233,9 @@ namespace ERPAPI.Controllers
                                 ModifiedUser = _Invoiceq.UsuarioModificacion,
                                 CreatedUser = _Invoiceq.UsuarioCreacion,
                                 DocumentId = _Invoiceq.InvoiceId,
+                                TypeOfAdjustmentId = 65,                               
+                                VoucherType = 1,
+                               
                             };
 
                            
@@ -246,9 +250,15 @@ namespace ERPAPI.Controllers
                                     if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
                                            && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
                                     {
+
+                                        _iline.AccountId = Convert.ToInt32(item.AccountId);
+                                        _iline.AccountName = item.AccountName;
+                                        _context.Entry(_iline).CurrentValues.SetValues((_iline));                                   
+
                                         _je.JournalEntryLines.Add(new JournalEntryLine
                                         {
                                             AccountId = Convert.ToInt32(item.AccountId),
+                                            AccountName = item.AccountName,
                                             Description = item.AccountName,
                                             Credit = item.DebitCredit == "Credito" ? _iline.SubTotal : 0,
                                             Debit = item.DebitCredit == "Debito" ? _iline.SubTotal : 0,
@@ -267,6 +277,7 @@ namespace ERPAPI.Controllers
                                         _je.JournalEntryLines.Add(new JournalEntryLine
                                         {
                                             AccountId = Convert.ToInt32(item.AccountId),
+                                            AccountName = item.AccountName,
                                             Description = item.AccountName,
                                             Credit = item.DebitCredit == "Credito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0,
                                             Debit = item.DebitCredit == "Debito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0,
