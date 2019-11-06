@@ -74,6 +74,8 @@ namespace ERP.Contexts
         public DbSet<FixedAsset> FixedAsset { get; set; }
         public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
 
+        public DbSet<SeveridadRiesgo> SeveridadRiesgo { get; set; }
+
         /// <summary>
         /// ///Cierres
         /// </summary>
