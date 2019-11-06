@@ -56,14 +56,20 @@ namespace ERPAPI.Controllers
             //guardar[0].AccountId ;
             guardar[0].UsuarioModificacion = "aguilar";
             guardar[0].AccountId = 1;
-            guardar[0].Moneda = new Currency { CurrencyId = 1}; /////prueba conciliacion
+            //guardar[0].Moneda = new Currency { CurrencyId = 1};
+            //guardar[0].TipoTransaccion = new ElementoConfiguracion { Id = 1 };/////prueba conciliacion
             try
             {
                 //using (var transaction = _context.Database.BeginTransaction())
                 //{
                 try
                 {
-                    _context.BulkInsert(guardar);
+                    foreach (var item in guardar)
+                    {
+                        _context.ConciliacionLinea.Add(item);
+                    }
+                    
+                    //_context.BulkInsert(guardar);
                     await _context.SaveChangesAsync();
 
 
