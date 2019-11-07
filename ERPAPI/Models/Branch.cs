@@ -16,6 +16,12 @@ namespace ERPAPI.Models
         public string BranchCode { get; set; }
         public int Numero { get; set; }
 
+        [Display(Name = "Cliente")]
+        public Int64? CustomerId { get; set; }
+
+        [Display(Name = "Cliente")]
+        public string CustomerName { get; set; }
+
         [Required]
         [Display(Name = "Nombre Sucursal")]
         public string BranchName { get; set; }
