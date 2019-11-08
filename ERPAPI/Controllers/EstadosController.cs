@@ -101,13 +101,13 @@ namespace ERPAPI.Controllers
 
         }
 
-        [HttpGet("[action]/{NombreEstado}")]
-        public async Task<IActionResult> GetEstadoByNombreEstado(String NombreEstado)
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetEstadoByNombreEstado(String NombreEstado,Int64 IdConfi)
         {
             Estados Items = new Estados();
             try
             {
-                Items = await _context.Estados.Where(q => q.NombreEstado == NombreEstado).FirstOrDefaultAsync();
+                Items = await _context.Estados.Where(q => q.NombreEstado == NombreEstado && q.IdGrupoEstado==IdConfi).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

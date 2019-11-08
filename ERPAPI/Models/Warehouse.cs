@@ -51,7 +51,11 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de vencimiento poliza")]
         public DateTime FechaVencimientoPoliza { get; set; }
 
+        [Display(Name = "Cliente")]
+        public Int64? CustomerId { get; set; }
 
+        [Display(Name = "Cliente")]
+        public string CustomerName { get; set; }
 
         [Required]
         [Display(Name = "Usuario de creación")]
