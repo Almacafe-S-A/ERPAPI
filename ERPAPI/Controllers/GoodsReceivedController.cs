@@ -301,7 +301,7 @@ namespace ERPAPI.Controllers
                                                      ).FirstOrDefaultAsync();
                             if (_subproduct.ProductTypeId == 3)
                             {
-                                Alert AlertP = new Alert();
+                                //Alert AlertP = new Alert();
                                 Alert Alerta = new Alert();
                                 Alerta.DocumentId = item.SubProductId;
                                 Alerta.DocumentName = "LISTA PROHIBIDA";
@@ -314,7 +314,7 @@ namespace ERPAPI.Controllers
                                 Alerta.UsuarioModificacion = item.UsuarioModificacion;
                                 // var AlertaP = await InsertAlert(Alerta);
                                 _context.Alert.Add(Alerta);
-                                await _context.SaveChangesAsync();
+                                //await _context.SaveChangesAsync();
 
                                 BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
                                 {
@@ -331,7 +331,7 @@ namespace ERPAPI.Controllers
 
                                 });
 
-                                //await _context.SaveChangesAsync();
+                               // await _context.SaveChangesAsync();
 
                             }
 
