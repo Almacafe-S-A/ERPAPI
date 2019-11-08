@@ -57,14 +57,14 @@ namespace ERPAPI.Controllers
         }
 
 
-        [HttpGet("[action]/{InvoiceId}")]
-        public async Task<IActionResult> GetInsuranceEndorsementLineByInvoiceId(Int64 InvoiceId)
+        [HttpGet("[action]/{InsuranceEndorsementId}")]
+        public async Task<IActionResult> GetInsuranceEndorsementLineByInsuranceEndorsementId(Int64 InsuranceEndorsementId)
         {
             List<InsuranceEndorsementLine> Items = new List<InsuranceEndorsementLine>();
             try
             {
                 Items = await _context.InsuranceEndorsementLine
-                             .Where(q => q.InsuranceEndorsementId == InvoiceId).ToListAsync();
+                             .Where(q => q.InsuranceEndorsementId == InsuranceEndorsementId).ToListAsync();
             }
             catch (Exception ex)
             {

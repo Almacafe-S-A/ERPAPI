@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191107020036_Branch_Customer")]
+    partial class Branch_Customer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1455,35 +1457,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("ContactPersonId");
 
                     b.ToTable("ContactPerson");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ControlAsistencias", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Dia");
-
-                    b.Property<DateTime>("Fecha");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long?>("IdEmpleado");
-
-                    b.Property<string>("TipoAsistencia");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdEmpleado");
-
-                    b.ToTable("ControlAsistencias");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPallets", b =>
@@ -8465,13 +8438,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Currency", "Moneda")
                         .WithMany()
                         .HasForeignKey("IdMoneda");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.ControlAsistencias", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Employees", "Empleado")
-                        .WithMany()
-                        .HasForeignKey("IdEmpleado");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPalletsLine", b =>

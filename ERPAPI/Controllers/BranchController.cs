@@ -58,6 +58,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetBranchByCustomer(Int64 CustomerId)
+        {
+            List<Branch> Items = new List<Branch>();
+            try
+            {
+                Items = await _context.Branch.Where(q => q.CustomerId == CustomerId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+          
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Obtiene el Listado de sucursales.
@@ -99,7 +117,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                return await Task.Run(()=> BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
             return await Task.Run(() => Ok(Items));
