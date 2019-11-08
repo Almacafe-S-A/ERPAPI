@@ -259,7 +259,8 @@ namespace ERPAPI.Controllers
 
                 Items = await _context.SubProduct
                               .Where(q=> SubProductsCustomer.Contains(q.SubproductId))
-                              .Where(q => q.ProductTypeId == _CustomerTypeSubProduct.ProductTypeId).ToListAsync();
+                              //.Where(q => q.ProductTypeId == _CustomerTypeSubProduct.ProductTypeId)
+                              .ToListAsync();
 
             }
             catch (Exception ex)
