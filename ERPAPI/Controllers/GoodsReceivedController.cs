@@ -130,8 +130,76 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]/{SubProductId}")]
+        public async Task<ActionResult<SubProduct>> GetSubProductById(Int64 SubProductId)
+        {
+            SubProduct Items = new SubProduct();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.SubproductId == SubProductId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
+        /// Inserta una nueva Alert
+        /// </summary>
+        /// <param name="_Alert"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Alert>> InsertAlert([FromBody]Alert _Alert)
+        {
+            Alert _Alertq = new Alert();
+            try
+            {
+               // using (var transaction = _context.Database.BeginTransaction())
+                //{
+                   // try
+                   // {
+                        _Alertq = _Alert;
+                        _context.Alert.Add(_Alertq);
+                        await _context.SaveChangesAsync();
 
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Alert.AlertId,
+                            DocType = "Alert",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Alert.UsuarioCreacion,
+                            UsuarioModificacion = _Alert.UsuarioModificacion,
+                            UsuarioEjecucion = _Alert.UsuarioModificacion,
 
+                        });
+
+                        await _context.SaveChangesAsync();
+                   //     transaction.Commit();
+                    //}
+                    //catch (Exception ex)
+                  //  {
+                       // transaction.Rollback();
+                        //_logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                      //  throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    //}
+               // }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_Alertq));
+        }
         /// <summary>
         /// Inserta una nueva GoodsReceived
         /// </summary>
@@ -231,6 +299,41 @@ namespace ERPAPI.Controllers
                                                      .Where(q => q.SubproductId == item.SubProductId)
                                                             select c
                                                      ).FirstOrDefaultAsync();
+                            if (_subproduct.ProductTypeId == 3)
+                            {
+                                Alert AlertP = new Alert();
+                                Alert Alerta = new Alert();
+                                Alerta.DocumentId = item.SubProductId;
+                                Alerta.DocumentName = "LISTA PROHIBIDA";
+                                Alerta.AlertName = "Productos";
+                                Alerta.Code = "PRODUCT01";
+                                Alerta.DescriptionAlert = "Lista de producto Prohibida";
+                                Alerta.FechaCreacion = Convert.ToDateTime(item.FechaCreacion);
+                                Alerta.FechaModificacion = Convert.ToDateTime(item.FechaModificacion);
+                                Alerta.UsuarioCreacion = item.UsuarioCreacion;
+                                Alerta.UsuarioModificacion = item.UsuarioModificacion;
+                                // var AlertaP = await InsertAlert(Alerta);
+                                _context.Alert.Add(Alerta);
+                                await _context.SaveChangesAsync();
+
+                                BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
+                                {
+                                    IdOperacion = Alerta.AlertId,
+                                    DocType = "Alert",
+                                    ClaseInicial =
+                                    Newtonsoft.Json.JsonConvert.SerializeObject(Alerta, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                    Accion = "Insertar",
+                                    FechaCreacion = DateTime.Now,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioCreacion = Alerta.UsuarioCreacion,
+                                    UsuarioModificacion = Alerta.UsuarioModificacion,
+                                    UsuarioEjecucion = Alerta.UsuarioModificacion,
+
+                                });
+
+                                //await _context.SaveChangesAsync();
+
+                            }
 
                             _context.GoodsReceivedLine.Add(item);
 
