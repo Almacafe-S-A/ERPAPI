@@ -50,12 +50,16 @@ namespace ERPAPI.Controllers
 
             List<ConciliacionLinea> guardar = new List<ConciliacionLinea>();
                 guardar = _Conciliacion;
-            guardar[0].ReferenciaBancaria = "referencia";
-            guardar[0].MonedaName = "MonedaF";
-            guardar[0].UsuarioCreacion = "MARIO";
-            //guardar[0].AccountId ;
-            guardar[0].UsuarioModificacion = "aguilar";
-            guardar[0].AccountId = 1;
+                guardar[0].ReferenciaBancaria = "referencia";
+                guardar[0].MonedaName = "MonedaF";
+                guardar[0].UsuarioCreacion = "MARIO";
+                //guardar[0].AccountId ;
+                guardar[0].UsuarioModificacion = "aguilar";
+                guardar[0].AccountId = 1;
+
+
+
+               
             //guardar[0].Moneda = new Currency { CurrencyId = 1};
             //guardar[0].TipoTransaccion = new ElementoConfiguracion { Id = 1 };/////prueba conciliacion
             try
@@ -66,6 +70,7 @@ namespace ERPAPI.Controllers
                 {
                     foreach (var item in guardar)
                     {
+                        item.FechaCreacion = DateTime.Now;
                         _context.ConciliacionLinea.Add(item);
                     }
                     
