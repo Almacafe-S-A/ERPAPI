@@ -49,11 +49,18 @@ namespace ERPAPI.Models
         public string DescriptionAlert { get; set; }
         [Display(Name = "Tipo(s) de alerta")]
         public string Type { get; set; } ///OFAC , ONU ,PEPS si existe en uno o varios
+
+        public string AlertType { get; set; } /// PERSONAS, PRODUCTO
+
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
 
+
     }
+
+    
+
 }
