@@ -123,7 +123,9 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<EmployeeSalary>> Insert([FromBody]EmployeeSalary _EmployeeSalary)
         {
             EmployeeSalary _EmployeeSalaryq = new EmployeeSalary();
-            // Alert _Alertq = new Alert();
+             Alert _Alertq = new Alert();
+            string employeeName =  _context.Employees.Where(e => e.IdEmpleado == _EmployeeSalary.IdEmpleado).FirstOrDefault().NombreEmpleado;
+
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -132,7 +134,24 @@ namespace ERPAPI.Controllers
                     {
                         _EmployeeSalaryq = _EmployeeSalary;
                         _context.EmployeeSalary.Add(_EmployeeSalaryq);
+                       
+
+                        //////////////Alerta al guardar un nuevo Salario/////////////
+
+                        _Alertq.AlertName = "Cambio de Salario";
+                        _Alertq.DocumentName = "EMPLEADO";
+                        _Alertq.Code = "PERSON005";
+                        _Alertq.FechaCreacion = DateTime.Now;
+                        _Alertq.FechaModificacion = DateTime.Now;
+                        _Alertq.UsuarioCreacion = _EmployeeSalary.CreatedUser;
+                        _Alertq.UsuarioModificacion = _EmployeeSalary.ModifiedUser;
+                        _Alertq.AlertType = "PERSONA";
+                        _Alertq.Description = "Se Modifico el Salario al Empleado: " + employeeName;
+
+                        _context.Alert.Add(_Alertq);
+
                         await _context.SaveChangesAsync();
+
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
