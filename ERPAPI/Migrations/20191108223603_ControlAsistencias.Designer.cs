@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191108223603_ControlAsistencias")]
+    partial class ControlAsistencias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -667,10 +669,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
-
-                    b.Property<long?>("CustomerId");
-
-                    b.Property<string>("CustomerName");
 
                     b.Property<string>("Description");
 
@@ -6657,10 +6655,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("TypeContractId");
 
-                    b.Property<long>("TypeInvoiceId");
-
-                    b.Property<string>("TypeInvoiceName");
-
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
@@ -7606,10 +7600,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CurrencyName");
 
-                    b.Property<long?>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
                     b.Property<string>("Description");
 
                     b.Property<string>("Estado");
@@ -7617,10 +7607,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaEmisionPoliza");
-
-                    b.Property<DateTime?>("FechaHabilitacion");
-
-                    b.Property<DateTime?>("FechaLibertadGravamen");
 
                     b.Property<DateTime>("FechaModificacion");
 

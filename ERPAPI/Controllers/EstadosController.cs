@@ -101,21 +101,21 @@ namespace ERPAPI.Controllers
 
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetEstadoByNombreEstado(String NombreEstado,Int64 IdConfi)
-        {
-            Estados Items = new Estados();
-            try
-            {
-                Items = await _context.Estados.Where(q => q.NombreEstado == NombreEstado && q.IdGrupoEstado==IdConfi).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-            return await Task.Run(() => Ok(Items));
-        }
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetEstadoByNombreEstado(String NombreEstado,Int64 IdConfi)
+        //{
+        //    Estados Items = new Estados();
+        //    try
+        //    {
+        //        Items = await _context.Estados.Where(q => q.NombreEstado == NombreEstado && q.IdGrupoEstado==IdConfi).FirstOrDefaultAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+        //        return BadRequest($"Ocurrio un error:{ex.Message}");
+        //    }
+        //    return await Task.Run(() => Ok(Items));
+        //}
 
         [HttpGet("[action]/{idgrupoestado}")]
         public async Task<ActionResult> GetEstadosByGrupo(Int64 idgrupoestado)

@@ -78,21 +78,21 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        [HttpGet("[action]/{Nombre}")]
-        public async Task<IActionResult> GetPeriodicidadPagoByNombre(String Nombre)
-        {
-            PeriodicidadPago Items = new PeriodicidadPago();
-            try
-            {
-                Items = await _context.PeriodicidadPago.Where(q => q.Nombre == Nombre).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-            return await Task.Run(() => Ok(Items));
-        }
+        //[HttpGet("[action]/{Nombre}")]
+        //public async Task<IActionResult> GetPeriodicidadPagoByNombre(String Nombre)
+        //{
+        //    PeriodicidadPago Items = new PeriodicidadPago();
+        //    try
+        //    {
+        //        Items = await _context.PeriodicidadPago.Where(q => q.Nombre == Nombre).FirstOrDefaultAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+        //        return BadRequest($"Ocurrio un error:{ex.Message}");
+        //    }
+        //    return await Task.Run(() => Ok(Items));
+        //}
 
         /// <summary>
         /// Inserta una nueva Bank
