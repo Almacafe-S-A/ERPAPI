@@ -42,6 +42,8 @@ namespace ERPAPI.Models
         [ForeignKey("CityId")]
         public City Ciudad { get; set; }
 
+       
+
         [Display(Name = "Ciudad")]
         public string City { get; set; }
 
