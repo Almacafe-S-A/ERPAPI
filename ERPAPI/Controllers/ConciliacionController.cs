@@ -31,12 +31,89 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
+        /// <summary>
+        /// Obtiene el Listado de Conciliacion paginado
+        /// </summary>
+        /// <returns></returns>    
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetConciliacionPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        {
+            List<Conciliacion> Items = new List<Conciliacion>();
+            try
+            {
+                var query = _context.Conciliacion.AsQueryable();
+                var totalRegistro = query.Count();
+
+                Items = await query
+                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
+                   .Take(cantidadDeRegistros)
+                    .ToListAsync();
+
+                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
 
         /// <summary>
-        /// 
+        /// Obtiene los Datos de la Conciliacion en una lista.
         /// </summary>
-        /// <param name="_Conciliacion"></param>
+
+        // GET: api/Conciliacion
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetConciliacion()
+
+        {
+            List<Conciliacion> Items = new List<Conciliacion>();
+            try
+            {
+                Items = await _context.Conciliacion.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
+        /// <summary>
+        /// Obtiene los Datos de la Conciliacion por medio del Id enviado.
+        /// </summary>
+        /// <param name="ConciliacionId"></param>
         /// <returns></returns>
+        [HttpGet("[action]/{ConciliacionId}")]
+        public async Task<IActionResult> GetConciliacionById(Int64 ConciliacionId)
+        {
+            Conciliacion Items = new Conciliacion();
+            try
+            {
+                Items = await _context.Conciliacion.Where(q => q.ConciliacionId == ConciliacionId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
 
         /// <summary>
         /// Inserta una nueva Conciliacion
