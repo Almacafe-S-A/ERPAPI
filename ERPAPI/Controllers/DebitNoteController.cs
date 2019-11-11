@@ -210,7 +210,7 @@ namespace ERPAPI.Controllers
                             });
 
                         }
-
+                        _context.JournalEntry.Add(_je);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
