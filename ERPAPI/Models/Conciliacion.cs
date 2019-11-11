@@ -19,6 +19,8 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "BankName")]
         public string BankName { get; set; }
+        [Display(Name = "Cuenta Bancaria")]
+        public Int64 CheckAccountId { get; set; }
 
         [Required]
         [Display(Name = "FechaConciliacion")]
