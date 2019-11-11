@@ -126,6 +126,43 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _CreditNoteq = _CreditNote;
+
+                        CreditNote _creditnote = await _context.CreditNote.Where(q => q.BranchId == _CreditNote.BranchId)
+                                             .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision)
+                                             .FirstOrDefaultAsync();
+                        if (_creditnote != null)
+                        {
+                            _CreditNoteq.NúmeroDEI = _context.CreditNote.Where(q => q.BranchId == _CreditNote.BranchId)
+                                                  .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision).Max(q => q.NúmeroDEI);
+                        }
+
+                        _CreditNoteq.NúmeroDEI += 1;
+
+
+                        //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_Invoiceq.UsuarioCreacion).Select(q=>q.)
+
+                        Int64 IdCai = await _context.NumeracionSAR
+                                                 .Where(q => q.BranchId == _CreditNoteq.BranchId)
+                                                 .Where(q => q.IdPuntoEmision == _CreditNoteq.IdPuntoEmision)
+                                                 .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
+
+
+                        if (IdCai == 0)
+                        {
+                            return BadRequest("No existe un CAI activo para el punto de emisión");
+                        }
+
+                        _CreditNoteq.Sucursal = await _context.Branch.Where(q => q.BranchId == _CreditNote.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                        //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
+                        _CreditNoteq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+
+                        Numalet let;
+                        let = new Numalet();
+                        let.SeparadorDecimalSalida = "Lempiras";
+                        let.MascaraSalidaDecimal = "00/100 ";
+                        let.ApocoparUnoParteEntera = true;
+                        _CreditNoteq.TotalLetras = let.ToCustomCardinal((_CreditNoteq.Total)).ToUpper();
+                        _CreditNoteq = _CreditNote;
                         _context.CreditNote.Add(_CreditNoteq);
 
                         foreach (var item in _CreditNote.CreditNoteLine)
@@ -152,88 +189,29 @@ namespace ERPAPI.Controllers
                         };
 
                         Accounting account = new Accounting();
-                        // account = await _context.Accounting.Where(acc => acc.AccountId == _CreditNote.AccountId).FirstOrDefaultAsync();
-                        //_je.JournalEntryLines.Add(new JournalEntryLine
-                        //{
-                        //    AccountId = Convert.ToInt32(_CreditNote.AccountId),
-                        //    //Description = _VendorInvoiceq.Account.AccountName,
-                        //    Description = account.AccountName,
-                        //    Credit = 0,
-                        //    Debit = _VendorInvoiceq.Total,
-                        //    CreatedDate = DateTime.Now,
-                        //    ModifiedDate = DateTime.Now,
-                        //    CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                        //    ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                        //    Memo = "",
-                        //});
 
-                        if (_CreditNoteq.InvoiceId <= 0)
+                        foreach (var item in _CreditNoteq.CreditNoteLine)
                         {
-                            foreach (var item in _CreditNoteq.CreditNoteLine)
+                            account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
+
+                            _je.JournalEntryLines.Add(new JournalEntryLine
                             {
-                                account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
+                                AccountId = Convert.ToInt32(item.AccountId),
+                                AccountName = account.AccountName,
+                                Description = account.AccountName,
+                                Credit = item.Total,
+                                Debit = 0,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedUser = _CreditNoteq.UsuarioCreacion,
+                                ModifiedUser = _CreditNoteq.UsuarioModificacion,
+                                Memo = "Nota de débito",
+                            });
 
-                                _je.JournalEntryLines.Add(new JournalEntryLine
-                                {
-                                    AccountId = Convert.ToInt32(item.AccountId),
-                                    Description = account.AccountName,
-                                    AccountName = account.AccountName,
-                                    Credit = item.Total,
-                                    Debit = 0,
-                                    CreatedDate = DateTime.Now,
-                                    ModifiedDate = DateTime.Now,
-                                    CreatedUser = _CreditNote.UsuarioCreacion,
-                                    ModifiedUser = _CreditNote.UsuarioModificacion,
-                                    Memo = "Nota de crédito",
-                                });
-
-                            }
-                        }
-                        else if (_CreditNoteq.InvoiceId > 0)
-                        {
-                            foreach (var item in _CreditNoteq.CreditNoteLine)
-                            {
-                                account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
-
-                                double debitcontra = 0;
-                                double creditocontra = 0;
-
-                                _je.TypeOfAdjustmentId = 65;
-                                _je.VoucherType = 3;
-
-                                JournalEntry _jeautomatico = await _context.JournalEntry
-                                                              .Include(q=>q.JournalEntryLines)
-                                                              .Where(q => q.VoucherType == 1)                                                              
-                                                              .Where(q => q.DocumentId == _CreditNote.InvoiceId).FirstOrDefaultAsync();
-
-                                JournalEntryLine _jefiltrado = new JournalEntryLine();
-
-                                _jefiltrado = _jeautomatico.JournalEntryLines
-                                    .Where(q => q.AccountId == item.AccountId).FirstOrDefault();
-
-                                creditocontra = _jefiltrado.Debit;
-                                debitcontra = _jefiltrado.Credit;
-
-                                _je.JournalEntryLines.Add(new JournalEntryLine
-                                {
-                                    AccountId = Convert.ToInt32(item.AccountId),
-                                    Description = account.AccountName,
-                                    AccountName = account.AccountName,
-                                    Credit = creditocontra,
-                                    Debit = debitcontra,
-                                    CreatedDate = DateTime.Now,
-                                    ModifiedDate = DateTime.Now,
-                                    CreatedUser = _CreditNote.UsuarioCreacion,
-                                    ModifiedUser = _CreditNote.UsuarioModificacion,
-                                    Memo = "Nota de crédito",
-                                });
-
-                            }
                         }
 
-
-
-                       await _context.SaveChangesAsync();
+                        _context.JournalEntry.Add(_je);
+                        await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {

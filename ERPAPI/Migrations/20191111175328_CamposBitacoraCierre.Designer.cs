@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191111175328_CamposBitacoraCierre")]
+    partial class CamposBitacoraCierre
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1298,18 +1300,16 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("BankId");
-
                     b.Property<string>("BankName")
                         .IsRequired();
-
-                    b.Property<long>("CheckAccountId");
 
                     b.Property<DateTime>("FechaConciliacion");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long?>("IdBanco");
 
                     b.Property<string>("NombreArchivo")
                         .IsRequired();
@@ -1324,6 +1324,8 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("ConciliacionId");
 
+                    b.HasIndex("IdBanco");
+
                     b.ToTable("Conciliacion");
                 });
 
@@ -1337,13 +1339,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("AccountName");
 
-                    b.Property<long>("CheknumberId");
-
                     b.Property<int?>("ConciliacionId");
 
                     b.Property<double>("Credit");
-
-                    b.Property<int>("CurrencyId");
 
                     b.Property<double>("Debit");
 
@@ -1353,23 +1351,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("JournalEntryId");
-
-                    b.Property<long>("JournalEntryLineId");
+                    b.Property<int?>("IdMoneda");
 
                     b.Property<string>("MonedaName")
                         .IsRequired();
 
                     b.Property<double>("Monto");
 
-                    b.Property<bool>("Reconciled");
-
-                    b.Property<string>("ReferenceTrans");
-
                     b.Property<string>("ReferenciaBancaria")
                         .IsRequired();
-
-                    b.Property<DateTime>("TransDate");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -1377,13 +1367,13 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion")
                         .IsRequired();
 
-                    b.Property<long>("VoucherTypeId");
-
                     b.HasKey("ConciliacionLineaId");
 
                     b.HasIndex("ConciliacionId");
 
                     b.HasIndex("ElementoConfiguracion");
+
+                    b.HasIndex("IdMoneda");
 
                     b.ToTable("ConciliacionLinea");
                 });
@@ -8485,6 +8475,13 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("StateId");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.Conciliacion", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Bank", "Banco")
+                        .WithMany()
+                        .HasForeignKey("IdBanco");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
                 {
                     b.HasOne("ERPAPI.Models.Conciliacion")
@@ -8494,6 +8491,10 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
                         .HasForeignKey("ElementoConfiguracion");
+
+                    b.HasOne("ERPAPI.Models.Currency", "Moneda")
+                        .WithMany()
+                        .HasForeignKey("IdMoneda");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlAsistencias", b =>
