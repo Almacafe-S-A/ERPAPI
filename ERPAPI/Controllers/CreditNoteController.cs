@@ -126,6 +126,43 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _CreditNoteq = _CreditNote;
+
+                        Invoice _invoice = await _context.Invoice.Where(q => q.BranchId == _CreditNote.BranchId)
+                                             .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision)
+                                             .FirstOrDefaultAsync();
+                        if (_invoice != null)
+                        {
+                            _CreditNoteq.NúmeroDEI = _context.Invoice.Where(q => q.BranchId == _CreditNote.BranchId)
+                                                  .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision).Max(q => q.NumeroDEI);
+                        }
+
+                        _CreditNoteq.NúmeroDEI += 1;
+
+
+                        //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_Invoiceq.UsuarioCreacion).Select(q=>q.)
+
+                        Int64 IdCai = await _context.NumeracionSAR
+                                                 .Where(q => q.BranchId == _CreditNoteq.BranchId)
+                                                 .Where(q => q.IdPuntoEmision == _CreditNoteq.IdPuntoEmision)
+                                                 .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
+
+
+                        if (IdCai == 0)
+                        {
+                            return BadRequest("No existe un CAI activo para el punto de emisión");
+                        }
+
+                        _CreditNoteq.Sucursal = await _context.Branch.Where(q => q.BranchId == _CreditNote.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                        //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
+                        _CreditNoteq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+
+                        Numalet let;
+                        let = new Numalet();
+                        let.SeparadorDecimalSalida = "Lempiras";
+                        let.MascaraSalidaDecimal = "00/100 ";
+                        let.ApocoparUnoParteEntera = true;
+                        _CreditNoteq.TotalLetras = let.ToCustomCardinal((_CreditNoteq.Total)).ToUpper();
+                        _CreditNoteq = _CreditNote;
                         _context.CreditNote.Add(_CreditNoteq);
 
                         foreach (var item in _CreditNote.CreditNoteLine)
