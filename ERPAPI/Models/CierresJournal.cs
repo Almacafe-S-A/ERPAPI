@@ -16,6 +16,10 @@ namespace ERPAPI.Models
 
         public DateTime FechaCierre { get; set; }
 
+        public int BitacoraCierreContableId { get; set; }
+        [ForeignKey("BitacoraCierreContableId")]
+        public BitacoraCierreContable BitacoraCierreContable { get; set; }
+
         public CierresJournal()
         {
             //  JournalEntryLines = new HashSet<JournalEntryLine>();

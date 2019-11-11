@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191111175328_CamposBitacoraCierre")]
+    partial class CamposBitacoraCierre
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1301,8 +1303,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("BankName")
                         .IsRequired();
 
-                    b.Property<long>("CheckAccountId");
-
                     b.Property<DateTime>("FechaConciliacion");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -1339,8 +1339,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("AccountName");
 
-                    b.Property<long>("CheknumberId");
-
                     b.Property<int?>("ConciliacionId");
 
                     b.Property<double>("Credit");
@@ -1355,31 +1353,19 @@ namespace ERPAPI.Migrations
 
                     b.Property<int?>("IdMoneda");
 
-                    b.Property<long>("JournalEntryId");
-
-                    b.Property<long>("JournalEntryLineId");
-
                     b.Property<string>("MonedaName")
                         .IsRequired();
 
                     b.Property<double>("Monto");
 
-                    b.Property<bool>("Reconciled");
-
-                    b.Property<string>("ReferenceTrans");
-
                     b.Property<string>("ReferenciaBancaria")
                         .IsRequired();
-
-                    b.Property<DateTime>("TransDate");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
 
                     b.Property<string>("UsuarioModificacion")
                         .IsRequired();
-
-                    b.Property<long>("VoucherTypeId");
 
                     b.HasKey("ConciliacionLineaId");
 
