@@ -31,13 +31,38 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
+        /// <summary>
+        /// Obtiene la ConciliacionLinea 
+        /// por un id de ConciliacionLineaId
+        /// </summary>
+        /// <param name="ConciliacionLineaId"></param>
+        /// <returns></returns>
+        
+        [HttpGet("[action]/{ConciliacionLineaId}")]
+        public async Task<IActionResult> GetConciliacionLineaById(int ConciliacionLineaId)
+        {
+            ConciliacionLinea Items = new ConciliacionLinea();
+            try
+            {
+                Items = await _context.ConciliacionLinea
+                             .Where(q => q.ConciliacionLineaId == ConciliacionLineaId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="_Conciliacion"></param>
         /// <returns></returns>
-       
+
 
         [HttpPost("[action]")]
         public async Task<IActionResult> InsertBulk([FromBody]dynamic _Conciliacion)
@@ -106,16 +131,16 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Inserta una nueva JournalEntryLine
         /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// <param name="_ConciliacionLinea"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntryLine>> Insert([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<ActionResult<ConciliacionLinea>> Insert([FromBody]ConciliacionLinea _ConciliacionLinea)
         {
-            JournalEntryLine _JournalEntryLineq = new JournalEntryLine();
+            ConciliacionLinea _ConciliacionLineaq = new ConciliacionLinea();
             try
             {
-                _JournalEntryLineq = _JournalEntryLine;
-                _context.JournalEntryLine.Add(_JournalEntryLineq);
+                _ConciliacionLineaq = _ConciliacionLinea;
+                _context.ConciliacionLinea.Add(_ConciliacionLineaq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -125,26 +150,26 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_ConciliacionLineaq));
         }
 
         /// <summary>
-        /// Actualiza la JournalEntryLine
+        /// Actualiza la ConciliacionLinea
         /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// <param name="_ConciliacionLinea"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<JournalEntryLine>> Update([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<ActionResult<ConciliacionLinea>> Update([FromBody]ConciliacionLinea _ConciliacionLinea)
         {
-            JournalEntryLine _JournalEntryLineq = _JournalEntryLine;
+            ConciliacionLinea _ConciliacionLineaq = _ConciliacionLinea;
             try
             {
-                _JournalEntryLineq = await (from c in _context.JournalEntryLine
-                                 .Where(q => q.JournalEntryLineId == _JournalEntryLine.JournalEntryLineId)
+                _ConciliacionLineaq = await (from c in _context.ConciliacionLinea
+                                 .Where(q => q.ConciliacionLineaId == _ConciliacionLinea.ConciliacionLineaId)
                                             select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_JournalEntryLineq).CurrentValues.SetValues((_JournalEntryLine));
+                _context.Entry(_ConciliacionLineaq).CurrentValues.SetValues((_ConciliacionLinea));
 
                 await _context.SaveChangesAsync();
             }
@@ -155,25 +180,25 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_ConciliacionLineaq));
         }
 
         /// <summary>
-        /// Elimina una JournalEntryLine       
+        /// Elimina una ConciliacionLinea       
         /// </summary>
-        /// <param name="_JournalEntryLine"></param>
+        /// <param name="_ConciliacionLinea"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]JournalEntryLine _JournalEntryLine)
+        public async Task<IActionResult> Delete([FromBody]ConciliacionLinea _ConciliacionLinea)
         {
-            JournalEntryLine _JournalEntryLineq = new JournalEntryLine();
+            ConciliacionLinea _ConciliacionLineaq = new ConciliacionLinea();
             try
             {
-                _JournalEntryLineq = _context.JournalEntryLine
-                .Where(x => x.JournalEntryLineId == (Int64)_JournalEntryLine.JournalEntryLineId)
+                _ConciliacionLineaq = _context.ConciliacionLinea
+                .Where(x => x.ConciliacionLineaId == _ConciliacionLinea.ConciliacionLineaId)
                 .FirstOrDefault();
 
-                _context.JournalEntryLine.Remove(_JournalEntryLineq);
+                _context.ConciliacionLinea.Remove(_ConciliacionLineaq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -182,7 +207,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_JournalEntryLineq));
+            return await Task.Run(() => Ok(_ConciliacionLineaq));
 
         }
     }
