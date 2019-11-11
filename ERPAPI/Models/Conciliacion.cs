@@ -14,7 +14,9 @@ namespace ERPAPI.Models
         public int ConciliacionId { get; set; }
 
         [ForeignKey("IdBanco")]
-        public Bank Banco { get; set; }
+        public Int64 BankId { get; set; }
+
+        
 
         [Required]
         [Display(Name = "BankName")]
