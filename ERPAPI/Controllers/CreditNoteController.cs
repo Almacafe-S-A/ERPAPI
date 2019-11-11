@@ -127,13 +127,13 @@ namespace ERPAPI.Controllers
                     {
                         _CreditNoteq = _CreditNote;
 
-                        Invoice _invoice = await _context.Invoice.Where(q => q.BranchId == _CreditNote.BranchId)
+                        CreditNote _creditnote = await _context.CreditNote.Where(q => q.BranchId == _CreditNote.BranchId)
                                              .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision)
                                              .FirstOrDefaultAsync();
-                        if (_invoice != null)
+                        if (_creditnote != null)
                         {
-                            _CreditNoteq.NúmeroDEI = _context.Invoice.Where(q => q.BranchId == _CreditNote.BranchId)
-                                                  .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision).Max(q => q.NumeroDEI);
+                            _CreditNoteq.NúmeroDEI = _context.CreditNote.Where(q => q.BranchId == _CreditNote.BranchId)
+                                                  .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision).Max(q => q.NúmeroDEI);
                         }
 
                         _CreditNoteq.NúmeroDEI += 1;
