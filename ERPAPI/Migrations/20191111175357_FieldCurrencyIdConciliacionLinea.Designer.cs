@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191111175357_FieldCurrencyIdConciliacionLinea")]
+    partial class FieldCurrencyIdConciliacionLinea
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1290,8 +1292,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("BankId");
-
                     b.Property<string>("BankName")
                         .IsRequired();
 
@@ -1302,6 +1302,8 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long?>("IdBanco");
 
                     b.Property<string>("NombreArchivo")
                         .IsRequired();
@@ -1315,6 +1317,8 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ConciliacionId");
+
+                    b.HasIndex("IdBanco");
 
                     b.ToTable("Conciliacion");
                 });
@@ -8465,6 +8469,13 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.State")
                         .WithMany("City")
                         .HasForeignKey("StateId");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Conciliacion", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Bank", "Banco")
+                        .WithMany()
+                        .HasForeignKey("IdBanco");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
