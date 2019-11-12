@@ -28,6 +28,12 @@ namespace ERPAPI.Models
         [Display(Name = "FechaConciliacion")]
         public DateTime FechaConciliacion { get; set; }
 
+        [Display(Name = "Fecha Inicio")]
+        public DateTime DateBeginReconciled { get; set; }
+        [Display(Name = "Fecha Fin")]
+        public DateTime DateEndReconciled { get; set; }
+
+
         [Required]
         [Display(Name = "SaldoConciliado")]
         public Double SaldoConciliado { get; set; }

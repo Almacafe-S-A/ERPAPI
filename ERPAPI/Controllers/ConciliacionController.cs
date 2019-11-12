@@ -135,7 +135,7 @@ namespace ERPAPI.Controllers
                         _Conciliacionq = _Conciliacion;
                         _context.Conciliacion.Add(_Conciliacionq);
 
-                        await _context.SaveChangesAsync();
+                        //await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _Conciliacionq.ConciliacionId,
@@ -151,7 +151,7 @@ namespace ERPAPI.Controllers
 
                         });
 
-                        await _context.SaveChangesAsync();
+                        //await _context.SaveChangesAsync();
                         foreach (var item in _Conciliacionq.ConciliacionLinea)
                         {
                             item.ConciliacionId = _Conciliacionq.ConciliacionId;
@@ -178,6 +178,7 @@ namespace ERPAPI.Controllers
                             });
 
                         }
+                        await _context.SaveChangesAsync();
 
                         transaction.Commit();
                     }
