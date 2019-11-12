@@ -16,6 +16,9 @@ namespace ERPAPI.Models
         [ForeignKey("ElementoConfiguracion")]
         public ElementoConfiguracion TipoTransaccion { get; set; }
 
+        [Display(Name = "Id Conciliacion")]
+        public int ConciliacionId { get; set; }
+
         [Display(Name = "Cuenta")]
         public Int64 AccountId { get; set; }
         [Display(Name = "Cuenta")]

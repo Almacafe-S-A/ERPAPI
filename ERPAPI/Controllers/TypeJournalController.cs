@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -123,9 +124,41 @@ namespace ERPAPI.Controllers
             TypeJournal _TypeJournalq = new TypeJournal();
             try
             {
-                _TypeJournalq = _TypeJournal;
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _TypeJournalq = _TypeJournal;
                 _context.TypeJournal.Add(_TypeJournalq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _TypeJournalq.TypeJournalId,
+                            DocType = "TypeJournal",
+                            ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(_TypeJournalq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _TypeJournalq.CreatedUser,
+                            UsuarioModificacion = _TypeJournalq.ModifiedUser,
+                            UsuarioEjecucion = _TypeJournalq.ModifiedUser,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -148,7 +181,12 @@ namespace ERPAPI.Controllers
             TypeJournal _TypeJournalq = _TypeJournal;
             try
             {
-                _TypeJournalq = await (from c in _context.TypeJournal
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _TypeJournalq = await (from c in _context.TypeJournal
                                  .Where(q => q.TypeJournalId == _TypeJournal.TypeJournalId)
                                        select c
                                 ).FirstOrDefaultAsync();
@@ -157,6 +195,34 @@ namespace ERPAPI.Controllers
 
                 //_context.Bank.Update(_Bankq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _TypeJournalq.TypeJournalId,
+                            DocType = "TypeJournal",
+                            ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(_TypeJournalq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _TypeJournalq.CreatedUser,
+                            UsuarioModificacion = _TypeJournalq.ModifiedUser,
+                            UsuarioEjecucion = _TypeJournalq.ModifiedUser,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
