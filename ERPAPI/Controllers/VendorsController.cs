@@ -118,12 +118,29 @@ namespace coderush.Controllers.Api
         }
 
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetVendorByRTN([FromBody]Vendor _Invoice)
+        {
+            Vendor Items = new Vendor();
+            try
+            {
+                Items = await _context.Vendor.Where(q => q.RTN == _Invoice.RTN).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Inserta una nueva 
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
-         [HttpPost("[action]")]
+        [HttpPost("[action]")]
         public async Task<ActionResult<Vendor>> Insert([FromBody]Vendor payload)
         {
             /* Vendor Vendor = payload;
