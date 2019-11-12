@@ -162,7 +162,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Elimina una Bank       
+        /// Elimina una Severidad Riesgo      
         /// </summary>
         /// <param name="_SeveridadRiesgo"></param>
         /// <returns></returns>
