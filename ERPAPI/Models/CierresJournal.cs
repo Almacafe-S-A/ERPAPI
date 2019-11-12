@@ -12,6 +12,8 @@ namespace ERPAPI.Models
         
 
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Int64 CierresJournalEntryId { get; set; }
+
         public Int64 JournalEntryId { get; set; }
 
         public DateTime FechaCierre { get; set; }
