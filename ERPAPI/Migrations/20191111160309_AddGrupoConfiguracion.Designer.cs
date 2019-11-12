@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191111160309_AddGrupoConfiguracion")]
+    partial class AddGrupoConfiguracion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1042,8 +1044,6 @@ namespace ERPAPI.Migrations
                         .IsRequired()
                         .HasMaxLength(200);
 
-                    b.Property<int>("BitacoraCierreContableId");
-
                     b.Property<bool>("BlockedInJournal");
 
                     b.Property<long>("CompanyInfoId");
@@ -1086,8 +1086,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("CierreAccountingId");
 
-                    b.HasIndex("BitacoraCierreContableId");
-
                     b.HasIndex("CompanyInfoId");
 
                     b.HasIndex("ParentAccountAccountId");
@@ -1097,11 +1095,9 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.CierresJournal", b =>
                 {
-                    b.Property<long>("CierresJournalEntryId")
+                    b.Property<long>("JournalEntryId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BitacoraCierreContableId");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -1127,8 +1123,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("IdPaymentCode");
 
                     b.Property<int>("IdTypeofPayment");
-
-                    b.Property<long>("JournalEntryId");
 
                     b.Property<string>("Memo");
 
@@ -1161,72 +1155,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<int?>("VoucherType");
 
-                    b.HasKey("CierresJournalEntryId");
-
-                    b.HasIndex("BitacoraCierreContableId");
+                    b.HasKey("JournalEntryId");
 
                     b.HasIndex("GeneralLedgerHeaderId1");
 
                     b.HasIndex("PartyId1");
 
                     b.ToTable("CierresJournal");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CierresJournalEntryLine", b =>
-                {
-                    b.Property<long>("CierresJournalEntryLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AccountId");
-
-                    b.Property<long?>("AccountId1");
-
-                    b.Property<string>("AccountName");
-
-                    b.Property<long>("CostCenterId")
-                        .HasMaxLength(30);
-
-                    b.Property<string>("CostCenterName");
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<double>("Credit");
-
-                    b.Property<double>("CreditME");
-
-                    b.Property<double>("CreditSy");
-
-                    b.Property<double>("Debit");
-
-                    b.Property<double>("DebitME");
-
-                    b.Property<double>("DebitSy");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(60);
-
-                    b.Property<long>("JournalEntryId");
-
-                    b.Property<long>("JournalEntryLineId");
-
-                    b.Property<string>("Memo");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.HasKey("CierresJournalEntryLineId");
-
-                    b.HasIndex("AccountId1");
-
-                    b.HasIndex("JournalEntryId");
-
-                    b.ToTable("CierresJournalEntryLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.City", b =>
@@ -1357,22 +1292,18 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("BankId");
-
                     b.Property<string>("BankName")
                         .IsRequired();
 
                     b.Property<long>("CheckAccountId");
-
-                    b.Property<DateTime>("DateBeginReconciled");
-
-                    b.Property<DateTime>("DateEndReconciled");
 
                     b.Property<DateTime>("FechaConciliacion");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long?>("IdBanco");
 
                     b.Property<string>("NombreArchivo")
                         .IsRequired();
@@ -1386,6 +1317,8 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ConciliacionId");
+
+                    b.HasIndex("IdBanco");
 
                     b.ToTable("Conciliacion");
                 });
@@ -1402,11 +1335,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CheknumberId");
 
-                    b.Property<int>("ConciliacionId");
+                    b.Property<int?>("ConciliacionId");
 
                     b.Property<double>("Credit");
-
-                    b.Property<int>("CurrencyId");
 
                     b.Property<double>("Debit");
 
@@ -1415,6 +1346,8 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<int?>("IdMoneda");
 
                     b.Property<long>("JournalEntryId");
 
@@ -1447,6 +1380,8 @@ namespace ERPAPI.Migrations
                     b.HasIndex("ConciliacionId");
 
                     b.HasIndex("ElementoConfiguracion");
+
+                    b.HasIndex("IdMoneda");
 
                     b.ToTable("ConciliacionLinea");
                 });
@@ -5164,31 +5099,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("InvoiceLine");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InvoiceTransReport", b =>
-                {
-                    b.Property<long>("IdInvoiceTransReport")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("InvoiceDate");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("IdInvoiceTransReport");
-
-                    b.ToTable("InvoiceTransReport");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.JournalEntry", b =>
                 {
                     b.Property<long>("JournalEntryId")
@@ -8535,11 +8445,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.CierresAccounting", b =>
                 {
-                    b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierreContable")
-                        .WithMany()
-                        .HasForeignKey("BitacoraCierreContableId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyInfoId")
@@ -8552,11 +8457,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.CierresJournal", b =>
                 {
-                    b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierreContable")
-                        .WithMany()
-                        .HasForeignKey("BitacoraCierreContableId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("ERPAPI.Models.GeneralLedgerHeader", "GeneralLedgerHeader")
                         .WithMany()
                         .HasForeignKey("GeneralLedgerHeaderId1");
@@ -8566,18 +8466,6 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("PartyId1");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.CierresJournalEntryLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Accounting", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId1");
-
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.City", b =>
                 {
                     b.HasOne("ERPAPI.Models.State")
@@ -8585,16 +8473,26 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("StateId");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.Conciliacion", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Bank", "Banco")
+                        .WithMany()
+                        .HasForeignKey("IdBanco");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
                 {
                     b.HasOne("ERPAPI.Models.Conciliacion")
                         .WithMany("ConciliacionLinea")
-                        .HasForeignKey("ConciliacionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("ConciliacionId");
 
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
                         .HasForeignKey("ElementoConfiguracion");
+
+                    b.HasOne("ERPAPI.Models.Currency", "Moneda")
+                        .WithMany()
+                        .HasForeignKey("IdMoneda");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlAsistencias", b =>

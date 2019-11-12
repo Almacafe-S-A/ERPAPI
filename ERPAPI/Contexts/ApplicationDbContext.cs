@@ -75,7 +75,7 @@ namespace ERP.Contexts
         public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
 
         public DbSet<SeveridadRiesgo> SeveridadRiesgo { get; set; }
-
+        public DbSet<InvoiceTransReport> InvoiceTransReport { get; set; }
         /// <summary>
         /// ///Cierres
         /// </summary>
@@ -86,6 +86,8 @@ namespace ERP.Contexts
         public DbSet<CierresAccounting> CierresAccounting { get; set; }
 
         public DbSet<CierresJournal> CierresJournal { get; set; }
+
+        public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
 
         public DbSet<InsuranceEndorsement> InsuranceEndorsement { get; set; }
 

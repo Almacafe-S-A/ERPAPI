@@ -126,6 +126,45 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _DebitNoteq = _DebitNote;
+                        if (!_DebitNote.Fiscal)
+                        {
+                            DebitNote _debitnote = await _context.DebitNote.Where(q => q.BranchId == _DebitNote.BranchId)
+                                                 .Where(q => q.IdPuntoEmision == _DebitNote.IdPuntoEmision)
+                                                 .FirstOrDefaultAsync();
+                            if (_debitnote != null)
+                            {
+                                _DebitNoteq.NúmeroDEI = _context.DebitNote.Where(q => q.BranchId == _DebitNote.BranchId)
+                                                      .Where(q => q.IdPuntoEmision == _DebitNote.IdPuntoEmision).Max(q => q.NúmeroDEI);
+                            }
+
+                            _DebitNoteq.NúmeroDEI += 1;
+
+
+                            //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_DebitNoteq.UsuarioCreacion).Select(q=>q.)
+
+                            Int64 IdCai = await _context.NumeracionSAR
+                                                     .Where(q => q.BranchId == _DebitNoteq.BranchId)
+                                                     .Where(q => q.IdPuntoEmision == _DebitNoteq.IdPuntoEmision)
+                                                     .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
+
+
+                            if (IdCai == 0)
+                            {
+                                return BadRequest("No existe un CAI activo para el punto de emisión");
+                            }
+
+                            _DebitNoteq.Sucursal = await _context.Branch.Where(q => q.BranchId == _DebitNote.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                            //  _DebitNoteq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
+                            _DebitNoteq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+                        }
+                        Numalet let;
+                        let = new Numalet();
+                        let.SeparadorDecimalSalida = "Lempiras";
+                        let.MascaraSalidaDecimal = "00/100 ";
+                        let.ApocoparUnoParteEntera = true;
+                        _DebitNoteq.TotalLetras = let.ToCustomCardinal((_DebitNoteq.Total)).ToUpper();
+
+                        _DebitNoteq = _DebitNote;
                         _context.DebitNote.Add(_DebitNoteq);
 
                         foreach (var item in _DebitNote.DebitNoteLine)
@@ -172,7 +211,7 @@ namespace ERPAPI.Controllers
                             });
 
                         }
-
+                        _context.JournalEntry.Add(_je);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
