@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191112085341_FieldconciliacionDate")]
+    partial class FieldconciliacionDate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5103,31 +5105,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.ToTable("InvoiceLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InvoiceTransReport", b =>
-                {
-                    b.Property<long>("IdInvoiceTransReport")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("InvoiceDate");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("IdInvoiceTransReport");
-
-                    b.ToTable("InvoiceTransReport");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.JournalEntry", b =>

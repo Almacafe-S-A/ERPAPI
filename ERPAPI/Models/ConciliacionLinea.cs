@@ -16,6 +16,9 @@ namespace ERPAPI.Models
         [ForeignKey("ElementoConfiguracion")]
         public ElementoConfiguracion TipoTransaccion { get; set; }
 
+        [Display(Name = "Id Conciliacion")]
+        public int ConciliacionId { get; set; }
+
         [Display(Name = "Cuenta")]
         public Int64 AccountId { get; set; }
         [Display(Name = "Cuenta")]
@@ -35,8 +38,10 @@ namespace ERPAPI.Models
         [Display(Name = "Referencia Bancaria")]
         public string ReferenciaBancaria { get; set; }
 
-        [ForeignKey("IdMoneda")]
-        public Currency Moneda { get; set; }
+        //[ForeignKey("IdMoneda")]
+        //public Currency Moneda { get; set; }
+        [ForeignKey("CurrencyId")]
+        public int CurrencyId { get; set; }
 
         [Display(Name = "Fecha Transaccion")]
         public DateTime TransDate { get; set; }

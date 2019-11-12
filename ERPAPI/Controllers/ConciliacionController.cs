@@ -123,12 +123,74 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Conciliacion>> Insert([FromBody]Conciliacion _Conciliacion)
         {
+
             Conciliacion _Conciliacionq = new Conciliacion();
             try
             {
-                _Conciliacionq = _Conciliacion;
-                _context.Conciliacion.Add(_Conciliacionq);
-                await _context.SaveChangesAsync();
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _Conciliacionq = _Conciliacion;
+                        _context.Conciliacion.Add(_Conciliacionq);
+
+                        //await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Conciliacionq.ConciliacionId,
+                            DocType = "Conciliacion",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Conciliacionq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Conciliacionq.UsuarioCreacion,
+                            UsuarioModificacion = _Conciliacionq.UsuarioModificacion,
+                            UsuarioEjecucion = _Conciliacionq.UsuarioModificacion,
+
+                        });
+
+                        //await _context.SaveChangesAsync();
+                        foreach (var item in _Conciliacionq.ConciliacionLinea)
+                        {
+                            item.ConciliacionId = _Conciliacionq.ConciliacionId;
+                            item.FechaCreacion = _Conciliacionq.FechaCreacion;
+                            item.FechaModificacion = _Conciliacionq.FechaModificacion;
+                            item.UsuarioCreacion = _Conciliacionq.UsuarioCreacion;
+                            item.UsuarioModificacion = _Conciliacionq.UsuarioModificacion;
+
+                            _context.ConciliacionLinea.Add(item);
+
+                            BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
+                            {
+                                IdOperacion = item.ConciliacionLineaId,
+                                DocType = "ConciliacionLinea",
+                                ClaseInicial =
+                     Newtonsoft.Json.JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                Accion = "Insertar",
+                                FechaCreacion = DateTime.Now,
+                                FechaModificacion = DateTime.Now,
+                                UsuarioCreacion = item.UsuarioCreacion,
+                                UsuarioModificacion = item.UsuarioModificacion,
+                                UsuarioEjecucion = item.UsuarioModificacion,
+
+                            });
+
+                        }
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -151,14 +213,48 @@ namespace ERPAPI.Controllers
             Conciliacion _Conciliacionq = _Conciliacion;
             try
             {
-                _Conciliacionq = await (from c in _context.Conciliacion
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+
+                        _Conciliacionq = await (from c in _context.Conciliacion
                                  .Where(q => q.ConciliacionId == _Conciliacion.ConciliacionId)
                                             select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Conciliacionq).CurrentValues.SetValues((_Conciliacion));
+                       _context.Entry(_Conciliacionq).CurrentValues.SetValues((_Conciliacion));
 
-                await _context.SaveChangesAsync();
+                         await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Conciliacionq.ConciliacionId,
+                            DocType = "Conciliacion",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Conciliacionq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Actualizar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Conciliacionq.UsuarioCreacion,
+                            UsuarioModificacion = _Conciliacionq.UsuarioModificacion,
+                            UsuarioEjecucion = _Conciliacionq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -181,12 +277,46 @@ namespace ERPAPI.Controllers
             Conciliacion _Conciliacionq = new Conciliacion();
             try
             {
-                _Conciliacionq = _context.Conciliacion
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _Conciliacionq = _context.Conciliacion
                 .Where(x => x.ConciliacionId == (Int64)_Conciliacion.ConciliacionId)
                 .FirstOrDefault();
 
                 _context.Conciliacion.Remove(_Conciliacionq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _Conciliacionq.ConciliacionId,
+                            DocType = "Conciliacion",
+                            ClaseInicial =
+    Newtonsoft.Json.JsonConvert.SerializeObject(_Conciliacionq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Eliminar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _Conciliacionq.UsuarioCreacion,
+                            UsuarioModificacion = _Conciliacionq.UsuarioModificacion,
+                            UsuarioEjecucion = _Conciliacionq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
+
             }
             catch (Exception ex)
             {

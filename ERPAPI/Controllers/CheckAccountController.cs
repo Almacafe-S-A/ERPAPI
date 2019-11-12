@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -87,6 +88,31 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la CheckAccount por medio del Id enviado.
         /// </summary>
+        /// <param name="CheckAccountNumber"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CheckAccountNumber}")]
+        public async Task<IActionResult> GetCheckAccountByAccountNumber(string CheckAccountNumber)
+        {
+            CheckAccount Items = new CheckAccount();
+            try
+            {
+                Items = await _context.CheckAccount.Where(q => q.CheckAccountNo 
+                == CheckAccountNumber).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Obtiene los Datos de la CheckAccount por medio del Id enviado.
+        /// </summary>
         /// <param name="CheckAccountId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{CheckAccountId}")]
@@ -120,9 +146,42 @@ namespace ERPAPI.Controllers
             CheckAccount _CheckAccountq = new CheckAccount();
             try
             {
-                _CheckAccountq = _CheckAccount;
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _CheckAccountq = _CheckAccount;
                 _context.CheckAccount.Add(_CheckAccountq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _CheckAccountq.CheckAccountId,
+                            DocType = "CheckAccount",
+                            ClaseInicial =
+ Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _CheckAccountq.UsuarioCreacion,
+                            UsuarioModificacion = _CheckAccountq.UsuarioModificacion,
+                            UsuarioEjecucion = _CheckAccountq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -145,7 +204,12 @@ namespace ERPAPI.Controllers
             CheckAccount _CheckAccountq = _CheckAccount;
             try
             {
-                _CheckAccountq = await (from c in _context.CheckAccount
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _CheckAccountq = await (from c in _context.CheckAccount
                                  .Where(q => q.CheckAccountId == _CheckAccount.CheckAccountId)
                                         select c
                                 ).FirstOrDefaultAsync();
@@ -154,6 +218,34 @@ namespace ERPAPI.Controllers
 
                 //_context.CheckAccount.Update(_CheckAccountq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _CheckAccountq.CheckAccountId,
+                            DocType = "CheckAccount",
+                            ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _CheckAccountq.UsuarioCreacion,
+                            UsuarioModificacion = _CheckAccountq.UsuarioModificacion,
+                            UsuarioEjecucion = _CheckAccountq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {

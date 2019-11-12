@@ -14,7 +14,9 @@ namespace ERPAPI.Models
         public int ConciliacionId { get; set; }
 
         [ForeignKey("IdBanco")]
-        public Bank Banco { get; set; }
+        public Int64 BankId { get; set; }
+
+        
 
         [Required]
         [Display(Name = "BankName")]
@@ -25,6 +27,12 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "FechaConciliacion")]
         public DateTime FechaConciliacion { get; set; }
+
+        [Display(Name = "Fecha Inicio")]
+        public DateTime DateBeginReconciled { get; set; }
+        [Display(Name = "Fecha Fin")]
+        public DateTime DateEndReconciled { get; set; }
+
 
         [Required]
         [Display(Name = "SaldoConciliado")]
