@@ -58,6 +58,32 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
+        /// Obtiene la ConciliacionLinea 
+        /// por un id de ConciliacionLineaId
+        /// </summary>
+        /// <param name="ConciliacionId"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]/{ConciliacionId}")]
+        public async Task<IActionResult> GetConciliacionLineaByConciliacionId(Int64 ConciliacionId)
+        {
+            List<ConciliacionLinea> Items = new List<ConciliacionLinea>();
+            try
+            {
+                Items = await _context.ConciliacionLinea
+                             .Where(q => q.ConciliacionId == ConciliacionId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="_Conciliacion"></param>
