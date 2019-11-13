@@ -25,6 +25,8 @@ namespace ERPAPI.Models
         [ForeignKey("IdTipoPlanilla")]
         public TipoPlanillas TipoPlanilla { get; set; }
 
+        public string BirthPlace { get; set; }
+
         public string Profesion { get; set; }
         public DateTime? FechaEgreso { get; set; }
         public string Direccion { get; set; }
