@@ -87,6 +87,8 @@ namespace ERP.Contexts
 
         public DbSet<CierresJournal> CierresJournal { get; set; }
 
+        public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
+
         public DbSet<InsuranceEndorsement> InsuranceEndorsement { get; set; }
 
         public DbSet<InsuranceEndorsementLine> InsuranceEndorsementLine { get; set; }
