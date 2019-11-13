@@ -10,6 +10,7 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -80,7 +81,6 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
-
         /// <summary>
         /// Obtiene la sucursal mediante el Id enviado.
         /// </summary>
@@ -104,9 +104,59 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene el control de asitencia por empleado mediante el Id enviado.
+        /// Y la fecha se envia en el campo FechaCreacion y la FechaModificacion 
+        /// </summary>
+        /// <param name="_ControlAsistenciasP"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetControlAsistenciasByEmployeeId([FromBody]ControlAsistencias _ControlAsistenciasP)
+        {
+            List<ControlAsistencias> Items = new List<ControlAsistencias>();
+            try
+            {
+                Items = await _context.ControlAsistencias.Where(
+                                q => q.Empleado.IdEmpleado == _ControlAsistenciasP.Empleado.IdEmpleado &&
+                                    q.Fecha >= _ControlAsistenciasP.FechaCreacion &&
+                                    q.Fecha <= _ControlAsistenciasP.FechaModificacion
+                                ).ToListAsync();
+                    ;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
+        /// Devuelve la Asistencia deacuerdo al tipo un Control de Asistencia
+        /// </summary>
+        /// <param name="TipoAsistencia"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityDepartamentos(Int64 TipoAsistencia)
+        {
+            try
+            {
+                var Items = await _context.Departamento.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
 
         /// <summary>
-        /// Inserta una sucursal
+        /// Inserta un Control de Asistencia
         /// </summary>
         /// <param name="payload"></param>
         /// <returns></returns>
@@ -116,9 +166,42 @@ namespace ERPAPI.Controllers
             ControlAsistencias ControlAsistencias = new ControlAsistencias();
             try
             {
-                ControlAsistencias = payload;
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        ControlAsistencias = payload;
                 _context.ControlAsistencias.Add(ControlAsistencias);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = ControlAsistencias.Id,
+                            DocType = "ControlAsistencias",
+                            ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = ControlAsistencias.UsuarioCreacion,
+                            UsuarioModificacion = ControlAsistencias.UsuarioModificacion,
+                            UsuarioEjecucion = ControlAsistencias.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -141,7 +224,12 @@ namespace ERPAPI.Controllers
             ControlAsistencias ControlAsistencias = payload;
             try
             {
-                ControlAsistencias = (from c in _context.ControlAsistencias
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        ControlAsistencias = (from c in _context.ControlAsistencias
                                     .Where(q => q.Id == payload.Id)
                           select c
                                     ).FirstOrDefault();
@@ -152,6 +240,34 @@ namespace ERPAPI.Controllers
                 _context.Entry(ControlAsistencias).CurrentValues.SetValues(payload);
                 // _context.ControlAsistencias.Update(payload);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = ControlAsistencias.Id,
+                            DocType = "ControlAsistencias",
+                            ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Actualizar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = ControlAsistencias.UsuarioCreacion,
+                            UsuarioModificacion = ControlAsistencias.UsuarioModificacion,
+                            UsuarioEjecucion = ControlAsistencias.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -175,11 +291,44 @@ namespace ERPAPI.Controllers
             ControlAsistencias ControlAsistencias = new ControlAsistencias();
             try
             {
-                ControlAsistencias = _context.ControlAsistencias
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        ControlAsistencias = _context.ControlAsistencias
                .Where(x => x.Id == (int)payload.Id)
                .FirstOrDefault();
                 _context.ControlAsistencias.Remove(ControlAsistencias);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = ControlAsistencias.Id,
+                            DocType = "ControlAsistencias",
+                            ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Eliminar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = ControlAsistencias.UsuarioCreacion,
+                            UsuarioModificacion = ControlAsistencias.UsuarioModificacion,
+                            UsuarioEjecucion = ControlAsistencias.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
