@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191113171421_EmployeeExtraHours")]
+    partial class EmployeeExtraHours
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1558,7 +1560,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdEmpleado");
 
-                    b.Property<long?>("TipoAsistencia");
+                    b.Property<string>("TipoAsistencia");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -3188,7 +3190,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<DateTime?>("FechaVencimiento");
+                    b.Property<DateTime>("FechaVencimiento");
 
                     b.Property<string>("Path");
 
@@ -6062,10 +6064,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdPolicy");
-
-                    b.HasIndex("IdRol");
-
                     b.ToTable("PolicyRoles");
                 });
 
@@ -6391,15 +6389,11 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
 
                     b.Property<long?>("IdDepartamento");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("NombreDepartamento");
 
@@ -6956,10 +6950,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("EndTime");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<double>("QuantityHours");
 
                     b.Property<DateTime>("StartTime");
@@ -6967,10 +6957,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("SubServiceId");
 
                     b.Property<bool>("Transport");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("ScheduleSubservicesId");
 
@@ -9074,19 +9060,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.PaymentTypes", "PaymentTypes")
                         .WithMany()
                         .HasForeignKey("PaymentTypesId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PolicyRoles", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Policy", "Policy")
-                        .WithMany()
-                        .HasForeignKey("IdPolicy")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.ApplicationRole", "Role")
-                        .WithMany()
-                        .HasForeignKey("IdRol")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
