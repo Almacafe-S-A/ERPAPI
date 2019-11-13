@@ -135,24 +135,32 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Devuelve la Asistencia deacuerdo al tipo un Control de Asistencia
         /// </summary>
-        /// <param name="TipoAsistencia"></param>
+        /// <param name="_ControlAsistenciasP"></param>
         /// <returns></returns>
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<Int32>> GetQuantityDepartamentos(Int64 TipoAsistencia)
+        public async Task<ActionResult<Int32>> GetSumControlAsistenciasByEmployeeId([FromBody]ControlAsistencias _ControlAsistenciasP)
         {
+           // ControlAsistencias Items = new ControlAsistencias();
+
             try
             {
-                var Items = await _context.Departamento.CountAsync();
+               var  Items = await _context.ControlAsistencias.Where(
+                                q => q.Empleado.IdEmpleado == _ControlAsistenciasP.Empleado.IdEmpleado &&
+                                    q.Fecha >= _ControlAsistenciasP.FechaCreacion &&
+                                    q.Fecha <= _ControlAsistenciasP.FechaModificacion &&
+                                    q.TipoAsistencia == _ControlAsistenciasP.TipoAsistencia
+                                ).CountAsync();
                 return await Task.Run(() => Ok(Items));
-
             }
             catch (Exception ex)
             {
+
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
+            
         }
 
         /// <summary>
