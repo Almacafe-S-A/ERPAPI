@@ -34,7 +34,7 @@ namespace ERPAPI.Models
         public DateTime FechaIngreso { get; set; }
 
         [Display(Name = "Fecha de vencimiento")]
-        public DateTime FechaVencimiento { get; set; }
+        public DateTime? FechaVencimiento { get; set; }
 
         [Display(Name = "Fecha de Creación")]
         public DateTime? FechaCreacion { get; set; }
