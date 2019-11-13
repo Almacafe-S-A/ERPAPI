@@ -117,11 +117,6 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
 
         }
-        /// <summary>
-        /// Obtiene los Datos de la ConfigurationVendor en una lista.
-        /// </summary>
-
-        // GET: api/ConfigurationVendor
 
         /// <summary>
         /// Obtiene los Datos de la ContactPerson por medio del Id enviado.

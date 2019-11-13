@@ -86,29 +86,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        /// <summary>
-        /// Obtiene los Datos de la ElementoConfiguracion por medio del Id enviado.
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        //[HttpGet("[action]/{Id}")]
-        //public async Task<IActionResult> GetElementoConfiguracionById(Int64 Id)
-        //{
-        //    ElementoConfiguracion Items = new ElementoConfiguracion();
-        //    try
-        //    {
-        //        Items = await _context.ElementoConfiguracion.Where(q => q.Id == Id).FirstOrDefaultAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-        //        return BadRequest($"Ocurrio un error:{ex.Message}");
-        //    }
-
-
-        //    return Ok(Items);
-        //}
+       
         /// <summary>
         /// Obtiene los Datos de la Country por medio del Id enviado.
         /// </summary>

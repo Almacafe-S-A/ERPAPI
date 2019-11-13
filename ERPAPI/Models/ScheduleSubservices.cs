@@ -38,7 +38,16 @@ namespace ERPAPI.Models
         [Display(Name = "Genera Transporte")]
         public bool Transport { get; set; }
 
+        [Display(Name = "Fecha de creación")]
+        public DateTime FechaCreacion { get; set; }
+        [Display(Name = "Fecha de modificación")]
+        public DateTime FechaModificacion { get; set; }
 
+        [Display(Name = "Usuario de creación")]
+        public string UsuarioCreacion { get; set; }
+
+        [Display(Name = "Usuario de modificación")]
+        public string UsuarioModificacion { get; set; }
 
     }
 }
