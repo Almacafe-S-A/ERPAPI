@@ -100,7 +100,8 @@ namespace ERPAPI.Controllers
             Conciliacion Items = new Conciliacion();
             try
             {
-                Items = await _context.Conciliacion.Where(q => q.ConciliacionId == ConciliacionId).FirstOrDefaultAsync();
+                Items = await _context.Conciliacion.Where(q => q.ConciliacionId == ConciliacionId)
+                    .Include(q => q.ConciliacionLinea).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

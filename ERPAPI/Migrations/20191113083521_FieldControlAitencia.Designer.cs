@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191113083521_FieldControlAitencia")]
+    partial class FieldControlAitencia
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5985,10 +5987,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdPolicy");
-
-                    b.HasIndex("IdRol");
-
                     b.ToTable("PolicyRoles");
                 });
 
@@ -8950,19 +8948,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.PaymentTypes", "PaymentTypes")
                         .WithMany()
                         .HasForeignKey("PaymentTypesId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PolicyRoles", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Policy", "Policy")
-                        .WithMany()
-                        .HasForeignKey("IdPolicy")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.ApplicationRole", "Role")
-                        .WithMany()
-                        .HasForeignKey("IdRol")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

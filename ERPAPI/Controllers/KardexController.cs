@@ -222,6 +222,7 @@ namespace ERPAPI.Controllers
 
                                    _so = await _context.SalesOrder
                                                            .Where(q => q.CustomerId == _cd.CustomerId)
+                                                           .Where(q=>q.SalesOrderId == _Kardexq.SalesOrderId)
                                                            .Include(q=>q.SalesOrderLines)
                                                            .OrderByDescending(q => q.SalesOrderId).FirstOrDefaultAsync();
 

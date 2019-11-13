@@ -154,66 +154,46 @@ namespace ERPAPI.Controllers
         /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
         /// </summary>
         /// 
-        /// <param name="FechaInicio"></param>
-        /// <param name="FechaFinal"></param>
-        /// <param name="AccountId"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{FechaInicio}/{FechaFinal}/{AccountId}")]
-        public async Task<IActionResult> GetJournalEntryByDateAccount(string FechaInicio,string FechaFinal, Int64 AccountId)
+         /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetJournalEntryByDateAccount([FromBody]Conciliacion _ConciliacionP)
         {
-            //string fecha = Date.ToString("yyyy-MM-dd");
-            DateTime fechainicio = Convert.ToDateTime(FechaInicio);
-            DateTime fechafinal = Convert.ToDateTime(FechaFinal);
-            //List<JournalEntry> Items = new List<JournalEntry>();
-            //var Items;
-            //List<JournalEntry> Items = new List<JournalEntry>();
-
-            //var Items = new List<double>();
-
-            //var Items = new List<double>();
-
-            List<ConciliacionDTO> Items = new List<ConciliacionDTO>();
-
-
-
+            JournalEntry Items = new JournalEntry();
+            Items.JournalEntryLines = new List<JournalEntryLine>();
             try
             {
 
+                var consulta = from c in _context.JournalEntryLine
+                               where c.AccountId == _ConciliacionP.ConciliacionLinea[0].AccountId &&
+                                      c.CreatedDate >= _ConciliacionP.DateBeginReconciled &&
+                                      c.CreatedDate <= _ConciliacionP.DateEndReconciled
+                                      group    c
+                                        by c.JournalEntryId into c 
+                                      
+                               select new JournalEntryLine
+                               {
+                                   Debit = c.Sum(z => z.Debit),
+                                   DebitME =c.Sum(z => z.DebitME),
+                                   DebitSy = c.Sum(z => z.DebitSy),
+                                   Credit = c.Sum(z => z.Credit),
+                                   CreditME = c.Sum(z => z.CreditME),
+                                   CreditSy = c.Sum(z => z.CreditSy),
+                                   //Account = c.ToList().
+                                   JournalEntryId = c.Key,
+                                 
+                               };
 
-               
+                Items.JournalEntryLines = consulta.ToList();
+                //   var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
+                //   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
+                //   + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
+                //  + "  ";
 
-                var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
-                  + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
-                  + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
-                 + "  ";
 
 
-                using (var dr = await _context.Database.ExecuteSqlQueryAsync(query))
-                {
-                    // Output rows.
-                    var reader = dr.DbDataReader;
-                    while (reader.Read())
-                    {
-                        //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
 
-                        Items.Add(new ConciliacionDTO
-                        {
-                            Debit = Convert.ToDouble(reader["Debito"]),
-                            Credit = Convert.ToDouble(reader["Credito"])
-                        });
 
-                        //Items.Add(Convert.ToDouble(reader["CREDITO"]));
-                        //Items.Add(
-                        //{
-                        //    //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
-                        //DEBITO = reader["DEBITO"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalCredit"]),
-                        //CREDITO = reader["CREDITO"] == DBNull.Value ? 0 : Convert.ToDouble(reader["TotalDebit"]),
-                        //});
 
-                    }
-                }
-
-               
 
             }
             catch (Exception ex)
@@ -224,14 +204,14 @@ namespace ERPAPI.Controllers
             }
 
 
-            return await Task.Run(() => Ok(Items));
+            return await Task.Run(() => Ok(Items.JournalEntryLines));
         }
 
 
         /// <summary>
         /// Inserta una nueva JournalEntry
         /// </summary>
-        /// <param name="_JournalEntry"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<JournalEntry>> Insert([FromBody]dynamic dto)
@@ -312,7 +292,7 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Actualiza la JournalEntry
         /// </summary>
-        /// <param name="_JournalEntry"></param>
+        /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
        // public async Task<ActionResult<JournalEntry>> Update([FromBody]JournalEntry _JournalEntry)
@@ -323,7 +303,12 @@ namespace ERPAPI.Controllers
             JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
-                _JournalEntry = JsonConvert.DeserializeObject<JournalEntry>(dto.ToString());
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _JournalEntry = JsonConvert.DeserializeObject<JournalEntry>(dto.ToString());
                 _JournalEntryq = await (from c in _context.JournalEntry
                                  .Where(q => q.JournalEntryId == _JournalEntry.JournalEntryId)
                                  select c
@@ -332,6 +317,33 @@ namespace ERPAPI.Controllers
                 _context.Entry(_JournalEntryq).CurrentValues.SetValues((_JournalEntry));
 
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _JournalEntry.JournalEntryId,
+                            DocType = "JournalEntry",
+                            ClaseInicial =
+                          Newtonsoft.Json.JsonConvert.SerializeObject(_JournalEntry, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Actualizar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _JournalEntry.CreatedUser,
+                            UsuarioModificacion = _JournalEntry.ModifiedUser,
+                            UsuarioEjecucion = _JournalEntry.ModifiedUser,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -354,12 +366,44 @@ namespace ERPAPI.Controllers
             JournalEntry _JournalEntryq = new JournalEntry();
             try
             {
-                _JournalEntryq = _context.JournalEntry
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        _JournalEntryq = _context.JournalEntry
                 .Where(x => x.JournalEntryId == (Int64)_JournalEntry.JournalEntryId)
                 .FirstOrDefault();
 
                 _context.JournalEntry.Remove(_JournalEntryq);
                 await _context.SaveChangesAsync();
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _JournalEntry.JournalEntryId,
+                            DocType = "JournalEntry",
+                            ClaseInicial =
+                      Newtonsoft.Json.JsonConvert.SerializeObject(_JournalEntry, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Eliminar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _JournalEntry.CreatedUser,
+                            UsuarioModificacion = _JournalEntry.ModifiedUser,
+                            UsuarioEjecucion = _JournalEntry.ModifiedUser,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
+
             }
             catch (Exception ex)
             {
