@@ -240,7 +240,7 @@ namespace ERPAPI.Controllers
                         }
 
 
-                        if (sumacreditos != sumadebitos)
+                        if (sumacreditos.ToString("N2") != sumadebitos.ToString("N2"))
                         {
                             transaction.Rollback();
                             _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos:{sumacreditos}");
