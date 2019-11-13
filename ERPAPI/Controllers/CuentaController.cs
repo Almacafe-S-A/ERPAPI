@@ -125,10 +125,14 @@ namespace ERPAPI.Controllers
             Branch _branch = _context.Branch.Where(b => b.BranchId == _appuser.BranchId).FirstOrDefault();
             var claims = new[]
              {
-                new Claim("UserEmail", userInfo.Email),
-                new Claim("UserName", _appuser.UserName),
+                //new Claim("UserEmail", userInfo.Email),
+                //new Claim("UserName", _appuser.UserName),
+                new Claim(ClaimTypes.Email,userInfo.Email),
+                new Claim(ClaimTypes.Role,_approle.RoleName),
                 new Claim("BranchName", _branch.BranchName),
-                new Claim("Role", _approle.RoleName),
+                new Claim(ClaimTypes.Name, _appuser.UserName),
+                //new Claim()                
+                //new Claim(ClaimTy)
                 //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
              };
 
@@ -142,8 +146,9 @@ namespace ERPAPI.Controllers
                issuer: null,
                audience: null,
                claims: claims,
-               expires: expiration,
-               signingCredentials: creds);
+               expires: expiration,               
+               signingCredentials: creds
+               );
 
              
              Int32? cambiopassworddias = Convert.ToInt32(_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q=>q.Valordecimal).FirstOrDefault());

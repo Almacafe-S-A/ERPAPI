@@ -78,6 +78,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{EmployeeId}")]
+        public async Task<IActionResult> GetFormulasAplicadasByEmployeeId(Int64 EmployeeId)
+        {
+            List<FormulasAplicadas> Items = new List<FormulasAplicadas>();
+            try
+            {
+                Items = await _context.FormulasAplicadas.Where(q => q.IdEmpleado == EmployeeId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return Ok(Items);
+        }
         // api/FormulasAplicadasGetFormulasAplicadasById
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetFormulasAplicadasById(int Id)

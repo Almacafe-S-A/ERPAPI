@@ -72,7 +72,7 @@ namespace ERPAPI.Controllers
             List<PolicyRoles> Items = new List<PolicyRoles>();
             try
             {
-                Items = await _context.PolicyRoles.ToListAsync();
+                Items = await _context.PolicyRoles.Include(e => e.Policy).Include( e => e.Role).ToListAsync();
             }
             catch (Exception ex)
             {
