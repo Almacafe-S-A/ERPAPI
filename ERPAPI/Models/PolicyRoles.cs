@@ -15,11 +15,15 @@ namespace ERPAPI.Models
 
         [Required]
         public Guid IdPolicy { get; set; }
+        [ForeignKey("IdPolicy")]
+        public Policy Policy { get; set; }
 
         public string PolicyName { get; set; }
 
         [Required]
         public Guid IdRol { get; set; }
+        [ForeignKey("IdRol")]
+        public ApplicationRole Role { get; set; }
 
         public string RolName { get; set; }
 
