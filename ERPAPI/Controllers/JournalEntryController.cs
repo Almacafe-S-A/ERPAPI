@@ -204,7 +204,7 @@ namespace ERPAPI.Controllers
             }
 
 
-            return await Task.Run(() => Ok(Items.));
+            return await Task.Run(() => Ok(Items.JournalEntryLines));
         }
 
 
