@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191114193821_SeveridadRiesgo_CamposAuditoria")]
+    partial class SeveridadRiesgo_CamposAuditoria
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4807,48 +4809,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("InsuranceEndorsementId");
 
                     b.ToTable("InsuranceEndorsementLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InsurancePolicy", b =>
-                {
-                    b.Property<long>("InsurancePolicyId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AttachmentURL");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<double>("DollarAmount");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("InsurancesId");
-
-                    b.Property<string>("InsurancesName");
-
-                    b.Property<double>("LpsAmount");
-
-                    b.Property<DateTime>("PolicyDate");
-
-                    b.Property<DateTime>("PolicyDueDate");
-
-                    b.Property<string>("PolicyNumber")
-                        .IsRequired();
-
-                    b.Property<string>("Status");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("InsurancePolicyId");
-
-                    b.ToTable("InsurancePolicy");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Insurances", b =>
