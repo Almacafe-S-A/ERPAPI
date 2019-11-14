@@ -12,6 +12,9 @@ namespace ERPAPI.Models
         [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int InsuranceEndorsementId { get; set; }
 
+        [Display(Name = "Centro de costos")]
+        public Int64 CostCenterId { get; set; }
+
         public Int64 CustomerId { get; set; }
         
         public string Customername { get; set; }
