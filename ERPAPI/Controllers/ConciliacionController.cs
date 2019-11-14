@@ -113,6 +113,35 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los Datos de la Conciliacion por medio de la Fecha enviado.
+        /// </summary>
+        /// <param name="_Conciliacion"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Conciliacion>> GetConciliacionByDate([FromBody]Conciliacion _Conciliacion)
+        {
+            Conciliacion Items = new Conciliacion();
+            try
+            {
+                Items = await _context.Conciliacion.Where(
+                        q => q.DateBeginReconciled >= _Conciliacion.DateBeginReconciled  &&
+                             q.DateBeginReconciled <= _Conciliacion.DateBeginReconciled  &&
+                             q.DateEndReconciled >= _Conciliacion.DateEndReconciled &&
+                             q.DateEndReconciled <= _Conciliacion.DateEndReconciled
+                        )
+                    .Include(q => q.ConciliacionLinea).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //return await Task.Run(() => Ok(_Conciliacionq));
+            return await Task.Run(() => Ok(Items));
+        }
 
 
 

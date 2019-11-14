@@ -16,7 +16,10 @@ namespace ERPAPI.Models
         [ForeignKey("IdBanco")]
         public Int64 BankId { get; set; }
 
-        
+        [ForeignKey("AccountId")]
+        [Display(Name = "Id")]
+        public Int64 AccountId { get; set; }
+
 
         [Required]
         [Display(Name = "BankName")]
