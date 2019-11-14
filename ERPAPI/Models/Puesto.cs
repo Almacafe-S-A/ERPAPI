@@ -14,6 +14,9 @@ namespace ERPAPI.Models
         public string NombrePuesto { get; set; }
         public long? IdDepartamento { get; set; }
         public string NombreDepartamento { get; set; }
+        [Display(Name = "Estado")]
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
 
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; }

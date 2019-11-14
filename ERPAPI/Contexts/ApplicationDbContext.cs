@@ -64,6 +64,11 @@ namespace ERP.Contexts
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<InvoiceLine> InvoiceLine { get; set; }
 
+        public DbSet<EmployeeExtraHours> EmployeeExtraHours { get; set; }
+        public DbSet<EmployeeExtraHoursDetail> EmployeeExtraHoursDetail { get; set; }
+        public DbSet<ScheduleSubservices> ScheduleSubservices { get; set; }
+        public DbSet<PaymentScheduleRulesByCustomer> PaymentScheduleRulesByCustomer { get; set; }
+
 
         public DbSet<CreditNote> CreditNote { get; set; }
         public DbSet<CreditNoteLine> CreditNoteLine { get; set; }

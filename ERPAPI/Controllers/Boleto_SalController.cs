@@ -124,12 +124,12 @@ namespace ERPAPI.Controllers
             {
                 Max = 0;
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return Ok(Max);
+                return await Task.Run(()=> Ok(Max));
                 //return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
             //  int Count = Items.Count();
-            return Ok(Max);
+            return await Task.Run(() => Ok(Max));
         }
 
         /// <summary>
