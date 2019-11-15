@@ -153,6 +153,10 @@ namespace ERPAPI.Controllers
                     {
 
                         _EmployeeExtraHoursDetailq = _EmployeeExtraHoursDetail;
+                        Customer _custo = new Customer();
+                        _custo = await _context.Customer
+                            .Where(q => q.CustomerId == _EmployeeExtraHoursDetail.CustomerId).FirstOrDefaultAsync();
+                        _EmployeeExtraHoursDetailq.CustomerName = _custo.CustomerName;
                         _context.EmployeeExtraHoursDetail.Add(_EmployeeExtraHoursDetailq);
                         await _context.SaveChangesAsync();
 
@@ -161,7 +165,7 @@ namespace ERPAPI.Controllers
                             IdOperacion = _EmployeeExtraHoursDetailq.EmployeeExtraHoursDetailId,
                             DocType = "EmployeeExtraHoursDetail",
                             ClaseInicial =
-                         Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeExtraHoursDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeExtraHoursDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
@@ -212,6 +216,12 @@ namespace ERPAPI.Controllers
                               .Where(q => q.EmployeeExtraHoursDetailId == _EmployeeExtraHoursDetail.EmployeeExtraHoursDetailId)
                                                             select c
                              ).FirstOrDefaultAsync();
+
+                        Customer _custo = new Customer();
+                        _custo = await _context.Customer
+                            .Where(q=>q.CustomerId==_EmployeeExtraHoursDetail.CustomerId).FirstOrDefaultAsync();
+
+                        _EmployeeExtraHoursDetail.CustomerName = _custo.CustomerName;
 
                         _EmployeeExtraHoursDetail.FechaCreacion = _EmployeeExtraHoursDetailq.FechaCreacion;
                         _EmployeeExtraHoursDetail.UsuarioCreacion = _EmployeeExtraHoursDetailq.UsuarioCreacion;
