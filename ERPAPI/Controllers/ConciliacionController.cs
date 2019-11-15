@@ -90,6 +90,77 @@ namespace ERPAPI.Controllers
             //return await _context.Dimensions.ToListAsync();
         }
         /// <summary>
+        /// Obtiene los Datos de la JournalEntryLine por medio del Conciliacion.
+        /// </summary>
+        /// 
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetJournalEntryByDateAccount([FromBody]Conciliacion _ConciliacionP)
+        {
+            //  JournalEntry Items = new JournalEntry();
+            List<ConciliacionLinea> LineConciliacionLinea = new List<ConciliacionLinea>();
+            try
+            {
+
+                var consulta = from journale in _context.JournalEntry
+                               join journalel in _context.JournalEntryLine
+                               on journale.JournalEntryId equals journalel.JournalEntryId
+                               join Currencyl in _context.Currency
+                               on journale.CurrencyId equals Currencyl.CurrencyId
+                               where journalel.AccountId == _ConciliacionP.ConciliacionLinea[0].AccountId &&
+                                 journale.Date >= _ConciliacionP.DateBeginReconciled &&
+                                 journale.Date <= _ConciliacionP.DateEndReconciled
+                               // group journalel
+                               //  by journalel.JournalEntryId into journalel
+
+                               select new ConciliacionLinea
+                               {
+                                   Debit = journalel.Debit,
+                                   Credit = journalel.Credit,
+                                   Monto = journalel.Debit - journalel.Credit,
+                                   AccountId = journalel.AccountId,
+                                   JournalEntryId = journalel.JournalEntryId,
+                                   JournalEntryLineId = journalel.JournalEntryLineId,
+                                   FechaCreacion = DateTime.Now,
+                                   FechaModificacion = DateTime.Now,
+                                   UsuarioCreacion = _ConciliacionP.UsuarioCreacion,
+                                   UsuarioModificacion = _ConciliacionP.UsuarioModificacion,
+                                   ConciliacionId = _ConciliacionP.ConciliacionId,
+                                   ReferenceTrans = journale.ReferenceNo,
+                                   VoucherTypeId = (int)journale.VoucherType,
+                                   TransDate = journale.Date,
+                                   CurrencyId = journale.CurrencyId,
+                                   AccountName = journalel.AccountName,
+                                   MonedaName = Currencyl.CurrencyName
+
+                               };
+
+                LineConciliacionLinea = consulta.ToList();
+                //   var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
+                //   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
+                //   + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
+                //  + "  ";
+
+
+
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(LineConciliacionLinea));
+        }
+
+
+        /// <summary>
         /// Obtiene los Datos de la Conciliacion por medio del Id enviado.
         /// </summary>
         /// <param name="ConciliacionId"></param>
@@ -102,6 +173,13 @@ namespace ERPAPI.Controllers
             {
                 Items = await _context.Conciliacion.Where(q => q.ConciliacionId == ConciliacionId)
                     .Include(q => q.ConciliacionLinea).FirstOrDefaultAsync();
+                if (Items.ConciliacionLinea == null)
+                {
+                    List<ConciliacionLinea> ArrayConciliacionLine = new List<ConciliacionLinea>();
+                    //JournalEntryController JEcontroller = new JournalEntryController();
+                    var arraylist = await GetJournalEntryByDateAccount(Items);
+                    Items.ConciliacionLinea = ((List<ConciliacionLinea>)arraylist);
+                }
             }
             catch (Exception ex)
             {

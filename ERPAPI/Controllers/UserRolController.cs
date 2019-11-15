@@ -16,7 +16,7 @@ namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/UserRol")]
     public class UserRolController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -38,7 +38,7 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los roles asignados a los usuarios
         /// </summary>
-        /// <returns></returns>
+        /// <returns></returns> 
         [HttpGet("[action]")]
         public async Task<ActionResult<List<ApplicationUserRole>>> GetUserRoles()
         {
@@ -110,7 +110,7 @@ namespace ERPAPI.Controllers
         //    {
         //        return BadRequest($"Ocurrio un error:{ex.Message}");
         //    }
-           
+
         //}
 
         /// <summary>

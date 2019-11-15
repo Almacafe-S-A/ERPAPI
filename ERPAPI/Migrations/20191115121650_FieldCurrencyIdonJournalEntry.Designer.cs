@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191115121650_FieldCurrencyIdonJournalEntry")]
+    partial class FieldCurrencyIdonJournalEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4812,48 +4814,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("InsuranceEndorsementLine");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InsurancePolicy", b =>
-                {
-                    b.Property<long>("InsurancePolicyId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AttachmentURL");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<double>("DollarAmount");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("InsurancesId");
-
-                    b.Property<string>("InsurancesName");
-
-                    b.Property<double>("LpsAmount");
-
-                    b.Property<DateTime>("PolicyDate");
-
-                    b.Property<DateTime>("PolicyDueDate");
-
-                    b.Property<string>("PolicyNumber")
-                        .IsRequired();
-
-                    b.Property<string>("Status");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("InsurancePolicyId");
-
-                    b.ToTable("InsurancePolicy");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Insurances", b =>
                 {
                     b.Property<int>("InsurancesId")
@@ -7013,8 +6973,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("QuantityHours");
 
-                    b.Property<long>("ServiceId");
-
                     b.Property<DateTime>("StartTime");
 
                     b.Property<long>("SubServiceId");
@@ -7038,10 +6996,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ColorHexadecimal");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<long>("Impacto");
 
                     b.Property<long>("LimeteCalidadSuperir");
@@ -7055,10 +7009,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("RangoInferiorSeveridad");
 
                     b.Property<double>("RangoSuperiorSeveridad");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("IdSeveridad");
 
