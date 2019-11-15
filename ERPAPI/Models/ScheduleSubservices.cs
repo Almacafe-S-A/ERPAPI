@@ -29,6 +29,10 @@ namespace ERPAPI.Models
         [Display(Name = "Cantidad de horas")]
         public double QuantityHours { get; set; }
 
+        [Display(Name = "Servicio")]
+        public Int64 ServiceId { get; set; }
+
+
         [Display(Name = "Subservicio")]
         public Int64 SubServiceId { get; set; }
 
