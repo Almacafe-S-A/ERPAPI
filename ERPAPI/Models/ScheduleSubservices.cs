@@ -32,9 +32,18 @@ namespace ERPAPI.Models
         [Display(Name = "Servicio")]
         public Int64 ServiceId { get; set; }
 
+        [Display(Name = "Servicio")]
+        public string ServiceName { get; set; }
+
 
         [Display(Name = "Subservicio")]
         public Int64 SubServiceId { get; set; }
+        [Display(Name = "Subservicio")]
+        public string SubServiceName { get; set; }
+
+
+        [Display(Name = "Id Condición")]
+        public Int64 LogicalConditionId { get; set; }
 
         [Display(Name = "Descripción")]
         public double Description { get; set; }
