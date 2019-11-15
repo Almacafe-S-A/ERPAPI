@@ -182,6 +182,8 @@ namespace ERPAPI.Controllers
                         });
 
                         //await _context.SaveChangesAsync();
+
+                        if(_Conciliacionq.ConciliacionLinea != null) { 
                         foreach (var item in _Conciliacionq.ConciliacionLinea)
                         {
                             item.ConciliacionId = _Conciliacionq.ConciliacionId;
@@ -208,8 +210,9 @@ namespace ERPAPI.Controllers
                             });
 
                         }
+                        }
                         await _context.SaveChangesAsync();
-
+                        
                         transaction.Commit();
                     }
                     catch (Exception ex)
