@@ -289,7 +289,7 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Vendor payload)
+        public async Task<ActionResult<ApplicationUserRole>> Delete([FromBody]Vendor payload)
         {
             Vendor Vendor = new Vendor();
             try

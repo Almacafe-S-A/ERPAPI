@@ -151,43 +151,56 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Obtiene los Datos de la JournalEntryLine por medio del Id enviado.
+        /// Obtiene los Datos de la JournalEntryLine por medio del Conciliacion.
         /// </summary>
         /// 
          /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<IActionResult> GetJournalEntryByDateAccount([FromBody]Conciliacion _ConciliacionP)
         {
-            JournalEntry Items = new JournalEntry();
-            Items.JournalEntryLines = new List<JournalEntryLine>();
+          //  JournalEntry Items = new JournalEntry();
+            List<ConciliacionLinea> LineConciliacionLinea = new List<ConciliacionLinea>();
             try
             {
 
-                var consulta = from c in _context.JournalEntryLine
-                               where c.AccountId == _ConciliacionP.ConciliacionLinea[0].AccountId &&
-                                      c.CreatedDate >= _ConciliacionP.DateBeginReconciled &&
-                                      c.CreatedDate <= _ConciliacionP.DateEndReconciled
-                                      group    c
-                                        by c.JournalEntryId into c 
-                                      
-                               select new JournalEntryLine
+                var consulta = from journale in _context.JournalEntry
+                               join journalel in _context.JournalEntryLine
+                               on journale.JournalEntryId equals journalel.JournalEntryId
+                               join Currencyl in _context.Currency
+                               on journale.CurrencyId equals Currencyl.CurrencyId
+                               where journalel.AccountId == _ConciliacionP.ConciliacionLinea[0].AccountId &&
+                                 journale.Date >= _ConciliacionP.DateBeginReconciled &&
+                                 journale.Date <= _ConciliacionP.DateEndReconciled
+                               // group journalel
+                               //  by journalel.JournalEntryId into journalel
+
+                               select new ConciliacionLinea
                                {
-                                   Debit = c.Sum(z => z.Debit),
-                                   DebitME =c.Sum(z => z.DebitME),
-                                   DebitSy = c.Sum(z => z.DebitSy),
-                                   Credit = c.Sum(z => z.Credit),
-                                   CreditME = c.Sum(z => z.CreditME),
-                                   CreditSy = c.Sum(z => z.CreditSy),
-                                   //Account = c.ToList().
-                                   JournalEntryId = c.Key,
-                                 
+                                   Debit = journalel.Debit,
+                                   Credit = journalel.Credit,
+                                   Monto = journalel.Debit - journalel.Credit,
+                                   AccountId = journalel.AccountId,
+                                   JournalEntryId = journalel.JournalEntryId,
+                                   JournalEntryLineId = journalel.JournalEntryLineId,
+                                   FechaCreacion = DateTime.Now,
+                                   FechaModificacion = DateTime.Now,
+                                   UsuarioCreacion = _ConciliacionP.UsuarioCreacion,
+                                   UsuarioModificacion = _ConciliacionP.UsuarioModificacion,
+                                   ConciliacionId = _ConciliacionP.ConciliacionId,
+                                   ReferenceTrans = journale.ReferenceNo,
+                                   VoucherTypeId = (int)journale.VoucherType,
+                                   TransDate = journale.Date,
+                                   CurrencyId =journale.CurrencyId,
+                                   AccountName=journalel.AccountName,
+                                   MonedaName=Currencyl.CurrencyName
+
                                };
 
-                Items.JournalEntryLines = consulta.ToList();
-                //   var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
-                //   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
-                //   + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
-                //  + "  ";
+                LineConciliacionLinea = consulta.ToList();
+                               //   var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
+                               //   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
+                               //   + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
+                               //  + "  ";
 
 
 
@@ -204,7 +217,7 @@ namespace ERPAPI.Controllers
             }
 
 
-            return await Task.Run(() => Ok(Items.JournalEntryLines));
+            return await Task.Run(() => Ok(LineConciliacionLinea));
         }
 
 

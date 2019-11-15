@@ -20,7 +20,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Id Libro Mayor")]
         public int? GeneralLedgerHeaderId { get; set; }
-
+        [Display(Name = "Id de la Moneda")]
+        public int CurrencyId { get; set; }
 
 
 

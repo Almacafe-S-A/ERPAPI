@@ -28,28 +28,82 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+        public class Parametros
+        {
+            public DateTime FechaInicio { get; set; }
+
+            public DateTime FechaFinal { get; set; }
+        }
+
         /// <summary>
         /// Realiza un Cierre Contable
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> EjecutarCierreContable()
+        public async Task<IActionResult> EjecutarCierreContable([FromBody]Parametros Params)
         {
+            try
+            {
+                BitacoraCierreContable existeCierre = await _context.BitacoraCierreContable.Where(b => b.FechaCierre.Equals(Params.FechaFinal)).FirstOrDefaultAsync();
+                if (existeCierre != null)
+                {
+                    return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
+                }
+                BitacoraCierreContable cierre = new BitacoraCierreContable
+                {
+                    FechaCierre = DateTime.Now,
+                    FechaCreacion = DateTime.Now,
+                    Estatus = "PENDIENTE",
+                    EstatusId = 1,
+                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    FechaModificacion = DateTime.Now,
 
-            BitacoraCierreContable cierre = new BitacoraCierreContable {
-                FechaCierre = DateTime.Now,
-                FechaCreacion = DateTime.Now,
-                Estatus = "ERROR",
-                EstatusId = 1,
-                UsuarioCreacion =  User.Claims.FirstOrDefault().Value.ToString(),
-                UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                FechaModificacion = DateTime.Now,             
 
+                };
+                _context.BitacoraCierreContable.Add(cierre);
+                BitacoraCierreProcesos proceso1 = new BitacoraCierreProcesos
+                {
+                    IdBitacoraCierre = cierre.Id,
+                    //IdProceso = 1,
+                    Estatus = "PENDIENTE",
+                    Proceso = "CALCULO SALDOS",
+                    PasoCierre = 1,
+                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    FechaModificacion = DateTime.Now,
+                    FechaCierre = DateTime.Now,
+                    FechaCreacion = DateTime.Now,
 
-            };
-            _context.BitacoraCierreContable.Add(cierre);
-            _context.SaveChanges();
-            return await Task.Run(() => Ok());
+                };
+                BitacoraCierreProcesos proceso2 = new BitacoraCierreProcesos
+                {
+                    IdBitacoraCierre = cierre.Id,
+                    //IdProceso = 1,
+                    Estatus = "PENDIENTE",
+                    Proceso = "PROCESO 2",
+                    PasoCierre = 2,
+                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    FechaModificacion = DateTime.Now,
+                    FechaCierre = DateTime.Now,
+                    FechaCreacion = DateTime.Now,
+
+                };
+                _context.BitacoraCierreProceso.Add(proceso1);
+                _context.BitacoraCierreProceso.Add(proceso2);
+
+                _context.SaveChanges();
+
+                List< BitacoraCierreProcesos> spCierre = await _context.BitacoraCierreProceso.FromSql("Cierres @p0, @p1, @p2", "2000/01/01", Params.FechaFinal, cierre.Id).ToListAsync();
+                return await Task.Run(() => Ok(spCierre));
+            }
+            catch (Exception ex)
+            {
+
+                return await Task.Run(()=> BadRequest(ex.Message));
+            }
+            
         }
     }
 }

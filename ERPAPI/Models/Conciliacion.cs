@@ -41,10 +41,7 @@ namespace ERPAPI.Models
         [Display(Name = "SaldoConciliado")]
         public Double SaldoConciliado { get; set; }
 
-        [Required]
-        [Display(Name = "NombreArchivo")]
-        public string NombreArchivo { get; set; }
-
+        
         [Required]
         [Display(Name = "FechaCreacion")]
         public DateTime FechaCreacion { get; set; }

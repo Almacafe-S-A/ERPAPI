@@ -85,6 +85,31 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de EmployeeExtraHoursDetailes 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{EmployeeExtraHoursId}")]
+        public async Task<IActionResult> GetEmployeeExtraHoursDetailByEmployeeExtraHoursId(Int64 EmployeeExtraHoursId)
+        {
+            List<EmployeeExtraHoursDetail> Items = new List<EmployeeExtraHoursDetail>();
+            try
+            {
+                Items = await _context.EmployeeExtraHoursDetail
+                    .Where(q=>q.EmployeeExtraHoursId== EmployeeExtraHoursId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la EmployeeExtraHoursDetail por medio del Id enviado.
         /// </summary>
@@ -128,6 +153,10 @@ namespace ERPAPI.Controllers
                     {
 
                         _EmployeeExtraHoursDetailq = _EmployeeExtraHoursDetail;
+                        Customer _custo = new Customer();
+                        _custo = await _context.Customer
+                            .Where(q => q.CustomerId == _EmployeeExtraHoursDetail.CustomerId).FirstOrDefaultAsync();
+                        _EmployeeExtraHoursDetailq.CustomerName = _custo.CustomerName;
                         _context.EmployeeExtraHoursDetail.Add(_EmployeeExtraHoursDetailq);
                         await _context.SaveChangesAsync();
 
@@ -136,7 +165,7 @@ namespace ERPAPI.Controllers
                             IdOperacion = _EmployeeExtraHoursDetailq.EmployeeExtraHoursDetailId,
                             DocType = "EmployeeExtraHoursDetail",
                             ClaseInicial =
-                         Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeExtraHoursDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_EmployeeExtraHoursDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
@@ -187,6 +216,15 @@ namespace ERPAPI.Controllers
                               .Where(q => q.EmployeeExtraHoursDetailId == _EmployeeExtraHoursDetail.EmployeeExtraHoursDetailId)
                                                             select c
                              ).FirstOrDefaultAsync();
+
+                        Customer _custo = new Customer();
+                        _custo = await _context.Customer
+                            .Where(q=>q.CustomerId==_EmployeeExtraHoursDetail.CustomerId).FirstOrDefaultAsync();
+
+                        _EmployeeExtraHoursDetail.CustomerName = _custo.CustomerName;
+
+                        _EmployeeExtraHoursDetail.FechaCreacion = _EmployeeExtraHoursDetailq.FechaCreacion;
+                        _EmployeeExtraHoursDetail.UsuarioCreacion = _EmployeeExtraHoursDetailq.UsuarioCreacion;
 
                         _context.Entry(_EmployeeExtraHoursDetailq).CurrentValues.SetValues((_EmployeeExtraHoursDetail));
 
