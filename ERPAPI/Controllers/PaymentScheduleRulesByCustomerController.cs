@@ -86,6 +86,30 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene el Listado de PaymentScheduleRulesByCustomeres por Schedule
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{ScheduleSubservicesId}")]
+        public async Task<IActionResult> GetByScheduleId(Int64 ScheduleSubservicesId)
+        {
+            List<PaymentScheduleRulesByCustomer> Items = new List<PaymentScheduleRulesByCustomer>();
+            try
+            {
+                Items = await _context.PaymentScheduleRulesByCustomer
+                    .Where(q=>q.ScheduleSubservicesId== ScheduleSubservicesId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
         /// Obtiene los Datos de la PaymentScheduleRulesByCustomer por medio del Id enviado.
         /// </summary>
         /// <param name="PaymentScheduleRulesByCustomerId"></param>
