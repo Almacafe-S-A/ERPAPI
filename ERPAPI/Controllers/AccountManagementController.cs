@@ -16,28 +16,28 @@ namespace ERPAPI.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class SeveridadRiesgoesController : Controller
+    public class AccountManagementController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public SeveridadRiesgoesController(ILogger<SeveridadRiesgoesController> logger, ApplicationDbContext context)
+        public AccountManagementController(ILogger<AccountManagementController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de SeveridadRiesgo, por paginas
+        /// Obtiene el Listado de Mantenimiento de cuentas, por paginas
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetServeridadRiesgoPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetAccountManagementPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<SeveridadRiesgo> Items = new List<SeveridadRiesgo>();
+            List<AccountManagement> Items = new List<AccountManagement>();
             try
             {
-                var query = _context.SeveridadRiesgo.AsQueryable();
+                var query = _context.AccountManagement.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +60,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de Severidad Riesgo 
+        /// Obtiene el Listado de mantenimiento de cuentas
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetSeveridadRiesgo()
+        public async Task<IActionResult> GetAccountManagement()
         {
-            List<SeveridadRiesgo> Items = new List<SeveridadRiesgo>();
+            List<AccountManagement> Items = new List<AccountManagement>();
             try
             {
-                Items = await _context.SeveridadRiesgo.ToListAsync();
+                Items = await _context.AccountManagement.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la SeveridadRiesgo por medio del Id enviado.
+        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
         /// </summary>
-        /// <param name="IdSeveridad"></param>
+        /// <param name="AccountManagementId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{IdSeveridad}")]
-        public async Task<IActionResult> GetSeveridadRiesgoById(Int64 IdSeveridad)
+        [HttpGet("[action]/{AccountManagementId}")]
+        public async Task<IActionResult> GetSAccountManagementById(Int64 AccountManagementId)
         {
-            SeveridadRiesgo Items = new SeveridadRiesgo();
+            AccountManagement Items = new AccountManagement();
             try
             {
-                Items = await _context.SeveridadRiesgo.Where(q => q.IdSeveridad == IdSeveridad).FirstOrDefaultAsync();
+                Items = await _context.AccountManagement.Where(q => q.AccountManagementId == AccountManagementId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,36 +107,36 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta una nueva severidad riesgo
+        /// Inserta un nuevo mantenimiento de cuentas
         /// </summary>
-        /// <param name="_SeveridadRiesgo"></param>
+        /// <param name="_AccountManagement"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<SeveridadRiesgo>> Insert([FromBody]SeveridadRiesgo _SeveridadRiesgo)
+        public async Task<ActionResult<AccountManagement>> Insert([FromBody]AccountManagement _AccountManagement)
         {
-            SeveridadRiesgo SeveridadRiesgoq = new SeveridadRiesgo();
+            AccountManagement AccountManagementq = new AccountManagement();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        SeveridadRiesgoq = _SeveridadRiesgo;
-                        _context.SeveridadRiesgo.Add(SeveridadRiesgoq);
+                        AccountManagementq = _AccountManagement;
+                        _context.AccountManagement.Add(AccountManagementq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = SeveridadRiesgoq.IdSeveridad,
-                            DocType = "SeveridadRiesgo",
+                            IdOperacion = AccountManagementq.AccountManagementId,
+                            DocType = "AccountManagement",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(SeveridadRiesgoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = SeveridadRiesgoq.UsuarioCreacion,
-                            UsuarioModificacion = SeveridadRiesgoq.UsuarioModificacion,
-                            UsuarioEjecucion = SeveridadRiesgoq.UsuarioModificacion,
+                            UsuarioCreacion = AccountManagementq.UsuarioCreacion,
+                            UsuarioModificacion = AccountManagementq.UsuarioModificacion,
+                            UsuarioEjecucion = AccountManagementq.UsuarioModificacion,
 
                         });
 
@@ -158,46 +158,45 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(SeveridadRiesgoq));
+            return await Task.Run(() => Ok(AccountManagementq));
         }
 
         /// <summary>
-        /// Actualiza la Severidad Riesgo
+        /// Actualiza el mantenimiento de cuentas
         /// </summary>
-        /// <param name="_SeveridadRiesgo"></param>
+        /// <param name="_AccountManagement"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<SeveridadRiesgo>> Update([FromBody]SeveridadRiesgo _SeveridadRiesgo)
+        public async Task<ActionResult<AccountManagement>> Update([FromBody]AccountManagement _AccountManagement)
         {
-            SeveridadRiesgo _SeveridadRiesgoq = _SeveridadRiesgo;
+            AccountManagement _AccountManagementq = _AccountManagement;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _SeveridadRiesgoq = await (from c in _context.SeveridadRiesgo
-                        .Where(q => q.IdSeveridad == _SeveridadRiesgo.IdSeveridad)
+                        _AccountManagementq = await (from c in _context.AccountManagement
+                        .Where(q => q.AccountManagementId == _AccountManagement.AccountManagementId)
                                                    select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_SeveridadRiesgoq).CurrentValues.SetValues((_SeveridadRiesgo));
+                        _context.Entry(_AccountManagementq).CurrentValues.SetValues((_AccountManagement));
 
-                        //_context.Bank.Update(_Bankq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _SeveridadRiesgoq.IdSeveridad,
-                            DocType = "SeveridadRiesgo",
+                            IdOperacion = _AccountManagementq.AccountManagementId,
+                            DocType = "AccountManagement",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_SeveridadRiesgoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _SeveridadRiesgoq.UsuarioCreacion,
-                            UsuarioModificacion = _SeveridadRiesgoq.UsuarioModificacion,
-                            UsuarioEjecucion = _SeveridadRiesgoq.UsuarioModificacion,
+                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
+                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
 
                         });
 
@@ -219,43 +218,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_SeveridadRiesgoq));
+            return await Task.Run(() => Ok(_AccountManagementq));
         }
 
         /// <summary>
-        /// Elimina una Severidad Riesgo      
+        /// Elimina un mantenimiento de cuentas
         /// </summary>
-        /// <param name="_SeveridadRiesgo"></param>
+        /// <param name="_AccountManagement"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]SeveridadRiesgo _SeveridadRiesgo)
+        public async Task<IActionResult> Delete([FromBody]AccountManagement _AccountManagement)
         {
-            SeveridadRiesgo _SeveridadRiesgoq = new SeveridadRiesgo();
+            AccountManagement _AccountManagementq = new AccountManagement();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _SeveridadRiesgoq = _context.SeveridadRiesgo
-                        .Where(x => x.IdSeveridad == (Int64)_SeveridadRiesgo.IdSeveridad)
+                        _AccountManagementq = _context.AccountManagement
+                        .Where(x => x.AccountManagementId == (Int64)_AccountManagement.AccountManagementId)
                         .FirstOrDefault();
 
-                        _context.SeveridadRiesgo.Remove(_SeveridadRiesgoq);
+                        _context.AccountManagement.Remove(_AccountManagementq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _SeveridadRiesgoq.IdSeveridad,
-                            DocType = "SeveridadRiesgo",
+                            IdOperacion = _AccountManagementq.AccountManagementId,
+                            DocType = "AccountManagement",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_SeveridadRiesgoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _SeveridadRiesgoq.UsuarioCreacion,
-                            UsuarioModificacion = _SeveridadRiesgoq.UsuarioModificacion,
-                            UsuarioEjecucion = _SeveridadRiesgoq.UsuarioModificacion,
+                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
+                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
 
                         });
 
@@ -276,7 +275,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_SeveridadRiesgoq));
+            return await Task.Run(() => Ok(_AccountManagementq));
 
         }
     }

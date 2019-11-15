@@ -152,6 +152,10 @@ namespace ERPAPI.Controllers
                     {
 
                         _PaymentScheduleRulesByCustomerq = _PaymentScheduleRulesByCustomer;
+                        Customer _custo = await _context.Customer
+                        .Where(q => q.CustomerId == _PaymentScheduleRulesByCustomer.CustomerId).FirstOrDefaultAsync();
+
+                        _PaymentScheduleRulesByCustomerq.CustomerName = _custo.CustomerName;
                         _context.PaymentScheduleRulesByCustomer.Add(_PaymentScheduleRulesByCustomerq);
                         await _context.SaveChangesAsync();
 
@@ -169,6 +173,8 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _PaymentScheduleRulesByCustomerq.UsuarioModificacion,
 
                         });
+
+                    
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
@@ -211,6 +217,10 @@ namespace ERPAPI.Controllers
                               .Where(q => q.PaymentScheduleRulesByCustomerId == _PaymentScheduleRulesByCustomer.PaymentScheduleRulesByCustomerId)
                                                                   select c
                              ).FirstOrDefaultAsync();
+
+                        Customer _custo = await _context.Customer
+                        .Where(q => q.CustomerId == _PaymentScheduleRulesByCustomer.CustomerId).FirstOrDefaultAsync();
+                        _PaymentScheduleRulesByCustomer.CustomerName = _custo.CustomerName;
 
                         _context.Entry(_PaymentScheduleRulesByCustomerq).CurrentValues.SetValues((_PaymentScheduleRulesByCustomer));
 

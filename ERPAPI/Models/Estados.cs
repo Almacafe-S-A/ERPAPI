@@ -14,9 +14,7 @@ namespace ERPAPI.Models
         [Required]
         public string NombreEstado { get; set; }
         public string DescripcionEstado { get; set; }
-        public long IdGrupoEstado { get; set; }
-        [ForeignKey("IdGrupoEstado")]
-        public virtual GrupoConfiguracion GrupoConfiguracion { get; set; }
+        public long IdGrupoEstado { get; set; }        
 
         [Required]
         public string UsuarioCreacion { get; set; }

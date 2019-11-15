@@ -81,6 +81,8 @@ namespace ERP.Contexts
 
         public DbSet<SeveridadRiesgo> SeveridadRiesgo { get; set; }
         public DbSet<InvoiceTransReport> InvoiceTransReport { get; set; }
+        public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
+        public DbSet<AccountManagement> AccountManagement { get; set; }
         /// <summary>
         /// ///Cierres
         /// </summary>

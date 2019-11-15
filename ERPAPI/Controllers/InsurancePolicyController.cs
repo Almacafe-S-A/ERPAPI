@@ -16,28 +16,28 @@ namespace ERPAPI.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
-    public class SeveridadRiesgoesController : Controller
+    public class InsurancePolicyController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public SeveridadRiesgoesController(ILogger<SeveridadRiesgoesController> logger, ApplicationDbContext context)
+        public InsurancePolicyController(ILogger<InsurancePolicyController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de SeveridadRiesgo, por paginas
+        /// Obtiene el Listado de Polizas por paginas
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetServeridadRiesgoPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetInsurancePolicyPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<SeveridadRiesgo> Items = new List<SeveridadRiesgo>();
+            List<InsurancePolicy> Items = new List<InsurancePolicy>();
             try
             {
-                var query = _context.SeveridadRiesgo.AsQueryable();
+                var query = _context.InsurancePolicy.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +60,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de Severidad Riesgo 
+        /// Obtiene el Listado de Polizas
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSeveridadRiesgo()
         {
-            List<SeveridadRiesgo> Items = new List<SeveridadRiesgo>();
+            List<InsurancePolicy> Items = new List<InsurancePolicy>();
             try
             {
-                Items = await _context.SeveridadRiesgo.ToListAsync();
+                Items = await _context.InsurancePolicy.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la SeveridadRiesgo por medio del Id enviado.
+        /// Obtiene los Datos de la poliza por medio del Id enviado.
         /// </summary>
-        /// <param name="IdSeveridad"></param>
+        /// <param name="IdInsurancePolicy"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{IdSeveridad}")]
-        public async Task<IActionResult> GetSeveridadRiesgoById(Int64 IdSeveridad)
+        [HttpGet("[action]/{IdInsurancePolicy}")]
+        public async Task<IActionResult> GetSeveridadRiesgoById(Int64 IdInsurancePolicy)
         {
-            SeveridadRiesgo Items = new SeveridadRiesgo();
+            InsurancePolicy Items = new InsurancePolicy();
             try
             {
-                Items = await _context.SeveridadRiesgo.Where(q => q.IdSeveridad == IdSeveridad).FirstOrDefaultAsync();
+                Items = await _context.InsurancePolicy.Where(q => q.InsurancePolicyId == IdInsurancePolicy).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,36 +107,36 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta una nueva severidad riesgo
+        /// Inserta una nueva poliza
         /// </summary>
-        /// <param name="_SeveridadRiesgo"></param>
+        /// <param name="_InsurancePolicy"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<SeveridadRiesgo>> Insert([FromBody]SeveridadRiesgo _SeveridadRiesgo)
+        public async Task<ActionResult<InsurancePolicy>> Insert([FromBody]InsurancePolicy _InsurancePolicy)
         {
-            SeveridadRiesgo SeveridadRiesgoq = new SeveridadRiesgo();
+            InsurancePolicy InsurancePolicyq = new InsurancePolicy();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        SeveridadRiesgoq = _SeveridadRiesgo;
-                        _context.SeveridadRiesgo.Add(SeveridadRiesgoq);
+                        InsurancePolicyq = _InsurancePolicy;
+                        _context.InsurancePolicy.Add(InsurancePolicyq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = SeveridadRiesgoq.IdSeveridad,
-                            DocType = "SeveridadRiesgo",
+                            IdOperacion = InsurancePolicyq.InsurancePolicyId,
+                            DocType = "InsurancePolicy",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(SeveridadRiesgoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(InsurancePolicyq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = SeveridadRiesgoq.UsuarioCreacion,
-                            UsuarioModificacion = SeveridadRiesgoq.UsuarioModificacion,
-                            UsuarioEjecucion = SeveridadRiesgoq.UsuarioModificacion,
+                            UsuarioCreacion = InsurancePolicyq.UsuarioCreacion,
+                            UsuarioModificacion = InsurancePolicyq.UsuarioModificacion,
+                            UsuarioEjecucion = InsurancePolicyq.UsuarioModificacion,
 
                         });
 
@@ -158,46 +158,45 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(SeveridadRiesgoq));
+            return await Task.Run(() => Ok(InsurancePolicyq));
         }
 
         /// <summary>
-        /// Actualiza la Severidad Riesgo
+        /// Actualiza la poliza
         /// </summary>
-        /// <param name="_SeveridadRiesgo"></param>
+        /// <param name="_InsurancePolicy"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<SeveridadRiesgo>> Update([FromBody]SeveridadRiesgo _SeveridadRiesgo)
+        public async Task<ActionResult<InsurancePolicy>> Update([FromBody]InsurancePolicy _InsurancePolicy)
         {
-            SeveridadRiesgo _SeveridadRiesgoq = _SeveridadRiesgo;
+            InsurancePolicy InsurancePolicyq = _InsurancePolicy;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _SeveridadRiesgoq = await (from c in _context.SeveridadRiesgo
-                        .Where(q => q.IdSeveridad == _SeveridadRiesgo.IdSeveridad)
-                                                   select c
+                        InsurancePolicyq = await (from c in _context.InsurancePolicy
+                        .Where(q => q.InsurancePolicyId == _InsurancePolicy.InsurancePolicyId)
+                                                  select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_SeveridadRiesgoq).CurrentValues.SetValues((_SeveridadRiesgo));
+                        _context.Entry(InsurancePolicyq).CurrentValues.SetValues((_InsurancePolicy));
 
-                        //_context.Bank.Update(_Bankq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _SeveridadRiesgoq.IdSeveridad,
-                            DocType = "SeveridadRiesgo",
+                            IdOperacion = InsurancePolicyq.InsurancePolicyId,
+                            DocType = "InsurancePolicy",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_SeveridadRiesgoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(InsurancePolicyq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _SeveridadRiesgoq.UsuarioCreacion,
-                            UsuarioModificacion = _SeveridadRiesgoq.UsuarioModificacion,
-                            UsuarioEjecucion = _SeveridadRiesgoq.UsuarioModificacion,
+                            UsuarioCreacion = InsurancePolicyq.UsuarioCreacion,
+                            UsuarioModificacion = InsurancePolicyq.UsuarioModificacion,
+                            UsuarioEjecucion = InsurancePolicyq.UsuarioModificacion,
 
                         });
 
@@ -219,43 +218,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_SeveridadRiesgoq));
+            return await Task.Run(() => Ok(InsurancePolicyq));
         }
 
         /// <summary>
-        /// Elimina una Severidad Riesgo      
+        /// Elimina una Poliza
         /// </summary>
-        /// <param name="_SeveridadRiesgo"></param>
+        /// <param name="_InsurancePolicy"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]SeveridadRiesgo _SeveridadRiesgo)
+        public async Task<IActionResult> Delete([FromBody]InsurancePolicy _InsurancePolicy)
         {
-            SeveridadRiesgo _SeveridadRiesgoq = new SeveridadRiesgo();
+            InsurancePolicy InsurancePolicyq = new InsurancePolicy();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _SeveridadRiesgoq = _context.SeveridadRiesgo
-                        .Where(x => x.IdSeveridad == (Int64)_SeveridadRiesgo.IdSeveridad)
+                        InsurancePolicyq = _context.InsurancePolicy
+                        .Where(x => x.InsurancePolicyId == (Int64)_InsurancePolicy.InsurancePolicyId)
                         .FirstOrDefault();
 
-                        _context.SeveridadRiesgo.Remove(_SeveridadRiesgoq);
+                        _context.InsurancePolicy.Remove(InsurancePolicyq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _SeveridadRiesgoq.IdSeveridad,
-                            DocType = "SeveridadRiesgo",
+                            IdOperacion = InsurancePolicyq.InsurancePolicyId,
+                            DocType = "InsurancePolicy",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_SeveridadRiesgoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(InsurancePolicyq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _SeveridadRiesgoq.UsuarioCreacion,
-                            UsuarioModificacion = _SeveridadRiesgoq.UsuarioModificacion,
-                            UsuarioEjecucion = _SeveridadRiesgoq.UsuarioModificacion,
+                            UsuarioCreacion = InsurancePolicyq.UsuarioCreacion,
+                            UsuarioModificacion = InsurancePolicyq.UsuarioModificacion,
+                            UsuarioEjecucion = InsurancePolicyq.UsuarioModificacion,
 
                         });
 
@@ -276,7 +275,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_SeveridadRiesgoq));
+            return await Task.Run(() => Ok(InsurancePolicyq));
 
         }
     }
