@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191115212632_RemoveNavPropGrupoEstados")]
+    partial class RemoveNavPropGrupoEstados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3243,8 +3245,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<double>("HourlySalary");
-
                     b.Property<double>("QuantityHours");
 
                     b.Property<DateTime>("StartTime");
@@ -5863,8 +5863,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CustomerId");
 
-                    b.Property<string>("CustomerName");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -7005,33 +7003,19 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Day");
 
-                    b.Property<string>("Description");
+                    b.Property<double>("Description");
 
                     b.Property<DateTime>("EndTime");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<double>("FactorHora");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("IdEstado");
-
-                    b.Property<long>("LogicalConditionId");
-
                     b.Property<double>("QuantityHours");
-
-                    b.Property<long>("ServiceId");
-
-                    b.Property<string>("ServiceName");
 
                     b.Property<DateTime>("StartTime");
 
                     b.Property<long>("SubServiceId");
-
-                    b.Property<string>("SubServiceName");
 
                     b.Property<bool>("Transport");
 
