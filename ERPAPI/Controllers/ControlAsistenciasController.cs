@@ -138,7 +138,7 @@ namespace ERPAPI.Controllers
         /// <param name="_ControlAsistenciasP"></param>
         /// <returns></returns>
 
-        [HttpGet("[action]")]
+        [HttpPost("[action]")]
         public async Task<ActionResult<Int32>> GetSumControlAsistenciasByEmployeeId([FromBody]ControlAsistencias _ControlAsistenciasP)
         {
            // ControlAsistencias Items = new ControlAsistencias();
