@@ -29,11 +29,32 @@ namespace ERPAPI.Models
         [Display(Name = "Cantidad de horas")]
         public double QuantityHours { get; set; }
 
+        [Display(Name = "Servicio")]
+        public Int64 ServiceId { get; set; }
+
+        [Display(Name = "Servicio")]
+        public string ServiceName { get; set; }
+
         [Display(Name = "Subservicio")]
         public Int64 SubServiceId { get; set; }
 
+        [Display(Name = "Subservicio")]
+        public string SubServiceName { get; set; }
+
+        [Display(Name = "Subservicio")]
+        public double FactorHora { get; set; }
+
+        [Display(Name = "Id Condición")]
+        public Int64 LogicalConditionId { get; set; }
+
+        [Display(Name = "Estado")]
+        public Int64 IdEstado { get; set; }
+
+        [Display(Name = "Estado")]
+        public string Estado { get; set; }
+
         [Display(Name = "Descripción")]
-        public double Description { get; set; }
+        public string Description { get; set; }
 
         [Display(Name = "Genera Transporte")]
         public bool Transport { get; set; }

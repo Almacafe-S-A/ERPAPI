@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
-     [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/Estados")]
     [ApiController]
     public class EstadosController : Controller
@@ -71,7 +71,7 @@ namespace ERPAPI.Controllers
             try
             {
                 
-                List<Estados> Items = await _context.Estados.Include(c => c.GrupoConfiguracion).ToListAsync();
+                List<Estados> Items = await _context.Estados.ToListAsync();
                 return await Task.Run(() => Ok(Items));
 
             }
@@ -89,7 +89,7 @@ namespace ERPAPI.Controllers
             try
             {
                 
-                Estados Items = await _context.Estados.Where(q=>q.IdEstado==IdEstado).Include(c => c.GrupoConfiguracion).FirstOrDefaultAsync();
+                Estados Items = await _context.Estados.Where(q=>q.IdEstado==IdEstado).FirstOrDefaultAsync();
                 return Ok(Items);
 
             }
