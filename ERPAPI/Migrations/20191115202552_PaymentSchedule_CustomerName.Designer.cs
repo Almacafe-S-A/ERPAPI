@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191115202552_PaymentSchedule_CustomerName")]
+    partial class PaymentSchedule_CustomerName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3785,6 +3787,8 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("IdEstado");
+
+                    b.HasIndex("IdGrupoEstado");
 
                     b.ToTable("Estados");
                 });
@@ -8987,6 +8991,14 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.EndososTalon")
                         .WithMany("EndososTalonLine")
                         .HasForeignKey("EndososTalonId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Estados", b =>
+                {
+                    b.HasOne("ERPAPI.Models.GrupoConfiguracion", "GrupoConfiguracion")
+                        .WithMany()
+                        .HasForeignKey("IdGrupoEstado")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

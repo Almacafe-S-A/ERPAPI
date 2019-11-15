@@ -16,6 +16,9 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
 
+        [Display(Name = "Cliente")]
+        public string CustomerName { get; set; }
+
         [Display(Name = "Horario servicio")]
         public Int64 ScheduleSubservicesId { get; set; }
 
