@@ -105,9 +105,9 @@ namespace ERPAPI.Controllers
                 var consulta = from journale in _context.JournalEntry
                                join journalel in _context.JournalEntryLine
                                on journale.JournalEntryId equals journalel.JournalEntryId
-                               join Currencyl in _context.Currency
-                               on journale.CurrencyId equals Currencyl.CurrencyId
-                               where journalel.AccountId == _ConciliacionP.ConciliacionLinea[0].AccountId &&
+                               //join Currencyl in _context.Currency
+                              // on journale.CurrencyId equals Currencyl.CurrencyId
+                               where journalel.AccountId == _ConciliacionP.AccountId &&
                                  journale.Date >= _ConciliacionP.DateBeginReconciled &&
                                  journale.Date <= _ConciliacionP.DateEndReconciled
                                // group journalel
@@ -131,7 +131,7 @@ namespace ERPAPI.Controllers
                                    TransDate = journale.Date,
                                    CurrencyId = journale.CurrencyId,
                                    AccountName = journalel.AccountName,
-                                   MonedaName = Currencyl.CurrencyName
+                                   MonedaName = "Moneda"
 
                                };
 
@@ -166,20 +166,16 @@ namespace ERPAPI.Controllers
         /// <param name="ConciliacionId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{ConciliacionId}")]
-        public async Task<IActionResult> GetConciliacionById(Int64 ConciliacionId)
+        public async Task<IActionResult> GetConciliacionById(int ConciliacionId)
         {
             Conciliacion Items = new Conciliacion();
             try
             {
                 Items = await _context.Conciliacion.Where(q => q.ConciliacionId == ConciliacionId)
                     .Include(q => q.ConciliacionLinea).FirstOrDefaultAsync();
-                if (Items.ConciliacionLinea == null)
-                {
-                    List<ConciliacionLinea> ArrayConciliacionLine = new List<ConciliacionLinea>();
-                    //JournalEntryController JEcontroller = new JournalEntryController();
-                    var arraylist = await GetJournalEntryByDateAccount(Items);
-                    Items.ConciliacionLinea = ((List<ConciliacionLinea>)arraylist);
-                }
+                
+
+
             }
             catch (Exception ex)
             {
@@ -260,8 +256,45 @@ namespace ERPAPI.Controllers
                         });
 
                         //await _context.SaveChangesAsync();
+                        if (_Conciliacionq.ConciliacionLinea == null)
+                {
+                    List<ConciliacionLinea> ArrayConciliacionLine = new List<ConciliacionLinea>();
+                    //JournalEntryController JEcontroller = new JournalEntryController();
+                    var arraylist = await GetJournalEntryByDateAccount(_Conciliacionq);
+                            _Conciliacionq.ConciliacionLinea = ((List<ConciliacionLinea>)arraylist);
+                    foreach (var item in _Conciliacionq.ConciliacionLinea)
+                    {
+                        item.ConciliacionId = _Conciliacionq.ConciliacionId;
+                        item.FechaCreacion = _Conciliacionq.FechaCreacion;
+                        item.FechaModificacion = _Conciliacionq.FechaModificacion;
+                        item.UsuarioCreacion = _Conciliacionq.UsuarioCreacion;
+                        item.UsuarioModificacion = _Conciliacionq.UsuarioModificacion;
 
-                        if(_Conciliacionq.ConciliacionLinea != null) { 
+                        _context.ConciliacionLinea.Add(item);
+
+                        BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = item.ConciliacionLineaId,
+                            DocType = "ConciliacionLinea",
+                            ClaseInicial =
+                 Newtonsoft.Json.JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = item.UsuarioCreacion,
+                            UsuarioModificacion = item.UsuarioModificacion,
+                            UsuarioEjecucion = item.UsuarioModificacion,
+
+                        });
+
+                    }
+                
+                    await _context.SaveChangesAsync();
+
+                }
+
+    
+                     /*   if (_Conciliacionq.ConciliacionLinea != null) { 
                         foreach (var item in _Conciliacionq.ConciliacionLinea)
                         {
                             item.ConciliacionId = _Conciliacionq.ConciliacionId;
@@ -290,7 +323,7 @@ namespace ERPAPI.Controllers
                         }
                         }
                         await _context.SaveChangesAsync();
-                        
+                        */
                         transaction.Commit();
                     }
                     catch (Exception ex)
