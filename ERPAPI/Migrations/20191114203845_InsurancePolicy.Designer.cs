@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191114203845_InsurancePolicy")]
+    partial class InsurancePolicy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1375,6 +1377,9 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("NombreArchivo")
+                        .IsRequired();
 
                     b.Property<double>("SaldoConciliado");
 
@@ -3231,10 +3236,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
                     b.Property<long>("EmployeeExtraHoursId");
 
                     b.Property<DateTime>("EndTime");
@@ -4742,8 +4743,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("CostCenterId");
-
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("Customername");
@@ -5302,8 +5301,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CreatedUser")
                         .IsRequired();
-
-                    b.Property<int>("CurrencyId");
 
                     b.Property<DateTime>("Date");
 
@@ -7011,19 +7008,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("LogicalConditionId");
-
                     b.Property<double>("QuantityHours");
-
-                    b.Property<long>("ServiceId");
-
-                    b.Property<string>("ServiceName");
 
                     b.Property<DateTime>("StartTime");
 
                     b.Property<long>("SubServiceId");
-
-                    b.Property<string>("SubServiceName");
 
                     b.Property<bool>("Transport");
 

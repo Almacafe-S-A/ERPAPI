@@ -22,5 +22,16 @@ namespace ERPAPI.Models
         public double RangoSuperiorSeveridad { get; set; }
         public string Nivel { get; set; }
         public string ColorHexadecimal { get; set; }
+
+        [Display(Name = "Fecha de creación")]
+        public DateTime FechaCreacion { get; set; }
+
+        [Display(Name = "Fecha de modificación")]
+        public DateTime FechaModificacion { get; set; }
+
+        [Display(Name = "Usuario de creación")]
+        public string UsuarioCreacion { get; set; }
+
+        public string UsuarioModificacion { get; set; }
     }
 }
