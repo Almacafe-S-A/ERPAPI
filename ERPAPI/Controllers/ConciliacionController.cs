@@ -200,9 +200,10 @@ namespace ERPAPI.Controllers
             {
                 Items = await _context.Conciliacion.Where(
                         q => q.DateBeginReconciled >= _Conciliacion.DateBeginReconciled  &&
-                             q.DateBeginReconciled <= _Conciliacion.DateBeginReconciled  &&
-                             q.DateEndReconciled >= _Conciliacion.DateEndReconciled &&
-                             q.DateEndReconciled <= _Conciliacion.DateEndReconciled
+                            // q.DateBeginReconciled <= _Conciliacion.DateBeginReconciled  &&
+                             //q.DateEndReconciled >= _Conciliacion.DateEndReconciled &&
+                             q.DateEndReconciled <= _Conciliacion.DateEndReconciled &&
+                             q.AccountId == _Conciliacion.AccountId
                         )
                     .Include(q => q.ConciliacionLinea).FirstOrDefaultAsync();
             }
@@ -238,7 +239,7 @@ namespace ERPAPI.Controllers
 
                         _Conciliacionq = _Conciliacion;
                         _context.Conciliacion.Add(_Conciliacionq);
-
+                        _Conciliacionq.ConciliacionLinea = new List<ConciliacionLinea>();
                         //await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -255,75 +256,47 @@ namespace ERPAPI.Controllers
 
                         });
 
-                        //await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
                         if (_Conciliacionq.ConciliacionLinea == null)
                 {
                     List<ConciliacionLinea> ArrayConciliacionLine = new List<ConciliacionLinea>();
                     //JournalEntryController JEcontroller = new JournalEntryController();
                     var arraylist = await GetJournalEntryByDateAccount(_Conciliacionq);
+                    if (arraylist != null)
+                        { 
                             _Conciliacionq.ConciliacionLinea = ((List<ConciliacionLinea>)arraylist);
-                    foreach (var item in _Conciliacionq.ConciliacionLinea)
-                    {
-                        item.ConciliacionId = _Conciliacionq.ConciliacionId;
-                        item.FechaCreacion = _Conciliacionq.FechaCreacion;
-                        item.FechaModificacion = _Conciliacionq.FechaModificacion;
-                        item.UsuarioCreacion = _Conciliacionq.UsuarioCreacion;
-                        item.UsuarioModificacion = _Conciliacionq.UsuarioModificacion;
+                                foreach (var item in _Conciliacionq.ConciliacionLinea)
+                                {
+                                    item.ConciliacionId = _Conciliacionq.ConciliacionId;
+                                    item.FechaCreacion = _Conciliacionq.FechaCreacion;
+                                    item.FechaModificacion = _Conciliacionq.FechaModificacion;
+                                    item.UsuarioCreacion = _Conciliacionq.UsuarioCreacion;
+                                    item.UsuarioModificacion = _Conciliacionq.UsuarioModificacion;
 
-                        _context.ConciliacionLinea.Add(item);
+                                    _context.ConciliacionLinea.Add(item);
 
-                        BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = item.ConciliacionLineaId,
-                            DocType = "ConciliacionLinea",
-                            ClaseInicial =
-                 Newtonsoft.Json.JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = item.UsuarioCreacion,
-                            UsuarioModificacion = item.UsuarioModificacion,
-                            UsuarioEjecucion = item.UsuarioModificacion,
+                                    BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
+                                    {
+                                        IdOperacion = item.ConciliacionLineaId,
+                                        DocType = "ConciliacionLinea",
+                                        ClaseInicial =
+                                          Newtonsoft.Json.JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                        Accion = "Insertar",
+                                        FechaCreacion = DateTime.Now,
+                                        FechaModificacion = DateTime.Now,
+                                        UsuarioCreacion = item.UsuarioCreacion,
+                                        UsuarioModificacion = item.UsuarioModificacion,
+                                        UsuarioEjecucion = item.UsuarioModificacion,
 
-                        });
+                                    });
 
-                    }
+                                }
                 
-                    await _context.SaveChangesAsync();
-
-                }
+                        await _context.SaveChangesAsync();
+                       }
+                    }
 
     
-                     /*   if (_Conciliacionq.ConciliacionLinea != null) { 
-                        foreach (var item in _Conciliacionq.ConciliacionLinea)
-                        {
-                            item.ConciliacionId = _Conciliacionq.ConciliacionId;
-                            item.FechaCreacion = _Conciliacionq.FechaCreacion;
-                            item.FechaModificacion = _Conciliacionq.FechaModificacion;
-                            item.UsuarioCreacion = _Conciliacionq.UsuarioCreacion;
-                            item.UsuarioModificacion = _Conciliacionq.UsuarioModificacion;
-
-                            _context.ConciliacionLinea.Add(item);
-
-                            BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
-                            {
-                                IdOperacion = item.ConciliacionLineaId,
-                                DocType = "ConciliacionLinea",
-                                ClaseInicial =
-                     Newtonsoft.Json.JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                Accion = "Insertar",
-                                FechaCreacion = DateTime.Now,
-                                FechaModificacion = DateTime.Now,
-                                UsuarioCreacion = item.UsuarioCreacion,
-                                UsuarioModificacion = item.UsuarioModificacion,
-                                UsuarioEjecucion = item.UsuarioModificacion,
-
-                            });
-
-                        }
-                        }
-                        await _context.SaveChangesAsync();
-                        */
                         transaction.Commit();
                     }
                     catch (Exception ex)
