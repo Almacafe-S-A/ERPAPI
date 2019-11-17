@@ -131,7 +131,10 @@ namespace ERPAPI.Controllers
                                    TransDate = journale.Date,
                                    CurrencyId = journale.CurrencyId,
                                    AccountName = journalel.AccountName,
-                                   MonedaName = "Moneda"
+                                   MonedaName = _context.Currency.Where(
+                                       p => p.CurrencyId ==  journale.CurrencyId
+                                       ).FirstOrDefault().CurrencyName,
+
 
                                };
 
@@ -200,8 +203,6 @@ namespace ERPAPI.Controllers
             {
                 Items = await _context.Conciliacion.Where(
                         q => q.DateBeginReconciled >= _Conciliacion.DateBeginReconciled  &&
-                            // q.DateBeginReconciled <= _Conciliacion.DateBeginReconciled  &&
-                             //q.DateEndReconciled >= _Conciliacion.DateEndReconciled &&
                              q.DateEndReconciled <= _Conciliacion.DateEndReconciled &&
                              q.AccountId == _Conciliacion.AccountId
                         )
