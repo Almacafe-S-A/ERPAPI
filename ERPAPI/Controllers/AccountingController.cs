@@ -29,6 +29,212 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
+        /// <summary>
+        /// Obtiene los Datos de la Account en una lista.
+        /// </summary>
+
+        // GET: api/Account
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccount()
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await _context.Accounting.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
+        /// <summary>
+        /// Obtiene los Datos de la Account en una lista.
+        /// </summary>
+
+        // GET: api/Account
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountDiary()
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await _context.Accounting.Where(q => q.BlockedInJournal == false).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
+
+
+        /// <summary>
+        /// Obtiene los Datos de la Account por medio del Id enviado.
+        /// </summary>
+        /// <param name="AccountId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{AccountId}")]
+        public async Task<IActionResult> GetAccountById(Int64 AccountId)
+        {
+            Accounting Items = new Accounting();
+            try
+            {
+                Items = await _context.Accounting.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
+        /// Obtiene los Datos de la Account por medio del Codigo de Cuenta enviado.
+        /// </summary>
+        /// <param name="AccountCode"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]/{AccountCode}")]
+        public async Task<IActionResult> GetAccountingByAccountCode(String AccountCode)
+        {
+            Accounting Items = new Accounting();
+            try
+            {
+                Items = await _context.Accounting.Where(q => q.AccountCode == AccountCode).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
+        /// Obtiene los Datos de la Account por medio del Id de Tipo de Cuenta enviado.
+        /// </summary>
+        /// <param name="TypeAccounting"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{TypeAccounting}")]
+        public async Task<IActionResult> GetFatherAccountById(Int64 TypeAccounting)
+        {
+            Accounting Items = new Accounting();
+            try
+            {
+                Items = await _context.Accounting.Where(
+                                q => q.TypeAccountId == TypeAccounting &&
+                                     q.ParentAccountId == null
+
+                ).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
+        /// Inserta una nueva Account
+        /// </summary>
+        /// <param name="_TypeAcountId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetHightLevelHierarchy(Int64 _TypeAcountId)
+        {
+
+            try
+            {
+                Accounting _Accounting = new Accounting();
+                _Accounting = _context.Accounting.Where(a => a.TypeAccountId == _TypeAcountId)
+                    .OrderByDescending(b => b.HierarchyAccount).FirstOrDefault();
+                var Items = _Accounting.HierarchyAccount;
+                return await Task.Run(() => Ok(Items));
+                //  return Ok(Items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+        /// <summary>
+        /// Inserta una nueva Account
+        /// </summary>
+        /// <param name="_TypeAcountId"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountingByTypeAccount(Int64 _TypeAcountId)
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await _context.Accounting.Where(p => p.TypeAccountId == _TypeAcountId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
+
+        /// <summary>
+        /// Retorna los nodos padres de un padre contable 
+        /// </summary>
+        /// <param name="ParentAcountId"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]/{ParentAcountId}")]
+        public async Task<IActionResult> GetFathersAccounting(Int64 ParentAcountId)
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await _context.Accounting.Where(p => p.ParentAccountId == ParentAcountId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+            //return await _context.Dimensions.ToListAsync();
+        }
 
         /// <summary>
         /// Obtiene los Datos de la tabla Accounting por clasificacion de cuenta.
@@ -203,207 +409,7 @@ namespace ERPAPI.Controllers
                     .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
         }
 
-        /// <summary>
-        /// Obtiene los Datos de la Account en una lista.
-        /// </summary>
-
-        // GET: api/Account
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccount()
-
-        {
-            List<Accounting> Items = new List<Accounting>();
-            try
-            {
-                Items = await _context.Accounting.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
-        }
-        /// <summary>
-        /// Obtiene los Datos de la Account en una lista.
-        /// </summary>
-
-        // GET: api/Account
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountDiary()
-
-        {
-            List<Accounting> Items = new List<Accounting>();
-            try
-            {
-                Items = await _context.Accounting.Where(q => q.BlockedInJournal == false).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
-        }
-
-
-        /// <summary>
-        /// Obtiene los Datos de la Account por medio del Id enviado.
-        /// </summary>
-        /// <param name="AccountId"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{AccountId}")]
-        public async Task<IActionResult> GetAccountById(Int64 AccountId)
-        {
-            Accounting Items = new Accounting();
-            try
-            {
-                Items = await _context.Accounting.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-        [HttpGet("[action]/{AccountCode}")]
-        public async Task<IActionResult> GetAccountingByAccountCode(String AccountCode)
-        {
-            Accounting Items = new Accounting();
-            try
-            {
-                Items = await _context.Accounting.Where(q => q.AccountCode == AccountCode).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-        /// <summary>
-        /// Obtiene los Datos de la Account por medio del Id enviado.
-        /// </summary>
-        /// <param name="TypeAccounting"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{TypeAccounting}")]
-        public async Task<IActionResult> GetFatherAccountById(Int64 TypeAccounting)
-        {
-            Accounting Items = new Accounting();
-            try
-            {
-                Items = await _context.Accounting.Where(
-                                q => q.TypeAccountId == TypeAccounting && 
-                                     q.ParentAccountId == null
-                                   
-                ).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-        /// <summary>
-        /// Inserta una nueva Account
-        /// </summary>
-        /// <param name="_TypeAcountId"></param>
-        /// <returns></returns>
-        [HttpGet("[action]")]
-        public async Task<ActionResult<Int32>> GetHightLevelHierarchy(Int64 _TypeAcountId)
-        {
-
-            try
-            {
-                Accounting _Accounting = new Accounting();
-                _Accounting= _context.Accounting.Where(a => a.TypeAccountId == _TypeAcountId)
-                    .OrderByDescending(b => b.HierarchyAccount).FirstOrDefault();
-                var Items = _Accounting.HierarchyAccount;
-                return await Task.Run(() => Ok(Items));
-                //  return Ok(Items);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-        }
-        /// <summary>
-        /// Inserta una nueva Account
-        /// </summary>
-        /// <param name="_TypeAcountId"></param>
-        /// <returns></returns>
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountingByTypeAccount(Int64 _TypeAcountId)
-
-        {
-            List<Accounting> Items = new List<Accounting>();
-            try
-            {
-                Items = await _context.Accounting.Where(p => p.TypeAccountId == _TypeAcountId)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
-        }
-
-        /// <summary>
-        /// Retorna los nodos padres de un padre contable 
-        /// </summary>
-        /// <param name="ParentAcountId"></param>
-        /// <returns></returns>
-
-        [HttpGet("[action]/{ParentAcountId}")]
-        public async Task<IActionResult> GetFathersAccounting(Int64 ParentAcountId)
-
-        {
-            List<Accounting> Items = new List<Accounting>();
-            try
-            {
-                Items = await _context.Accounting.Where(p => p.ParentAccountId == ParentAcountId)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
-        }
-
+        
 
         /// <summary>
         /// Inserta una nueva Account
