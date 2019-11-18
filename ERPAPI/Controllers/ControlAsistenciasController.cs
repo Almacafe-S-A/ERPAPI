@@ -103,7 +103,32 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene el ControlAsistencias mediante la fecha y empleado id enviado.
+        /// </summary>
+        /// <param name="_ControlAsistencias"></param>
+        /// <returns></returns>
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetControlAsistenciasByFecha([FromBody]ControlAsistencias _ControlAsistencias)
+        {
+            ControlAsistencias Items = new ControlAsistencias();
+            try
+            {
+                // DateTime filtro = Convert.ToDateTime(fecha);
+                Items = await _context.ControlAsistencias.Where(q => q.Fecha.ToString("yyyy-MM-dd") == _ControlAsistencias.Fecha.ToString("yyyy-MM-dd") && 
+                q.Empleado.IdEmpleado == _ControlAsistencias.Empleado.IdEmpleado).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene el control de asitencia por empleado mediante el Id enviado.
         /// Y la fecha se envia en el campo FechaCreacion y la FechaModificacion 

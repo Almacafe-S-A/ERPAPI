@@ -32,19 +32,19 @@ namespace ERPAPI.Controllers
         {
             public DateTime FechaInicio { get; set; }
 
-            public DateTime FechaFinal { get; set; }
+            public DateTime FechaCierre { get; set; }
         }
 
         /// <summary>
         /// Realiza un Cierre Contable
         /// </summary>
         /// <returns></returns>    
-        [HttpGet("[action]")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> EjecutarCierreContable([FromBody]Parametros Params)
         {
             try
             {
-                BitacoraCierreContable existeCierre = await _context.BitacoraCierreContable.Where(b => b.FechaCierre.Equals(Params.FechaFinal)).FirstOrDefaultAsync();
+                BitacoraCierreContable existeCierre = await _context.BitacoraCierreContable.Where(b => b.FechaCierre.Equals(Params.FechaCierre)).FirstOrDefaultAsync();
                 if (existeCierre != null)
                 {
                     return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
@@ -95,7 +95,7 @@ namespace ERPAPI.Controllers
 
                 _context.SaveChanges();
 
-                List< BitacoraCierreProcesos> spCierre = await _context.BitacoraCierreProceso.FromSql("Cierres @p0, @p1, @p2", "2000/01/01", Params.FechaFinal, cierre.Id).ToListAsync();
+                List< BitacoraCierreProcesos> spCierre = await _context.BitacoraCierreProceso.FromSql("Cierres @p0, @p1, @p2", "2000/01/01", Params.FechaCierre, cierre.Id).ToListAsync();
                 return await Task.Run(() => Ok(spCierre));
             }
             catch (Exception ex)
