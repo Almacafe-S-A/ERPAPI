@@ -134,17 +134,57 @@ namespace ERPAPI.Controllers
                                    MonedaName = _context.Currency.Where(
                                        p => p.CurrencyId ==  journale.CurrencyId
                                        ).FirstOrDefault().CurrencyName,
+                                   
 
 
                                };
 
                 LineConciliacionLinea = consulta.ToList();
-                //   var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
-                //   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
-                //   + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
-                //  + "  ";
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var NodeConciline in LineConciliacionLinea)
+                        {
+                            _context.ConciliacionLinea.Add(NodeConciline);
+                            BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                            {
+                                IdOperacion = NodeConciline.ConciliacionId,
+                                DocType = "Conciliacion",
+                                ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(NodeConciline, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                Accion = "Insertar",
+                                FechaCreacion = DateTime.Now,
+                                FechaModificacion = DateTime.Now,
+                                UsuarioCreacion = NodeConciline.UsuarioCreacion,
+                                UsuarioModificacion = NodeConciline.UsuarioModificacion,
+                                UsuarioEjecucion = NodeConciline.UsuarioModificacion,
+
+                            });
 
 
+                        }
+
+
+
+
+                        await _context.SaveChangesAsync();
+
+                        //   var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
+                        //   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
+                        //   + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
+                        //  + "  ";
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                    }
+                }
 
 
 
