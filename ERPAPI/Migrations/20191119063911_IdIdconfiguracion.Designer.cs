@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191119063911_IdIdconfiguracion")]
+    partial class IdIdconfiguracion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7370,55 +7372,6 @@ namespace ERPAPI.Migrations
                         .HasFilter("[ProductCode] IS NOT NULL");
 
                     b.ToTable("SubProduct");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.SubServicesWareHouse", b =>
-                {
-                    b.Property<long>("SubServicesWareHouseId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<long>("EmployeeId");
-
-                    b.Property<string>("EmployeeName");
-
-                    b.Property<DateTime>("EndTime");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("QuantityHours");
-
-                    b.Property<long>("ServiceId");
-
-                    b.Property<string>("ServiceName");
-
-                    b.Property<DateTime>("StartTime");
-
-                    b.Property<long>("SubServiceId");
-
-                    b.Property<string>("SubServiceName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
-
-                    b.HasKey("SubServicesWareHouseId");
-
-                    b.ToTable("SubServicesWareHouse");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Tax", b =>

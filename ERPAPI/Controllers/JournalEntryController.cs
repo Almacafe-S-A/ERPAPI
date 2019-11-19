@@ -166,8 +166,8 @@ namespace ERPAPI.Controllers
                 var consulta = from journale in _context.JournalEntry
                                join journalel in _context.JournalEntryLine
                                on journale.JournalEntryId equals journalel.JournalEntryId
-                               join Currencyl in _context.Currency
-                               on journale.CurrencyId equals Currencyl.CurrencyId
+                               //join Currencyl in _context.Currency
+                               // on journale.CurrencyId equals Currencyl.CurrencyId
                                where journalel.AccountId == _ConciliacionP.ConciliacionLinea[0].AccountId &&
                                  journale.Date >= _ConciliacionP.DateBeginReconciled &&
                                  journale.Date <= _ConciliacionP.DateEndReconciled
@@ -192,8 +192,9 @@ namespace ERPAPI.Controllers
                                    TransDate = journale.Date,
                                    CurrencyId =journale.CurrencyId,
                                    AccountName=journalel.AccountName,
-                                   MonedaName=Currencyl.CurrencyName
-
+                                   MonedaName= _context.Currency.Where(
+                                       p => p.CurrencyId == journale.CurrencyId
+                                       ).FirstOrDefault().CurrencyName,
                                };
 
                 LineConciliacionLinea = consulta.ToList();

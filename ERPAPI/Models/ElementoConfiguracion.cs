@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERPAPI.Models
 {
@@ -19,6 +20,7 @@ namespace ERPAPI.Models
 
         [Display(Name = "Estado")]
         public string Estado { get; set; } 
+        
         public long? Idconfiguracion { get; set; } 
         public double? Valordecimal { get; set; } 
         public string Valorstring { get; set; } 
@@ -28,7 +30,7 @@ namespace ERPAPI.Models
         public DateTime? FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
-
+        [ForeignKey("Idconfiguracion")]
         public GrupoConfiguracion GrupoConfiguracion { get; set; }
     }
 

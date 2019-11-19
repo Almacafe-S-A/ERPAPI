@@ -44,6 +44,19 @@ namespace ERPAPI.Models
         [Display(Name = "Subservicio")]
         public double FactorHora { get; set; }
 
+        [Display(Name = "Desayuno")]
+        public double Desayuno { get; set; }
+
+        [Display(Name = "Almuerzo")]
+        public double Almuerzo { get; set; }
+
+        [Display(Name = "Cena")]
+        public double Cena { get; set; }
+
+        [Display(Name = "Desayuno")]
+        public double Transporte { get; set; }
+
+
         [Display(Name = "Id Condición")]
         public Int64 LogicalConditionId { get; set; }
 

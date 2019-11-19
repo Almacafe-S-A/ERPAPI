@@ -30,6 +30,8 @@ namespace ERPAPI.Models
 
         public string AttachmentURL { get; set; }
 
+        public string AttachementFileName { get; set; }
+
         public string Status { get; set; }
 
         [Display(Name = "Fecha de creación")]
