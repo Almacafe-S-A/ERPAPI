@@ -167,8 +167,7 @@ namespace ERPAPI.Controllers
                 string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01";
                 string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-"+ DateTime.DaysInMonth(DateTime.Now.Year,DateTime.Now.Month);
 
-                Guid Identificador = Guid.NewGuid();
-               
+                Guid Identificador = Guid.NewGuid();               
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
@@ -442,6 +441,7 @@ namespace ERPAPI.Controllers
 
                         });
 
+                        //2 Seguro
                         _su = new SubProduct();
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 2).FirstOrDefaultAsync();
                         _soline = new SalesOrderLine();
@@ -473,6 +473,7 @@ namespace ERPAPI.Controllers
                             });
                         }
 
+                        //4 Bascula
                         _su = new SubProduct();
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 4).FirstOrDefaultAsync();
                         _soline = new SalesOrderLine();
@@ -535,6 +536,7 @@ namespace ERPAPI.Controllers
                         }
 
 
+                        //8 Comisión arancelarias
                         _su = new SubProduct();
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 8).FirstOrDefaultAsync();
                         _soline = new SalesOrderLine();
@@ -564,7 +566,7 @@ namespace ERPAPI.Controllers
 
                         }
 
-                    
+                        
 
                         _proforma = new ProformaInvoiceDTO
                         {
