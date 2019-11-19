@@ -267,11 +267,66 @@ namespace ERPAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Valida si ya exíste el numero de Identidad.       
+        /// </summary>
+        /// <param name="Identidad"></param>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{Identidad}/{Id}")]
+        public async Task<IActionResult> ValidacionIdentidad(string Identidad, Int64 Id)
+        {
+            Employees Items = new Employees();
+            try
+            {
+                if (Id == 0)
+                {
+                    Items = await _context.Employees.Where(q => q.Identidad == Identidad).FirstOrDefaultAsync();
+                }
+                else
+                {
+                    Items = await _context.Employees.Where(q => q.Identidad == Identidad && q.IdEmpleado != Id).FirstOrDefaultAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
 
+            return await Task.Run(() => Ok(Items));
 
+        }
 
+        /// <summary>
+        /// Valida si ya exíste el numero de RTN.      
+        /// </summary>
+        /// <param name="RTN"></param>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{RTN}/{Id}")]
+        public async Task<IActionResult> ValidacionRTN(string RTN, Int64 Id)
+        {
+            Employees Items = new Employees();
+            try
+            {
+                if (Id == 0)
+                {
+                    Items = await _context.Employees.Where(q => q.RTN == RTN).FirstOrDefaultAsync();
+                }
+                else
+                {
+                    Items = await _context.Employees.Where(q => q.RTN == RTN && q.IdEmpleado != Id).FirstOrDefaultAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
 
+            return await Task.Run(() => Ok(Items));
 
-
+        }
     }
 }
