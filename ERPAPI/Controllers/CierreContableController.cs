@@ -46,7 +46,7 @@ namespace ERPAPI.Controllers
                 }
                 BitacoraCierreContable cierre = new BitacoraCierreContable
                 {
-                    FechaCierre = DateTime.Now,
+                    FechaCierre = pBitacoraCierre.FechaCierre.Date,
                     FechaCreacion = DateTime.Now,
                     Estatus = "PENDIENTE",
                     EstatusId = 1,
@@ -57,6 +57,8 @@ namespace ERPAPI.Controllers
 
                 };
                 _context.BitacoraCierreContable.Add(cierre);
+
+                //Paso 1
                 BitacoraCierreProcesos proceso1 = new BitacoraCierreProcesos
                 {
                     IdBitacoraCierre = cierre.Id,
@@ -71,6 +73,7 @@ namespace ERPAPI.Controllers
                     FechaCreacion = DateTime.Now,
 
                 };
+                //Paso2
                 BitacoraCierreProcesos proceso2 = new BitacoraCierreProcesos
                 {
                     IdBitacoraCierre = cierre.Id,
