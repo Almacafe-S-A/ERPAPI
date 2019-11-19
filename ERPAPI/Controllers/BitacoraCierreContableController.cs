@@ -28,6 +28,9 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+
+       
+
         /// <summary>
         /// Obtiene el Listado de BitacoraCierreContable paginado
         /// </summary>
