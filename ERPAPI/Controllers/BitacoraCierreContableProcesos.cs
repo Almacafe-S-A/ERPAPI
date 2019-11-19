@@ -59,6 +59,51 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
+        /// Obtiene los roles asignados a los usuarios
+        /// </summary>
+        /// <returns></returns> 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<BitacoraCierreProcesos>>> GetBitacoraCierreProceso()
+        {
+            List<BitacoraCierreProcesos> _cierre = new List<BitacoraCierreProcesos>();
+            try
+            {
+                _cierre = await (_context.BitacoraCierreProceso.ToListAsync());
+                // _users = mapper.Map<,ApplicationUserRole>(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
+            }
+
+            return await Task.Run(() => _cierre);
+        }
+
+
+        /// <summary>
+        /// Obtiene los roles asignados a los usuarios
+        /// </summary>
+        /// <returns></returns> 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<BitacoraCierreContable>>> GetBitacorasProcesos()
+        {
+            List<BitacoraCierreContable> _cierre = new List<BitacoraCierreContable>();
+            try
+            {
+                _cierre = await (_context.BitacoraCierreContable.ToListAsync());
+                // _users = mapper.Map<,ApplicationUserRole>(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
+            }
+            return await Task.Run(() => _cierre);
+        }
+
+
+        /// <summary>
         /// Obtiene el Listado de BitacoraCierreProcesoses 
         /// </summary>
         /// <returns></returns>
