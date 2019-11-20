@@ -23,7 +23,7 @@ namespace ERPAPI.Migrations
                 column: "IdEmpleado",
                 principalTable: "Employees",
                 principalColumn: "IdEmpleado",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -44,7 +44,7 @@ namespace ERPAPI.Migrations
                 column: "IdEmpleado",
                 principalTable: "Employees",
                 principalColumn: "IdEmpleado",
-                onDelete: ReferentialAction.Restrict);
+                onDelete: ReferentialAction.NoAction);
         }
     }
 }
