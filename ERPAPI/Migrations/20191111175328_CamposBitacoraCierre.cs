@@ -28,21 +28,21 @@ namespace ERPAPI.Migrations
                 table: "CierresAccounting",
                 column: "BitacoraCierreContableId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_CierresAccounting_BitacoraCierreContable_BitacoraCierreContableId",
-                table: "CierresAccounting",
-                column: "BitacoraCierreContableId",
-                principalTable: "BitacoraCierreContable",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_CierresAccounting_BitacoraCierreContable_BitacoraCierreContableId",
+            //    table: "CierresAccounting",
+            //    column: "BitacoraCierreContableId",
+            //    principalTable: "BitacoraCierreContable",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Cascade);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_CierresJournal_BitacoraCierreContable_BitacoraCierreContableId",
-                table: "CierresJournal",
-                column: "BitacoraCierreContableId",
-                principalTable: "BitacoraCierreContable",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_CierresJournal_BitacoraCierreContable_BitacoraCierreContableId",
+            //    table: "CierresJournal",
+            //    column: "BitacoraCierreContableId",
+            //    principalTable: "BitacoraCierreContable",
+            //    principalColumn: "Id",
+            //    onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

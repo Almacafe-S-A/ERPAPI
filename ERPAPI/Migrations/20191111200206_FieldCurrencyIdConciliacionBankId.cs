@@ -10,9 +10,9 @@ namespace ERPAPI.Migrations
                 name: "FK_Conciliacion_Bank_IdBanco",
                 table: "Conciliacion");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Conciliacion_IdBanco",
-                table: "Conciliacion");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_Conciliacion_IdBanco",
+            //    table: "Conciliacion");
 
             migrationBuilder.DropColumn(
                 name: "IdBanco",
