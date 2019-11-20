@@ -374,5 +374,87 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
         }
 
 
+
+        [HttpPost("PostControlAsistencias")]
+        public async Task<ActionResult<ControlAsistencias>> PostControlAsistencias([FromBody]ControlAsistencias _controlAsist)
+        {
+
+            
+
+            try
+            {
+
+
+                var user = new ControlAsistencias { Fecha = _controlAsist.Fecha, /*IdEmpleado = _controlAsist.Empleado.IdEmpleado,*/ Dia = _controlAsist.Dia, TipoAsistencia = _controlAsist.TipoAsistencia };
+                user.FechaCreacion = DateTime.Now;
+                user.FechaModificacion = DateTime.Now;
+                user.UsuarioCreacion = _controlAsist.UsuarioCreacion;
+                user.UsuarioModificacion = _controlAsist.UsuarioModificacion;
+                //var result = await _userManager.CreateAsync(user, _usuario.PasswordHash);
+
+                //if (!result.Succeeded)
+                //{
+                //    string errores = "";
+                //    foreach (var item in result.Errors)
+                //    {
+                //        errores += item.Description;
+                //    }
+                //    return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+                //}
+
+                //using (var transaction = _context.Database.BeginTransaction())
+                //{
+                //    try
+                //    {
+                //        ApplicationUser _newpass = await _context.Users.Where(q => q.Id == _usuario.Id).FirstOrDefaultAsync();
+                //        _context.PasswordHistory.Add(new PasswordHistory()
+                //        {
+                //            UserId = user.Id.ToString(),
+                //            PasswordHash = user.PasswordHash,
+                //        });
+
+                //        await _context.SaveChangesAsync();
+
+                //        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                //        {
+                //            // IdOperacion =,
+                //            Descripcion = _usuario.Id.ToString(),
+                //            DocType = "Usuario",
+                //            ClaseInicial =
+                //              Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                //            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                //            Accion = "PostUsuario",
+                //            FechaCreacion = DateTime.Now,
+                //            FechaModificacion = DateTime.Now,
+                //            UsuarioCreacion = _usuario.UsuarioCreacion,
+                //            UsuarioModificacion = _usuario.UsuarioModificacion,
+                //            UsuarioEjecucion = _usuario.UsuarioModificacion,
+
+                //        });
+
+                //        await _context.SaveChangesAsync();
+                //        transaction.Commit();
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        transaction.Rollback();
+                //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                //        return BadRequest($"Ocurrio un error: {ex.Message}");
+                //    }
+                //}
+
+
+                return await Task.Run(() => _controlAsist);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error: {ex.Message}");
+            }
+
+
+        }
+
+
     }
 }
