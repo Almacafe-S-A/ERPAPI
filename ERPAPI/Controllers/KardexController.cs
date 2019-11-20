@@ -419,6 +419,8 @@ namespace ERPAPI.Controllers
 
                         SalesOrderLine _soline = new SalesOrderLine();
                         SubProduct _su = new SubProduct();
+
+                        //1. Almacenaje
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 1).FirstOrDefaultAsync();
                         _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
                         double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q=>q.ValorAFacturarMerma);
@@ -535,6 +537,124 @@ namespace ERPAPI.Controllers
                             });
                         }
 
+                        //5 Banda
+                        _su = new SubProduct();
+                        _su = await _context.SubProduct.Where(q => q.SubproductId == 5).FirstOrDefaultAsync();
+                        _soline = new SalesOrderLine();
+                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                        if (_soline != null)
+                        {
+                            taxamount = preciocot = quantitycot = 0;                           
+                            preciocot = _soline.Price;
+                            SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
+                            _subservicewarehouse = await _context.SubServicesWareHouse
+                                .Where(q => q.SubServiceId == _su.SubproductId)
+                                .Where(q=>q.DocumentDate>=Convert.ToDateTime(fechainicio))
+                                .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                                .FirstOrDefaultAsync();
+
+                            quantitycot = _subservicewarehouse.QuantityHours;
+
+                            taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = (preciocot * quantitycot), 
+                                SubTotal = (preciocot * quantitycot),
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
+                                Total = (preciocot * quantitycot) + taxamount,
+
+                            });
+                        }
+
+                        //6 Monta carga
+                        _su = new SubProduct();
+                        _su = await _context.SubProduct.Where(q => q.SubproductId == 6).FirstOrDefaultAsync();
+                        _soline = new SalesOrderLine();
+                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                        if (_soline != null)
+                        {
+                            taxamount = preciocot = quantitycot = 0;
+                            preciocot = _soline.Price;
+                            SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
+                            _subservicewarehouse = await _context.SubServicesWareHouse
+                                .Where(q => q.SubServiceId == _su.SubproductId)
+                                .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                                .FirstOrDefaultAsync();
+
+                            quantitycot = _subservicewarehouse.QuantityHours;
+
+                            taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = (preciocot * quantitycot),
+                                SubTotal = (preciocot * quantitycot),
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
+                                Total = (preciocot * quantitycot) + taxamount,
+
+                            });
+                        }
+
+                        //7 Tarimas
+                        _su = new SubProduct();
+                        _su = await _context.SubProduct.Where(q => q.SubproductId == 7).FirstOrDefaultAsync();
+                        _soline = new SalesOrderLine();
+                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                        if (_soline != null)
+                        {
+                            taxamount = preciocot = quantitycot = 0;
+                            preciocot = _soline.Price;
+                            SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
+                            _subservicewarehouse = await _context.SubServicesWareHouse
+                                .Where(q => q.SubServiceId == _su.SubproductId)
+                                .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                                .FirstOrDefaultAsync();
+
+                            quantitycot = _subservicewarehouse.QuantityHours;
+
+                            taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = (preciocot * quantitycot),
+                                SubTotal = (preciocot * quantitycot),
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
+                                Total = (preciocot * quantitycot) + taxamount,
+
+                            });
+                        }
+
+
 
                         //8 Comisión arancelarias
                         _su = new SubProduct();
@@ -566,7 +686,171 @@ namespace ERPAPI.Controllers
 
                         }
 
-                        
+
+                        //9 Horas Extras
+                        _su = new SubProduct();
+                        _su = await _context.SubProduct.Where(q => q.SubproductId == 9).FirstOrDefaultAsync();
+                        _soline = new SalesOrderLine();
+                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                        if (_soline != null)
+                        {
+                            taxamount = preciocot = quantitycot = 0;
+                           
+                            List<Int64> _EmployeeExtraHours = new List<long>();
+                            _EmployeeExtraHours = await _context.EmployeeExtraHours
+                               // .Where(q => q. == _so.ProductId)
+                                .Where(q => q.WorkDate >= Convert.ToDateTime(fechainicio))
+                                .Where(q => q.WorkDate <= Convert.ToDateTime(fechafin))
+                                .Select(q=>q.EmployeeExtraHoursId)
+                                .ToListAsync();
+
+                            List<Int64> _schedulelist = new List<Int64>();
+                            _schedulelist = await _context.ScheduleSubservices
+                                    .Where(q => q.ServiceId == _so.ProductId)
+                                    .Where(q => q.SubServiceId == _su.SubproductId)
+                                    .Select(q => q.ScheduleSubservicesId)
+                                    .ToListAsync();
+
+                            List<Int64> schedulecustomer =
+                                   await _context.PaymentScheduleRulesByCustomer
+                                           .Where(q => _schedulelist.Contains(q.ScheduleSubservicesId))
+                                           .Where(q => q.CustomerId == _customer.CustomerId)
+                                           .OrderByDescending(q => q.ScheduleSubservicesId)
+                                           .Select(q=>q.ScheduleSubservicesId)
+                                           .ToListAsync();
+
+                            List<ScheduleSubservices> _schedule = new List<ScheduleSubservices>();
+                            _schedule = await _context.ScheduleSubservices
+                               .Where(q => schedulecustomer.Contains( q.ScheduleSubservicesId))
+                               .ToListAsync();
+
+                            List<EmployeeExtraHoursDetail> _employeeextra = await _context.EmployeeExtraHoursDetail
+                                               .Where(q => q.CustomerId == _customer.CustomerId)
+                                               .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                               .ToListAsync();
+
+                            double subtotal = 0;
+                           
+                            foreach (var item in _schedule)
+                            {
+                                List<EmployeeExtraHoursDetail> _EmployeeExtraHoursDetail = new List<EmployeeExtraHoursDetail>();
+                                _EmployeeExtraHoursDetail = _employeeextra
+                                                              .Where(q => q.StartTime >= item.StartTime)
+                                                              .Where(q => q.EndTime <= item.EndTime)
+                                                              .ToList();
+
+                                //EmployeeExtraHours _EmployeeExtraHoursf = new EmployeeExtraHours();
+                                //_EmployeeExtraHoursf = await _context.EmployeeExtraHours
+                                //    .Where(q => q.EmployeeExtraHoursId == _EmployeeExtraHoursDetail.EmployeeExtraHoursId)
+                                //    .FirstOrDefaultAsync();
+                                preciocot += item.FactorHora;
+                                subtotal += _EmployeeExtraHoursDetail.Sum(q=>q.QuantityHours) * item.FactorHora;
+                            }
+
+                            preciocot = preciocot / _schedule.Count;
+                            quantitycot = await _context.EmployeeExtraHoursDetail
+                                               .Where(q => q.CustomerId == _customer.CustomerId)
+                                               .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                              .Select(q => q.QuantityHours).SumAsync();
+
+
+                            taxamount = (subtotal) * (_tax.TaxPercentage / 100);
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = (subtotal),
+                                SubTotal = subtotal,
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
+                                Total = (subtotal) + taxamount,
+
+                            });
+                        }
+
+                        //10 Alimentación
+                        _su = new SubProduct();
+                        _su = await _context.SubProduct.Where(q => q.SubproductId == 10).FirstOrDefaultAsync();
+                        _soline = new SalesOrderLine();
+                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                        if (_soline != null)
+                        {
+                            taxamount = preciocot = quantitycot = 0;
+                            //preciocot = _soline.Price;
+                            List<Int64> _EmployeeExtraHours = new List<long>();
+                            _EmployeeExtraHours = await _context.EmployeeExtraHours
+                                .Where(q => q.WorkDate >= Convert.ToDateTime(fechainicio))
+                                .Where(q => q.WorkDate <= Convert.ToDateTime(fechafin))
+                                .Select(q => q.EmployeeExtraHoursId)
+                                .ToListAsync();
+
+                            quantitycot = await _context.EmployeeExtraHoursDetail
+                                                .Where(q => q.CustomerId == _customer.CustomerId)
+                                                .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                               .Select(q => q.QuantityHours).SumAsync();
+
+                            List<EmployeeExtraHoursDetail> _EmployeeExtraHoursDetail = new List<EmployeeExtraHoursDetail>();
+
+                            _EmployeeExtraHoursDetail = await _context.EmployeeExtraHoursDetail
+                                                .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                                 .ToListAsync();
+
+                            foreach (var item in _EmployeeExtraHoursDetail)
+                            {
+                                List<Int64> _schedulelist = new List<Int64>();
+                                _schedulelist = await _context.ScheduleSubservices
+                                        .Where(q => q.SubServiceId == _su.SubproductId)
+                                        .Select(q => q.ScheduleSubservicesId)
+                                         .ToListAsync();
+
+                                PaymentScheduleRulesByCustomer _scheduledetail
+                                    = await _context.PaymentScheduleRulesByCustomer
+                                             .Where(q => _schedulelist.Contains(q.ScheduleSubservicesId))
+                                             .Where(q => q.CustomerId == _customer.CustomerId)
+                                             .OrderByDescending(q => q.ScheduleSubservicesId)
+                                             .FirstOrDefaultAsync();
+
+                                ScheduleSubservices _schedule = new ScheduleSubservices();
+                                 _schedule = await _context.ScheduleSubservices
+                                    .Where(q => q.ScheduleSubservicesId == _scheduledetail.ScheduleSubservicesId)
+                                    .FirstOrDefaultAsync();
+
+                                if (_schedule.StartTime >= item.StartTime && _schedule.EndTime <= item.EndTime)
+                                {
+                                    preciocot += _schedule.Almuerzo + _schedule.Desayuno + _schedule.Cena;
+                                }
+                            }
+
+                            taxamount = ((preciocot)) * (_tax.TaxPercentage / 100);
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = _su.SubproductId,
+                                SubProductName = _su.ProductName,
+                                UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                Price = preciocot,
+                                Quantity = quantitycot,
+                                Amount = (preciocot ),
+                                SubTotal = (preciocot ),
+                                TaxAmount = taxamount,
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
+                                Total = (preciocot * quantitycot) + taxamount,
+
+                            });
+                        }
+
+
+
 
                         _proforma = new ProformaInvoiceDTO
                         {
