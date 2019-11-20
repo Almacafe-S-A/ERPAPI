@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191119181400_SubservicesWarehouse")]
+    partial class SubservicesWarehouse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1593,7 +1595,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("IdEmpleado");
+                    b.Property<long?>("IdEmpleado");
 
                     b.Property<long?>("TipoAsistencia");
 
@@ -7386,21 +7388,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerName");
 
-                    b.Property<DateTime>("DocumentDate");
-
                     b.Property<long>("EmployeeId");
 
                     b.Property<string>("EmployeeName");
 
                     b.Property<DateTime>("EndTime");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<double>("QuantityHours");
 
@@ -8901,8 +8897,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.Employees", "Empleado")
                         .WithMany()
-                        .HasForeignKey("IdEmpleado")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("IdEmpleado");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPalletsLine", b =>

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191118195302_AttachementFileName_InsurancePolicy")]
+    partial class AttachementFileName_InsurancePolicy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1593,7 +1595,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("IdEmpleado");
+                    b.Property<long?>("IdEmpleado");
 
                     b.Property<long?>("TipoAsistencia");
 
@@ -7372,61 +7374,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("SubProduct");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.SubServicesWareHouse", b =>
-                {
-                    b.Property<long>("SubServicesWareHouseId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<long>("EmployeeId");
-
-                    b.Property<string>("EmployeeName");
-
-                    b.Property<DateTime>("EndTime");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<double>("QuantityHours");
-
-                    b.Property<long>("ServiceId");
-
-                    b.Property<string>("ServiceName");
-
-                    b.Property<DateTime>("StartTime");
-
-                    b.Property<long>("SubServiceId");
-
-                    b.Property<string>("SubServiceName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
-
-                    b.HasKey("SubServicesWareHouseId");
-
-                    b.ToTable("SubServicesWareHouse");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Tax", b =>
                 {
                     b.Property<long>("TaxId")
@@ -8901,8 +8848,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.Employees", "Empleado")
                         .WithMany()
-                        .HasForeignKey("IdEmpleado")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("IdEmpleado");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPalletsLine", b =>

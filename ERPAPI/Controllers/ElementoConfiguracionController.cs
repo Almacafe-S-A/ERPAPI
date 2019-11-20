@@ -73,7 +73,7 @@ namespace ERPAPI.Controllers
             List<ElementoConfiguracion> Items = new List<ElementoConfiguracion>();
             try
             {
-                Items = await _context.ElementoConfiguracion.ToListAsync();
+                Items = await _context.ElementoConfiguracion.Include(e => e.GrupoConfiguracion).ToListAsync();
             }
             catch (Exception ex)
             {
