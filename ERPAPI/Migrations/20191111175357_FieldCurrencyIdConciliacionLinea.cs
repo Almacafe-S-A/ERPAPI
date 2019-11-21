@@ -10,9 +10,9 @@ namespace ERPAPI.Migrations
                 name: "FK_ConciliacionLinea_Currency_IdMoneda",
                 table: "ConciliacionLinea");
 
-            //migrationBuilder.DropIndex(
-            //    name: "IX_ConciliacionLinea_IdMoneda",
-            //    table: "ConciliacionLinea");
+            migrationBuilder.DropIndex(
+                name: "IX_ConciliacionLinea_IdMoneda",
+                table: "ConciliacionLinea");
 
             migrationBuilder.DropColumn(
                 name: "IdMoneda",
