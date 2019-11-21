@@ -208,6 +208,31 @@ namespace ERPAPI.Controllers
             //return await _context.Dimensions.ToListAsync();
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de Cuentas sin hijos 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetNoChildAccounts()
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await _context.Accounting.Where(q => _context.Accounting.Where(r => r.ParentAccountId == q.AccountId).Count() == 0).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Retorna los nodos padres de un padre contable 
         /// </summary>

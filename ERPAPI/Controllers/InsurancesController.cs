@@ -115,7 +115,7 @@ namespace ERPAPI.Controllers
         /// <param name="InsurancesName"></param>
         /// <returns></returns>
         [HttpGet("[action]/{InsurancesName}")]
-        public async Task<IActionResult> GetInsurancesById(String InsurancesName)
+        public async Task<IActionResult> GetInsurancesByInsurancesName(String InsurancesName)
         {
             Insurances Items = new Insurances();
             try
