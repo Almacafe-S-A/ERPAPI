@@ -117,7 +117,7 @@ namespace ERPAPI.Controllers
             {
                 // DateTime filtro = Convert.ToDateTime(fecha);
                 Items = await _context.ControlAsistencias.Where(q => q.Fecha.ToString("yyyy-MM-dd") == _ControlAsistencias.Fecha.ToString("yyyy-MM-dd") && 
-                q.Empleado.IdEmpleado == _ControlAsistencias.Empleado.IdEmpleado).FirstOrDefaultAsync();
+                q.Empleado.IdEmpleado == _ControlAsistencias.IdEmpleado).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
