@@ -103,7 +103,13 @@ namespace ERPAPI.Controllers
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    return await Task.Run(() => BuildToken(userInfo));
+                    UserToken token = BuildToken(userInfo);
+                    if (token==null)
+                    {
+                        return BadRequest($"El Usuario no tiene ningun rol asignado");
+                    }
+                    //return await Task.Run(() => BuildToken(userInfo));
+                    return await Task.Run(()=>token);
                 }
                 else
                 {
@@ -122,13 +128,17 @@ namespace ERPAPI.Controllers
         {
             ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
             ApplicationUserRole _approle = _context.UserRoles.Where(q => q.UserId == _appuser.Id).FirstOrDefault();
+            if (_approle== null)
+            {
+                return null;
+            }
             Branch _branch = _context.Branch.Where(b => b.BranchId == _appuser.BranchId).FirstOrDefault();
             var claims = new[]
              {
                 //new Claim("UserEmail", userInfo.Email),
                 //new Claim("UserName", _appuser.UserName),
                 new Claim(ClaimTypes.Email,userInfo.Email),
-                new Claim(ClaimTypes.Role,_approle.RoleName),
+                //new Claim(ClaimTypes.Role,_approle.RoleId.ToString(_)),
                 new Claim("BranchName", _branch.BranchName),
                 new Claim(ClaimTypes.Name, _appuser.UserName),
                 //new Claim()                
@@ -158,7 +168,7 @@ namespace ERPAPI.Controllers
             {
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Expiration = expiration,
-                BranchId = _appuser.BranchId,
+                BranchId = Convert.ToInt32(_appuser.BranchId),
                 IsEnabled = _appuser.IsEnabled,
                 LastPasswordChangedDate = _appuser.LastPasswordChangedDate,
                 Passworddias = cambiopassworddias.Value,
