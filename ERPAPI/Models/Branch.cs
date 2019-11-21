@@ -83,6 +83,8 @@ namespace ERPAPI.Models
         public Estados Estados { get; set; }
         public string Estado { get; set; }
 
+        public string URL { get; set; }
+
         [Required]
         [Display(Name = "Usuario de modificacion")]
         public string UsuarioModificacion { get; set; }
