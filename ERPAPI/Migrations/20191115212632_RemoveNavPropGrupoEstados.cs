@@ -10,9 +10,9 @@ namespace ERPAPI.Migrations
                 name: "FK_Estados_GrupoConfiguracion_IdGrupoEstado",
                 table: "Estados");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Estados_IdGrupoEstado",
-                table: "Estados");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_Estados_IdGrupoEstado",
+            //    table: "Estados");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

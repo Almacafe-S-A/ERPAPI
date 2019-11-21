@@ -14,9 +14,10 @@ namespace ERPAPI.Models
         public int Id { get; set; }
         [Display(Name = "Fecha")]
         public DateTime Fecha { get; set; }
+        public Employees Empleado { get; set; }
         [Display(Name = "Empleado")]
         [ForeignKey("IdEmpleado")]
-        public Employees Empleado { get; set; }
+        public long IdEmpleado  { get; set; }
         [Display(Name = "Dia")]
         public int Dia { get; set; }
         [Display(Name = "Tipo Asistencia")]

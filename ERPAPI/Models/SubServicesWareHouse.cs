@@ -13,8 +13,8 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 SubServicesWareHouseId { get; set; }
 
-        //[Display(Name = "Id horas extras")]
-        //public Int64 EmployeeExtraHoursId { get; set; }
+        [Display(Name = "Fecha de Subservicios")]      
+        public DateTime DocumentDate { get; set; }
 
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
@@ -39,6 +39,15 @@ namespace ERPAPI.Models
 
         [Display(Name = "Servicio")]
         public string ServiceName { get; set; }
+
+
+        [Display(Name = "Estado")]
+        public Int64 IdEstado { get; set; }
+
+        [Display(Name = "Estado")]
+        public string Estado { get; set; }
+
+
 
         [Display(Name = "Sub Servicio")]
         public Int64 SubServiceId { get; set; }
