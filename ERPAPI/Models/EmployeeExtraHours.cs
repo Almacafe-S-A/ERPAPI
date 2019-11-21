@@ -28,7 +28,7 @@ namespace ERPAPI.Models
         public Customer Customer { get; set; }
         [Display(Name = "Id Cliente")]
         [ForeignKey("CustomerId")]
-        public Int64 CustomerId { get; set; }
+        public Int64? CustomerId { get; set; }
 
         [Display(Name = "Usuario modificación")]
         public string UsuarioModificacion { get; set; }
