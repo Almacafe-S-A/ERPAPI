@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191120070922_FieldControlAsistenciaIdEmpleado")]
+    partial class FieldControlAsistenciaIdEmpleado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3244,8 +3246,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("CustomerId");
-
                     b.Property<long>("EmployeeId");
 
                     b.Property<string>("EmployeeName");
@@ -3263,8 +3263,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("WorkDate");
 
                     b.HasKey("EmployeeExtraHoursId");
-
-                    b.HasIndex("CustomerId");
 
                     b.ToTable("EmployeeExtraHours");
                 });
@@ -4861,8 +4859,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("InsurancePolicyId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AttachementFileName");
 
                     b.Property<string>("AttachmentURL");
 
@@ -7376,61 +7372,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("SubProduct");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.SubServicesWareHouse", b =>
-                {
-                    b.Property<long>("SubServicesWareHouseId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<DateTime>("DocumentDate");
-
-                    b.Property<long>("EmployeeId");
-
-                    b.Property<string>("EmployeeName");
-
-                    b.Property<DateTime>("EndTime");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<double>("QuantityHours");
-
-                    b.Property<long>("ServiceId");
-
-                    b.Property<string>("ServiceName");
-
-                    b.Property<DateTime>("StartTime");
-
-                    b.Property<long>("SubServiceId");
-
-                    b.Property<string>("SubServiceName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
-
-                    b.HasKey("SubServicesWareHouseId");
-
-                    b.ToTable("SubServicesWareHouse");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Tax", b =>
                 {
                     b.Property<long>("TaxId")
@@ -9005,14 +8946,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GrupoConfiguracion", "GrupoConfiguracion")
                         .WithMany()
                         .HasForeignKey("Idconfiguracion");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.EmployeeExtraHours", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EmployeeExtraHoursDetail", b =>
