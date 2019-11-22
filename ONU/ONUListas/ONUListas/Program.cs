@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-﻿using AutoMapper;
-using System;
-using System.IO;
-using System.Net;
-=======
+
 ﻿using AspNetCore.Http.Extensions;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
@@ -13,7 +8,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
->>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
+
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -21,17 +16,16 @@ namespace ONUListas
 {
     class Program
     {
-<<<<<<< HEAD
-=======
+
         static MyConfig moduleSettings = new MyConfig();
->>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
+b2fb91e01bba1acf16e6738e453b9f4c701f0f
         static void Main(string[] args)
         {
             Console.WriteLine("Downloading data from https://scsanctions.un.org/resources/xml/en/consolidated.xml");
 
             try
             {
-<<<<<<< HEAD
+/*
                 var data = GetData();
 
                 var config = new MapperConfiguration(cfg =>
@@ -78,7 +72,7 @@ namespace ONUListas
                 CONSOLIDATED_LISTM CONSOLIDATED_LISTM = mapper.Map<CONSOLIDATED_LIST, CONSOLIDATED_LISTM>(data);
 
                 Console.WriteLine("Inserting data to db.. Please wait");
-=======
+*/
                 var builder = new ConfigurationBuilder()
                  .SetBasePath(Directory.GetCurrentDirectory())
                  .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -90,7 +84,7 @@ namespace ONUListas
                 Ejecutar().Wait();
 
                
->>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
+
 
             }
             catch (Exception ex)
@@ -103,8 +97,7 @@ namespace ONUListas
 
         }
 
-<<<<<<< HEAD
-=======
+
 
         public async static Task<int> Ejecutar()
         {
@@ -188,7 +181,7 @@ namespace ONUListas
 
         }
 
->>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
+
         public static CONSOLIDATED_LIST GetData()
         {
             WebClient client = new WebClient();
@@ -212,8 +205,6 @@ namespace ONUListas
 
 
     }
-<<<<<<< HEAD
-=======
 
 
     public class UserInfo
@@ -236,5 +227,5 @@ namespace ONUListas
         public string UserPassword { get; set; }
         public string wsorbiteciahhrr { get; set; }
     }
->>>>>>> 42b2fb91e01bba1acf16e6738e453b9f4c701f0f
+
 }
