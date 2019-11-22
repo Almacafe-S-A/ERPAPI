@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191121204717_ApplicationUserClaimTable")]
+    partial class ApplicationUserClaimTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -734,8 +736,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("StateId");
 
-                    b.Property<string>("URL");
-
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
 
@@ -1331,15 +1331,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Email");
 
-                    b.Property<string>("Estado");
-
                     b.Property<string>("Fax");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long?>("IdEstado");
 
                     b.Property<string>("Manager");
 
