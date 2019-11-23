@@ -6,7 +6,7 @@ namespace ERPAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            /* migrationBuilder.DropForeignKey(
+             migrationBuilder.DropForeignKey(
                  name: "FK_EmployeeExtraHours_Customer_CustomerId",
                  table: "EmployeeExtraHours");
 
@@ -15,19 +15,19 @@ namespace ERPAPI.Migrations
                  table: "EmployeeExtraHours",
                  nullable: true,
                  oldClrType: typeof(long));
-                 */
-            /* migrationBuilder.AddForeignKey(
+                 
+            migrationBuilder.AddForeignKey(
                  name: "FK_EmployeeExtraHours_Customer_CustomerId",
                  table: "EmployeeExtraHours",
                  column: "CustomerId",
                  principalTable: "Customer",
                  principalColumn: "CustomerId",
-                 onDelete: ReferentialAction.NoAction);*/
+                 onDelete: ReferentialAction.NoAction);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            /*  migrationBuilder.DropForeignKey(
+              migrationBuilder.DropForeignKey(
                   name: "FK_EmployeeExtraHours_Customer_CustomerId",
                   table: "EmployeeExtraHours");
 
@@ -44,7 +44,7 @@ namespace ERPAPI.Migrations
                   column: "CustomerId",
                   principalTable: "Customer",
                   principalColumn: "CustomerId",
-                  onDelete: ReferentialAction.Cascade);*/
+                  onDelete: ReferentialAction.NoAction);
         }
     }
 }
