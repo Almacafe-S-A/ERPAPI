@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191125185509_Alert_ActionTakenNameVarType_string")]
+    partial class Alert_ActionTakenNameVarType_string
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3250,6 +3252,8 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<long?>("CustomerId");
+
                     b.Property<long>("EmployeeId");
 
                     b.Property<string>("EmployeeName");
@@ -3267,6 +3271,8 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("WorkDate");
 
                     b.HasKey("EmployeeExtraHoursId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("EmployeeExtraHours");
                 });
@@ -9007,6 +9013,13 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GrupoConfiguracion", "GrupoConfiguracion")
                         .WithMany()
                         .HasForeignKey("Idconfiguracion");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.EmployeeExtraHours", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EmployeeExtraHoursDetail", b =>

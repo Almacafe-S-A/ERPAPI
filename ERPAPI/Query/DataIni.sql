@@ -118,5 +118,5 @@ INSERT dbo.PolicyRoles(Id, IdPolicy, IdRol, UsuarioCreacion, UsuarioModificacion
 INSERT dbo.PolicyRoles(Id, IdPolicy, IdRol, UsuarioCreacion, UsuarioModificacion, Estado, IdEstado) VALUES ('ed463f83-c71a-4ec8-f382-08d71a9a4b63', '727f9108-fe76-4c7e-3efd-08d71a9a2950', 'bc0e4be0-dca1-4530-b2e4-1645f6caf87c', N'erp@bi-dss.com', N'erp@bi-dss.com', N'Activo', 1)
 GO
 
-INSERT dbo.AspNetUserClaims(Id, UserId, ClaimType, ClaimValue, PolicyId) VALUES (1, 'fc405b7d-9fe3-43c9-97b5-d87a174cab8a', N'EscrituraAdministracion', N'1', '5be222c7-375d-4efc-b02f-575d8a4d2f95')
-GO
+--INSERT dbo.AspNetUserClaims(Id, UserId, ClaimType, ClaimValue, PolicyId) VALUES (1, 'fc405b7d-9fe3-43c9-97b5-d87a174cab8a', N'EscrituraAdministracion', N'1', '5be222c7-375d-4efc-b02f-575d8a4d2f95')
+--GO

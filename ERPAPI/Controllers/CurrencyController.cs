@@ -111,6 +111,31 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene los datos de la moneda con el id enviado
+        /// </summary>
+        /// <param name="CurrencyName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CurrencyName}")]
+        public async Task<ActionResult<Currency>> GetCurrencyByCurrencyName(string CurrencyName)
+        {
+            Currency Items = new Currency();
+            try
+            {
+                Items = await _context.Currency.Where(q => q.CurrencyName == CurrencyName).FirstOrDefaultAsync();
+                // int Count = Items.Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+
+            return Ok(Items);
+        }
+
+        /// <summary>
         /// Inserta la moneda 
         /// </summary>
         /// <param name="_Currency"></param>
