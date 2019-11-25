@@ -32,28 +32,28 @@ namespace ERPAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_EmployeeExtraHours_Customer_CustomerId",
-                table: "EmployeeExtraHours");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_EmployeeExtraHours_Customer_CustomerId",
+            //    table: "EmployeeExtraHours");
 
             migrationBuilder.DropColumn(
                 name: "URL",
                 table: "Branch");
 
-            migrationBuilder.AlterColumn<long>(
-                name: "CustomerId",
-                table: "EmployeeExtraHours",
-                nullable: false,
-                oldClrType: typeof(long),
-                oldNullable: true);
+            //migrationBuilder.AlterColumn<long>(
+            //    name: "CustomerId",
+            //    table: "EmployeeExtraHours",
+            //    nullable: false,
+            //    oldClrType: typeof(long),
+            //    oldNullable: true);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_EmployeeExtraHours_Customer_CustomerId",
-                table: "EmployeeExtraHours",
-                column: "CustomerId",
-                principalTable: "Customer",
-                principalColumn: "CustomerId",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "FK_EmployeeExtraHours_Customer_CustomerId",
+            //    table: "EmployeeExtraHours",
+            //    column: "CustomerId",
+            //    principalTable: "Customer",
+            //    principalColumn: "CustomerId",
+            //    onDelete: ReferentialAction.Cascade);
         }
     }
 }

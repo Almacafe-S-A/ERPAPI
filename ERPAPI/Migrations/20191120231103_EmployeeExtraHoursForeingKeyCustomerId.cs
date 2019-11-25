@@ -28,17 +28,17 @@ namespace ERPAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_EmployeeExtraHours_Customer_CustomerId",
-                table: "EmployeeExtraHours");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_EmployeeExtraHours_Customer_CustomerId",
+            //    table: "EmployeeExtraHours");
 
-            migrationBuilder.DropIndex(
-                name: "IX_EmployeeExtraHours_CustomerId",
-                table: "EmployeeExtraHours");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_EmployeeExtraHours_CustomerId",
+            //    table: "EmployeeExtraHours");
 
-            migrationBuilder.DropColumn(
-                name: "CustomerId",
-                table: "EmployeeExtraHours");
+            //migrationBuilder.DropColumn(
+            //    name: "CustomerId",
+            //    table: "EmployeeExtraHours");
         }
     }
 }
