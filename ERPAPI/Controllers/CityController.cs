@@ -108,7 +108,21 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetCityByName(String Name, Int64 StateId)
+        {
+            City Items = new City();
+            try
+            {
+                Items = await _context.City.Where(q => q.Name == Name && q.StateId == StateId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Inserta una nueva City
         /// </summary>
