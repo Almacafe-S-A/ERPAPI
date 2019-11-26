@@ -87,7 +87,7 @@ namespace ERP.Contexts
         public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
         public DbSet<AccountManagement> AccountManagement { get; set; }
 
-        public DbSet<ConfiguracionesGenerales> GetConfiguracionesGenerales { get; set; }
+        public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
 
        
         /// <summary>
