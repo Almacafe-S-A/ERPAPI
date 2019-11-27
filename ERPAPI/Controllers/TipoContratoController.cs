@@ -101,6 +101,21 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{NombreTipoContrato}")]
+        public async Task<ActionResult<TipoContrato>> GetTipoContratoByName(String NombreTipoContrato)
+        {
+            TipoContrato Items = new TipoContrato();
+            try
+            {
+                Items = await _context.TipoContrato.Where(q => q.NombreTipoContrato == NombreTipoContrato).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Inserta un puesto , y retorna el id generado.
         /// </summary>
