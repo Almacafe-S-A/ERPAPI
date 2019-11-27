@@ -111,6 +111,31 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene los datos de la moneda con el id enviado
+        /// </summary>
+        /// <param name="CurrencyName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CurrencyName}")]
+        public async Task<ActionResult<Currency>> GetCurrencyByCurrencyName(string CurrencyName)
+        {
+            Currency Items = new Currency();
+            try
+            {
+                Items = await _context.Currency.Where(q => q.CurrencyName == CurrencyName).FirstOrDefaultAsync();
+                // int Count = Items.Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+
+            return Ok(Items);
+        }
+
+        /// <summary>
         /// Inserta la moneda 
         /// </summary>
         /// <param name="_Currency"></param>
@@ -176,11 +201,88 @@ namespace ERPAPI.Controllers
             Currency currency = new Currency();
             try
             {
-                currency = _context.Currency
-               .Where(x => x.CurrencyId == (int)_Currency.CurrencyId)
-               .FirstOrDefault();
-                _context.Currency.Remove(currency);
-              await  _context.SaveChangesAsync();
+                bool flag = false;
+                var VariableVendor=_context.Vendor.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                    .FirstOrDefault();
+                if (VariableVendor == null)
+                {
+                    flag = true;
+                }
+                
+                var VariableBranch = _context.Branch.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                    .FirstOrDefault();
+                if (VariableBranch == null)
+                {
+                    flag = true;
+                }
+                var VariableAccountManagement = _context.AccountManagement.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                                    .FirstOrDefault();
+                if (VariableAccountManagement == null)
+                {
+                    flag = true;
+                }
+                var VariableConciliacionLinea = _context.ConciliacionLinea.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                                    .FirstOrDefault();
+                if (VariableConciliacionLinea == null)
+                {
+                    flag = true;
+                }
+                //CreditNote
+                var VariableCreditNote = _context.CreditNote.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                                    .FirstOrDefault();
+                if (VariableCreditNote == null)
+                {
+                    flag = true;
+                }
+                var VariableDebitNote = _context.DebitNote.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                                    .FirstOrDefault();
+                if (VariableDebitNote == null)
+                {
+                    flag = true;
+                }
+                var VariableEmployees = _context.Employees.Where(a => a.IdCurrency == _Currency.CurrencyId)
+                                                    .FirstOrDefault();
+                if (VariableEmployees == null)
+                {
+                    flag = true;
+                }
+                var VariableExchangeRate = _context.ExchangeRate.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                                    .FirstOrDefault();
+                if (VariableExchangeRate == null)
+                {
+                    flag = true;
+                }
+                var VariableGoodsReceived = _context.GoodsReceived.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                    .FirstOrDefault();
+                if (VariableGoodsReceived == null)
+                {
+                    flag = true;
+                }
+                var VariableInvoice = _context.Invoice.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                    .FirstOrDefault();
+                if (VariableInvoice == null)
+                {
+                    flag = true;
+                }
+                var VariableJournalEntry = _context.JournalEntry.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                    .FirstOrDefault();
+                if (VariableJournalEntry == null)
+                {
+                    flag = true;
+                }
+                var VariableVendorInvoice = _context.VendorInvoice.Where(a => a.CurrencyId == _Currency.CurrencyId)
+                                    .FirstOrDefault();
+                if (VariableVendorInvoice == null)
+                {
+                    flag = true;
+                }
+                if (flag) { 
+                         currency = _context.Currency
+                        .Where(x => x.CurrencyId == (int)_Currency.CurrencyId)
+                        .FirstOrDefault();
+                         _context.Currency.Remove(currency);
+                        await  _context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {

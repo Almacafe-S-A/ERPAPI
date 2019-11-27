@@ -2,15 +2,29 @@
 
 namespace ERPAPI.Migrations
 {
-    public partial class EmployeeExtraHoursForeingKeyCustomerId : Migration
+    public partial class RemoveCustomerID_EmployeeExtraHours : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_EmployeeExtraHours_Customer_CustomerId",
+            //    table: "EmployeeExtraHours");
+
+            //migrationBuilder.DropIndex(
+            //    name: "IX_EmployeeExtraHours_CustomerId",
+            //    table: "EmployeeExtraHours");
+
+            //migrationBuilder.DropColumn(                  ERROR AL GENERAR BASE DE DATOS NUEVA        
+            //    name: "CustomerId",
+            //    table: "EmployeeExtraHours");
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
         {
             //migrationBuilder.AddColumn<long>(
             //    name: "CustomerId",
             //    table: "EmployeeExtraHours",
-            //    nullable: false,
-            //    defaultValue: 0L);
+            //    nullable: true);
 
             //migrationBuilder.CreateIndex(
             //    name: "IX_EmployeeExtraHours_CustomerId",
@@ -23,22 +37,7 @@ namespace ERPAPI.Migrations
             //    column: "CustomerId",
             //    principalTable: "Customer",
             //    principalColumn: "CustomerId",
-            //    onDelete: ReferentialAction.NoAction);
-        }
-
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            //migrationBuilder.DropForeignKey(
-            //    name: "FK_EmployeeExtraHours_Customer_CustomerId",
-            //    table: "EmployeeExtraHours");
-
-            //migrationBuilder.DropIndex(
-            //    name: "IX_EmployeeExtraHours_CustomerId",
-            //    table: "EmployeeExtraHours");
-
-            //migrationBuilder.DropColumn(
-            //    name: "CustomerId",
-            //    table: "EmployeeExtraHours");
+            //    onDelete: ReferentialAction.Restrict);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace ERPAPI.Models
         public Int64 ActionTakenId { get; set; }
 
         [Display(Name = "Acción tomada")]
-        public Int64 ActionTakenName { get; set; }
+        public string ActionTakenName { get; set; }
 
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
@@ -51,6 +51,8 @@ namespace ERPAPI.Models
         public string Type { get; set; } ///OFAC , ONU ,PEPS si existe en uno o varios
 
         public string AlertType { get; set; } /// PERSONAS, PRODUCTO
+
+        public string Observacion { get; set; }
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

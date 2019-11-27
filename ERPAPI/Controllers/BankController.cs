@@ -116,7 +116,7 @@ namespace ERPAPI.Controllers
             Bank Items = new Bank();
             try
             {
-                Items = await _context.Bank.Where(q => q.BankName.Contains(BankName)).FirstOrDefaultAsync();
+                Items = await _context.Bank.Where(q => q.BankName==BankName).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
