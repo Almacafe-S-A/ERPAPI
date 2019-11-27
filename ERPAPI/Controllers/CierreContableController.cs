@@ -99,7 +99,7 @@ namespace ERPAPI.Controllers
                         //IdProceso = 1,
                         Estatus = "PENDIENTE",
                         Proceso = "POLIZAS DE SEGURO VENCIDAS",
-                        PasoCierre = 2,
+                        PasoCierre = 3,
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
                         FechaModificacion = DateTime.Now,
@@ -113,32 +113,31 @@ namespace ERPAPI.Controllers
 
                     List<InsurancePolicy> insurancePolicies = _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToList();
 
+                    double SumaPolizas = _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToList().
+                        Sum(s => s.LpsAmount);
+                     
                     if (insurancePolicies.Count > 0)
                     {
                         foreach (var item in insurancePolicies)
                         {
                             item.Status = "INACTIVA";
-                           
                             
 
+
                         }
-                        proceso3.Estatus = "FINALIZADO";
-                        //proceso3.Mensaje = "FINALIZADO No se encontraron Polizas Vencidas";
+                        _context.InsurancePolicy.UpdateRange(insurancePolicies);
+                        proceso3.Estatus = "FINALIZADO";                      
                        
                     }
                     else
                     {
                         proceso3.Estatus = "FINALIZADO";
+                        //proceso3.Mensaje = "FINALIZADO No se encontraron Polizas Vencidas";
                     }
-
-                    _context.InsurancePolicy.UpdateRange(insurancePolicies);
-                
-
-
 
                     /////////////Fin del Paso 3
 
-                _context.SaveChanges();
+                    _context.SaveChanges();
 
                     //List< BitacoraCierreProcesos> spCierre = await _context.BitacoraCierreProceso.FromSql("Cierres @p0, @p1, @p2", pBitacoraCierre.FechaCierre, cierre.Id).ToListAsync();
                     _context.Database.ExecuteSqlCommand("Cierres @p0, @p1", pBitacoraCierre.FechaCierre, cierre.Id);
@@ -157,6 +156,10 @@ namespace ERPAPI.Controllers
 
             }
 
-        }
+        }`
+
+
     }
+
+
 }
