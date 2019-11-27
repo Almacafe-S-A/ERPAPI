@@ -553,27 +553,29 @@ namespace ERPAPI.Controllers
                                 .Where(q=>q.DocumentDate>=Convert.ToDateTime(fechainicio))
                                 .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
                                 .FirstOrDefaultAsync();
-
-                            quantitycot = _subservicewarehouse.QuantityHours;
-
-                            taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
-                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            if (_subservicewarehouse != null)
                             {
-                                SubProductId = _su.SubproductId,
-                                SubProductName = _su.ProductName,
-                                UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                Price = preciocot,
-                                Quantity = quantitycot,
-                                Amount = (preciocot * quantitycot), 
-                                SubTotal = (preciocot * quantitycot),
-                                TaxAmount = taxamount,
-                                TaxId = _tax.TaxId,
-                                TaxCode = _tax.TaxCode,
-                                TaxPercentage = _tax.TaxPercentage,
-                                Total = (preciocot * quantitycot) + taxamount,
+                                quantitycot = _subservicewarehouse.QuantityHours;
 
-                            });
+                                taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                                ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                {
+                                    SubProductId = _su.SubproductId,
+                                    SubProductName = _su.ProductName,
+                                    UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                    UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                    Price = preciocot,
+                                    Quantity = quantitycot,
+                                    Amount = (preciocot * quantitycot),
+                                    SubTotal = (preciocot * quantitycot),
+                                    TaxAmount = taxamount,
+                                    TaxId = _tax.TaxId,
+                                    TaxCode = _tax.TaxCode,
+                                    TaxPercentage = _tax.TaxPercentage,
+                                    Total = (preciocot * quantitycot) + taxamount,
+
+                                });
+                            }
                         }
 
                         //6 Monta carga
