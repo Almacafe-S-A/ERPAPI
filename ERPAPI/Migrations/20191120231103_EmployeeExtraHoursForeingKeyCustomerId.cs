@@ -9,7 +9,7 @@ namespace ERPAPI.Migrations
             migrationBuilder.AddColumn<long>(
                 name: "CustomerId",
                 table: "EmployeeExtraHours",
-                nullable: false,
+                nullable: true,
                 defaultValue: 0L);
 
             migrationBuilder.CreateIndex(

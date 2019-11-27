@@ -104,7 +104,9 @@ namespace ERP.Contexts
         public DbSet<Policy> Policy { get; set; }
         public DbSet<PolicyClaims> PolicyClaims { get; set; }
         public DbSet<PolicyRoles> PolicyRoles { get; set; }
-       // public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }       
+
+        public DbSet<ApplicationUserClaim> ApplicationUserClaim { get; set; }
+
         public DbSet<Product> Product { get; set; }
         public DbSet<ProductType> ProductType { get; set; }
         public DbSet<Tax> Tax { get; set; }
