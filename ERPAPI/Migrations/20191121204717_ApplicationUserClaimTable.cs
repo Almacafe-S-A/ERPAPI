@@ -6,17 +6,17 @@ namespace ERPAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            /* migrationBuilder.DropForeignKey(
-                 name: "FK_EmployeeExtraHours_Customer_CustomerId",
-                 table: "EmployeeExtraHours");
+             //migrationBuilder.DropForeignKey(
+             //    name: "FK_EmployeeExtraHours_Customer_CustomerId",
+             //    table: "EmployeeExtraHours");
 
-             migrationBuilder.AlterColumn<long>(
-                 name: "CustomerId",
-                 table: "EmployeeExtraHours",
-                 nullable: true,
-                 oldClrType: typeof(long));
-                 */
-            /* migrationBuilder.AddForeignKey(
+             //migrationBuilder.AlterColumn<long>(
+             //    name: "CustomerId",
+             //    table: "EmployeeExtraHours",
+             //    nullable: true,
+             //    oldClrType: typeof(long));
+                 
+         /*   migrationBuilder.AddForeignKey(
                  name: "FK_EmployeeExtraHours_Customer_CustomerId",
                  table: "EmployeeExtraHours",
                  column: "CustomerId",
@@ -27,9 +27,9 @@ namespace ERPAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            /*  migrationBuilder.DropForeignKey(
+             /* migrationBuilder.DropForeignKey(
                   name: "FK_EmployeeExtraHours_Customer_CustomerId",
-                  table: "EmployeeExtraHours");
+                  table: "EmployeeExtraHours");*/
 
               migrationBuilder.AlterColumn<long>(
                   name: "CustomerId",
@@ -38,13 +38,13 @@ namespace ERPAPI.Migrations
                   oldClrType: typeof(long),
                   oldNullable: true);
 
-              migrationBuilder.AddForeignKey(
+              /*migrationBuilder.AddForeignKey(
                   name: "FK_EmployeeExtraHours_Customer_CustomerId",
                   table: "EmployeeExtraHours",
                   column: "CustomerId",
                   principalTable: "Customer",
                   principalColumn: "CustomerId",
-                  onDelete: ReferentialAction.Cascade);*/
+                  onDelete: ReferentialAction.NoAction);*/
         }
     }
 }
