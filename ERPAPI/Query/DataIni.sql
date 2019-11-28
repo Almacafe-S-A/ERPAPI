@@ -3,27 +3,20 @@
     "UserPassword": "Aa123456!"
 */
 
+SET IDENTITY_INSERT [dbo].[GrupoEstado] ON 
+GO
+INSERT [dbo].[GrupoEstado] ([Id], [Nombre], [Modulo], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion]) VALUES (1, N'Activo/Inactivo', N'Todos', CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com')
+GO
+SET IDENTITY_INSERT [dbo].[GrupoEstado] OFF
+GO
+
+
+
 SET IDENTITY_INSERT [dbo].[Estados] ON 
 GO
 INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (1, N'Activo', N'Activo', 1, N'freddy.chinchilla@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), CAST(N'2019-08-11T19:17:11.7570904' AS DateTime2))
 GO
 INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (2, N'Inactivo', N'Estado Inactivo', 1, N'freddy.chinchilla@bi-dss.com', N'tania.sosa@bi-dss.com', CAST(N'2019-03-15T17:21:16.7000000' AS DateTime2), CAST(N'2019-09-02T14:43:28.9760922' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (3, N'Copiar a Factura proforma', N'Copia cotizacióna a una factura a proforma', 2, N'freddy.chinchilla@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-04-15T00:00:00.0000000' AS DateTime2), CAST(N'2019-08-11T19:19:57.5447331' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (4, N'Copiar a Factura Fiscal', N'Copia cotización a una factura fiscal', 2, N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', CAST(N'2019-04-15T08:51:24.9549875' AS DateTime2), CAST(N'2019-04-15T08:51:28.5466625' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (5, N'Enviada a Aprobacion', N'Validacion', 3, N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', CAST(N'2019-07-30T14:24:35.3930000' AS DateTime2), CAST(N'2019-07-30T14:24:35.3930000' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (6, N'Aprobado', N'AprobadoGerente', 3, N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', CAST(N'2019-08-03T13:54:50.2930000' AS DateTime2), CAST(N'2019-08-03T13:54:50.2930000' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (7, N'Rechazado', N'Rechazado', 3, N'celia.suazo@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-08-11T19:09:51.6959632' AS DateTime2), CAST(N'2019-08-12T13:52:48.5514736' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (8, N'Pendiente', N'Ninguna', 3, N'celia.suazo@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-08-13T17:34:48.6879083' AS DateTime2), CAST(N'2019-08-30T00:38:53.8025191' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (11, N'Activo', N'Estado Activo', 5, N'celia.suazo@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-08-15T21:23:54.6116090' AS DateTime2), CAST(N'2019-08-30T09:45:30.1466853' AS DateTime2))
-GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (21, N'Copia de Autorización', N'Autorización disponibles', 3, N'celia.suazo@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-08-30T11:35:10.3541774' AS DateTime2), CAST(N'2019-08-30T11:35:10.3541787' AS DateTime2))
 GO
 SET IDENTITY_INSERT [dbo].[Estados] OFF
 GO
