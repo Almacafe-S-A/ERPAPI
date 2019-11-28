@@ -50,6 +50,11 @@ namespace ERPAPI.Models
         [Display(Name = "Id")]
         public Int64 ProductId { get; set; }
 
+        [Display(Name = "Fecha de inicio")]
+        public DateTime? StartDate { get; set; }
+
+        [Display(Name = "Fecha de fin")]
+        public DateTime? EndDate { get; set; }
 
 
         [Display(Name = "Nombre Producto")]
