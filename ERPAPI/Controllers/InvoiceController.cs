@@ -443,7 +443,7 @@ namespace ERPAPI.Controllers
                             _alert.AlertName = "Sancionados";
                             _alert.Code = "PERSON004";
                             _alert.ActionTakenId = 0;
-                            _alert.ActionTakenName = 0;
+                            _alert.ActionTakenName = "";
                             _alert.IdEstado = 0;
                             _alert.SujetaARos = false;
                             _alert.FalsoPositivo = false;

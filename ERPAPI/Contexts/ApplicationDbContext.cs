@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using OFAC;
 using ONUListas;
+using ERPAPI.Helpers;
 
 namespace ERP.Contexts
 {
@@ -40,6 +41,8 @@ namespace ERP.Contexts
         public DbSet<CostCenter> CostCenter { get; set; }
 
         public DbSet<Concept> Concept { get; set; }
+
+        public DbSet<GrupoEstado> GrupoEstado { get; set; }
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 
@@ -83,9 +86,15 @@ namespace ERP.Contexts
         public DbSet<InvoiceTransReport> InvoiceTransReport { get; set; }
         public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
         public DbSet<AccountManagement> AccountManagement { get; set; }
+
+        public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
+
+       
         /// <summary>
         /// ///Cierres
         /// </summary>
+        /// 
+
 
         public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
         public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
@@ -283,7 +292,9 @@ namespace ERP.Contexts
             //     new Customer(){CustomerId=2,CustomerName="CAFE INDIO"},
             //};
 
-            //modelBuilder.Entity<Customer>().HasData(Customers);         
+            //modelBuilder.Entity<Customer>().HasData(Customers);   
+
+            //modelBuilder.Entity<ConfiguracionesGenerales>().HasBaseType<CamposAuditoria>();
 
             modelBuilder.Entity<VendorProduct>()
            .HasIndex(p => new { p.ProductId,p.VendorId })

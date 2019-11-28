@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -16,31 +14,30 @@ using Newtonsoft.Json;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Country")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class CountryController : Controller
+    public class ConfiguracionesGeneralesesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public CountryController(ILogger<CountryController> logger, ApplicationDbContext context)
+        public ConfiguracionesGeneralesesController(ILogger<ConfiguracionesGeneralesesController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
-
         /// <summary>
-        /// Obtiene el Listado de Country paginado
+        /// Obtiene el Listado de ConfiguracionesGenerales, por paginas
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Country>>> GetCountryPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetServeridadRiesgoPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<Country> Items = new List<Country>();
+            List<ConfiguracionesGenerales> Items = new List<ConfiguracionesGenerales>();
             try
             {
-                var query = _context.Country.AsQueryable();
+                var query = _context.ConfiguracionesGenerales.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -58,22 +55,21 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            
+            //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
 
         /// <summary>
-        /// Obtiene el Listado de Countryes 
-        /// El estado define cuales son los cai activos
+        /// Obtiene el Listado de Severidad Riesgo 
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetCountry()
+        public async Task<IActionResult> GetConfiguracionesGenerales()
         {
-            List<Country> Items = new List<Country>();
+            List<ConfiguracionesGenerales> Items = new List<ConfiguracionesGenerales>();
             try
             {
-                Items = await _context.Country.ToListAsync();
+                Items = await _context.ConfiguracionesGenerales.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -87,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la Country por medio del Id enviado.
+        /// Obtiene los Datos de la ConfiguracionesGenerales por medio del Id enviado.
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
         [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetCountryById(Int64 Id)
+        public async Task<IActionResult> GetConfiguracionesGeneralesById(Int64 Id)
         {
-            Country Items = new Country();
+            ConfiguracionesGenerales Items = new ConfiguracionesGenerales();
             try
             {
-                Items = await _context.Country.Where(q => q.Id == Id).FirstOrDefaultAsync();
+                Items = await _context.ConfiguracionesGenerales.Where(q => q.Id == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -109,58 +105,38 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
-
-        [HttpGet("[action]/{Name}")]
-        public async Task<IActionResult> GetCountryByName(String Name)
-        {
-            Country Items = new Country();
-            try
-            {
-                Items = await _context.Country.Where(q => q.Name == Name).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-            return await Task.Run(() => Ok(Items));
-        }
-
 
         /// <summary>
-        /// Inserta una nueva Country
+        /// Inserta una nueva severidad riesgo
         /// </summary>
-        /// <param name="_Country"></param>
+        /// <param name="_ConfiguracionesGenerales"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Country>> Insert([FromBody]Country _Country)
+        public async Task<ActionResult<ConfiguracionesGenerales>> Insert([FromBody]ConfiguracionesGenerales _ConfiguracionesGenerales)
         {
-            Country _Countryq = new Country();
+            ConfiguracionesGenerales ConfiguracionesGeneralesq = new ConfiguracionesGenerales();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
-
                     try
                     {
-                        _Countryq = _Country;
-                        _context.Country.Add(_Countryq);
+                        ConfiguracionesGeneralesq = _ConfiguracionesGenerales;
+                        _context.ConfiguracionesGenerales.Add(ConfiguracionesGeneralesq);
                         await _context.SaveChangesAsync();
 
-                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Country.Id,
-                            DocType = "Country",
+                            IdOperacion = ConfiguracionesGeneralesq.Id,
+                            DocType = "ConfiguracionesGenerales",
                             ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(ConfiguracionesGeneralesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Country.Usuariocreacion,
-                            UsuarioModificacion = _Country.Usuariomodificacion,
-                            UsuarioEjecucion = _Country.Usuariomodificacion,
+                            UsuarioCreacion = ConfiguracionesGeneralesq.UsuarioCreacion,
+                            UsuarioModificacion = ConfiguracionesGeneralesq.UsuarioModificacion,
+                            UsuarioEjecucion = ConfiguracionesGeneralesq.UsuarioModificacion,
 
                         });
 
@@ -170,73 +146,70 @@ namespace ERPAPI.Controllers
                     catch (Exception ex)
                     {
                         transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                         throw ex;
                     }
                 }
-
             }
             catch (Exception ex)
             {
-                
+
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Countryq));
+            return await Task.Run(() => Ok(ConfiguracionesGeneralesq));
         }
 
         /// <summary>
-        /// Actualiza la Country
+        /// Actualiza la Severidad Riesgo
         /// </summary>
-        /// <param name="_Country"></param>
+        /// <param name="_ConfiguracionesGenerales"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Country>> Update([FromBody]Country _Country)
+        public async Task<ActionResult<ConfiguracionesGenerales>> Update([FromBody]ConfiguracionesGenerales _ConfiguracionesGenerales)
         {
-            Country _Countryq = _Country;
+            ConfiguracionesGenerales _ConfiguracionesGeneralesq = _ConfiguracionesGenerales;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Countryq = await (from c in _context.Country
-                                  .Where(q => q.Id == _Country.Id)
-                                           select c
-                                 ).FirstOrDefaultAsync();
+                        _ConfiguracionesGeneralesq = await (from c in _context.ConfiguracionesGenerales
+                        .Where(q => q.Id == _ConfiguracionesGenerales.Id)
+                                                   select c
+                        ).FirstOrDefaultAsync();
 
-                        _context.Entry(_Countryq).CurrentValues.SetValues((_Country));
+                        _context.Entry(_ConfiguracionesGeneralesq).CurrentValues.SetValues((_ConfiguracionesGenerales));
 
-                        //_context.Country.Update(_Countryq);
+                        //_context.Bank.Update(_Bankq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Country.Id,
-                            DocType = "Country",
+                            IdOperacion = _ConfiguracionesGeneralesq.Id,
+                            DocType = "ConfiguracionesGenerales",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Update",
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_ConfiguracionesGeneralesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Country.Usuariocreacion,
-                            UsuarioModificacion = _Country.Usuariomodificacion,
-                            UsuarioEjecucion = _Country.Usuariomodificacion,
+                            UsuarioCreacion = _ConfiguracionesGeneralesq.UsuarioCreacion,
+                            UsuarioModificacion = _ConfiguracionesGeneralesq.UsuarioModificacion,
+                            UsuarioEjecucion = _ConfiguracionesGeneralesq.UsuarioModificacion,
 
                         });
 
                         await _context.SaveChangesAsync();
-
                         transaction.Commit();
-
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                         throw ex;
                     }
-                  
                 }
             }
             catch (Exception ex)
@@ -246,61 +219,56 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Countryq));
+            return await Task.Run(() => Ok(_ConfiguracionesGeneralesq));
         }
 
         /// <summary>
-        /// Elimina una Country       
+        /// Elimina una Severidad Riesgo      
         /// </summary>
-        /// <param name="_Country"></param>
+        /// <param name="_ConfiguracionesGenerales"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Country _Country)
+        public async Task<IActionResult> Delete([FromBody]ConfiguracionesGenerales _ConfiguracionesGenerales)
         {
-            Country _Countryq = new Country();
+            ConfiguracionesGenerales _ConfiguracionesGeneralesq = new ConfiguracionesGenerales();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Countryq = _context.Country
-                       .Where(x => x.Id == (Int64)_Country.Id)
-                          .FirstOrDefault();
+                        _ConfiguracionesGeneralesq = _context.ConfiguracionesGenerales
+                        .Where(x => x.Id == (Int64)_ConfiguracionesGenerales.Id)
+                        .FirstOrDefault();
 
-                        _context.Country.Remove(_Countryq);
+                        _context.ConfiguracionesGenerales.Remove(_ConfiguracionesGeneralesq);
                         await _context.SaveChangesAsync();
-
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Country.Id,
-                            DocType = "Country",
+                            IdOperacion = _ConfiguracionesGeneralesq.Id,
+                            DocType = "ConfiguracionesGenerales",
                             ClaseInicial =
-                                  Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Country, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Update",
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_ConfiguracionesGeneralesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Country.Usuariocreacion,
-                            UsuarioModificacion = _Country.Usuariomodificacion,
-                            UsuarioEjecucion = _Country.Usuariomodificacion,
+                            UsuarioCreacion = _ConfiguracionesGeneralesq.UsuarioCreacion,
+                            UsuarioModificacion = _ConfiguracionesGeneralesq.UsuarioModificacion,
+                            UsuarioEjecucion = _ConfiguracionesGeneralesq.UsuarioModificacion,
 
                         });
 
                         await _context.SaveChangesAsync();
-
                         transaction.Commit();
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                         throw ex;
                     }
-
-                  
                 }
-
             }
             catch (Exception ex)
             {
@@ -308,15 +276,8 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Countryq));
+            return await Task.Run(() => Ok(_ConfiguracionesGeneralesq));
 
         }
-
-
-
-
-
-
-
     }
 }
