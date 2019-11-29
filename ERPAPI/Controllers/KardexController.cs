@@ -164,8 +164,12 @@ namespace ERPAPI.Controllers
                 CertificadoDeposito _tcd = await _context.CertificadoDeposito
                                                        .Where(q => q.IdCD == _Kardexq.Ids[0]).FirstOrDefaultAsync();
 
-                string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01";
-                string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-"+ DateTime.DaysInMonth(DateTime.Now.Year,DateTime.Now.Month);
+                string fechainicio = _Kardexq.StartDate.Value.Year 
+                        + "-" + _Kardexq.StartDate.Value.Month + "-"+ _Kardexq.StartDate.Value.Day;
+                string fechafin = _Kardexq.EndDate.Value.Year + "-" + _Kardexq.EndDate.Value.Month
+                                 + "-" + _Kardexq.EndDate.Value.Day;
+                //string fechainicio = DateTime.Now.Year + "-" + DateTime.Now.Month + "-01";
+                //string fechafin = DateTime.Now.Year + "-" + DateTime.Now.Month + "-"+ DateTime.DaysInMonth(DateTime.Now.Year,DateTime.Now.Month);
 
                 Guid Identificador = Guid.NewGuid();               
                 using (var transaction = _context.Database.BeginTransaction())
