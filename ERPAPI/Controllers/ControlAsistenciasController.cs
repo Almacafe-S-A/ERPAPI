@@ -171,7 +171,7 @@ namespace ERPAPI.Controllers
             try
             {
                var  Items = await _context.ControlAsistencias.Where(
-                                q => q.Empleado.IdEmpleado == _ControlAsistenciasP.Empleado.IdEmpleado &&
+                                q => q.Empleado.IdEmpleado == _ControlAsistenciasP.IdEmpleado &&
                                     q.Fecha >= _ControlAsistenciasP.FechaCreacion &&
                                     q.Fecha <= _ControlAsistenciasP.FechaModificacion &&
                                     q.TipoAsistencia == _ControlAsistenciasP.TipoAsistencia
