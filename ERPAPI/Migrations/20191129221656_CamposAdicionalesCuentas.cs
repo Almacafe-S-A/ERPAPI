@@ -7,14 +7,14 @@ namespace ERPAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name:"Mayoriza", 
+                name:"Totaliza", 
                 nullable:false,
                 defaultValue:false,
                 table: "Accounting"
             );
 
             migrationBuilder.AddColumn<string>(
-                name: "NaturalezaCuenta",
+                name: "DeudoraAcreedora",
                 nullable: false,
                 defaultValue: "D",
                 table: "Accounting"
@@ -23,8 +23,8 @@ namespace ERPAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(name: "Mayoriza", table: "Accounting");
-            migrationBuilder.DropColumn("NaturalezaCuenta", table: "Accounting");
+            migrationBuilder.DropColumn(name: "Totaliza", table: "Accounting");
+            migrationBuilder.DropColumn("DeudoraAcreedora", table: "Accounting");
         }
     }
 }
