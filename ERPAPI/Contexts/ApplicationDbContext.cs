@@ -335,7 +335,9 @@ namespace ERP.Contexts
            .HasIndex(p => new { p.RTN })
            .IsUnique(true);
 
-
+            modelBuilder.Entity<Departamento>()
+            .HasIndex(e => e.NombreDepartamento)
+            .IsUnique(true);
 
             modelBuilder.Entity<SubProduct>()
              .HasMany(c => c.ProductRelation)
