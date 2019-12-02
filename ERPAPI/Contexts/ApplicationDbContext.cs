@@ -89,11 +89,13 @@ namespace ERP.Contexts
 
         public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
 
-       
+
         /// <summary>
         /// ///Cierres
         /// </summary>
         /// 
+
+        public DbSet<GarantiaBancaria> GarantiaBancaria { get; set; }
 
 
         public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }

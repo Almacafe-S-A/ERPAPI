@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191129221656_CamposAdicionalesCuentas")]
+    partial class CamposAdicionalesCuentas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4149,49 +4151,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FundingInterestRate");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GarantiaBancaria", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Ajuste");
-
-                    b.Property<long>("CostCenterId");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaFianlVigencia");
-
-                    b.Property<DateTime>("FechaInicioVigencia");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<double>("Monto");
-
-                    b.Property<string>("NumeroCertificado");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<string>("strign");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CostCenterId");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("IdEstado");
-
-                    b.ToTable("GarantiaBancaria");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerHeader", b =>
@@ -9230,24 +9189,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.FixedAssetGroup")
                         .WithMany("_FixedAssetGroup")
                         .HasForeignKey("FixedAssetGroupId1");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GarantiaBancaria", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
-                        .WithMany()
-                        .HasForeignKey("CostCenterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estado")
-                        .WithMany()
-                        .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
