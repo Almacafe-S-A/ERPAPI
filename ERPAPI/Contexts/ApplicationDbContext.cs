@@ -89,7 +89,7 @@ namespace ERP.Contexts
 
         public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
 
-
+        public DbSet<PayrollDeduction> PayrollDeduction { get; set; }
         /// <summary>
         /// ///Cierres
         /// </summary>
