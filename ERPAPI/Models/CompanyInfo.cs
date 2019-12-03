@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
@@ -35,8 +32,11 @@ namespace ERPAPI.Models
         [Display(Name = "Correo")]
         public string Email { get; set; }
 
-        [Display(Name = "RTN")]
+        [Display(Name = "Tax")]
         public string Tax_Id { get; set; }
+
+        [Display(Name = "RTN")]
+        public string RTN { get; set; }
 
         [Display(Name = "Imagen")]
         public string image { get; set; }

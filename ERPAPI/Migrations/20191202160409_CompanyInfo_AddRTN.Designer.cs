@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191202160409_CompanyInfo_AddRTN")]
+    partial class CompanyInfo_AddRTN
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,15 +183,9 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256);
@@ -307,13 +303,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<Guid>("RoleId");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("RoleName");
 
@@ -2999,10 +2991,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Usuariomodificacion");
 
                     b.HasKey("IdDepartamento");
-
-                    b.HasIndex("NombreDepartamento")
-                        .IsUnique()
-                        .HasFilter("[NombreDepartamento] IS NOT NULL");
 
                     b.ToTable("Departamento");
                 });
@@ -6147,39 +6135,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Payroll");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.PayrollDeduction", b =>
-                {
-                    b.Property<long>("PayrollDeductionId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("ConceptName");
-
-                    b.Property<DateTime>("EndDate");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<double>("Fees");
-
-                    b.Property<long>("IdEmpleado");
-
-                    b.Property<string>("NombreEmpleado");
-
-                    b.Property<DateTime>("StartDate");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("PayrollDeductionId");
-
-                    b.ToTable("PayrollDeduction");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.PayrollEmployee", b =>
                 {
                     b.Property<long>("IdPlanillaempleado")
@@ -6526,8 +6481,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Discount");
 
-                    b.Property<DateTime?>("EndDate");
-
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("ExpirationDate");
@@ -6557,8 +6510,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("SalesOrderId");
 
                     b.Property<int>("SalesTypeId");
-
-                    b.Property<DateTime?>("StartDate");
 
                     b.Property<double>("SubTotal");
 
