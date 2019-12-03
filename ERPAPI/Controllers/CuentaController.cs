@@ -70,10 +70,7 @@ namespace ERPAPI.Controllers
         {
             var user = _context.Users.Where(q => q.Email == model.Email).FirstOrDefault();
 
-
-            var result = await _userManager.RemovePasswordAsync(user);
-
-            var resultadd = await _userManager.AddPasswordAsync(user, model.Password);
+            var result = await _userManager.ChangePasswordAsync(user, model.PasswordAnterior, model.Password);
 
             if (result.Succeeded)
             {
@@ -81,10 +78,8 @@ namespace ERPAPI.Controllers
             }
             else
             {
-                return await Task.Run(() => BadRequest("Username or password invalid"));
+                return await Task.Run(() => BadRequest(@"Contrasña o usuario incorrecto"));
             }
-
-
         }
 
 
