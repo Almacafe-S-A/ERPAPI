@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191202222706_UserRole_Estado")]
+    partial class UserRole_Estado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6522,8 +6524,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Discount");
 
-                    b.Property<DateTime?>("EndDate");
-
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("ExpirationDate");
@@ -6553,8 +6553,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("SalesOrderId");
 
                     b.Property<int>("SalesTypeId");
-
-                    b.Property<DateTime?>("StartDate");
 
                     b.Property<double>("SubTotal");
 

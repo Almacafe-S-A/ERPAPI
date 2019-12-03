@@ -133,6 +133,33 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Obtiene los Datos de la ProformaInvoice por medio del Id enviado.
+        /// </summary>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetLastProformaInvoice(Int64 CustomerId)
+        {
+            ProformaInvoice Items = new ProformaInvoice();
+            try
+            {
+                Items = await _context.ProformaInvoice
+                              .OrderByDescending(q=>q.ProformaId)
+                              .Where(q => q.CustomerId == CustomerId)
+                             .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> GetProformaInvoiceLineById([FromBody]ProformaInvoice _ProformaInvoice)
         {
