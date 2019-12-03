@@ -19,14 +19,14 @@ namespace ERPAPI.Controllers
     public class CuentaController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _rolemanager;
+        private readonly RoleManager<ApplicationUserRole> _rolemanager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _context;
 
         public CuentaController(
             UserManager<ApplicationUser> userManager,
-             RoleManager<ApplicationRole> rolemanager,
+             RoleManager<ApplicationUserRole> rolemanager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration
             , ApplicationDbContext context
@@ -98,7 +98,7 @@ namespace ERPAPI.Controllers
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    UserToken token = BuildToken(userInfo);
+                    UserToken token = await BuildToken(userInfo);
                     if (token==null)
                     {
                         return BadRequest($"El Usuario no tiene ningun rol asignado");
@@ -119,7 +119,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        private UserToken BuildToken(UserInfo userInfo)
+        private async Task<UserToken> BuildToken(UserInfo userInfo)
         {
             ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
             ApplicationUserRole _approle = _context.UserRoles.Where(q => q.UserId == _appuser.Id).FirstOrDefault();
@@ -128,18 +128,15 @@ namespace ERPAPI.Controllers
                 return null;
             }
             Branch _branch = _context.Branch.Where(b => b.BranchId == _appuser.BranchId).FirstOrDefault();
-            var claims = new[]
+            var claims = new List<Claim>()
              {
-                //new Claim("UserEmail", userInfo.Email),
-                //new Claim("UserName", _appuser.UserName),
-                new Claim(ClaimTypes.Email,userInfo.Email),
-                //new Claim(ClaimTypes.Role,_approle.RoleId.ToString(_)),
-                new Claim("BranchName", _branch.BranchName),
                 new Claim(ClaimTypes.Name, _appuser.UserName),
-                //new Claim()                
-                //new Claim(ClaimTy)
-                //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(ClaimTypes.Email,userInfo.Email),
+                new Claim(ClaimTypes.Role,_approle.RoleId.ToString()),
+                new Claim("BranchName", _branch.BranchName)
              };
+            var roleClaims = await _rolemanager.GetClaimsAsync(_approle);
+            claims.AddRange(roleClaims);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
