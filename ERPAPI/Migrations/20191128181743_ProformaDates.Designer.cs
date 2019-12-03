@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191128181743_ProformaDates")]
+    partial class ProformaDates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,8 +183,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("Description");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -192,8 +192,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256);
-
-                    b.Property<string>("Status");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -305,13 +303,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<Guid>("RoleId");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("RoleName");
 
@@ -2996,10 +2990,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("IdDepartamento");
 
-                    b.HasIndex("NombreDepartamento")
-                        .IsUnique()
-                        .HasFilter("[NombreDepartamento] IS NOT NULL");
-
                     b.ToTable("Departamento");
                 });
 
@@ -4161,49 +4151,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FundingInterestRate");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GarantiaBancaria", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Ajuste");
-
-                    b.Property<long>("CostCenterId");
-
-                    b.Property<int>("CurrencyId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaFianlVigencia");
-
-                    b.Property<DateTime>("FechaInicioVigencia");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<double>("Monto");
-
-                    b.Property<string>("NumeroCertificado");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<string>("strign");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CostCenterId");
-
-                    b.HasIndex("CurrencyId");
-
-                    b.HasIndex("IdEstado");
-
-                    b.ToTable("GarantiaBancaria");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerHeader", b =>
@@ -6141,39 +6088,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdPlanilla");
 
                     b.ToTable("Payroll");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PayrollDeduction", b =>
-                {
-                    b.Property<long>("PayrollDeductionId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("ConceptName");
-
-                    b.Property<DateTime>("EndDate");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<double>("Fees");
-
-                    b.Property<long>("IdEmpleado");
-
-                    b.Property<string>("NombreEmpleado");
-
-                    b.Property<DateTime>("StartDate");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("PayrollDeductionId");
-
-                    b.ToTable("PayrollDeduction");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.PayrollEmployee", b =>
@@ -9279,24 +9193,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.FixedAssetGroup")
                         .WithMany("_FixedAssetGroup")
                         .HasForeignKey("FixedAssetGroupId1");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GarantiaBancaria", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
-                        .WithMany()
-                        .HasForeignKey("CostCenterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Currency", "Currency")
-                        .WithMany()
-                        .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estado")
-                        .WithMany()
-                        .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>

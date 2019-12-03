@@ -68,8 +68,13 @@ namespace ERPAPI.Models
     public class KardexDTO : Kardex
     {
        public List<Int64> Ids { get; set; } = new List<long>();
-
        public Int64 SalesOrderId { get; set; }
+
+        [Display(Name = "Fecha de inicio")]
+        public DateTime? StartDate { get; set; }
+
+        [Display(Name = "Fecha de fin")]
+        public DateTime? EndDate { get; set; }
 
     }
 
