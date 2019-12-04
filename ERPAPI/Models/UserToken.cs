@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ERPAPI.Models
@@ -20,6 +21,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Habilitado")]
         public bool? IsEnabled { get; set; }
+
+        public List<Claim> Claims { get; set; }
 
     }
 

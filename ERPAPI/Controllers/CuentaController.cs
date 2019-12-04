@@ -19,14 +19,14 @@ namespace ERPAPI.Controllers
     public class CuentaController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationUserRole> _rolemanager;
+        private readonly RoleManager<ApplicationRole> _rolemanager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ApplicationDbContext _context;
 
         public CuentaController(
             UserManager<ApplicationUser> userManager,
-             RoleManager<ApplicationUserRole> rolemanager,
+             RoleManager<ApplicationRole> rolemanager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration
             , ApplicationDbContext context
@@ -98,12 +98,27 @@ namespace ERPAPI.Controllers
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    UserToken token = await BuildToken(userInfo);
-                    if (token==null)
+                    ApplicationUser usuario = await _userManager.FindByEmailAsync(userInfo.Email);
+                    var _approle = await _userManager.GetRolesAsync(usuario);
+                    if (_approle == null)
                     {
                         return BadRequest($"El Usuario no tiene ningun rol asignado");
                     }
-                    //return await Task.Run(() => BuildToken(userInfo));
+                    var claims = (List<Claim>) await _userManager.GetClaimsAsync(usuario);
+                    var listaRoles = _approle.Select(async x => await _rolemanager.FindByNameAsync(x));
+                    var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result);
+                    foreach (IList<Claim> claimsRole in listClaims)
+                    {
+                        claims.AddRange(claimsRole.ToArray());
+                    }
+                    //Verificacion manual debido a que la accion permite que se invoque de forma anonima
+                    var permiso = claims.FirstOrDefault(x => x.Type.Equals("Permiso") && x.Value.Equals("Seguridad.Iniciar Sesion"));
+                    if (permiso == null)
+                    {
+                        return BadRequest($"El Usuario no tiene permiso para iniciar sesión");
+                    }
+                    UserToken token = await BuildToken(userInfo);
+                    token.Claims = claims;
                     return await Task.Run(()=>token);
                 }
                 else
@@ -122,21 +137,13 @@ namespace ERPAPI.Controllers
         private async Task<UserToken> BuildToken(UserInfo userInfo)
         {
             ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
-            ApplicationUserRole _approle = _context.UserRoles.Where(q => q.UserId == _appuser.Id).FirstOrDefault();
-            if (_approle== null)
-            {
-                return null;
-            }
             Branch _branch = _context.Branch.Where(b => b.BranchId == _appuser.BranchId).FirstOrDefault();
             var claims = new List<Claim>()
              {
                 new Claim(ClaimTypes.Name, _appuser.UserName),
                 new Claim(ClaimTypes.Email,userInfo.Email),
-                new Claim(ClaimTypes.Role,_approle.RoleId.ToString()),
                 new Claim("BranchName", _branch.BranchName)
              };
-            var roleClaims = await _rolemanager.GetClaimsAsync(_approle);
-            claims.AddRange(roleClaims);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -153,8 +160,11 @@ namespace ERPAPI.Controllers
                );
 
              
-             Int32? cambiopassworddias = Convert.ToInt32(_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q=>q.Valordecimal).FirstOrDefault());
-             if (cambiopassworddias == null) { cambiopassworddias = 0; }
+             Int32? cambiopassworddias = (Int32?)_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q=>q.Valordecimal).FirstOrDefault();
+             if (cambiopassworddias == null)
+             {
+                 cambiopassworddias = 0;
+             }
 
             return new UserToken()
             {
@@ -163,7 +173,8 @@ namespace ERPAPI.Controllers
                 BranchId = Convert.ToInt32(_appuser.BranchId),
                 IsEnabled = _appuser.IsEnabled,
                 LastPasswordChangedDate = _appuser.LastPasswordChangedDate,
-                Passworddias = cambiopassworddias.Value,
+                Passworddias = cambiopassworddias.Value
+                
             };
         }
 
