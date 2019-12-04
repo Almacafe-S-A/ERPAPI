@@ -107,6 +107,27 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene un rol , filtrado por su Nombre.
+        /// </summary>
+        /// <param name="ConfiguracionName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ConfiguracionName}")]
+        public async Task<ActionResult> GetConfiguracionByName(String ConfiguracionName)
+        {
+            try
+            {
+                GrupoConfiguracion Items = await _context.GrupoConfiguracion.Where(q => q.Nombreconfiguracion == ConfiguracionName).FirstOrDefaultAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
 
 
         /// <summary>

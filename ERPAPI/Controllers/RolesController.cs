@@ -58,6 +58,27 @@ namespace ERPAPI.Controllers
             }
            
         }
+        /// <summary>
+        /// Obtiene un rol , filtrado por su Nombre.
+        /// </summary>
+        /// <param name="RoleName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{RoleName}")]
+        public async Task<ActionResult> GetRoleByName(String RoleName)
+        {
+            try
+            {
+                ApplicationRole Items = await _context.Roles.Where(q => q.Name == RoleName).FirstOrDefaultAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
 
 
         /// <summary>

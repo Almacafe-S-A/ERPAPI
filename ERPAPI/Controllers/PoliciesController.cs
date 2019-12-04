@@ -111,6 +111,23 @@ namespace ERPAPI.Controllers
             }
 
         }
+        [HttpGet("[action]/{PolicyName}")]
+        public async Task<ActionResult<Policy>> GetPoliciesByName(String PolicyName)
+        {
+            try
+            {
+                var Items = await _context.Policy.Where(q => q.Name == PolicyName).FirstOrDefaultAsync();
+                return await Task.Run(() => Ok(Items));
+                //return Ok(Items);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
 
 
         /// <summary>
