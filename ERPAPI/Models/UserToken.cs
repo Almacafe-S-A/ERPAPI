@@ -22,8 +22,6 @@ namespace ERPAPI.Models
         [Display(Name = "Habilitado")]
         public bool? IsEnabled { get; set; }
 
-        public List<Claim> Claims { get; set; }
-
     }
 
 

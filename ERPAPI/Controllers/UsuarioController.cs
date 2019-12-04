@@ -112,6 +112,7 @@ namespace ERPAPI.Controllers
         /// Obtiene los usuarios de la aplicacion.
         /// </summary>
         /// <returns></returns>
+        [Authorize(Policy = "Seguridad.Usuarios")]
         [HttpGet("[action]")]      
         public async Task<ActionResult<List<ApplicationUser>>> GetUsers()
         {

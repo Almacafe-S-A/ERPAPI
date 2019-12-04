@@ -25,6 +25,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 [assembly:ApiConventionType(typeof(DefaultApiConventions))]
 
@@ -94,30 +96,22 @@ namespace ERPAPI
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 config.IncludeXmlComments(xmlPath);
             });
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            //Cargar los permisos del sistema y crear politicas
+            var permisosText = File.ReadAllText("PermisosSistema.txt");
+            permisosText = permisosText.Replace("\r", "");
+            var permisos = permisosText.Split("\n");
+            services.AddAuthorization(options =>
+                                      {
+                                          foreach (var permiso in permisos)
+                                          {
+                                              options.AddPolicy(permiso,policy=>policy.RequireClaim(permiso,"true"));
+                                          }
+                                      });
         }
-
-        /*private string GetConnection(HttpRequest _request)
-        {
-            string db2ConnectionString = "";
-            var databaseQuerystringParameter = "";
-            databaseQuerystringParameter = _request.Query["database"].ToString();
-             db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            _logger.LogInformation($"Parametro de base de datos{databaseQuerystringParameter}");
-            if (databaseQuerystringParameter != "" && databaseQuerystringParameter != null)
-            {
-                _logger.LogInformation($"Distinto de nulo");
-                db2ConnectionString = string.Format(db2ConnectionString, databaseQuerystringParameter);
-            }
-            else
-            {
-                db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-            }
-            return db2ConnectionString;
-
-        }*/
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
