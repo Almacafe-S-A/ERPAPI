@@ -139,8 +139,8 @@
     <Compile Remove="Migrations\20191111155139_InvoiceTransReport.cs" />
     <Compile Remove="Migrations\20191111155139_InvoiceTransReport.Designer.cs" />
     <Compile Remove="Migrations\20191115121326_FieldAddCurrencyIdonJournalEntry.cs" />
-    <Compile Remove="Migrations\20191128213556_GarantiasBancarias.cs" />
-    <Compile Remove="Migrations\20191128213556_GarantiasBancarias.Designer.cs" />
+    <Compile Remove="Migrations\20191128181102_ProformaDate.cs" />
+    <Compile Remove="Migrations\20191128181102_ProformaDate.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />

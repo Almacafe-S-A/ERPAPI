@@ -34,6 +34,7 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetProfitAndLoss([FromBody]Fechas _Fecha)
         {
             List<AccountingDTO> Items = new List<AccountingDTO>();
+            List<AccountingDTO> ParentsValues = new List<AccountingDTO>();
             try
             {
                 string profitandloss = "";
@@ -72,11 +73,11 @@ namespace ERPAPI.Controllers
                         string parentaccount = _ParentAccountId.Substring(0, 1);
                         if (parentaccount == "5")
                         {
-                            ingresos += ingresos + (reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]));
+                            ingresos += (reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]));
                         }
                         else if (parentaccount == "6")
                         {
-                            gastos += gastos + (reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]));
+                            gastos += (reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]));
                         }
 
                             Items.Add(new AccountingDTO
@@ -91,12 +92,55 @@ namespace ERPAPI.Controllers
                         });
 
                         Parents.Add(reader["ParentAccountId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ParentAccountId"]));
+
+                        if(reader["ParentAccountId"] != DBNull.Value)
+                        {
+                            AccountingDTO _ac = ParentsValues.Where(q => q.AccountId == Convert.ToInt32(reader["ParentAccountId"])).FirstOrDefault();
+                            if(_ac == null)
+                            {
+                                ParentsValues.Add(new AccountingDTO
+                                {
+                                    //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
+                                    AccountId = reader["ParentAccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["ParentAccountId"]),
+                                    AccountName = "",
+                                    AccountCode = "",
+                                    ParentAccountId = 0,
+                                    Credit = reader["Credit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["Credit"]),
+                                    Debit = reader["Debit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["Debit"]),
+                                    //AccountBalance = reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]),
+                                    AccountBalance = (reader["Credit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["Credit"])) - (reader["Debit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["Debit"])),
+                                });
+                            }
+                            else
+                            {
+                                if(ParentsValues.Remove(_ac))
+                                {
+                                    double credit, debit = 0;
+                                    credit = reader["Credit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["Credit"]);
+                                    _ac.Credit += credit;
+                                    debit = reader["Debit"] == DBNull.Value ? 0 : Convert.ToDouble(reader["Debit"]);
+                                    _ac.Debit += debit;
+                                    //accoutbalance = reader["AccountBalance"] == DBNull.Value ? 0 : Convert.ToDouble(reader["AccountBalance"]);
+                                    _ac.AccountBalance = _ac.Credit - _ac.Debit;
+                                    ParentsValues.Add(new AccountingDTO
+                                    {
+                                        AccountId = _ac.AccountId,
+                                        AccountName = "",
+                                        AccountCode = "",
+                                        ParentAccountId = 0,
+                                        Credit = _ac.Credit,
+                                        Debit = _ac.Debit,
+                                        AccountBalance = _ac.AccountBalance,
+                                    });
+                                }
+                            }
+                        }
                         
                     }
                 }
 
-                ingresos = Math.Abs(ingresos);
-                gastos = Math.Abs(gastos);
+                //ingresos = Math.Abs(ingresos);
+                //gastos = Math.Abs(gastos);
                 Items.Add(new AccountingDTO
                 {
                     AccountId = 9999999999,
@@ -124,12 +168,23 @@ namespace ERPAPI.Controllers
                 query = new List<AccountingDTO>();
                 //Padres de las cuentas con saldo
                 List<AccountingDTO> _categoria = new List<AccountingDTO>();
-                _categoria = ObtenerCategoriarJerarquia(Parents);
+                _categoria = ObtenerCategoriarJerarquia(ParentsValues);
+
+                //foreach (var padre in Items)
+                //{
+                //    AccountingDTO _ac = _categoria.Where(q => q.AccountId == padre.AccountId).FirstOrDefault();
+
+                //    if (_ac != null)
+                //    {
+                //        _categoria.Remove(_ac);
+                //    }
+                //}
+
                 Items.AddRange(_categoria);
 
 
                 Items = (from c in Items
-                         .OrderBy(q=>q.AccountId)
+                         .OrderBy(q => q.AccountId)
                          select new AccountingDTO
                          {
                              AccountId = c.AccountId,
@@ -140,7 +195,7 @@ namespace ERPAPI.Controllers
                              Debit = c.Debit,
                              AccountBalance = c.AccountBalance
 
-                         }).ToList();            
+                         }).ToList();
 
 
             }
@@ -158,18 +213,47 @@ namespace ERPAPI.Controllers
         List<AccountingDTO> query = new List<AccountingDTO>();
 
 
-        private List<AccountingDTO> ObtenerCategoriarJerarquia(List<Int64> Parents)
+        private List<AccountingDTO> ObtenerCategoriarJerarquia(List<AccountingDTO> Parents)
         {
-
             List<AccountingDTO> Items = new List<AccountingDTO>();
-            List<Int64> _padre = new List<Int64>();
+            List<AccountingDTO> _padre = new List<AccountingDTO>();
             foreach (var padre in Parents)
             {
-                Accounting _ac =  _context.Accounting.Where(q => q.AccountId == padre).FirstOrDefault();
+                Accounting _ac =  _context.Accounting.Where(q => q.AccountId == padre.AccountId).FirstOrDefault();
               
                 if (_ac.ParentAccountId != null)
                 {
-                    _padre.Add(_ac.ParentAccountId.Value);
+                    if (_padre.Where(q => q.AccountId == _ac.ParentAccountId).Count() == 0)
+                    {
+                        _padre.Add(new AccountingDTO
+                        {
+                            AccountId = _ac.ParentAccountId.Value,
+                            AccountName = "",
+                            AccountCode = "",
+                            ParentAccountId = 0,
+                            Credit = padre.Credit,
+                            Debit = padre.Debit,
+                            AccountBalance = padre.Debit - padre.Credit,
+                            //AccountBalance = padre.AccountBalance,
+                        });
+                    }
+                    else
+                    {
+                        AccountingDTO _cuenta = _padre.Where(q => q.AccountId == _ac.ParentAccountId).FirstOrDefault();
+                        _padre.Remove(_cuenta);
+                        _padre.Add(new AccountingDTO
+                        {
+                            AccountId = _cuenta.AccountId,
+                            AccountName = "",
+                            AccountCode = "",
+                            ParentAccountId = 0,
+                            Credit = padre.Credit + _cuenta.Credit,
+                            Debit = padre.Debit + _cuenta.Debit,
+                            AccountBalance = (padre.Debit + _cuenta.Debit) - (padre.Credit + _cuenta.Credit),
+                            //AccountBalance = padre.AccountBalance,
+                        });
+                    }
+                    //_padre.Add(_ac.ParentAccountId.Value);
                 }
 
                 Items.Add(new AccountingDTO
@@ -177,18 +261,23 @@ namespace ERPAPI.Controllers
                     AccountId = _ac.AccountId,
                     AccountName = _ac.AccountName,
                     AccountCode = _ac.AccountCode,
-                    AccountBalance = _ac.AccountBalance,
-                    ParentAccountId = _ac.ParentAccountId ,
+                    Credit = padre.Credit,
+                    Debit = padre.Debit,
+                    //AccountBalance = padre.AccountBalance,
+                    AccountBalance = padre.Debit - padre.Credit,
+                    ParentAccountId = _ac.ParentAccountId,
                 });
             }
 
-            List<Accounting> categoriasList = (from c in Items
-                                               select new Accounting
+            List<AccountingDTO> categoriasList = (from c in Items
+                                               select new AccountingDTO
                                                {
                                                    AccountId = c.AccountId,
                                                    AccountBalance = c.AccountBalance,
                                                    AccountCode = c.AccountCode,
                                                    AccountName = c.AccountName,
+                                                   Credit = c.Credit,
+                                                   Debit = c.Debit,
                                                    ParentAccountId = c.ParentAccountId,
                                                }
 
@@ -202,6 +291,8 @@ namespace ERPAPI.Controllers
                            AccountId = c.AccountId,
                            AccountName = c.AccountName,
                            AccountBalance = c.AccountBalance,
+                           Credit = c.Credit,
+                           Debit = c.Debit,
                            AccountCode = c.AccountCode,
                            ParentAccountId = c.ParentAccountId,
                         //   Children = ObtenerHijos(c.AccountId, categoriasList)
@@ -229,12 +320,6 @@ namespace ERPAPI.Controllers
 
             return query;
         }
-
-
-     
-
-
-
 
     }
 }

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191203142723_Deparment_UniqueName")]
+    partial class Deparment_UniqueName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,19 +185,17 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256);
+
+                    b.Property<string>("Status");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -307,13 +307,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<Guid>("RoleId");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("RoleName");
 
@@ -1360,8 +1356,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("PostalCode");
 
                     b.Property<string>("PrintHeader");
-
-                    b.Property<string>("RTN");
 
                     b.Property<string>("RTNMANAGER");
 
@@ -6526,8 +6520,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Discount");
 
-                    b.Property<DateTime?>("EndDate");
-
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("ExpirationDate");
@@ -6557,8 +6549,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("SalesOrderId");
 
                     b.Property<int>("SalesTypeId");
-
-                    b.Property<DateTime?>("StartDate");
 
                     b.Property<double>("SubTotal");
 
