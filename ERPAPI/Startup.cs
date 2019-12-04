@@ -25,6 +25,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 [assembly:ApiConventionType(typeof(DefaultApiConventions))]
 
@@ -51,76 +53,15 @@ namespace ERPAPI
             services.AddScoped<HashService>();
             services.AddDataProtection();
 
-
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")          
-            //), ServiceLifetime.Transient);
-
             services.AddDbContext<ApplicationDbContext>(options =>
                  options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")
                     ));
 
-
-
-            //_logger.LogInformation($"Antes de agregar el contexto");
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
-            //{
-            //    var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
-            //    var httpRequest = httpContext.Request;
-            //    var connection = GetConnection(httpRequest);
-            //    options.UseSqlServer(connection);
-            //});
-            //services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
-            //{
-            //    var httpContext = serviceProvider.GetService<IHttpContextAccessor>().HttpContext;
-            //    _logger.LogInformation(httpContext.ToString());
-            //    var httpRequest = httpContext.Request;
-            //    var databaseQuerystringParameter = "";              
-            //         databaseQuerystringParameter = httpRequest.Query["database"].ToString();
-            //    var db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            //    _logger.LogInformation($"Parametro de base de datos{databaseQuerystringParameter}");
-            //    if (databaseQuerystringParameter != "" && databaseQuerystringParameter != null)
-            //    {
-            //        _logger.LogInformation($"Distinto de nulo");
-            //        // We have a 'database' param, stick it in.
-            //        db2ConnectionString = string.Format(db2ConnectionString, databaseQuerystringParameter);
-            //    }
-            //    else
-            //    {
-            //        // We havent been given a 'database' param, use the default.
-            //         db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-            //        //db2ConnectionString = string.Format(db2ConnectionString, db2DefaultDatabaseValue);
-            //    }
-
-            //    _logger.LogInformation($"Connection string usado:{db2ConnectionString}");
-
-            //    options.UseSqlServer(db2ConnectionString);
-            //    //options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-
-            //});
-
-
-
-            //services.AddIdentity<ApplicationUser, IdentityRole>()
-            //    .AddEntityFrameworkStores<ApplicationDbContext>()
-            //    .AddDefaultTokenProviders();
-
             services.AddIdentity<ApplicationUser,  ApplicationRole>()
-           .AddEntityFrameworkStores<ApplicationDbContext>()
-          // .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
-           // .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>()
-          //.AddRoleManager<ApplicationRole>()
-          // .AddSignInManager<SignInManager<ApplicationUser>>()          
-          .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
-            
-
-            services.AddAutoMapper(options =>
-          {
-              //options.CreateMap<AutorCreacionDTO, Autor>();
-          });
+            services.AddAutoMapper();
 
             services.AddLogging();
 
@@ -137,7 +78,6 @@ namespace ERPAPI
                 ClockSkew = TimeSpan.Zero
             });
 
-
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info {
@@ -149,51 +89,28 @@ namespace ERPAPI
                     {
                         Name ="MIT",
                         Url= "https://www.bi-dss.com"
-                    },
-                    Contact = new Swashbuckle.AspNetCore.Swagger.Contact()
-                    {
-                        Name = "Freddy Chinchilla",
-                        Email="freddy.chinchilla@bi-dss.com",
-                        
-                        
                     }
                 });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 config.IncludeXmlComments(xmlPath);
-                // _logger.LogInformation("Agrego los comentarios de los endpoints a swagger! ");
             });
-
-            //  _logger.LogInformation("Arranco! ");
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-        }
 
-        private string GetConnection(HttpRequest _request)
-        {
-            string db2ConnectionString = "";
-
-            var databaseQuerystringParameter = "";
-            databaseQuerystringParameter = _request.Query["database"].ToString();
-             db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-
-            _logger.LogInformation($"Parametro de base de datos{databaseQuerystringParameter}");
-            if (databaseQuerystringParameter != "" && databaseQuerystringParameter != null)
-            {
-                _logger.LogInformation($"Distinto de nulo");
-                // We have a 'database' param, stick it in.
-                db2ConnectionString = string.Format(db2ConnectionString, databaseQuerystringParameter);
-            }
-            else
-            {
-                // We havent been given a 'database' param, use the default.
-                db2ConnectionString = Configuration.GetConnectionString("DefaultConnection");
-                //db2ConnectionString = string.Format(db2ConnectionString, db2DefaultDatabaseValue);
-            }
-
-            return db2ConnectionString;
-
+            //Cargar los permisos del sistema y crear politicas
+            var permisosText = File.ReadAllText("PermisosSistema.txt");
+            permisosText = permisosText.Replace("\r", "");
+            var permisos = permisosText.Split("\n");
+            services.AddAuthorization(options =>
+                                      {
+                                          foreach (var permiso in permisos)
+                                          {
+                                              options.AddPolicy(permiso,policy=>policy.RequireClaim(permiso,"true"));
+                                          }
+                                      });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -206,12 +123,7 @@ namespace ERPAPI
 
             });
 
-            app.UseCors(b => b.AllowAnyOrigin()
-            .AllowAnyHeader().AllowAnyMethod()
-                           
-            )
-                           
-                ;
+            app.UseCors(b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             if (env.IsDevelopment())
             {
@@ -219,11 +131,8 @@ namespace ERPAPI
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();

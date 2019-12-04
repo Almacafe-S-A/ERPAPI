@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -54,7 +55,13 @@ namespace ERPAPI.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                return await Task.Run(() => BuildToken(model));
+                JwtSecurityToken token = await BuildToken(new List<Claim>());
+                UserToken userToken = new UserToken()
+                                      {
+                                          Token = new JwtSecurityTokenHandler().WriteToken(token),
+                                          Expiration = token.ValidTo
+                                      };
+                return await Task.Run(() => userToken);
             }
             else
             {
@@ -70,10 +77,7 @@ namespace ERPAPI.Controllers
         {
             var user = _context.Users.Where(q => q.Email == model.Email).FirstOrDefault();
 
-
-            var result = await _userManager.RemovePasswordAsync(user);
-
-            var resultadd = await _userManager.AddPasswordAsync(user, model.Password);
+            var result = await _userManager.ChangePasswordAsync(user, model.PasswordAnterior, model.Password);
 
             if (result.Succeeded)
             {
@@ -81,10 +85,8 @@ namespace ERPAPI.Controllers
             }
             else
             {
-                return await Task.Run(() => BadRequest("Username or password invalid"));
+                return await Task.Run(() => BadRequest(@"Contrasña o usuario incorrecto"));
             }
-
-
         }
 
 
@@ -103,13 +105,50 @@ namespace ERPAPI.Controllers
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    UserToken token = BuildToken(userInfo);
-                    if (token==null)
+                    ApplicationUser usuario = await _userManager.FindByEmailAsync(userInfo.Email);
+                    var _approle = await _userManager.GetRolesAsync(usuario);
+                    if (_approle == null)
                     {
                         return BadRequest($"El Usuario no tiene ningun rol asignado");
                     }
-                    //return await Task.Run(() => BuildToken(userInfo));
-                    return await Task.Run(()=>token);
+                    var claims = (List<Claim>) await _userManager.GetClaimsAsync(usuario);
+                    var listaRoles = _approle.Select(async x => await _rolemanager.FindByNameAsync(x));
+                    var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result.Where(c=>c.Value.Equals("true")).ToList());
+                    foreach (IList<Claim> claimsRole in listClaims)
+                    {
+                        claims.AddRange(claimsRole.ToArray());
+                    }
+                    //Verificacion manual debido a que la accion permite que se invoque de forma anonima
+                    var permiso = claims.FirstOrDefault(x => x.Type.Equals("Seguridad.Iniciar Sesion") && x.Value.Equals("true"));
+                    if (permiso == null)
+                    {
+                        return BadRequest($"El Usuario no tiene permiso para iniciar sesión");
+                    }
+
+                    claims.Add(new Claim(ClaimTypes.Email, usuario.Email));
+                    claims.Add(new Claim(ClaimTypes.Name, usuario.UserName));
+                    claims.Add(new Claim("Branch",usuario.BranchId.ToString()));
+
+                    JwtSecurityToken token = await BuildToken(claims);
+
+                    Int32? cambiopassworddias = (Int32?)_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q => q.Valordecimal).FirstOrDefault();
+                    if (cambiopassworddias == null)
+                    {
+                        cambiopassworddias = 0;
+                    }
+
+                    UserToken userToken = new UserToken()
+                           {
+                               Token = new JwtSecurityTokenHandler().WriteToken(token),
+                               Expiration = token.ValidTo,
+                               BranchId = Convert.ToInt32(usuario.BranchId),
+                               IsEnabled = usuario.IsEnabled,
+                               LastPasswordChangedDate = usuario.LastPasswordChangedDate,
+                               Passworddias = cambiopassworddias.Value
+
+                           };
+
+                    return await Task.Run(()=>userToken);
                 }
                 else
                 {
@@ -124,32 +163,10 @@ namespace ERPAPI.Controllers
 
         }
 
-        private UserToken BuildToken(UserInfo userInfo)
+        private async Task<JwtSecurityToken> BuildToken(List<Claim> claims)
         {
-            ApplicationUser _appuser = _context.Users.Where(q => q.Email == userInfo.Email).FirstOrDefault();
-            ApplicationUserRole _approle = _context.UserRoles.Where(q => q.UserId == _appuser.Id).FirstOrDefault();
-            if (_approle== null)
-            {
-                return null;
-            }
-            Branch _branch = _context.Branch.Where(b => b.BranchId == _appuser.BranchId).FirstOrDefault();
-            var claims = new[]
-             {
-                //new Claim("UserEmail", userInfo.Email),
-                //new Claim("UserName", _appuser.UserName),
-                new Claim(ClaimTypes.Email,userInfo.Email),
-                //new Claim(ClaimTypes.Role,_approle.RoleId.ToString(_)),
-                new Claim("BranchName", _branch.BranchName),
-                new Claim(ClaimTypes.Name, _appuser.UserName),
-                //new Claim()                
-                //new Claim(ClaimTy)
-                //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-             };
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            // Tiempo de expiración del token.
             var expiration = DateTime.UtcNow.AddMinutes(120);
 
             JwtSecurityToken token = new JwtSecurityToken(
@@ -160,19 +177,7 @@ namespace ERPAPI.Controllers
                signingCredentials: creds
                );
 
-             
-             Int32? cambiopassworddias = Convert.ToInt32(_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q=>q.Valordecimal).FirstOrDefault());
-             if (cambiopassworddias == null) { cambiopassworddias = 0; }
-
-            return new UserToken()
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Expiration = expiration,
-                BranchId = Convert.ToInt32(_appuser.BranchId),
-                IsEnabled = _appuser.IsEnabled,
-                LastPasswordChangedDate = _appuser.LastPasswordChangedDate,
-                Passworddias = cambiopassworddias.Value,
-            };
+            return token;
         }
 
 
