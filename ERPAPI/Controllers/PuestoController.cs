@@ -109,7 +109,7 @@ namespace ERPAPI.Controllers
             Puesto Items = new Puesto();
             try
             {
-                Items = await _context.Puesto.Where(q => q.NombreDepartamento == NombrePuesto).FirstOrDefaultAsync();
+                Items = await _context.Puesto.Where(q => q.NombrePuesto == NombrePuesto).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
