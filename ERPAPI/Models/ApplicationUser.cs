@@ -10,17 +10,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ERPAPI.Models
 {
     public class ApplicationUser : IdentityUser<Guid>
-    // public class ApplicationUser : IdentityUser<string, IdentityUserLogin, IdentityUserRole, ApplicationUserClaim>
     {
-
         [Display(Name = "Habilitado")]
         public bool? IsEnabled { get; set; }
-        
 
         [Display(Name = "Sucursal")]
         public int BranchId { get; set; }
-
-        
 
         public DateTime LastPasswordChangedDate { get; set; }
         public DateTime FechaCreacion { get; set; }
