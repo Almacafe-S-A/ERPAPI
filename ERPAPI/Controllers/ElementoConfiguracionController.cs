@@ -134,6 +134,7 @@ namespace ERPAPI.Controllers
 
         }
 
+        }
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetElementoConfiguracionByIdConfiguracion(Int64 Id)
         {

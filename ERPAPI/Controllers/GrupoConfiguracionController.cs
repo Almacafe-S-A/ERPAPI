@@ -127,6 +127,8 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
+        
+
         }
 
         /// <summary>
