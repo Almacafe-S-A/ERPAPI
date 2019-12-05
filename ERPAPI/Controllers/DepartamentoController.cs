@@ -81,6 +81,25 @@ namespace ERPAPI.Controllers
 
             return departamento;
         }
+        [HttpGet("[action]/{DepartamentoName}")]
+        public async Task<IActionResult> GetDepartamentoByDepartamentoName(String DepartamentoName)
+        {
+            Departamento Items = new Departamento();
+            try
+            {
+                Items = await _context.Departamento.Where(q => q.NombreDepartamento == DepartamentoName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         // PUT: api/Departamento/5
         //[HttpPut("[action]")]
