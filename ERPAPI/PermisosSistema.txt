@@ -113,3 +113,4 @@ Proveedores.Tipo Proveedores
 Proveedores.Configuracion de Proveedores
 Proveedores.Listas de Costos
 Seguridad.Listar Permisos
+Seguridad.Permiso Roles

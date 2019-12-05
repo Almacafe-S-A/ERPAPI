@@ -90,12 +90,10 @@ namespace ERPAPI.Controllers
         [HttpGet("GetRoles")]
         public async Task<ActionResult<List<ApplicationRole>>> GetRoles()
         {
-           // List<IdentityRole> _roles = new List<IdentityRole>();
-            List<ApplicationRole> _rolesprod = new List<ApplicationRole>();
+            List<ApplicationRole> roles = new List<ApplicationRole>();
             try
             {
-                _rolesprod = await _context.Roles.ToListAsync();
-             // _rolesprod = mapper.Map<List<IdentityRole>, List<ApplicationRole>>(_roles);
+                roles = await _context.Roles.ToListAsync();
 
             }
             catch (Exception ex)
@@ -104,7 +102,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
 
-            return await Task.Run(() => _rolesprod);
+            return await Task.Run(() => roles);
         }
 
 
