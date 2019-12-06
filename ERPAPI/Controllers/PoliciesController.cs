@@ -120,6 +120,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => Ok(Items));
                 //return Ok(Items);
 
+
             }
             catch (Exception ex)
             {
@@ -127,8 +128,10 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-        }
+ 
+            
 
+        }
 
         /// <summary>
         /// Obtiene Los Roles que existen por Politica

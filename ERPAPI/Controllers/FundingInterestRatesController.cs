@@ -99,6 +99,23 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetFundingInterestRateByDescripcion(String Description)
+        {
+            FundingInterestRate Items = new FundingInterestRate();
+            try
+            {
+                Items = await _context.FundingInterestRate.Where(q => q.Descripcion==Description).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         [HttpPost("[action]")]
         public async Task<ActionResult<FundingInterestRate>> Insert([FromBody]FundingInterestRate payload)
