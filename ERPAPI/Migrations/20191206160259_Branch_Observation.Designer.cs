@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191206160259_Branch_Observation")]
+    partial class Branch_Observation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3409,13 +3411,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<Guid?>("ApplicationUserId");
 
-                    b.Property<bool>("ApplyCommission");
-
                     b.Property<string>("BirthPlace");
-
-                    b.Property<long>("ComisionId");
-
-                    b.Property<string>("CommissionName");
 
                     b.Property<string>("Correo");
 
@@ -3472,10 +3468,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("NombreEmpleado");
 
                     b.Property<string>("Notas");
-
-                    b.Property<long>("PeriodicidadId");
-
-                    b.Property<string>("PeriodicityName");
 
                     b.Property<string>("Profesion");
 
