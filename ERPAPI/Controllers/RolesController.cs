@@ -71,6 +71,7 @@ namespace ERPAPI.Controllers
                 ApplicationRole Items = await _context.Roles.Where(q => q.Name == RoleName).FirstOrDefaultAsync();
                 return await Task.Run(() => Ok(Items));
 
+
             }
             catch (Exception ex)
             {
@@ -79,7 +80,6 @@ namespace ERPAPI.Controllers
             }
 
         }
-
 
         /// <summary>
         /// Obtiene los roles en formato Json

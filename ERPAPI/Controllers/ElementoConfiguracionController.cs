@@ -131,6 +131,9 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
+
+        }
+
         }
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetElementoConfiguracionByIdConfiguracion(Int64 Id)

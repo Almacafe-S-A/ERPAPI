@@ -82,7 +82,9 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="TipoComision"></param>
         /// <returns></returns>
+
         [HttpGet("[action]/{TipoComision}")]
+
         public async Task<IActionResult> GetComisionByTipoComision(String TipoComision)
         {
             Comision Items = new Comision();
@@ -102,12 +104,18 @@ namespace ERPAPI.Controllers
         }
 
 
-        /// <summary>
-        /// Inserta una nueva Bank
-        /// </summary>
-        /// <param name="_Comision"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
+
+        
+    
+
+
+
+    /// <summary>
+    /// Inserta una nueva Bank
+    /// </summary>
+    /// <param name="_Comision"></param>
+    /// <returns></returns>
+    [HttpPost("[action]")]
         public async Task<ActionResult<Comision>> Insert([FromBody]Comision _Comision)
         {
             Comision _Comisionq = new Comision();
