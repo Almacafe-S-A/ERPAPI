@@ -135,13 +135,8 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+    
 
-        /// <summary>
-        /// Obtiene los Datos de la Journal por medio del Id enviado.
-        /// </summary>
-        /// <param name="TypeJournalName"></param>
-        /// <returns></returns>
-       
     /// <summary>
     /// Inserta una nueva Journal
     /// </summary>
