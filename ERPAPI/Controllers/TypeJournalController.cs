@@ -141,26 +141,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="TypeJournalName"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{TypeJournalName}")]
-        public async Task<IActionResult> GetTypeJournalByName(String TypeJournalName)
-        {
-            TypeJournal Items = new TypeJournal();
-            try
-            {
-                Items = await _context.TypeJournal.Where(q => q.TypeJournalName == TypeJournalName).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-    
-
+       
     /// <summary>
     /// Inserta una nueva Journal
     /// </summary>

@@ -135,31 +135,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
-        /// <summary>
-        /// Obtiene los Datos de la Account por medio del Nombre enviado.
-        /// </summary>
-        /// <param name="TypeAccountName"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{TypeAccountName}")]
-        public async Task<IActionResult> GetTypeAccountByName(String TypeAccountName)
-        {
-            TypeAccount Items = new TypeAccount();
-            try
-            {
-                Items = await _context.TypeAccount.Where(q => q.TypeAccountName == TypeAccountName).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-        /// <summary>
+/// <summary>
         /// Inserta una nueva Account
         /// </summary>
         /// <param name="_TypeAccount"></param>
