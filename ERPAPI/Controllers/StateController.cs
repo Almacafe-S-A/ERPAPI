@@ -1,4 +1,18 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDState
+-- PROPOSE:  show State records
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+6.0                  08/12/2019          Marvin.Guillen                  Changes of Validation duplicated
+5.0                  16/09/2019          Freddy.Chinchilla               Changes of Pagination Controller
+4.0                  02/09/2019          Freddy.Chinchilla               Changes of Boleta_ent
+3.0                  08/12/2019          Cristopher.Arias                TesT
+2.0                  22/07/2019          Freddy.Chinchilla               Changes of Controller
+1.0                  22/07/2019          Freddy.Chinchilla               Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -57,7 +71,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-           
+
             return await Task.Run(() => Ok(Items));
         }
 
@@ -108,6 +122,32 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Consultar una nueva State Name en la Tabla
+        /// </summary>
+        /// <param name="_State"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<State>> GetStateByName([FromBody]State _State)
+        {
+            State _Stateq = new State();
+            try
+            {
+                _Stateq = _context.State.Where(z => z.Name == _State.Name
+                  && z.CountryId == _State.CountryId).FirstOrDefault();
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_Stateq));
+        }
 
 
         /// <summary>
@@ -153,9 +193,9 @@ namespace ERPAPI.Controllers
                     {
                         transaction.Rollback();
                         _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                     
+
                     }
-                 
+
                 }
             }
             catch (Exception ex)
