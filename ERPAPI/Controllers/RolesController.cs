@@ -215,10 +215,7 @@ namespace ERPAPI.Controllers
                 if (_appRole != null)
                 {
                     var listClaims = await _rolemanager.GetClaimsAsync(_appRole);
-                    foreach (IList<Claim> claimsRole in listClaims)
-                    {
-                        permisos.AddRange(claimsRole.Select(x => x.Type).ToList());
-                    }
+                    permisos.AddRange(listClaims.Select(x => x.Type).ToList());
                 }
             }
             catch (Exception ex)
@@ -228,7 +225,38 @@ namespace ERPAPI.Controllers
             return await Task.Run((() => Ok(permisos)));
         }
 
+        [Authorize(Policy = "Seguridad.Modificar Permisos Rol")]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GuardarPermisosAsignados([FromBody] PostAsignacionesPermisoRol asignaciones)
+        {
+            try
+            {
+                var rol = await _rolemanager.FindByIdAsync(asignaciones.IdRol);
+                if (rol != null)
+                {
+                    var listClaims = await _rolemanager.GetClaimsAsync(rol);
+                    foreach (var claim in listClaims)
+                    {
+                        await _rolemanager.RemoveClaimAsync(rol, claim);
+                    }
 
+                    foreach (var permiso in asignaciones.Permisos)
+                    {
+                        await _rolemanager.AddClaimAsync(rol, new Claim(permiso.Id, "true"));
+                    }
+
+                    return await Task.Run(() => Ok());
+                }
+                else
+                {
+                    return BadRequest($"Rol no existe");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
 
     }
 }

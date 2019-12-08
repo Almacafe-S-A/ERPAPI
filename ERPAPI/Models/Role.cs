@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ERPAPI.Models
@@ -42,5 +43,22 @@ namespace ERPAPI.Models
         public string Descripcion { get; set; }
         public string Estado { get; set; }
         public int IdEstado { get; set; }
+    }
+
+    public class RolPermisoAsignacion
+    {
+        public string Id { get; set; }
+        public bool Asignado { get; set; }
+        public string Categoria { get; set; }
+        public string Nivel1 { get; set; }
+        public string Nivel2 { get; set; }
+        public string Nivel3 { get; set; }
+        public string IdPadre { get; set; }
+    }
+
+    public class PostAsignacionesPermisoRol
+    {
+        public string IdRol { get; set; }
+        public List<RolPermisoAsignacion> Permisos { get; set; }
     }
 }
