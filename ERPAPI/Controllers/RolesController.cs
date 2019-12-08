@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -203,7 +204,29 @@ namespace ERPAPI.Controllers
            
         }
 
-
+        [Authorize(Policy = "Seguridad.Listar Permisos")]
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> ListarPermisos([FromRoute(Name = "id")]string idRol)
+        {
+            List<string> permisos = new List<string>();
+            try
+            {
+                var _appRole = await _rolemanager.FindByIdAsync(idRol);
+                if (_appRole != null)
+                {
+                    var listClaims = await _rolemanager.GetClaimsAsync(_appRole);
+                    foreach (IList<Claim> claimsRole in listClaims)
+                    {
+                        permisos.AddRange(claimsRole.Select(x => x.Type).ToList());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run((() => Ok(permisos)));
+        }
 
 
 
