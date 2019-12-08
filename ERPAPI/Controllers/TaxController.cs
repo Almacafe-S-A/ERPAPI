@@ -107,6 +107,30 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los Datos de la Tax por medio del Id enviado.
+        /// </summary>
+        /// <param name="TaxCode"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{TaxCode}")]
+        public async Task<IActionResult> GetTaxByTaxCode(String TaxCode)
+        {
+            Tax Items = new Tax();
+            try
+            {
+                Items = await _context.Tax.Where(q => q.TaxCode == TaxCode).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
 
         /// <summary>

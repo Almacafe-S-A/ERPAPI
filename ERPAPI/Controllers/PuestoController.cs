@@ -98,6 +98,29 @@ namespace ERPAPI.Controllers
             }
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los Datos de Puesto por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="NombrePuesto"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{NombrePuesto}")]
+        public async Task<IActionResult> GetPuestoByNombrePuesto(String NombrePuesto)
+        {
+            Puesto Items = new Puesto();
+            try
+            {
+                Items = await _context.Puesto.Where(q => q.NombrePuesto == NombrePuesto).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         // PUT: api/Puesto/5
         //[HttpPut("[action]")]
@@ -107,7 +130,7 @@ namespace ERPAPI.Controllers
         //    {
         //        return BadRequest();
         //    }
-             
+
         //    _context.Entry(puesto).State = EntityState.Modified;
 
         //    try

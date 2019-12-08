@@ -80,16 +80,16 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene el detalle de las mercaderias.
         /// </summary>
-        /// <param name="GoodsReceivedId"></param>
+        /// <param name="PurchaseOrderId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{GoodsReceivedId}")]
-        public async Task<IActionResult> GetPurchaseOrderLineByGoodsReceivedId(Int64 GoodsReceivedId)
+        [HttpGet("[action]/{PurchaseOrderId}")]
+        public async Task<IActionResult> GetPurchaseOrderLineByPurchaseOrderId(Int64 PurchaseOrderId)
         {
             List<PurchaseOrderLine> Items = new List<PurchaseOrderLine>();
             try
             {
                 Items = await _context.PurchaseOrderLine
-                             .Where(q => q.Id == GoodsReceivedId).ToListAsync();
+                             .Where(q => q.PurchaseOrderId == PurchaseOrderId).ToListAsync();
             }
             catch (Exception ex)
             {

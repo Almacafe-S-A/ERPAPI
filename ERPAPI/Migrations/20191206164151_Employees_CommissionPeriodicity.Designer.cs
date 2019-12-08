@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191206164151_Employees_CommissionPeriodicity")]
+    partial class Employees_CommissionPeriodicity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -739,8 +741,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal?>("LimitCNBS");
 
                     b.Property<int>("Numero");
-
-                    b.Property<string>("Observation");
 
                     b.Property<string>("Phone");
 
@@ -5753,8 +5753,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("KardexDate");
 
                     b.Property<long>("KardexId");
-
-                    b.Property<double>("MinimumExistance");
 
                     b.Property<long>("ProducId");
 
