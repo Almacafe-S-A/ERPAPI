@@ -71,7 +71,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-           
+
             return await Task.Run(() => Ok(Items));
         }
 
@@ -133,11 +133,13 @@ namespace ERPAPI.Controllers
             State _Stateq = new State();
             try
             {
-                _Stateq=_context.State.Where(z => z.Name== _State.Name 
-                && z.CountryId== _State.CountryId).FirstOrDefault();
-                        
-                        
-               
+
+                _Stateq = _context.State.Where(z => z.Name == _State.Name
+                  && z.CountryId == _State.CountryId).FirstOrDefault();
+
+
+
+
             }
             catch (Exception ex)
             {
@@ -193,9 +195,9 @@ namespace ERPAPI.Controllers
                     {
                         transaction.Rollback();
                         _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                     
+
                     }
-                 
+
                 }
             }
             catch (Exception ex)
