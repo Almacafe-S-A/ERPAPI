@@ -1,4 +1,14 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDPurchaseOrderLine
+-- PROPOSE:  show record PurchaseOrderLine
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+2.0                  09/12/2019          Marvin.Guillen                 Changes of Add fields TaxPercentage, TaxAmount ,DiscountAmount, DiscountPercentage,  SubTotal, Total, Amount
+1.0                  27/09/2019          Carlos.Castillo                Creation of Model
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -41,6 +51,13 @@ namespace ERPAPI.Models
 
         [ForeignKey("TaxId")]
         public Tax Tax { get; set; }
+        public double Amount { get; set; }
+        public double TaxPercentage { get; set; }
+        public double TaxAmount { get; set; }
+        public int DiscountAmount { get; set; }
+        public int DiscountPercentage { get; set; }
+        public double SubTotal { get; set; }
+        public double Total { get; set; }
 
         public int UnitOfMeasureId { get; set; }
 
