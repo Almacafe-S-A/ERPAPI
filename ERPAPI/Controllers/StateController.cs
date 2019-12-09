@@ -133,8 +133,10 @@ namespace ERPAPI.Controllers
             State _Stateq = new State();
             try
             {
+
                 _Stateq = _context.State.Where(z => z.Name == _State.Name
                   && z.CountryId == _State.CountryId).FirstOrDefault();
+
 
 
 
