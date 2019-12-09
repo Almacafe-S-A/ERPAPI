@@ -57,7 +57,7 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-             
+
             return await Task.Run(() => Ok(Items));
         }
 
@@ -136,29 +136,7 @@ namespace ERPAPI.Controllers
         }
 
 
-        /// <summary>
-        /// Obtiene los Datos de la Account por medio del Nombre enviado.
-        /// </summary>
-        /// <param name="TypeAccountName"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{TypeAccountName}")]
-        public async Task<IActionResult> GetTypeAccountByName(String TypeAccountName)
-        {
-            TypeAccount Items = new TypeAccount();
-            try
-            {
-                Items = await _context.TypeAccount.Where(q => q.TypeAccountName == TypeAccountName).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
+      
         /// <summary>
         /// Inserta una nueva Account
         /// </summary>
@@ -179,24 +157,24 @@ namespace ERPAPI.Controllers
                         _context.TypeAccount.Add(_TypeAccountq);
                         await _context.SaveChangesAsync();
 
-                      CompanyInfo _co =  await  _context.CompanyInfo.FirstOrDefaultAsync();
+                        CompanyInfo _co = await _context.CompanyInfo.FirstOrDefaultAsync();
                         Accounting _padreaccount = new Accounting
                         {
-                             AccountName = _TypeAccountq.TypeAccountName,  
-                             AccountCode= _TypeAccountq.TypeAccountId.ToString(),
-                             TypeAccountId = _TypeAccountq.TypeAccountId,
-                             IsCash =false,
-                             Description = _TypeAccountq.TypeAccountName,
-                             CompanyInfoId = _co.CompanyInfoId,
+                            AccountName = _TypeAccountq.TypeAccountName,
+                            AccountCode = _TypeAccountq.TypeAccountId.ToString(),
+                            TypeAccountId = _TypeAccountq.TypeAccountId,
+                            IsCash = false,
+                            Description = _TypeAccountq.TypeAccountName,
+                            CompanyInfoId = _co.CompanyInfoId,
 
                             // AccountCode = _TypeAccountq.
-                             UsuarioCreacion = _TypeAccountq.CreatedUser,
-                             UsuarioModificacion = _TypeAccountq.ModifiedUser,
-                             FechaCreacion = DateTime.Now,
-                             FechaModificacion = DateTime.Now,
-                             ParentAccountId = null,
-                             IdEstado = 1,
-                             Estado="Activo",
+                            UsuarioCreacion = _TypeAccountq.CreatedUser,
+                            UsuarioModificacion = _TypeAccountq.ModifiedUser,
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            ParentAccountId = null,
+                            IdEstado = 1,
+                            Estado = "Activo",
                         };
 
 
@@ -227,9 +205,9 @@ namespace ERPAPI.Controllers
                     {
                         transaction.Rollback();
                         _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        return await Task.Run(()=> BadRequest($"Ocurrio un error:{ex.Message}"));
+                        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
                     }
-                  
+
                 }
             }
             catch (Exception ex)

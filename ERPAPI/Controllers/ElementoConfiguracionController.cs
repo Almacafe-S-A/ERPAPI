@@ -86,7 +86,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-       
+
         /// <summary>
         /// Obtiene los Datos de la Country por medio del Id enviado.
         /// </summary>
@@ -134,7 +134,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        }
+
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetElementoConfiguracionByIdConfiguracion(Int64 Id)
         {
@@ -193,7 +193,7 @@ namespace ERPAPI.Controllers
             {
                 _ElementoConfiguracionq = await (from c in _context.ElementoConfiguracion
                                  .Where(q => q.Id == _ElementoConfiguracion.Id)
-                                           select c
+                                                 select c
                                 ).FirstOrDefaultAsync();
 
                 _context.Entry(_ElementoConfiguracionq).CurrentValues.SetValues((_ElementoConfiguracion));
