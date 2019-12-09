@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using ERP.Contexts;
@@ -433,6 +434,31 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => (_user));
         }
 
+        [Authorize(Policy = "Seguridad.Listar Permisos")]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ListarPermisos([FromBody]UserInfo _usuario)
+        {
+            List<string> permisos = new List<string>();
+            try
+            {
+                ApplicationUser usuario = await _userManager.FindByEmailAsync(_usuario.Email);
+                var _appRole = await _userManager.GetRolesAsync(usuario);
+                if (_appRole != null)
+                {
+                    var listaRoles = _appRole.Select(async x => await _rolemanager.FindByNameAsync(x));
+                    var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result.Where(c => c.Value.Equals("true")).ToList());
+                    foreach (IList<Claim> claimsRole in listClaims)
+                    {
+                        permisos.AddRange(claimsRole.Select(x => x.Type).ToList());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run((() => Ok(permisos)));
+        }
 
     }
 }

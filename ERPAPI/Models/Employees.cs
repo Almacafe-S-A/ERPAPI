@@ -81,6 +81,20 @@ namespace ERPAPI.Models
         public string NombreContacto { get; set; }
         public string TelefonoContacto { get; set; }
 
+        [Display(Name = "Aplica Comision")]
+        public bool ApplyCommission { get; set; }
+
+        [ForeignKey("ComisionId")]
+        public Int64 ComisionId { get; set; }
+
+        public string CommissionName { get; set; }
+
+        [ForeignKey("PeriodicidadId")]
+        public Int64 PeriodicidadId { get; set; }
+
+        [Display(Name = "Nombre Periodicidad Pago")]
+        public string PeriodicityName { get; set; }
+
         public string Usuariocreacion { get; set; }
         public string Usuariomodificacion { get; set; }
         public DateTime? FechaCreacion { get; set; }

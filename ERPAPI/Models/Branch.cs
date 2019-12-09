@@ -85,6 +85,9 @@ namespace ERPAPI.Models
 
         public string URL { get; set; }
 
+        [Display(Name = "Observacion")]
+        public string Observation { get; set; }
+
         [Required]
         [Display(Name = "Usuario de modificacion")]
         public string UsuarioModificacion { get; set; }
