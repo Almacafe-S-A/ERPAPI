@@ -82,7 +82,9 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="TipoComision"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ComisionName}")]
+
+        [HttpGet("[action]/{TipoComision}")]
+
         public async Task<IActionResult> GetComisionByTipoComision(String TipoComision)
         {
             Comision Items = new Comision();
@@ -103,29 +105,7 @@ namespace ERPAPI.Controllers
 
 
 
-        /// <summary>
-        /// Obtiene los Datos de la Bank por medio del Id enviado.
-        /// </summary>
-        /// <param name="ComisionName"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{ComisionName}")]
-        public async Task<IActionResult> GetComisionByName(String ComisionName)
-        {
-            Comision Items = new Comision();
-            try
-            {
-                Items = await _context.Comision.Where(q => q.Description == ComisionName).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items)); 
-        }
+        
     
 
 

@@ -101,7 +101,6 @@ namespace ERPAPI.Controllers
         }
        
 
-
         // PUT: api/Departamento/5
         //[HttpPut("[action]")]
         //public async Task<IActionResult> PutDepartamento(long id, Departamento departamento)

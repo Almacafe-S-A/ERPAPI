@@ -1,4 +1,21 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDCurency
+-- PROPOSE:  show relation between Department and Branch
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+9.0                  07/12/2019          Marvin.Guillen                     Validation to duplicated on Dearrollo Branch
+8.0                  06/12/2019          Marvin.Guillen                     Validation to duplicated
+7.0                  16/09/2019          Marvin.Guillen                     Changes of Controller
+6.0                  11/09/2019          Oscar.Gomez                        Changes of Controller
+5.0                  06/09/2019          Oscar.Gomez                        Changes of Controller
+4.0                  15/07/2019          Freddy.Chinchilla                  Changes of Controller
+3.0                  30/04/2019          Freddy.Chinchilla                  Changes of Controller
+2.0                  15/04/2019          Freddy.Chinchilla                  Changes of Controller
+1.0                  11/04/2019          Freddy.Chinchilla                  Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -107,6 +124,30 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los Datos de la Tax por medio del Id enviado.
+        /// </summary>
+        /// <param name="TaxCode"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{TaxCode}")]
+        public async Task<IActionResult> GetTaxByTaxCode(String TaxCode)
+        {
+            Tax Items = new Tax();
+            try
+            {
+                Items = await _context.Tax.Where(q => q.TaxCode == TaxCode).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
 
         /// <summary>

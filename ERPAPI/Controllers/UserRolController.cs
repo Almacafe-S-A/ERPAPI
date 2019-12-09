@@ -34,6 +34,8 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+        
+
 
         /// <summary>
         /// Obtiene los roles asignados a los usuarios
