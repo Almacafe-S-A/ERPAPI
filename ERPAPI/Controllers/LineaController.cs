@@ -100,6 +100,23 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{idestado}")]
+        public async Task<ActionResult> GetLineaByEstado(Int64 idestado)
+        {
+            try
+            {
+                List<Linea> Items = await _context.Linea.Where(q => q.IdEstado == idestado).ToListAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
         [HttpPost("[action]")]
         public async Task<ActionResult<Linea>> Insert([FromBody]Linea payload)
         {
