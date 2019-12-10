@@ -88,7 +88,7 @@ namespace ERPAPI.Controllers
         /// <param name="IdInsurancePolicy"></param>
         /// <returns></returns>
         [HttpGet("[action]/{IdInsurancePolicy}")]
-        public async Task<IActionResult> GetSeveridadRiesgoById(Int64 IdInsurancePolicy)
+        public async Task<IActionResult> GetInsurancePolicyById(Int64 IdInsurancePolicy)
         {
             InsurancePolicy Items = new InsurancePolicy();
             try
@@ -285,6 +285,177 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(InsurancePolicyq));
+        }
+
+        /// <summary>
+        /// Actualiza la poliza y hace una contra partida de ajuste
+        /// </summary>
+        /// <param name="_InsurancePolicy"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<InsurancePolicy>> AjusteDiferencialCambiario([FromBody]InsurancePolicy _InsurancePolicy)
+        {
+            InsurancePolicy InsurancePolicyq = _InsurancePolicy;
+            InsurancePolicy _Original;
+            try
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _Original = await _context.InsurancePolicy.Where(q => q.InsurancePolicyId == _InsurancePolicy.InsurancePolicyId).FirstOrDefaultAsync();
+                        InsurancePolicyq = await (from c in _context.InsurancePolicy
+                        .Where(q => q.InsurancePolicyId == _InsurancePolicy.InsurancePolicyId)
+                                                  select c
+                        ).FirstOrDefaultAsync();
+
+                        _context.Entry(InsurancePolicyq).CurrentValues.SetValues((_InsurancePolicy));
+
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = InsurancePolicyq.InsurancePolicyId,
+                            DocType = "InsurancePolicy",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(InsurancePolicyq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "AjusteDiferencialCambiario",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = InsurancePolicyq.UsuarioCreacion,
+                            UsuarioModificacion = InsurancePolicyq.UsuarioModificacion,
+                            UsuarioEjecucion = InsurancePolicyq.UsuarioModificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+
+                        if(_Original != null)
+                        {
+                            if(_Original.LpsAmount != _InsurancePolicy.LpsAmount || _Original.DollarAmount != _InsurancePolicy.DollarAmount)
+                            {
+                                JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                                      .Where(q => q.TransactionId == 1)
+                                                                      //.Where(q => q.BranchId == InsurancePolicyq.BranchId)
+                                                                      .Where(q => q.EstadoName == "Activo")
+                                                                      .Include(q => q.JournalEntryConfigurationLine)
+                                                                      ).FirstOrDefaultAsync();
+
+                                BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
+                                {
+                                    IdOperacion = InsurancePolicyq.CustomerId,
+                                    DocType = "JournalEntryConfiguration",
+                                    ClaseInicial =
+                                     Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                    ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                    Accion = "AjusteDiferencialCambiario",
+                                    FechaCreacion = DateTime.Now,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioCreacion = InsurancePolicyq.UsuarioCreacion,
+                                    UsuarioModificacion = InsurancePolicyq.UsuarioModificacion,
+                                    UsuarioEjecucion = InsurancePolicyq.UsuarioModificacion,
+
+                                });
+
+                                // await _context.SaveChangesAsync();
+
+                                double sumacreditos = 0, sumadebitos = 0;
+                                if (_journalentryconfiguration != null)
+                                {
+                                    //Crear el asiento contable configurado
+                                    //.............................///////
+                                    JournalEntry _je = new JournalEntry
+                                    {
+                                        Date = InsurancePolicyq.PolicyDate,
+                                        Memo = "Contra Partidad de Poliza: Ajuste por diferencial cambiario",
+                                        DatePosted = InsurancePolicyq.PolicyDate,
+                                        ModifiedDate = DateTime.Now,
+                                        CreatedDate = DateTime.Now,
+                                        ModifiedUser = InsurancePolicyq.UsuarioModificacion,
+                                        CreatedUser = InsurancePolicyq.UsuarioCreacion,
+                                        DocumentId = InsurancePolicyq.InsurancePolicyId,
+                                        TypeOfAdjustmentId = 65,
+                                        VoucherType = 1,
+
+                                    };
+
+
+
+                                    foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
+                                    {
+
+                                        _je.JournalEntryLines.Add(new JournalEntryLine
+                                        {
+                                            AccountId = Convert.ToInt32(item.AccountId),
+                                            AccountName = item.AccountName,
+                                            Description = item.AccountName,
+                                            Debit = item.DebitCredit == "Credito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0,
+                                            Credit = item.DebitCredit == "Debito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0,
+                                            CreatedDate = DateTime.Now,
+                                            ModifiedDate = DateTime.Now,
+                                            CreatedUser = InsurancePolicyq.UsuarioCreacion,
+                                            ModifiedUser = InsurancePolicyq.UsuarioModificacion,
+                                            Memo = "",
+                                        });
+
+                                        sumacreditos += item.DebitCredit == "Debito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0;
+                                        sumadebitos += item.DebitCredit == "Credito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0;
+
+                                        // _context.JournalEntryLine.Add(_je);
+
+                                    }
+
+
+                                    if (sumacreditos != sumadebitos)
+                                    {
+                                        transaction.Rollback();
+                                        _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                                        return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                                    }
+
+                                    _je.TotalCredit = sumacreditos;
+                                    _je.TotalDebit = sumadebitos;
+                                    _context.JournalEntry.Add(_je);
+
+                                    await _context.SaveChangesAsync();
+                                }
+
+                                 _write = new BitacoraWrite(_context, new Bitacora
+                                {
+                                    IdOperacion = InsurancePolicyq.InsurancePolicyId,
+                                    DocType = "InsurancePolicy",
+                                    ClaseInicial =
+                                    Newtonsoft.Json.JsonConvert.SerializeObject(InsurancePolicyq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                    Accion = "AjusteDiferencialCambiario",
+                                    FechaCreacion = DateTime.Now,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioCreacion = InsurancePolicyq.UsuarioCreacion,
+                                    UsuarioModificacion = InsurancePolicyq.UsuarioModificacion,
+                                    UsuarioEjecucion = InsurancePolicyq.UsuarioModificacion,
+
+                                });
+
+                                await _context.SaveChangesAsync();
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
