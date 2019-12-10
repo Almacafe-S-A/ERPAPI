@@ -108,16 +108,15 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="AccountNumber"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<AccountManagement>> GetSAccountManagementByAccountTypeAccountNumber([FromBody]AccountManagement _AccountManagement)
+        [HttpGet("[action]/{AccountNumber}")]
+        public async Task<IActionResult> GetSAccountManagementByAccountTypeAccountNumber(String AccountNumber)
         {
             AccountManagement Items = new AccountManagement();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.AccountNumber == _AccountManagement.AccountNumber
-                                            && q.AccountType ==_AccountManagement.AccountType
+                Items = await _context.AccountManagement.Where(q => q.AccountNumber == AccountNumber
                                             ).FirstOrDefaultAsync();
             }
             catch (Exception ex)
