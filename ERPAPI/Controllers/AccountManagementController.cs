@@ -105,6 +105,30 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// </summary>
+        /// <param name="AccountNumber"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{AccountNumber}")]
+        public async Task<IActionResult> GetSAccountManagementByAccountTypeAccountNumber(String AccountNumber)
+        {
+            AccountManagement Items = new AccountManagement();
+            try
+            {
+                Items = await _context.AccountManagement.Where(q => q.AccountNumber == AccountNumber
+                                            ).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
         /// Inserta un nuevo mantenimiento de cuentas

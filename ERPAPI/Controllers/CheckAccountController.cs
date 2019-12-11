@@ -1,4 +1,15 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDCheckAccount
+-- PROPOSE:  show CheckAccount records
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+3.0                  09/12/2019          Marvin.Guillen                  Validation of duplicated
+2.0                  11/11/2019          Marvin.Guillen                  Changes of Conciliaicon
+1.0                  19/09/2019          Freddy.Chinchilla               Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -132,6 +143,34 @@ namespace ERPAPI.Controllers
 
 
             return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Verifica una nueva CheckAccount
+        /// </summary>
+        /// <param name="_CheckAccount"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<CheckAccount>> GetCheckAccountByCheckAccountNo([FromBody]CheckAccount _CheckAccount)
+        {
+            CheckAccount _CheckAccountq = new CheckAccount();
+            try
+            {
+                
+                        _CheckAccountq =  _context.CheckAccount.Where(z => z.BankId == _CheckAccount.BankId
+          && z.CheckAccountNo == _CheckAccount.CheckAccountNo &&
+            z.AssociatedAccountNumber== _CheckAccount.AssociatedAccountNumber).FirstOrDefault();
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_CheckAccountq));
         }
 
 
@@ -285,6 +324,27 @@ Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountq, new JsonSerializerSe
 
         }
 
+        /// <summary>
+        /// Obtiene las cuentas de banco de un banco especifico
+        /// </summary>
+        /// <param name="bankId">Id de banco</param>
+        /// <returns></returns>
+        [HttpGet("[action]/{bankId}")]
+        public async Task<IActionResult> GetCheckAccountByBankId(Int64 bankId)
+        {
+            List<CheckAccount> cuentas = new List<CheckAccount>();
+            try
+            {
+                cuentas = await _context.CheckAccount.Where(q => q.BankId == bankId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(cuentas));
+        }
 
 
 

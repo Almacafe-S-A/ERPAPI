@@ -77,14 +77,45 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
-
-
         /// <summary>
-        /// Inserta una nueva Bank
+        /// Obtiene los Datos de la Bank por medio del Id enviado.
         /// </summary>
-        /// <param name="_Comision"></param>
+        /// <param name="TipoComision"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
+
+        [HttpGet("[action]/{TipoComision}")]
+
+        public async Task<IActionResult> GetComisionByTipoComision(String TipoComision)
+        {
+            Comision Items = new Comision();
+            try
+            {
+                Items = await _context.Comision.Where(q => q.TipoComision == TipoComision).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
+        
+    
+
+
+
+    /// <summary>
+    /// Inserta una nueva Bank
+    /// </summary>
+    /// <param name="_Comision"></param>
+    /// <returns></returns>
+    [HttpPost("[action]")]
         public async Task<ActionResult<Comision>> Insert([FromBody]Comision _Comision)
         {
             Comision _Comisionq = new Comision();

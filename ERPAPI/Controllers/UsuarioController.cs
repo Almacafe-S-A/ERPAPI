@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using ERP.Contexts;
@@ -112,6 +113,7 @@ namespace ERPAPI.Controllers
         /// Obtiene los usuarios de la aplicacion.
         /// </summary>
         /// <returns></returns>
+        [Authorize(Policy = "Seguridad.Usuarios")]
         [HttpGet("[action]")]      
         public async Task<ActionResult<List<ApplicationUser>>> GetUsers()
         {
@@ -336,111 +338,59 @@ namespace ERPAPI.Controllers
 
         /// <returns></returns>
         [HttpPost("ChangePassword")]
-        public async Task<ActionResult<ApplicationUser>> ChangePassword([FromBody]ApplicationUserDTO _usuario)
+        public async Task<ActionResult<ApplicationUser>> ChangePassword([FromBody]UserInfo _cambio)
         {
             try
             {
-                ApplicationUser ApplicationUserq = (from c in _context.Users
-                                                    .Include(q=>q.Branch)
-                  .Where(q => q.Id == _usuario.Id)
-                       select c
-                    ).FirstOrDefault();
-
-                ApplicationUserDTO _appdto = new ApplicationUserDTO
-                {
-                     Id = ApplicationUserq.Id,
-                     IsEnabled = ApplicationUserq.IsEnabled,
-                     NormalizedEmail = ApplicationUserq.NormalizedEmail,
-                     LockoutEnd= ApplicationUserq.LockoutEnd,
-                     PhoneNumberConfirmed = ApplicationUserq.PhoneNumberConfirmed,
-                     SecurityStamp = ApplicationUserq.SecurityStamp,
-                     PhoneNumber = ApplicationUserq.PhoneNumber,
-                     TwoFactorEnabled = ApplicationUserq.TwoFactorEnabled,
-                     BranchId = ApplicationUserq.BranchId,
-                     AccessFailedCount = ApplicationUserq.AccessFailedCount,
-                     ConcurrencyStamp = ApplicationUserq.ConcurrencyStamp,
-                     Email = ApplicationUserq.Email,
-                     EmailConfirmed = ApplicationUserq.EmailConfirmed,
-                     FechaCreacion = ApplicationUserq.FechaCreacion,
-                     FechaModificacion = ApplicationUserq.FechaModificacion,
-                     LastPasswordChangedDate = ApplicationUserq.LastPasswordChangedDate,
-                     LockoutEnabled = ApplicationUserq.LockoutEnabled,
-                     NormalizedUserName = ApplicationUserq.NormalizedUserName,
-                     UsuarioCreacion = ApplicationUserq.UsuarioCreacion,
-                     UsuarioModificacion = ApplicationUserq.UsuarioModificacion,
-                     PasswordHash = ApplicationUserq.PasswordHash,
-                     UserName = ApplicationUserq.UserName,
-                     Branch = ApplicationUserq.Branch,
-
-                };
-
-                string password = _usuario.PasswordHash;
+                ApplicationUser usuarioActualizar = await _context.Users.Where(q => q.Email == _cambio.Email).FirstOrDefaultAsync();
+                
                 var passwordValidator = new PasswordValidator<ApplicationUser>();
-                var result = await passwordValidator.ValidateAsync(_userManager, null, password);
+                var result = await passwordValidator.ValidateAsync(_userManager, null, _cambio.Password);
 
                 if (result.Succeeded)
                 {
-                    
 
-                    _appdto.LastPasswordChangedDate=_usuario.LastPasswordChangedDate = DateTime.Now;
-
-                    _appdto.IsEnabled = true;
-                    var actualizarusuario = await PutUsuario(_appdto);
-                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
-                    _appdto.PasswordHash = password;
-
-                     resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
-                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
-
-                                 
-
-                    if (!resultadadd.Succeeded)
+                    var resultCambio = await _userManager.ChangePasswordAsync(usuarioActualizar,
+                        _cambio.PasswordAnterior, _cambio.Password);
+                    if (!resultCambio.Succeeded)
                     {
                         string errores = "";
-                        foreach (var item in resultadadd.Errors)
+                        foreach (var item in resultCambio.Errors)
                         {
                             errores += item.Description;
                         }
                         return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
 
-                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
+                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == usuarioActualizar.Id).FirstOrDefaultAsync();
                     _context.PasswordHistory.Add(new PasswordHistory()
                     {
-                        UserId = ApplicationUserq.Id.ToString(),
+                        UserId = _newpass.Id.ToString(),
                         PasswordHash = _newpass.PasswordHash,
                     });
 
                     await  _context.SaveChangesAsync();
 
-
-                    //ApplicationUserq.PasswordHistory.Add(new PasswordHistory()
-                    //{
-                    //    UserId = ApplicationUserq.Id.ToString(),
-                    //    PasswordHash = _newpass.PasswordHash,
-                    //});
-
-
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                     {
                         // IdOperacion =,
-                       Descripcion = _usuario.Id.ToString(),
+                        Descripcion = usuarioActualizar.Id.ToString(),
                         DocType = "Usuario",
                         ClaseInicial =
-                             Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                        ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_newpass, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_newpass, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                         Accion = "ChangePassword",
                         FechaCreacion = DateTime.Now,
                         FechaModificacion = DateTime.Now,
-                        UsuarioCreacion = _usuario.UsuarioCreacion,
-                        UsuarioModificacion = _usuario.UsuarioModificacion,
-                        UsuarioEjecucion = _usuario.UsuarioModificacion,
+                        UsuarioCreacion = usuarioActualizar.UsuarioCreacion,
+                        UsuarioModificacion = usuarioActualizar.UsuarioModificacion,
+                        UsuarioEjecucion = usuarioActualizar.UsuarioModificacion,
 
                     });
 
                     await _context.SaveChangesAsync();
 
-                    return await Task.Run(() => _usuario);
+                    return await Task.Run(() => _newpass);
 
                 }
                 else
@@ -484,6 +434,31 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => (_user));
         }
 
+        [Authorize(Policy = "Seguridad.Listar Permisos")]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ListarPermisos([FromBody]UserInfo _usuario)
+        {
+            List<string> permisos = new List<string>();
+            try
+            {
+                ApplicationUser usuario = await _userManager.FindByEmailAsync(_usuario.Email);
+                var _appRole = await _userManager.GetRolesAsync(usuario);
+                if (_appRole != null)
+                {
+                    var listaRoles = _appRole.Select(async x => await _rolemanager.FindByNameAsync(x));
+                    var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result.Where(c => c.Value.Equals("true")).ToList());
+                    foreach (IList<Claim> claimsRole in listClaims)
+                    {
+                        permisos.AddRange(claimsRole.Select(x => x.Type).ToList());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run((() => Ok(permisos)));
+        }
 
     }
 }

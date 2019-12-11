@@ -108,7 +108,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{_cai}")]
+        public async Task<IActionResult> GetCAIByDescription(string _cai)
+        {
+            CAI Items = new CAI();
+            try
+            {
+                Items = await _context.CAI.Where(q => q._cai == _cai).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Inserta un nuevo cai
         /// </summary>

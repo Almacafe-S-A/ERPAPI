@@ -143,7 +143,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _context.PurchaseOrder.Add(_PurchaseOrders);
-                        //await _context.SaveChangesAsync();
+                       // await _context.SaveChangesAsync();
 
                         foreach (var item in _PurchaseOrders.PurchaseOrderLines)
                         {
@@ -162,7 +162,7 @@ namespace ERPAPI.Controllers
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
                             KardexLine _KardexLine = await _context.KardexLine
                                                                          .Where(q => q.KardexId == _kardexmax.KardexId)
-                                                                         .Where(q => q.SubProducId == item.ProductId)
+                                                                         .Where(q => q.ProducId == item.ProductId)
                                                                          //.Where(q => q.WareHouseId == item.WareHouseId)
                                                                          //.Where(q => q.BranchId == _GoodsDeliveredq.BranchId)
                                                                          .OrderByDescending(q => q.KardexLineId)
@@ -189,7 +189,7 @@ namespace ERPAPI.Controllers
                                 QuantityEntry = Convert.ToDouble(item.QtyReceived),
                                 QuantityOut = 0,
                                 BranchId = Convert.ToInt64(_PurchaseOrders.BranchId),
-                                BranchName = _PurchaseOrders.Branch.BranchName,
+                                //BranchName = _PurchaseOrders.Branch.BranchName,
                                 WareHouseId = 0,
                                 WareHouseName = "N/A",
                                 UnitOfMeasureId = item.UnitOfMeasureId,

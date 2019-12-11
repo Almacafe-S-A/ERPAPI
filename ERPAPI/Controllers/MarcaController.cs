@@ -56,6 +56,23 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{idestado}")]
+        public async Task<ActionResult> GetMarcaByEstado(Int64 idestado)
+        {
+            try
+            {
+                List<Marca> Items = await _context.Marca.Where(q => q.IdEstado == idestado).ToListAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
         // GET: api/Marca
         [HttpGet("[action]")]
         public async Task<IActionResult> GetMarca()

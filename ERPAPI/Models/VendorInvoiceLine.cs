@@ -51,6 +51,10 @@ namespace ERPAPI.Models
         [Display(Name = "Código Impuesto")]
         public string TaxCode { get; set; }
 
+        public Int64? TaxId { get; set; }
+        [ForeignKey("TaxId")]
+        public virtual Tax Tax { get; set; }
+
         [Display(Name = "Monto Impuesto")]
         public double TaxAmount { get; set; }
         public double Total { get; set; }

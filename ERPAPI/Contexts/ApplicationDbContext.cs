@@ -89,11 +89,13 @@ namespace ERP.Contexts
 
         public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
 
-       
+        public DbSet<PayrollDeduction> PayrollDeduction { get; set; }
         /// <summary>
         /// ///Cierres
         /// </summary>
         /// 
+
+        public DbSet<GarantiaBancaria> GarantiaBancaria { get; set; }
 
 
         public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
@@ -333,7 +335,9 @@ namespace ERP.Contexts
            .HasIndex(p => new { p.RTN })
            .IsUnique(true);
 
-
+            modelBuilder.Entity<Departamento>()
+            .HasIndex(e => e.NombreDepartamento)
+            .IsUnique(true);
 
             modelBuilder.Entity<SubProduct>()
              .HasMany(c => c.ProductRelation)

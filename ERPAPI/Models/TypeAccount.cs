@@ -30,5 +30,13 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Modificacion")]
         public DateTime ModifiedDate { get; set; }
 
+        [Required]
+        [Display(Name="Deudora / Acreedora")]
+        public string DeudoraAcreedora { get; set; }
+    }
+
+    public class TypeAccountDTO : TypeAccount
+    {
+        public bool Totaliza { get; set; }
     }
 }
