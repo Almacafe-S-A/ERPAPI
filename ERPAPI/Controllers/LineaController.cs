@@ -101,7 +101,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]/{idestado}")]
-        public async Task<ActionResult> GetLineaByEstado(Int64 idestado)
+        public async Task<ActionResult> GetLineasByEstado(Int64 idestado)
         {
             try
             {
