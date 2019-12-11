@@ -142,7 +142,7 @@ namespace ERPAPI.Controllers
         /// <param name="_TypeAccount"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<TypeAccount>> Insert([FromBody]TypeAccount _TypeAccount)
+        public async Task<ActionResult<TypeAccount>> Insert([FromBody]TypeAccountDTO _TypeAccount)
         {
             TypeAccount _TypeAccountq = new TypeAccount();
             try
@@ -165,13 +165,13 @@ namespace ERPAPI.Controllers
                              IsCash =false,
                              Description = _TypeAccountq.TypeAccountName,
                              CompanyInfoId = _co.CompanyInfoId,
-
-                            // AccountCode = _TypeAccountq.
                              UsuarioCreacion = _TypeAccountq.CreatedUser,
                              UsuarioModificacion = _TypeAccountq.ModifiedUser,
                              FechaCreacion = DateTime.Now,
                              FechaModificacion = DateTime.Now,
                              ParentAccountId = null,
+                             Totaliza = true,
+                             DeudoraAcreedora = _TypeAccount.DeudoraAcreedora,
                              IdEstado = 1,
                              Estado="Activo",
                         };
