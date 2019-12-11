@@ -57,7 +57,7 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-             
+
             return await Task.Run(() => Ok(Items));
         }
 
@@ -156,9 +156,10 @@ namespace ERPAPI.Controllers
                         _context.TypeAccount.Add(_TypeAccountq);
                         await _context.SaveChangesAsync();
 
-                      CompanyInfo _co =  await  _context.CompanyInfo.FirstOrDefaultAsync();
+                        CompanyInfo _co = await _context.CompanyInfo.FirstOrDefaultAsync();
                         Accounting _padreaccount = new Accounting
                         {
+
                              AccountName = _TypeAccountq.TypeAccountName,  
                              AccountCode= _TypeAccountq.TypeAccountId.ToString(),
                              TypeAccountId = _TypeAccountq.TypeAccountId,
@@ -204,9 +205,9 @@ namespace ERPAPI.Controllers
                     {
                         transaction.Rollback();
                         _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        return await Task.Run(()=> BadRequest($"Ocurrio un error:{ex.Message}"));
+                        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
                     }
-                  
+
                 }
             }
             catch (Exception ex)

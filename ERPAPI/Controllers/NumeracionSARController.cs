@@ -1,4 +1,25 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDNumeracionSAR
+-- PROPOSE:  show record NumeracionSAR
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+13.0                  09/12/2019          Marvin.Guillen                 Validation of duplicated
+12.0                  16/09/2019          Carlos.Castillo                Changes of Paginacion of Controller
+11.0                  21/08/2019          Freddy.Chinchilla              Changes of Campos Virtuales
+10.0                  19/06/2019          Freddy.Chinchilla              Changes of Task run return controllers
+9.0                  21/05/2019          Freddy.Chinchilla              Changes of Numeracion SAR delete
+8.0                  09/05/2019          Freddy.Chinchilla              Post to put update Numeracion SAR
+7.0                  08/05/2019          Freddy.Chinchilla              Changes of datos
+6.0                  30/04/2019          Freddy.Chinchilla              Changes of Add Colomns
+5.0                  29/04/2019          Freddy.Chinchilla              Changes of Mejoras a Numeracion SAR
+4.0                  26/04/2019          Freddy.Chinchilla              Changes of GetById
+3.0                  22/04/2019          Freddy.Chinchilla              Changes of mejoras a controller
+2.0                  22/04/2019          Freddy.Chinchilla              Changes of Autorize
+1.0                  22/04/2019          Freddy.Chinchilla              Creation of controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -103,6 +124,32 @@ namespace ERPAPI.Controllers
 
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Inserta numeracion SAR
+        /// </summary>
+        /// <param name="_NumeracionSAR"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<NumeracionSAR>> GetNumeracionByNumeracionSAR([FromBody]NumeracionSAR _NumeracionSAR)
+        {
+            NumeracionSAR _NumeracionSARq = new NumeracionSAR();
+            try
+            {
+                _NumeracionSARq = await _context.NumeracionSAR.Where(a => a.BranchId== _NumeracionSAR.BranchId
+                                        && a.IdCAI ==_NumeracionSAR.IdCAI
+                                        && a.IdPuntoEmision== _NumeracionSAR.IdPuntoEmision
+                ).FirstOrDefaultAsync();
+              }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_NumeracionSARq));
         }
 
 

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191209162535_AddFieldsPurchaseOrderLine")]
+    partial class AddFieldsPurchaseOrderLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,8 +84,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(5000);
 
-                    b.Property<string>("DeudoraAcreedora");
-
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -106,8 +106,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp")
                         .HasMaxLength(8);
-
-                    b.Property<bool>("Totaliza");
 
                     b.Property<long>("TypeAccountId");
 
@@ -8100,8 +8098,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("TaxCode");
 
-                    b.Property<long?>("TaxId");
-
                     b.Property<double>("TaxPercentage");
 
                     b.Property<double>("Total");
@@ -8115,8 +8111,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("VendorInvoiceLineId");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("TaxId");
 
                     b.HasIndex("VendorInvoiceId");
 
@@ -9673,10 +9667,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Tax", "Tax")
-                        .WithMany()
-                        .HasForeignKey("TaxId");
 
                     b.HasOne("ERPAPI.Models.VendorInvoice", "VendorInvoice")
                         .WithMany("VendorInvoiceLine")
