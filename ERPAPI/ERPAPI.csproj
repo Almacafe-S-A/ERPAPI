@@ -141,6 +141,8 @@
     <Compile Remove="Migrations\20191115121326_FieldAddCurrencyIdonJournalEntry.cs" />
     <Compile Remove="Migrations\20191128181102_ProformaDate.cs" />
     <Compile Remove="Migrations\20191128181102_ProformaDate.Designer.cs" />
+    <Compile Remove="Migrations\20191211161708_fieldjournalentrychanged.cs" />
+    <Compile Remove="Migrations\20191211161708_fieldjournalentrychanged.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />
