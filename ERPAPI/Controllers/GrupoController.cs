@@ -98,6 +98,23 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{idestado}")]
+        public async Task<ActionResult> GetGrupoByEstado(Int64 idestado)
+        {
+            try
+            {
+                List<Grupo> Items = await _context.Grupo.Where(q => q.IdEstado == idestado).ToListAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
         [HttpPost("[action]")]
         public async Task<ActionResult<Grupo>> Insert([FromBody]Grupo payload)
         {
