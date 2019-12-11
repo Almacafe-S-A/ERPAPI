@@ -117,6 +117,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
         [HttpGet("[action]/{idestado}")]
         public async Task<ActionResult> GetTasaInteresByEstado(Int64 idestado)
         {
@@ -133,6 +134,7 @@ namespace ERPAPI.Controllers
             }
 
         }
+
 
         [HttpPost("[action]")]
         public async Task<ActionResult<FundingInterestRate>> Insert([FromBody]FundingInterestRate payload)

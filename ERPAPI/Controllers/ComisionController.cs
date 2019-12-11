@@ -80,15 +80,17 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la Bank por medio del Id enviado.
         /// </summary>
-        /// <param name="ComisionName"></param>
+        /// <param name="TipoComision"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ComisionName}")]
-        public async Task<IActionResult> GetComisionByName(String ComisionName)
+
+        [HttpGet("[action]/{TipoComision}")]
+
+        public async Task<IActionResult> GetComisionByTipoComision(String TipoComision)
         {
             Comision Items = new Comision();
             try
             {
-                Items = await _context.Comision.Where(q => q.Description == ComisionName).FirstOrDefaultAsync();
+                Items = await _context.Comision.Where(q => q.TipoComision == TipoComision).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -102,12 +104,18 @@ namespace ERPAPI.Controllers
         }
 
 
-        /// <summary>
-        /// Inserta una nueva Bank
-        /// </summary>
-        /// <param name="_Comision"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
+
+        
+    
+
+
+
+    /// <summary>
+    /// Inserta una nueva Bank
+    /// </summary>
+    /// <param name="_Comision"></param>
+    /// <returns></returns>
+    [HttpPost("[action]")]
         public async Task<ActionResult<Comision>> Insert([FromBody]Comision _Comision)
         {
             Comision _Comisionq = new Comision();

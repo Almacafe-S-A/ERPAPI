@@ -127,8 +127,9 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-        }
+        
 
+        }
 
         /// <summary>
         /// Inserta una nueva GrupoConfiguracion

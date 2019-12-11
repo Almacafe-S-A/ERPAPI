@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191209204044_Added_TaxId_VendorInvoiceLine")]
+    partial class Added_TaxId_VendorInvoiceLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6813,12 +6815,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("DiscountAmount");
-
-                    b.Property<int>("DiscountPercentage");
-
                     b.Property<int?>("LineNumber");
 
                     b.Property<double?>("Price");
@@ -6835,19 +6831,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<double?>("QtyReceivedToDate");
 
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("TaxAmount");
-
                     b.Property<long?>("TaxId");
 
                     b.Property<string>("TaxName");
 
-                    b.Property<double>("TaxPercentage");
-
                     b.Property<decimal>("TaxRate");
-
-                    b.Property<double>("Total");
 
                     b.Property<int>("UnitOfMeasureId");
 

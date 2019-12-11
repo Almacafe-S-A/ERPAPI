@@ -135,13 +135,12 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
-        /// <summary>
-        /// Inserta una nueva Journal
-        /// </summary>
-        /// <param name="_TypeJournal"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
+    /// <summary>
+    /// Inserta una nueva Journal
+    /// </summary>
+    /// <param name="_TypeJournal"></param>
+    /// <returns></returns>
+    [HttpPost("[action]")]
         public async Task<ActionResult<TypeJournal>> Insert([FromBody]TypeJournal _TypeJournal)
         {
             TypeJournal _TypeJournalq = new TypeJournal();

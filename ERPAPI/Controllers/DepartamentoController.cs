@@ -67,20 +67,6 @@ namespace ERPAPI.Controllers
         {
             return await _context.Departamento.ToListAsync();
         }
-
-        // GET: api/Departamento/5
-        [HttpGet("[action]/{Id}")]
-        public async Task<ActionResult<Departamento>> GetDepartamento(long id)
-        {
-            var departamento = await _context.Departamento.FindAsync(id);
-
-            if (departamento == null)
-            {
-                return NotFound();
-            }
-
-            return departamento;
-        }
         [HttpGet("[action]/{DepartamentoName}")]
         public async Task<IActionResult> GetDepartamentoByDepartamentoName(String DepartamentoName)
         {
@@ -100,6 +86,20 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        // GET: api/Departamento/5
+        [HttpGet("[action]/{Id}")]
+        public async Task<ActionResult<Departamento>> GetDepartamento(long id)
+        {
+            var departamento = await _context.Departamento.FindAsync(id);
+
+            if (departamento == null)
+            {
+                return NotFound();
+            }
+
+            return departamento;
+        }
+       
 
         // PUT: api/Departamento/5
         //[HttpPut("[action]")]
