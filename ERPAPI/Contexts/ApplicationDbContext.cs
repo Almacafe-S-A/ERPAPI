@@ -288,6 +288,8 @@ namespace ERP.Contexts
         public DbSet<PaymentTerms> PaymentTerms { get; set; }
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
 
+        public DbSet<Colors> Colors { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
