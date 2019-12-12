@@ -60,15 +60,36 @@ namespace ERPAPI.Models
 
         [ForeignKey("EstadoId")]
         public TiposDocumento TiposDocumento { get; set; }
-        
+
         public long NumeracionSARId { get; set; }
 
         [ForeignKey("NumeracionSARId")]
         public NumeracionSAR NumeracionSAR { get; set; }
 
+        public int CurrencyId { get; set; }
+        [ForeignKey("CurrencyId")]
+        public Currency Currency { get; set; }
+
+        public string  CurrencyName { get; set; }
+
+        public List<InventoryTransferLine> InventoryTransferLines { get; set; }
+
+        public string UsuarioCreacion { get; set; }
+        public string UsuarioModificacion { get; set; }
+        public DateTime? FechaCreacion { get; set; }
+        public DateTime? FechaModificacion { get; set; }
+
+
+        
 
 
 
 
+
+    }
+
+    public class InventoryTransferDTO : InventoryTransfer
+    {
+        public Kardex Kardex { get; set; } = new Kardex();
     }
 }

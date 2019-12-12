@@ -43,49 +43,49 @@ namespace ERPAPI.Migrations
                         column: x => x.CarriedByEmployeeId,
                         principalTable: "Employees",
                         principalColumn: "IdEmpleado",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransfer_Estados_EstadoId",
                         column: x => x.EstadoId,
                         principalTable: "Estados",
                         principalColumn: "IdEstado",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransfer_TiposDocumento_EstadoId",
                         column: x => x.EstadoId,
                         principalTable: "TiposDocumento",
                         principalColumn: "IdTipoDocumento",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransfer_Employees_GeneratedbyEmployeeId",
                         column: x => x.GeneratedbyEmployeeId,
                         principalTable: "Employees",
                         principalColumn: "IdEmpleado",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransfer_NumeracionSAR_NumeracionSARId",
                         column: x => x.NumeracionSARId,
                         principalTable: "NumeracionSAR",
                         principalColumn: "IdNumeracion",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransfer_Employees_ReceivedByEmployeeId",
                         column: x => x.ReceivedByEmployeeId,
                         principalTable: "Employees",
                         principalColumn: "IdEmpleado",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransfer_Branch_SourceBranchId",
                         column: x => x.SourceBranchId,
                         principalTable: "Branch",
                         principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransfer_Branch_TargetBranchId",
                         column: x => x.TargetBranchId,
                         principalTable: "Branch",
                         principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -111,13 +111,13 @@ namespace ERPAPI.Migrations
                         column: x => x.InventoryTransferId,
                         principalTable: "InventoryTransfer",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_InventoryTransferLine_Product_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Product",
                         principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

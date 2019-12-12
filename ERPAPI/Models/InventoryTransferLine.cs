@@ -32,6 +32,12 @@ namespace ERPAPI.Models
 
         public decimal Price { get; set; }
 
+        public int UnitOfMeasureId { get; set; }
+        [ForeignKey("UnitOfMeasureId")]
+        public UnitOfMeasure UnitOfMeasure { get; set; }
+
+        public string UnitOfMeasureName { get; set; }
+
 
 
 
