@@ -160,11 +160,20 @@ namespace ERPAPI.Controllers
                                                 .FirstOrDefaultAsync();
 
                             if (_kardexmax == null) { _kardexmax = new Kardex(); }
-                            KardexLine _KardexLine = await _context.KardexLine
+                            KardexLine _KardexLineSource = await _context.KardexLine
                                                                          .Where(q => q.KardexId == _kardexmax.KardexId)
                                                                          .Where(q => q.ProducId == item.ProductId)
                                                                          //.Where(q => q.WareHouseId == item.WareHouseId)
-                                                                         //.Where(q => q.BranchId == _GoodsDeliveredq.BranchId)
+                                                                         .Where(q => q.BranchId == _InventoryTransfers.SourceBranchId)
+                                                                         .OrderByDescending(q => q.KardexLineId)
+                                                                         .Take(1)
+                                                                        .FirstOrDefaultAsync();
+
+                            KardexLine _KardexLineTarget = await _context.KardexLine
+                                                                         .Where(q => q.KardexId == _kardexmax.KardexId)
+                                                                         .Where(q => q.ProducId == item.ProductId)
+                                                                         //.Where(q => q.WareHouseId == item.WareHouseId)
+                                                                         .Where(q => q.BranchId == _InventoryTransfers.TargetBranchId)
                                                                          .OrderByDescending(q => q.KardexLineId)
                                                                          .Take(1)
                                                                         .FirstOrDefaultAsync();
@@ -177,6 +186,7 @@ namespace ERPAPI.Controllers
 
                             //item. = _KardexLine.Total + item.QtyReceived;
 
+                            
 
                             //////Entrada de Inventario///////////
                             _InventoryTransfers.Kardex._KardexLine.Add(new KardexLine
@@ -196,7 +206,31 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = item.UnitOfMeasureName,
                                 TypeOperationId = 7,
                                 TypeOperationName = "Orden de Compra",
-                                Total = Convert.ToDouble(item.QtyStock),
+                                Total = _KardexLineTarget.Total + Convert.ToDouble(item.QtyIn),
+                                // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                                //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                                //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                            });
+
+                            //////Salida de Inventario///////////
+                            _InventoryTransfers.Kardex._KardexLine.Add(new KardexLine
+                            {
+                                DocumentDate = _InventoryTransfers.DateGenerated,
+                                ProducId = Convert.ToInt64(item.ProductId),
+                                ProductName = item.ProductName,
+                                SubProducId = 0,
+                                SubProductName = "N/A",
+                                QuantityEntry = 0,
+                                QuantityOut = Convert.ToDouble(item.QtyIn),
+                                BranchId = Convert.ToInt64(_InventoryTransfers.SourceBranch),
+                                //BranchName = _InventoryTransfers.Branch.BranchName,
+                                WareHouseId = 0,
+                                WareHouseName = "N/A",
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                TypeOperationId = 7,
+                                TypeOperationName = "Orden de Compra",
+                                Total = _KardexLineSource.Total - Convert.ToDouble(item.QtyIn),
                                 // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
                                 //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
                                 //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
