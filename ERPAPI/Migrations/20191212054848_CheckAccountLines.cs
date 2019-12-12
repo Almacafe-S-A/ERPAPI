@@ -70,11 +70,7 @@ namespace ERPAPI.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_CheckAccount_AccountManagementId",
-                table: "CheckAccount");
-
-            migrationBuilder.DropColumn(
-                name: "DeudoraAcreedora",
-                table: "TypeAccount");
+                table: "CheckAccount");            
 
             migrationBuilder.DropColumn(
                 name: "AccountManagementId",
