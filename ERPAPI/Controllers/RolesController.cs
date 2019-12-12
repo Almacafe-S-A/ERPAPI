@@ -253,20 +253,38 @@ namespace ERPAPI.Controllers
             try
             {
                 var rol = await _rolemanager.FindByIdAsync(asignaciones.IdRol);
+                var rolId = Guid.Parse(asignaciones.IdRol);
                 if (rol != null)
                 {
-                    var listClaims = await _rolemanager.GetClaimsAsync(rol);
+                    var listClaims = _context.RoleClaims.Where(p => p.RoleId.Equals(rolId)).ToList();
+
+                    List<AspNetRoleClaims> permisosBorrar = new List<AspNetRoleClaims>();
+                    List<AspNetRoleClaims> permisosInsertar = new List<AspNetRoleClaims>();
+                    
                     foreach (var claim in listClaims)
                     {
-                        await _rolemanager.RemoveClaimAsync(rol, claim);
+                        if(asignaciones.Permisos.FirstOrDefault(p => p.Id.Equals(claim.ClaimType)) == null)
+                            permisosBorrar.Add(claim);
                     }
 
                     foreach (var permiso in asignaciones.Permisos)
                     {
-                        await _rolemanager.AddClaimAsync(rol, new Claim(permiso.Id, "true"));
+                        if(listClaims.FirstOrDefault(p=>p.ClaimType.Equals(permiso.Id))==null)
+                            permisosInsertar.Add(new AspNetRoleClaims()
+                            {
+                                ClaimType = permiso.Id,
+                                ClaimValue = "true",
+                                RoleId = rolId
+                            });
                     }
 
-                    return await Task.Run(() => Ok());
+                    _context.RoleClaims.RemoveRange(permisosBorrar);
+                    _context.RoleClaims.AddRange(permisosInsertar);
+                    _context.SaveChanges();
+
+                    return new EmptyResult();
+
+                    
                 }
                 else
                 {
