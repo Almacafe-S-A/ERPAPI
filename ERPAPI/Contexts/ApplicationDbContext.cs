@@ -244,6 +244,8 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
         public DbSet<CheckAccount> CheckAccount { get; set; }
 
+
+        public DbSet<Substratum> Substratum { get; set; }
         ///// <summary>
         ////////
         /// <summary>
