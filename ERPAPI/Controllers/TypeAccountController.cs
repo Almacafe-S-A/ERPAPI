@@ -166,7 +166,7 @@ namespace ERPAPI.Controllers
                             Description = _TypeAccountq.TypeAccountName,
                             CompanyInfoId = _co.CompanyInfoId,
 
-                            // AccountCode = _TypeAccountq.
+                            
                             UsuarioCreacion = _TypeAccountq.CreatedUser,
                             UsuarioModificacion = _TypeAccountq.ModifiedUser,
                             FechaCreacion = DateTime.Now,
