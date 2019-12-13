@@ -130,7 +130,7 @@ namespace ERPAPI.Controllers
 
                         if (SumaPolizas > 0)
                         {
-                            TipoDocumento tipoDocumento = _context.TipoDocumento.Where(d => d.NombreTipoDocumento == "Polizas").FirstOrDefault();
+                            TiposDocumento tipoDocumento = _context.TiposDocumento.Where(d => d.Descripcion == "Polizas").FirstOrDefault();
                             JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
                                                                        .Where(q => q.TransactionId == tipoDocumento.IdTipoDocumento)
                                                                        //.Where(q => q.BranchId == _Invoiceq.BranchId)
