@@ -264,3 +264,4 @@ ERPAPI/appsettings.json
 ERPAPI/appsettings.json
 /ERPAPI/Migrations/20191010154425_dbInitial.Designer.cs
 /ERPAPI/Migrations/20191010154425_dbInitial.cs
+appsettings.json

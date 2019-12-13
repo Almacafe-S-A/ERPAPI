@@ -219,12 +219,10 @@ namespace ERPAPI.Controllers
             List<Accounting> Items = new List<Accounting>();
             try
             {
-                Items = await _context.Accounting.Where(q => _context.Accounting.Where(r => r.ParentAccountId == q.AccountId).Count() == 0).ToListAsync();
-
+                Items = await _context.Accounting.Where(q=> !q.Totaliza).OrderBy(q=>q.AccountCode).ToListAsync();
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
