@@ -35,6 +35,10 @@ namespace ERP.Contexts
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
+
+
+        public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
+        public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
         public DbSet<Insurances> Insurances { get; set; }
         public DbSet<ContactPerson> ContactPerson { get; set; }
         public DbSet<TypeJournal> TypeJournal { get; set; }
