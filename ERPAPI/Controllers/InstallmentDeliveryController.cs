@@ -51,7 +51,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetMeasurePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetInstallmentDeliveryPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
             List<InstallmentDelivery> Items = new List<InstallmentDelivery>();
             try
@@ -85,7 +85,7 @@ namespace ERPAPI.Controllers
         /// <returns></returns>
         // GET: api/InstallmentDelivery
         [HttpGet("[action]")]
-        public async Task<ActionResult<InstallmentDelivery>> GetMeasure()
+        public async Task<ActionResult<InstallmentDelivery>> GetInstallmentDelivery()
         {
             List<InstallmentDelivery> Items = new List<InstallmentDelivery>();
             try
