@@ -74,6 +74,12 @@ namespace ERPAPI.Models
         [Display(Name = "Padre de la cuenta")]
         public virtual Accounting ParentAccount { get; set; }
 
+        [Display(Name = "Cuenta Totaliza")]
+        public bool Totaliza { get; set; }
+
+        [Display(Name = "Cuenta Deudora / Acreedora")]
+        public string DeudoraAcreedora { get; set; }
+
        // public virtual AccountClass AccountClass { get; set; }
 
         public virtual CompanyInfo Company { get; set; }
