@@ -324,6 +324,27 @@ Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountq, new JsonSerializerSe
 
         }
 
+        /// <summary>
+        /// Obtiene las cuentas de banco de un banco especifico
+        /// </summary>
+        /// <param name="bankId">Id de banco</param>
+        /// <returns></returns>
+        [HttpGet("[action]/{bankId}")]
+        public async Task<IActionResult> GetCheckAccountByBankId(Int64 bankId)
+        {
+            List<CheckAccount> cuentas = new List<CheckAccount>();
+            try
+            {
+                cuentas = await _context.CheckAccount.Where(q => q.BankId == bankId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(cuentas));
+        }
 
 
 

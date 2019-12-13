@@ -71,7 +71,7 @@ namespace ERPAPI.Controllers
             List<Bank> Items = new List<Bank>();
             try
             {
-                Items = await _context.Bank.ToListAsync();
+                Items = await _context.Bank.OrderBy(b=>b.BankName).ToListAsync();
             }
             catch (Exception ex)
             {

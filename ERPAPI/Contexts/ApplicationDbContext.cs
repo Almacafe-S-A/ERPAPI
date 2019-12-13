@@ -54,6 +54,8 @@ namespace ERP.Contexts
         public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
         //public DbSet<Account> Account { get; set; }
+
+        public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
@@ -286,6 +288,8 @@ namespace ERP.Contexts
 
         public DbSet<PaymentTerms> PaymentTerms { get; set; }
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
+
+        public DbSet<Colors> Colors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -142,7 +142,7 @@ namespace ERPAPI.Controllers
         /// <param name="_TypeAccount"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<TypeAccount>> Insert([FromBody]TypeAccount _TypeAccount)
+        public async Task<ActionResult<TypeAccount>> Insert([FromBody]TypeAccountDTO _TypeAccount)
         {
             TypeAccount _TypeAccountq = new TypeAccount();
             try
@@ -159,21 +159,24 @@ namespace ERPAPI.Controllers
                         CompanyInfo _co = await _context.CompanyInfo.FirstOrDefaultAsync();
                         Accounting _padreaccount = new Accounting
                         {
-                            AccountName = _TypeAccountq.TypeAccountName,
-                            AccountCode = _TypeAccountq.TypeAccountId.ToString(),
-                            TypeAccountId = _TypeAccountq.TypeAccountId,
-                            IsCash = false,
-                            Description = _TypeAccountq.TypeAccountName,
-                            CompanyInfoId = _co.CompanyInfoId,
 
-                            
-                            UsuarioCreacion = _TypeAccountq.CreatedUser,
-                            UsuarioModificacion = _TypeAccountq.ModifiedUser,
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            ParentAccountId = null,
-                            IdEstado = 1,
-                            Estado = "Activo",
+
+                             AccountName = _TypeAccountq.TypeAccountName,  
+                             AccountCode= _TypeAccountq.TypeAccountId.ToString(),
+                             TypeAccountId = _TypeAccountq.TypeAccountId,
+                             IsCash =false,
+                             Description = _TypeAccountq.TypeAccountName,
+                             CompanyInfoId = _co.CompanyInfoId,
+                             UsuarioCreacion = _TypeAccountq.CreatedUser,
+                             UsuarioModificacion = _TypeAccountq.ModifiedUser,
+                             FechaCreacion = DateTime.Now,
+                             FechaModificacion = DateTime.Now,
+                             ParentAccountId = null,
+                             Totaliza = true,
+                             DeudoraAcreedora = _TypeAccount.DeudoraAcreedora,
+                             IdEstado = 1,
+                             Estado="Activo",
+
                         };
 
 

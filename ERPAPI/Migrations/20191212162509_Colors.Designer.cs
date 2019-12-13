@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191212162509_Colors")]
+    partial class Colors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5917,41 +5919,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("MarcaId");
 
                     b.ToTable("Marca");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Measure", b =>
-                {
-                    b.Property<long>("MeasurelId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<string>("Description");
-
-                    b.Property<decimal?>("High");
-
-                    b.Property<long?>("IdEstado");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.Property<decimal?>("faces");
-
-                    b.Property<decimal?>("quantity");
-
-                    b.Property<decimal?>("thickness");
-
-                    b.Property<decimal?>("width");
-
-                    b.HasKey("MeasurelId");
-
-                    b.ToTable("Measure");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.NumeracionSAR", b =>
