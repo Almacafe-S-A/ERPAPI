@@ -14,30 +14,30 @@ using Newtonsoft.Json;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Colors")]
+    [Route("api/Recipe")]
     [ApiController]
-    public class ColorsController : Controller
+    public class RecipeController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public ColorsController(ILogger<ColorsController> logger, ApplicationDbContext context)
+        public RecipeController(ILogger<RecipeController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Colores, con paginacion
+        /// Obtiene el Listado de Recetas, con paginacion
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetColorsPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetRecipePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<Colors> Items = new List<Colors>();
+            List<Recipe> Items = new List<Recipe>();
             try
             {
-                var query = _context.Colors.AsQueryable();
+                var query = _context.Recipe.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +60,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de Colores, ordenado por codigo de colores
+        /// Obtiene el Listado de Recetas, ordenado por codigo de receta
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetColors()
+        public async Task<IActionResult> GetRecipe()
         {
-            List<Colors> Items = new List<Colors>();
+            List<Recipe> Items = new List<Recipe>();
             try
             {
-                Items = await _context.Colors.OrderBy(b => b.ColorCode).ToListAsync();
+                Items = await _context.Recipe.OrderBy(b => b.RecipeCode).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del Color por medio del Id enviado.
+        /// Obtiene los Datos de la receta por medio del Id enviado.
         /// </summary>
-        /// <param name="ColorsId"></param>
+        /// <param name="RecipeId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ColorsId}")]
-        public async Task<IActionResult> GetColorsById(Int64 ColorsId)
+        [HttpGet("[action]/{RecipeId}")]
+        public async Task<IActionResult> GetRecipeById(Int64 RecipeId)
         {
-            Colors Items = new Colors();
+            Recipe Items = new Recipe();
             try
             {
-                Items = await _context.Colors.Where(q => q.ColorId == ColorsId).FirstOrDefaultAsync();
+                Items = await _context.Recipe.Where(q => q.RecipeId == RecipeId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,17 +107,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el color por el codigo enviado
+        /// Obtiene la receta por el codigo enviado
         /// </summary>
-        /// <param name="ColorsCode"></param>
+        /// <param name="RecipeCode"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ColorsCode}")]
-        public async Task<IActionResult> GetColorsByCode(string ColorsCode)
+        [HttpGet("[action]/{RecipeCode}")]
+        public async Task<IActionResult> GetRecipeByRecipeCode(string RecipeCode)
         {
-            Colors Items = new Colors();
+            Recipe Items = new Recipe();
             try
             {
-                Items = await _context.Colors.Where(q => q.ColorCode == ColorsCode).FirstOrDefaultAsync();
+                Items = await _context.Recipe.Where(q => q.RecipeCode == RecipeCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -131,17 +131,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el color por la descripcion enviada
+        /// Obtiene la receta por la descripcion enviada
         /// </summary>
-        /// <param name="ColorsDescription"></param>
+        /// <param name="RecipeDescription"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ColorsDescription}")]
-        public async Task<IActionResult> GetColorsByDescription(string ColorsDescription)
+        [HttpGet("[action]/{RecipeDescription}")]
+        public async Task<IActionResult> GetRecipeByDescription(string RecipeDescription)
         {
-            Colors Items = new Colors();
+            Recipe Items = new Recipe();
             try
             {
-                Items = await _context.Colors.Where(q => q.Description == ColorsDescription).FirstOrDefaultAsync();
+                Items = await _context.Recipe.Where(q => q.Description == RecipeDescription).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -155,36 +155,36 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta un nuevo color
+        /// Inserta una nueva receta
         /// </summary>
-        /// <param name="_Colors"></param>
+        /// <param name="_Recipe"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Colors>> Insert([FromBody]Colors _Colors)
+        public async Task<ActionResult<Recipe>> Insert([FromBody]Recipe _Recipe)
         {
-            Colors _Colorsq = new Colors();
+            Recipe _Recipeq = new Recipe();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Colorsq = _Colors;
-                        _context.Colors.Add(_Colorsq);
+                        _Recipeq = _Recipe;
+                        _context.Recipe.Add(_Recipeq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Colorsq.ColorId,
-                            DocType = "Colors",
+                            IdOperacion = _Recipeq.RecipeId,
+                            DocType = "Recipe",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Colorsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Recipeq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Colorsq.UsuarioCreacion,
-                            UsuarioModificacion = _Colorsq.UsuarioModificacion,
-                            UsuarioEjecucion = _Colorsq.UsuarioModificacion,
+                            UsuarioCreacion = _Recipeq.UsuarioCreacion,
+                            UsuarioModificacion = _Recipeq.UsuarioModificacion,
+                            UsuarioEjecucion = _Recipeq.UsuarioModificacion,
 
                         });
 
@@ -206,44 +206,44 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Colorsq));
+            return await Task.Run(() => Ok(_Recipeq));
         }
 
         /// <summary>
         /// Actualiza el Color
         /// </summary>
-        /// <param name="_Colors"></param>
+        /// <param name="_Recipe"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Colors>> Update([FromBody]Colors _Colors)
+        public async Task<ActionResult<Recipe>> Update([FromBody]Recipe _Recipe)
         {
-            Colors _Colorsq = _Colors;
+            Recipe _Recipeq = _Recipe;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Colorsq = await (from c in _context.Colors
-                        .Where(q => q.ColorId == _Colors.ColorId)
+                        _Recipeq = await (from c in _context.Recipe
+                        .Where(q => q.RecipeId == _Recipe.RecipeId)
                                           select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_Colorsq).CurrentValues.SetValues((_Colors));
+                        _context.Entry(_Recipeq).CurrentValues.SetValues((_Recipe));
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Colorsq.ColorId,
-                            DocType = "Colors",
+                            IdOperacion = _Recipeq.RecipeId,
+                            DocType = "Recipe",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Colorsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Recipeq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Colorsq.UsuarioCreacion,
-                            UsuarioModificacion = _Colorsq.UsuarioModificacion,
-                            UsuarioEjecucion = _Colorsq.UsuarioModificacion,
+                            UsuarioCreacion = _Recipeq.UsuarioCreacion,
+                            UsuarioModificacion = _Recipeq.UsuarioModificacion,
+                            UsuarioEjecucion = _Recipeq.UsuarioModificacion,
 
                         });
 
@@ -265,43 +265,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Colorsq));
+            return await Task.Run(() => Ok(_Recipeq));
         }
 
         /// <summary>
         /// Elimina un Color       
         /// </summary>
-        /// <param name="_Colors"></param>
+        /// <param name="_Recipe"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Colors _Colors)
+        public async Task<IActionResult> Delete([FromBody]Recipe _Recipe)
         {
-            Colors _Colorsq = new Colors();
+            Recipe _Recipeq = new Recipe();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Colorsq = _context.Colors
-                        .Where(x => x.ColorId == (Int64)_Colors.ColorId)
+                        _Recipeq = _context.Recipe
+                        .Where(x => x.RecipeId == (Int64)_Recipe.RecipeId)
                         .FirstOrDefault();
 
-                        _context.Colors.Remove(_Colorsq);
+                        _context.Recipe.Remove(_Recipeq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Colorsq.ColorId,
-                            DocType = "Colors",
+                            IdOperacion = _Recipeq.RecipeId,
+                            DocType = "Recipe",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Colorsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Recipeq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Colorsq.UsuarioCreacion,
-                            UsuarioModificacion = _Colorsq.UsuarioModificacion,
-                            UsuarioEjecucion = _Colorsq.UsuarioModificacion,
+                            UsuarioCreacion = _Recipeq.UsuarioCreacion,
+                            UsuarioModificacion = _Recipeq.UsuarioModificacion,
+                            UsuarioEjecucion = _Recipeq.UsuarioModificacion,
 
                         });
 
@@ -322,7 +322,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Colorsq));
+            return await Task.Run(() => Ok(_Recipeq));
 
         }
     }
