@@ -57,9 +57,9 @@ namespace ERP.Contexts
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
-        //public DbSet<Account> Account { get; set; }
-
+        public DbSet<InstallmentDelivery> InstallmentDelivery { get; set; }
         public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
+
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
