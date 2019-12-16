@@ -109,15 +109,15 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene la receta por el codigo enviado
         /// </summary>
-        /// <param name="ColorsCode"></param>
+        /// <param name="RecipeCode"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{ColorsCode}")]
-        public async Task<IActionResult> GetColorsByCode(string ColorsCode)
+        [HttpGet("[action]/{RecipeCode}")]
+        public async Task<IActionResult> GetRecipeByRecipeCode(string RecipeCode)
         {
-            Colors Items = new Colors();
+            Recipe Items = new Recipe();
             try
             {
-                Items = await _context.Colors.Where(q => q.ColorCode == ColorsCode).FirstOrDefaultAsync();
+                Items = await _context.Recipe.Where(q => q.RecipeCode == RecipeCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
