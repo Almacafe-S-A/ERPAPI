@@ -251,6 +251,8 @@ namespace ERP.Contexts
 
         public DbSet<Material> Material { get; set; }
         public DbSet<Substratum> Substratum { get; set; }
+
+        public DbSet<Quotation> Quotation { get; set; }
         ///// <summary>
         ////////
         /// <summary>
