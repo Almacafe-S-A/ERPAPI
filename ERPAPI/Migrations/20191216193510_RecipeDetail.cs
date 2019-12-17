@@ -9,24 +9,6 @@ namespace ERPAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "InstallmentDelivery",
-                columns: table => new
-                {
-                    InstallmentDeliveryId = table.Column<long>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Description = table.Column<string>(nullable: true),
-                    IdEstado = table.Column<long>(nullable: true),
-                    CreatedUser = table.Column<string>(nullable: false),
-                    ModifiedUser = table.Column<string>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InstallmentDelivery", x => x.InstallmentDeliveryId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Material",
                 columns: table => new
                 {
