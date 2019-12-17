@@ -82,8 +82,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(5000);
 
-                    b.Property<string>("DeudoraAcreedora");
-
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -106,8 +104,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp")
                         .HasMaxLength(8);
-
-                    b.Property<bool>("Totaliza");
 
                     b.Property<long>("TypeAccountId");
 
@@ -1053,8 +1049,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("AccountManagementId");
-
                     b.Property<string>("AssociatedAccountNumber");
 
                     b.Property<long>("BankId");
@@ -1079,38 +1073,7 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("CheckAccountId");
 
-                    b.HasIndex("AccountManagementId");
-
                     b.ToTable("CheckAccount");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CheckAccountLines", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Address");
-
-                    b.Property<decimal>("Ammount");
-
-                    b.Property<string>("AmountWords");
-
-                    b.Property<long>("CheckAccountId");
-
-                    b.Property<string>("CheckNumber");
-
-                    b.Property<DateTime>("Date");
-
-                    b.Property<string>("PaytoOrderOf");
-
-                    b.Property<string>("Place");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CheckAccountId");
-
-                    b.ToTable("CheckAccountLines");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CierresAccounting", b =>
@@ -1339,29 +1302,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("StateId");
 
                     b.ToTable("City");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Colors", b =>
-                {
-                    b.Property<long>("ColorId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ColorCode");
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("ColorId");
-
-                    b.ToTable("Colors");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Comision", b =>
@@ -7218,47 +7158,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Recipe");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.RecipeDetail", b =>
-                {
-                    b.Property<long>("IngredientCode");
-
-                    b.Property<long>("RecipeId");
-
-                    b.Property<string>("Attachment");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Height");
-
-                    b.Property<long>("MaterialId");
-
-                    b.Property<string>("MaterialType");
-
-                    b.Property<int>("NumCara");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<double>("Thickness");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("Width");
-
-                    b.HasKey("IngredientCode", "RecipeId");
-
-                    b.HasAlternateKey("IngredientCode");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("RecipeDetail");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Reconciliacion", b =>
                 {
                     b.Property<long>("IdReconciliacion")
@@ -8157,9 +8056,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<string>("DeudoraAcreedora")
                         .IsRequired();
 
                     b.Property<DateTime>("ModifiedDate");
@@ -9432,22 +9328,6 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.CheckAccount", b =>
-                {
-                    b.HasOne("ERPAPI.Models.AccountManagement", "AccountManagement")
-                        .WithMany()
-                        .HasForeignKey("AccountManagementId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CheckAccountLines", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CheckAccount", "CheckAccount")
-                        .WithMany()
-                        .HasForeignKey("CheckAccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.CierresAccounting", b =>
                 {
                     b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierreContable")
@@ -10077,14 +9957,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "Tipo")
                         .WithMany()
                         .HasForeignKey("TipoId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.RecipeDetail", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Recipe")
-                        .WithMany("RecipeDetail")
-                        .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>
