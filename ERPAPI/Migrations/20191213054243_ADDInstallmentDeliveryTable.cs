@@ -13,6 +13,7 @@
  version              Date                Author                        Description
 
  ----------           -------------       ---------------               -------------------------------
+ 2.0                  17/12/2019          Marvin.Guillen                Changes to create model
  1.0                  13/12/2019          Marvin.Guillen                Changes to create model
  
 
