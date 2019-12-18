@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191216193510_RecipeDetail")]
-    partial class RecipeDetail
+    [Migration("20191218140818_Material_Status")]
+    partial class Material_Status
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -4979,31 +4979,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("IncomeAndExpensesAccount");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InstallmentDelivery", b =>
-                {
-                    b.Property<long>("InstallmentDeliveryId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate");
-
-                    b.Property<string>("CreatedUser")
-                        .IsRequired();
-
-                    b.Property<string>("Description");
-
-                    b.Property<long?>("IdEstado");
-
-                    b.Property<DateTime>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser")
-                        .IsRequired();
-
-                    b.HasKey("InstallmentDeliveryId");
-
-                    b.ToTable("InstallmentDelivery");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsement", b =>
                 {
                     b.Property<int>("InsuranceEndorsementId")
@@ -6066,9 +6041,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<string>("Estado");
+
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
 
                     b.Property<string>("MaterialCode");
 
@@ -7125,51 +7104,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("PurchaseOrderLine");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Quotation", b =>
-                {
-                    b.Property<long>("QuotationCode")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("BranchCode");
-
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
-                    b.Property<string>("Email");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEmpleado");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("Phone");
-
-                    b.Property<DateTime>("QuotationDate");
-
-                    b.Property<long>("QuotationVersion");
-
-                    b.Property<string>("Representative");
-
-                    b.Property<long?>("TipoId");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("QuotationCode");
-
-                    b.HasIndex("TipoId");
-
-                    b.ToTable("Quotation");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.RecibosCertificado", b =>
                 {
                     b.Property<long>("IdReciboCertificado")
@@ -7191,74 +7125,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("IdReciboCertificado");
 
                     b.ToTable("RecibosCertificado");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Recipe", b =>
-                {
-                    b.Property<long>("RecipeId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Estatus");
-
-                    b.Property<long>("EstatusId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<string>("RecipeCode");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("RecipeId");
-
-                    b.ToTable("Recipe");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.RecipeDetail", b =>
-                {
-                    b.Property<long>("IngredientCode");
-
-                    b.Property<long>("RecipeId");
-
-                    b.Property<string>("Attachment");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<double>("Height");
-
-                    b.Property<long>("MaterialId");
-
-                    b.Property<string>("MaterialType");
-
-                    b.Property<int>("NumCara");
-
-                    b.Property<long>("ProductId");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<double>("Thickness");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<double>("Width");
-
-                    b.HasKey("IngredientCode", "RecipeId");
-
-                    b.HasAlternateKey("IngredientCode");
-
-                    b.HasIndex("RecipeId");
-
-                    b.ToTable("RecipeDetail");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Reconciliacion", b =>
@@ -10071,21 +9937,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
                         .HasForeignKey("UnitOfMeasureId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Quotation", b =>
-                {
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "Tipo")
-                        .WithMany()
-                        .HasForeignKey("TipoId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.RecipeDetail", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Recipe")
-                        .WithMany("RecipeDetail")
-                        .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

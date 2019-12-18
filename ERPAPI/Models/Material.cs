@@ -15,6 +15,10 @@ namespace ERPAPI.Models
         public string MaterialCode { get; set; }
         [Display(Name = "Tipo de Material")]
         public string MaterialType { get; set; }
+
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
+
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioModificacion { get; set; }

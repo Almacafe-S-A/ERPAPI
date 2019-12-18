@@ -14,30 +14,30 @@ using Newtonsoft.Json;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/RecipeDetail")]
+    [Route("api/QuotationDetail")]
     [ApiController]
-    public class RecipeDetailController : Controller
+    public class QuotationDetailController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public RecipeDetailController(ILogger<RecipeDetailController> logger, ApplicationDbContext context)
+        public QuotationDetailController(ILogger<QuotationDetailController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de detalles de recetas, con paginacion
+        /// Obtiene el Listado de detalle de cotizacion, con paginacion
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetRecipeDetailPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetQuotationDetailPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<RecipeDetail> Items = new List<RecipeDetail>();
+            List<QuotationDetail> Items = new List<QuotationDetail>();
             try
             {
-                var query = _context.RecipeDetail.AsQueryable();
+                var query = _context.QuotationDetail.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +60,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de detalle de recetas, ordenado por id de receta
+        /// Obtiene el Listado de detalle de cotizacion, ordenado por codigo de Cotizacion y id
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetRecipeDetail()
+        public async Task<IActionResult> GetQuotationDetail()
         {
-            List<RecipeDetail> Items = new List<RecipeDetail>();
+            List<QuotationDetail> Items = new List<QuotationDetail>();
             try
             {
-                Items = await _context.RecipeDetail.OrderBy(b => b.RecipeId).ToListAsync();
+                Items = await _context.QuotationDetail.OrderBy(b => b.QuotationCode & b.QuotationDetailId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de detalle de receta por medio del Id de receta enviado.
+        /// Obtiene los Datos de detalle de cotizacion por medio del Id enviado.
         /// </summary>
-        /// <param name="RecipeId"></param>
+        /// <param name="QuotationDetailId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{RecipeDetailId}")]
-        public async Task<IActionResult> GetRecipeDetailById(Int64 RecipeId)
+        [HttpGet("[action]/{QuotationDetailId}")]
+        public async Task<IActionResult> GetQuotationDetailById(Int64 QuotationDetailId)
         {
-            RecipeDetail Items = new RecipeDetail();
+            QuotationDetail Items = new QuotationDetail();
             try
             {
-                Items = await _context.RecipeDetail.Where(q => q.RecipeId == RecipeId).FirstOrDefaultAsync();
+                Items = await _context.QuotationDetail.Where(q => q.QuotationDetailId == QuotationDetailId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,18 +107,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el detalle de receta por el codigo enviado y id de receta
+        /// Obtiene el detalle de cotizacion por el codigo enviado
         /// </summary>
-        /// <param name="IngredientCode"></param>
-        /// <param name="RecipeId"></param>
+        /// <param name="QuotationDetailCode"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{RecipeDetailCode}")]
-        public async Task<IActionResult> GetRecipeDetailByCode(Int64 IngredientCode, Int64 RecipeId)
+        [HttpGet("[action]/{QuotationDetailCode}")]
+        public async Task<IActionResult> GetQuotationDetailByCode(Int64 QuotationDetailCode)
         {
-            RecipeDetail Items = new RecipeDetail();
+            QuotationDetail Items = new QuotationDetail();
             try
             {
-                Items = await _context.RecipeDetail.Where(x => x.IngredientCode == IngredientCode && x.RecipeId == RecipeId).FirstOrDefaultAsync();
+                Items = await _context.QuotationDetail.Where(q => q.QuotationCode == QuotationDetailCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -132,36 +131,61 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta un nuevo detalle de receta
+        /// Obtiene el detalle de cotizacion, por medio del id y el codigo de cotizacion
         /// </summary>
-        /// <param name="_RecipeDetail"></param>
+        /// <param name="QuotationDetailId"></param>
+        /// <param name="QuotationCode"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{QuotationDetailDescription}")]
+        public async Task<IActionResult> GetQuotationDetailByDescription(Int64 QuotationDetailId, Int64 QuotationCode)
+        {
+            QuotationDetail Items = new QuotationDetail();
+            try
+            {
+                Items = await _context.QuotationDetail.Where(q => q.QuotationCode == QuotationCode & q.QuotationDetailId == QuotationDetailId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Inserta un nuevo detalle de cotizacion
+        /// </summary>
+        /// <param name="_QuotationDetail"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<RecipeDetail>> Insert([FromBody]RecipeDetail _RecipeDetail)
+        public async Task<ActionResult<QuotationDetail>> Insert([FromBody]QuotationDetail _QuotationDetail)
         {
-            RecipeDetail _RecipeDetailq = new RecipeDetail();
+            QuotationDetail _QuotationDetailq = new QuotationDetail();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _RecipeDetailq = _RecipeDetail;
-                        _context.RecipeDetail.Add(_RecipeDetailq);
+                        _QuotationDetailq = _QuotationDetail;
+                        _context.QuotationDetail.Add(_QuotationDetailq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _RecipeDetailq.IngredientCode,
-                            DocType = "RecipeDetail",
+                            IdOperacion = _QuotationDetailq.QuotationDetailId,
+                            DocType = "QuotationDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_RecipeDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_QuotationDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _RecipeDetailq.UsuarioCreacion,
-                            UsuarioModificacion = _RecipeDetailq.UsuarioModificacion,
-                            UsuarioEjecucion = _RecipeDetailq.UsuarioModificacion,
+                            UsuarioCreacion = _QuotationDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _QuotationDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _QuotationDetailq.UsuarioModificacion,
 
                         });
 
@@ -183,44 +207,44 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_RecipeDetailq));
+            return await Task.Run(() => Ok(_QuotationDetailq));
         }
 
         /// <summary>
-        /// Actualiza el detalle de receta
+        /// Actualiza el Color
         /// </summary>
-        /// <param name="_RecipeDetail"></param>
+        /// <param name="_QuotationDetail"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<RecipeDetail>> Update([FromBody]RecipeDetail _RecipeDetail)
+        public async Task<ActionResult<QuotationDetail>> Update([FromBody]QuotationDetail _QuotationDetail)
         {
-            RecipeDetail _RecipeDetailq = _RecipeDetail;
+            QuotationDetail _QuotationDetailq = _QuotationDetail;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _RecipeDetailq = await (from c in _context.RecipeDetail
-                        .Where(x => x.IngredientCode == (Int64)_RecipeDetail.IngredientCode && x.RecipeId == (Int64)_RecipeDetail.RecipeId)
-                                                select c
+                        _QuotationDetailq = await (from c in _context.QuotationDetail
+                        .Where(q => q.QuotationCode == _QuotationDetail.QuotationCode & q.QuotationDetailId == _QuotationDetail.QuotationDetailId)
+                                          select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_RecipeDetailq).CurrentValues.SetValues((_RecipeDetail));
+                        _context.Entry(_QuotationDetailq).CurrentValues.SetValues((_QuotationDetail));
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _RecipeDetailq.IngredientCode,
-                            DocType = "RecipeDetail",
+                            IdOperacion = _QuotationDetailq.QuotationDetailId,
+                            DocType = "QuotationDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_RecipeDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_QuotationDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _RecipeDetailq.UsuarioCreacion,
-                            UsuarioModificacion = _RecipeDetailq.UsuarioModificacion,
-                            UsuarioEjecucion = _RecipeDetailq.UsuarioModificacion,
+                            UsuarioCreacion = _QuotationDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _QuotationDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _QuotationDetailq.UsuarioModificacion,
 
                         });
 
@@ -242,43 +266,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_RecipeDetailq));
+            return await Task.Run(() => Ok(_QuotationDetailq));
         }
 
         /// <summary>
-        /// Elimina un detalle de receta       
+        /// Elimina un Color       
         /// </summary>
-        /// <param name="_RecipeDetail"></param>
+        /// <param name="_QuotationDetail"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]RecipeDetail _RecipeDetail)
+        public async Task<IActionResult> Delete([FromBody]QuotationDetail _QuotationDetail)
         {
-            RecipeDetail _RecipeDetailq = new RecipeDetail();
+            QuotationDetail _QuotationDetailq = new QuotationDetail();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _RecipeDetailq = _context.RecipeDetail
-                        .Where(x => x.IngredientCode == (Int64)_RecipeDetail.IngredientCode && x.RecipeId == (Int64)_RecipeDetail.RecipeId)
+                        _QuotationDetailq = _context.QuotationDetail
+                        .Where(x => x.QuotationCode == (Int64)_QuotationDetail.QuotationCode & x.QuotationDetailId == _QuotationDetail.QuotationDetailId)
                         .FirstOrDefault();
 
-                        _context.RecipeDetail.Remove(_RecipeDetailq);
+                        _context.QuotationDetail.Remove(_QuotationDetailq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _RecipeDetailq.IngredientCode,
-                            DocType = "RecipeDetail",
+                            IdOperacion = _QuotationDetailq.QuotationDetailId,
+                            DocType = "QuotationDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_RecipeDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_QuotationDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _RecipeDetailq.UsuarioCreacion,
-                            UsuarioModificacion = _RecipeDetailq.UsuarioModificacion,
-                            UsuarioEjecucion = _RecipeDetailq.UsuarioModificacion,
+                            UsuarioCreacion = _QuotationDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _QuotationDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _QuotationDetailq.UsuarioModificacion,
 
                         });
 
@@ -299,7 +323,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_RecipeDetailq));
+            return await Task.Run(() => Ok(_QuotationDetailq));
 
         }
     }

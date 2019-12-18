@@ -253,7 +253,7 @@ namespace ERP.Contexts
         public DbSet<Substratum> Substratum { get; set; }
 
         public DbSet<Quotation> Quotation { get; set; }
-        public DbSet<RecipeDetail> RecipeDetail { get; set; }
+        public DbSet<QuotationDetail> QuotationDetail { get; set; }
         ///// <summary>
         ////////
         /// <summary>
@@ -424,8 +424,8 @@ namespace ERP.Contexts
           //.IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<RecipeDetail>()
-            .HasKey(c => new { c.IngredientCode, c.RecipeId });
+            modelBuilder.Entity<QuotationDetail>()
+            .HasKey(t => new { t.QuotationDetailId, t.QuotationCode });
 
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })
