@@ -253,6 +253,7 @@ namespace ERP.Contexts
         public DbSet<Substratum> Substratum { get; set; }
 
         public DbSet<Quotation> Quotation { get; set; }
+        public DbSet<QuotationDetail> QuotationDetail { get; set; }
         ///// <summary>
         ////////
         /// <summary>
@@ -422,6 +423,9 @@ namespace ERP.Contexts
           .WithMany(c => c.Employees)
           //.IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<QuotationDetail>()
+            .HasKey(t => new { t.QuotationDetailId, t.QuotationCode });
 
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })
