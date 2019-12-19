@@ -299,6 +299,7 @@ namespace ERP.Contexts
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
 
         public DbSet<Colors> Colors { get; set; }
+        public DbSet<ColorsDetailQuotation> ColorsDetailQuotation { get; set; }
 
         public DbSet<Recipe> Recipe { get; set; }
 
