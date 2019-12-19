@@ -1,4 +1,17 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDTipoPlanillas
+-- PROPOSE:  show record TipoPlanillas
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+
+5.0                  18/12/2019          Marvin.Guillen                     Changes of validation to delete recors
+4.0                  16/09/2019          Freddy.Chinchilla                  Changes of Pagination of Controller
+3.0                  13/09/2019          Oscar.Gomez                        Changes of Mantenimeinto de planilla
+2.0                  12/09/2019          Oscar.Gomez                        Changes of employee
+1.0                  11/09/2019          Oscar.Gomez                        Creation of Controller
+********************************************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -107,6 +120,27 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+
+        [HttpGet("[action]/{TipoPlanilla}")]
+        public async Task<IActionResult> GetTipoPlanillasByTipoPlanilla(String TipoPlanilla)
+        {
+            TipoPlanillas Items = new TipoPlanillas();
+            try
+            {
+                Items = await _context.TipoPlanillas.Where(q => q.TipoPlanilla == TipoPlanilla).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
 
 
         /// <summary>
