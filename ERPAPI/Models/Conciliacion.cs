@@ -58,6 +58,14 @@ namespace ERPAPI.Models
         [Display(Name = "UsuarioModificacion")]
         public string UsuarioModificacion { get; set; }
 
+        [Required]
+        [Display(Name="Saldo en Estado de Cuenta de Banco")]
+        public decimal SaldoBanco { get; set; }
+
+        [Required]
+        [Display(Name="Saldo en Libro Mayor de Banco")]
+        public decimal SaldoLibro { get; set; }
+
         public List<ConciliacionLinea> ConciliacionLinea { get; set; }
 
     }

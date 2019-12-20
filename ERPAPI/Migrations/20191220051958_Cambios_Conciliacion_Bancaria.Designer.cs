@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191220051958_Cambios_Conciliacion_Bancaria")]
+    partial class Cambios_Conciliacion_Bancaria
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1523,11 +1525,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<decimal>("SaldoBanco");
-
                     b.Property<double>("SaldoConciliado");
-
-                    b.Property<decimal>("SaldoLibro");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
