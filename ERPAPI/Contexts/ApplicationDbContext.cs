@@ -303,6 +303,8 @@ namespace ERP.Contexts
 
         public DbSet<Recipe> Recipe { get; set; }
 
+        public DbSet<MaterialDetail> MaterialDetail { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
@@ -427,6 +429,9 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<QuotationDetail>()
             .HasKey(t => new { t.QuotationDetailId, t.QuotationCode });
+
+            modelBuilder.Entity<MaterialDetail>()
+            .HasKey(t => new { t.MaterialDetailId, t.MaterialId });
 
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })
