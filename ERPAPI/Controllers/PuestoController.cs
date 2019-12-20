@@ -60,7 +60,22 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
+        //Metodo Busqueda por nombre
+        [HttpGet("[action]/{NombrePuesto}")]
+        public async Task<IActionResult> GetPuestoByName(String NombrePuesto)
+        {
+            Puesto Items = new Puesto();
+            try
+            {
+                Items = await _context.Puesto.Where(q => q.NombrePuesto == NombrePuesto).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
 
         // GET: api/Puesto
         [HttpGet("[action]")]

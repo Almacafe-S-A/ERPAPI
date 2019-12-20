@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191218191036_ColorsDetailQuotation")]
+    partial class ColorsDetailQuotation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1102,17 +1104,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<string>("PaytoOrderOf");
 
                     b.Property<string>("Place");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("Id");
 
@@ -6120,37 +6114,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Material");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.MaterialDetail", b =>
-                {
-                    b.Property<long>("MaterialDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("MaterialId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("MaterialDetailId", "MaterialId");
-
-                    b.HasAlternateKey("MaterialDetailId");
-
-                    b.HasIndex("MaterialId");
-
-                    b.ToTable("MaterialDetail");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Measure", b =>
                 {
                     b.Property<long>("MeasurelId")
@@ -10051,14 +10014,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Kardex")
                         .WithMany("_KardexLine")
                         .HasForeignKey("KardexId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.MaterialDetail", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Material")
-                        .WithMany("MaterialDetail")
-                        .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
