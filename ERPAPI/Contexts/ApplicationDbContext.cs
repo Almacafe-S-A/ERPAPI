@@ -435,6 +435,9 @@ namespace ERP.Contexts
             modelBuilder.Entity<MaterialDetail>()
             .HasKey(t => new { t.MaterialDetailId, t.MaterialId });
 
+            modelBuilder.Entity<Quotation>()
+            .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
+
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })
             //    .IsUnique(true);
