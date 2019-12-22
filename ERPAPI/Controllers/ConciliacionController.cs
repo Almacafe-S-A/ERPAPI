@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using EFCore.BulkExtensions;
+using ERPAPI.Migrations;
 using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
@@ -22,15 +23,12 @@ namespace ERPAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
-        /*public DimensionsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }*/
         public ConciliacionController(ILogger<Conciliacion> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
+
         /// <summary>
         /// Obtiene el Listado de Conciliacion paginado
         /// </summary>
@@ -38,57 +36,64 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetConciliacionPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<Conciliacion> Items = new List<Conciliacion>();
             try
-            {
+            {    
                 var query = _context.Conciliacion.AsQueryable();
                 var totalRegistro = query.Count();
 
-                Items = await query
+                List<Conciliacion> Items = await query
                    .Skip(cantidadDeRegistros * (numeroDePagina - 1))
                    .Take(cantidadDeRegistros)
-                    .ToListAsync();
+                   .ToListAsync();
 
                 Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
                 Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+                return await Task.Run(() => Ok(Items));
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            return await Task.Run(() => Ok(Items));
         }
-
-
-
+        
         /// <summary>
         /// Obtiene los Datos de la Conciliacion en una lista.
         /// </summary>
-
-        // GET: api/Conciliacion
         [HttpGet("[action]")]
         public async Task<IActionResult> GetConciliacion()
-
         {
-            List<Conciliacion> Items = new List<Conciliacion>();
             try
             {
-                Items = await _context.Conciliacion.ToListAsync();
+                List<Conciliacion> Items = await _context.Conciliacion.ToListAsync();
+                return await Task.Run(() => Ok(Items));
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-            //return await _context.Dimensions.ToListAsync();
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetConciliacionConCuenta()
+        {
+            try
+            {
+                var Items = from conciliaciones in _context.Conciliacion
+                    join cuentas in _context.Accounting on conciliaciones.AccountId equals cuentas.AccountId
+                    select new ConciliacionDTO(conciliaciones, cuentas.AccountCode + " - " + cuentas.AccountName);
+                return await Task.Run(() => Ok(Items));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
+
+
+        /*
         /// <summary>
         /// Obtiene los Datos de la JournalEntryLine por medio del Conciliacion.
         /// </summary>
@@ -105,39 +110,27 @@ namespace ERPAPI.Controllers
                 var consulta = from journale in _context.JournalEntry
                                join journalel in _context.JournalEntryLine
                                on journale.JournalEntryId equals journalel.JournalEntryId
-                               //join Currencyl in _context.Currency
-                              // on journale.CurrencyId equals Currencyl.CurrencyId
-                               where journalel.AccountId == _ConciliacionP.AccountId &&
-                                 journale.Date >= _ConciliacionP.DateBeginReconciled &&
-                                 journale.Date <= _ConciliacionP.DateEndReconciled
-                               // group journalel
-                               //  by journalel.JournalEntryId into journalel
+                               where journale.Date >= _ConciliacionP.DateBeginReconciled &&
+                                     journale.Date <= _ConciliacionP.DateEndReconciled
 
-                               select new ConciliacionLinea
-                               {
-                                   Debit = journalel.Debit,
-                                   Credit = journalel.Credit,
-                                   Monto = journalel.Debit - journalel.Credit,
-                                   AccountId = journalel.AccountId,
-                                   JournalEntryId = journalel.JournalEntryId,
-                                   JournalEntryLineId = journalel.JournalEntryLineId,
-                                   FechaCreacion = DateTime.Now,
-                                   FechaModificacion = DateTime.Now,
-                                   UsuarioCreacion = _ConciliacionP.UsuarioCreacion,
-                                   UsuarioModificacion = _ConciliacionP.UsuarioModificacion,
-                                   ConciliacionId = _ConciliacionP.ConciliacionId,
-                                   ReferenceTrans = journale.ReferenceNo,
-                                   VoucherTypeId = (int)journale.VoucherType,
-                                   TransDate = journale.Date,
-                                   CurrencyId = journale.CurrencyId,
-                                   AccountName = journalel.AccountName,
-                                   MonedaName = _context.Currency.Where(
-                                       p => p.CurrencyId ==  journale.CurrencyId
-                                       ).FirstOrDefault().CurrencyName,
-                                   
-
-
-                               };
+                select new ConciliacionLinea
+                {
+                   Debit = journalel.Debit,
+                   Credit = journalel.Credit,
+                   Monto = journalel.Debit - journalel.Credit,
+                   JournalEntryId = journalel.JournalEntryId,
+                   JournalEntryLineId = journalel.JournalEntryLineId,
+                   FechaCreacion = DateTime.Now,
+                   UsuarioCreacion = _ConciliacionP.UsuarioCreacion,
+                   ConciliacionId = _ConciliacionP.ConciliacionId,
+                   ReferenceTrans = journale.ReferenceNo,
+                   VoucherTypeId = (int)journale.VoucherType,
+                   TransDate = journale.Date,
+                   CurrencyId = journale.CurrencyId,
+                   MonedaName = _context.Currency.Where(
+                       p => p.CurrencyId ==  journale.CurrencyId
+                       ).FirstOrDefault().CurrencyName,
+                };
 
                 LineConciliacionLinea = consulta.ToList();
                 using (var transaction = _context.Database.BeginTransaction())
@@ -151,8 +144,8 @@ namespace ERPAPI.Controllers
                             {
                                 IdOperacion = NodeConciline.ConciliacionId,
                                 DocType = "Conciliacion",
-                                ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(NodeConciline, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                ClaseInicial = Newtonsoft.Json.JsonConvert.SerializeObject(NodeConciline, 
+                                    new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                                 Accion = "Insertar",
                                 FechaCreacion = DateTime.Now,
                                 FechaModificacion = DateTime.Now,
@@ -161,39 +154,20 @@ namespace ERPAPI.Controllers
                                 UsuarioEjecucion = NodeConciline.UsuarioModificacion,
 
                             });
-
-
                         }
-
-
-
-
                         await _context.SaveChangesAsync();
-
-                        //   var query = "select sum(debit) as Debito ,SUM(CREDIT) as Credito from dbo.journalentryline jel   "
-                        //   + $"inner join  dbo.journalentry je  on je.journalentryid = jel.journalentryid "
-                        //   + $"where JE.[DATE] >= '{FechaInicio}' and JE.[DATE] < ='{FechaFinal}' and jel.AccountId = {AccountId}"
-                        //  + "  ";
-
                         transaction.Commit();
                     }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
                         _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        throw ex;
-                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                        return BadRequest($"Ocurrio un error:{ex.Message}");
                     }
                 }
-
-
-
-
-
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
@@ -201,8 +175,7 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(LineConciliacionLinea));
         }
-
-
+        
         /// <summary>
         /// Obtiene los Datos de la Conciliacion por medio del Id enviado.
         /// </summary>
@@ -230,6 +203,7 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+
         /// <summary>
         /// Obtiene los Datos de la Conciliacion por medio de la Fecha enviado.
         /// </summary>
@@ -258,9 +232,7 @@ namespace ERPAPI.Controllers
             //return await Task.Run(() => Ok(_Conciliacionq));
             return await Task.Run(() => Ok(Items));
         }
-
-
-
+        
         /// <summary>
         /// Inserta una nueva Conciliacion
         /// </summary>
@@ -485,5 +457,6 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_Conciliacionq));
 
         }
+        */
     }
 }

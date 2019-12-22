@@ -196,11 +196,11 @@ namespace ERPAPI.Controllers
                     {
                         //AccountId = reader["AccountId"] == DBNull.Value ? 0 : Convert.ToInt64(reader["AccountId"]),
 
-                        Items.Add(new ConciliacionDTO
+                        /*Items.Add(new ConciliacionDTO
                         {
                             Debit = Convert.ToDouble(reader["Debito"]),
                             Credit = Convert.ToDouble(reader["Credito"])
-                        });
+                        });*/
 
                         //Items.Add(Convert.ToDouble(reader["CREDITO"]));
                         //Items.Add(

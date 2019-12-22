@@ -48,6 +48,10 @@ namespace ERPAPI.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_ConciliacionLinea_Motivo",
+                table: "ConciliacionLinea");
+
             migrationBuilder.DropColumn(
                 name: "MotivoId",
                 table: "ConciliacionLinea");
@@ -70,14 +74,6 @@ namespace ERPAPI.Migrations
                 principalTable: "ElementoConfiguracion",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
-
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_ConciliacionLinea_Motivo",
-                table: "ConciliacionLinea");
-
-            
-
         }
     }
 }
