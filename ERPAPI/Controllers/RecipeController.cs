@@ -14,30 +14,30 @@ using Newtonsoft.Json;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
+    [Route("api/Recipe")]
     [ApiController]
-    public class AccountManagementController : Controller
+    public class RecipeController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public AccountManagementController(ILogger<AccountManagementController> logger, ApplicationDbContext context)
+        public RecipeController(ILogger<RecipeController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Mantenimiento de cuentas, por paginas
+        /// Obtiene el Listado de Recetas, con paginacion
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagementPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetRecipePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<Recipe> Items = new List<Recipe>();
             try
             {
-                var query = _context.AccountManagement.AsQueryable();
+                var query = _context.Recipe.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +60,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de mantenimiento de cuentas
+        /// Obtiene el Listado de Recetas, ordenado por codigo de receta
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagement()
+        public async Task<IActionResult> GetRecipe()
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<Recipe> Items = new List<Recipe>();
             try
             {
-                Items = await _context.AccountManagement.ToListAsync();
+                Items = await _context.Recipe.OrderBy(b => b.RecipeCode).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene los Datos de la receta por medio del Id enviado.
         /// </summary>
-        /// <param name="AccountManagementId"></param>
+        /// <param name="RecipeId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AccountManagementId}")]
-        public async Task<IActionResult> GetSAccountManagementById(Int64 AccountManagementId)
+        [HttpGet("[action]/{RecipeId}")]
+        public async Task<IActionResult> GetRecipeById(Int64 RecipeId)
         {
-            AccountManagement Items = new AccountManagement();
+            Recipe Items = new Recipe();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.AccountManagementId == AccountManagementId).FirstOrDefaultAsync();
+                Items = await _context.Recipe.Where(q => q.RecipeId == RecipeId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,45 +107,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene la receta por el codigo enviado
         /// </summary>
-        /// <param name="BankId"></param>
+        /// <param name="RecipeCode"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{BankId}")]
-        public async Task<IActionResult> GetAccountManagementByBankId(Int64 BankId)
+        [HttpGet("[action]/{RecipeCode}")]
+        public async Task<IActionResult> GetRecipeByRecipeCode(string RecipeCode)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            Recipe Items = new Recipe();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.BankId == BankId).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-
-
-
-        /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
-        /// </summary>
-        /// <param name="AccountNumber"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{AccountNumber}")]
-        public async Task<IActionResult> GetSAccountManagementByAccountTypeAccountNumber(String AccountNumber)
-        {
-            AccountManagement Items = new AccountManagement();
-            try
-            {
-                Items = await _context.AccountManagement.Where(q => q.AccountNumber == AccountNumber
-                                            ).FirstOrDefaultAsync();
+                Items = await _context.Recipe.Where(q => q.RecipeCode == RecipeCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -159,36 +131,60 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta un nuevo mantenimiento de cuentas
+        /// Obtiene la receta por la descripcion enviada
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="RecipeDescription"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{RecipeDescription}")]
+        public async Task<IActionResult> GetRecipeByDescription(string RecipeDescription)
+        {
+            Recipe Items = new Recipe();
+            try
+            {
+                Items = await _context.Recipe.Where(q => q.Description == RecipeDescription).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Inserta una nueva receta
+        /// </summary>
+        /// <param name="_Recipe"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<AccountManagement>> Insert([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<Recipe>> Insert([FromBody]Recipe _Recipe)
         {
-            AccountManagement AccountManagementq = new AccountManagement();
+            Recipe _Recipeq = new Recipe();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        AccountManagementq = _AccountManagement;
-                        _context.AccountManagement.Add(AccountManagementq);
+                        _Recipeq = _Recipe;
+                        _context.Recipe.Add(_Recipeq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _Recipeq.RecipeId,
+                            DocType = "Recipe",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Recipeq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _Recipeq.UsuarioCreacion,
+                            UsuarioModificacion = _Recipeq.UsuarioModificacion,
+                            UsuarioEjecucion = _Recipeq.UsuarioModificacion,
 
                         });
 
@@ -210,45 +206,44 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(AccountManagementq));
+            return await Task.Run(() => Ok(_Recipeq));
         }
 
         /// <summary>
-        /// Actualiza el mantenimiento de cuentas
+        /// Actualiza el Color
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_Recipe"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<AccountManagement>> Update([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<Recipe>> Update([FromBody]Recipe _Recipe)
         {
-            AccountManagement _AccountManagementq = _AccountManagement;
+            Recipe _Recipeq = _Recipe;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = await (from c in _context.AccountManagement
-                        .Where(q => q.AccountManagementId == _AccountManagement.AccountManagementId)
-                                                   select c
+                        _Recipeq = await (from c in _context.Recipe
+                        .Where(q => q.RecipeId == _Recipe.RecipeId)
+                                          select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_AccountManagementq).CurrentValues.SetValues((_AccountManagement));
-
+                        _context.Entry(_Recipeq).CurrentValues.SetValues((_Recipe));
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _Recipeq.RecipeId,
+                            DocType = "Recipe",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Recipeq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _Recipeq.UsuarioCreacion,
+                            UsuarioModificacion = _Recipeq.UsuarioModificacion,
+                            UsuarioEjecucion = _Recipeq.UsuarioModificacion,
 
                         });
 
@@ -270,43 +265,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_Recipeq));
         }
 
         /// <summary>
-        /// Elimina un mantenimiento de cuentas
+        /// Elimina un Color       
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_Recipe"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]AccountManagement _AccountManagement)
+        public async Task<IActionResult> Delete([FromBody]Recipe _Recipe)
         {
-            AccountManagement _AccountManagementq = new AccountManagement();
+            Recipe _Recipeq = new Recipe();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = _context.AccountManagement
-                        .Where(x => x.AccountManagementId == (Int64)_AccountManagement.AccountManagementId)
+                        _Recipeq = _context.Recipe
+                        .Where(x => x.RecipeId == (Int64)_Recipe.RecipeId)
                         .FirstOrDefault();
 
-                        _context.AccountManagement.Remove(_AccountManagementq);
+                        _context.Recipe.Remove(_Recipeq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _Recipeq.RecipeId,
+                            DocType = "Recipe",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Recipeq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _Recipeq.UsuarioCreacion,
+                            UsuarioModificacion = _Recipeq.UsuarioModificacion,
+                            UsuarioEjecucion = _Recipeq.UsuarioModificacion,
 
                         });
 
@@ -327,7 +322,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_Recipeq));
 
         }
     }

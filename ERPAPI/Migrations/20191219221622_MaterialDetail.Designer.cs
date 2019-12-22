@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191219221622_MaterialDetail")]
+    partial class MaterialDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1102,17 +1104,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<string>("PaytoOrderOf");
 
                     b.Property<string>("Place");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("Id");
 
@@ -5363,7 +5357,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("TargetBranchId");
 
-                    b.Property<long>("TipoDocumentoId");
+                    b.Property<int>("TipoDocumentoId");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -5386,8 +5380,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("SourceBranchId");
 
                     b.HasIndex("TargetBranchId");
-
-                    b.HasIndex("TipoDocumentoId");
 
                     b.ToTable("InventoryTransfer");
                 });
@@ -7197,9 +7189,9 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.Quotation", b =>
                 {
-                    b.Property<long>("QuotationCode");
-
-                    b.Property<long>("QuotationVersion");
+                    b.Property<long>("QuotationCode")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("BranchCode");
 
@@ -7223,6 +7215,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("QuotationDate");
 
+                    b.Property<long>("QuotationVersion");
+
                     b.Property<string>("Representative");
 
                     b.Property<long?>("TipoId");
@@ -7231,9 +7225,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion");
 
-                    b.HasKey("QuotationCode", "QuotationVersion");
-
-                    b.HasAlternateKey("QuotationCode");
+                    b.HasKey("QuotationCode");
 
                     b.HasIndex("TipoId");
 
@@ -7330,7 +7322,7 @@ namespace ERPAPI.Migrations
 
                     b.HasAlternateKey("QuotationDetailId");
 
-                    b.HasIndex("QuotationCode", "QuotationVersion");
+                    b.HasIndex("QuotationCode");
 
                     b.ToTable("QuotationDetail");
                 });
@@ -9960,6 +9952,11 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("EstadoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("ERPAPI.Models.TiposDocumento", "TiposDocumento")
+                        .WithMany()
+                        .HasForeignKey("EstadoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("ERPAPI.Models.Employees", "GeneratedbyEmployee")
                         .WithMany()
                         .HasForeignKey("GeneratedbyEmployeeId")
@@ -9983,11 +9980,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Branch", "TargetBranch")
                         .WithMany()
                         .HasForeignKey("TargetBranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.TiposDocumento", "TiposDocumento")
-                        .WithMany()
-                        .HasForeignKey("TipoDocumentoId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -10217,7 +10209,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.Quotation")
                         .WithMany("QuotationDetail")
-                        .HasForeignKey("QuotationCode", "QuotationVersion")
+                        .HasForeignKey("QuotationCode")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

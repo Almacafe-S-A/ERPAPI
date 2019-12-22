@@ -14,30 +14,30 @@ using Newtonsoft.Json;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
+    [Route("api/Colors")]
     [ApiController]
-    public class AccountManagementController : Controller
+    public class ColorsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public AccountManagementController(ILogger<AccountManagementController> logger, ApplicationDbContext context)
+        public ColorsController(ILogger<ColorsController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Mantenimiento de cuentas, por paginas
+        /// Obtiene el Listado de Colores, con paginacion
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagementPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetColorsPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<Colors> Items = new List<Colors>();
             try
             {
-                var query = _context.AccountManagement.AsQueryable();
+                var query = _context.Colors.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +60,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de mantenimiento de cuentas
+        /// Obtiene el Listado de Colores, ordenado por codigo de colores
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagement()
+        public async Task<IActionResult> GetColors()
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<Colors> Items = new List<Colors>();
             try
             {
-                Items = await _context.AccountManagement.ToListAsync();
+                Items = await _context.Colors.OrderBy(b => b.ColorCode).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene los Datos del Color por medio del Id enviado.
         /// </summary>
-        /// <param name="AccountManagementId"></param>
+        /// <param name="ColorsId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AccountManagementId}")]
-        public async Task<IActionResult> GetSAccountManagementById(Int64 AccountManagementId)
+        [HttpGet("[action]/{ColorsId}")]
+        public async Task<IActionResult> GetColorsById(Int64 ColorsId)
         {
-            AccountManagement Items = new AccountManagement();
+            Colors Items = new Colors();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.AccountManagementId == AccountManagementId).FirstOrDefaultAsync();
+                Items = await _context.Colors.Where(q => q.ColorId == ColorsId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,45 +107,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene el color por el codigo enviado
         /// </summary>
-        /// <param name="BankId"></param>
+        /// <param name="ColorsCode"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{BankId}")]
-        public async Task<IActionResult> GetAccountManagementByBankId(Int64 BankId)
+        [HttpGet("[action]/{ColorsCode}")]
+        public async Task<IActionResult> GetColorsByCode(string ColorsCode)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            Colors Items = new Colors();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.BankId == BankId).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-
-
-
-        /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
-        /// </summary>
-        /// <param name="AccountNumber"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{AccountNumber}")]
-        public async Task<IActionResult> GetSAccountManagementByAccountTypeAccountNumber(String AccountNumber)
-        {
-            AccountManagement Items = new AccountManagement();
-            try
-            {
-                Items = await _context.AccountManagement.Where(q => q.AccountNumber == AccountNumber
-                                            ).FirstOrDefaultAsync();
+                Items = await _context.Colors.Where(q => q.ColorCode == ColorsCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -159,36 +131,60 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta un nuevo mantenimiento de cuentas
+        /// Obtiene el color por la descripcion enviada
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="ColorsDescription"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ColorsDescription}")]
+        public async Task<IActionResult> GetColorsByDescription(string ColorsDescription)
+        {
+            Colors Items = new Colors();
+            try
+            {
+                Items = await _context.Colors.Where(q => q.Description == ColorsDescription).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Inserta un nuevo color
+        /// </summary>
+        /// <param name="_Colors"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<AccountManagement>> Insert([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<Colors>> Insert([FromBody]Colors _Colors)
         {
-            AccountManagement AccountManagementq = new AccountManagement();
+            Colors _Colorsq = new Colors();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        AccountManagementq = _AccountManagement;
-                        _context.AccountManagement.Add(AccountManagementq);
+                        _Colorsq = _Colors;
+                        _context.Colors.Add(_Colorsq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _Colorsq.ColorId,
+                            DocType = "Colors",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Colorsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _Colorsq.UsuarioCreacion,
+                            UsuarioModificacion = _Colorsq.UsuarioModificacion,
+                            UsuarioEjecucion = _Colorsq.UsuarioModificacion,
 
                         });
 
@@ -210,45 +206,44 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(AccountManagementq));
+            return await Task.Run(() => Ok(_Colorsq));
         }
 
         /// <summary>
-        /// Actualiza el mantenimiento de cuentas
+        /// Actualiza el Color
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_Colors"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<AccountManagement>> Update([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<Colors>> Update([FromBody]Colors _Colors)
         {
-            AccountManagement _AccountManagementq = _AccountManagement;
+            Colors _Colorsq = _Colors;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = await (from c in _context.AccountManagement
-                        .Where(q => q.AccountManagementId == _AccountManagement.AccountManagementId)
-                                                   select c
+                        _Colorsq = await (from c in _context.Colors
+                        .Where(q => q.ColorId == _Colors.ColorId)
+                                          select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_AccountManagementq).CurrentValues.SetValues((_AccountManagement));
-
+                        _context.Entry(_Colorsq).CurrentValues.SetValues((_Colors));
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _Colorsq.ColorId,
+                            DocType = "Colors",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Colorsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _Colorsq.UsuarioCreacion,
+                            UsuarioModificacion = _Colorsq.UsuarioModificacion,
+                            UsuarioEjecucion = _Colorsq.UsuarioModificacion,
 
                         });
 
@@ -270,43 +265,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_Colorsq));
         }
 
         /// <summary>
-        /// Elimina un mantenimiento de cuentas
+        /// Elimina un Color       
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_Colors"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]AccountManagement _AccountManagement)
+        public async Task<IActionResult> Delete([FromBody]Colors _Colors)
         {
-            AccountManagement _AccountManagementq = new AccountManagement();
+            Colors _Colorsq = new Colors();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = _context.AccountManagement
-                        .Where(x => x.AccountManagementId == (Int64)_AccountManagement.AccountManagementId)
+                        _Colorsq = _context.Colors
+                        .Where(x => x.ColorId == (Int64)_Colors.ColorId)
                         .FirstOrDefault();
 
-                        _context.AccountManagement.Remove(_AccountManagementq);
+                        _context.Colors.Remove(_Colorsq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _Colorsq.ColorId,
+                            DocType = "Colors",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Colorsq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _Colorsq.UsuarioCreacion,
+                            UsuarioModificacion = _Colorsq.UsuarioModificacion,
+                            UsuarioEjecucion = _Colorsq.UsuarioModificacion,
 
                         });
 
@@ -327,7 +322,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_Colorsq));
 
         }
     }

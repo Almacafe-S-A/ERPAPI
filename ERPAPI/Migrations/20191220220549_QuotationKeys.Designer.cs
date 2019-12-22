@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191220220549_QuotationKeys")]
+    partial class QuotationKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5363,7 +5365,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("TargetBranchId");
 
-                    b.Property<long>("TipoDocumentoId");
+                    b.Property<int>("TipoDocumentoId");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -5386,8 +5388,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("SourceBranchId");
 
                     b.HasIndex("TargetBranchId");
-
-                    b.HasIndex("TipoDocumentoId");
 
                     b.ToTable("InventoryTransfer");
                 });
@@ -9960,6 +9960,11 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("EstadoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("ERPAPI.Models.TiposDocumento", "TiposDocumento")
+                        .WithMany()
+                        .HasForeignKey("EstadoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("ERPAPI.Models.Employees", "GeneratedbyEmployee")
                         .WithMany()
                         .HasForeignKey("GeneratedbyEmployeeId")
@@ -9983,11 +9988,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Branch", "TargetBranch")
                         .WithMany()
                         .HasForeignKey("TargetBranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.TiposDocumento", "TiposDocumento")
-                        .WithMany()
-                        .HasForeignKey("TipoDocumentoId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

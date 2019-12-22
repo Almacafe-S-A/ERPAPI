@@ -13,31 +13,28 @@ using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AccountManagementController : Controller
+    public class MaterialDetailController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public AccountManagementController(ILogger<AccountManagementController> logger, ApplicationDbContext context)
+        public MaterialDetailController(ILogger<MaterialDetailController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Mantenimiento de cuentas, por paginas
+        /// Obtiene el Listado de detalle de materiales, con paginacion
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagementPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetMaterialDetailPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<MaterialDetail> Items = new List<MaterialDetail>();
             try
             {
-                var query = _context.AccountManagement.AsQueryable();
+                var query = _context.MaterialDetail.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +57,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de mantenimiento de cuentas
+        /// Obtiene el Listado de detalle de materiales, ordenado por id de material
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagement()
+        public async Task<IActionResult> GetMaterialDetail()
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<MaterialDetail> Items = new List<MaterialDetail>();
             try
             {
-                Items = await _context.AccountManagement.ToListAsync();
+                Items = await _context.MaterialDetail.OrderBy(b => b.MaterialId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +80,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene los Datos del detalle de materiales por medio del Id enviado.
         /// </summary>
-        /// <param name="AccountManagementId"></param>
+        /// <param name="MaterialDetailId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AccountManagementId}")]
-        public async Task<IActionResult> GetSAccountManagementById(Int64 AccountManagementId)
+        [HttpGet("[action]/{MaterialDetailId}")]
+        public async Task<IActionResult> GetMaterialDetailById(Int64 MaterialDetailId)
         {
-            AccountManagement Items = new AccountManagement();
+            MaterialDetail Items = new MaterialDetail();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.AccountManagementId == AccountManagementId).FirstOrDefaultAsync();
+                Items = await _context.MaterialDetail.Where(q => q.MaterialDetailId == MaterialDetailId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,45 +104,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene el detalle de materiales por el id del material enviado
         /// </summary>
-        /// <param name="BankId"></param>
+        /// <param name="MaterialId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{BankId}")]
-        public async Task<IActionResult> GetAccountManagementByBankId(Int64 BankId)
+        [HttpGet("[action]/{MaterialDetailCode}")]
+        public async Task<IActionResult> GetMaterialDetailByCode(Int64 MaterialId)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            MaterialDetail Items = new MaterialDetail();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.BankId == BankId).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-
-
-
-        /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
-        /// </summary>
-        /// <param name="AccountNumber"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{AccountNumber}")]
-        public async Task<IActionResult> GetSAccountManagementByAccountTypeAccountNumber(String AccountNumber)
-        {
-            AccountManagement Items = new AccountManagement();
-            try
-            {
-                Items = await _context.AccountManagement.Where(q => q.AccountNumber == AccountNumber
-                                            ).FirstOrDefaultAsync();
+                Items = await _context.MaterialDetail.Where(q => q.MaterialId == MaterialId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -159,36 +128,60 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta un nuevo mantenimiento de cuentas
+        /// Obtiene el detalle de materiales por la descripcion enviada
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="MaterialDetailDescription"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{MaterialDetailDescription}")]
+        public async Task<IActionResult> GetMaterialDetailByDescription(string MaterialDetailDescription)
+        {
+            MaterialDetail Items = new MaterialDetail();
+            try
+            {
+                Items = await _context.MaterialDetail.Where(q => q.Description == MaterialDetailDescription).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Inserta un nuevo detalle de materiales
+        /// </summary>
+        /// <param name="_MaterialDetail"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<AccountManagement>> Insert([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<MaterialDetail>> Insert([FromBody]MaterialDetail _MaterialDetail)
         {
-            AccountManagement AccountManagementq = new AccountManagement();
+            MaterialDetail _MaterialDetailq = new MaterialDetail();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        AccountManagementq = _AccountManagement;
-                        _context.AccountManagement.Add(AccountManagementq);
+                        _MaterialDetailq = _MaterialDetail;
+                        _context.MaterialDetail.Add(_MaterialDetailq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _MaterialDetailq.MaterialDetailId,
+                            DocType = "MaterialDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_MaterialDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _MaterialDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _MaterialDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _MaterialDetailq.UsuarioModificacion,
 
                         });
 
@@ -210,45 +203,44 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(AccountManagementq));
+            return await Task.Run(() => Ok(_MaterialDetailq));
         }
 
         /// <summary>
-        /// Actualiza el mantenimiento de cuentas
+        /// Actualiza el detalle de materiales
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_MaterialDetail"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<AccountManagement>> Update([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<MaterialDetail>> Update([FromBody]MaterialDetail _MaterialDetail)
         {
-            AccountManagement _AccountManagementq = _AccountManagement;
+            MaterialDetail _MaterialDetailq = _MaterialDetail;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = await (from c in _context.AccountManagement
-                        .Where(q => q.AccountManagementId == _AccountManagement.AccountManagementId)
-                                                   select c
+                        _MaterialDetailq = await (from c in _context.MaterialDetail
+                        .Where(q => q.MaterialDetailId == _MaterialDetail.MaterialDetailId)
+                                          select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_AccountManagementq).CurrentValues.SetValues((_AccountManagement));
-
+                        _context.Entry(_MaterialDetailq).CurrentValues.SetValues((_MaterialDetail));
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _MaterialDetailq.MaterialDetailId,
+                            DocType = "MaterialDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_MaterialDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _MaterialDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _MaterialDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _MaterialDetailq.UsuarioModificacion,
 
                         });
 
@@ -270,43 +262,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_MaterialDetailq));
         }
 
         /// <summary>
-        /// Elimina un mantenimiento de cuentas
+        /// Elimina un detalle de materiales       
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_MaterialDetail"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]AccountManagement _AccountManagement)
+        public async Task<IActionResult> Delete([FromBody]MaterialDetail _MaterialDetail)
         {
-            AccountManagement _AccountManagementq = new AccountManagement();
+            MaterialDetail _MaterialDetailq = new MaterialDetail();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = _context.AccountManagement
-                        .Where(x => x.AccountManagementId == (Int64)_AccountManagement.AccountManagementId)
+                        _MaterialDetailq = _context.MaterialDetail
+                        .Where(x => x.MaterialDetailId == (Int64)_MaterialDetail.MaterialDetailId)
                         .FirstOrDefault();
 
-                        _context.AccountManagement.Remove(_AccountManagementq);
+                        _context.MaterialDetail.Remove(_MaterialDetailq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _MaterialDetailq.MaterialDetailId,
+                            DocType = "MaterialDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_MaterialDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _MaterialDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _MaterialDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _MaterialDetailq.UsuarioModificacion,
 
                         });
 
@@ -327,7 +319,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_MaterialDetailq));
 
         }
     }
