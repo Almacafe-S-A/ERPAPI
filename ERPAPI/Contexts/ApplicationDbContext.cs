@@ -307,6 +307,15 @@ namespace ERP.Contexts
 
         public DbSet<MaterialDetail> MaterialDetail { get; set; }
 
+        // Gestion de Contratos para Modulo CxC
+
+        public DbSet<Contrato> Contrato { get; set; }
+        public DbSet<Contrato_detalle> Contrato_detalle { get; set; }
+
+        public DbSet<Contrato_plan_pagos> Contrato_plan_pagos { get; set; }
+        public DbSet<Contrato_movimientos> Contrato_movimientos { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
@@ -322,6 +331,11 @@ namespace ERP.Contexts
             modelBuilder.Entity<VendorProduct>()
            .HasIndex(p => new { p.ProductId,p.VendorId })
            .IsUnique(true);
+
+
+            modelBuilder.Entity<Contrato_plan_pagos>().HasKey(t => new { t.Nro_cuota, t.ContratoId });
+
+
 
             base.OnModelCreating(modelBuilder);
 

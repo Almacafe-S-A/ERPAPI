@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191222221906_Contratos")]
+    partial class Contratos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1531,11 +1533,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<decimal>("SaldoBanco");
-
                     b.Property<double>("SaldoConciliado");
-
-                    b.Property<decimal>("SaldoLibro");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
@@ -1554,6 +1552,10 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<long>("AccountId");
+
+                    b.Property<string>("AccountName");
+
                     b.Property<long>("CheknumberId");
 
                     b.Property<int>("ConciliacionId");
@@ -1563,6 +1565,8 @@ namespace ERPAPI.Migrations
                     b.Property<int>("CurrencyId");
 
                     b.Property<double>("Debit");
+
+                    b.Property<long?>("ElementoConfiguracion");
 
                     b.Property<DateTime>("FechaCreacion");
 
@@ -1577,20 +1581,20 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Monto");
 
-                    b.Property<long?>("MotivoId");
-
                     b.Property<bool>("Reconciled");
 
                     b.Property<string>("ReferenceTrans");
 
-                    b.Property<string>("ReferenciaBancaria");
+                    b.Property<string>("ReferenciaBancaria")
+                        .IsRequired();
 
                     b.Property<DateTime>("TransDate");
 
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
 
-                    b.Property<string>("UsuarioModificacion");
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
 
                     b.Property<long>("VoucherTypeId");
 
@@ -1598,7 +1602,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("ConciliacionId");
 
-                    b.HasIndex("MotivoId");
+                    b.HasIndex("ElementoConfiguracion");
 
                     b.ToTable("ConciliacionLinea");
                 });
@@ -4527,6 +4531,41 @@ namespace ERPAPI.Migrations
                     b.ToTable("GeneralLedgerHeader");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
+                {
+                    b.Property<long>("GeneralLedgerHeaderId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AccountId");
+
+                    b.Property<long?>("AccountId1");
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<int>("DrCr");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long?>("GeneralLedgerHeaderId1");
+
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
+
+                    b.HasKey("GeneralLedgerHeaderId");
+
+                    b.HasIndex("AccountId1");
+
+                    b.HasIndex("GeneralLedgerHeaderId1");
+
+                    b.ToTable("GeneralLedgerLine");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.GoodsDelivered", b =>
                 {
                     b.Property<long>("GoodsDeliveredId")
@@ -6334,20 +6373,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("MeasurelId");
 
                     b.ToTable("Measure");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.MotivoConciliacion", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Nombre")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MotivosConciliacion");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.NumeracionSAR", b =>
@@ -9795,9 +9820,9 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("ConciliacionId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.MotivoConciliacion", "MotivoConciliacion")
+                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
-                        .HasForeignKey("MotivoId");
+                        .HasForeignKey("ElementoConfiguracion");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Contrato", b =>
@@ -10082,6 +10107,17 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("IdEstado")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Accounting", "Account")
+                        .WithMany("GeneralLedgerLines")
+                        .HasForeignKey("AccountId1");
+
+                    b.HasOne("ERPAPI.Models.GeneralLedgerHeader", "GeneralLedgerHeader")
+                        .WithMany()
+                        .HasForeignKey("GeneralLedgerHeaderId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDeliveredLine", b =>
