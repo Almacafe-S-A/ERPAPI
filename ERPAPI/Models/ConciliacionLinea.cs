@@ -15,7 +15,7 @@ namespace ERPAPI.Models
 
         [ForeignKey("MotivoId")]
         [Display(Name = "Motivo Transacción")]
-        public MotivoConciliacion MotivoConciliacion { get; set; }
+        public int? MotivoId { get; set; }
 
         [Display(Name = "Id Conciliacion")]
         public int ConciliacionId { get; set; }
@@ -50,7 +50,7 @@ namespace ERPAPI.Models
         public Int64 JournalEntryLineId { get; set; }
 
         [Display(Name = "Tipos de Voucher/Documento")]
-        public Int64 VoucherTypeId { get; set; }
+        public Int64? VoucherTypeId { get; set; }
 
         [Display(Name = "Conciliado")]
         public bool Reconciled { get; set; }

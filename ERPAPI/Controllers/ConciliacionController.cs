@@ -75,6 +75,21 @@ namespace ERPAPI.Controllers
             }
         }
 
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetConciliacionById([FromRoute(Name = "Id")] Int64 id)
+        {
+            try
+            {
+                Conciliacion conciliacion = await _context.Conciliacion.Where(c=> c.ConciliacionId == id).FirstOrDefaultAsync();
+                return await Task.Run(() => Ok(conciliacion));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetConciliacionConCuenta()
         {
@@ -232,7 +247,7 @@ namespace ERPAPI.Controllers
             //return await Task.Run(() => Ok(_Conciliacionq));
             return await Task.Run(() => Ok(Items));
         }
-        
+        */
         /// <summary>
         /// Inserta una nueva Conciliacion
         /// </summary>
@@ -240,76 +255,39 @@ namespace ERPAPI.Controllers
         /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<Conciliacion>> Insert([FromBody]Conciliacion _Conciliacion)
-        {
-
-            Conciliacion _Conciliacionq = new Conciliacion();
+        {   
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
+                        foreach (var linea in _Conciliacion.ConciliacionLinea)
+                        {
+                            if (linea.MotivoId == 0)
+                            {
+                                linea.MotivoId = null;
+                            }
 
-                        _Conciliacionq = _Conciliacion;
-                        _context.Conciliacion.Add(_Conciliacionq);
-                        _Conciliacionq.ConciliacionLinea = new List<ConciliacionLinea>();
+                            linea.VoucherTypeId = null;
+                        }
+                        _context.Conciliacion.Add(_Conciliacion);
                         //await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Conciliacionq.ConciliacionId,
+                            IdOperacion = _Conciliacion.ConciliacionId,
                             DocType = "Conciliacion",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Conciliacionq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_Conciliacion, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Conciliacionq.UsuarioCreacion,
-                            UsuarioModificacion = _Conciliacionq.UsuarioModificacion,
-                            UsuarioEjecucion = _Conciliacionq.UsuarioModificacion,
-
+                            UsuarioCreacion = _Conciliacion.UsuarioCreacion,
+                            UsuarioModificacion = _Conciliacion.UsuarioModificacion,
+                            UsuarioEjecucion = _Conciliacion.UsuarioModificacion,
                         });
 
                         await _context.SaveChangesAsync();
-                        if (_Conciliacionq.ConciliacionLinea == null)
-                {
-                    List<ConciliacionLinea> ArrayConciliacionLine = new List<ConciliacionLinea>();
-                    //JournalEntryController JEcontroller = new JournalEntryController();
-                    var arraylist = await GetJournalEntryByDateAccount(_Conciliacionq);
-                    if (arraylist != null)
-                        { 
-                            _Conciliacionq.ConciliacionLinea = ((List<ConciliacionLinea>)arraylist);
-                                foreach (var item in _Conciliacionq.ConciliacionLinea)
-                                {
-                                    item.ConciliacionId = _Conciliacionq.ConciliacionId;
-                                    item.FechaCreacion = _Conciliacionq.FechaCreacion;
-                                    item.FechaModificacion = _Conciliacionq.FechaModificacion;
-                                    item.UsuarioCreacion = _Conciliacionq.UsuarioCreacion;
-                                    item.UsuarioModificacion = _Conciliacionq.UsuarioModificacion;
-
-                                    _context.ConciliacionLinea.Add(item);
-
-                                    BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
-                                    {
-                                        IdOperacion = item.ConciliacionLineaId,
-                                        DocType = "ConciliacionLinea",
-                                        ClaseInicial =
-                                          Newtonsoft.Json.JsonConvert.SerializeObject(item, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                        Accion = "Insertar",
-                                        FechaCreacion = DateTime.Now,
-                                        FechaModificacion = DateTime.Now,
-                                        UsuarioCreacion = item.UsuarioCreacion,
-                                        UsuarioModificacion = item.UsuarioModificacion,
-                                        UsuarioEjecucion = item.UsuarioModificacion,
-
-                                    });
-
-                                }
-                
-                        await _context.SaveChangesAsync();
-                       }
-                    }
-
-    
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -329,9 +307,9 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Conciliacionq));
+            return await Task.Run(() => Ok(_Conciliacion));
         }
-
+        /*
         /// <summary>
         /// Actualiza la Conciliacion
         /// </summary>

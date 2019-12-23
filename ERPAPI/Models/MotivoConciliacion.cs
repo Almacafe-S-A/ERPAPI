@@ -11,7 +11,7 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
-        public long Id { get; set; }
+        public long MotivoId { get; set; }
 
         [Required]
         [Display(Name="Nombre")]

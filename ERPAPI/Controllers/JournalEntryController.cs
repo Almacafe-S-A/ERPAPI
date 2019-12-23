@@ -429,7 +429,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<JournalEntryLine>>> GetLineasAsientoContableCuentaRangoFechas([FromQuery(Name = "CodigoCuenta")]Int64 codigoCuenta,
+        public async Task<ActionResult<List<JournalEntryLineDTO>>> GetLineasAsientoContableCuentaRangoFechas([FromQuery(Name = "CodigoCuenta")]Int64 codigoCuenta,
             [FromQuery(Name = "FechaInicial")]DateTime fechaInicial, [FromQuery(Name = "FechaFinal")]DateTime fechaFinal)
         {
             try
@@ -437,7 +437,7 @@ namespace ERPAPI.Controllers
                 var entradas = (from lineas in _context.JournalEntryLine
                     join cabeza in _context.JournalEntry on lineas.JournalEntryId equals cabeza.JournalEntryId
                     where cabeza.Date >= fechaInicial && cabeza.Date <= fechaFinal.AddDays(1).AddTicks(-1) && lineas.AccountId == codigoCuenta
-                    select lineas).ToList();
+                    select new JournalEntryLineDTO(lineas, cabeza.Date)).ToList();
                 return await Task.Run(() => Ok(entradas));
             }
             catch (Exception ex)

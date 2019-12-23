@@ -66,6 +66,38 @@ namespace ERPAPI.Models
 
     }
 
+    public class JournalEntryLineDTO : JournalEntryLine
+    {
+        public JournalEntryLineDTO()
+        {
+        }
+
+        public JournalEntryLineDTO(JournalEntryLine origen, DateTime fechaTransaccion)
+        {
+            JournalEntryLineId = origen.JournalEntryLineId;
+            JournalEntryId = origen.JournalEntryId;
+            CostCenterId = origen.CostCenterId;
+            CostCenterName = origen.CostCenterName;
+            Description = origen.Description;
+            AccountId = origen.AccountId;
+            AccountName = origen.AccountName;
+            Debit = origen.Debit;
+            Credit = origen.Credit;
+            DebitSy = origen.DebitSy;
+            CreditSy = origen.CreditSy;
+            DebitME = origen.DebitME;
+            CreditME = origen.CreditME;
+            Memo = origen.Memo;
+            CreatedUser = origen.CreatedUser;
+            ModifiedUser = origen.ModifiedUser;
+            CreatedDate = origen.CreatedDate;
+            ModifiedDate = origen.ModifiedDate;
+            FechaTransaccion = fechaTransaccion;
+        }
+
+        public DateTime FechaTransaccion { get; set; }
+    }
+
 
 
 }
