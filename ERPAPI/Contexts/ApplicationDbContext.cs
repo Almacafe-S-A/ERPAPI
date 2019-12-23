@@ -282,6 +282,8 @@ namespace ERP.Contexts
 
         public DbSet<VendorProduct> VendorProduct { get; set; }
 
+        public DbSet<MotivoConciliacion> MotivoConciliacion { get; set; }
+
         public DbSet<Conciliacion> Conciliacion { get; set; }
         public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
 

@@ -148,14 +148,13 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
-
-
+        
         /// <summary>
         /// Obtiene los Datos de la JournalEntryLine por medio del Conciliacion.
         /// </summary>
         /// 
          /// <returns></returns>
-        [HttpPost("[action]")]
+        /*[HttpPost("[action]")]
         public async Task<IActionResult> GetJournalEntryByDateAccount([FromBody]Conciliacion _ConciliacionP)
         {
           //  JournalEntry Items = new JournalEntry();
@@ -219,7 +218,7 @@ namespace ERPAPI.Controllers
 
 
             return await Task.Run(() => Ok(LineConciliacionLinea));
-        }
+        }*/
 
 
         /// <summary>
@@ -427,6 +426,25 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_JournalEntryq));
 
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<JournalEntryLineDTO>>> GetLineasAsientoContableCuentaRangoFechas([FromQuery(Name = "CodigoCuenta")]Int64 codigoCuenta,
+            [FromQuery(Name = "FechaInicial")]DateTime fechaInicial, [FromQuery(Name = "FechaFinal")]DateTime fechaFinal)
+        {
+            try
+            {
+                var entradas = (from lineas in _context.JournalEntryLine
+                    join cabeza in _context.JournalEntry on lineas.JournalEntryId equals cabeza.JournalEntryId
+                    where cabeza.Date >= fechaInicial && cabeza.Date <= fechaFinal.AddDays(1).AddTicks(-1) && lineas.AccountId == codigoCuenta
+                    select new JournalEntryLineDTO(lineas, cabeza.Date)).ToList();
+                return await Task.Run(() => Ok(entradas));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error en GetLineasAsientoContableCuentaRangoFechas: {ex}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
         }
     }
 }
