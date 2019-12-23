@@ -196,17 +196,23 @@ namespace ERPAPI.Controllers
             CustomerType customertype = new CustomerType();
             try
             {
-                bool flag = false;
+                bool flag = true;
 
-                //CreditNote
+                //Customer
                 var VariableCustomer = _context.Customer.Where(a => a.CustomerTypeId == _CustomerType.CustomerTypeId)
                                                     .FirstOrDefault();
-                if (VariableCustomer == null)
+                if (VariableCustomer != null)
                 {
-                    flag = true;
+                    flag = false;
+                }
+                //Customer
+                var VariableCustomersOfCustomer = _context.CustomersOfCustomer.Where(a => a.CustomerTypeId == _CustomerType.CustomerTypeId)
+                                                    .FirstOrDefault();
+                if (VariableCustomersOfCustomer != null)
+                {
+                    flag = false;
                 }
 
-              
                 if (flag)
                 {
                     customertype = _context.CustomerType
