@@ -1,6 +1,6 @@
 ﻿/********************************************************************************************************
 -- NAME   :  CRUDCurency
--- PROPOSE:  show relation between Department and Branch
+-- PROPOSE:  show relation Moneda
 REVISIONS:
 version              Date                Author                        Description
 ----------           -------------       ---------------               -------------------------------
