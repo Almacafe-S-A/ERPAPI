@@ -129,6 +129,26 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+        [HttpGet("[action]/{CurrencyId}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(int CurrencyId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = await _context.Branch.Where(a => a.CurrencyId == CurrencyId)
+                                    .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
         /// <summary>
         /// Obtiene los datos de la moneda con el id enviado
         /// </summary>
@@ -312,26 +332,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(currency));
 
         }
-        [HttpGet("[action]/{CurrencyId}")]
-        public async Task<ActionResult<Int32>> ValidationDelete(int CurrencyId)
-        {
-            try
-            {
-//var Items = await _context.Product.CountAsync();
-                Int32 Items = await _context.Branch.Where(a => a.CurrencyId == CurrencyId)
-                                    .CountAsync();
-                    return await Task.Run(() => Ok(Items));
-
-                
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
-            }
-
-        }
-
+      
 
 
 
