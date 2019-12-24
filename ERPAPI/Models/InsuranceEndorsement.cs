@@ -9,18 +9,18 @@ namespace ERPAPI.Models
 {
     public class InsuranceEndorsement
     {
-        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int InsuranceEndorsementId { get; set; }
 
         [Display(Name = "Centro de costos")]
         public Int64 CostCenterId { get; set; }
 
         public Int64 CustomerId { get; set; }
-        
+
         public string Customername { get; set; }
 
         public int WarehouseId { get; set; }
-        
+
         public string WarehouseName { get; set; }
 
         public int WarehouseTypeId { get; set; }
@@ -42,6 +42,10 @@ namespace ERPAPI.Models
         public double TotalCertificateBalalnce { get; set; }
 
         public double TotalAssuredDifernce { get; set; }
+
+        public Int64 EstadoId { get; set; }
+        [ForeignKey("EstadoId")]
+        public Estados Estados { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }

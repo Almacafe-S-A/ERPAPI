@@ -1,4 +1,22 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDDepartment
+-- PROPOSE:  show record from department
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+9.0                  22/12/2019          Marvin.Guillen                     Changes of Departmento to validation to delete
+8.0                  06/12/2019          Marvin.Guillen                     Changes of Correcion de fusion de rama tipos de comision
+7.0                  05/12/2019          Marvin.Guillen                     Changes of Merger branch530 Cambio de puestos
+6.0                  04/12/2019          Marvin.Guillen                     Changes of rama Grupo de Configuracion
+5.0                  05/12/2019          Marvin.Guillen                     Changes of Avoid duplicated
+4.0                  16/09/2019          Freddy.Chinchilla                  Changes of Paginacion de controller
+3.0                  01/07/2019          Cristopher.Arias                   Changes of Archivos ignorados por Appsetting
+2.0                  19/06/2019          Freddy.Chinchilla                  Changes of Task return
+1.0                  18/06/2019          Mario.Rodriguez                    Creation of Controller
+********************************************************************************************************/
+
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -181,5 +199,25 @@ namespace ERPAPI.Controllers
         {
             return _context.Departamento.Any(e => e.IdDepartamento == id);
         }
+        [HttpGet("[action]/{IdDepartamento}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(int IdDepartamento)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = await _context.BranchPorDepartamento.Where(a => a.IdDepartamento == IdDepartamento)
+                                    .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
     }
 }

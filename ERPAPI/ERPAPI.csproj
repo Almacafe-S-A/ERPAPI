@@ -141,6 +141,8 @@
     <Compile Remove="Migrations\20191115121326_FieldAddCurrencyIdonJournalEntry.cs" />
     <Compile Remove="Migrations\20191128181102_ProformaDate.cs" />
     <Compile Remove="Migrations\20191128181102_ProformaDate.Designer.cs" />
+    <Compile Remove="Migrations\20191211161708_fieldjournalentrychanged.cs" />
+    <Compile Remove="Migrations\20191211161708_fieldjournalentrychanged.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />
@@ -158,7 +160,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
     <PackageReference Include="Morelinq" Version="3.2.0" />
     <PackageReference Include="Nlog" Version="4.6.7" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.4" />

@@ -160,6 +160,7 @@ namespace ERPAPI.Controllers
                         Accounting _padreaccount = new Accounting
                         {
 
+
                              AccountName = _TypeAccountq.TypeAccountName,  
                              AccountCode= _TypeAccountq.TypeAccountId.ToString(),
                              TypeAccountId = _TypeAccountq.TypeAccountId,
@@ -175,6 +176,7 @@ namespace ERPAPI.Controllers
                              DeudoraAcreedora = _TypeAccount.DeudoraAcreedora,
                              IdEstado = 1,
                              Estado="Activo",
+
                         };
 
 

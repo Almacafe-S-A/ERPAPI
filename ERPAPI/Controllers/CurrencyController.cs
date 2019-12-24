@@ -1,4 +1,23 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDCurency
+-- PROPOSE:  show relation Moneda
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+12.0                 22/12/2019          Marvin.Guillen                     Validation to eliminate
+11.0                 18/12/2019          Marvin.Guillen                     Validation to eliminate
+10.0                 23/11/2019          Marvin.Guillen                     Changes of Currency
+9.0                  21/11/2019          Marvin.Guillen                     Changes of Currency
+8.0                  16/09/2019          Freddy.Chinchilla                  Changes of Currency COntroller
+7.0                  19/06/2019          Freddy.Chinchilla                  Changes of Task Return
+6.0                  27/05/2019          Freddy.Chinchilla                  Changes of Currency COntroller
+5.0                  30/04/2019          Freddy.Chinchilla                  Changes of Add Colums
+4.0                  26/04/2019          Freddy.Chinchilla                  Changes of Get by Id
+3.0                  24/04/2019          Freddy.Chinchilla                  Changes of Mejoras de controllers
+2.0                  22/04/2019          Freddy.Chinchilla                  Changes of Numeracion SAR
+1.0                  11/04/2019          Freddy.Chinchilla                  Creation of Controller
+********************************************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -293,6 +312,27 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(currency));
 
         }
+        [HttpGet("[action]/{CurrencyId}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(int CurrencyId)
+        {
+            try
+            {
+//var Items = await _context.Product.CountAsync();
+                Int32 Items = await _context.Branch.Where(a => a.CurrencyId == CurrencyId)
+                                    .CountAsync();
+                    return await Task.Run(() => Ok(Items));
+
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
 
 
     }
