@@ -117,14 +117,15 @@ namespace ERPAPI.Controllers
         /// Obtiene los Datos de Puesto por medio del Nombre enviado.
         /// </summary>
         /// <param name="NombrePuesto"></param>
+        /// <param name="NombreDepartamento"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{NombrePuesto}")]
-        public async Task<IActionResult> GetPuestoByNombrePuesto(String NombrePuesto)
+        [HttpGet("[action]/{NombrePuesto}/{NombreDepartamento}")]
+        public async Task<IActionResult> GetPuestoByNombrePuesto(String NombrePuesto, String NombreDepartamento)
         {
             Puesto Items = new Puesto();
             try
             {
-                Items = await _context.Puesto.Where(q => q.NombrePuesto == NombrePuesto).FirstOrDefaultAsync();
+                Items = await _context.Puesto.Where(q => q.NombrePuesto == NombrePuesto && q.NombreDepartamento == NombreDepartamento).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
