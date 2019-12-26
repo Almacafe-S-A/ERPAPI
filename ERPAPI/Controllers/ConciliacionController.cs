@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using EFCore.BulkExtensions;
-using ERPAPI.Migrations;
+//using ERPAPI.Migrations;
 using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
@@ -81,6 +81,12 @@ namespace ERPAPI.Controllers
             try
             {
                 Conciliacion conciliacion = await _context.Conciliacion.Where(c=> c.ConciliacionId == id).FirstOrDefaultAsync();
+                if (conciliacion != null)
+                {
+                    List<ConciliacionLinea> lineas =
+                        await _context.ConciliacionLinea.Where(c => c.ConciliacionId == id).ToListAsync();
+                    conciliacion.ConciliacionLinea = lineas;
+                }
                 return await Task.Run(() => Ok(conciliacion));
             }
             catch (Exception ex)
@@ -309,7 +315,7 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_Conciliacion));
         }
-        /*
+        
         /// <summary>
         /// Actualiza la Conciliacion
         /// </summary>
@@ -331,10 +337,15 @@ namespace ERPAPI.Controllers
                                  .Where(q => q.ConciliacionId == _Conciliacion.ConciliacionId)
                                             select c
                                 ).FirstOrDefaultAsync();
-
-                       _context.Entry(_Conciliacionq).CurrentValues.SetValues((_Conciliacion));
-
-                         await _context.SaveChangesAsync();
+                        var lineas = await _context.ConciliacionLinea
+                            .Where(l => l.ConciliacionId == _Conciliacion.ConciliacionId).ToListAsync();
+                        _Conciliacionq.ConciliacionLinea = lineas;
+                        _context.Entry(_Conciliacionq).CurrentValues.SetValues((_Conciliacion));
+                        foreach (var linea in _Conciliacion.ConciliacionLinea.Where(l=> l.ConciliacionLineaId == 0).ToList())
+                        {
+                            _Conciliacionq.ConciliacionLinea.Add(linea);
+                        }
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _Conciliacionq.ConciliacionId,
@@ -373,7 +384,7 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_Conciliacionq));
         }
-
+        /*
         /// <summary>
         /// Elimina una Conciliacion       
         /// </summary>
