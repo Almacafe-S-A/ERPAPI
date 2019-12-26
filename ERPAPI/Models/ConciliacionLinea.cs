@@ -15,7 +15,7 @@ namespace ERPAPI.Models
 
         [ForeignKey("MotivoId")]
         [Display(Name = "Motivo Transacción")]
-        public int? MotivoId { get; set; }
+        public Int64? MotivoId { get; set; }
 
         [Display(Name = "Id Conciliacion")]
         public int ConciliacionId { get; set; }
@@ -45,9 +45,9 @@ namespace ERPAPI.Models
         public string ReferenceTrans { get; set; }
 
         [Display(Name = "Id de Asiento Contable")]
-        public Int64 JournalEntryId { get; set; }
+        public Int64? JournalEntryId { get; set; }
         [Display(Name = "Id de Línea de Asiento Contable")]
-        public Int64 JournalEntryLineId { get; set; }
+        public Int64? JournalEntryLineId { get; set; }
 
         [Display(Name = "Tipos de Voucher/Documento")]
         public Int64? VoucherTypeId { get; set; }
@@ -56,7 +56,7 @@ namespace ERPAPI.Models
         public bool Reconciled { get; set; }
 
         [Display(Name = "Numero de cheque")]
-        public Int64 CheknumberId { get; set; }
+        public Int64? CheknumberId { get; set; }
         
         [Required]
         [Display(Name = "MonedaName")]
