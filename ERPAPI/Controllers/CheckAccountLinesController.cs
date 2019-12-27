@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Helpers;
 
 namespace ERPAPI.Controllers
 {
@@ -113,7 +114,18 @@ namespace ERPAPI.Controllers
             CheckAccountLines _CheckAccountLinesq = new CheckAccountLines();
             try
             {
+
                 _CheckAccountLinesq = _CheckAccountLines;
+
+                Numalet let;
+                let = new Numalet();
+                let.SeparadorDecimalSalida = "Lempiras";
+                let.MascaraSalidaDecimal = "00/100 ";
+                let.ApocoparUnoParteEntera = true;
+                _CheckAccountLinesq.AmountWords = let.ToCustomCardinal((_CheckAccountLinesq.Ammount)).ToUpper();
+
+                //CheckAccount chequera = await _context.CheckAccount.Where(c =>c.CheckAccountId == _CheckAccountLinesq.CheckAccountId).FirstOrDefaultAsync();
+                //chequera.NumeroActual = Convert.ToInt32(_CheckAccountLines.CheckNumber);
                 _context.CheckAccountLines.Add(_CheckAccountLinesq);
                 await _context.SaveChangesAsync();
             }
