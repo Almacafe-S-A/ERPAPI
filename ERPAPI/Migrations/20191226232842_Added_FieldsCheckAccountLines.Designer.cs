@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191226232842_Added_FieldsCheckAccountLines")]
+    partial class Added_FieldsCheckAccountLines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1103,8 +1105,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CheckNumber");
 
                     b.Property<DateTime>("Date");
-
-                    b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
 

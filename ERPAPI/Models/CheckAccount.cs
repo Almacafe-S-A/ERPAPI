@@ -37,6 +37,8 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de ingreso")]
         public DateTime FechaIngreso { get; set; }
 
+        public int NumeroActual { get; set; }
+
         [Display(Name = "Fecha de creacion")]
         public DateTime FechaCreacion { get; set; }
 
