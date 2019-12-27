@@ -206,6 +206,28 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_Taxq));
         }
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]Tax payload)
+        {
+            Tax tax = new Tax();
+            try
+            {
+                tax = _context.Tax
+               .Where(x => x.TaxId == (int)payload.TaxId)
+               .FirstOrDefault();
+                _context.Tax.Remove(tax);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(tax));
+
+        }
+
 
 
 
