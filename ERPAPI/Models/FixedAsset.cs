@@ -75,6 +75,17 @@ namespace ERPAPI.Models
         [Display(Name = "Total Depreciado")]
         public double TotalDepreciated { get; set; }
 
+        [Display(Name = "Costo total del activo")]
+        public double ActiveTotalCost { get; set; }
+
+        [Display(Name = "Valor residual porcentaje")]
+        public double ResidualValuePercent { get; set; }
+
+        [Display(Name = "Valor neto")]
+        public double NetValue { get; set; }
+
+        [Display(Name = "Depreciacion acumulada")]
+        public double AccumulatedDepreciation { get; set; }
 
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }

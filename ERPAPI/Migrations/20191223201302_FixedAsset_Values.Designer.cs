@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191223201302_FixedAsset_Values")]
+    partial class FixedAsset_Values
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1069,8 +1071,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NoInicial");
 
-                    b.Property<int>("NumeroActual");
-
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
@@ -1100,13 +1100,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("Date");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
 
                     b.Property<string>("PaytoOrderOf");
 
@@ -1119,8 +1115,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CheckAccountId");
-
-                    b.HasIndex("IdEstado");
 
                     b.ToTable("CheckAccountLines");
                 });
@@ -5209,8 +5203,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("DateGenerated");
 
-                    b.Property<long>("EstadoId");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -5242,8 +5234,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("WarehouseTypeName");
 
                     b.HasKey("InsuranceEndorsementId");
-
-                    b.HasIndex("EstadoId");
 
                     b.ToTable("InsuranceEndorsement");
                 });
@@ -9748,11 +9738,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("CheckAccountId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CierresAccounting", b =>
@@ -10135,14 +10120,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.HoursWorked")
                         .WithMany("idhorastrabajadasconstrains")
                         .HasForeignKey("IdHorasTrabajadas");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsement", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InsuranceEndorsementLine", b =>
