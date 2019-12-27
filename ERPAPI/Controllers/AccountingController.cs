@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.ExpressionVisitors.Internal;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -584,40 +585,22 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_Accountq));
 
         }
-        /*[HttpGet("[action]")]
-        public async Task<ActionResult<AccountClasses>> GetEnumClass()//Int64 idgrupoestado
-        {
-            List<AccountClasses> Items = new List<AccountClasses>();
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatron([FromQuery(Name = "Patron")] string patron)
+        {
             try
             {
-                Items = await _context.enum//.AccountClasses.ToListAsync();
-                //List<AccountClasses> Items; //await _context.Account.a//.Where(q => q.IdGrupoEstado == idgrupoestado).ToListAsync();
-                //return await Task.Run(() => Ok(AccountClasses));
-
+                var cuentas = await _context.Accounting
+                    .Where(c => c.AccountCode.StartsWith(patron) && c.BlockedInJournal == false && c.Totaliza == false)
+                    .ToListAsync();
+                return await Task.Run(() => Ok(cuentas));
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
-            }*/
-        /*
-        List<Account> Items = new List<Account>();
-        try
-        {
-            Items = await _context.Account.ToListAsync();
+            }
         }
-        catch (Exception ex)
-        {
-
-            _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-            return BadRequest($"Ocurrio un error:{ex.Message}");
-        }
-
-        //  int Count = Items.Count();
-        return await Task.Run(() => Ok(Items));
-
-         */
-        //}
     }
 }

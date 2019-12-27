@@ -87,6 +87,23 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
+        public async Task<IActionResult> GetBlackListByRTN([FromBody]BlackListCustomers _BlackList)
+        {
+            BlackListCustomers Items = new BlackListCustomers();
+            try
+            {
+                Items = await _context.BlackListCustomers.Where(q => q.RTN == _BlackList.RTN).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        [HttpPost("[action]")]
         public async Task<IActionResult> GetBlackListByParams([FromBody]BlackListCustomers _BlackListCustomers)
         {
             List<BlackListCustomers> Items = new List<BlackListCustomers>();

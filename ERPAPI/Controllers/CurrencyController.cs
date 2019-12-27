@@ -1,10 +1,11 @@
 ﻿/********************************************************************************************************
 -- NAME   :  CRUDCurency
--- PROPOSE:  show relation between Department and Branch
+-- PROPOSE:  show relation Moneda
 REVISIONS:
 version              Date                Author                        Description
 ----------           -------------       ---------------               -------------------------------
-11.0                 18/12/2019         Marvin.Guillen                 Show Tooltip message
+12.0                 22/12/2019          Marvin.Guillen                     Validation to eliminate
+11.0                 18/12/2019          Marvin.Guillen                     Validation to eliminate
 10.0                 23/11/2019          Marvin.Guillen                     Changes of Currency
 9.0                  21/11/2019          Marvin.Guillen                     Changes of Currency
 8.0                  16/09/2019          Freddy.Chinchilla                  Changes of Currency COntroller
@@ -317,7 +318,7 @@ namespace ERPAPI.Controllers
             try
             {
 //var Items = await _context.Product.CountAsync();
-                var Items = _context.Vendor.Where(a => a.CurrencyId == CurrencyId)
+                Int32 Items = await _context.Branch.Where(a => a.CurrencyId == CurrencyId)
                                     .CountAsync();
                     return await Task.Run(() => Ok(Items));
 
