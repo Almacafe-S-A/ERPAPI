@@ -238,7 +238,29 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_ElementoConfiguracionq));
 
         }
+        /// <summary>
+        /// Obtiene los Datos de Puesto por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="Nombre"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{Nombre}")]
+        public async Task<IActionResult> GetElemntoConfiguracionByNombre(String Nombre)
+        {
+            ElementoConfiguracion Items = new ElementoConfiguracion();
+            try
+            {
+                Items = await _context.ElementoConfiguracion.Where(q => q.Nombre == Nombre).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
 
 
