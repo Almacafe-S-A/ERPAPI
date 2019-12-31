@@ -134,6 +134,23 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{RTN}")]
+        public async Task<IActionResult> GetVendorByRTNS(String RTN)
+        {
+            Vendor Items = new Vendor();
+            try
+            {
+                Items = await _context.Vendor.Where(q => q.RTN == RTN).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
         /// Inserta una nueva 
@@ -285,6 +302,29 @@ namespace coderush.Controllers.Api
             }
 
             return await Task.Run(() => Ok(_Vendorq));
+
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Deletes([FromBody]Vendor payload)
+        {
+            Vendor Vendor = new Vendor();
+            try
+            {
+                Vendor = _context.Vendor
+                .Where(x => x.VendorId == (int)payload.VendorId)
+                .FirstOrDefault();
+                _context.Vendor.Remove(Vendor);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(Vendor));
 
         }
 
