@@ -1,18 +1,4 @@
-﻿/********************************************************************************************************
--- NAME   :  CRUDFundingInterestRate
--- PROPOSE:  show records FundingInterestRate
-REVISIONS:
-version              Date                Author                        Description
-----------           -------------       ---------------               -------------------------------
-
-5.0                  23/12/2019          Marvin.Guillen                     Changes of Validation to delete record
-4.0                  10/12/2019          Maria.Funez                        Changes of Merger desarrollo with branch 908
-3.0                  10/12/2019          Maria.Funez                        Changes of add method to get record 
-2.0                  05/12/2019          Marvin.Guillen                     Changes of To avoid duplicated
-1.0                  19/09/2019          Carlos.Castillo                    Creation of Controller
-********************************************************************************************************/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -113,33 +99,13 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
-        [HttpGet("[action]/{FundingInterestRateId}")]
-        public async Task<ActionResult<Int32>> ValidationDelete(int FundingInterestRateId)
-        {
-            try
-            {
-                //var Items = await _context.Product.CountAsync();
-                Int32 Items = await _context.Product.Where(a => a.FundingInterestRateId == FundingInterestRateId)
-                                    .CountAsync();
-                return await Task.Run(() => Ok(Items));
-
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
-            }
-
-        }
-
-        [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetFundingInterestRateByDescripcion(String Description)
+        [HttpGet("[action]/{Descripcion}")]
+        public async Task<IActionResult> GetFundingInterestRateByDescripcion(String Descripcion)
         {
             FundingInterestRate Items = new FundingInterestRate();
             try
             {
-                Items = await _context.FundingInterestRate.Where(q => q.Descripcion==Description).FirstOrDefaultAsync();
+                Items = await _context.FundingInterestRate.Where(q => q.Descripcion== Descripcion).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
