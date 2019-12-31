@@ -14,30 +14,30 @@ using Newtonsoft.Json;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
+    [Route("api/QuotationDetail")]
     [ApiController]
-    public class AccountManagementController : Controller
+    public class QuotationDetailController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public AccountManagementController(ILogger<AccountManagementController> logger, ApplicationDbContext context)
+        public QuotationDetailController(ILogger<QuotationDetailController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Mantenimiento de cuentas, por paginas
+        /// Obtiene el Listado de detalle de cotizacion, con paginacion
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagementPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetQuotationDetailPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<QuotationDetail> Items = new List<QuotationDetail>();
             try
             {
-                var query = _context.AccountManagement.AsQueryable();
+                var query = _context.QuotationDetail.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -60,16 +60,16 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de mantenimiento de cuentas
+        /// Obtiene el Listado de detalle de cotizacion, ordenado por codigo de Cotizacion y id
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetAccountManagement()
+        public async Task<IActionResult> GetQuotationDetail()
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            List<QuotationDetail> Items = new List<QuotationDetail>();
             try
             {
-                Items = await _context.AccountManagement.ToListAsync();
+                Items = await _context.QuotationDetail.OrderBy(b => b.QuotationCode & b.QuotationDetailId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -83,17 +83,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene los Datos de detalle de cotizacion por medio del Id enviado.
         /// </summary>
-        /// <param name="AccountManagementId"></param>
+        /// <param name="QuotationDetailId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AccountManagementId}")]
-        public async Task<IActionResult> GetSAccountManagementById(Int64 AccountManagementId)
+        [HttpGet("[action]/{QuotationDetailId}")]
+        public async Task<IActionResult> GetQuotationDetailById(Int64 QuotationDetailId)
         {
-            AccountManagement Items = new AccountManagement();
+            QuotationDetail Items = new QuotationDetail();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.AccountManagementId == AccountManagementId).FirstOrDefaultAsync();
+                Items = await _context.QuotationDetail.Where(q => q.QuotationDetailId == QuotationDetailId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -107,45 +107,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// Obtiene el detalle de cotizacion por el codigo enviado
         /// </summary>
-        /// <param name="BankId"></param>
+        /// <param name="QuotationDetailCode"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{BankId}")]
-        public async Task<IActionResult> GetAccountManagementByBankId(Int64 BankId)
+        [HttpGet("[action]/{QuotationDetailCode}")]
+        public async Task<IActionResult> GetQuotationDetailByCode(Int64 QuotationDetailCode)
         {
-            List<AccountManagement> Items = new List<AccountManagement>();
+            QuotationDetail Items = new QuotationDetail();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.BankId == BankId).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-
-
-
-        /// <summary>
-        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
-        /// </summary>
-        /// <param name="AccountNumber"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{AccountNumber}")]
-        public async Task<IActionResult> GetSAccountManagementByAccountTypeAccountNumber(String AccountNumber)
-        {
-            AccountManagement Items = new AccountManagement();
-            try
-            {
-                Items = await _context.AccountManagement.Where(q => q.AccountNumber == AccountNumber
-                                            ).FirstOrDefaultAsync();
+                Items = await _context.QuotationDetail.Where(q => q.QuotationCode == QuotationDetailCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -159,36 +131,61 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Inserta un nuevo mantenimiento de cuentas
+        /// Obtiene el detalle de cotizacion, por medio del id y el codigo de cotizacion
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="QuotationDetailId"></param>
+        /// <param name="QuotationCode"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{QuotationDetailDescription}")]
+        public async Task<IActionResult> GetQuotationDetailByDescription(Int64 QuotationDetailId, Int64 QuotationCode)
+        {
+            QuotationDetail Items = new QuotationDetail();
+            try
+            {
+                Items = await _context.QuotationDetail.Where(q => q.QuotationCode == QuotationCode & q.QuotationDetailId == QuotationDetailId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Inserta un nuevo detalle de cotizacion
+        /// </summary>
+        /// <param name="_QuotationDetail"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<AccountManagement>> Insert([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<QuotationDetail>> Insert([FromBody]QuotationDetail _QuotationDetail)
         {
-            AccountManagement AccountManagementq = new AccountManagement();
+            QuotationDetail _QuotationDetailq = new QuotationDetail();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        AccountManagementq = _AccountManagement;
-                        _context.AccountManagement.Add(AccountManagementq);
+                        _QuotationDetailq = _QuotationDetail;
+                        _context.QuotationDetail.Add(_QuotationDetailq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _QuotationDetailq.QuotationDetailId,
+                            DocType = "QuotationDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_QuotationDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _QuotationDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _QuotationDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _QuotationDetailq.UsuarioModificacion,
 
                         });
 
@@ -210,45 +207,44 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(AccountManagementq));
+            return await Task.Run(() => Ok(_QuotationDetailq));
         }
 
         /// <summary>
-        /// Actualiza el mantenimiento de cuentas
+        /// Actualiza el Color
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_QuotationDetail"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<AccountManagement>> Update([FromBody]AccountManagement _AccountManagement)
+        public async Task<ActionResult<QuotationDetail>> Update([FromBody]QuotationDetail _QuotationDetail)
         {
-            AccountManagement _AccountManagementq = _AccountManagement;
+            QuotationDetail _QuotationDetailq = _QuotationDetail;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = await (from c in _context.AccountManagement
-                        .Where(q => q.AccountManagementId == _AccountManagement.AccountManagementId)
-                                                   select c
+                        _QuotationDetailq = await (from c in _context.QuotationDetail
+                        .Where(q => q.QuotationCode == _QuotationDetail.QuotationCode & q.QuotationDetailId == _QuotationDetail.QuotationDetailId)
+                                          select c
                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_AccountManagementq).CurrentValues.SetValues((_AccountManagement));
-
+                        _context.Entry(_QuotationDetailq).CurrentValues.SetValues((_QuotationDetail));
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _QuotationDetailq.QuotationDetailId,
+                            DocType = "QuotationDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_QuotationDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Actualizar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _QuotationDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _QuotationDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _QuotationDetailq.UsuarioModificacion,
 
                         });
 
@@ -270,43 +266,43 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_QuotationDetailq));
         }
 
         /// <summary>
-        /// Elimina un mantenimiento de cuentas
+        /// Elimina un Color       
         /// </summary>
-        /// <param name="_AccountManagement"></param>
+        /// <param name="_QuotationDetail"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]AccountManagement _AccountManagement)
+        public async Task<IActionResult> Delete([FromBody]QuotationDetail _QuotationDetail)
         {
-            AccountManagement _AccountManagementq = new AccountManagement();
+            QuotationDetail _QuotationDetailq = new QuotationDetail();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _AccountManagementq = _context.AccountManagement
-                        .Where(x => x.AccountManagementId == (Int64)_AccountManagement.AccountManagementId)
+                        _QuotationDetailq = _context.QuotationDetail
+                        .Where(x => x.QuotationCode == (Int64)_QuotationDetail.QuotationCode & x.QuotationDetailId == _QuotationDetail.QuotationDetailId)
                         .FirstOrDefault();
 
-                        _context.AccountManagement.Remove(_AccountManagementq);
+                        _context.QuotationDetail.Remove(_QuotationDetailq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _AccountManagementq.AccountManagementId,
-                            DocType = "AccountManagement",
+                            IdOperacion = _QuotationDetailq.QuotationDetailId,
+                            DocType = "QuotationDetail",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_AccountManagementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_QuotationDetailq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Eliminar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _AccountManagementq.UsuarioCreacion,
-                            UsuarioModificacion = _AccountManagementq.UsuarioModificacion,
-                            UsuarioEjecucion = _AccountManagementq.UsuarioModificacion,
+                            UsuarioCreacion = _QuotationDetailq.UsuarioCreacion,
+                            UsuarioModificacion = _QuotationDetailq.UsuarioModificacion,
+                            UsuarioEjecucion = _QuotationDetailq.UsuarioModificacion,
 
                         });
 
@@ -327,7 +323,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_AccountManagementq));
+            return await Task.Run(() => Ok(_QuotationDetailq));
 
         }
     }

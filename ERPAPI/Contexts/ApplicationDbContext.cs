@@ -253,6 +253,7 @@ namespace ERP.Contexts
         public DbSet<Substratum> Substratum { get; set; }
 
         public DbSet<Quotation> Quotation { get; set; }
+        public DbSet<QuotationDetail> QuotationDetail { get; set; }
         ///// <summary>
         ////////
         /// <summary>
@@ -298,8 +299,20 @@ namespace ERP.Contexts
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
 
         public DbSet<Colors> Colors { get; set; }
+        public DbSet<ColorsDetailQuotation> ColorsDetailQuotation { get; set; }
 
         public DbSet<Recipe> Recipe { get; set; }
+
+        public DbSet<MaterialDetail> MaterialDetail { get; set; }
+
+        // Gestion de Contratos para Modulo CxC
+
+        public DbSet<Contrato> Contrato { get; set; }
+        public DbSet<Contrato_detalle> Contrato_detalle { get; set; }
+
+        public DbSet<Contrato_plan_pagos> Contrato_plan_pagos { get; set; }
+        public DbSet<Contrato_movimientos> Contrato_movimientos { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -316,6 +329,11 @@ namespace ERP.Contexts
             modelBuilder.Entity<VendorProduct>()
            .HasIndex(p => new { p.ProductId,p.VendorId })
            .IsUnique(true);
+
+
+            modelBuilder.Entity<Contrato_plan_pagos>().HasKey(t => new { t.Nro_cuota, t.ContratoId });
+
+
 
             base.OnModelCreating(modelBuilder);
 
@@ -422,6 +440,15 @@ namespace ERP.Contexts
           .WithMany(c => c.Employees)
           //.IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<QuotationDetail>()
+            .HasKey(t => new { t.QuotationDetailId, t.QuotationCode });
+
+            modelBuilder.Entity<MaterialDetail>()
+            .HasKey(t => new { t.MaterialDetailId, t.MaterialId });
+
+            modelBuilder.Entity<Quotation>()
+            .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
 
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })
