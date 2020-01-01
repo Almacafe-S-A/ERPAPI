@@ -53,7 +53,25 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]/{Id}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 Id)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = 0;// await _context.BranchPorDepartamento.Where(a => a.IdDepartamento == Id)
+                               //     .CountAsync();
+                return await Task.Run(() => Ok(Items));
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
         /// <summary>
         /// Obtiene los Datos de la Bank por medio del Id enviado.
         /// </summary>
@@ -178,6 +196,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_BranchPorDepartamentoq));
 
         }
+
 
     }
 }
