@@ -130,7 +130,7 @@ namespace ERPAPI.Controllers
             try
             {
                 //var Items = await _context.Product.CountAsync();
-                var Items = _context.Departamento.Where(a => a.ComisionId == ComisionId)
+                Int32 Items = await _context.Departamento.Where(a => a.ComisionId == ComisionId)
                                     .CountAsync();
                 return await Task.Run(() => Ok(Items));
 
