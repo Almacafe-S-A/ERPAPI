@@ -47,7 +47,7 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Obtiene el Listado de Bankes 
+        /// Obtiene el Listado de Tipos de Comision 
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
@@ -71,7 +71,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la Bank por medio del Id enviado.
+        /// Obtiene los Datos de la Tipo de Comision por medio del Id enviado.
         /// </summary>
         /// <param name="ComisionId"></param>
         /// <returns></returns>
@@ -94,7 +94,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
-        /// Obtiene los Datos de la Bank por medio del Id enviado.
+        /// Obtiene los Datos de la Tipo de Comision por medio del Tipo de Comision enviado.
         /// </summary>
         /// <param name="TipoComision"></param>
         /// <returns></returns>
@@ -119,7 +119,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
-        /// Obtiene los Datos de la Comision por medio del Id enviado. Validación de eliminar
+        /// Obtiene los Datos de la Comision por medio del validación de Id enviado. Validación de eliminar
         /// </summary>
         /// <param name="ComisionId"></param>
         /// <returns></returns>
@@ -150,7 +150,7 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta una nueva Bank
+        /// Inserta una nueva Tipos de Comision
         /// </summary>
         /// <param name="_Comision"></param>
         /// <returns></returns>
@@ -175,7 +175,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Actualiza la Bank
+        /// Actualiza la Tipos de Comision
         /// </summary>
         /// <param name="_Comision"></param>
         /// <returns></returns>
@@ -206,7 +206,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Elimina una Bank       
+        /// Elimina una Tipos de Comision      
         /// </summary>
         /// <param name="_Comision"></param>
         /// <returns></returns>
