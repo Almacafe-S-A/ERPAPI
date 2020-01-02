@@ -156,7 +156,7 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
         /// <summary>
-        /// Obtiene los Datos de la Comision por medio del Id enviado. Validación de eliminar
+        /// Obtiene los Datos de la InstallmentDelivery por medio del Id enviado. Validación de eliminar
         /// </summary>
         /// <param name="InstallmentDeliveryId"></param>
         /// <returns></returns>
