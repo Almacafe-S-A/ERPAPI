@@ -13,6 +13,7 @@
  version              Date                Author                        Description
 
  ----------           -------------       ---------------               -------------------------------
+ 2.0                  02/01/2020          Marvin.Guillen                Changes to validation delete records
  1.0                  12/12/2019          Marvin.Guillen                Changes to create model
  
 
@@ -103,7 +104,30 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los datos de la medida con el id enviado
+        /// </summary>
+        /// <param name="MeasureId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{MeasureId}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 MeasureId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = 0;// await _context.Branch.Where(a => a.CurrencyId == MeasureId)
+                                //    .CountAsync();
+                return await Task.Run(() => Ok(Items));
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
         /// <summary>
         /// Obtiene los datos de la medida con el id enviado
         /// </summary>
