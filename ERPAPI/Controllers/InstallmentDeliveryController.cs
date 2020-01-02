@@ -13,6 +13,7 @@
  version              Date                Author                        Description
 
  ----------           -------------       ---------------               -------------------------------
+ 2.0                  01/01/2020          Marvin.Guillen                Changes to validation to delete records
  1.0                  13/12/2019          Marvin.Guillen                Changes to create controller
  
 
