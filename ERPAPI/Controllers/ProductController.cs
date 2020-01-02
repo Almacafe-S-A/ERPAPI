@@ -172,8 +172,27 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{ProductCode}")]
+        public async Task<IActionResult> GetProductValidarProductCode(String ProductCode)
+        {
+            Product Items = new Product();
+            try
+            {
+                Items = await _context.Product.Where(q => q.ProductCode == ProductCode).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// Elimina un producto
-        /// </summary>
+        /// <summary>
         /// <returns></returns>
         [HttpPost("[action]")]
         public async Task<ActionResult<Product>> Delete([FromBody]Product _Product)
