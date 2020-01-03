@@ -20,6 +20,7 @@ namespace ERPAPI.Models
         public string Estado { get; set; }
         
         public  Linea Linea { get; set; }
+        public int LineaId { get; set; }
 
         [Required]
         public string UsuarioCreacion { get; set; }

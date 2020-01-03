@@ -95,6 +95,30 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los Datos de los Puestos por medio del Departamento enviado.
+        /// </summary>
+        /// <param name="IdDepartamento"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdDepartamento}")]
+        public async Task<IActionResult> GetPuestoByIdDepartamento(Int64 IdDepartamento)
+        {
+            List<Puesto> Items = new List<Puesto>();
+            try
+            {
+                Items = await _context.Puesto.Where(q => q.IdDepartamento == IdDepartamento).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
         // GET: api/Puesto
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Puesto>>> GetPuesto()
