@@ -301,6 +301,7 @@ namespace ERP.Contexts
         public DbSet<Colors> Colors { get; set; }
 
         public DbSet<Recipe> Recipe { get; set; }
+        public DbSet<RecipeDetail> RecipeDetail { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
