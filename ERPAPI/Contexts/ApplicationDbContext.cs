@@ -304,6 +304,7 @@ namespace ERP.Contexts
         public DbSet<ColorsDetailQuotation> ColorsDetailQuotation { get; set; }
 
         public DbSet<Recipe> Recipe { get; set; }
+        public DbSet<RecipeDetail> RecipeDetail { get; set; }
 
         public DbSet<MaterialDetail> MaterialDetail { get; set; }
 
