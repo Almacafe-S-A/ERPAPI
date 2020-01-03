@@ -13,6 +13,7 @@
  version              Date                Author                        Description
 
  ----------           -------------       ---------------               -------------------------------
+ 2.0                  01/01/2020          Marvin.Guillen                Changes to validation to delete records
  1.0                  13/12/2019          Marvin.Guillen                Changes to create controller
  
 
@@ -154,6 +155,32 @@ namespace ERPAPI.Controllers
 
             return Ok(Items);
         }
+        /// <summary>
+        /// Obtiene los Datos de la InstallmentDelivery por medio del Id enviado. Validación de eliminar
+        /// </summary>
+        /// <param name="InstallmentDeliveryId"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]/{InstallmentDeliveryId}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 InstallmentDeliveryId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = 0;//await _context.Departamento.Where(a => a.ComisionId == InstallmentDeliveryId)
+                  //                  .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
 
         /// <summary>
         /// Inserta la InstallmentDelivery

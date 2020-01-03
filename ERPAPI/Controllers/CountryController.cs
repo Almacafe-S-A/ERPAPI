@@ -313,6 +313,102 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Elimina la moneda
+        /// </summary>
+        /// <param name="_Country"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Country>> DeleteCountry([FromBody]Country _Country)
+        {
+            Country country = new Country();
+            try
+            {
+                bool flag = true;
+
+                //Customer
+                var VariableCustomer = _context.Customer.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableCustomer != null)
+                {
+                    flag = false;
+                }
+                //Vendor
+                var VariableVendor = _context.Vendor.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableVendor != null)
+                {
+                    flag = false;
+                }
+                //GoodsReceived
+                var VariableGoodsReceived = _context.GoodsReceived.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableGoodsReceived != null)
+                {
+                    flag = false;
+                }
+
+                //State
+                var VariableState = _context.State.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableState != null)
+                {
+                    flag = false;
+                }
+                //BlackListCustomers
+                var VariableBlackListCustomers = _context.BlackListCustomers.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableBlackListCustomers != null)
+                {
+                    flag = false;
+                }
+                //PEPS
+                var VariablePEPS = _context.PEPS.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariablePEPS != null)
+                {
+                    flag = false;
+                }
+                //CompanyInfo
+                var VariableCompanyInfo = _context.CompanyInfo.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableCompanyInfo != null)
+                {
+                    flag = false;
+                }
+                //Branch
+                var VariableBranch = _context.Branch.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableBranch != null)
+                {
+                    flag = false;
+                }
+                //City
+                var VariableCity = _context.City.Where(a => a.CountryId == _Country.Id)
+                                                    .FirstOrDefault();
+                if (VariableCity != null)
+                {
+                    flag = false;
+                }
+
+                if (flag)
+                {
+                    country = _context.Country
+                   .Where(x => x.Id == (int)_Country.Id)
+                   .FirstOrDefault();
+                    _context.Country.Remove(country);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(country));
+
+        }
 
 
 

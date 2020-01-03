@@ -56,9 +56,9 @@ namespace ERPAPI.Models
 
         public string Rango { get; set; }
 
-        public int TipoDocumentoId { get; set; }
+        public long TipoDocumentoId { get; set; }
 
-        [ForeignKey("EstadoId")]
+        [ForeignKey("TipoDocumentoId")]
         public TiposDocumento TiposDocumento { get; set; }
 
         public long NumeracionSARId { get; set; }

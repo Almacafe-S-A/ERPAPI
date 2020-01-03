@@ -98,6 +98,26 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
+
+        [HttpGet("[action]/{Description}")]
+        public async Task<IActionResult> GetGrupoByDescripcion(String Description)
+        {
+            Grupo Items = new Grupo();
+            try
+            {
+                Items = await _context.Grupo.Where(q => q.Description == Description).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         [HttpGet("[action]/{idestado}")]
         public async Task<ActionResult> GetGrupoByEstado(Int64 idestado)
         {

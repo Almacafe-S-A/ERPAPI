@@ -4,6 +4,7 @@
 REVISIONS:
 version              Date                Author                        Description
 ----------           -------------       ---------------               -------------------------------
+7.0                  23/12/2019          Marvin.Guillen                  Changes of Validation delete record
 6.0                  08/12/2019          Marvin.Guillen                  Changes of Validation duplicated
 5.0                  16/09/2019          Freddy.Chinchilla               Changes of Pagination Controller
 4.0                  02/09/2019          Freddy.Chinchilla               Changes of Boleta_ent
@@ -149,6 +150,25 @@ namespace ERPAPI.Controllers
             }
 
             return await Task.Run(() => Ok(_Stateq));
+        }
+        [HttpGet("[action]/{StateId}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 StateId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = await _context.Employees.Where(a => a.IdState == StateId)
+                                    .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
         }
 
 

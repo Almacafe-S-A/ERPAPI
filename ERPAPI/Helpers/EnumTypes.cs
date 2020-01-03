@@ -22,7 +22,6 @@ namespace ERPAPI.Helpers
         Status = 8, // Saldos
         HeadingEmpty = 9,  // Encabezados de 
         AccountGroup =10 //Totalizar
-
     }
 
     public enum SysDimension

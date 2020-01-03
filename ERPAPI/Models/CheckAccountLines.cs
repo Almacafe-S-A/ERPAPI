@@ -29,5 +29,17 @@ namespace ERPAPI.Models
         public string AmountWords { get; set; }
 
         public string Address { get; set; }
+
+        public string Estado { get; set; }
+
+        public Int64 IdEstado{ get; set; }
+
+        [ForeignKey("IdEstado")]
+        public Estados Estados { get; set; }
+
+        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaModificacion { get; set; }
+        public string UsuarioCreacion { get; set; }
+        public string UsuarioModificacion { get; set; }
     }
 }

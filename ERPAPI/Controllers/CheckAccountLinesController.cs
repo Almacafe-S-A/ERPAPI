@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Helpers;
 
 namespace ERPAPI.Controllers
 {
@@ -113,8 +114,35 @@ namespace ERPAPI.Controllers
             CheckAccountLines _CheckAccountLinesq = new CheckAccountLines();
             try
             {
+
                 _CheckAccountLinesq = _CheckAccountLines;
-                _context.CheckAccountLines.Add(_CheckAccountLinesq);
+
+                Numalet let;
+                let = new Numalet();
+                let.SeparadorDecimalSalida = "Lempiras";
+                let.MascaraSalidaDecimal = "00/100 ";
+                let.ApocoparUnoParteEntera = true;
+                _CheckAccountLinesq.AmountWords = let.ToCustomCardinal((_CheckAccountLinesq.Ammount)).ToUpper();
+                _CheckAccountLinesq.IdEstado = 1;
+                _CheckAccountLinesq.Estado = "Activo";
+                //Conteo Cheques
+                CheckAccount chequera = await _context.CheckAccount.Where(c =>c.CheckAccountId == _CheckAccountLinesq.CheckAccountId).FirstOrDefaultAsync();
+                chequera.NumeroActual = Convert.ToInt32(_CheckAccountLines.CheckNumber);
+                if(chequera.NumeroActual> Convert.ToInt32(chequera.NoFinal))
+                {
+                    return BadRequest("No se pueden emitir más Cheques.");
+
+                }
+                else
+                {
+                    _context.CheckAccountLines.Add(_CheckAccountLinesq);
+                    CheckAccount _CheckAccountq = await (from c in _context.CheckAccount
+                                 .Where(q => q.CheckAccountId == _CheckAccountLinesq.CheckAccountId)
+                                            select c
+                                ).FirstOrDefaultAsync();
+
+                    _context.Entry(_CheckAccountq).CurrentValues.SetValues((chequera));
+                }
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

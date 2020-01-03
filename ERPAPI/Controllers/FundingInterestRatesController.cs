@@ -99,13 +99,13 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
-        [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GetFundingInterestRateByDescripcion(String Description)
+        [HttpGet("[action]/{Descripcion}")]
+        public async Task<IActionResult> GetFundingInterestRateByDescripcion(String Descripcion)
         {
             FundingInterestRate Items = new FundingInterestRate();
             try
             {
-                Items = await _context.FundingInterestRate.Where(q => q.Descripcion==Description).FirstOrDefaultAsync();
+                Items = await _context.FundingInterestRate.Where(q => q.Descripcion== Descripcion).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
