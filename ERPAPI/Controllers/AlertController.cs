@@ -167,7 +167,7 @@ namespace ERPAPI.Controllers
         /// <param name="_Alert"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Alert>> Update([FromBody]Alert _Alert)
+        public async Task<ActionResult<Alert>> Update(Alert _Alert)
         {
             Alert _Alertq = _Alert;
             try

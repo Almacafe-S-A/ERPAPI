@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,10 @@ namespace ERP.Contexts
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
+
+
+        public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
+        public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
         public DbSet<Insurances> Insurances { get; set; }
         public DbSet<ContactPerson> ContactPerson { get; set; }
         public DbSet<TypeJournal> TypeJournal { get; set; }
@@ -50,9 +55,11 @@ namespace ERP.Contexts
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
           public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
-       // public DbSet<PurchDocument> PurchDocument { get; set; }
+        public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
-        //public DbSet<Account> Account { get; set; }
+        public DbSet<InstallmentDelivery> InstallmentDelivery { get; set; }
+        public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
+
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
@@ -89,11 +96,13 @@ namespace ERP.Contexts
 
         public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
 
-       
+        public DbSet<PayrollDeduction> PayrollDeduction { get; set; }
         /// <summary>
         /// ///Cierres
         /// </summary>
         /// 
+
+        public DbSet<GarantiaBancaria> GarantiaBancaria { get; set; }
 
 
         public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
@@ -240,6 +249,11 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
         public DbSet<CheckAccount> CheckAccount { get; set; }
 
+        public DbSet<Material> Material { get; set; }
+        public DbSet<Substratum> Substratum { get; set; }
+
+        public DbSet<Quotation> Quotation { get; set; }
+        public DbSet<QuotationDetail> QuotationDetail { get; set; }
         ///// <summary>
         ////////
         /// <summary>
@@ -268,6 +282,8 @@ namespace ERP.Contexts
 
         public DbSet<VendorProduct> VendorProduct { get; set; }
 
+        public DbSet<MotivoConciliacion> MotivoConciliacion { get; set; }
+
         public DbSet<Conciliacion> Conciliacion { get; set; }
         public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
 
@@ -284,6 +300,23 @@ namespace ERP.Contexts
         public DbSet<PaymentTerms> PaymentTerms { get; set; }
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
 
+        public DbSet<Colors> Colors { get; set; }
+        public DbSet<ColorsDetailQuotation> ColorsDetailQuotation { get; set; }
+
+        public DbSet<Recipe> Recipe { get; set; }
+        public DbSet<RecipeDetail> RecipeDetail { get; set; }
+
+        public DbSet<MaterialDetail> MaterialDetail { get; set; }
+
+        // Gestion de Contratos para Modulo CxC
+
+        public DbSet<Contrato> Contrato { get; set; }
+        public DbSet<Contrato_detalle> Contrato_detalle { get; set; }
+
+        public DbSet<Contrato_plan_pagos> Contrato_plan_pagos { get; set; }
+        public DbSet<Contrato_movimientos> Contrato_movimientos { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
@@ -299,6 +332,11 @@ namespace ERP.Contexts
             modelBuilder.Entity<VendorProduct>()
            .HasIndex(p => new { p.ProductId,p.VendorId })
            .IsUnique(true);
+
+
+            modelBuilder.Entity<Contrato_plan_pagos>().HasKey(t => new { t.Nro_cuota, t.ContratoId });
+
+
 
             base.OnModelCreating(modelBuilder);
 
@@ -333,7 +371,9 @@ namespace ERP.Contexts
            .HasIndex(p => new { p.RTN })
            .IsUnique(true);
 
-
+            modelBuilder.Entity<Departamento>()
+            .HasIndex(e => e.NombreDepartamento)
+            .IsUnique(true);
 
             modelBuilder.Entity<SubProduct>()
              .HasMany(c => c.ProductRelation)
@@ -403,6 +443,15 @@ namespace ERP.Contexts
           .WithMany(c => c.Employees)
           //.IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<QuotationDetail>()
+            .HasKey(t => new { t.QuotationDetailId, t.QuotationCode });
+
+            modelBuilder.Entity<MaterialDetail>()
+            .HasKey(t => new { t.MaterialDetailId, t.MaterialId });
+
+            modelBuilder.Entity<Quotation>()
+            .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
 
             //modelBuilder.Entity<Dimensions>()
             //    .HasIndex(p => new { p.Num, p.DimCode })

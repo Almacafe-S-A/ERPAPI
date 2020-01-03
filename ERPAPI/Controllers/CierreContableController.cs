@@ -99,7 +99,7 @@ namespace ERPAPI.Controllers
                         //IdProceso = 1,
                         Estatus = "PENDIENTE",
                         Proceso = "POLIZAS DE SEGURO VENCIDAS",
-                        PasoCierre = 2,
+                        PasoCierre = 3,
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
                         FechaModificacion = DateTime.Now,
@@ -113,32 +113,88 @@ namespace ERPAPI.Controllers
 
                     List<InsurancePolicy> insurancePolicies = _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToList();
 
+                    double SumaPolizas = _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToList().
+                        Sum(s => s.LpsAmount);
+                     
                     if (insurancePolicies.Count > 0)
                     {
                         foreach (var item in insurancePolicies)
                         {
                             item.Status = "INACTIVA";
-                           
                             
 
+
                         }
+                        _context.InsurancePolicy.UpdateRange(insurancePolicies);
                         proceso3.Estatus = "FINALIZADO";
-                        //proceso3.Mensaje = "FINALIZADO No se encontraron Polizas Vencidas";
-                       
+
+                        if (SumaPolizas > 0)
+                        {
+                            TiposDocumento tipoDocumento = _context.TiposDocumento.Where(d => d.Descripcion == "Polizas").FirstOrDefault();
+                            JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                                       .Where(q => q.TransactionId == tipoDocumento.IdTipoDocumento)
+                                                                       //.Where(q => q.BranchId == _Invoiceq.BranchId)
+                                                                       .Where(q => q.EstadoName == "Activo")
+                                                                       .Include(q => q.JournalEntryConfigurationLine)
+                                                                       ).FirstOrDefaultAsync();
+
+
+                            double sumacreditos = 0, sumadebitos = 0;
+                            if (_journalentryconfiguration != null)
+                            {
+                                //Crear el asiento contable configurado
+                                //.............................///////
+                                JournalEntry _je = new JournalEntry
+                                {
+                                    Date = pBitacoraCierre.FechaCierre,
+                                    Memo = "Vecimiento de Polizas",
+                                    DatePosted = pBitacoraCierre.FechaCierre,
+                                    ModifiedDate = DateTime.Now,
+                                    CreatedDate = DateTime.Now,
+                                    ModifiedUser = pBitacoraCierre.UsuarioCreacion,
+                                    CreatedUser = pBitacoraCierre.UsuarioCreacion,
+                                    DocumentId = pBitacoraCierre.Id,
+                                    TypeOfAdjustmentId = 65,
+                                    VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),
+
+                                };
+
+
+
+                                foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
+                                {
+
+
+                                    _je.JournalEntryLines.Add(new JournalEntryLine
+                                    {
+                                        AccountId = Convert.ToInt32(item.AccountId),
+                                        AccountName = item.AccountName,
+                                        Description = item.AccountName,
+                                        Credit = item.DebitCredit == "Credito" ? SumaPolizas : 0,
+                                        Debit = item.DebitCredit == "Debito" ? SumaPolizas : 0,
+                                        CreatedDate = DateTime.Now,
+                                        ModifiedDate = DateTime.Now,
+                                        CreatedUser = pBitacoraCierre.UsuarioCreacion,
+                                        ModifiedUser = pBitacoraCierre.UsuarioModificacion,
+                                        Memo = "",
+                                    });
+
+                                    // sumacreditos += item.DebitCredit == "Credito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
+                                    //sumadebitos += item.DebitCredit == "Debito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
+
+                                }
+                            }
+                        }
                     }
                     else
                     {
                         proceso3.Estatus = "FINALIZADO";
+                        //proceso3.Mensaje = "FINALIZADO No se encontraron Polizas Vencidas";
                     }
-
-                    _context.InsurancePolicy.UpdateRange(insurancePolicies);
-                
-
-
 
                     /////////////Fin del Paso 3
 
-                _context.SaveChanges();
+                    _context.SaveChanges();
 
                     //List< BitacoraCierreProcesos> spCierre = await _context.BitacoraCierreProceso.FromSql("Cierres @p0, @p1, @p2", pBitacoraCierre.FechaCierre, cierre.Id).ToListAsync();
                     _context.Database.ExecuteSqlCommand("Cierres @p0, @p1", pBitacoraCierre.FechaCierre, cierre.Id);
@@ -158,5 +214,9 @@ namespace ERPAPI.Controllers
             }
 
         }
+
+
     }
+
+
 }

@@ -134,8 +134,41 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(_VendorType));
         }
 
+//Metodo para eliminar si el registro esta siendo utilizado.
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody]VendorType payload)
+        {
+            VendorType VendorType = new VendorType();
+            try
+            {
+                bool flag = false;
+                var VariableVendor = _context.Vendor.Where(a => a.VendorTypeId == (int)payload.VendorTypeId)
+                                    .FirstOrDefault();
+                if (VariableVendor == null)
+                {
+                    flag = true;
+                }
+
+                if (flag)
+                {
+                    VendorType = _context.VendorType
+                   .Where(x => x.VendorTypeId == (int)payload.VendorTypeId)
+                   .FirstOrDefault();
+                    _context.VendorType.Remove(VendorType);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            
+            return await Task.Run(() => Ok(VendorType));
+        }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DeleteVendorType([FromBody]VendorType payload)
         {
             VendorType VendorType = new VendorType();
             try

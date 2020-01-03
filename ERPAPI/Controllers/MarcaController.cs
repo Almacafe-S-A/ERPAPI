@@ -1,4 +1,19 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDMarca
+-- PROPOSE:  show relation Marca
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+7.0                  02/01/2020          Marvin.Guillen                     Changes of Validation to duplicated and delete
+6.0                  10/12/2019          Maria.Funez                        Changes of add metodo to record active
+5.0                  16/09/2019          Freddy.Chinchilla                  Changes of reparacion de llave forranea
+4.0                  16/09/2019          Carlos.Castillo                    Changes of merger branch master
+3.0                  16/09/2019          Freddy.Chinchilla                  Changes of pagination of controller
+2.0                  16/09/2019          Carlos.Castillo                    Changes of rename de table
+1.0                  09/09/2019          Carlos.Castillo                    Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,6 +71,23 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{idestado}")]
+        public async Task<ActionResult> GetMarcaByEstado(Int64 idestado)
+        {
+            try
+            {
+                List<Marca> Items = await _context.Marca.Where(q => q.IdEstado == idestado).ToListAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
         // GET: api/Marca
         [HttpGet("[action]")]
         public async Task<IActionResult> GetMarca()
@@ -94,6 +126,57 @@ namespace coderush.Controllers.Api
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los datos de la Marca con el descripcion enviado
+        /// </summary>
+        /// <param name="Description"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{Description}")]
+        public async Task<ActionResult<Linea>> GetMarcaByDescription(String Description)
+        {
+            Marca Items = new Marca();
+            try
+            {
+                Items = await _context.Marca.Where(q => q.Description == Description).FirstOrDefaultAsync();
+                // int Count = Items.Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+
+            return Ok(Items);
+        }
+        /// <summary>
+        /// Obtiene los Datos de la Marca por medio del Id enviado. Validación de eliminar
+        /// </summary>
+        /// <param name="MarcaId"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]/{MarcaId}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 MarcaId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = await _context.Product.Where(a => a.MarcaId == MarcaId)
+                                                 .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
 
         [HttpPost("[action]")]
         public async Task<ActionResult<Marca>> Insert([FromBody]Marca payload)

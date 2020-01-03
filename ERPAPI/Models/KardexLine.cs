@@ -103,5 +103,8 @@ namespace ERPAPI.Models
         [Display(Name = "Centro de costos")]
         public string CostCenterName { get; set; }
 
+        [Display(Name = "Cantidad minima en existencia por producto")]
+        public double MinimumExistance { get; set; }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -58,7 +59,28 @@ namespace ERPAPI.Controllers
             }
            
         }
+        /// <summary>
+        /// Obtiene un rol , filtrado por su Nombre.
+        /// </summary>
+        /// <param name="RoleName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{RoleName}")]
+        public async Task<ActionResult> GetRoleByName(String RoleName)
+        {
+            try
+            {
+                ApplicationRole Items = await _context.Roles.Where(q => q.Name == RoleName).FirstOrDefaultAsync();
+                return await Task.Run(() => Ok(Items));
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
 
         /// <summary>
         /// Obtiene los roles en formato Json
@@ -90,12 +112,10 @@ namespace ERPAPI.Controllers
         [HttpGet("GetRoles")]
         public async Task<ActionResult<List<ApplicationRole>>> GetRoles()
         {
-           // List<IdentityRole> _roles = new List<IdentityRole>();
-            List<ApplicationRole> _rolesprod = new List<ApplicationRole>();
+            List<ApplicationRole> roles = new List<ApplicationRole>();
             try
             {
-                _rolesprod = await _context.Roles.ToListAsync();
-             // _rolesprod = mapper.Map<List<IdentityRole>, List<ApplicationRole>>(_roles);
+                roles = await _context.Roles.ToListAsync();
 
             }
             catch (Exception ex)
@@ -104,7 +124,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
 
-            return await Task.Run(() => _rolesprod);
+            return await Task.Run(() => roles);
         }
 
 
@@ -205,9 +225,77 @@ namespace ERPAPI.Controllers
            
         }
 
+        [Authorize(Policy = "Seguridad.Listar Permisos")]
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> ListarPermisos([FromRoute(Name = "id")]string idRol)
+        {
+            List<string> permisos = new List<string>();
+            try
+            {
+                var _appRole = await _rolemanager.FindByIdAsync(idRol);
+                if (_appRole != null)
+                {
+                    var listClaims = await _rolemanager.GetClaimsAsync(_appRole);
+                    permisos.AddRange(listClaims.Select(x => x.Type).ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run((() => Ok(permisos)));
+        }
 
+        [Authorize(Policy = "Seguridad.Modificar Permisos Rol")]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GuardarPermisosAsignados([FromBody] PostAsignacionesPermisoRol asignaciones)
+        {
+            try
+            {
+                var rol = await _rolemanager.FindByIdAsync(asignaciones.IdRol);
+                var rolId = Guid.Parse(asignaciones.IdRol);
+                if (rol != null)
+                {
+                    var listClaims = _context.RoleClaims.Where(p => p.RoleId.Equals(rolId)).ToList();
 
+                    List<AspNetRoleClaims> permisosBorrar = new List<AspNetRoleClaims>();
+                    List<AspNetRoleClaims> permisosInsertar = new List<AspNetRoleClaims>();
+                    
+                    foreach (var claim in listClaims)
+                    {
+                        if(asignaciones.Permisos.FirstOrDefault(p => p.Id.Equals(claim.ClaimType)) == null)
+                            permisosBorrar.Add(claim);
+                    }
 
+                    foreach (var permiso in asignaciones.Permisos)
+                    {
+                        if(listClaims.FirstOrDefault(p=>p.ClaimType.Equals(permiso.Id))==null)
+                            permisosInsertar.Add(new AspNetRoleClaims()
+                            {
+                                ClaimType = permiso.Id,
+                                ClaimValue = "true",
+                                RoleId = rolId
+                            });
+                    }
+
+                    _context.RoleClaims.RemoveRange(permisosBorrar);
+                    _context.RoleClaims.AddRange(permisosInsertar);
+                    _context.SaveChanges();
+
+                    return new EmptyResult();
+
+                    
+                }
+                else
+                {
+                    return BadRequest($"Rol no existe");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
 
     }
 }

@@ -98,6 +98,25 @@ namespace ERPAPI.Controllers
 
         }
 
+        [HttpGet("[action]/{CustomerTypeName}")]
+        public async Task<IActionResult> GetCustomerTypeByCustomerTypeName(string CustomerTypeName)
+        {
+            CustomerType Items = new CustomerType();
+            try
+            {
+                Items = await _context.CustomerType.Where(q => q.CustomerTypeName == CustomerTypeName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
 
         [HttpPost("[action]")]
@@ -163,6 +182,53 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error: { ex.Message }");
             }
+
+        }
+
+        /// <summary>
+        /// Elimina la moneda
+        /// </summary>
+        /// <param name="_CustomerType"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<CustomerType>> DeleteCustomerType([FromBody]CustomerType _CustomerType)
+        {
+            CustomerType customertype = new CustomerType();
+            try
+            {
+                bool flag = true;
+
+                //Customer
+                var VariableCustomer = _context.Customer.Where(a => a.CustomerTypeId == _CustomerType.CustomerTypeId)
+                                                    .FirstOrDefault();
+                if (VariableCustomer != null)
+                {
+                    flag = false;
+                }
+                //Customer
+                var VariableCustomersOfCustomer = _context.CustomersOfCustomer.Where(a => a.CustomerTypeId == _CustomerType.CustomerTypeId)
+                                                    .FirstOrDefault();
+                if (VariableCustomersOfCustomer != null)
+                {
+                    flag = false;
+                }
+
+                if (flag)
+                {
+                    customertype = _context.CustomerType
+                   .Where(x => x.CustomerTypeId == (int)_CustomerType.CustomerTypeId)
+                   .FirstOrDefault();
+                    _context.CustomerType.Remove(customertype);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(customertype));
 
         }
     }

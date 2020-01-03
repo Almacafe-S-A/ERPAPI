@@ -171,13 +171,71 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_Productq));
         }
 
+
+        [HttpGet("[action]/{ProductCode}")]
+        public async Task<IActionResult> GetProductValidarProductCode(String ProductCode)
+        {
+            Product Items = new Product();
+            try
+            {
+                Items = await _context.Product.Where(q => q.ProductCode == ProductCode).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// Elimina un producto
+        /// <summary>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Product>> Delete([FromBody]Product _Product)
+        {
+            Product product = new Product();
+            try
+            {
+                bool flag = false;
+                var VariableVendor = _context.ProformaInvoice.Where(a => a.ProductId == _Product.ProductId)
+                                    .FirstOrDefault();
+                if (VariableVendor == null)
+                {
+                    flag = true;
+                }
+
+                if (flag)
+                {
+                    product = _context.Product
+                   .Where(x => x.ProductId == (int)_Product.ProductId)
+                   .FirstOrDefault();
+                    _context.Product.Remove(product);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            
+            return await Task.Run(() => Ok(product));
+
+        }
+
+
+
         /// <summary>
         /// Elimina un producto
         /// </summary>
         /// <param name="_product"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async  Task<IActionResult> Delete([FromBody]Product _product)
+        public async  Task<IActionResult> DeleteProduct([FromBody]Product _product)
         {
             Product product = new Product();
             try

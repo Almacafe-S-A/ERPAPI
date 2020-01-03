@@ -58,22 +58,41 @@ namespace ERPAPI.Models
         [Display(Name = "UsuarioModificacion")]
         public string UsuarioModificacion { get; set; }
 
+        [Required]
+        [Display(Name="Saldo en Estado de Cuenta de Banco")]
+        public decimal SaldoBanco { get; set; }
+
+        [Required]
+        [Display(Name="Saldo en Libro Mayor de Banco")]
+        public decimal SaldoLibro { get; set; }
+
         public List<ConciliacionLinea> ConciliacionLinea { get; set; }
 
     }
 
     public class ConciliacionDTO : Conciliacion
     {
-        public ConciliacionDTO()
+        public ConciliacionDTO(){}
+
+        public ConciliacionDTO(Conciliacion a, string nombreCuenta)
         {
-
+            ConciliacionId = a.ConciliacionId;
+            BankId = a.BankId;
+            AccountId = a.AccountId;
+            BankName = a.BankName;
+            CheckAccountId = a.CheckAccountId;
+            FechaConciliacion = a.FechaConciliacion;
+            DateBeginReconciled = a.DateBeginReconciled;
+            DateEndReconciled = a.DateEndReconciled;
+            SaldoConciliado = a.SaldoConciliado;
+            FechaCreacion = a.FechaCreacion;
+            FechaModificacion = a.FechaModificacion;
+            UsuarioCreacion = a.UsuarioCreacion;
+            UsuarioModificacion = a.UsuarioModificacion;
+            SaldoBanco = a.SaldoBanco;
+            SaldoLibro = a.SaldoLibro;
+            NombreCuenta = nombreCuenta;
         }
-
-        public double Debit { get; set; }
-        public double Credit { get; set; }
-        public double Saldo { get; set; }
-
-
-
+        public string NombreCuenta { get; set; }
     }
 }

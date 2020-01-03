@@ -1,4 +1,22 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUPuesto
+-- PROPOSE:  show Puesto records
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+10.0                 31/12/2019          Marvin.Guillen                  Changes of Validation delete record
+9.0                  16/12/2019          Maria.Funez                     Changes of buscar por Nombre de puesto
+8.0                  04/12/2019          Marvin.Guillen                  Changes of Nombre de puesto
+7.0                  04/12/2019          Marvin.Guillen                  Changes of Puesto api
+6.0                  16/09/2019          Freddy.Chinchilla               Changes of Pagination Controller
+5.0                  22/07/2019          Cristopher.Arias                Changes of puesto mvc
+4.0                  22/07/2019          Cristopher.Arias                Changes of Avances de puesto
+3.0                  15/07/2019          Freddy.Chinchilla               Changes of task return methods
+2.0                  25/06/2019          Freddy.Chinchilla               Changes of Controller
+1.0                  18/06/2019          Mario.Rodriguez                 Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,7 +78,46 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        //Metodo Busqueda por nombre
+        [HttpGet("[action]/{NombrePuesto}")]
+        public async Task<IActionResult> GetPuestoByName(String NombrePuesto)
+        {
+            Puesto Items = new Puesto();
+            try
+            {
+                Items = await _context.Puesto.Where(q => q.NombrePuesto == NombrePuesto).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
 
+        /// <summary>
+        /// Obtiene los Datos de los Puestos por medio del Departamento enviado.
+        /// </summary>
+        /// <param name="IdDepartamento"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdDepartamento}")]
+        public async Task<IActionResult> GetPuestoByIdDepartamento(Int64 IdDepartamento)
+        {
+            List<Puesto> Items = new List<Puesto>();
+            try
+            {
+                Items = await _context.Puesto.Where(q => q.IdDepartamento == IdDepartamento).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         // GET: api/Puesto
         [HttpGet("[action]")]
@@ -98,6 +155,56 @@ namespace ERPAPI.Controllers
             }
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los Datos de Puesto por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="IdPuesto"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdPuesto}")]
+        public async Task<ActionResult<Int64>> ValidationDelete(Int64 IdPuesto)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int64 Items = await _context.Employees.Where(a => a.IdPuesto == IdPuesto)
+                                    .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        /// <summary>
+        /// Obtiene los Datos de Puesto por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="NombrePuesto"></param>
+        /// <param name="NombreDepartamento"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{NombrePuesto}/{NombreDepartamento}")]
+        public async Task<IActionResult> GetPuestoByNombrePuesto(String NombrePuesto, String NombreDepartamento)
+        {
+            Puesto Items = new Puesto();
+            try
+            {
+                Items = await _context.Puesto.Where(q => q.NombrePuesto == NombrePuesto && q.NombreDepartamento == NombreDepartamento).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         // PUT: api/Puesto/5
         //[HttpPut("[action]")]
@@ -107,7 +214,7 @@ namespace ERPAPI.Controllers
         //    {
         //        return BadRequest();
         //    }
-             
+
         //    _context.Entry(puesto).State = EntityState.Modified;
 
         //    try

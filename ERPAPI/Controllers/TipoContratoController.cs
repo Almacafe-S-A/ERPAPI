@@ -1,4 +1,18 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDComision
+-- PROPOSE:  show record Comision
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+6.0                  31/12/2019          Marvin.Guillen                        Changes of validation to delete records
+5.0                  26/11/2019          Brayan.Interiano                      Changes of Duplicate
+4.0                  16/09/2019          Freddy.Chinchilla                     Changes to Pagination of controller
+3.0                  22/07/2019          Cristopher.Arias                      Changes of Tipo de contrato
+2.0                  15/07/2019          Freddy.Chinchilla                     Changes of Task return
+1.0                  18/09/2019          Mario.Rodrigez                        Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -84,7 +98,25 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => tipoContrato);
         }
+        [HttpGet("[action]/{IdTipoContrato}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 IdTipoContrato)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = await _context.Employees.Where(a => a.IdTipoContrato == IdTipoContrato)
+                                    .CountAsync();
+                return await Task.Run(() => Ok(Items));
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
         [HttpGet("[action]/{IdTipoContrato}")]
         public async Task<ActionResult<TipoContrato>> GetTipoContratoById(Int64 IdTipoContrato)
         {

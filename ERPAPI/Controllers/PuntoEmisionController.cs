@@ -1,4 +1,23 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDPuntoEmision
+-- PROPOSE:  show PuntoEmision records
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+11.0                 09/12/2019          Freddy.Chinchilla               Changes of GetPuntoEmisionByPuntoEmisionCod
+10.0                 22/09/2019          Freddy.Chinchilla               Changes of  Punto de Emision
+9.0                  16/09/2019          Freddy.Chinchilla               Changes of Paginacion Controller
+8.0                  15/07/2019          Freddy.Chinchilla               Mejoras a los controllers Task return
+7.0                  03/06/2019          Irvin.Valeriano                 Changes of Punto Emision
+6.0                  08/05/2019          Freddy.Chinchilla               Changes of Datos
+5.0                  07/05/2019          Freddy.Chinchilla               Changes of Delete Punto de Emision
+4.0                  26/04/2019          Freddy.Chinchilla               Changes of GetbyId
+3.0                  24/04/2019          Freddy.Chinchilla               Mejoras a los controllers
+2.0                  22/04/2019          Freddy.Chinchilla               Changes of Controller
+1.0                  22/04/2019          Freddy.Chinchilla               Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -124,6 +143,31 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+        /// <summary>
+        /// Verifica un punto de emision existente
+        /// </summary>
+        /// <param name="payload"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetPuntoEmisionByPuntoEmisionCod([FromBody]PuntoEmision payload)
+        {
+            PuntoEmision _PuntoEmision = new PuntoEmision();
+            try
+            {
+                _PuntoEmision = _context.PuntoEmision.Where(z => z.PuntoEmisionCod == payload.PuntoEmisionCod
+                  && z.BranchId == payload.BranchId).FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_PuntoEmision));
+        }
+
 
         /// <summary>
         /// Inserta un punto de emision

@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Metadata;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Principal;
-using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
@@ -15,6 +10,9 @@ namespace ERPAPI.Models
         public string UserName { get; set; }
 
         public string RoleName { get; set; }
+
+        public Int64 IdEstado { get; set; }
+        public string Estado { get; set; }
 
         [Required]
         public string UsuarioCreacion { get; set; }
