@@ -155,13 +155,18 @@ namespace ERPAPI.Controllers
             }
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene los Datos de Puesto por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="IdPuesto"></param>
+        /// <returns></returns>
         [HttpGet("[action]/{IdPuesto}")]
-        public async Task<ActionResult<Int32>> ValidationDelete(Int64 IdPuesto)
+        public async Task<ActionResult<Int64>> ValidationDelete(Int64 IdPuesto)
         {
             try
             {
                 //var Items = await _context.Product.CountAsync();
-                Int32 Items = await _context.Employees.Where(a => a.IdPuesto == IdPuesto)
+                Int64 Items = await _context.Employees.Where(a => a.IdPuesto == IdPuesto)
                                     .CountAsync();
                 return await Task.Run(() => Ok(Items));
 
