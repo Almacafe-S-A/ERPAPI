@@ -1,4 +1,26 @@
-﻿using System;
+﻿/********************************************************************************************************
+
+ -- NAME   :  CRUDColors
+
+ -- PROPOSE:  show records Colors from company
+
+
+
+ REVISIONS:
+
+
+
+ version              Date                Author                        Description
+
+ ----------           -------------       ---------------               -------------------------------
+ 2.0                  02/01/2020          Marvin.Guillen                Changes of Validation to delete record
+ 
+ 1.0                  12/12/2019          Alfredo.Ochoa                Creation of Controller
+
+
+ ********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -153,6 +175,27 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]/{ColorsId}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 ColorsId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = 0;//await _context.CheckAccount.Where(a => a.BankId == BankId)
+                                //    .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
 
         /// <summary>
         /// Inserta un nuevo color
