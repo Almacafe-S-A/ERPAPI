@@ -1,4 +1,14 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDUserClaims
+-- PROPOSE:  show relation UserClaims
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+3.0                  03/01/2020          Marvin.Guillen                     Changes of avoid duplicate
+2.0                  15/07/2019          Freddy.Chinchilla                  Changes of Numeracion SAR
+1.0                  04/06/2019          Freddy.Chinchilla                  Creation of Controller
+********************************************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -76,7 +86,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{Id}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 Id )
+        {
+            try
+            {
+                Int32 Items = 0;//await _context.Branch.Where(a => a.CurrencyId == CurrencyId)
+                                //    .CountAsync();
+                return await Task.Run(() => Ok(Items));
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
         /// <summary>
         /// Inserta una nueva AspNetUserClaims
         /// </summary>
