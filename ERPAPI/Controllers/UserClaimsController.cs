@@ -132,6 +132,35 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_AspNetUserClaimsq));
         }
+        /// <summary>
+        /// Consultar una nueva AspNetUserClaims  en la Tabla para evitar duplicarla
+        /// </summary>
+        /// <param name="_ApplicationUserClaimP"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ApplicationUserClaim>> GetAspNetUserClaimsByUser([FromBody]ApplicationUserClaim _ApplicationUserClaimP)
+        {
+            ApplicationUserClaim _Item = new ApplicationUserClaim();
+            try
+            {
+
+                _Item = _context.ApplicationUserClaim.Where(z => z.ClaimType == _ApplicationUserClaimP.ClaimType
+                  && z.ClaimValue == _ApplicationUserClaimP.ClaimValue && z.UserId == _ApplicationUserClaimP.UserId
+                   ).FirstOrDefault();
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_Item));
+        }
 
         /// <summary>
         /// Elimina una AspNetUserClaims       
