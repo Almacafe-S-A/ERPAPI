@@ -330,5 +330,30 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_AccountManagementq));
 
         }
+        /// <summary>
+        /// Obtiene los Datos de Puesto por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="AccountManagementId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{AccountManagementId}")]
+        public async Task<ActionResult<Int64>> ValidationDelete(Int64 AccountManagementId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int64 Items = await _context.CheckAccount.Where(a => a.AccountManagementId == AccountManagementId)
+                                    .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
     }
 }
