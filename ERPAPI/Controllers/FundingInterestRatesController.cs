@@ -1,4 +1,19 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDFundingInterestRate
+-- PROPOSE:  show FundingInterestRate records
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+7.0                  05/01/2020          Marvin.Guillen                 Changes of delete records of FundingInterestRate
+6.0                  30/12/2019          Maria.Funez                    Changes of modified method of controller
+5.0                  23/12/2019          Marvin.Guillen                 Changes of Validation to delete
+4.0                  10/12/2019          Maria.Funez                    Changes of Merger con rama de de sarrollo
+3.0                  10/12/2019          Maria.Funez                    Changes of metodo para traer los registros activos
+2.0                  05/12/2019          Marvin.Guillen                 Changes of FundingInterestRate
+1.0                  19/09/2019          Carlos.Castillo                Creation of Controller
+********************************************************************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -134,7 +149,30 @@ namespace ERPAPI.Controllers
             }
 
         }
+        /// <summary>
+        /// Obtiene los Datos de la Tasa por medio del Id enviado. Validación de eliminar
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
 
+        [HttpGet("[action]/{Id}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(int Id)
+        {
+            try
+            {
+                Int32 Items = await _context.Product.Where(a => a.FundingInterestRateId == Id)
+                                                 .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
 
         [HttpPost("[action]")]
         public async Task<ActionResult<FundingInterestRate>> Insert([FromBody]FundingInterestRate payload)
