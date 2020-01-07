@@ -242,14 +242,15 @@ namespace ERPAPI.Controllers
         /// Obtiene los Datos de Puesto por medio del Nombre enviado.
         /// </summary>
         /// <param name="Nombre"></param>
+        /// /// <param name="Idconfiguracion"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{Nombre}")]
-        public async Task<IActionResult> GetElemntoConfiguracionByNombre(String Nombre)
+        [HttpGet("[action]/{Nombre}/{Idconfiguracion}")]
+        public async Task<IActionResult> GetElemntoConfiguracionByNombre(String Nombre, Int64 Idconfiguracion)
         {
             ElementoConfiguracion Items = new ElementoConfiguracion();
             try
             {
-                Items = await _context.ElementoConfiguracion.Where(q => q.Nombre == Nombre).FirstOrDefaultAsync();
+                Items = await _context.ElementoConfiguracion.Where(q => q.Nombre == Nombre && q.Idconfiguracion == Idconfiguracion).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
