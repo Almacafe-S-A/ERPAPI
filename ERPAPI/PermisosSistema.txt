@@ -5,6 +5,7 @@ Menu.Seguridad
 Menu.Bancos
 Menu.Contabilidad
 Menu.Monitoreo
+Menu.Catalogos
 Menu.Inventarios
 Menu.Clientes
 Menu.Compras
