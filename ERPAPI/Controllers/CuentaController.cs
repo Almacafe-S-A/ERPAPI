@@ -76,11 +76,13 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<UserToken>> CambiarPassword([FromBody] UserInfo model)
         {
             var user = _context.Users.Where(q => q.Email == model.Email).FirstOrDefault();
+            user.LastPasswordChangedDate = DateTime.Now;
 
             var result = await _userManager.ChangePasswordAsync(user, model.PasswordAnterior, model.Password);
 
             if (result.Succeeded)
             {
+                await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok());
             }
             else
