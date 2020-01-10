@@ -288,7 +288,7 @@ namespace ERPAPI.Controllers
 
                 string password = "";
 
-                if (_usuario.cambiarpassword) { password= _usuario.PasswordHash; }
+                if (_usuario.cambiarpassword) { password= _usuario.PasswordHash; _usuario.LastPasswordChangedDate = new DateTime();  }
                 else
                 {
                     _usuario.PasswordHash = ApplicationUserq.PasswordHash;
