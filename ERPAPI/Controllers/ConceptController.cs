@@ -108,6 +108,33 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los Datos del Concepto por medio del concepto enviado, para validar antes de ingresar.
+        /// </summary>
+        /// <param name="_Concept"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{_Concept}")]
+        public async Task<IActionResult> GetConceptByConceptValues(Concept _Concept)
+        {
+            Concept Items = new Concept();
+            try
+            {
+                Items = await _context.Concept.Where(q => q.ConceptName == _Concept.ConceptName 
+                && q.Calculation == _Concept.Calculation
+                && q.Value == _Concept.Value
+                && q.TypeId == q.TypeId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Inserta una nueva Concept
