@@ -353,7 +353,7 @@ namespace ERPAPI.Controllers
                 ApplicationUser usuarioActualizar = await _context.Users.Where(q => q.Email == _cambio.Email).FirstOrDefaultAsync();
                 
                 var passwordValidator = new PasswordValidator<ApplicationUser>();
-                var result = await passwordValidator.ValidateAsync(_userManager, null, _cambio.Password);
+                var result = await passwordValidator.ValidateAsync(_userManager, usuarioActualizar, _cambio.Password);
 
                 if (result.Succeeded)
                 {
@@ -376,7 +376,7 @@ namespace ERPAPI.Controllers
                         UserId = _newpass.Id.ToString(),
                         PasswordHash = _newpass.PasswordHash,
                     });
-
+                    usuarioActualizar.LastPasswordChangedDate = DateTime.Now;
                     await  _context.SaveChangesAsync();
 
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
