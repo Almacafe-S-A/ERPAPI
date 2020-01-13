@@ -64,7 +64,7 @@ namespace ERPAPI.Models
         public double Amount { get; set; }
 
         [Display(Name = "Costo")]
-        public double Cost { get; set; }
+        public double? Cost { get; set; }
 
         [Display(Name = "Valor residual")]
         public double ResidualValue { get; set; }
