@@ -108,7 +108,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{Name}/{StateId}")]
         public async Task<IActionResult> GetCityByName(String Name, Int64 StateId)
         {
             City Items = new City();
