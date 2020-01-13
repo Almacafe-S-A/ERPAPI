@@ -38,7 +38,7 @@ namespace ERPAPI.Models
         [Display(Name = "Id de Socio de negocios")]
         public int? PartyId { get; set; }
 
-        public string PartyName { get; set; }
+        public string PartyName { get; set; } 
 
         [Display(Name = "Tipos de Voucher/Documento")]
         //  public JournalVoucherTypes? VoucherType { get; set; }

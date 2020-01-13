@@ -49,6 +49,18 @@ namespace ERPAPI.Models
         public double CreditME { get; set; }
 
         public string Memo { get; set; }
+
+        [Display(Name = "Tipo de Socio de negocios")]
+        public int PartyTypeId { get; set; }
+
+        [Display(Name = "Tipo de Socio de negocios")]
+        public string PartyTypeName { get; set; }
+
+        [Display(Name = "Id de Socio de negocios")]
+        public int? PartyId { get; set; }
+
+        public string PartyName { get; set; }
+
         public virtual JournalEntry JournalEntry { get; set; }
         public virtual Accounting Account { get; set; }
         [Required]
