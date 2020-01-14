@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200107180232_Added_Fields_journal_Entry")]
+    partial class Added_Fields_journal_Entry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4242,7 +4244,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CenterCostName");
 
-                    b.Property<double?>("Cost");
+                    b.Property<double>("Cost");
 
                     b.Property<string>("Estado");
 
@@ -5338,10 +5340,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DocumentTypeName");
 
-                    b.Property<string>("Estado");
-
-                    b.Property<long>("EstadoId");
-
                     b.Property<string>("InsurancesName");
 
                     b.Property<DateTime>("ModifiedDate");
@@ -5352,8 +5350,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Path");
 
                     b.HasKey("InsurancesId");
-
-                    b.HasIndex("EstadoId");
 
                     b.ToTable("Insurances");
                 });
@@ -6081,14 +6077,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ModifiedUser")
                         .IsRequired();
-
-                    b.Property<int?>("PartyId");
-
-                    b.Property<string>("PartyName");
-
-                    b.Property<int>("PartyTypeId");
-
-                    b.Property<string>("PartyTypeName");
 
                     b.HasKey("JournalEntryLineId");
 
@@ -10212,14 +10200,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.InsuranceEndorsement")
                         .WithMany("InsuranceEndorsementLines")
                         .HasForeignKey("InsuranceEndorsementId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Insurances", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

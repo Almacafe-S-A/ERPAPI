@@ -67,7 +67,9 @@ namespace ERPAPI.Controllers
             List<GarantiaBancaria> Items = new List<GarantiaBancaria>();
             try
             {
-                Items = await _context.GarantiaBancaria.ToListAsync();
+                Items = await _context.GarantiaBancaria.Include("CostCenter")
+                                                       .Include("Currency")
+                                                       .Include("Estado").ToListAsync();
             }
             catch (Exception ex)
             {

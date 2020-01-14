@@ -38,6 +38,8 @@ namespace ERPAPI.Models
         [Display(Name = "Id de Socio de negocios")]
         public int? PartyId { get; set; }
 
+        public string PartyName { get; set; } 
+
         [Display(Name = "Tipos de Voucher/Documento")]
         //  public JournalVoucherTypes? VoucherType { get; set; }
         public int? VoucherType { get; set; }
@@ -75,6 +77,10 @@ namespace ERPAPI.Models
 
         [Display(Name = "Tipo de ajuste")]
         public string TypeOfAdjustmentName { get; set; }
+
+        public string ApprovedBy { get; set; }
+
+        public DateTime? ApprovedDate { get; set; }
 
         public List<JournalEntryLine> JournalEntryLines { get; set; } = new List<JournalEntryLine>();
         [Required]

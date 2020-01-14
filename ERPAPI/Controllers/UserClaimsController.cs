@@ -1,4 +1,14 @@
-﻿using System;
+﻿/********************************************************************************************************
+-- NAME   :  CRUDUserClaims
+-- PROPOSE:  show relation UserClaims
+REVISIONS:
+version              Date                Author                        Description
+----------           -------------       ---------------               -------------------------------
+3.0                  03/01/2020          Marvin.Guillen                     Changes of avoid duplicate
+2.0                  15/07/2019          Freddy.Chinchilla                  Changes of Numeracion SAR
+1.0                  04/06/2019          Freddy.Chinchilla                  Creation of Controller
+********************************************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -76,7 +86,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{Id}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 Id )
+        {
+            try
+            {
+                Int32 Items = 0;//await _context.Branch.Where(a => a.CurrencyId == CurrencyId)
+                                //    .CountAsync();
+                return await Task.Run(() => Ok(Items));
 
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
         /// <summary>
         /// Inserta una nueva AspNetUserClaims
         /// </summary>
@@ -131,6 +158,35 @@ namespace ERPAPI.Controllers
             }
 
             return await Task.Run(() => Ok(_AspNetUserClaimsq));
+        }
+        /// <summary>
+        /// Consultar una nueva AspNetUserClaims  en la Tabla para evitar duplicarla
+        /// </summary>
+        /// <param name="_ApplicationUserClaimP"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<ApplicationUserClaim>> GetAspNetUserClaimsByUser([FromBody]ApplicationUserClaim _ApplicationUserClaimP)
+        {
+            ApplicationUserClaim _Item = new ApplicationUserClaim();
+            try
+            {
+
+                _Item = _context.ApplicationUserClaim.Where(z => z.ClaimType == _ApplicationUserClaimP.ClaimType
+                  && z.ClaimValue == _ApplicationUserClaimP.ClaimValue && z.UserId == _ApplicationUserClaimP.UserId
+                   ).FirstOrDefault();
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_Item));
         }
 
         /// <summary>

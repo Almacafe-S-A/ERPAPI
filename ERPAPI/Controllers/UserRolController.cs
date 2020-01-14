@@ -121,7 +121,7 @@ namespace ERPAPI.Controllers
         /// <param name="_ApplicationUserRole"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]ApplicationUserRole _ApplicationUserRole)
+        public async Task<IActionResult>Delete([FromBody]ApplicationUserRole _ApplicationUserRole)
         {
             try
             {

@@ -113,7 +113,7 @@ namespace ERPAPI.Controllers
         /// Obtiene los usuarios de la aplicacion.
         /// </summary>
         /// <returns></returns>
-        [Authorize(Policy = "Seguridad.Usuarios")]
+       //[Authorize(Policy = "Seguridad.Usuarios")]
         [HttpGet("[action]")]      
         public async Task<ActionResult<List<ApplicationUser>>> GetUsers()
         {
@@ -288,7 +288,7 @@ namespace ERPAPI.Controllers
 
                 string password = "";
 
-                if (_usuario.cambiarpassword) { password= _usuario.PasswordHash; }
+                if (_usuario.cambiarpassword) { password= _usuario.PasswordHash; _usuario.LastPasswordChangedDate = new DateTime();  }
                 else
                 {
                     _usuario.PasswordHash = ApplicationUserq.PasswordHash;
@@ -353,7 +353,7 @@ namespace ERPAPI.Controllers
                 ApplicationUser usuarioActualizar = await _context.Users.Where(q => q.Email == _cambio.Email).FirstOrDefaultAsync();
                 
                 var passwordValidator = new PasswordValidator<ApplicationUser>();
-                var result = await passwordValidator.ValidateAsync(_userManager, null, _cambio.Password);
+                var result = await passwordValidator.ValidateAsync(_userManager, usuarioActualizar, _cambio.Password);
 
                 if (result.Succeeded)
                 {
@@ -376,7 +376,7 @@ namespace ERPAPI.Controllers
                         UserId = _newpass.Id.ToString(),
                         PasswordHash = _newpass.PasswordHash,
                     });
-
+                    usuarioActualizar.LastPasswordChangedDate = DateTime.Now;
                     await  _context.SaveChangesAsync();
 
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora

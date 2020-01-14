@@ -4,6 +4,8 @@
 REVISIONS:
 version              Date                Author                        Description
 ----------           -------------       ---------------               -------------------------------
+11.0                 06/01/2020          Marvin.Guillen                     Change to Validation to delete records on Dearrollo Branch
+10.0                 16/12/2019          Maria.Funez                        Changes to delete recordChanges
 9.0                  07/12/2019          Marvin.Guillen                     Validation to duplicated on Dearrollo Branch
 8.0                  06/12/2019          Marvin.Guillen                     Validation to duplicated
 7.0                  16/09/2019          Marvin.Guillen                     Changes of Controller
@@ -147,6 +149,28 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        [HttpGet("[action]/{Id}")]
+        public async Task<ActionResult<Int32>> ValidationDelete(Int64 Id)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int32 Items = await _context.Customer.Where(a => a.TaxId == Id)
+                                    .CountAsync()
+                                    +
+                              await _context.PurchaseOrder.Where(a =>a.TaxId==Id).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
 
 
 
