@@ -14,3 +14,5 @@ morelinq (3.2.0) <br/>
 Nlog (4.6.7) <br/>
 Nlog.Web.AspNetCore (4.8.4) <br/>
 Swashbuckle.AspNetCore (4.0.1) <br/>
+
+DevOps
