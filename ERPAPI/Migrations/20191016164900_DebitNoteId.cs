@@ -41,7 +41,7 @@ namespace ERPAPI.Migrations
                 column: "DebitNoteId",
                 principalTable: "DebitNote",
                 principalColumn: "DebitNoteId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

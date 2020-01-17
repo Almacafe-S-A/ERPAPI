@@ -65,7 +65,7 @@ namespace ERPAPI.Migrations
                 column: "CurrencyId",
                 principalTable: "Currency",
                 principalColumn: "CurrencyId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_InventoryTransferLine_UnitOfMeasure_UnitOfMeasureId",
@@ -73,7 +73,7 @@ namespace ERPAPI.Migrations
                 column: "UnitOfMeasureId",
                 principalTable: "UnitOfMeasure",
                 principalColumn: "UnitOfMeasureId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -45,7 +45,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CompanyInfoId,
                         principalTable: "CompanyInfo",
                         principalColumn: "CompanyInfoId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_CierresAccounting_Accounting_ParentAccountAccountId",
                         column: x => x.ParentAccountAccountId,

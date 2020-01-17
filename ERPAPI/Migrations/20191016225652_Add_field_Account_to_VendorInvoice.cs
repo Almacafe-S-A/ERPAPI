@@ -23,7 +23,7 @@ namespace ERPAPI.Migrations
                 column: "AccountId",
                 principalTable: "Accounting",
                 principalColumn: "AccountId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

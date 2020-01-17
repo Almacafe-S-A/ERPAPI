@@ -32,7 +32,7 @@ namespace ERPAPI.Migrations
                         column: x => x.MaterialId,
                         principalTable: "Material",
                         principalColumn: "MaterialId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

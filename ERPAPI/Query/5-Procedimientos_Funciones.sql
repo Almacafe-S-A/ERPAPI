@@ -156,7 +156,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[CierresPaso1_Historicos] 
+CREATE OR ALTER PROCEDURE [dbo].[CierresPaso1_Historicos] 
 	
 	@pFechaInicio	DateTime,
 	@pIdBitacora    int
@@ -169,8 +169,6 @@ BEGIN
            ,[AccountBalance]
            ,[Description]
            ,[IsCash]
-           ,[AccountClasses]
-           ,[IsContraAccount]
            ,[TypeAccountId]
            ,[BlockedInJournal]
            ,[AccountCode]
@@ -192,8 +190,6 @@ BEGIN
            ,[AccountBalance]
            ,[Description]
            ,[IsCash]
-           ,[AccountClasses]
-           ,[IsContraAccount]
            ,[TypeAccountId]
            ,[BlockedInJournal]
            ,[AccountCode]
@@ -333,7 +329,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[CierresPaso2_CertificadosMaxSum]
+CREATE OR ALTER PROCEDURE [dbo].[CierresPaso2_CertificadosMaxSum]
 	-- Parametros
 	@pFechaInicio	DateTime,
 	@pIdBitacora    int

@@ -28,7 +28,7 @@ namespace ERPAPI.Migrations
                 column: "IdGrupoEstado",
                 principalTable: "GrupoConfiguracion",
                 principalColumn: "IdConfiguracion",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
     }
 }

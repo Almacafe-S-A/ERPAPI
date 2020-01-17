@@ -8869,7 +8869,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyInfoId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Accounting", "ParentAccount")
                         .WithMany("ChildAccounts")
@@ -8881,7 +8881,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Branch", "Branch")
                         .WithMany()
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ApplicationUserClaim", b =>
@@ -8889,7 +8889,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ApplicationUserRole", b =>
@@ -8897,12 +8897,12 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationRole")
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.AspNetRoleClaims", b =>
@@ -8910,7 +8910,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationRole")
                         .WithMany()
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.AspNetUserLogins", b =>
@@ -8918,7 +8918,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.AspNetUserTokens", b =>
@@ -8926,7 +8926,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.BitacoraCierreProcesos", b =>
@@ -8934,7 +8934,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierresContable")
                         .WithMany("CierreContableLineas")
                         .HasForeignKey("IdBitacoraCierre")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Boleto_Sal", b =>
@@ -8942,7 +8942,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Boleto_Ent", "Boleto_Ent")
                         .WithOne("Boleto_Sal")
                         .HasForeignKey("ERPAPI.Models.Boleto_Sal", "clave_e")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Branch", b =>
@@ -8950,22 +8950,22 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.City", "Ciudad")
                         .WithMany()
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
                         .WithMany()
                         .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.State", "Departamento")
                         .WithMany("Branch")
@@ -8978,7 +8978,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CertificadoDeposito")
                         .WithMany("_CertificadoLine")
                         .HasForeignKey("IdCD")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CierresAccounting", b =>
@@ -8986,12 +8986,12 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierreContable")
                         .WithMany()
                         .HasForeignKey("BitacoraCierreContableId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.CompanyInfo", "Company")
                         .WithMany()
                         .HasForeignKey("CompanyInfoId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Accounting", "ParentAccount")
                         .WithMany()
@@ -9003,7 +9003,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierreContable")
                         .WithMany()
                         .HasForeignKey("BitacoraCierreContableId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.GeneralLedgerHeader", "GeneralLedgerHeader")
                         .WithMany()
@@ -9023,7 +9023,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
                         .WithMany()
                         .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.City", b =>
@@ -9038,7 +9038,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Conciliacion")
                         .WithMany("ConciliacionLinea")
                         .HasForeignKey("ConciliacionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoTransaccion")
                         .WithMany()
@@ -9050,7 +9050,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Employees", "Empleado")
                         .WithMany()
                         .HasForeignKey("IdEmpleado")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPalletsLine", b =>
@@ -9058,7 +9058,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ControlPallets")
                         .WithMany("_ControlPalletsLine")
                         .HasForeignKey("ControlPalletsId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CreditNoteLine", b =>
@@ -9066,7 +9066,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CreditNote", "CreditNote")
                         .WithMany("CreditNoteLine")
                         .HasForeignKey("CreditNoteId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Customer", b =>
@@ -9098,7 +9098,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CustomerArea")
                         .WithMany("CustomerAreaProduct")
                         .HasForeignKey("CustomerAreaId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomersOfCustomer", b =>
@@ -9106,7 +9106,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Customers")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.DebitNoteLine", b =>
@@ -9114,7 +9114,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.DebitNote", "DebitNote")
                         .WithMany("DebitNoteLine")
                         .HasForeignKey("DebitNoteId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Doc_CP", b =>
@@ -9122,12 +9122,12 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Accounting", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.ElementoConfiguracion", "DocType")
                         .WithMany()
@@ -9136,12 +9136,12 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.PaymentTypes", "PaymentType")
                         .WithMany()
                         .HasForeignKey("PaymentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Tax", "Tax")
                         .WithMany()
                         .HasForeignKey("TaxId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ElementoConfiguracion", b =>
@@ -9156,7 +9156,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.EmployeeExtraHours")
                         .WithMany("EmployeeExtraHoursDetail")
                         .HasForeignKey("EmployeeExtraHoursId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EmployeeSalary", b =>
@@ -9164,7 +9164,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Employees")
                         .WithMany("_EmployeeSalary")
                         .HasForeignKey("IdEmpleado")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Employees", b =>
@@ -9176,12 +9176,12 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Bank", "Bank")
                         .WithMany()
                         .HasForeignKey("IdBank")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Branch", "Branch")
                         .WithMany()
                         .HasForeignKey("IdBranch")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.City", "City")
                         .WithMany("Employees")
@@ -9201,7 +9201,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Departamento", "Departamento")
                         .WithMany()
                         .HasForeignKey("IdDepartamento")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
                         .WithMany("Employees")
@@ -9211,7 +9211,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Puesto", "Puesto")
                         .WithMany()
                         .HasForeignKey("IdPuesto")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.State", "State")
                         .WithMany("Employees")
@@ -9221,7 +9221,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.TipoContrato", "TipoContrato")
                         .WithMany()
                         .HasForeignKey("IdTipoContrato")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.TipoPlanillas", "TipoPlanilla")
                         .WithMany()
@@ -9233,7 +9233,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.EndososBono")
                         .WithMany("EndososBonoLine")
                         .HasForeignKey("EndososBonoId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EndososCertificadosLine", b =>
@@ -9241,7 +9241,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.EndososCertificados")
                         .WithMany("EndososCertificadosLine")
                         .HasForeignKey("EndososCertificadosId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EndososTalonLine", b =>
@@ -9249,7 +9249,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.EndososTalon")
                         .WithMany("EndososTalonLine")
                         .HasForeignKey("EndososTalonId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ExchangeRate", b =>
@@ -9257,7 +9257,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.FixedAssetGroup", b =>
@@ -9272,17 +9272,17 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
                         .WithMany()
                         .HasForeignKey("CostCenterId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Estados", "Estado")
                         .WithMany()
                         .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GeneralLedgerLine", b =>
@@ -9301,7 +9301,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GoodsDelivered")
                         .WithMany("_GoodsDeliveredLine")
                         .HasForeignKey("GoodsDeliveredId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorizationLine", b =>
@@ -9309,7 +9309,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorization")
                         .WithMany("GoodsDeliveryAuthorizationLine")
                         .HasForeignKey("GoodsDeliveryAuthorizationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsReceivedLine", b =>
@@ -9317,7 +9317,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GoodsReceived")
                         .WithMany("_GoodsReceivedLine")
                         .HasForeignKey("GoodsReceivedId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Grupo", b =>
@@ -9339,7 +9339,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.InsuranceEndorsement")
                         .WithMany("InsuranceEndorsementLines")
                         .HasForeignKey("InsuranceEndorsementId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InsurancesCertificateLine", b =>
@@ -9347,7 +9347,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.InsurancesCertificate")
                         .WithMany("_InsurancesCertificateLine")
                         .HasForeignKey("InsurancesCertificateId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InvoiceLine", b =>
@@ -9355,7 +9355,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Invoice", "Invoice")
                         .WithMany("InvoiceLine")
                         .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.JournalEntry", b =>
@@ -9374,7 +9374,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.JournalEntryConfiguration")
                         .WithMany("JournalEntryConfigurationLine")
                         .HasForeignKey("JournalEntryConfigurationId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.JournalEntryLine", b =>
@@ -9386,7 +9386,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
                         .WithMany("JournalEntryLines")
                         .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.KardexLine", b =>
@@ -9394,7 +9394,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Kardex")
                         .WithMany("_KardexLine")
                         .HasForeignKey("KardexId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.PasswordHistory", b =>
@@ -9413,7 +9413,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.PaymentTypes", "PaymentTypes")
                         .WithMany()
                         .HasForeignKey("PaymentTypesId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.PolicyRoles", b =>
@@ -9421,12 +9421,12 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Policy", "Policy")
                         .WithMany()
                         .HasForeignKey("IdPolicy")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.ApplicationRole", "Role")
                         .WithMany()
                         .HasForeignKey("IdRol")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Product", b =>
@@ -9434,7 +9434,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Branch", "Branch")
                         .WithMany()
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
                         .WithMany("Product")
@@ -9484,7 +9484,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ProformaInvoice", "ProformaInvoice")
                         .WithMany("ProformaInvoiceLine")
                         .HasForeignKey("ProformaInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.PurchaseOrder", b =>
@@ -9527,7 +9527,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.PurchaseOrder", "PurchaseOrder")
                         .WithMany("PurchaseOrderLines")
                         .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Tax", "Tax")
                         .WithMany()
@@ -9536,7 +9536,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
                         .HasForeignKey("UnitOfMeasureId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>
@@ -9544,7 +9544,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
                         .HasForeignKey("SalesOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoLine", b =>
@@ -9552,7 +9552,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.SolicitudCertificadoDeposito")
                         .WithMany("_SolicitudCertificadoLine")
                         .HasForeignKey("IdSCD")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.State", b =>
@@ -9560,7 +9560,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Country")
                         .WithMany("State")
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Vendor", b =>
@@ -9568,22 +9568,22 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.City", "City")
                         .WithMany()
                         .HasForeignKey("CityId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Country", "Country")
                         .WithMany()
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Currency", "Currency")
                         .WithMany()
                         .HasForeignKey("CurrencyId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
                         .WithMany()
                         .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.State", "State")
                         .WithMany("Vendor")
@@ -9593,7 +9593,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.VendorType", "VendorType")
                         .WithMany()
                         .HasForeignKey("VendorTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorInvoice", b =>
@@ -9601,7 +9601,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Accounting", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.PurchaseOrder", "PurchaseOrder")
                         .WithMany()
@@ -9610,7 +9610,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Vendor", "Vendor")
                         .WithMany()
                         .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorInvoiceLine", b =>
@@ -9618,12 +9618,12 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Accounting", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ERPAPI.Models.VendorInvoice", "VendorInvoice")
                         .WithMany("VendorInvoiceLine")
                         .HasForeignKey("VendorInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorOfCustomer", b =>
@@ -9645,7 +9645,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("OFAC.sdnListSdnEntryM")
                         .WithMany("addressList")
                         .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("OFAC.sdnListSdnEntryAkaM", b =>
@@ -9653,7 +9653,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("OFAC.sdnListSdnEntryM")
                         .WithMany("akaList")
                         .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("OFAC.sdnListSdnEntryCitizenshipM", b =>
@@ -9661,7 +9661,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("OFAC.sdnListSdnEntryM")
                         .WithMany("citizenshipList")
                         .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("OFAC.sdnListSdnEntryDateOfBirthItemM", b =>
@@ -9669,7 +9669,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("OFAC.sdnListSdnEntryM")
                         .WithMany("dateOfBirthList")
                         .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("OFAC.sdnListSdnEntryIDM", b =>
@@ -9677,7 +9677,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("OFAC.sdnListSdnEntryM")
                         .WithMany("idList")
                         .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("OFAC.sdnListSdnEntryM", b =>
@@ -9696,7 +9696,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("OFAC.sdnListSdnEntryM")
                         .WithMany("nationalityList")
                         .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("OFAC.sdnListSdnEntryPlaceOfBirthItemM", b =>
@@ -9704,7 +9704,7 @@ namespace ERPAPI.Migrations
                     b.HasOne("OFAC.sdnListSdnEntryM")
                         .WithMany("placeOfBirthList")
                         .HasForeignKey("sdnListSdnEntryMId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ONUListas.ENTITYM", b =>

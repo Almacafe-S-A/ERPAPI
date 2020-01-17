@@ -77,13 +77,13 @@ namespace ERPAPI.Migrations
                         column: x => x.PurchaseOrderId,
                         principalTable: "PurchaseOrder",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_VendorInvoice_Vendor_VendorId",
                         column: x => x.VendorId,
                         principalTable: "Vendor",
                         principalColumn: "VendorId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -119,13 +119,13 @@ namespace ERPAPI.Migrations
                         column: x => x.AccountId,
                         principalTable: "Accounting",
                         principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_VendorInvoiceLine_Invoice_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_VendorInvoiceLine_VendorInvoice_VendorInvoiceId",
                         column: x => x.VendorInvoiceId,

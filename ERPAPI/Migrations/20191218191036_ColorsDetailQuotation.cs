@@ -39,7 +39,7 @@ namespace ERPAPI.Migrations
                 column: "QuotationCode",
                 principalTable: "Quotation",
                 principalColumn: "QuotationCode",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
