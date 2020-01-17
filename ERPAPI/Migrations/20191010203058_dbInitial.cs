@@ -3658,7 +3658,7 @@ namespace ERPAPI.Migrations
                     IdPaymentCode = table.Column<int>(nullable: false),
                     IdTypeofPayment = table.Column<int>(nullable: false),
                     EstadoId = table.Column<int>(nullable: false),
-                    EstadoName = table.Column<int>(nullable: false),
+                    EstadoName = table.Column<string>(nullable: false),
                     TotalDebit = table.Column<double>(nullable: false),
                     TotalCredit = table.Column<double>(nullable: false),
                     TypeOfAdjustmentId = table.Column<int>(nullable: false),
