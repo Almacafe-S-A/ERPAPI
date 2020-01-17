@@ -44,7 +44,7 @@ namespace ERPAPI.Migrations
                 column: "PurchaseOrderId",
                 principalTable: "PurchaseOrder",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
     }
 }

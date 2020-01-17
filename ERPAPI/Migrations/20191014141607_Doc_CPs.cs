@@ -72,13 +72,13 @@ namespace ERPAPI.Migrations
                         column: x => x.AccountId,
                         principalTable: "Accounting",
                         principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Doc_CP_Currency_CurrencyId",
                         column: x => x.CurrencyId,
                         principalTable: "Currency",
                         principalColumn: "CurrencyId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Doc_CP_ElementoConfiguracion_DocTipoId",
                         column: x => x.DocTipoId,
@@ -90,13 +90,13 @@ namespace ERPAPI.Migrations
                         column: x => x.PaymentTypeId,
                         principalTable: "PaymentTypes",
                         principalColumn: "PaymentTypesId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Doc_CP_Tax_TaxId",
                         column: x => x.TaxId,
                         principalTable: "Tax",
                         principalColumn: "TaxId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

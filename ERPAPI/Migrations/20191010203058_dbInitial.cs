@@ -2880,7 +2880,7 @@ namespace ERPAPI.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2933,7 +2933,7 @@ namespace ERPAPI.Migrations
                         column: x => x.clave_e,
                         principalTable: "Boleto_Ent",
                         principalColumn: "clave_e",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -2964,7 +2964,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdCD,
                         principalTable: "CertificadoDeposito",
                         principalColumn: "IdCD",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3002,7 +3002,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CompanyInfoId,
                         principalTable: "CompanyInfo",
                         principalColumn: "CompanyInfoId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Accounting_Accounting_ParentAccountAccountId",
                         column: x => x.ParentAccountAccountId,
@@ -3039,7 +3039,7 @@ namespace ERPAPI.Migrations
                         column: x => x.ControlPalletsId,
                         principalTable: "ControlPallets",
                         principalColumn: "ControlPalletsId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3063,7 +3063,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CountryId,
                         principalTable: "Country",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3089,7 +3089,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CurrencyId,
                         principalTable: "Currency",
                         principalColumn: "CurrencyId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3112,7 +3112,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CustomerAreaId,
                         principalTable: "CustomerArea",
                         principalColumn: "CustomerAreaId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3139,7 +3139,7 @@ namespace ERPAPI.Migrations
                         column: x => x.EndososBonoId,
                         principalTable: "EndososBono",
                         principalColumn: "EndososBonoId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3166,7 +3166,7 @@ namespace ERPAPI.Migrations
                         column: x => x.EndososCertificadosId,
                         principalTable: "EndososCertificados",
                         principalColumn: "EndososCertificadosId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3193,7 +3193,7 @@ namespace ERPAPI.Migrations
                         column: x => x.EndososTalonId,
                         principalTable: "EndososTalon",
                         principalColumn: "EndososTalonId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3233,7 +3233,7 @@ namespace ERPAPI.Migrations
                         column: x => x.GoodsDeliveredId,
                         principalTable: "GoodsDelivered",
                         principalColumn: "GoodsDeliveredId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3266,7 +3266,7 @@ namespace ERPAPI.Migrations
                         column: x => x.GoodsDeliveryAuthorizationId,
                         principalTable: "GoodsDeliveryAuthorization",
                         principalColumn: "GoodsDeliveryAuthorizationId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3304,7 +3304,7 @@ namespace ERPAPI.Migrations
                         column: x => x.GoodsReceivedId,
                         principalTable: "GoodsReceived",
                         principalColumn: "GoodsReceivedId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3360,7 +3360,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdGrupoEstado,
                         principalTable: "GrupoConfiguracion",
                         principalColumn: "IdConfiguracion",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3425,7 +3425,7 @@ namespace ERPAPI.Migrations
                         column: x => x.InvoiceId,
                         principalTable: "Invoice",
                         principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3456,7 +3456,7 @@ namespace ERPAPI.Migrations
                         column: x => x.JournalEntryConfigurationId,
                         principalTable: "JournalEntryConfiguration",
                         principalColumn: "JournalEntryConfigurationId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3503,7 +3503,7 @@ namespace ERPAPI.Migrations
                         column: x => x.KardexId,
                         principalTable: "Kardex",
                         principalColumn: "KardexId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3658,7 +3658,7 @@ namespace ERPAPI.Migrations
                     IdPaymentCode = table.Column<int>(nullable: false),
                     IdTypeofPayment = table.Column<int>(nullable: false),
                     EstadoId = table.Column<int>(nullable: false),
-                    EstadoName = table.Column<string>(nullable: false),
+                    EstadoName = table.Column<string>(nullable: true),
                     TotalDebit = table.Column<double>(nullable: false),
                     TotalCredit = table.Column<double>(nullable: false),
                     TypeOfAdjustmentId = table.Column<int>(nullable: false),
@@ -3722,7 +3722,7 @@ namespace ERPAPI.Migrations
                         column: x => x.ProformaInvoiceId,
                         principalTable: "ProformaInvoice",
                         principalColumn: "ProformaId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3758,7 +3758,7 @@ namespace ERPAPI.Migrations
                         column: x => x.SalesOrderId,
                         principalTable: "SalesOrder",
                         principalColumn: "SalesOrderId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -3806,7 +3806,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdSCD,
                         principalTable: "SolicitudCertificadoDeposito",
                         principalColumn: "IdSCD",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4105,7 +4105,7 @@ namespace ERPAPI.Migrations
                         column: x => x.JournalEntryId,
                         principalTable: "JournalEntry",
                         principalColumn: "JournalEntryId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4180,25 +4180,25 @@ namespace ERPAPI.Migrations
                         column: x => x.CityId,
                         principalTable: "City",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Branch_Country_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Country",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Branch_Currency_CurrencyId",
                         column: x => x.CurrencyId,
                         principalTable: "Currency",
                         principalColumn: "CurrencyId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Branch_Estados_IdEstado",
                         column: x => x.IdEstado,
                         principalTable: "Estados",
                         principalColumn: "IdEstado",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Branch_State_StateId",
                         column: x => x.StateId,
@@ -4334,25 +4334,25 @@ namespace ERPAPI.Migrations
                         column: x => x.CityId,
                         principalTable: "City",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Vendor_Country_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Country",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Vendor_Currency_CurrencyId",
                         column: x => x.CurrencyId,
                         principalTable: "Currency",
                         principalColumn: "CurrencyId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Vendor_Estados_IdEstado",
                         column: x => x.IdEstado,
                         principalTable: "Estados",
                         principalColumn: "IdEstado",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Vendor_State_StateId",
                         column: x => x.StateId,
@@ -4364,7 +4364,7 @@ namespace ERPAPI.Migrations
                         column: x => x.VendorTypeId,
                         principalTable: "VendorType",
                         principalColumn: "VendorTypeId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4391,7 +4391,7 @@ namespace ERPAPI.Migrations
                         column: x => x.sdnListSdnEntryMId,
                         principalTable: "sdnListSdnEntry",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4415,7 +4415,7 @@ namespace ERPAPI.Migrations
                         column: x => x.sdnListSdnEntryMId,
                         principalTable: "sdnListSdnEntry",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4437,7 +4437,7 @@ namespace ERPAPI.Migrations
                         column: x => x.sdnListSdnEntryMId,
                         principalTable: "sdnListSdnEntry",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4459,7 +4459,7 @@ namespace ERPAPI.Migrations
                         column: x => x.sdnListSdnEntryMId,
                         principalTable: "sdnListSdnEntry",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4484,7 +4484,7 @@ namespace ERPAPI.Migrations
                         column: x => x.sdnListSdnEntryMId,
                         principalTable: "sdnListSdnEntry",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4506,7 +4506,7 @@ namespace ERPAPI.Migrations
                         column: x => x.sdnListSdnEntryMId,
                         principalTable: "sdnListSdnEntry",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4528,7 +4528,7 @@ namespace ERPAPI.Migrations
                         column: x => x.sdnListSdnEntryMId,
                         principalTable: "sdnListSdnEntry",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4566,7 +4566,7 @@ namespace ERPAPI.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branch",
                         principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4608,7 +4608,7 @@ namespace ERPAPI.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branch",
                         principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Product_Currency_CurrencyId",
                         column: x => x.CurrencyId,
@@ -4674,7 +4674,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CustomerId,
                         principalTable: "Customer",
                         principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4812,7 +4812,7 @@ namespace ERPAPI.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4832,7 +4832,7 @@ namespace ERPAPI.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4856,13 +4856,13 @@ namespace ERPAPI.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4882,7 +4882,7 @@ namespace ERPAPI.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -4940,13 +4940,13 @@ namespace ERPAPI.Migrations
                         column: x => x.IdBank,
                         principalTable: "Bank",
                         principalColumn: "BankId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Employees_Branch_IdBranch",
                         column: x => x.IdBranch,
                         principalTable: "Branch",
                         principalColumn: "BranchId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Employees_City_IdCity",
                         column: x => x.IdCity,
@@ -4970,7 +4970,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdDepartamento,
                         principalTable: "Departamento",
                         principalColumn: "IdDepartamento",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Employees_Estados_IdEstado",
                         column: x => x.IdEstado,
@@ -4982,7 +4982,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdPuesto,
                         principalTable: "Puesto",
                         principalColumn: "IdPuesto",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Employees_State_IdState",
                         column: x => x.IdState,
@@ -4994,7 +4994,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdTipoContrato,
                         principalTable: "TipoContrato",
                         principalColumn: "IdTipoContrato",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -5085,7 +5085,7 @@ namespace ERPAPI.Migrations
                         column: x => x.PurchaseOrderId,
                         principalTable: "PurchaseOrder",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_PurchaseOrderLine_Tax_TaxId",
                         column: x => x.TaxId,
@@ -5097,7 +5097,7 @@ namespace ERPAPI.Migrations
                         column: x => x.UnitOfMeasureId,
                         principalTable: "UnitOfMeasure",
                         principalColumn: "UnitOfMeasureId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

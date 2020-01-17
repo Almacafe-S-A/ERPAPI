@@ -60,7 +60,7 @@ namespace ERPAPI.Migrations
                         column: x => x.InsuranceEndorsementId,
                         principalTable: "InsuranceEndorsement",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

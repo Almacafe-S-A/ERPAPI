@@ -50,7 +50,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CustomerId,
                         principalTable: "Customer",
                         principalColumn: "CustomerId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -79,7 +79,7 @@ namespace ERPAPI.Migrations
                         column: x => x.ContratoId,
                         principalTable: "Contrato",
                         principalColumn: "ContratoId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,7 +114,7 @@ namespace ERPAPI.Migrations
                         column: x => x.ContratoId,
                         principalTable: "Contrato",
                         principalColumn: "ContratoId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Contrato_movimientos_Employees_EmployeesId",
                         column: x => x.EmployeesId,
@@ -154,7 +154,7 @@ namespace ERPAPI.Migrations
                         column: x => x.ContratoId,
                         principalTable: "Contrato",
                         principalColumn: "ContratoId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

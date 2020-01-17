@@ -88,7 +88,7 @@ namespace ERPAPI.Migrations
                         column: x => x.EmployeeExtraHoursId,
                         principalTable: "EmployeeExtraHours",
                         principalColumn: "EmployeeExtraHoursId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

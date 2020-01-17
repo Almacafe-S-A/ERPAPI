@@ -44,7 +44,7 @@ namespace ERPAPI.Migrations
                         column: x => x.PaymentTypesId,
                         principalTable: "PaymentTypes",
                         principalColumn: "PaymentTypesId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

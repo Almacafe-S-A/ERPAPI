@@ -1,5 +1,5 @@
-USE ERP
-GO
+--USE ERP
+--GO
 
 DELETE FROM CierresJournalEntryLine
 DELETE FROM CierresJournal
@@ -12,6 +12,15 @@ DELETE FROM Accounting
 DELETE FROM TypeAccount
 GO
 
+
+SET IDENTITY_INSERT [dbo].[CompanyInfo] ON 
+GO
+INSERT [dbo].[CompanyInfo] ([CompanyInfoId], [Company_Name], [Address], [PostalCode], [Phone], [Fax], [Email], [Tax_Id], [image], [Manager], [RTNMANAGER], [PrintHeader], [CountryId], [CountryName], [RevOffice], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion], [Estado], [IdEstado], [RTN]) VALUES (1, N'Muestra, S.A. AAAA', N'Muestra, S.A.', N'222', N'(333) 3333-3333', N'504', N'usuario@gmail.com', N'123456765432123456789098765432', N'mmuestra, S.A. AAAA.png', NULL, N'sps', N'muestra@gmail.com', 1, N'USA', N'SAR', CAST(N'2019-12-13T15:27:45.8060051' AS DateTime2), CAST(N'2020-01-02T22:56:58.9986934' AS DateTime2), N'erp@bi-dss.com', N'erp@bi-dss.com ', N'Activo', 1, NULL)
+GO
+SET IDENTITY_INSERT [dbo].[CompanyInfo] OFF
+GO
+
+
 SET IDENTITY_INSERT TypeAccount ON
 INSERT INTO TypeAccount (TypeAccountId, TypeAccountName,CreatedUser,ModifiedUser,CreatedDate,ModifiedDate,DeudoraAcreedora) VALUES (1,'ACTIVO','erp@bi-dss.com','erp@bi-dss.com',GetDate(),GetDate(),'D');
 INSERT INTO TypeAccount (TypeAccountId, TypeAccountName,CreatedUser,ModifiedUser,CreatedDate,ModifiedDate,DeudoraAcreedora) VALUES (2,'PASIVO','erp@bi-dss.com','erp@bi-dss.com',GetDate(),GetDate(),'A');
@@ -23,6 +32,9 @@ INSERT INTO TypeAccount (TypeAccountId, TypeAccountName,CreatedUser,ModifiedUser
 SET IDENTITY_INSERT TypeAccount OFF
 DBCC CHECKIDENT ('TypeAccount',RESEED,7)
 GO
+
+
+
 
 SET IDENTITY_INSERT Accounting ON
 INSERT INTO Accounting (AccountId, ParentAccountId, CompanyInfoId, AccountBalance, Description, IsCash, TypeAccountId,BlockedInJournal,AccountCode,HierarchyAccount,AccountName,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion,IdEstado,Estado,Totaliza,DeudoraAcreedora) VALUES (1,NULL,1,0.00,'ACTIVO',0,1,1,'1',1,'ACTIVO','erp@bi-dss.com','erp@bi-dss.com',GetDate(),GetDate(),1,'Activo',1,'D');
@@ -1701,3 +1713,5 @@ INSERT INTO Accounting (AccountId, ParentAccountId, CompanyInfoId, AccountBalanc
 SET IDENTITY_INSERT Accounting OFF
 DBCC CHECKIDENT ('Accounting',RESEED,1673)
 GO
+
+
