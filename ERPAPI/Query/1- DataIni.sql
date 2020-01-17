@@ -3,22 +3,43 @@
     "UserPassword": "Aa123456!"
 */
 
-SET IDENTITY_INSERT [dbo].[GrupoEstado] ON 
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (3, N'Copiar a Factura proforma', N'Copia cotizacióna a una factura a proforma', 2, N'freddy.chinchilla@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-04-15T00:00:00.0000000' AS DateTime2), CAST(N'2019-08-11T19:19:57.5447331' AS DateTime2))
 GO
-INSERT [dbo].[GrupoEstado] ([Id], [Nombre], [Modulo], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion]) VALUES (1, N'Activo/Inactivo', N'Todos', CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com')
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (4, N'Copiar a Factura Fiscal', N'Copia cotización a una factura fiscal', 2, N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', CAST(N'2019-04-15T08:51:24.9549875' AS DateTime2), CAST(N'2019-04-15T08:51:28.5466625' AS DateTime2))
 GO
-SET IDENTITY_INSERT [dbo].[GrupoEstado] OFF
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (5, N'Enviada a Aprobacion', N'Validacion', 3, N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', CAST(N'2019-07-30T14:24:35.3930000' AS DateTime2), CAST(N'2019-07-30T14:24:35.3930000' AS DateTime2))
 GO
-
-
-
-SET IDENTITY_INSERT [dbo].[Estados] ON 
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (7, N'Rechazado', N'Rechazado', 3, N'celia.suazo@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-08-11T19:09:51.6959632' AS DateTime2), CAST(N'2019-08-12T13:52:48.5514736' AS DateTime2))
 GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (1, N'Activo', N'Activo', 1, N'freddy.chinchilla@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), CAST(N'2019-08-11T19:17:11.7570904' AS DateTime2))
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (8, N'Pendiente', N'Ninguna', 3, N'celia.suazo@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-08-13T17:34:48.6879083' AS DateTime2), CAST(N'2019-08-30T00:38:53.8025191' AS DateTime2))
 GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (2, N'Inactivo', N'Estado Inactivo', 1, N'freddy.chinchilla@bi-dss.com', N'tania.sosa@bi-dss.com', CAST(N'2019-03-15T17:21:16.7000000' AS DateTime2), CAST(N'2019-09-02T14:43:28.9760922' AS DateTime2))
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (30, N'Intermedio', N'Intermedio', 2, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-10-09T10:12:05.3314552' AS DateTime2), CAST(N'2019-10-09T10:12:05.3314559' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (31, N'Avanzados', N'Avanzados', 2, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-10-09T10:53:30.2336475' AS DateTime2), CAST(N'2019-10-09T10:53:30.2336487' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (39, N'Aprobados', N'Aprobado por el Gerente', 2, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-11-08T11:54:59.5249553' AS DateTime2), CAST(N'2019-11-19T10:28:42.7384873' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (41, N'Pendiente de Analisis', N'Alerta Pendiente de Analisis', 4, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (42, N'Cerrada', N'Alerta Cerrada', 4, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (43, N'Analizada', N'Accion Tomada Alertas', 5, N'asd', N'erp@bi-dss.com', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (44, N'Pendiente de Analisis', N'Accion Tomada Alertas', 5, N'erp@bi-dss.com', N'asd', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (47, N'Depreciándose', N'Activos Fijos', 6, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-29T13:45:04.4897784' AS DateTime2), CAST(N'2019-12-29T13:45:04.4897798' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (48, N'Depreciado', N'Activos Fijos', 6, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-29T13:45:56.5081518' AS DateTime2), CAST(N'2019-12-29T13:45:56.5081529' AS DateTime2))
 GO
 SET IDENTITY_INSERT [dbo].[Estados] OFF
+GO
+SET IDENTITY_INSERT [dbo].[GrupoEstado] ON 
+GO
+INSERT [dbo].[GrupoEstado] ([Id], [Nombre], [Modulo], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion]) VALUES (4, N'Estado Alertas', N'Alertas', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), N'erp@bi-dss.com', N'erp@bi-dss.com')
+GO
+INSERT [dbo].[GrupoEstado] ([Id], [Nombre], [Modulo], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion]) VALUES (5, N'Accion Tomada', N'Alertas', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), N'erp@bi-dss.com', N'erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT [dbo].[GrupoEstado] OFF
 GO
 
 
