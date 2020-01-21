@@ -227,7 +227,7 @@ namespace ERPAPI.Controllers
                     _context.Database.ExecuteSqlCommand("Cierres @p0, @p1", pBitacoraCierre.FechaCierre, cierre.Id);
 
                     transaction.Commit();
-                    return await Task.Run(() => Ok());
+                    return await Task.Run(() => Ok(cierre));
                 }
                 catch (Exception ex)
                 {
