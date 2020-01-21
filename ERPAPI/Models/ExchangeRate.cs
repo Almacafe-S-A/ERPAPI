@@ -20,6 +20,11 @@ namespace ERPAPI.Models
         [Column(TypeName = "decimal(18,4)")]
         public decimal ExchangeRateValue { get; set; }
 
+        [Display(Name = "Monto Decimal Compras")]
+        [Column(TypeName = "decimal(18,4)")]
+        public decimal? ExchangeRateValueCompra { get; set; }
+
+
         public Currency Currency { get; set; }
 
         [Display(Name = "Moneda")]

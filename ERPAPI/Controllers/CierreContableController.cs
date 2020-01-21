@@ -28,7 +28,34 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
-       
+
+        /// <summary>
+        /// Obtiene El ultimo Cierre Ejecutado
+        /// </summary>
+        /// GET: api/CierreContable
+        [HttpGet("[action]")]
+        public async Task<IActionResult> UltimoCierre() {
+            try
+            {
+                BitacoraCierreContable cierre = new BitacoraCierreContable();
+                cierre = await _context.BitacoraCierreContable.OrderByDescending(i => i.Id).FirstOrDefaultAsync();
+                 return await Task.Run(() => Ok(cierre)); ;
+
+            }
+            catch (Exception ex)
+            {
+
+                return await Task.Run(() => BadRequest("Error:"+ex.Message));
+            }
+        
+        
+        
+        
+        }
+
+
+
+
 
         /// <summary>
         /// Realiza un Cierre Contable
@@ -200,11 +227,12 @@ namespace ERPAPI.Controllers
                     _context.Database.ExecuteSqlCommand("Cierres @p0, @p1", pBitacoraCierre.FechaCierre, cierre.Id);
 
                     transaction.Commit();
-                    return await Task.Run(() => Ok());
+                    return await Task.Run(() => Ok(cierre));
                 }
                 catch (Exception ex)
                 {
-                    transaction.Rollback();
+                    //transaction.Rollback();
+                    transaction.Commit();
                     return await Task.Run(() => BadRequest(ex.Message));
                 }
 

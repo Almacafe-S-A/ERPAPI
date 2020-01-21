@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200121051023_AddedField_ExhangeRateCompraNullable")]
+    partial class AddedField_ExhangeRateCompraNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,8 +26,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountManagementId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("AccountId");
 
                     b.Property<string>("AccountNumber");
 
@@ -1137,6 +1137,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("AccountBalance");
 
+                    b.Property<int>("AccountClasses");
+
                     b.Property<string>("AccountCode")
                         .IsRequired()
                         .HasMaxLength(50);
@@ -1169,6 +1171,8 @@ namespace ERPAPI.Migrations
                     b.Property<long?>("IdEstado");
 
                     b.Property<bool>("IsCash");
+
+                    b.Property<bool>("IsContraAccount");
 
                     b.Property<long?>("ParentAccountAccountId");
 
