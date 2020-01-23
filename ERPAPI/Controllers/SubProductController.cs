@@ -438,7 +438,29 @@ namespace ERPAPI.Controllers
             // return Ok(currency);
             return await Task.Run(() => Ok(subproduct));
         }
+        /// <summary>
+        /// Obtiene los Datos de SubProduct por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="ProductName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ProductName}")]
+        public async Task<IActionResult> GetSubProductByProductName(String ProductName)
+        {
+            SubProduct Items = new SubProduct();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.ProductName == ProductName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
     }
 }
