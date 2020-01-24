@@ -356,7 +356,7 @@ namespace ERPAPI.Controllers
 
                         if(!isapproved)
                         {
-                            foreach(JournalEntryLine jel in _JournalEntryq.JournalEntryLines)
+                            foreach(JournalEntryLine jel in _JournalEntry.JournalEntryLines)
                             {
                                 bool continuar = true;
                                 Accounting _account = new Accounting();
