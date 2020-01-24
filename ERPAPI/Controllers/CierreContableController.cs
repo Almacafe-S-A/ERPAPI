@@ -317,9 +317,8 @@ namespace ERPAPI.Controllers
             {
                 if (item.Estatus == "ERROR" || item.Estatus == "PENDIENTE")
                 {
-
-                    mensaje += " Paso " + item.PasoCierre;
-
+                    //mensaje += " Paso " + item.PasoCierre;
+                    mensaje += " " + item.PasoCierre;
                 }
             }
             if (mensaje != "")
@@ -331,8 +330,7 @@ namespace ERPAPI.Controllers
             }
             else
             {
-                pCierre.Estatus = "FINALIZADO";
-                
+                pCierre.Estatus = "FINALIZADO";                
                 return ;
 
             }
