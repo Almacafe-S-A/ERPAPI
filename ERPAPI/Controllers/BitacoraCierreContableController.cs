@@ -74,7 +74,7 @@ namespace ERPAPI.Controllers
             List<BitacoraCierreContable> Items = new List<BitacoraCierreContable>();
             try
             {
-                Items = await _context.BitacoraCierreContable.ToListAsync();
+                Items = await _context.BitacoraCierreContable.OrderByDescending(c => c.FechaCierre).ToListAsync();
             }
             catch (Exception ex)
             {
