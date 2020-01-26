@@ -73,38 +73,15 @@ namespace ERPAPI.Controllers
             }
 
             if (cierre != null)               
-                    {
-                            List<BitacoraCierreProcesos> procesos = await _context.BitacoraCierreProceso
-                           .Where(b => b.IdBitacoraCierre == cierre.Id)
-                           .ToListAsync();
-                            bool repetido = true;
-                            foreach (var item in procesos) ////REVISA QUE ALGUN PASO NO TENGA ERROR EN EL CIERRE AL VOLVER A EJECUTAR
-                                {
-                                    if (item.Estatus == "ERROR"|| item.Estatus == "PENDIENTE")
-                                    {
-                                            repetido = false;
-                                            if (item.PasoCierre == 3)
-                                            {
-                                                Paso3(item);
-                                                _context.SaveChanges();
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                _context.Database.ExecuteSqlCommand("Cierres @p0", cierre.Id); ////Ejecuta SP para ejecutar pasos con errores
-                                                break;
-                                            }
-                                        
-                                    }
-                                }
-                            if (repetido)
-                            {
-                                return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
-
-                            }
-                            ValidarPasos(cierre);
-                            _context.SaveChanges();
-                            return await Task.Run(() => Ok());
+            {
+                if (!CheckCierre(cierre))
+                {
+                    return await Task.Run(() =>Ok());
+                }
+                else
+                {
+                    return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
+                } 
             }
 
                     ////Si no existe Ciere lo crea
@@ -182,7 +159,7 @@ namespace ERPAPI.Controllers
             {
                 //////Ejecuta el Cierre
                 _context.Database.ExecuteSqlCommand("Cierres @p0", cierre.Id); ////Ejecuta SP Cierres
-                ValidarPasos(cierre);
+                //ValidarPasos(cierre);
                 _context.SaveChanges();
                 return await Task.Run(() => Ok());
 
@@ -334,6 +311,46 @@ namespace ERPAPI.Controllers
                 return ;
 
             }
+
+        }
+
+
+        public  bool CheckCierre(BitacoraCierreContable pCierre)
+        {
+            List<BitacoraCierreProcesos> procesos =  _context.BitacoraCierreProceso
+                           .Where(b => b.IdBitacoraCierre == pCierre.Id)
+                           .ToList();
+            bool repetido = true;
+            foreach (var item in procesos) ////REVISA QUE ALGUN PASO NO TENGA ERROR EN EL CIERRE AL VOLVER A EJECUTAR
+            {
+                if (item.Estatus == "ERROR" || item.Estatus == "PENDIENTE")
+                {
+                    repetido = false;
+                    if (item.PasoCierre == 3)
+                    {
+                        Paso3(item);
+                        _context.SaveChanges();
+                        break;
+                    }
+                    else
+                    {
+                        _context.Database.ExecuteSqlCommand("Cierres @p0", pCierre.Id); ////Ejecuta SP para ejecutar pasos con errores
+                        break;
+                    }
+
+                }
+            }
+            //if (repetido)
+            //{
+            //    return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
+
+            //}
+           // ValidarPasos(pCierre);
+            _context.SaveChanges();
+            return repetido;
+           
+            //return await Task.Run(() => Ok());
+
 
         }
 
