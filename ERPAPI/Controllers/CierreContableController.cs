@@ -113,7 +113,7 @@ namespace ERPAPI.Controllers
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
                         FechaModificacion = DateTime.Now,
-                        FechaCierre = DateTime.Now,
+                        FechaCierre = cierre.FechaCierre,
                         FechaCreacion = DateTime.Now,
 
                     };
@@ -128,7 +128,7 @@ namespace ERPAPI.Controllers
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
                         FechaModificacion = DateTime.Now,
-                        FechaCierre = DateTime.Now,
+                        FechaCierre = cierre.FechaCierre,
                         FechaCreacion = DateTime.Now,
 
                     };
@@ -144,7 +144,7 @@ namespace ERPAPI.Controllers
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
                         FechaModificacion = DateTime.Now,
-                        FechaCierre = DateTime.Now,
+                        FechaCierre = cierre.FechaCierre,
                         FechaCreacion = DateTime.Now,
 
                     };
@@ -152,14 +152,37 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(proceso1);
                     _context.BitacoraCierreProceso.Add(proceso2);
                     _context.BitacoraCierreProceso.Add(proceso3);
-                     Paso3(proceso3);
+                     Paso1(cierre,proceso1); ////HISTORICOS
+                     Paso2(cierre,proceso2);/// Valor Maximo de Certificados 
+                     Paso3(proceso3);//// POLIZAS VENCIDAS 
+
+                    if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
+                        {
+                            //Paso3
+                            BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
+                            {
+                                IdBitacoraCierre = cierre.Id,
+                                //IdProceso = 1,
+                                Estatus = "PENDIENTE",
+                                Proceso = "Depreciacion de Activos",
+                                PasoCierre = 4,
+                                UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                FechaModificacion = DateTime.Now,
+                                FechaCierre = cierre.FechaCierre,
+                                FechaCreacion = DateTime.Now,
+
+                            };
+                             Paso4(cierre, proceso4);
+                        }
+                     
                     _context.SaveChanges();
 
 
             try
             {
                 //////Ejecuta el Cierre
-                _context.Database.ExecuteSqlCommand("Cierres @p0", cierre.Id); ////Ejecuta SP Cierres
+               // _context.Database.ExecuteSqlCommand("Cierres @p0", cierre.Id); ////Ejecuta SP Cierres
                 //ValidarPasos(cierre);
                 _context.SaveChanges();
                 return await Task.Run(() => Ok());
@@ -177,16 +200,54 @@ namespace ERPAPI.Controllers
             }
 
 
-        BitacoraCierreContable CargarPasos(BitacoraCierreContable pCierre)
+        
+        private async void Paso1(BitacoraCierreContable pCierre,BitacoraCierreProcesos pProceso)
         {
+            ////////////////Cierre Catalogo
+            List<CierresAccounting> cierreCatalogo = new List<CierresAccounting>();
+            List<Accounting> catalogo = await _context.Accounting.ToListAsync();
+
+            foreach (var item in catalogo)
+            {
+                CierresAccounting cuenta = new CierresAccounting
+                {
+                    AccountId = item.AccountId,
+                    AccountCode = item.AccountCode ,
+                    AccountName = item.AccountName,
+                    BlockedInJournal = item.BlockedInJournal,                    
+                    CompanyInfoId = item.CompanyInfoId,
+                    Description = item.Description,
+                    IsCash = item.IsCash,                    
+                    ParentAccountId = item.ParentAccountId,
+                    TypeAccountId = item.TypeAccountId,
+                    FechaCierre = pCierre.FechaCierre,
+                    BitacoraCierreContableId = pCierre.Id,
+                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    
+
+                };
+                cierreCatalogo.Add(cuenta);
+            }
+
+            _context.CierresAccounting.AddRange(cierreCatalogo);
 
 
-            return pCierre;
+
 
 
         }
 
+        private async void Paso2(BitacoraCierreContable pCierre, BitacoraCierreProcesos pProceso)
+        {
 
+            //////////Actualiza el techo de los certificados mensuales
+            double suma = _context.CertificadoDeposito.Sum(c => c.Total);
+            ElementoConfiguracion elemento = _context.ElementoConfiguracion.Where(e => e.Descripcion == "VALOR MAXIMO CERTIFICADOS").FirstOrDefault();
+            elemento.Valordecimal = suma;
+            _context.ElementoConfiguracion.Update(elemento);
+
+        }
 
         private async void Paso3(BitacoraCierreProcesos pProceso3)
         {
@@ -316,7 +377,7 @@ namespace ERPAPI.Controllers
         }
 
 
-        public  bool CheckCierre(BitacoraCierreContable pCierre)
+        private bool CheckCierre(BitacoraCierreContable pCierre)
         {
             List<BitacoraCierreProcesos> procesos =  _context.BitacoraCierreProceso
                            .Where(b => b.IdBitacoraCierre == pCierre.Id)
