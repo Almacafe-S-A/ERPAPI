@@ -59,7 +59,7 @@ namespace ERPAPI.Controllers
         /// <returns></returns>    
         [HttpPost("[action]")]
         public async Task<IActionResult> EjecutarCierreContable([FromBody]BitacoraCierreContable pBitacoraCierre)
-        {
+            {
 
              BitacoraCierreContable cierre = await _context.BitacoraCierreContable
                                     .Where(b => b.FechaCierre.Date == pBitacoraCierre.FechaCierre.Date).FirstOrDefaultAsync();
@@ -74,14 +74,15 @@ namespace ERPAPI.Controllers
 
             if (cierre != null)               
             {
-                if (!CheckCierre(cierre))
-                {
-                    return await Task.Run(() =>Ok());
-                }
-                else
-                {
-                    return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
-                } 
+                //if (!CheckCierre(cierre))
+                //{
+                //    return await Task.Run(() =>Ok());
+                //}
+                //else
+                //{
+                //    return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
+                //}
+                return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
             }
 
                     ////Si no existe Ciere lo crea
