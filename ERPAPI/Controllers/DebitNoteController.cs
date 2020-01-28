@@ -154,6 +154,11 @@ namespace ERPAPI.Controllers
                             }
 
                             _DebitNoteq.Sucursal = await _context.Branch.Where(q => q.BranchId == _DebitNote.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                            _DebitNoteq.FechaLimiteEmision = await _context.NumeracionSAR
+                                                     .Where(q => q.BranchId == _DebitNoteq.BranchId)
+                                                     .Where(q => q.IdCAI == IdCai)
+                                                     .Where(q => q.IdPuntoEmision == _DebitNoteq.IdPuntoEmision)
+                                                     .Where(q => q.Estado == "Activo").Select(q => q.FechaLimite).FirstOrDefaultAsync();
                             //  _DebitNoteq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
                             _DebitNoteq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
                         }

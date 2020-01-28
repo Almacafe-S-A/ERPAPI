@@ -43,7 +43,7 @@ namespace ERPAPI.Controllers
             List<ExchangeRate> Items = new List<ExchangeRate>();
             try
             {
-                Items = await _context.ExchangeRate.ToListAsync();
+                Items = await _context.ExchangeRate.OrderByDescending(c => c.ExchangeRateId).ToListAsync();
             }
             catch (Exception ex)
             {

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200120151227_AccountManagement_AccountId")]
+    partial class AccountManagement_AccountId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -497,8 +499,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<int>("IdBitacoraCierre");
-
-                    b.Property<string>("Mensaje");
 
                     b.Property<int>("PasoCierre");
 
@@ -1139,6 +1139,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("AccountBalance");
 
+                    b.Property<int>("AccountClasses");
+
                     b.Property<string>("AccountCode")
                         .IsRequired()
                         .HasMaxLength(50);
@@ -1171,6 +1173,8 @@ namespace ERPAPI.Migrations
                     b.Property<long?>("IdEstado");
 
                     b.Property<bool>("IsCash");
+
+                    b.Property<bool>("IsContraAccount");
 
                     b.Property<long?>("ParentAccountAccountId");
 
@@ -4210,9 +4214,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("ExchangeRateValue")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<decimal?>("ExchangeRateValueCompra")
-                        .HasColumnType("decimal(18,4)");
-
                     b.Property<DateTime>("ModifiedDate");
 
                     b.Property<string>("ModifiedUser")
@@ -4296,15 +4297,11 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("DepreciationAccountingId");
-
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long?>("FixedAssetAccountingId");
 
                     b.Property<string>("FixedAssetGroupDescription");
 
@@ -4321,10 +4318,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("FixedAssetGroupId");
-
-                    b.HasIndex("DepreciationAccountingId");
-
-                    b.HasIndex("FixedAssetAccountingId");
 
                     b.HasIndex("FixedAssetGroupId1");
 
@@ -6061,7 +6054,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("AccountName");
 
-                    b.Property<long>("CostCenterId");
+                    b.Property<long>("CostCenterId")
+                        .HasMaxLength(30);
 
                     b.Property<string>("CostCenterName");
 
@@ -6082,7 +6076,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("DebitSy");
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .HasMaxLength(60);
 
                     b.Property<long>("JournalEntryId");
 
@@ -10148,14 +10143,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.FixedAssetGroup", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "DepreciationFixedAssetAccounting")
-                        .WithMany()
-                        .HasForeignKey("DepreciationAccountingId");
-
-                    b.HasOne("ERPAPI.Models.Accounting", "FixedAssetAccounting")
-                        .WithMany()
-                        .HasForeignKey("FixedAssetAccountingId");
-
                     b.HasOne("ERPAPI.Models.FixedAssetGroup")
                         .WithMany("_FixedAssetGroup")
                         .HasForeignKey("FixedAssetGroupId1");

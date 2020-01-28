@@ -438,7 +438,55 @@ namespace ERPAPI.Controllers
             // return Ok(currency);
             return await Task.Run(() => Ok(subproduct));
         }
+        /// <summary>
+        /// Obtiene los Datos de SubProduct por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="ProductName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ProductName}")]
+        public async Task<IActionResult> GetSubProductByProductName(String ProductName)
+        {
+            SubProduct Items = new SubProduct();
+            try
+            {
+                Items = await _context.SubProduct.Where(q => q.ProductName == ProductName).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+        /// <summary>
+        /// Obtiene los Datos de Puesto por medio del Nombre enviado.
+        /// </summary>
+        /// <param name="SubproductId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{SubproductId}")]
+        public async Task<ActionResult<Int64>> ValidationDelete(Int64 SubproductId)
+        {
+            try
+            {
+                //var Items = await _context.Product.CountAsync();
+                Int64 Items = await _context.InvoiceLine.Where(a => a.SubProductId == SubproductId)
+                                    .CountAsync();
+                Items = await _context.ProformaInvoiceLine.Where(a => a.SubProductId == SubproductId)
+                                    .CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
 
     }
 }
