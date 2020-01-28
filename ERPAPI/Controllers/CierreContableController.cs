@@ -441,40 +441,78 @@ namespace ERPAPI.Controllers
         }
 
 
-        private void Paso4()
+        private void Paso4(BitacoraCierreContable pProceso)
         {
             var depreciaciongrupos = _context.FixedAsset
-                .GroupBy(g => new { g.FixedAssetGroupId })
-                .Select(g => new { Grupo = g.Key.FixedAssetGroupId, Depreciacion = g.Sum(s => s.ToDepreciate) }).ToList();
+                .GroupBy(g => new { 
+                    g.FixedAssetGroupId,
+                    g.CenterCostId,
+                    g.CenterCostName })
+                .Select(g => new {
+                    CentroCostoName = g.Key.CenterCostName, 
+                    CentroCostoID = g.Key.CenterCostId, 
+                    Grupo = g.Key.FixedAssetGroupId, 
+                    Depreciacion = g.Sum(s => s.ToDepreciate) })
+                .ToList();
 
             if (depreciaciongrupos.Count>0)
             {
-                JournalEntry _je = new JournalEntry
-                {
-                    Date = DateTime.Now,
-                    Memo = "Depreciacion de Activos",
-                    DatePosted = DateTime.Now,
-                    ModifiedDate = DateTime.Now,
-                    CreatedDate = DateTime.Now,
-                    ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                    CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                    //DocumentId = pProceso3.IdProceso,
-                    TypeOfAdjustmentId = 65,
-                    //VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),
-
-                };
+                
                 foreach (var item in depreciaciongrupos)
                 {
-                    
+                    FixedAssetGroup grupo = _context.FixedAssetGroup.Where(w => w.FixedAssetGroupId == item.Grupo).FirstOrDefault();
 
+                    Accounting cuentaDepreciacion = _context.Accounting.Where(w => w.AccountId == grupo.DepreciationAccountingId).FirstOrDefault();
+                    Accounting cuentaActivo = _context.Accounting.Where(w => w.AccountId == grupo.FixedAssetAccountingId).FirstOrDefault();
+
+                    JournalEntry _je = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        Memo = "Depreciacion de Activos",
+                        DatePosted = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        //DocumentId = pProceso3.IdProceso,
+                        TypeOfAdjustmentId = 65,
+                        //VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),                      
+
+                    };                    
                     _je.JournalEntryLines.Add(new JournalEntryLine {
                            JournalEntryId = _je.JournalEntryId,
-                           //AccountId = _context.FixedAssetGroup.Select(s => s.)
-                    
-                    
+                           AccountId = Convert.ToInt32(cuentaDepreciacion.AccountId),
+                           AccountName = cuentaDepreciacion.AccountName,
+                           Debit = item.Depreciacion,
+                           DebitME = item.Depreciacion,
+                           CostCenterId = item.CentroCostoID,
+                           CostCenterName = item.CentroCostoName,
+                           CreatedUser = "SYSTEM",
+                           CreatedDate = DateTime.Now,
+                    });
+
+                    _je.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        JournalEntryId = _je.JournalEntryId,
+                        AccountId = Convert.ToInt32(cuentaActivo.AccountId),
+                        AccountName = cuentaActivo.AccountName,
+                        Credit = item.Depreciacion,
+                        CreditME = item.Depreciacion,
+                        CostCenterId = item.CentroCostoID,
+                        CostCenterName = item.CentroCostoName,
+                        CreatedUser = "SYSTEM",
+                        CreatedDate = DateTime.Now,
                     });
                 }
             }
+            else
+            {
+                pProceso.Mensaje = "No se encontraron grupos de Activos";
+                pProceso.Estatus = "FINALIZADO";
+                return;
+
+            }
+                
             
         }
 
