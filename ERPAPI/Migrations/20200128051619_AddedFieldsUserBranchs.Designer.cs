@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200128051619_AddedFieldsUserBranchs")]
+    partial class AddedFieldsUserBranchs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1206,8 +1208,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ApprovedBy");
-
                     b.Property<int>("BitacoraCierreContableId");
 
                     b.Property<DateTime>("CreatedDate");
@@ -1291,8 +1291,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("AccountName");
 
-                    b.Property<int>("BitacoraCierreContableId");
-
                     b.Property<long>("CostCenterId")
                         .HasMaxLength(30);
 
@@ -1318,8 +1316,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(60);
 
-                    b.Property<DateTime>("FechaCierre");
-
                     b.Property<long>("JournalEntryId");
 
                     b.Property<long>("JournalEntryLineId");
@@ -1334,8 +1330,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("CierresJournalEntryLineId");
 
                     b.HasIndex("AccountId1");
-
-                    b.HasIndex("BitacoraCierreContableId");
 
                     b.HasIndex("JournalEntryId");
 
@@ -9903,11 +9897,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Accounting", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId1");
-
-                    b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierreContable")
-                        .WithMany()
-                        .HasForeignKey("BitacoraCierreContableId")
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
                         .WithMany()
