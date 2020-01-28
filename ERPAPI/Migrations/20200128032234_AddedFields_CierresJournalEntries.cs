@@ -7,6 +7,10 @@ namespace ERPAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("DELETE FROM BitacoraCierreContable");
+
+            migrationBuilder.Sql("DELETE FROM CierresJournalEntryLine", true);
+
             migrationBuilder.AddColumn<int>(
                 name: "BitacoraCierreContableId",
                 table: "CierresJournalEntryLine",

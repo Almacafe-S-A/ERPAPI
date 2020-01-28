@@ -152,7 +152,8 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(proceso1);
                     _context.BitacoraCierreProceso.Add(proceso2);
                     _context.BitacoraCierreProceso.Add(proceso3);
-                     Paso1(cierre,proceso1); ////HISTORICOS
+                    _context.SaveChanges();
+                    Paso1(cierre,proceso1); ////HISTORICOS
                      Paso2(cierre,proceso2);/// Valor Maximo de Certificados 
                      Paso3(proceso3);//// POLIZAS VENCIDAS 
 
@@ -173,7 +174,7 @@ namespace ERPAPI.Controllers
                                 FechaCreacion = DateTime.Now,
                                 
                             };
-                            //Paso4(cierre, proceso4);
+                            Paso4(proceso4,cierre);
                             _context.BitacoraCierreProceso.Add(proceso4);
                         }
                          
@@ -441,7 +442,7 @@ namespace ERPAPI.Controllers
         }
 
 
-        private void Paso4(BitacoraCierreContable pProceso)
+        private void Paso4(BitacoraCierreProcesos pProceso, BitacoraCierreContable pCierre)
         {
             var depreciaciongrupos = _context.FixedAsset
                 .GroupBy(g => new { 
@@ -504,6 +505,8 @@ namespace ERPAPI.Controllers
                         CreatedDate = DateTime.Now,
                     });
                 }
+                pProceso.Estatus = "FINALIZADO";
+                return;
             }
             else
             {
