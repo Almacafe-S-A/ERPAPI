@@ -59,6 +59,8 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Posteo")]
         public DateTime DatePosted { get; set; }
 
+        public string ApprovedBy { get; set; }
+
         public string Memo { get; set; }
         public string ReferenceNo { get; set; }
         public bool? Posted { get; set; }

@@ -52,6 +52,13 @@ namespace ERPAPI.Models
         public string Memo { get; set; }
         public virtual JournalEntry JournalEntry { get; set; }
         public virtual Accounting Account { get; set; }
+
+        public DateTime FechaCierre { get; set; }
+
+        public int BitacoraCierreContableId { get; set; }
+
+        [ForeignKey("BitacoraCierreContableId")]
+        public BitacoraCierreContable BitacoraCierreContable { get; set; }
         [Required]
         [Display(Name = "Usuario de creacion")]
         public string CreatedUser { get; set; }

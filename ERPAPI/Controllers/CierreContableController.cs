@@ -156,9 +156,9 @@ namespace ERPAPI.Controllers
                      Paso2(cierre,proceso2);/// Valor Maximo de Certificados 
                      Paso3(proceso3);//// POLIZAS VENCIDAS 
 
-                    if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
+                    if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
                         {
-                            //Paso3
+                            //Paso4 Depreciacion de Activos 
                             BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
                             {
                                 IdBitacoraCierre = cierre.Id,
@@ -171,12 +171,13 @@ namespace ERPAPI.Controllers
                                 FechaModificacion = DateTime.Now,
                                 FechaCierre = cierre.FechaCierre,
                                 FechaCreacion = DateTime.Now,
-
+                                
                             };
-                             Paso4(cierre, proceso4);
+                            //Paso4(cierre, proceso4);
+                            _context.BitacoraCierreProceso.Add(proceso4);
                         }
-                     
-                    _context.SaveChanges();
+                         
+                        _context.SaveChanges();
 
 
             try
@@ -201,51 +202,144 @@ namespace ERPAPI.Controllers
 
 
         
-        private async void Paso1(BitacoraCierreContable pCierre,BitacoraCierreProcesos pProceso)
+        private  void Paso1(BitacoraCierreContable pCierre,BitacoraCierreProcesos pProceso)
         {
-            ////////////////Cierre Catalogo
-            List<CierresAccounting> cierreCatalogo = new List<CierresAccounting>();
-            List<Accounting> catalogo = await _context.Accounting.ToListAsync();
 
-            foreach (var item in catalogo)
+            try
             {
-                CierresAccounting cuenta = new CierresAccounting
+                ////////////////Cierre Catalogo
+                List<CierresAccounting> cierreCatalogo = new List<CierresAccounting>();
+                List<Accounting> catalogo = _context.Accounting.ToList();
+
+                foreach (var item in catalogo)
                 {
-                    AccountId = item.AccountId,
-                    AccountCode = item.AccountCode ,
-                    AccountName = item.AccountName,
-                    BlockedInJournal = item.BlockedInJournal,                    
-                    CompanyInfoId = item.CompanyInfoId,
-                    Description = item.Description,
-                    IsCash = item.IsCash,                    
-                    ParentAccountId = item.ParentAccountId,
-                    TypeAccountId = item.TypeAccountId,
-                    FechaCierre = pCierre.FechaCierre,
-                    BitacoraCierreContableId = pCierre.Id,
-                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                    
+                    CierresAccounting cuenta = new CierresAccounting
+                    {
+                        AccountId = item.AccountId,
+                        AccountCode = item.AccountCode,
+                        AccountName = item.AccountName,
+                        BlockedInJournal = item.BlockedInJournal,
+                        CompanyInfoId = item.CompanyInfoId,
+                        Description = item.Description,
+                        IsCash = item.IsCash,
+                        ParentAccountId = item.ParentAccountId,
+                        TypeAccountId = item.TypeAccountId,
+                        FechaCierre = pCierre.FechaCierre,
+                        BitacoraCierreContableId = pCierre.Id,
+                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
 
-                };
-                cierreCatalogo.Add(cuenta);
+
+                    };
+                    cierreCatalogo.Add(cuenta);
+                }
+
+                _context.CierresAccounting.AddRange(cierreCatalogo);
+
+
+                /////////Cierre Journal entries
+                ///
+                var cerradosJE = _context.CierresJournal.Select(x => x.JournalEntryId).ToList();
+                List<JournalEntry> cierreJE = _context.JournalEntry.Where(c => !cerradosJE.Any(x => x == c.JournalEntryId)).ToList(); ////Busca los Journal Entry a Cerrar (los no cerrados)
+                List<CierresJournal> cierreCuentas = new List<CierresJournal>();
+                foreach (var item in cierreJE)
+                {
+                    CierresJournal je = new CierresJournal
+                    {
+                        JournalEntryId = item.JournalEntryId,
+                        ApprovedBy = item.ApprovedBy,
+                        DatePosted = item.DatePosted,
+                        DocumentId = item.DocumentId,
+                        EstadoId = item.EstadoId,
+                        TotalCredit = item.TotalCredit,
+                        TotalDebit = item.TotalDebit,
+                        BitacoraCierreContableId = pCierre.Id,
+                        FechaCierre = pCierre.FechaCierre
+
+                    };
+
+                    cierreCuentas.Add(je);
+
+                }
+
+                _context.CierresJournal.AddRange(cierreCuentas);
+                /////////Cierre Journal entries Lineas
+                ///
+
+                List<JournalEntryLine> cierreJEL = _context.JournalEntryLine.Where(c => cierreJE.Any(x => c.JournalEntryId == x.JournalEntryId)).ToList();
+                List<CierresJournalEntryLine> cierreLineas = new List<CierresJournalEntryLine>();
+
+                foreach (var item in cierreJEL)
+                {
+                    CierresJournalEntryLine jel = new CierresJournalEntryLine
+                    {
+                        JournalEntryId = item.JournalEntryId,
+                        JournalEntryLineId = item.JournalEntryLineId,
+                        AccountId = item.AccountId,
+                        AccountName = item.AccountName,
+                        Debit = item.Debit,
+                        Credit = item.Credit,
+                        BitacoraCierreContableId = pCierre.Id,
+                        FechaCierre = pCierre.FechaCierre,
+
+
+
+
+                    };
+
+                    cierreLineas.Add(jel);
+
+
+
+                }
+
+                _context.CierresJournalEntryLine.AddRange(cierreLineas);
+
+                pProceso.Estatus = "FINALIZADO";
+                _context.BitacoraCierreProceso.Update(pProceso);
+
             }
+            catch (Exception ex)
+            {
 
-            _context.CierresAccounting.AddRange(cierreCatalogo);
+                pProceso.Estatus = "ERROR";
+                pProceso.Mensaje = ex.Message;
+                _context.BitacoraCierreProceso.Update(pProceso);
 
 
-
+            }
+            
 
 
         }
 
-        private async void Paso2(BitacoraCierreContable pCierre, BitacoraCierreProcesos pProceso)
+        private  void Paso2(BitacoraCierreContable pCierre, BitacoraCierreProcesos pProceso)
         {
-
+           
             //////////Actualiza el techo de los certificados mensuales
             double suma = _context.CertificadoDeposito.Sum(c => c.Total);
-            ElementoConfiguracion elemento = _context.ElementoConfiguracion.Where(e => e.Descripcion == "VALOR MAXIMO CERTIFICADOS").FirstOrDefault();
-            elemento.Valordecimal = suma;
-            _context.ElementoConfiguracion.Update(elemento);
+            ElementoConfiguracion elemento =  _context.ElementoConfiguracion.Where(e => e.Descripcion == "VALOR MAXIMO CERTIFICADOS").FirstOrDefault();
+            if (elemento != null)
+            {
+                elemento.Valordecimal = suma;
+                _context.ElementoConfiguracion.Update(elemento);
+            }
+            else
+            {
+                pProceso.Estatus = "ERROR";
+                pProceso.Mensaje = "NO SE ENCONTRO EL ELEMENTO DE CONFIGURACION";
+
+                _context.BitacoraCierreProceso.Update(pProceso);
+
+                return;
+
+            }
+
+
+            pProceso.Estatus = "FINALIZADO";
+
+            _context.BitacoraCierreProceso.Update(pProceso);
+            return;
 
         }
 
@@ -344,6 +438,44 @@ namespace ERPAPI.Controllers
 
 
 
+        }
+
+
+        private void Paso4()
+        {
+            var depreciaciongrupos = _context.FixedAsset
+                .GroupBy(g => new { g.FixedAssetGroupId })
+                .Select(g => new { Grupo = g.Key.FixedAssetGroupId, Depreciacion = g.Sum(s => s.ToDepreciate) }).ToList();
+
+            if (depreciaciongrupos.Count>0)
+            {
+                JournalEntry _je = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    Memo = "Depreciacion de Activos",
+                    DatePosted = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                    CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                    //DocumentId = pProceso3.IdProceso,
+                    TypeOfAdjustmentId = 65,
+                    //VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),
+
+                };
+                foreach (var item in depreciaciongrupos)
+                {
+                    
+
+                    _je.JournalEntryLines.Add(new JournalEntryLine {
+                           JournalEntryId = _je.JournalEntryId,
+                           //AccountId = _context.FixedAssetGroup.Select(s => s.)
+                    
+                    
+                    });
+                }
+            }
+            
         }
 
         private  void ValidarPasos(BitacoraCierreContable pCierre )
