@@ -71,7 +71,8 @@ namespace ERPAPI.Controllers
             List<City> Items = new List<City>();
             try
             {
-                Items = await _context.City.ToListAsync();
+                //Items = await _context.City.ToListAsync();
+                Items = await _context.City.Include(e => e.State).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -106,6 +107,7 @@ namespace ERPAPI.Controllers
 
 
             return await Task.Run(() => Ok(Items));
+            
         }
 
         [HttpGet("[action]/{Name}/{StateId}")]
@@ -123,6 +125,8 @@ namespace ERPAPI.Controllers
             }
             return await Task.Run(() => Ok(Items));
         }
+
+
         /// <summary>
         /// Inserta una nueva City
         /// </summary>

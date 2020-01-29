@@ -22,6 +22,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Departamento")]
         public long? StateId { get; set; }
+        [ForeignKey("StateId")]
+        public State State { get; set; }
 
         [Display(Name = "Empleados")]
         public virtual List<Employees> Employees { get; set; }
