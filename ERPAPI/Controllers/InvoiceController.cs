@@ -250,7 +250,10 @@ namespace ERPAPI.Controllers
                                     if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
                                            && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
                                     {
-
+                                        if (_iline is null)
+                                        {
+                                            _iline = new InvoiceLine();
+                                        }
                                         _iline.AccountId = Convert.ToInt32(item.AccountId);
                                         _iline.AccountName = item.AccountName;
                                         _context.Entry(_iline).CurrentValues.SetValues((_iline));                                   
