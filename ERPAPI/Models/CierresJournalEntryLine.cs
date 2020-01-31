@@ -50,8 +50,6 @@ namespace ERPAPI.Models
         public double CreditME { get; set; }
 
         public string Memo { get; set; }
-        public virtual JournalEntry JournalEntry { get; set; }
-        public virtual Accounting Account { get; set; }
 
         public DateTime FechaCierre { get; set; }
 
