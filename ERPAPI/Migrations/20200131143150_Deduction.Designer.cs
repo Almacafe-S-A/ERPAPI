@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200131143150_Deduction")]
+    partial class Deduction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1287,6 +1289,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("AccountId");
 
+                    b.Property<long?>("AccountId1");
+
                     b.Property<string>("AccountName");
 
                     b.Property<int>("BitacoraCierreContableId");
@@ -1331,7 +1335,11 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("CierresJournalEntryLineId");
 
+                    b.HasIndex("AccountId1");
+
                     b.HasIndex("BitacoraCierreContableId");
+
+                    b.HasIndex("JournalEntryId");
 
                     b.ToTable("CierresJournalEntryLine");
                 });
@@ -9925,9 +9933,18 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.CierresJournalEntryLine", b =>
                 {
+                    b.HasOne("ERPAPI.Models.Accounting", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId1");
+
                     b.HasOne("ERPAPI.Models.BitacoraCierreContable", "BitacoraCierreContable")
                         .WithMany()
                         .HasForeignKey("BitacoraCierreContableId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
+                        .WithMany()
+                        .HasForeignKey("JournalEntryId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -10605,7 +10622,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.State", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Country", "Country")
+                    b.HasOne("ERPAPI.Models.Country")
                         .WithMany("State")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade);

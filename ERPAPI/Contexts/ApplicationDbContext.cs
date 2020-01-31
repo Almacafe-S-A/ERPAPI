@@ -318,6 +318,7 @@ namespace ERP.Contexts
         public DbSet<Contrato_plan_pagos> Contrato_plan_pagos { get; set; }
         public DbSet<Contrato_movimientos> Contrato_movimientos { get; set; }
 
+        public DbSet<Deduction> Deduction { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
