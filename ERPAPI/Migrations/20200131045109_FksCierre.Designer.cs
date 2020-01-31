@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200131045109_FksCierre")]
+    partial class FksCierre
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8606,36 +8608,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("UnitOfMeasure");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.UserBranch", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("BranchName");
-
-                    b.Property<DateTime?>("CreatedDate");
-
-                    b.Property<string>("CreatedUser");
-
-                    b.Property<DateTime?>("ModifiedDate");
-
-                    b.Property<string>("ModifiedUser");
-
-                    b.Property<Guid>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("BranchId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserBranch");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Vendor", b =>
                 {
                     b.Property<long>("VendorId")
@@ -10577,19 +10549,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Country", "Country")
                         .WithMany("State")
                         .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.UserBranch", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

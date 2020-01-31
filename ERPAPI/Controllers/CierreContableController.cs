@@ -20,6 +20,10 @@ namespace ERPAPI.Controllers
     public class CierreContableController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _contextp1;
+        private readonly ApplicationDbContext _contextp2;
+        private readonly ApplicationDbContext _contextp3;
+
         private readonly ILogger _logger;
 
         public CierreContableController(ILogger<CierreContableController> logger, ApplicationDbContext context)
@@ -153,40 +157,49 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(proceso2);
                     _context.BitacoraCierreProceso.Add(proceso3);
                     _context.SaveChanges();
-                    Paso1(cierre,proceso1); ////HISTORICOS
-                     Paso2(cierre,proceso2);/// Valor Maximo de Certificados 
-                     Paso3(proceso3);//// POLIZAS VENCIDAS 
+
+
+
 
                     if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
+                    {
+                        //Paso4 Depreciacion de Activos 
+                        BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
                         {
-                            //Paso4 Depreciacion de Activos 
-                            BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
-                            {
-                                IdBitacoraCierre = cierre.Id,
-                                //IdProceso = 1,
-                                Estatus = "PENDIENTE",
-                                Proceso = "Depreciacion de Activos",
-                                PasoCierre = 4,
-                                UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                                UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                                FechaModificacion = DateTime.Now,
-                                FechaCierre = cierre.FechaCierre,
-                                FechaCreacion = DateTime.Now,
-                                
-                            };
-                            Paso4(proceso4,cierre);
-                            _context.BitacoraCierreProceso.Add(proceso4);
-                        }
-                         
+                            IdBitacoraCierre = cierre.Id,
+                            //IdProceso = 1,
+                            Estatus = "PENDIENTE",
+                            Proceso = "Depreciacion de Activos",
+                            PasoCierre = 4,
+                            UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                            UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                            FechaModificacion = DateTime.Now,
+                            FechaCierre = cierre.FechaCierre,
+                            FechaCreacion = DateTime.Now,
+
+                        };
+                        _context.BitacoraCierreProceso.Add(proceso4);
+
                         _context.SaveChanges();
+                        await Paso4(proceso4, cierre);
+                    }
+
+            
 
 
             try
             {
-                //////Ejecuta el Cierre
-               // _context.Database.ExecuteSqlCommand("Cierres @p0", cierre.Id); ////Ejecuta SP Cierres
+                //////Ejecuta el Cierre en db
+                //await _context.Database.ExecuteSqlCommandAsync("Cierres @p0", cierre.Id); ////Ejecuta SP Cierres
                 //ValidarPasos(cierre);
-                _context.SaveChanges();
+                
+                await Paso3(proceso3.IdProceso);
+                await Paso2(proceso2.IdProceso);/// Valor Maximo de Certificados 
+                // POLIZAS VENCIDAS 
+                await Paso1(cierre.Id, proceso1.IdProceso); ////HISTORICOS
+                cierre.Estatus = "Finalizado";
+                _context.Update(cierre);
+                await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok());
 
             }
@@ -203,14 +216,20 @@ namespace ERPAPI.Controllers
 
 
         
-        private  void Paso1(BitacoraCierreContable pCierre,BitacoraCierreProcesos pProceso)
+        private async Task Paso1(int idCierre,int idproceso)
         {
+            //////////////
+            ///
+            BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == idproceso).FirstOrDefaultAsync();
+            proceso.Estatus = "EJECUTANDO";
+            _context.BitacoraCierreProceso.Update(proceso);
+            await _context.SaveChangesAsync();
 
             try
             {
                 ////////////////Cierre Catalogo
                 List<CierresAccounting> cierreCatalogo = new List<CierresAccounting>();
-                List<Accounting> catalogo = _context.Accounting.ToList();
+                List<Accounting> catalogo =await  _context.Accounting.ToListAsync();
 
                 foreach (var item in catalogo)
                 {
@@ -225,8 +244,8 @@ namespace ERPAPI.Controllers
                         IsCash = item.IsCash,
                         ParentAccountId = item.ParentAccountId,
                         TypeAccountId = item.TypeAccountId,
-                        FechaCierre = pCierre.FechaCierre,
-                        BitacoraCierreContableId = pCierre.Id,
+                        FechaCierre = proceso.FechaCierre,
+                        BitacoraCierreContableId = proceso.IdBitacoraCierre,
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
 
@@ -235,13 +254,13 @@ namespace ERPAPI.Controllers
                     cierreCatalogo.Add(cuenta);
                 }
 
-                _context.CierresAccounting.AddRange(cierreCatalogo);
+                await _context.CierresAccounting.AddRangeAsync(cierreCatalogo);
 
 
                 /////////Cierre Journal entries
                 ///
-                var cerradosJE = _context.CierresJournal.Select(x => x.JournalEntryId).ToList();
-                List<JournalEntry> cierreJE = _context.JournalEntry.Where(c => !cerradosJE.Any(x => x == c.JournalEntryId)).ToList(); ////Busca los Journal Entry a Cerrar (los no cerrados)
+                var cerradosJE = await _context.CierresJournal.Select(x => x.JournalEntryId).ToListAsync();
+                List<JournalEntry> cierreJE = await _context.JournalEntry.Where(c => !cerradosJE.Any(x => x == c.JournalEntryId )&& c.EstadoId ==6 ).ToListAsync(); ////Busca los Journal Entry a Cerrar (los no cerrados)
                 List<CierresJournal> cierreCuentas = new List<CierresJournal>();
                 foreach (var item in cierreJE)
                 {
@@ -254,8 +273,13 @@ namespace ERPAPI.Controllers
                         EstadoId = item.EstadoId,
                         TotalCredit = item.TotalCredit,
                         TotalDebit = item.TotalDebit,
-                        BitacoraCierreContableId = pCierre.Id,
-                        FechaCierre = pCierre.FechaCierre
+                        BitacoraCierreContableId = proceso.IdBitacoraCierre,
+                        FechaCierre = proceso.FechaCierre,
+                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        CreatedDate = item.CreatedDate,
+                        ModifiedDate = item.ModifiedDate,
+
 
                     };
 
@@ -263,11 +287,11 @@ namespace ERPAPI.Controllers
 
                 }
 
-                _context.CierresJournal.AddRange(cierreCuentas);
+                await _context.CierresJournal.AddRangeAsync(cierreCuentas);
                 /////////Cierre Journal entries Lineas
                 ///
 
-                List<JournalEntryLine> cierreJEL = _context.JournalEntryLine.Where(c => cierreJE.Any(x => c.JournalEntryId == x.JournalEntryId)).ToList();
+                List<JournalEntryLine> cierreJEL = await _context.JournalEntryLine.Where(c => cierreJE.Any(x => c.JournalEntryId == x.JournalEntryId)).ToListAsync();
                 List<CierresJournalEntryLine> cierreLineas = new List<CierresJournalEntryLine>();
 
                 foreach (var item in cierreJEL)
@@ -280,9 +304,12 @@ namespace ERPAPI.Controllers
                         AccountName = item.AccountName,
                         Debit = item.Debit,
                         Credit = item.Credit,
-                        BitacoraCierreContableId = pCierre.Id,
-                        FechaCierre = pCierre.FechaCierre,
-
+                        BitacoraCierreContableId = proceso.IdBitacoraCierre,
+                        FechaCierre = proceso.FechaCierre,
+                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        CreatedDate = item.CreatedDate,
+                        ModifiedDate = item.ModifiedDate,
 
 
 
@@ -294,32 +321,38 @@ namespace ERPAPI.Controllers
 
                 }
 
-                _context.CierresJournalEntryLine.AddRange(cierreLineas);
+                await _context.CierresJournalEntryLine.AddRangeAsync(cierreLineas);
 
-                pProceso.Estatus = "FINALIZADO";
-                _context.BitacoraCierreProceso.Update(pProceso);
-
+                proceso.Estatus = "FINALIZADO";
+                _context.BitacoraCierreProceso.Update(proceso);
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
 
-                pProceso.Estatus = "ERROR";
-                pProceso.Mensaje = ex.Message;
-                _context.BitacoraCierreProceso.Update(pProceso);
-
+                proceso.Estatus = "ERROR";
+                proceso.Mensaje = ex.Message;
+                _context.BitacoraCierreProceso.Update(proceso);
+                await _context.SaveChangesAsync();
 
             }
-            
 
+            
 
         }
 
-        private  void Paso2(BitacoraCierreContable pCierre, BitacoraCierreProcesos pProceso)
+        private  async Task Paso2(int idProceso)
         {
-           
+            //////////////
+            ///
+            BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == idProceso).FirstOrDefaultAsync();
+            proceso.Estatus = "EJECUTANDO";
+            _context.BitacoraCierreProceso.Update(proceso);
+            await _context.SaveChangesAsync();
+
             //////////Actualiza el techo de los certificados mensuales
-            double suma = _context.CertificadoDeposito.Sum(c => c.Total);
-            ElementoConfiguracion elemento =  _context.ElementoConfiguracion.Where(e => e.Descripcion == "VALOR MAXIMO CERTIFICADOS").FirstOrDefault();
+            double suma = await _context.CertificadoDeposito.SumAsync(c => c.Total);
+            ElementoConfiguracion elemento = await _context.ElementoConfiguracion.Where(e => e.Descripcion == "VALOR MAXIMO CERTIFICADOS").FirstOrDefaultAsync();
             if (elemento != null)
             {
                 elemento.Valordecimal = suma;
@@ -327,111 +360,116 @@ namespace ERPAPI.Controllers
             }
             else
             {
-                pProceso.Estatus = "ERROR";
-                pProceso.Mensaje = "NO SE ENCONTRO EL ELEMENTO DE CONFIGURACION";
+                proceso.Estatus = "ERROR";
+                proceso.Mensaje = "NO SE ENCONTRO EL ELEMENTO DE CONFIGURACION";
 
-                _context.BitacoraCierreProceso.Update(pProceso);
+                _context.BitacoraCierreProceso.Update(proceso);
 
                 return;
 
             }
 
 
-            pProceso.Estatus = "FINALIZADO";
+            proceso.Estatus = "FINALIZADO";
 
-            _context.BitacoraCierreProceso.Update(pProceso);
+            _context.BitacoraCierreProceso.Update(proceso);
             return;
 
         }
 
-        private async void Paso3(BitacoraCierreProcesos pProceso3)
+        private async Task Paso3(int idProceso)
         {
+            TiposDocumento tipoDocumento = await _context.TiposDocumento.Where(d => d.Descripcion == "Polizas").FirstOrDefaultAsync();
 
-            List<InsurancePolicy> insurancePolicies = _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToList();
+            JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                           .Where(q => q.TransactionId == tipoDocumento.IdTipoDocumento)
+                                                           //.Where(q => q.BranchId == _Invoiceq.BranchId)
+                                                           .Where(q => q.EstadoName == "Activo")
+                                                           .Include(q => q.JournalEntryConfigurationLine)
+                                                           ).FirstOrDefaultAsync();
+            //////////////
+            ///
+            BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == idProceso).FirstOrDefaultAsync();
+            proceso.Estatus = "EJECUTANDO";
+            _context.BitacoraCierreProceso.Update(proceso);
+            //await _context.SaveChangesAsync();
 
-            double SumaPolizas = _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToList().
-                Sum(s => s.LpsAmount);
+            List<InsurancePolicy> insurancePolicies = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToListAsync();
+
+            double SumaPolizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).SumAsync(s => s.LpsAmount);
 
             if (insurancePolicies.Count > 0)
             {
 
 
-                foreach (var item in insurancePolicies)
+                if (_journalentryconfiguration != null)
                 {
-                    item.Status = "INACTIVA";
-                }
-                _context.InsurancePolicy.UpdateRange(insurancePolicies);
-                pProceso3.Estatus = "FINALIZADO";
 
-                if (SumaPolizas > 0)
-                {
-                    TiposDocumento tipoDocumento = _context.TiposDocumento.Where(d => d.Descripcion == "Polizas").FirstOrDefault();
-                    JournalEntryConfiguration _journalentryconfiguration = await(_context.JournalEntryConfiguration
-                                                               .Where(q => q.TransactionId == tipoDocumento.IdTipoDocumento)
-                                                               //.Where(q => q.BranchId == _Invoiceq.BranchId)
-                                                               .Where(q => q.EstadoName == "Activo")
-                                                               .Include(q => q.JournalEntryConfigurationLine)
-                                                               ).FirstOrDefaultAsync();
-
-                    if (_journalentryconfiguration != null)
+                    //Crear el asiento contable configurado
+                    //.............................///////
+                    JournalEntry _je = new JournalEntry
                     {
-                        //Crear el asiento contable configurado
-                        //.............................///////
-                        JournalEntry _je = new JournalEntry
+                        Date = DateTime.Now,
+                        Memo = "Vecimiento de Polizas",
+                        DatePosted = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        DocumentId = proceso.IdProceso,
+                        TypeOfAdjustmentId = 65,
+                        VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),
+
+                    };
+                    _context.JournalEntry.Add(_je);
+                    foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
+                    {
+
+
+                        _je.JournalEntryLines.Add(new JournalEntryLine
                         {
-                            Date = DateTime.Now,
-                            Memo = "Vecimiento de Polizas",
-                            DatePosted = DateTime.Now,
-                            ModifiedDate = DateTime.Now,
+                            JournalEntryId = _je.JournalEntryId,
+                            AccountId = Convert.ToInt32(item.AccountId),
+                            AccountName = item.AccountName,
+                            Description = item.AccountName,
+                            Credit = item.DebitCredit == "Credito" ? SumaPolizas : 0,
+                            Debit = item.DebitCredit == "Debito" ? SumaPolizas : 0,
                             CreatedDate = DateTime.Now,
-                            ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                            ModifiedDate = DateTime.Now,
                             CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                            DocumentId = pProceso3.IdProceso,
-                            TypeOfAdjustmentId = 65,
-                            VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),
-
-                        };
-                        _context.JournalEntry.Add(_je);
-                        foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
-                        {
+                            ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                            Memo = "",
+                        }); ;
 
 
-                            _je.JournalEntryLines.Add(new JournalEntryLine
-                            {
-                                JournalEntryId = _je.JournalEntryId,
-                                AccountId = Convert.ToInt32(item.AccountId),
-                                AccountName = item.AccountName,
-                                Description = item.AccountName,
-                                Credit = item.DebitCredit == "Credito" ? SumaPolizas : 0,
-                                Debit = item.DebitCredit == "Debito" ? SumaPolizas : 0,
-                                CreatedDate = DateTime.Now,
-                                ModifiedDate = DateTime.Now,
-                                CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                                ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                                Memo = "",
-                            }); ;
-
-
-                        }
-                        _context.JournalEntry.Update(_je);
-                        pProceso3.Mensaje = "Generado Asiendo No. "+_je.JournalEntryId;
-                        pProceso3.Estatus = "FINALIZADO";
                     }
-                    else
+                    _context.JournalEntry.Update(_je);
+                    proceso.Mensaje = "Generado Asiendo No. " + _je.JournalEntryId;
+                    proceso.Estatus = "FINALIZADO";
+
+                    foreach (var item in insurancePolicies)
                     {
-                        pProceso3.Mensaje = "No se encontro Configuracion del asiento del vencimiento de pólizas";
-                        pProceso3.Estatus = "ERROR";
+                        item.Status = "VENCIDA";
                     }
+                    _context.InsurancePolicy.UpdateRange(insurancePolicies);
+                    proceso.Estatus = "FINALIZADO";
 
                 }
-
+                else
+                {
+                    proceso.Mensaje = "No se encontro Configuracion del asiento del vencimiento de pólizas";
+                    proceso.Estatus = "ERROR";
+                }
                 //_context.BitacoraCierreProceso.Update(pProceso3);
                 return;
             }
+
+                
+            
             else
             {
-                pProceso3.Mensaje = "No se encontraron pólizas vencidas";
-                pProceso3.Estatus = "FINALIZADO";
+                proceso.Mensaje = "No se encontraron pólizas vencidas";
+                proceso.Estatus = "FINALIZADO";
                 //_context.BitacoraCierreProceso.Update(pProceso3);
                 return;
             }
@@ -442,9 +480,9 @@ namespace ERPAPI.Controllers
         }
 
 
-        private void Paso4(BitacoraCierreProcesos pProceso, BitacoraCierreContable pCierre)
+        private async Task Paso4(BitacoraCierreProcesos pProceso, BitacoraCierreContable pCierre)
         {
-            var depreciaciongrupos = _context.FixedAsset
+            var depreciaciongrupos = await _context.FixedAsset
                 .GroupBy(g => new { 
                     g.FixedAssetGroupId,
                     g.CenterCostId,
@@ -454,17 +492,24 @@ namespace ERPAPI.Controllers
                     CentroCostoID = g.Key.CenterCostId, 
                     Grupo = g.Key.FixedAssetGroupId, 
                     Depreciacion = g.Sum(s => s.ToDepreciate) })
-                .ToList();
+                .ToListAsync();
 
             if (depreciaciongrupos.Count>0)
             {
                 
                 foreach (var item in depreciaciongrupos)
                 {
-                    FixedAssetGroup grupo = _context.FixedAssetGroup.Where(w => w.FixedAssetGroupId == item.Grupo).FirstOrDefault();
+                    FixedAssetGroup grupo = await _context.FixedAssetGroup.Where(w => w.FixedAssetGroupId == item.Grupo).FirstOrDefaultAsync();
 
-                    Accounting cuentaDepreciacion = _context.Accounting.Where(w => w.AccountId == grupo.DepreciationAccountingId).FirstOrDefault();
-                    Accounting cuentaActivo = _context.Accounting.Where(w => w.AccountId == grupo.FixedAssetAccountingId).FirstOrDefault();
+                    if (grupo.DepreciationAccountingId == null || grupo.FixedAssetAccountingId == null)
+                    {
+                        pProceso.Mensaje = "Los grupos de activos deben de tener las cuentas contables asignadas";
+                        pProceso.Estatus = "FINALIZADO";
+                        return ;
+                    }
+                    Accounting cuentaDepreciacion = await _context.Accounting.Where(w => w.AccountId == grupo.DepreciationAccountingId).FirstOrDefaultAsync();
+                    Accounting cuentaActivo = await _context.Accounting.Where(w => w.AccountId == grupo.FixedAssetAccountingId).FirstOrDefaultAsync();
+
 
                     JournalEntry _je = new JournalEntry
                     {
@@ -563,7 +608,7 @@ namespace ERPAPI.Controllers
                     repetido = false;
                     if (item.PasoCierre == 3)
                     {
-                        Paso3(item);
+                        //Paso3(item);
                         _context.SaveChanges();
                         break;
                     }
