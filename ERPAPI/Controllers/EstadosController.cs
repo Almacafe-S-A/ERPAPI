@@ -117,6 +117,26 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la tabla Grupo Estados.
+        /// </summary>
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetGrupoEstados()
+        {
+            try
+            {
+                List<GrupoEstado> Items = await _context.GrupoEstado.ToListAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
         [HttpGet("[action]/{idgrupoestado}")]
         public async Task<ActionResult> GetEstadosByGrupo(Int64 idgrupoestado)
         {
@@ -219,9 +239,84 @@ namespace ERPAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la tabla Estados por clasificación de Grupos.
+        /// </summary>
+        /// <param name="GrupoEstadoId"></param>
+        /// <param name="GrupoConfiguracionId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{GrupoEstadoId}/{GrupoConfiguracionId}")]
+        public async Task<ActionResult> GetEstadosByGrupoEstado(Int64 GrupoEstadoId, Int64 GrupoConfiguracionId)
+        {
+            List<Estados> Items = new List<Estados>();
+            try
+            {
+                if (GrupoEstadoId == 0 && GrupoConfiguracionId == 0)
+                {
+                    Items = await _context.Estados.ToListAsync();
+                    Items = Items.OrderByDescending(p => p.IdEstado).ToList();
+                    return await Task.Run(() => Ok(Items));
+                }
+                else if (GrupoEstadoId > 0 && GrupoConfiguracionId > 0 && GrupoEstadoId == GrupoConfiguracionId)
+                {
+                    Items = await _context.Estados.Where(q => q.IdGrupoEstado == GrupoEstadoId).ToListAsync();
+                    Items = Items.OrderByDescending(p => p.IdEstado).ToList();
+                }
+                else if (GrupoEstadoId > 0 && GrupoConfiguracionId > 0)
+                {
+                    List<Estados> ItemGruposDiferentes = new List<Estados>();
+                    Items = await _context.Estados.ToListAsync();
+                    foreach (var item in Items)
+                    {
+                        if (item.IdGrupoEstado.Equals(GrupoEstadoId))
+                        {
+                            ItemGruposDiferentes.Add(item);
+                        } 
+                    }
+                    foreach (var item in Items)
+                    {
+                        if (item.IdGrupoEstado.Equals(GrupoConfiguracionId))
+                        {
+                            ItemGruposDiferentes.Add(item);
+                        }
+                    }
+                    ItemGruposDiferentes = ItemGruposDiferentes.OrderByDescending(p => p.IdEstado).ToList();
+                    return await Task.Run(() => Ok(ItemGruposDiferentes));
+                }
+                else if (GrupoConfiguracionId > 0 && GrupoEstadoId == 0)
+                {
+                    List<Estados> ItemsRemovePrepend = new List<Estados>();
+                    Items = await _context.Estados.ToListAsync();
+                    Items = Items.OrderByDescending(p => p.IdEstado).ToList();
+                    ItemsRemovePrepend = Items.FindAll(q => q.IdGrupoEstado == GrupoConfiguracionId);
+                    foreach (var item in ItemsRemovePrepend)
+                    {
+                        Items.Remove(item);
+                        Items.Insert(0,item);
+                    }
+                }
+                else if (GrupoConfiguracionId == 0 && GrupoEstadoId > 0)
+                {
+                    List<Estados> ItemsRemovePrepend = new List<Estados>();
+                    Items = await _context.Estados.ToListAsync();
+                    Items = Items.OrderByDescending(p => p.IdEstado).ToList();
+                    ItemsRemovePrepend = Items.FindAll(q => q.IdGrupoEstado == GrupoEstadoId);
+                    
+                    foreach (var item in ItemsRemovePrepend)
+                    {
+                        Items.Remove(item);
+                        Items.Insert(0,item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
 
-
-
+        }
 
     }
 }
