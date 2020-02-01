@@ -320,6 +320,8 @@ namespace ERP.Contexts
 
         public DbSet<Deduction> Deduction { get; set; }
 
+        public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
