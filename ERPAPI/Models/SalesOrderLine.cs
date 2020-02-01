@@ -47,6 +47,8 @@ namespace ERPAPI.Models
           [Display(Name = "Monto descuento")]
         public double DiscountAmount { get; set; }
           [Display(Name = "Subtotal")]
+
+        
         public double SubTotal { get; set; }
          [Display(Name = "% Impuesto")]
         public double TaxPercentage { get; set; }
