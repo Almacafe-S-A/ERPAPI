@@ -167,10 +167,10 @@ namespace ERPAPI.Controllers
                                                  .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
 
                          
-                        if(IdCai==0)
-                        {
-                            return BadRequest("No existe un CAI activo para el punto de emisión");
-                        }
+                        //if(IdCai==0)
+                        //{
+                        //    return BadRequest("No existe un CAI activo para el punto de emisión");
+                        //}
 
                         _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                         //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
