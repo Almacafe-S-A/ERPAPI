@@ -27,6 +27,25 @@ namespace ERPAPI.Models
 
         [Display(Name = "Empleados")]
         public virtual List<Employees> Employees { get; set; }
+
+        [Display(Name = "Id de estado")]
+        public Int64? IdEstado { get; set; }
+        [Display(Name = "Estado")]
+        public string Estado { get; set; }
+        [ForeignKey("IdEstado")]
+        public Estados Estados { get; set; }
+
+        [Display(Name = "Fecha de Creación")]
+        public DateTime? FechaCreacion { get; set; }
+
+        [Display(Name = "Fecha de Modificación")]
+        public DateTime? FechaModificacion { get; set; }
+
+        [Display(Name = "Usuario de Creación")]
+        public string UsuarioCreacion { get; set; }
+
+        [Display(Name = "Usuario de Modificación")]
+        public string UsuarioModificacion { get; set; }
     }
 
 
