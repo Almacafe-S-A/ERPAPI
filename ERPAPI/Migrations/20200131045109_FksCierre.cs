@@ -14,13 +14,13 @@ namespace ERPAPI.Migrations
                 name: "FK_CierresJournalEntryLine_JournalEntry_JournalEntryId",
                 table: "CierresJournalEntryLine");
 
-            migrationBuilder.DropIndex(
-                name: "IX_CierresJournalEntryLine_AccountId1",
-                table: "CierresJournalEntryLine");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_CierresJournalEntryLine_AccountId1",
+            //    table: "CierresJournalEntryLine");
 
-            migrationBuilder.DropIndex(
-                name: "IX_CierresJournalEntryLine_JournalEntryId",
-                table: "CierresJournalEntryLine");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_CierresJournalEntryLine_JournalEntryId",
+            //    table: "CierresJournalEntryLine");
 
             migrationBuilder.DropColumn(
                 name: "AccountId1",
