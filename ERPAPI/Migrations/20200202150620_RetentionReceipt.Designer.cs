@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200202150620_RetentionReceipt")]
+    partial class RetentionReceipt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1346,25 +1348,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long?>("IdEstado");
-
                     b.Property<string>("Name");
 
                     b.Property<long?>("StateId");
 
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("IdEstado");
 
                     b.HasIndex("StateId");
 
@@ -2748,8 +2736,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("ProductId");
 
                     b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -7939,11 +7925,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NameContract");
 
-                    b.Property<string>("Observacion");
-
                     b.Property<DateTime>("OrderDate");
-
-                    b.Property<decimal?>("Porcentaje");
 
                     b.Property<long>("ProductId");
 
@@ -7984,8 +7966,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<decimal?>("Valor");
 
                     b.HasKey("SalesOrderId");
 
@@ -9994,10 +9974,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.City", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("IdEstado");
-
                     b.HasOne("ERPAPI.Models.State", "State")
                         .WithMany("City")
                         .HasForeignKey("StateId");
