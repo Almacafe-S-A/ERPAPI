@@ -48,7 +48,12 @@ namespace ERPAPI.Models
         public double DiscountAmount { get; set; }
           [Display(Name = "Subtotal")]
 
-        
+
+        public decimal? Valor { get; set; }
+
+        public decimal? Porcentaje { get; set; }
+
+
         public double SubTotal { get; set; }
          [Display(Name = "% Impuesto")]
         public double TaxPercentage { get; set; }
