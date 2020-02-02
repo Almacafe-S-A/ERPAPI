@@ -34,9 +34,6 @@ namespace ERPAPI.Models
 
         public string Observacion { get; set; }
 
-        public decimal? Valor { get; set; }
-
-        public decimal? Porcentaje { get; set; }
 
 
         //[EmailAddress(ErrorMessage ="Agregue una direccion de correo valida")]

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200202164110_ChangedFields_SalesOrder")]
+    partial class ChangedFields_SalesOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1346,25 +1348,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime?>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<long?>("IdEstado");
-
                     b.Property<string>("Name");
 
                     b.Property<long?>("StateId");
 
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("IdEstado");
 
                     b.HasIndex("StateId");
 
@@ -7852,45 +7840,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("ReconciliacionGasto");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.RetentionReceipt", b =>
-                {
-                    b.Property<int>("RetentionReceiptId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CAI");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<long>("DocumentId");
-
-                    b.Property<DateTime>("DueDate");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaEmision");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEmpleado");
-
-                    b.Property<long>("IdTipoDocumento");
-
-                    b.Property<string>("NoCorrelativo");
-
-                    b.Property<string>("RTN");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long>("VendorId");
-
-                    b.HasKey("RetentionReceiptId");
-
-                    b.ToTable("RetentionReceipt");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.SalesOrder", b =>
                 {
                     b.Property<int>("SalesOrderId")
@@ -9994,10 +9943,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.City", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("IdEstado");
-
                     b.HasOne("ERPAPI.Models.State", "State")
                         .WithMany("City")
                         .HasForeignKey("StateId");
