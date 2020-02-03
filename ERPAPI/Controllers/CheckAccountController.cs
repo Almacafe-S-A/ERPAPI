@@ -191,6 +191,8 @@ namespace ERPAPI.Controllers
                     {
 
                         _CheckAccountq = _CheckAccount;
+                        _CheckAccountq.NumeroActual = _CheckAccountq.NoInicial;
+
                 _context.CheckAccount.Add(_CheckAccountq);
                 await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -256,6 +258,7 @@ namespace ERPAPI.Controllers
                 _context.Entry(_CheckAccountq).CurrentValues.SetValues((_CheckAccount));
 
                 //_context.CheckAccount.Update(_CheckAccountq);
+                
                 await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -346,6 +349,8 @@ Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountq, new JsonSerializerSe
             return await Task.Run(() => Ok(cuentas));
         }
 
+
+        
 
 
 

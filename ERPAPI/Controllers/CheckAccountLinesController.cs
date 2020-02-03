@@ -127,22 +127,22 @@ namespace ERPAPI.Controllers
                 _CheckAccountLinesq.Estado = "Activo";
                 //Conteo Cheques
                 CheckAccount chequera = await _context.CheckAccount.Where(c =>c.CheckAccountId == _CheckAccountLinesq.CheckAccountId).FirstOrDefaultAsync();
-                chequera.NumeroActual = Convert.ToInt32(_CheckAccountLines.CheckNumber);
-                if(chequera.NumeroActual> Convert.ToInt32(chequera.NoFinal))
-                {
-                    return BadRequest("No se pueden emitir más Cheques.");
+                chequera.NumeroActual = _CheckAccountLines.CheckNumber;
+                //if(chequera.NumeroActual> Convert.ToInt32(chequera.NoFinal))
+                //{
+                //    return BadRequest("No se pueden emitir más Cheques.");
 
-                }
-                else
-                {
-                    _context.CheckAccountLines.Add(_CheckAccountLinesq);
-                    CheckAccount _CheckAccountq = await (from c in _context.CheckAccount
-                                 .Where(q => q.CheckAccountId == _CheckAccountLinesq.CheckAccountId)
-                                            select c
-                                ).FirstOrDefaultAsync();
+                //}
+                //else
+                //{
+                //    _context.CheckAccountLines.Add(_CheckAccountLinesq);
+                //    CheckAccount _CheckAccountq = await (from c in _context.CheckAccount
+                //                 .Where(q => q.CheckAccountId == _CheckAccountLinesq.CheckAccountId)
+                //                            select c
+                //                ).FirstOrDefaultAsync();
 
-                    _context.Entry(_CheckAccountq).CurrentValues.SetValues((chequera));
-                }
+                //    _context.Entry(_CheckAccountq).CurrentValues.SetValues((chequera));
+                //}
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
