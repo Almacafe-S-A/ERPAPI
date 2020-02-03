@@ -22,9 +22,9 @@ namespace ERPAPI.Migrations
             //    name: "IX_CierresJournalEntryLine_JournalEntryId",
             //    table: "CierresJournalEntryLine");
 
-            migrationBuilder.DropColumn(
-                name: "AccountId1",
-                table: "CierresJournalEntryLine");
+            //migrationBuilder.DropColumn(
+            //    name: "AccountId1",
+            //    table: "CierresJournalEntryLine");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
