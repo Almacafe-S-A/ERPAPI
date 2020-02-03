@@ -24,6 +24,12 @@ namespace ERPAPI.Models
 
         public string PaytoOrderOf { get; set; }
 
+        public string RTN { get; set; }
+
+        public int? RetencionId { get; set; }
+        [ForeignKey("RetencionId")]
+        public RetentionReceipt Retention { get; set; }
+
         public decimal Ammount { get; set; }
 
         public string AmountWords { get; set; }
