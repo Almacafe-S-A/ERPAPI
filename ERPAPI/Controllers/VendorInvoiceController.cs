@@ -141,7 +141,19 @@ namespace ERPAPI.Controllers
                             CreatedDate = DateTime.Now,
                             ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
                             CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                            DocumentId = _VendorInvoiceq.VendorInvoiceId,
+                            PartyId = Convert.ToInt32( _VendorInvoiceq.VendorId),
+                            PartyTypeName = _VendorInvoiceq.VendorName,
+                            TotalDebit = _VendorInvoiceq.Total,
+                            TotalCredit = _VendorInvoiceq.Total,
+                            PartyTypeId = 3,
+                            PartyName = "Proveedor",
+                            TypeJournalName = "Factura de Compras",
+                            VoucherType = 2,
+                            EstadoId = 5,
+                            EstadoName = "Enviada a Aprobacion",
+                            TypeOfAdjustmentId = 65,
+                            TypeOfAdjustmentName = "Asiento diario"
+
                         };
 
                         Accounting account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountId).FirstOrDefaultAsync();
@@ -149,6 +161,7 @@ namespace ERPAPI.Controllers
                         {
                             AccountId = Convert.ToInt32(_VendorInvoiceq.AccountId),
                             //Description = _VendorInvoiceq.Account.AccountName,
+                            AccountName = account.AccountCode,
                             Description = account.AccountName,
                             Credit =  0,
                             Debit = _VendorInvoiceq.Total ,
@@ -160,12 +173,13 @@ namespace ERPAPI.Controllers
                         });
                         foreach (var item in _VendorInvoiceq.VendorInvoiceLine)
                         {
-                            account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountId).FirstOrDefaultAsync();
+                            account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
                             item.VendorInvoiceId = _VendorInvoiceq.VendorInvoiceId;
                             _context.VendorInvoiceLine.Add(item);
                             _je.JournalEntryLines.Add(new JournalEntryLine
                             {
                                 AccountId = Convert.ToInt32(item.AccountId),
+                                AccountName = account.AccountCode,
                                 Description = account.AccountName,
                                 Credit = item.Total,
                                 Debit = 0,
