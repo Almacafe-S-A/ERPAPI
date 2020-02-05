@@ -33,6 +33,8 @@ namespace ERPAPI.Models
         [ForeignKey("CostCenterId")]
         public CostCenter CostCenter { get; set; }
 
+        public string CostCenterName { get; set; }
+
 
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
