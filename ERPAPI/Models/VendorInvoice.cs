@@ -32,7 +32,11 @@ namespace ERPAPI.Models
 
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
-        
+
+        public Int64? CostCenterId { get; set; }
+        [ForeignKey("CostCenterId")]
+        public CostCenter CostCenter { get; set; }
+
 
         [Display(Name = "Numero de Factura")]
         public string TipoDocumento { get; set; }

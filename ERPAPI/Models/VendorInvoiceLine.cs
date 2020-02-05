@@ -29,6 +29,10 @@ namespace ERPAPI.Models
         [Display(Name = "Unidad de Medida")]
         public string UnitOfMeasureName { get; set; }
 
+        public Int64? CostCenterId { get; set; }
+        [ForeignKey("CostCenterId")]
+        public CostCenter CostCenter { get; set; }
+
 
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
