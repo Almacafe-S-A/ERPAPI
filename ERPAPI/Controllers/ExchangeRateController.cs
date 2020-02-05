@@ -79,8 +79,12 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
-        [HttpPost("[action]")]
+        /// <summary>
+        /// Obtiene un Exchange Rate para la fecha y moneda
+        /// </summary>
+        /// <param name="_ExchangeRate"></param>
+        /// <returns></returns>
+        [HttpPost("[action]/{ExchangeRate}")]
         public async Task<IActionResult> GetExchangeRateByFecha([FromBody]ExchangeRate _ExchangeRate)
         {
             ExchangeRate Items = new ExchangeRate();

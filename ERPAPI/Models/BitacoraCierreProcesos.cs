@@ -23,6 +23,8 @@ namespace ERPAPI.Models
 
         public string Proceso { get; set; }
 
+        public string Mensaje { get; set; }
+
         public string Estatus { get; set; }
 
         public DateTime FechaCreacion { get; set; }

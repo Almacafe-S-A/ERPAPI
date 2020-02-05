@@ -45,6 +45,8 @@ namespace ERP.Contexts
         public DbSet<CostListItem> CostListItem { get; set; }
         public DbSet<CostCenter> CostCenter { get; set; }
 
+        public DbSet<UserBranch> UserBranch { get; set; }
+
         public DbSet<Concept> Concept { get; set; }
 
         public DbSet<GrupoEstado> GrupoEstado { get; set; }
@@ -316,6 +318,9 @@ namespace ERP.Contexts
         public DbSet<Contrato_plan_pagos> Contrato_plan_pagos { get; set; }
         public DbSet<Contrato_movimientos> Contrato_movimientos { get; set; }
 
+        public DbSet<Deduction> Deduction { get; set; }
+
+        public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -328,6 +333,15 @@ namespace ERP.Contexts
             //modelBuilder.Entity<Customer>().HasData(Customers);   
 
             //modelBuilder.Entity<ConfiguracionesGenerales>().HasBaseType<CamposAuditoria>();
+
+            modelBuilder.Entity<UserBranch>()
+            .HasIndex(k => new { k.BranchId, k.UserId })
+            .IsUnique(true);
+
+            //modelBuilder.Entity<UserBranch>()
+            //.HasKey(k => new { k.BranchId, k.UserId });
+            ////.IsUnique(true);
+
 
             modelBuilder.Entity<VendorProduct>()
            .HasIndex(p => new { p.ProductId,p.VendorId })
@@ -363,9 +377,9 @@ namespace ERP.Contexts
            .HasIndex(p => new { p.Name })
            .IsUnique(true);
 
-            modelBuilder.Entity<SubProduct>()
-           .HasIndex(p => new { p.ProductCode })
-           .IsUnique(true);
+           // modelBuilder.Entity<SubProduct>()
+           //.HasIndex(p => new { p.ProductCode })
+           //.IsUnique(true);
 
             modelBuilder.Entity<Customer>()
            .HasIndex(p => new { p.RTN })
@@ -453,22 +467,6 @@ namespace ERP.Contexts
             modelBuilder.Entity<Quotation>()
             .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
 
-            //modelBuilder.Entity<Dimensions>()
-            //    .HasIndex(p => new { p.Num, p.DimCode })
-            //    .IsUnique(true);
-            //modelBuilder.Entity<SubProduct>(entity => {
-            //    entity.HasIndex(e => e.ProductCode).IsUnique();
-            //});
-
-
-            // .HasIndex(p => new { p.FirstColumn, p.SecondColumn }).IsUnique();
-
-
-            //modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("AspNetUserClaims");
-            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
-
-            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims"); 
-            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
 
 
 
