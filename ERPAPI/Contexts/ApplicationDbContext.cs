@@ -322,6 +322,8 @@ namespace ERP.Contexts
 
         public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
 
+        public DbSet<DeduccionEmpleado> DeduccionesEmpleados { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
@@ -466,8 +468,6 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<Quotation>()
             .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
-
-
 
 
         }
