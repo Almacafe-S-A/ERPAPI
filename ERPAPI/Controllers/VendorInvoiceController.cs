@@ -143,8 +143,8 @@ namespace ERPAPI.Controllers
                         CreatedUser = _VendorInvoiceq.UsuarioCreacion,
                         PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
                         PartyTypeName = _VendorInvoiceq.VendorName,
-                        TotalDebit = _VendorInvoiceq.Amount,
-                        TotalCredit = _VendorInvoiceq.Amount,                        
+                        TotalDebit = _VendorInvoiceq.Total,
+                        TotalCredit = _VendorInvoiceq.Total,                        
                         PartyTypeId = 3,
                         PartyName = "Proveedor",
                         TypeJournalName = "Factura de Compras",
@@ -163,8 +163,8 @@ namespace ERPAPI.Controllers
                         //Description = _VendorInvoiceq.Account.AccountName,
                         AccountName = account.AccountCode,
                         Description = account.AccountName,
-                        Credit = 0,
-                        Debit = _VendorInvoiceq.Total,
+                        Credit = _VendorInvoiceq.Total,
+                        Debit = 0,
                         CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
@@ -182,8 +182,8 @@ namespace ERPAPI.Controllers
                             AccountId = Convert.ToInt32(item.AccountId),
                             AccountName = account.AccountCode,
                             Description = account.AccountName,
-                            Credit = item.Total,
-                            Debit = 0,
+                            Credit = 0,
+                            Debit = item.Total,
                             CostCenterId = Convert.ToInt64(item.CostCenterId),                            
                             CreatedDate = DateTime.Now,
                             ModifiedDate = DateTime.Now,
@@ -191,6 +191,30 @@ namespace ERPAPI.Controllers
                             ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
                             Memo = "",
                         });
+                    }
+
+                    JournalEntryConfiguration jec = _context.JournalEntryConfiguration.Where(w => w.TransactionId == 2).FirstOrDefault();
+
+                    if (jec != null)
+                    {
+                        JournalEntryConfigurationLine jeclines = _context.JournalEntryConfigurationLine.Where(w => w.JournalEntryConfigurationId == jec.JournalEntryConfigurationId).FirstOrDefault();
+                        if (jeclines != null)
+                        {                            
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                AccountId = Convert.ToInt32(jeclines.AccountId),
+                                //AccountName = jeclines.AccountCode,
+                                Description = jeclines.AccountName,
+                                Credit = jeclines.DebitCredit == "Credito" ? _VendorInvoiceq.Tax : 0,
+                                Debit = jeclines.DebitCredit == "Debito" ? _VendorInvoiceq.Tax : 0,
+                                CostCenterId = Convert.ToInt64(jeclines.CostCenterId),
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedUser = _VendorInvoiceq.UsuarioCreacion,
+                                ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
+                                Memo = "",
+                            });
+                        }
                     }
 
                     
