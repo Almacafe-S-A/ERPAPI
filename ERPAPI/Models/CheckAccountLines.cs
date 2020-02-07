@@ -48,4 +48,12 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
     }
+
+    public class CheckAccountLinesDTO : CheckAccountLines
+    {
+        public  List<JournalEntryLine> JournalEntryLines { get; set; }
+
+
+
+    }
 }
