@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200205044507_AgregarCampoTipoDeducciones")]
+    partial class AgregarCampoTipoDeducciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1075,7 +1077,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NoInicial");
 
-                    b.Property<string>("NumeroActual");
+                    b.Property<int>("NumeroActual");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -1118,10 +1120,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Place");
 
-                    b.Property<string>("RTN");
-
-                    b.Property<int?>("RetencionId");
-
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
@@ -1131,8 +1129,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("CheckAccountId");
 
                     b.HasIndex("IdEstado");
-
-                    b.HasIndex("RetencionId");
 
                     b.ToTable("CheckAccountLines");
                 });
@@ -3650,27 +3646,15 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("CustomerId");
-
-                    b.Property<string>("CustomerName");
-
                     b.Property<long>("EmployeeId");
 
                     b.Property<string>("EmployeeName");
-
-                    b.Property<DateTime>("EndTime");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<decimal>("HourlySalary");
-
                     b.Property<string>("Motivo");
-
-                    b.Property<decimal>("QuantityHours");
-
-                    b.Property<DateTime>("StartTime");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -3679,10 +3663,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("WorkDate");
 
                     b.HasKey("EmployeeExtraHoursId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("EmployeeId");
 
                     b.ToTable("EmployeeExtraHours");
                 });
@@ -3716,6 +3696,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("EmployeeExtraHoursDetailId");
+
+                    b.HasIndex("EmployeeExtraHoursId");
 
                     b.ToTable("EmployeeExtraHoursDetail");
                 });
@@ -7880,10 +7862,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("BranchId");
-
-                    b.Property<string>("BranchName");
-
                     b.Property<string>("CAI");
 
                     b.Property<int>("CustomerId");
@@ -7891,8 +7869,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("DocumentId");
 
                     b.Property<DateTime>("DueDate");
-
-                    b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
 
@@ -7902,25 +7878,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEmpleado");
 
-                    b.Property<long>("IdEstado");
-
-                    b.Property<long>("IdPuntoEmision");
-
                     b.Property<long>("IdTipoDocumento");
 
                     b.Property<string>("NoCorrelativo");
 
-                    b.Property<int>("NumeroDEI");
-
-                    b.Property<double>("Percentage");
-
                     b.Property<string>("RTN");
-
-                    b.Property<string>("RetentionTaxDescription");
-
-                    b.Property<double>("TaxableBase");
-
-                    b.Property<double>("TotalAmount");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -8439,6 +8401,10 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("SubproductId");
 
+                    b.HasIndex("ProductCode")
+                        .IsUnique()
+                        .HasFilter("[ProductCode] IS NOT NULL");
+
                     b.ToTable("SubProduct");
                 });
 
@@ -8900,8 +8866,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Correo");
 
-                    b.Property<long?>("CostCenterId");
-
                     b.Property<double>("Currency");
 
                     b.Property<int>("CurrencyId");
@@ -9000,8 +8964,6 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("CostCenterId");
-
                     b.HasIndex("PurchaseOrderId");
 
                     b.HasIndex("VendorId");
@@ -9018,10 +8980,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("AccountId");
 
                     b.Property<double>("Amount");
-
-                    b.Property<long?>("CostCenterId");
-
-                    b.Property<string>("CostCenterName");
 
                     b.Property<string>("Description");
 
@@ -9056,8 +9014,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("VendorInvoiceLineId");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("CostCenterId");
 
                     b.HasIndex("TaxId");
 
@@ -9997,10 +9953,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("IdEstado")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.RetentionReceipt", "Retention")
-                        .WithMany()
-                        .HasForeignKey("RetencionId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CierresAccounting", b =>
@@ -10213,16 +10165,11 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("Idconfiguracion");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.EmployeeExtraHours", b =>
+            modelBuilder.Entity("ERPAPI.Models.EmployeeExtraHoursDetail", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Employees", "Employees")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
+                    b.HasOne("ERPAPI.Models.EmployeeExtraHours")
+                        .WithMany("EmployeeExtraHoursDetail")
+                        .HasForeignKey("EmployeeExtraHoursId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -10786,10 +10733,6 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
-                        .WithMany()
-                        .HasForeignKey("CostCenterId");
-
                     b.HasOne("ERPAPI.Models.PurchaseOrder", "PurchaseOrder")
                         .WithMany()
                         .HasForeignKey("PurchaseOrderId");
@@ -10806,10 +10749,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
-                        .WithMany()
-                        .HasForeignKey("CostCenterId");
 
                     b.HasOne("ERPAPI.Models.Tax", "Tax")
                         .WithMany()

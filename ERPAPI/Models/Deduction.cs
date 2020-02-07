@@ -22,6 +22,8 @@ namespace ERPAPI.Models
         public double Formula { get; set; }
         [Display(Name = "Quincena a pagar")]
         public double Fortnight { get; set; }
+        [Required]
+        public bool EsPorcentaje { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioModificacion { get; set; }

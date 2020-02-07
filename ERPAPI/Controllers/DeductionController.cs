@@ -181,7 +181,7 @@ namespace ERPAPI.Controllers
                             UsuarioCreacion = _Deductionq.UsuarioCreacion,
                             UsuarioModificacion = _Deductionq.UsuarioModificacion,
                             UsuarioEjecucion = _Deductionq.UsuarioModificacion,
-
+                            
                         });
 
                         await _context.SaveChangesAsync();

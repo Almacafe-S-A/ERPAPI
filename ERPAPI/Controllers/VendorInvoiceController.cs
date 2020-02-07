@@ -143,8 +143,8 @@ namespace ERPAPI.Controllers
                         CreatedUser = _VendorInvoiceq.UsuarioCreacion,
                         PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
                         PartyTypeName = _VendorInvoiceq.VendorName,
-                        TotalDebit = _VendorInvoiceq.Total,
-                        TotalCredit = _VendorInvoiceq.Total,
+                        TotalDebit = _VendorInvoiceq.Amount,
+                        TotalCredit = _VendorInvoiceq.Amount,                        
                         PartyTypeId = 3,
                         PartyName = "Proveedor",
                         TypeJournalName = "Factura de Compras",
@@ -165,6 +165,7 @@ namespace ERPAPI.Controllers
                         Description = account.AccountName,
                         Credit = 0,
                         Debit = _VendorInvoiceq.Total,
+                        CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
                         CreatedUser = _VendorInvoiceq.UsuarioCreacion,
@@ -183,6 +184,7 @@ namespace ERPAPI.Controllers
                             Description = account.AccountName,
                             Credit = item.Total,
                             Debit = 0,
+                            CostCenterId = Convert.ToInt64(item.CostCenterId),                            
                             CreatedDate = DateTime.Now,
                             ModifiedDate = DateTime.Now,
                             CreatedUser = _VendorInvoiceq.UsuarioCreacion,
@@ -191,18 +193,7 @@ namespace ERPAPI.Controllers
                         });
                     }
 
-                    await _context.SaveChangesAsync();
-
-                    double sumacreditos = 0, sumadebitos = 0;
-                    if (sumacreditos != sumadebitos)
-                    {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                        return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                    }
-
-                    _je.TotalCredit = sumacreditos;
-                    _je.TotalDebit = sumadebitos;
+                    
                     _context.JournalEntry.Add(_je);
 
                     await _context.SaveChangesAsync();
