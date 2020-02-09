@@ -162,6 +162,7 @@ namespace ERPAPI.Controllers
                     CreatedUser = check.UsuarioCreacion,
                     //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
                     PartyTypeName = check.PaytoOrderOf,
+                    DocumentId = check.Id,
                     TotalDebit =suma,
                     TotalCredit = suma,
                     PartyTypeId = 3,
@@ -259,64 +260,67 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<CheckAccountLines>> AnularCheque([FromBody]CheckAccountLines _CheckAccountLines)
         {
             CheckAccountLines _CheckAccountLinesq = _CheckAccountLines;
-            _CheckAccountLinesq.Estado = "Anulado";
-            _CheckAccountLinesq.IdEstado = 53;
+            
             try
             {
-                _CheckAccountLinesq = await (from c in _context.CheckAccountLines
-                                 .Where(q => q.Id == _CheckAccountLines.Id)
-                                             select c
-                                ).FirstOrDefaultAsync();
+                _CheckAccountLinesq = await _context.CheckAccountLines.Where(w => w.Id == _CheckAccountLines.Id).FirstOrDefaultAsync();
 
-                _context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
+                _CheckAccountLinesq.Estado = "Anulado";
+                _CheckAccountLinesq.IdEstado = 53;
+                //_context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
 
 
 
                 JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 8).FirstOrDefaultAsync();
-
-                JournalEntry jeAnulacion = new JournalEntry
+                if (jecheck != null)
                 {
-                    Date = DateTime.Now,
-                    Memo = $"Anulación Cheque Numero {_CheckAccountLinesq.CheckNumber} ",
-                    DatePosted = DateTime.Now,
-                    ModifiedDate = DateTime.Now,
-                    CreatedDate = DateTime.Now,
-                    ModifiedUser = _CheckAccountLinesq.UsuarioModificacion,
-                    CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
-                    //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),                    
-                    PartyTypeName = _CheckAccountLinesq.PaytoOrderOf,
-                    TotalDebit = jecheck.TotalDebit,
-                    TotalCredit = jecheck.TotalCredit,
-                    PartyTypeId = 3,
-                    //PartyName = "Proveedor",
-                    TypeJournalName = "Cheques",
-                    VoucherType = 8,
-                    EstadoId = 5,
-                    EstadoName = "Enviada a Aprobacion",
-                    TypeOfAdjustmentId = 65,
-                    TypeOfAdjustmentName = "Asiento diario"
 
-
-
-                };
-
-                foreach (var item in jecheck.JournalEntryLines)
-                {
-                    jeAnulacion.JournalEntryLines.Add(new JournalEntryLine {
-                        AccountId = item.AccountId,
-                        AccountName = item.AccountName,
-                        Debit = item.Credit,
-                        Credit = item.Debit,
-                        CostCenterId = item.CostCenterId,
-                        CostCenterName = item.CostCenterName,
-                        CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
-                        ModifiedUser = _CheckAccountLinesq.UsuarioCreacion,
-                        CreatedDate = DateTime.Now,
+                    JournalEntry jeAnulacion = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        Memo = $"Anulación Cheque Numero {_CheckAccountLinesq.CheckNumber} ",
+                        DatePosted = DateTime.Now,
                         ModifiedDate = DateTime.Now,
-                     });
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = _CheckAccountLinesq.UsuarioModificacion,
+                        CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
+                        //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),                    
+                        PartyTypeName = _CheckAccountLinesq.PaytoOrderOf,
+                        TotalDebit = jecheck.TotalDebit,
+                        TotalCredit = jecheck.TotalCredit,
+                        PartyTypeId = 3,
+                        //PartyName = "Proveedor",
+                        TypeJournalName = "Cheques",
+                        VoucherType = 8,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobacion",
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento diario"
+
+
+
+                    };
+
+                    foreach (var item in jecheck.JournalEntryLines)
+                    {
+                        jeAnulacion.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = item.AccountId,
+                            AccountName = item.AccountName,
+                            Debit = item.Credit,
+                            Credit = item.Debit,
+                            CostCenterId = item.CostCenterId,
+                            CostCenterName = item.CostCenterName,
+                            CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
+                            ModifiedUser = _CheckAccountLinesq.UsuarioCreacion,
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now,
+                        });
+                    }
+                    _context.JournalEntry.Add(jeAnulacion);
                 }
 
-                _context.JournalEntry.Add(jeAnulacion);
+                
 
                 //_context.CheckAccountLines.Update(_CheckAccountLinesq);
                 await _context.SaveChangesAsync();
