@@ -262,9 +262,7 @@ namespace ERPAPI.Controllers
                     try
                     {
 
-                        _UserBranchq = _context.UserBranch
-                .Where(x => x.Id == (Int64)_UserBranch.Id)
-                .FirstOrDefault();
+                        _UserBranchq = _context.UserBranch.Where(x => x.BranchId == _UserBranch.BranchId && x.UserId == _UserBranch.UserId).FirstOrDefault();
 
                         _context.UserBranch.Remove(_UserBranchq);
                         await _context.SaveChangesAsync();
@@ -306,7 +304,30 @@ namespace ERPAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la UserBranch por medio del BranchId y UserId enviado.
+        /// </summary>
+        /// <param name="DatosBrach"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> ObtenerUserBranch([FromBody]UserBranch DatosBrach)
+        {
 
+            UserBranch Items = new UserBranch();
+
+            try
+            {
+                Items = await _context.UserBranch.Where(q => q.BranchId == DatosBrach.BranchId && q.UserId == DatosBrach.UserId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
 
 
