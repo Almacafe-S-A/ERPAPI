@@ -124,7 +124,7 @@ namespace ERPAPI.Controllers
                 check = new CheckAccountLines
                 {
                     CheckAccountId = _CheckAccountLinesq.CheckAccountId,
-                    
+
                     CheckNumber = _CheckAccountLinesq.CheckNumber,
                     Address = _CheckAccountLinesq.Address,
                     PaytoOrderOf = _CheckAccountLinesq.Place,
@@ -132,6 +132,8 @@ namespace ERPAPI.Controllers
                     Ammount = _CheckAccountLinesq.Ammount,
                     Date = _CheckAccountLinesq.Date,
                     RetencionId = _CheckAccountLinesq.RetencionId,
+                    Estado = "Emitido",
+                    IdEstado = 51,
                     FechaCreacion = DateTime.Now,
                     FechaModificacion = DateTime.Now,
                     UsuarioCreacion = _CheckAccountLinesq.UsuarioCreacion,
@@ -152,7 +154,7 @@ namespace ERPAPI.Controllers
                 JournalEntry _je = new JournalEntry
                 {
                     Date = DateTime.Now,
-                    Memo = $"Cheque Numero{check.CheckNumber} ",
+                    Memo = $"Cheque Numero {check.CheckNumber} ",
                     DatePosted = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
@@ -246,6 +248,91 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_CheckAccountLinesq));
         }
+
+
+        /// <summary>
+        /// Actualiza la CheckAccountLines
+        /// </summary>
+        /// <param name="_CheckAccountLines"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<CheckAccountLines>> AnularCheque([FromBody]CheckAccountLines _CheckAccountLines)
+        {
+            CheckAccountLines _CheckAccountLinesq = _CheckAccountLines;
+            _CheckAccountLinesq.Estado = "Anulado";
+            _CheckAccountLinesq.IdEstado = 53;
+            try
+            {
+                _CheckAccountLinesq = await (from c in _context.CheckAccountLines
+                                 .Where(q => q.Id == _CheckAccountLines.Id)
+                                             select c
+                                ).FirstOrDefaultAsync();
+
+                _context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
+
+
+
+                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 8).FirstOrDefaultAsync();
+
+                JournalEntry jeAnulacion = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    Memo = $"Anulación Cheque Numero {_CheckAccountLinesq.CheckNumber} ",
+                    DatePosted = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = _CheckAccountLinesq.UsuarioModificacion,
+                    CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
+                    //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),                    
+                    PartyTypeName = _CheckAccountLinesq.PaytoOrderOf,
+                    TotalDebit = jecheck.TotalDebit,
+                    TotalCredit = jecheck.TotalCredit,
+                    PartyTypeId = 3,
+                    //PartyName = "Proveedor",
+                    TypeJournalName = "Cheques",
+                    VoucherType = 8,
+                    EstadoId = 5,
+                    EstadoName = "Enviada a Aprobacion",
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento diario"
+
+
+
+                };
+
+                foreach (var item in jecheck.JournalEntryLines)
+                {
+                    jeAnulacion.JournalEntryLines.Add(new JournalEntryLine {
+                        AccountId = item.AccountId,
+                        AccountName = item.AccountName,
+                        Debit = item.Credit,
+                        Credit = item.Debit,
+                        CostCenterId = item.CostCenterId,
+                        CostCenterName = item.CostCenterName,
+                        CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
+                        ModifiedUser = _CheckAccountLinesq.UsuarioCreacion,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                     });
+                }
+
+                _context.JournalEntry.Add(jeAnulacion);
+
+                //_context.CheckAccountLines.Update(_CheckAccountLinesq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_CheckAccountLinesq));
+        }
+
+
+
 
         /// <summary>
         /// Elimina una CheckAccountLines       
