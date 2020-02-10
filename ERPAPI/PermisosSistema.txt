@@ -137,3 +137,4 @@ Seguridad.Iniciar Sesion
 Seguridad.Usuarios
 Seguridad.Roles
 Seguridad.Roles por Usuario
+Seguridad.Sucursales por Usuario
