@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200210170533_AddedSubserviceToDebitNoteCreditnote")]
+    partial class AddedSubserviceToDebitNoteCreditnote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1065,15 +1067,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CheckAccountNo");
 
-                    b.Property<string>("Estado");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaIngreso");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long?>("IdEstado");
 
                     b.Property<string>("NoFinal");
 
@@ -1088,12 +1086,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("CheckAccountId");
 
                     b.HasIndex("AccountManagementId");
-
-                    b.HasIndex("CheckAccountNo")
-                        .IsUnique()
-                        .HasFilter("[CheckAccountNo] IS NOT NULL");
-
-                    b.HasIndex("IdEstado");
 
                     b.ToTable("CheckAccount");
                 });
@@ -10002,10 +9994,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("AccountManagementId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("IdEstado");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CheckAccountLines", b =>
