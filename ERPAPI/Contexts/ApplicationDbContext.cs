@@ -322,6 +322,8 @@ namespace ERP.Contexts
 
         public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
 
+        public DbSet<PhoneLines> PhoneLines { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
