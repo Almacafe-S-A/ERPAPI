@@ -338,6 +338,11 @@ namespace ERP.Contexts
             .HasIndex(k => new { k.BranchId, k.UserId })
             .IsUnique(true);
 
+
+            modelBuilder.Entity<CheckAccount>()
+            .HasIndex(u => u.CheckAccountNo)
+            .IsUnique();
+
             //modelBuilder.Entity<UserBranch>()
             //.HasKey(k => new { k.BranchId, k.UserId });
             ////.IsUnique(true);

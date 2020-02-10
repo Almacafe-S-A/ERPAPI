@@ -192,8 +192,12 @@ namespace ERPAPI.Controllers
 
                         _CheckAccountq = _CheckAccount;
                         _CheckAccountq.NumeroActual = _CheckAccountq.NoInicial;
+                        _CheckAccountq.IdEstado = 1;
+                        _CheckAccountq.Estado = "Activo";
 
-                _context.CheckAccount.Add(_CheckAccountq);
+
+
+                        _context.CheckAccount.Add(_CheckAccountq);
                 await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {

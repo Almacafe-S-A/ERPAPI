@@ -39,6 +39,13 @@ namespace ERPAPI.Models
 
         public string NumeroActual { get; set; }
 
+        public Int64? IdEstado { get; set; }
+
+        [ForeignKey("IdEstado")]
+        public Estados Estados { get; set; }
+
+        public string Estado { get; set; }
+
         [Display(Name = "Fecha de creacion")]
         public DateTime FechaCreacion { get; set; }
 

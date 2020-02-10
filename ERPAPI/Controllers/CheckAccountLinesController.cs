@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ERPAPI.Helpers;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -109,41 +110,114 @@ namespace ERPAPI.Controllers
         /// <param name="_CheckAccountLines"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<CheckAccountLines>> Insert([FromBody]CheckAccountLines _CheckAccountLines)
+        public async Task<ActionResult<CheckAccountLines>> Insert([FromBody]dynamic dto)
         {
-            CheckAccountLines _CheckAccountLinesq = new CheckAccountLines();
+            CheckAccountLinesDTO _CheckAccountLinesq = new CheckAccountLinesDTO();
+            CheckAccountLines check = new CheckAccountLines();
             try
             {
 
-                _CheckAccountLinesq = _CheckAccountLines;
+                _CheckAccountLinesq = JsonConvert.DeserializeObject<CheckAccountLinesDTO>(dto.ToString());
 
-                Numalet let;
-                let = new Numalet();
-                let.SeparadorDecimalSalida = "Lempiras";
-                let.MascaraSalidaDecimal = "00/100 ";
-                let.ApocoparUnoParteEntera = true;
-                _CheckAccountLinesq.AmountWords = let.ToCustomCardinal((_CheckAccountLinesq.Ammount)).ToUpper();
-                _CheckAccountLinesq.IdEstado = 1;
-                _CheckAccountLinesq.Estado = "Activo";
+                List<JournalEntryLine> journalEntryLines = _CheckAccountLinesq.JournalEntryLines;
+
+                check = new CheckAccountLines
+                {
+                    CheckAccountId = _CheckAccountLinesq.CheckAccountId,
+
+                    CheckNumber = _CheckAccountLinesq.CheckNumber,
+                    Address = _CheckAccountLinesq.Address,
+                    PaytoOrderOf = _CheckAccountLinesq.PaytoOrderOf,
+                    RTN = _CheckAccountLinesq.RTN,
+                    Ammount = _CheckAccountLinesq.Ammount,
+                    Date = _CheckAccountLinesq.Date,
+                    RetencionId = _CheckAccountLinesq.RetencionId,
+                    Place = _CheckAccountLinesq.Place,
+                    Estado = "Emitido",
+                    IdEstado = 51,
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = _CheckAccountLinesq.UsuarioCreacion,
+                    UsuarioModificacion = _CheckAccountLinesq.UsuarioModificacion,
+
+                };
+
+
+                int actual = Convert.ToInt32(check.CheckNumber);
+
                 //Conteo Cheques
-                CheckAccount chequera = await _context.CheckAccount.Where(c =>c.CheckAccountId == _CheckAccountLinesq.CheckAccountId).FirstOrDefaultAsync();
-                chequera.NumeroActual = _CheckAccountLines.CheckNumber;
-                //if(chequera.NumeroActual> Convert.ToInt32(chequera.NoFinal))
-                //{
-                //    return BadRequest("No se pueden emitir más Cheques.");
+                CheckAccount chequera = await _context.CheckAccount.Where(c =>c.CheckAccountId == check.CheckAccountId).FirstOrDefaultAsync();
+                chequera.NumeroActual = (actual+1).ToString();
+                if (actual > Convert.ToInt32(chequera.NoFinal))
+                {
+                    return BadRequest("No se pueden emitir más Cheques.");
 
-                //}
-                //else
-                //{
-                //    _context.CheckAccountLines.Add(_CheckAccountLinesq);
-                //    CheckAccount _CheckAccountq = await (from c in _context.CheckAccount
-                //                 .Where(q => q.CheckAccountId == _CheckAccountLinesq.CheckAccountId)
-                //                            select c
-                //                ).FirstOrDefaultAsync();
+                }
+                else
+                {
+                   
+                    Numalet let;
+                    let = new Numalet();
+                    let.SeparadorDecimalSalida = "Lempiras";
+                    let.MascaraSalidaDecimal = "00/100 ";
+                    let.ApocoparUnoParteEntera = true;
+                    check.AmountWords = let.ToCustomCardinal((check.Ammount)).ToUpper();                    
+                    _context.CheckAccountLines.Add(check);
+                    CheckAccount _CheckAccountq = await _context.CheckAccount.Where(q => q.CheckAccountId == check.CheckAccountId).FirstOrDefaultAsync();
+                    _CheckAccountq.NumeroActual = (actual + 1).ToString();
+                    if (_CheckAccountq.NumeroActual == _CheckAccountq.NoFinal)
+                    {
+                        //_CheckAccountq.
+                    }
 
-                //    _context.Entry(_CheckAccountq).CurrentValues.SetValues((chequera));
-                //}
-                await _context.SaveChangesAsync();
+                    _context.Entry(_CheckAccountq).CurrentValues.SetValues((chequera));
+                    await _context.SaveChangesAsync();
+
+                    foreach (var item in journalEntryLines)
+                    {
+                        item.CreatedUser = _CheckAccountLinesq.UsuarioCreacion;
+                        item.ModifiedUser = _CheckAccountLinesq.UsuarioCreacion;
+                        item.CreatedDate = DateTime.Now;
+                        item.ModifiedDate = DateTime.Now;
+
+
+                    }
+                    double suma = journalEntryLines.Sum(s => s.Debit);
+
+                    JournalEntry _je = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        Memo = $"Cheque Numero {check.CheckNumber} ",
+                        DatePosted = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = check.UsuarioModificacion,
+                        CreatedUser = check.UsuarioCreacion,
+                        //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
+                        PartyName = check.PaytoOrderOf,
+                        DocumentId = check.Id,
+                        TotalDebit = suma,
+                        TotalCredit = suma,
+                        PartyTypeId = 3,
+                        //PartyName = "Proveedor",
+                        TypeJournalName = "Cheques",
+                        VoucherType = 8,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobacion",
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento diario"
+
+                    };
+
+                    _je.JournalEntryLines.AddRange(journalEntryLines);
+
+                    _context.JournalEntry.Add(_je);
+
+                    await _context.SaveChangesAsync();
+                }
+                
+
+
             }
             catch (Exception ex)
             {
@@ -152,7 +226,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_CheckAccountLinesq));
+            return await Task.Run(() => Ok(check));
         }
 
         /// <summary>
@@ -185,6 +259,94 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_CheckAccountLinesq));
         }
+
+
+        /// <summary>
+        /// Actualiza la CheckAccountLines
+        /// </summary>
+        /// <param name="_CheckAccountLines"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<CheckAccountLines>> AnularCheque([FromBody]CheckAccountLines _CheckAccountLines)
+        {
+            CheckAccountLines _CheckAccountLinesq = _CheckAccountLines;
+            
+            try
+            {
+                _CheckAccountLinesq = await _context.CheckAccountLines.Where(w => w.Id == _CheckAccountLines.Id).FirstOrDefaultAsync();
+
+                _CheckAccountLinesq.Estado = "Anulado";
+                _CheckAccountLinesq.IdEstado = 53;
+                //_context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
+
+
+
+                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 8).FirstOrDefaultAsync();
+                if (jecheck != null)
+                {
+
+                    JournalEntry jeAnulacion = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        Memo = $"Anulación Cheque Numero {_CheckAccountLinesq.CheckNumber} ",
+                        DatePosted = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = _CheckAccountLinesq.UsuarioModificacion,
+                        CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
+                        //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),                    
+                        PartyTypeName = _CheckAccountLinesq.PaytoOrderOf,
+                        TotalDebit = jecheck.TotalDebit,
+                        TotalCredit = jecheck.TotalCredit,
+                        PartyTypeId = 3,
+                        //PartyName = "Proveedor",
+                        TypeJournalName = "Cheques",
+                        VoucherType = 8,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobacion",
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento diario"
+
+
+
+                    };
+
+                    foreach (var item in jecheck.JournalEntryLines)
+                    {
+                        jeAnulacion.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = item.AccountId,
+                            AccountName = item.AccountName,
+                            Debit = item.Credit,
+                            Credit = item.Debit,
+                            CostCenterId = item.CostCenterId,
+                            CostCenterName = item.CostCenterName,
+                            CreatedUser = _CheckAccountLinesq.UsuarioCreacion,
+                            ModifiedUser = _CheckAccountLinesq.UsuarioCreacion,
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now,
+                        });
+                    }
+                    _context.JournalEntry.Add(jeAnulacion);
+                }
+
+                
+
+                //_context.CheckAccountLines.Update(_CheckAccountLinesq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_CheckAccountLinesq));
+        }
+
+
+
 
         /// <summary>
         /// Elimina una CheckAccountLines       
