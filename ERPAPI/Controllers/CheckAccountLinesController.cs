@@ -127,11 +127,12 @@ namespace ERPAPI.Controllers
 
                     CheckNumber = _CheckAccountLinesq.CheckNumber,
                     Address = _CheckAccountLinesq.Address,
-                    PaytoOrderOf = _CheckAccountLinesq.Place,
+                    PaytoOrderOf = _CheckAccountLinesq.PaytoOrderOf,
                     RTN = _CheckAccountLinesq.RTN,
                     Ammount = _CheckAccountLinesq.Ammount,
                     Date = _CheckAccountLinesq.Date,
                     RetencionId = _CheckAccountLinesq.RetencionId,
+                    Place = _CheckAccountLinesq.Place,
                     Estado = "Emitido",
                     IdEstado = 51,
                     FechaCreacion = DateTime.Now,
@@ -140,55 +141,10 @@ namespace ERPAPI.Controllers
                     UsuarioModificacion = _CheckAccountLinesq.UsuarioModificacion,
 
                 };
-                foreach (var item in journalEntryLines)
-                {
-                    item.CreatedUser = _CheckAccountLinesq.UsuarioCreacion;
-                    item.ModifiedUser=_CheckAccountLinesq.UsuarioCreacion;
-                    item.CreatedDate =DateTime.Now;
-                    item.ModifiedDate = DateTime.Now;
 
-
-                }
-                double suma = journalEntryLines.Sum(s => s.Debit);
-
-                JournalEntry _je = new JournalEntry
-                {
-                    Date = DateTime.Now,
-                    Memo = $"Cheque Numero {check.CheckNumber} ",
-                    DatePosted = DateTime.Now,
-                    ModifiedDate = DateTime.Now,
-                    CreatedDate = DateTime.Now,
-                    ModifiedUser = check.UsuarioModificacion,
-                    CreatedUser = check.UsuarioCreacion,
-                    //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
-                    PartyTypeName = check.PaytoOrderOf,
-                    DocumentId = check.Id,
-                    TotalDebit =suma,
-                    TotalCredit = suma,
-                    PartyTypeId = 3,
-                    //PartyName = "Proveedor",
-                    TypeJournalName = "Cheques",
-                    VoucherType = 8,
-                    EstadoId = 5,
-                    EstadoName = "Enviada a Aprobacion",
-                    TypeOfAdjustmentId = 65,
-                    TypeOfAdjustmentName = "Asiento diario"
-
-                };
-
-                _je.JournalEntryLines.AddRange(journalEntryLines);
-
-                _context.JournalEntry.Add(_je);
 
                 int actual = Convert.ToInt32(check.CheckNumber);
-                Numalet let;
-                let = new Numalet();
-                let.SeparadorDecimalSalida = "Lempiras";
-                let.MascaraSalidaDecimal = "00/100 ";
-                let.ApocoparUnoParteEntera = true;
-                check.AmountWords = let.ToCustomCardinal((check.Ammount)).ToUpper();
-                check.IdEstado = 1;
-                check.Estado = "Activo";
+
                 //Conteo Cheques
                 CheckAccount chequera = await _context.CheckAccount.Where(c =>c.CheckAccountId == check.CheckAccountId).FirstOrDefaultAsync();
                 chequera.NumeroActual = (actual+1).ToString();
@@ -199,10 +155,64 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
+                   
+                    Numalet let;
+                    let = new Numalet();
+                    let.SeparadorDecimalSalida = "Lempiras";
+                    let.MascaraSalidaDecimal = "00/100 ";
+                    let.ApocoparUnoParteEntera = true;
+                    check.AmountWords = let.ToCustomCardinal((check.Ammount)).ToUpper();                    
                     _context.CheckAccountLines.Add(check);
                     CheckAccount _CheckAccountq = await _context.CheckAccount.Where(q => q.CheckAccountId == check.CheckAccountId).FirstOrDefaultAsync();
                     _CheckAccountq.NumeroActual = (actual + 1).ToString();
+                    if (_CheckAccountq.NumeroActual == _CheckAccountq.NoFinal)
+                    {
+                        //_CheckAccountq.
+                    }
+
                     _context.Entry(_CheckAccountq).CurrentValues.SetValues((chequera));
+                    await _context.SaveChangesAsync();
+
+                    foreach (var item in journalEntryLines)
+                    {
+                        item.CreatedUser = _CheckAccountLinesq.UsuarioCreacion;
+                        item.ModifiedUser = _CheckAccountLinesq.UsuarioCreacion;
+                        item.CreatedDate = DateTime.Now;
+                        item.ModifiedDate = DateTime.Now;
+
+
+                    }
+                    double suma = journalEntryLines.Sum(s => s.Debit);
+
+                    JournalEntry _je = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        Memo = $"Cheque Numero {check.CheckNumber} ",
+                        DatePosted = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = check.UsuarioModificacion,
+                        CreatedUser = check.UsuarioCreacion,
+                        //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
+                        PartyName = check.PaytoOrderOf,
+                        DocumentId = check.Id,
+                        TotalDebit = suma,
+                        TotalCredit = suma,
+                        PartyTypeId = 3,
+                        //PartyName = "Proveedor",
+                        TypeJournalName = "Cheques",
+                        VoucherType = 8,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobacion",
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento diario"
+
+                    };
+
+                    _je.JournalEntryLines.AddRange(journalEntryLines);
+
+                    _context.JournalEntry.Add(_je);
+
                     await _context.SaveChangesAsync();
                 }
                 
