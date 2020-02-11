@@ -135,8 +135,8 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var Items = await _context.Product.CountAsync();
-                await _context.CheckAccount.Where(a => a.BankId == BankId)
+                var Items = await _context.PhoneLines.CountAsync();
+                await _context.PhoneLines.Where(a => a.PhoneLineId == PhoneLinesId)
                                     .CountAsync();
                 return await Task.Run(() => Ok(Items));
 
