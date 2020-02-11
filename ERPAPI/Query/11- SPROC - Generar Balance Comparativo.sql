@@ -68,7 +68,7 @@ BEGIN
 		TypeAccountId INT,
 		TipoDeCuenta NVARCHAR(50),
 		SubCuentaId INT,
-		SubCuenta NVARCHAR(50),
+		SubCuenta NVARCHAR(MAX),
 		Nivel INT,
 		Columna INT
 	);
