@@ -28,6 +28,8 @@ namespace ERPAPI.Models
 
         [Required]
         public int EstadoId { get; set; }
+
+        public int CantidadCuotas { get; set; }
         
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
