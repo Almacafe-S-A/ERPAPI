@@ -40,6 +40,9 @@ namespace ERPAPI.Models
         [Display(Name = "Proveedor")]
         public Int64 VendorId { get; set; }
 
+        [Display(Name = "CAI Proveedor")]
+        public string VendorCAI { get; set; }
+
         [ForeignKey("IdEmpleado")]
         [Display(Name = "Empleado")]
         public long IdEmpleado { get; set; }
@@ -50,6 +53,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Nombre Sucursal")]
         public string BranchName { get; set; }
+
+        [Display(Name = "Codigo Sucursal")]
+        public string BranchCode { get; set; }
 
         [ForeignKey("IdPuntoEmision")]
         [Display(Name = "Punto de emisión")]
