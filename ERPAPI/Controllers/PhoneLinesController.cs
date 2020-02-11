@@ -107,7 +107,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el color por el id empleado enviado
+        /// Obtiene las lineas telefonicas por el id empleado enviado
         /// </summary>
         /// <param name="IdEmpleado"></param>
         /// <returns></returns>
@@ -153,7 +153,7 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
-        /// Inserta un nueva Lineas Telefonicas
+        /// Inserta una nueva Linea Telefonica
         /// </summary>
         /// <param name="_PhoneLines"></param>
         /// <returns></returns>
@@ -208,7 +208,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Actualiza el Color
+        /// Actualiza la linea telefonica
         /// </summary>
         /// <param name="_PhoneLines"></param>
         /// <returns></returns>
@@ -223,7 +223,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _PhoneLinesq = await (from c in _context.PhoneLines
-                        .Where(q => q.ColorId == _PhoneLines.ColorId)
+                        .Where(q => q.PhoneLineId == _PhoneLines.PhoneLineId)
                                           select c
                         ).FirstOrDefaultAsync();
 
@@ -232,7 +232,7 @@ namespace ERPAPI.Controllers
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _PhoneLinesq.ColorId,
+                            IdOperacion = _PhoneLinesq.PhoneLineId,
                             DocType = "PhoneLines",
                             ClaseInicial =
                             Newtonsoft.Json.JsonConvert.SerializeObject(_PhoneLinesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
@@ -267,7 +267,7 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Elimina un Color       
+        /// Elimina una linea telefonica
         /// </summary>
         /// <param name="_PhoneLines"></param>
         /// <returns></returns>
@@ -282,7 +282,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _PhoneLinesq = _context.PhoneLines
-                        .Where(x => x.ColorId == (Int64)_PhoneLines.ColorId)
+                        .Where(x => x.PhoneLineId == (Int64)_PhoneLines.PhoneLineId)
                         .FirstOrDefault();
 
                         _context.PhoneLines.Remove(_PhoneLinesq);
@@ -290,7 +290,7 @@ namespace ERPAPI.Controllers
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _PhoneLinesq.ColorId,
+                            IdOperacion = _PhoneLinesq.PhoneLineId,
                             DocType = "PhoneLines",
                             ClaseInicial =
                             Newtonsoft.Json.JsonConvert.SerializeObject(_PhoneLinesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
