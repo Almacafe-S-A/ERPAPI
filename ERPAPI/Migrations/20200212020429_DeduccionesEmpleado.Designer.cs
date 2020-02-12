@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200205083944_DeduccionesEmpleado")]
+    [Migration("20200212020429_DeduccionesEmpleado")]
     partial class DeduccionesEmpleado
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -3290,9 +3290,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("DeductionId");
+                    b.Property<int>("CantidadCuotas");
 
-                    b.Property<long?>("EmpeladoId");
+                    b.Property<long>("DeductionId");
 
                     b.Property<long>("EmpleadoId");
 
@@ -3316,7 +3316,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("DeductionId");
 
-                    b.HasIndex("EmpeladoId");
+                    b.HasIndex("EmpleadoId");
 
                     b.ToTable("DeduccionesEmpleados");
                 });
@@ -10197,7 +10197,8 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.Employees", "Empleado")
                         .WithMany()
-                        .HasForeignKey("EmpeladoId");
+                        .HasForeignKey("EmpleadoId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Doc_CP", b =>

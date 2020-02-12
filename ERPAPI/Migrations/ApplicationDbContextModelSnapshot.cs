@@ -3292,8 +3292,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("DeductionId");
 
-                    b.Property<long?>("EmpeladoId");
-
                     b.Property<long>("EmpleadoId");
 
                     b.Property<int>("EstadoId");
@@ -3316,7 +3314,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("DeductionId");
 
-                    b.HasIndex("EmpeladoId");
+                    b.HasIndex("EmpleadoId");
 
                     b.ToTable("DeduccionesEmpleados");
                 });
@@ -10197,7 +10195,8 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.Employees", "Empleado")
                         .WithMany()
-                        .HasForeignKey("EmpeladoId");
+                        .HasForeignKey("EmpleadoId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Doc_CP", b =>
