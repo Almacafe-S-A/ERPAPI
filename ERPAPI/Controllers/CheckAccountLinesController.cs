@@ -130,6 +130,7 @@ namespace ERPAPI.Controllers
                     PaytoOrderOf = _CheckAccountLinesq.PaytoOrderOf,
                     RTN = _CheckAccountLinesq.RTN,
                     Ammount = _CheckAccountLinesq.Ammount,
+                    Sinopsis = _CheckAccountLinesq.Sinopsis,
                     Date = _CheckAccountLinesq.Date,
                     RetencionId = _CheckAccountLinesq.RetencionId,
                     Place = _CheckAccountLinesq.Place,
@@ -187,7 +188,8 @@ namespace ERPAPI.Controllers
                     JournalEntry _je = new JournalEntry
                     {
                         Date = DateTime.Now,
-                        Memo = $"Cheque Numero {check.CheckNumber} ",
+                        //Memo = $"Cheque Numero {check.CheckNumber} ",
+                        Memo = _CheckAccountLinesq.Sinopsis,
                         DatePosted = DateTime.Now,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
@@ -278,6 +280,13 @@ namespace ERPAPI.Controllers
                 _CheckAccountLinesq.Estado = "Anulado";
                 _CheckAccountLinesq.IdEstado = 53;
                 //_context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
+
+                if (_CheckAccountLinesq.RetencionId != null)
+                {
+                    RetentionReceipt retention = await _context.RetentionReceipt.Where(w => w.RetentionReceiptId == _CheckAccountLinesq.RetencionId).FirstOrDefaultAsync();
+                    retention.IdEstado = 2;
+                    retention.Estado = "Inactiva";
+                }
 
 
 

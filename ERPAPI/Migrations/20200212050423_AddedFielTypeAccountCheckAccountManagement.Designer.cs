@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200212050423_AddedFielTypeAccountCheckAccountManagement")]
+    partial class AddedFielTypeAccountCheckAccountManagement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1135,8 +1137,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("RTN");
 
                     b.Property<int?>("RetencionId");
-
-                    b.Property<string>("Sinopsis");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -2359,10 +2359,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("ShipmentId");
 
-                    b.Property<long?>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
                     b.Property<double>("SubTotal");
 
                     b.Property<string>("Sucursal");
@@ -3207,10 +3203,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("SalesTypeId");
 
                     b.Property<int>("ShipmentId");
-
-                    b.Property<long?>("SubProductId");
-
-                    b.Property<string>("SubProductName");
 
                     b.Property<double>("SubTotal");
 
@@ -6881,51 +6873,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("PeriodicidadPago");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.PhoneLines", b =>
-                {
-                    b.Property<long>("PhoneLineId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CompanyPhone");
-
-                    b.Property<double>("DueBalanceLps");
-
-                    b.Property<double>("DueBalanceUS");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("IdBranch");
-
-                    b.Property<long>("IdEmpleado");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("NombreEmpleado");
-
-                    b.Property<double>("PaymentLps");
-
-                    b.Property<double>("PaymentUS");
-
-                    b.Property<double>("TotalLps");
-
-                    b.Property<double>("TotalUS");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("PhoneLineId");
-
-                    b.HasIndex("IdBranch");
-
-                    b.ToTable("PhoneLines");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.Policy", b =>
                 {
                     b.Property<Guid>("Id")
@@ -7949,8 +7896,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("BranchCode");
-
                     b.Property<int>("BranchId");
 
                     b.Property<string>("BranchName");
@@ -7996,8 +7941,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<string>("VendorCAI");
 
                     b.Property<long>("VendorId");
 
@@ -10652,14 +10595,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.PaymentTypes", "PaymentTypes")
                         .WithMany()
                         .HasForeignKey("PaymentTypesId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PhoneLines", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("IdBranch")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

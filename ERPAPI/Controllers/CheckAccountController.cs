@@ -183,8 +183,19 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<CheckAccount>> Insert([FromBody]CheckAccount _CheckAccount)
         {
             CheckAccount _CheckAccountq = new CheckAccount();
+
+            //////Valida que solo exista una chequera activa para una cuenta bancaria 
+            ///
+            List<CheckAccount> checkAccounts = await _context.CheckAccount.Where(w => w.AccountManagementId == _CheckAccount.AccountManagementId && w.IdEstado == 1).ToListAsync();
+
+            if (checkAccounts.Count>0)
+            {
+                return BadRequest($"Ya existe una chequera Activa para esta cuenta bancaria");
+            }
+
             try
             {
+
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try

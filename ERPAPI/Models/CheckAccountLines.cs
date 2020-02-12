@@ -34,6 +34,8 @@ namespace ERPAPI.Models
 
         public string AmountWords { get; set; }
 
+        public string Sinopsis { get; set; }
+
         public string Address { get; set; }
 
         public string Estado { get; set; }
