@@ -8,7 +8,6 @@ namespace ERPAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.CreateTable(
                 name: "DeduccionesEmpleados",
                 columns: table => new
@@ -21,11 +20,11 @@ namespace ERPAPI.Migrations
                     VigenciaInicio = table.Column<DateTime>(nullable: false),
                     VigenciaFinaliza = table.Column<DateTime>(nullable: false),
                     EstadoId = table.Column<int>(nullable: false),
+                    CantidadCuotas = table.Column<int>(nullable: false),
                     FechaCreacion = table.Column<DateTime>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     UsuarioModificacion = table.Column<string>(nullable: true),
-                    UsuarioCreacion = table.Column<string>(nullable: true),
-                    EmpeladoId = table.Column<long>(nullable: true)
+                    UsuarioCreacion = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -35,24 +34,15 @@ namespace ERPAPI.Migrations
                         column: x => x.DeductionId,
                         principalTable: "Deduction",
                         principalColumn: "DeductionId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_DeduccionesEmpleados_Employees_EmpeladoId",
-                        column: x => x.EmpeladoId,
+                        name: "FK_DeduccionesEmpleados_Employees_EmpleadoId",
+                        column: x => x.EmpleadoId,
                         principalTable: "Employees",
                         principalColumn: "IdEmpleado",
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_DeduccionesEmpleados_DeductionId",
-                table: "DeduccionesEmpleados",
-                column: "DeductionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DeduccionesEmpleados_EmpeladoId",
-                table: "DeduccionesEmpleados",
-                column: "EmpeladoId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -60,6 +50,5 @@ namespace ERPAPI.Migrations
             migrationBuilder.DropTable(
                 name: "DeduccionesEmpleados");
         }
-
     }
 }

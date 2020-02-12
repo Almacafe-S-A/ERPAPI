@@ -36,10 +36,18 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
 
-        [ForeignKey("EmpeladoId")]
+        [ForeignKey("EmpleadoId")]
         public Employees Empleado { get; set; }
 
         [ForeignKey("DeductionId")]
         public Deduction Deduccion { get; set; }
+    }
+
+    public class DeduccionesEmpleadoDTO
+    {
+        public long EmpleadoId { get; set; }
+        public string NombreEmpleado { get; set; }
+        public int CantidadDeducciones { get; set; }
+        public float TotalDeducciones { get; set; }
     }
 }

@@ -28,6 +28,7 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
+        [HttpPost("[action]")]
         public async Task<ActionResult<DeduccionEmpleado>> Guardar([FromBody] DeduccionEmpleado deduccion)
         {
             try
@@ -64,10 +65,29 @@ namespace ERPAPI.Controllers
 
                             await _context.SaveChangesAsync();
                             transaction.Commit();
+                            return Ok(deduccionExistente);
                         }
                         else
                         {
+                            _context.DeduccionesEmpleados.Add(deduccion);
+                            await _context.SaveChangesAsync();
+                            BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                                                                               {
+                                                                                   IdOperacion = deduccion.Id,
+                                                                                   DocType = "DeduccionEmpleado",
+                                                                                   ClaseInicial =
+                                                                                       Newtonsoft.Json.JsonConvert.SerializeObject(deduccion, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                                                                   Accion = "Insert",
+                                                                                   FechaCreacion = DateTime.Now,
+                                                                                   FechaModificacion = DateTime.Now,
+                                                                                   UsuarioCreacion = deduccion.UsuarioCreacion,
+                                                                                   UsuarioModificacion = deduccion.UsuarioModificacion,
+                                                                                   UsuarioEjecucion = deduccion.UsuarioModificacion,
 
+                                                                               });
+                            await _context.SaveChangesAsync();
+                            transaction.Commit();
+                            return Ok(deduccion);
                         }
                     }
                     catch (Exception ex)
@@ -82,6 +102,49 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex,"Error Guardar Deducción Empleado");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("[action]/{empleadoId}")]
+        public async Task<ActionResult<List<DeduccionEmpleado>>> GetDeduccionesPorEmpleado(long empleadoId)
+        {
+            try
+            {
+                List<DeduccionEmpleado> deducciones =
+                    await _context.DeduccionesEmpleados.Where(d => d.EmpleadoId == empleadoId).ToListAsync();
+                return Ok(deducciones);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error Guardar Deducción Empleado");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<DeduccionesEmpleadoDTO>>> GetDeduccionesEmpleados()
+        {
+            try
+            {
+                var detalleEmpleado = from emp in _context.Employees
+                    join ded in _context.DeduccionesEmpleados on emp.IdEmpleado equals ded.EmpleadoId into dedEmp
+                    from subDed in dedEmp.DefaultIfEmpty()
+                    group new {emp, subDed} by emp.IdEmpleado
+                    into g
+                    select new DeduccionesEmpleadoDTO()
+                           {
+                               EmpleadoId = g.Key,
+                               NombreEmpleado = g.FirstOrDefault().emp.NombreEmpleado,
+                               CantidadDeducciones = g.Count(s=> s.subDed != null),
+                               TotalDeducciones = g.Sum(s => s.subDed == null ? 0 : s.subDed.Monto )
+                           };
+                List<DeduccionesEmpleadoDTO> deducciones = await detalleEmpleado.ToListAsync();
+                return Ok(deducciones);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error Guardar Deducción Empleado");
                 return BadRequest(ex);
             }
         }
