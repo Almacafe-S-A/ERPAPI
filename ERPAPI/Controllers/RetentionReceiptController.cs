@@ -144,6 +144,37 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _RetentionReceiptq = _RetentionReceipt;
+                        RetentionReceipt _retentionreceipt = await _context.RetentionReceipt.Where(q => q.BranchId == _RetentionReceipt.BranchId)
+                                                 .Where(q => q.IdPuntoEmision == _RetentionReceipt.IdPuntoEmision)
+                                                 .FirstOrDefaultAsync();
+                        if (_retentionreceipt != null)
+                        {
+                            _RetentionReceiptq.NumeroDEI = _context.RetentionReceipt.Where(q => q.BranchId == _RetentionReceipt.BranchId)
+                                                  .Where(q => q.IdPuntoEmision == _RetentionReceipt.IdPuntoEmision).Max(q => q.NumeroDEI);
+                        }
+
+                        _RetentionReceiptq.NumeroDEI += 1;
+                        
+                        Int64 IdCai = await _context.NumeracionSAR
+                                                 .Where(q => q.BranchId == _RetentionReceiptq.BranchId)
+                                                 .Where(q => q.IdPuntoEmision == _RetentionReceiptq.IdPuntoEmision)
+                                                 .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
+
+
+                        if (IdCai == 0)
+                        {
+                            return BadRequest("No existe un CAI activo para el punto de emisión");
+                        }
+
+                        _RetentionReceiptq.DueDate = await _context.NumeracionSAR
+                                                     .Where(q => q.BranchId == _RetentionReceipt.BranchId)
+                                                     .Where(q => q.IdCAI == IdCai)
+                                                     .Where(q => q.IdPuntoEmision == _RetentionReceipt.IdPuntoEmision)
+                                                     .Where(q => q.Estado == "Activo").Select(q => q.FechaLimite).FirstOrDefaultAsync();
+
+                        _RetentionReceiptq.BranchCode = await _context.Branch.Where(q => q.BranchId == _RetentionReceipt.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                        _RetentionReceiptq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+
                         _context.RetentionReceipt.Add(_RetentionReceiptq);
                         await _context.SaveChangesAsync();
 
