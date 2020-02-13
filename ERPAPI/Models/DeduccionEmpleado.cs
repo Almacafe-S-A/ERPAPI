@@ -49,5 +49,6 @@ namespace ERPAPI.Models
         public string NombreEmpleado { get; set; }
         public int CantidadDeducciones { get; set; }
         public float TotalDeducciones { get; set; }
+        public double SalarioEmpleado { get; set; }
     }
 }

@@ -112,7 +112,7 @@ namespace ERPAPI.Controllers
             try
             {
                 List<DeduccionEmpleado> deducciones =
-                    await _context.DeduccionesEmpleados.Where(d => d.EmpleadoId == empleadoId).ToListAsync();
+                    await _context.DeduccionesEmpleados.Include(s=> s.Deduccion).Where(d => d.EmpleadoId == empleadoId).ToListAsync();
                 return Ok(deducciones);
             }
             catch (Exception ex)
@@ -137,7 +137,8 @@ namespace ERPAPI.Controllers
                                EmpleadoId = g.Key,
                                NombreEmpleado = g.FirstOrDefault().emp.NombreEmpleado,
                                CantidadDeducciones = g.Count(s=> s.subDed != null),
-                               TotalDeducciones = g.Sum(s => s.subDed == null ? 0 : s.subDed.Monto )
+                               TotalDeducciones = g.Sum(s => s.subDed == null ? 0 : s.subDed.Monto ),
+                               SalarioEmpleado = (double) (g.First().emp.Salario.HasValue ? g.First().emp.Salario.Value : 0)
                            };
                 List<DeduccionesEmpleadoDTO> deducciones = await detalleEmpleado.ToListAsync();
                 return Ok(deducciones);
