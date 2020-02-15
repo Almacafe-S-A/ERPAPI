@@ -117,7 +117,7 @@ namespace ERPAPI.Controllers
             Deduction Items = new Deduction();
             try
             {
-                Items = await _context.Deduction.Where(q => q.Description == DeductionDescription).FirstOrDefaultAsync();
+                Items = await _context.Deduction.Where(q => q.Description.ToUpper().Equals(DeductionDescription.ToUpper())).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
@@ -149,5 +150,98 @@ namespace ERPAPI.Controllers
                 return BadRequest(ex);
             }
         }
+
+        private decimal GetSalarioNominal(long empleadoId)
+        {
+            //Calculo del salario nominal, basado en los ultimos 6 meses de salario
+            var salarios =  _context.EmployeeSalary.Where(s => s.IdEmpleado == empleadoId)
+                .OrderByDescending(f => f.DayApplication).ToList();
+            decimal salarioNominal = 0;
+
+            if (salarios.Count() == 1)
+            {
+                salarioNominal = salarios[0].QtySalary ?? 0;
+            }
+            else
+            {
+                List<decimal> salariosHistoricos = new List<decimal>();
+                for (int i = 0; i < salarios.Count - 1; i++)
+                {
+                    if (i == salarios.Count - 1)
+                    {
+                        EmployeeSalary salarioReciente = salarios[i];
+                        salariosHistoricos.Add(salarioReciente.QtySalary ?? 0);
+                    }
+                    else
+                    {
+                        EmployeeSalary salarioReciente = salarios[i];
+                        EmployeeSalary salarioAnterior = salarios[i + 1];
+                        if (salarioReciente.DayApplication.Year == salarioAnterior.DayApplication.Year &&
+                            salarioReciente.DayApplication.Month == salarioAnterior.DayApplication.Month)
+                        {
+                            salariosHistoricos.Add(salarioReciente.QtySalary ?? 0);
+                        }
+                        else
+                        {
+                            int mes = salarioReciente.DayApplication.Month;
+                            int anio = salarioReciente.DayApplication.Year;
+                            while (!(salarioAnterior.DayApplication.Year == anio &&
+                                     salarioAnterior.DayApplication.Month == mes))
+                            {
+                                salariosHistoricos.Add(salarioReciente.QtySalary ?? 0);
+                                if (mes == 1)
+                                {
+                                    mes = 12;
+                                    anio--;
+                                }
+                                else
+                                {
+                                    mes--;
+                                }
+                            }
+                        }
+                    }
+
+                    if (salariosHistoricos.Count() >= 6)
+                    {
+                        break;
+                    }
+                }
+
+                salarioNominal = salariosHistoricos.Count() <= 6 ? salariosHistoricos.Average() : salariosHistoricos.GetRange(0, 6).Average();
+            }
+
+            return salarioNominal;
+        }
+
+        //public async Task<ActionResult> GetISREmpleado(long empleadoId)
+        //{
+        //    try
+        //    {
+        //        Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+        //        if (empleado == null)
+        //        {
+        //            return Ok(0);
+        //        }
+        //        decimal salarioNominal = GetSalarioNominal(empleadoId);
+
+        //        if (empleado.FechaIngreso == null)
+        //        {
+        //            return Ok(0);
+        //        }
+
+        //        if (empleado.FechaIngreso.Value.Year == DateTime.Today.Year)
+        //        {
+
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error Guardar Deducción Empleado");
+        //        return BadRequest(ex);
+        //    }
+        //}
     }
+
+    
 }

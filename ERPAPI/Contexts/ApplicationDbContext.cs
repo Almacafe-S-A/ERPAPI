@@ -324,6 +324,8 @@ namespace ERP.Contexts
 
         public DbSet<DeduccionEmpleado> DeduccionesEmpleados { get; set; }
 
+        public DbSet<ISR> ISRConfiguracion { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
