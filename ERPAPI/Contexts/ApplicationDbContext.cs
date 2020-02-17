@@ -36,6 +36,8 @@ namespace ERP.Contexts
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
 
+        public DbSet <Presupuesto> Presupuesto { get; set; }
+
 
         public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
         public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
