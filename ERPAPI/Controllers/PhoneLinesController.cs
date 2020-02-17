@@ -69,7 +69,7 @@ namespace ERPAPI.Controllers
             List<PhoneLines> Items = new List<PhoneLines>();
             try
             {
-                Items = await _context.PhoneLines.OrderBy(b => b.PhoneLineId).ToListAsync();
+                Items = await _context.PhoneLines.OrderBy(b => b.PhoneLineId).Include("Branch").ToListAsync();
             }
             catch (Exception ex)
             {
