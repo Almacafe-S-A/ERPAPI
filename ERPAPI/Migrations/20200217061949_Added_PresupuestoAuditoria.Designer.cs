@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200217061949_Added_PresupuestoAuditoria")]
+    partial class Added_PresupuestoAuditoria
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7062,7 +7064,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("Periodo");
+                    b.Property<int>("Periodo");
 
                     b.Property<decimal>("PresupuestoAbril");
 
@@ -7101,8 +7103,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("AccountigId");
 
                     b.HasIndex("CostCenterId");
-
-                    b.HasIndex("Periodo");
 
                     b.ToTable("Presupuesto");
                 });
@@ -10775,11 +10775,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
                         .WithMany()
                         .HasForeignKey("CostCenterId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "ElementoConfiguracion")
-                        .WithMany()
-                        .HasForeignKey("Periodo")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
