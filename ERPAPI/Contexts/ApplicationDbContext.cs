@@ -326,6 +326,18 @@ namespace ERP.Contexts
 
         public DbSet<ISR> ISRConfiguracion { get; set; }
 
+        public DbSet<Feriado> Feriados { get; set; }
+
+        public DbSet<Horario> Horarios { get; set; }
+
+        public DbSet<EmpleadoHorario> EmpleadoHorarios { get; set; }
+
+        public DbSet<EmpleadoBiometrico> EmpleadosBiometrico { get; set; }
+
+        public DbSet<Biometrico> Biometricos { get; set; }
+
+        public DbSet<DetalleBiometrico> DetallesBiometricos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
