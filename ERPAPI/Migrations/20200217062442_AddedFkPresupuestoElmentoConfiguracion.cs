@@ -23,7 +23,7 @@ namespace ERPAPI.Migrations
                 column: "Periodo",
                 principalTable: "ElementoConfiguracion",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
