@@ -121,6 +121,10 @@ namespace ERPAPI.Controllers
             {
                 _EndososLiberacionq = _EndososLiberacion;
                 _context.EndososLiberacion.Add(_EndososLiberacionq);
+                EndososCertificados endoso = _context.EndososCertificados.Where(w => w.EndososCertificadosId == _EndososLiberacionq.EndososId).FirstOrDefault();
+                endoso.Saldo -= _EndososLiberacionq.Quantity;
+                EndososCertificadosLine endososoline = _context.EndososCertificadosLine.Where(w => w.EndososCertificadosId == _EndososLiberacionq.EndososLineId).FirstOrDefault();
+                endososoline.Saldo -= _EndososLiberacionq.Quantity;
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
