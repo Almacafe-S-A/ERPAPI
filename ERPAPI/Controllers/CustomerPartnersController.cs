@@ -212,7 +212,34 @@ namespace ERPAPI.Controllers
 
         }
 
+        /// <summary>
+        ///Devuelve la cantidad de Socios que coinciden con los parametros
+        /// </summary>
+        /// <param name="Socios"></param>
+        /// <returns></returns>
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Int32>> GetClienteRTN([FromBody]CustomerPartners Socios)
+        {            
+            try
+            {
+                if (Socios.PartnerId == 0)
+                {
+                    var Items = await _context.CustomerPartners.Where(q => q.RTN == Socios.Identidad && q.CustomerId == Socios.CustomerId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+                else
+                {
+                    var Items = await _context.CustomerPartners.Where(q => q.RTN == Socios.Identidad && q.CustomerId == Socios.CustomerId && q.PartnerId != Socios.PartnerId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
 
 
 
