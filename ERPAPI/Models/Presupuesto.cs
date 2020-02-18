@@ -16,9 +16,11 @@ namespace ERPAPI.Models
         [ForeignKey("CostCenterId")]
         public CostCenter CostCenter { get; set; }
         [Display(Name = "Año")]
-        public long Periodo { get; set; }
-        [ForeignKey("Periodo")]
-        public ElementoConfiguracion ElementoConfiguracion { get; set; }
+
+        public int PeriodoId { get; set; }
+        [ForeignKey("PeriodoId")]
+        public Periodo Periodo { get; set; }
+
 
         public decimal PresupuestoEnero { get; set; }
         public decimal PresupuestoFebrero { get; set; }
