@@ -24,7 +24,7 @@ namespace ERPAPI.Models
         public string PasswordHash { get; set; }
 
         //[Key, Column(Order = 0)]
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
 
         public virtual ApplicationUser User { get; set; }
 

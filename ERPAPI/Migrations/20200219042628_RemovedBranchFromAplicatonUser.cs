@@ -10,9 +10,9 @@ namespace ERPAPI.Migrations
                 name: "FK_AspNetUsers_Branch_BranchId",
                 table: "AspNetUsers");
 
-            //migrationBuilder.DropIndex(
-            //    name: "IX_AspNetUsers_BranchId",
-            //    table: "AspNetUsers");
+            migrationBuilder.DropIndex(
+                name: "IX_AspNetUsers_BranchId",
+                table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
                 name: "BranchId",
