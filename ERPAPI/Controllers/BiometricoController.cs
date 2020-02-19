@@ -37,6 +37,21 @@ namespace ERPAPI.Controllers
                     throw new Exception("Archivo Biometrico sin Detalle");
                 }
 
+                foreach (var det in biometrico.Detalle)
+                {
+                    if (det.IdEmpleado == 0)
+                    {
+                        var relacion =
+                           await context.EmpleadosBiometrico.FirstOrDefaultAsync(r => r.BiometricoId == det.IdBiometrico);
+                        if (relacion == null)
+                        {
+                            throw new Exception("Empleado no existe en asignado a un codigo de biometrico");
+                        }
+
+                        det.IdEmpleado = relacion.EmpleadoId;
+                    }
+                }
+
                 if (biometrico.Id == 0)
                 {
                     context.Biometricos.Add(biometrico);
