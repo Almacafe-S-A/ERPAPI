@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200219042628_RemovedBranchFromAplicatonUser")]
+    partial class RemovedBranchFromAplicatonUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6907,33 +6909,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("PeriodicidadPago");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Periodo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Anio");
-
-                    b.Property<string>("Estado");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("IdEstado");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdEstado");
-
-                    b.ToTable("Periodo");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.PhoneLines", b =>
                 {
                     b.Property<long>("PhoneLineId")
@@ -7111,7 +7086,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<int>("PeriodoId");
+                    b.Property<long>("Periodo");
 
                     b.Property<decimal>("PresupuestoAbril");
 
@@ -7151,7 +7126,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("CostCenterId");
 
-                    b.HasIndex("PeriodoId");
+                    b.HasIndex("Periodo");
 
                     b.ToTable("Presupuesto");
                 });
@@ -10792,14 +10767,6 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.Periodo", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("IdEstado")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.PhoneLines", b =>
                 {
                     b.HasOne("ERPAPI.Models.Branch", "Branch")
@@ -10833,9 +10800,9 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("CostCenterId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.Periodo", "Periodo")
+                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "ElementoConfiguracion")
                         .WithMany()
-                        .HasForeignKey("PeriodoId")
+                        .HasForeignKey("Periodo")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
