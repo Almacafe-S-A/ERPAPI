@@ -217,6 +217,34 @@ namespace ERPAPI.Controllers
 
 
 
+        /// <summary>
+        ///Consulta si el Cliente ya tiene un documento con el mismo nombre
+        /// </summary>
+        /// <param name="Documento"></param>
+        /// <returns></returns>
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Int32>> GetDocumento([FromBody]CustomerDocument Documento)
+        {
+            try
+            {
+                if (Documento.CustomerDocumentId == 0)
+                {
+                    var Items = await _context.CustomerDocument.Where(q => q.DocumentName == Documento.DocumentName && q.CustomerId == Documento.CustomerId && q.DocumentTypeId == Documento.DocumentTypeId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+                else
+                {
+                    var Items = await _context.CustomerDocument.Where(q => q.DocumentName == Documento.DocumentName && q.CustomerId == Documento.CustomerId && q.DocumentTypeId == Documento.DocumentTypeId && q.CustomerDocumentId != Documento.CustomerDocumentId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
 
 
 
