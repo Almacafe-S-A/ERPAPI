@@ -129,7 +129,7 @@ namespace ERPAPI.Controllers
 
                     claims.Add(new Claim(ClaimTypes.Email, usuario.Email));
                     claims.Add(new Claim(ClaimTypes.Name, usuario.UserName));
-                    claims.Add(new Claim("Branch",usuario.BranchId.ToString()));
+                    //claims.Add(new Claim("Branch",usuario.BranchId.ToString()));
 
                     JwtSecurityToken token = await BuildToken(claims);
 
@@ -143,7 +143,7 @@ namespace ERPAPI.Controllers
                            {
                                Token = new JwtSecurityTokenHandler().WriteToken(token),
                                Expiration = token.ValidTo,
-                               BranchId = Convert.ToInt32(usuario.BranchId),
+                              // BranchId = Convert.ToInt32(usuario.BranchId),
                                IsEnabled = usuario.IsEnabled,
                                LastPasswordChangedDate = usuario.LastPasswordChangedDate,
                                Passworddias = cambiopassworddias.Value

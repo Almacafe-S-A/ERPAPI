@@ -98,7 +98,8 @@ namespace ERPAPI.Controllers
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
-                _users = await _context.Users.Include(c => c.Branch).ToListAsync();
+                //_users = await _context.Users.Include(c => c.Branch).ToListAsync();
+                _users = await _context.Users.ToListAsync();
             }
             catch (System.Exception ex)
             {
@@ -120,10 +121,11 @@ namespace ERPAPI.Controllers
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
-                 _users = await _context.Users.Include(c => c.Branch).ToListAsync();
-                    
-                  //  .Include(c => c.Branch)
-               // _users = await _context.Users.ToListAsync();
+                //_users = await _context.Users.Include(c => c.Branch).ToListAsync();
+                _users = await _context.Users.ToListAsync();
+
+                //  .Include(c => c.Branch)
+                // _users = await _context.Users.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -192,7 +194,7 @@ namespace ERPAPI.Controllers
                 {
                     UserName = _usuario.Email,
                     Email = _usuario.Email,
-                    BranchId = _usuario.BranchId,
+                    //BranchId = _usuario.BranchId,
                     PhoneNumber = _usuario.PhoneNumber,
                     IsEnabled = _usuario.IsEnabled,
                     LastPasswordChangedDate = DateTime.Now
@@ -281,7 +283,7 @@ namespace ERPAPI.Controllers
                   .Where(q => q.Id == _usuario.Id)
                                                 select c
                     ).FirstOrDefault();
-                _usuario.BranchId = _usuario.Branch.BranchId;
+                //_usuario.BranchId = _usuario.Branch.BranchId;
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
                 _usuario.FechaModificacion = DateTime.Now;
@@ -467,6 +469,211 @@ namespace ERPAPI.Controllers
             }
             return await Task.Run((() => Ok(permisos)));
         }
+
+
+        /// <summary>
+        /// Modifica/Actualiza un Usuario 
+        /// </summary>
+        /// <param name="_usuario"></param>
+        /// <returns></returns>
+        [HttpPut("PutUsuario")]
+        public async Task<ActionResult<ApplicationUser>> DesbloqueoUsuario([FromBody]ApplicationUserDTO _usuario)
+        {
+            try
+            {
+
+                ApplicationUser ApplicationUserq = (from c in _context.Users
+                  .Where(q => q.Id == _usuario.Id)
+                                                    select c
+                    ).FirstOrDefault();
+                //_usuario.BranchId = _usuario.Branch.BranchId;
+                _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
+                _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;
+                _usuario.FechaModificacion = DateTime.Now;
+
+                string password = "";
+
+                if (_usuario.cambiarpassword) { password = _usuario.PasswordHash; }
+                else
+                {
+                    _usuario.PasswordHash = ApplicationUserq.PasswordHash;
+                    //_context.Entry(ApplicationUserq).Property(x => x.PasswordHash).IsModified = false;
+                    //_context.Entry(ApplicationUserq).Property(x => x.PhoneNumber).IsModified = true;
+                    //_context.Entry(ApplicationUserq).Property(x => x.IsEnabled).IsModified = true;
+
+
+                    // _context.Users.Property(x => x.Password).IsModified = true;
+                    //password = _userManager.PasswordHasher.HashPassword(ApplicationUserq,ApplicationUserq.PasswordHash);
+                }
+
+                _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
+                await _context.SaveChangesAsync();
+
+                //await _userManager.UpdateAsync(_usuario);
+                if (_usuario.cambiarpassword)
+                {
+                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+                    var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
+
+                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+                    if (!resultadadd.Succeeded)
+                    {
+                        string errores = "";
+                        foreach (var item in resultadadd.Errors)
+                        {
+                            errores += item.Description;
+                        }
+                        return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+                    }
+
+                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
+                    _context.PasswordHistory.Add(new PasswordHistory()
+                    {
+                        UserId = ApplicationUserq.Id.ToString(),
+                        PasswordHash = _newpass.PasswordHash,
+                    });
+
+                    await _context.SaveChangesAsync();
+                }
+
+                return await Task.Run(() => _usuario);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
+            }
+
+        }
+
+
+
+        /// <returns></returns>
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult<ApplicationUser>> ChangePasswordPoliticas([FromBody]ApplicationUserDTO _usuario)
+        {
+            try
+            {
+                ApplicationUser ApplicationUserq = (from c in _context.Users
+                                                    //.Include(q => q.Branch)
+                  .Where(q => q.Id == _usuario.Id)
+                                                    select c
+                    ).FirstOrDefault();
+
+                ApplicationUserDTO _appdto = new ApplicationUserDTO
+                {
+                    Id = ApplicationUserq.Id,
+                    IsEnabled = ApplicationUserq.IsEnabled,
+                    NormalizedEmail = ApplicationUserq.NormalizedEmail,
+                    LockoutEnd = ApplicationUserq.LockoutEnd,
+                    PhoneNumberConfirmed = ApplicationUserq.PhoneNumberConfirmed,
+                    SecurityStamp = ApplicationUserq.SecurityStamp,
+                    PhoneNumber = ApplicationUserq.PhoneNumber,
+                    TwoFactorEnabled = ApplicationUserq.TwoFactorEnabled,
+                    //BranchId = ApplicationUserq.BranchId,
+                    AccessFailedCount = ApplicationUserq.AccessFailedCount,
+                    ConcurrencyStamp = ApplicationUserq.ConcurrencyStamp,
+                    Email = ApplicationUserq.Email,
+                    EmailConfirmed = ApplicationUserq.EmailConfirmed,
+                    FechaCreacion = ApplicationUserq.FechaCreacion,
+                    FechaModificacion = ApplicationUserq.FechaModificacion,
+                    LastPasswordChangedDate = ApplicationUserq.LastPasswordChangedDate,
+                    LockoutEnabled = ApplicationUserq.LockoutEnabled,
+                    NormalizedUserName = ApplicationUserq.NormalizedUserName,
+                    UsuarioCreacion = ApplicationUserq.UsuarioCreacion,
+                    UsuarioModificacion = ApplicationUserq.UsuarioModificacion,
+                    PasswordHash = ApplicationUserq.PasswordHash,
+                    UserName = ApplicationUserq.UserName,
+                    //Branch = ApplicationUserq.Branch,
+
+                };
+
+                string password = _usuario.PasswordHash;
+                var passwordValidator = new PasswordValidator<ApplicationUser>();
+                var result = await passwordValidator.ValidateAsync(_userManager, null, password);
+
+                if (result.Succeeded)
+                {
+
+
+                    _appdto.LastPasswordChangedDate = _usuario.LastPasswordChangedDate = DateTime.Now;
+
+                    _appdto.IsEnabled = true;
+                    var actualizarusuario = await PutUsuario(_appdto);
+                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+                    _appdto.PasswordHash = password;
+
+                    resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+
+
+
+                    if (!resultadadd.Succeeded)
+                    {
+                        string errores = "";
+                        foreach (var item in resultadadd.Errors)
+                        {
+                            errores += item.Description;
+                        }
+                        return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+                    }
+
+                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
+                    _context.PasswordHistory.Add(new PasswordHistory()
+                    {
+                        UserId = ApplicationUserq.Id.ToString(),
+                        PasswordHash = _newpass.PasswordHash,
+                    });
+
+                    await _context.SaveChangesAsync();
+
+
+                    //ApplicationUserq.PasswordHistory.Add(new PasswordHistory()
+                    //{
+                    //    UserId = ApplicationUserq.Id.ToString(),
+                    //    PasswordHash = _newpass.PasswordHash,
+                    //});
+
+
+                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                    {
+                        // IdOperacion =,
+                        Descripcion = _usuario.Id.ToString(),
+                        DocType = "Usuario",
+                        ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_usuario, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "ChangePassword",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = _usuario.UsuarioCreacion,
+                        UsuarioModificacion = _usuario.UsuarioModificacion,
+                        UsuarioEjecucion = _usuario.UsuarioModificacion,
+
+                    });
+
+                    await _context.SaveChangesAsync();
+
+                    return await Task.Run(() => _usuario);
+
+                }
+                else
+                {
+                    return await Task.Run(() => BadRequest($" El password debe tener mayusculas, minusculas y caracteres especiales!"));
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
+            }
+
+        }
+
+
 
     }
 }
