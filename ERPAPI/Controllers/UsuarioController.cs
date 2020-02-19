@@ -324,11 +324,11 @@ namespace ERPAPI.Controllers
                     }
 
                     ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
-                    _context.PasswordHistory.Add(new PasswordHistory()
-                    {
-                        UserId = ApplicationUserq.Id.ToString(),
-                        PasswordHash = _newpass.PasswordHash,
-                    });
+                    //_context.PasswordHistory.Add(new PasswordHistory()
+                    //{
+                    //    UserId = ApplicationUserq.Id.ToString(),
+                    //    PasswordHash = _newpass.PasswordHash,
+                    //});
 
                     await _context.SaveChangesAsync();
                 }

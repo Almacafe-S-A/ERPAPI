@@ -113,15 +113,26 @@ namespace ERPAPI.Controllers
                 var resultvalidador = await passwordValidator.ValidateAsync(_userManager, null, model.Password);
                 if (resultvalidador.Succeeded)
                 {
+                    //Verifica en los historicos 
+                    var validarhistoricos = _context.PasswordHistory.Where(w => w.UserId == ApplicationUserq.Id.ToString()).ToList();
+                    if (validarhistoricos != null)
+                    {
+                        foreach (var item in validarhistoricos)
+                        {
+                            PasswordVerificationResult passwordMatch = _userManager.PasswordHasher.VerifyHashedPassword(ApplicationUserq, item.PasswordHash, model.Password);
+                            if (passwordMatch == PasswordVerificationResult.Success)
+                            {
+                                return await Task.Run(() => BadRequest(@"Error Ya ha utilizado esta contraseña"));
+                            }
+                        }
+                    }                   
+
                     ApplicationUserq.LastPasswordChangedDate = ApplicationUserq.LastPasswordChangedDate = DateTime.Now;
                     var result = await _userManager.ChangePasswordAsync(ApplicationUserq, model.PasswordAnterior, model.Password);                    
                     if (result.Succeeded)
                     {
-                        var validarhistoricos = _context.PasswordHistory.Where(w => w.PasswordHash == ApplicationUserq.PasswordHash && Guid.Parse(w.UserId) == ApplicationUserq.Id).FirstOrDefault();
-                        if (validarhistoricos != null)
-                        {
-                            return await Task.Run(() => BadRequest(@"Error Ya ha utilizado esta contraseña"));
-                        }
+                        
+                        
                         _context.PasswordHistory.Add(new PasswordHistory()
                         {
                             UserId = ApplicationUserq.Id.ToString(),
@@ -150,7 +161,7 @@ namespace ERPAPI.Controllers
                     }
                     else
                     {
-                        return await Task.Run(() => BadRequest(@"Contrasña o usuario incorrecto"));
+                        return await Task.Run(() => BadRequest(@"Contraseña o usuario incorrecto"));
                         
                     }
 
