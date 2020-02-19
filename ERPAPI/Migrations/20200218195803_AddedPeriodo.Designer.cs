@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200218195803_AddedPeriodo")]
+    partial class AddedPeriodo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6921,15 +6923,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<long>("IdEstado");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("Id");
 
@@ -7115,7 +7109,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<int>("PeriodoId");
+                    b.Property<long>("Periodo");
 
                     b.Property<decimal>("PresupuestoAbril");
 
@@ -7155,7 +7149,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("CostCenterId");
 
-                    b.HasIndex("PeriodoId");
+                    b.HasIndex("Periodo");
 
                     b.ToTable("Presupuesto");
                 });
@@ -10845,9 +10839,9 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("CostCenterId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.Periodo", "Periodo")
+                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "ElementoConfiguracion")
                         .WithMany()
-                        .HasForeignKey("PeriodoId")
+                        .HasForeignKey("Periodo")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
