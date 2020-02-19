@@ -213,7 +213,34 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Devuelve la cantidad de Firmas Autorizadas que coinciden con los parametros
+        /// </summary>
+        /// <param name="FirmasAutorizadas"></param>
+        /// <returns></returns>
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Int32>> GetFirmaByRTN([FromBody]CustomerAuthorizedSignature FirmasAutorizadas)
+        {
+            try
+            {
+                if (FirmasAutorizadas.CustomerAuthorizedSignatureId == 0)
+                {
+                    var Items = await _context.CustomerAuthorizedSignature.Where(q => q.RTN == FirmasAutorizadas.RTN && q.CustomerId == FirmasAutorizadas.CustomerId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+                else
+                {
+                    var Items = await _context.CustomerAuthorizedSignature.Where(q => q.RTN == FirmasAutorizadas.RTN && q.CustomerId == FirmasAutorizadas.CustomerId && q.CustomerAuthorizedSignatureId != FirmasAutorizadas.CustomerAuthorizedSignatureId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
 
 
 
