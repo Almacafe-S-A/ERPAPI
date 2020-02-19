@@ -481,61 +481,15 @@ namespace ERPAPI.Controllers
         {
             try
             {
-
                 ApplicationUser ApplicationUserq = (from c in _context.Users
                   .Where(q => q.Id == _usuario.Id)
                                                     select c
                     ).FirstOrDefault();
-                //_usuario.BranchId = _usuario.Branch.BranchId;
-                _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
-                _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;
-                _usuario.FechaModificacion = DateTime.Now;
-
-                string password = "";
-
-                if (_usuario.cambiarpassword) { password = _usuario.PasswordHash; }
-                else
-                {
-                    _usuario.PasswordHash = ApplicationUserq.PasswordHash;
-                    //_context.Entry(ApplicationUserq).Property(x => x.PasswordHash).IsModified = false;
-                    //_context.Entry(ApplicationUserq).Property(x => x.PhoneNumber).IsModified = true;
-                    //_context.Entry(ApplicationUserq).Property(x => x.IsEnabled).IsModified = true;
-
-
-                    // _context.Users.Property(x => x.Password).IsModified = true;
-                    //password = _userManager.PasswordHasher.HashPassword(ApplicationUserq,ApplicationUserq.PasswordHash);
-                }
+                _usuario.LastPasswordChangedDate = DateTime.Now;
+                
 
                 _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
                 await _context.SaveChangesAsync();
-
-                //await _userManager.UpdateAsync(_usuario);
-                if (_usuario.cambiarpassword)
-                {
-                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
-                    var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
-
-                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
-                    if (!resultadadd.Succeeded)
-                    {
-                        string errores = "";
-                        foreach (var item in resultadadd.Errors)
-                        {
-                            errores += item.Description;
-                        }
-                        return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
-                    }
-
-                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
-                    _context.PasswordHistory.Add(new PasswordHistory()
-                    {
-                        UserId = ApplicationUserq.Id.ToString(),
-                        PasswordHash = _newpass.PasswordHash,
-                    });
-
-                    await _context.SaveChangesAsync();
-                }
-
                 return await Task.Run(() => _usuario);
 
             }
@@ -591,6 +545,7 @@ namespace ERPAPI.Controllers
 
                 string password = _usuario.PasswordHash;
                 var passwordValidator = new PasswordValidator<ApplicationUser>();
+                
                 var result = await passwordValidator.ValidateAsync(_userManager, null, password);
 
                 if (result.Succeeded)
@@ -629,11 +584,11 @@ namespace ERPAPI.Controllers
                     await _context.SaveChangesAsync();
 
 
-                    //ApplicationUserq.PasswordHistory.Add(new PasswordHistory()
-                    //{
-                    //    UserId = ApplicationUserq.Id.ToString(),
-                    //    PasswordHash = _newpass.PasswordHash,
-                    //});
+                    ApplicationUserq.PasswordHistory.Add(new PasswordHistory()
+                    {
+                        UserId = ApplicationUserq.Id.ToString(),
+                        PasswordHash = _newpass.PasswordHash,
+                    });
 
 
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
