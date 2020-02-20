@@ -265,10 +265,11 @@ namespace ERPAPI.Controllers
                     try
                     {
 
-                        _CheckAccountq = await (from c in _context.CheckAccount
-                                 .Where(q => q.CheckAccountId == _CheckAccount.CheckAccountId)
-                                        select c
-                                ).FirstOrDefaultAsync();
+                        _CheckAccountq = await _context.CheckAccount.Where(w => w.CheckAccountId == _CheckAccount.CheckAccountId).FirstOrDefaultAsync();
+                        if (_CheckAccountq.NoInicial == _CheckAccountq.NumeroActual)
+                        {
+                            _CheckAccount.NumeroActual = _CheckAccount.NoInicial; 
+                        }
 
                 _context.Entry(_CheckAccountq).CurrentValues.SetValues((_CheckAccount));
 
