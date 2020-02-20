@@ -21,6 +21,8 @@ namespace ERPAPI.Models
 
         public string RTN { get; set; }
 
+        public bool? HorasExtra { get; set; }
+
         public long? IdTipoPlanilla { get; set; }
         [ForeignKey("IdTipoPlanilla")]
         public TipoPlanillas TipoPlanilla { get; set; }
