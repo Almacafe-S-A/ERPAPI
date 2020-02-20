@@ -77,7 +77,7 @@ namespace ERPAPI.Controllers
             try
             {
                 var registros = await context.Biometricos
-                    .Include(d => d.Detalle)
+                    //.Include(d => d.Detalle)
                     .Include(e => e.Estado).ToListAsync();
                 return Ok(registros);
             }
