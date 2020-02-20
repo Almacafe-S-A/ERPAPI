@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Models;
@@ -79,6 +80,21 @@ namespace ERPAPI.Controllers
                 var registros = await context.Biometricos
                     //.Include(d => d.Detalle)
                     .Include(e => e.Estado).ToListAsync();
+                return Ok(registros);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al cargar los registros del biometrico");
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet("[action]/{IdBiometrico}")]
+        public async Task<ActionResult> GetDetalleBiometrico(long IdBiometrico)
+        {
+            try
+            {
+                var registros = await context.DetallesBiometricos.Where(b => b.Encabezado.Id == IdBiometrico).ToListAsync();
                 return Ok(registros);
             }
             catch (Exception ex)
