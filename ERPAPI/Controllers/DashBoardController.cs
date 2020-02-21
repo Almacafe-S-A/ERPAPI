@@ -265,6 +265,23 @@ namespace ERPAPI.Controllers
 
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityJournalEntriesAprovement()
+        {
+            try
+            {
+                var Items = await _context.JournalEntry.Where(w => w.EstadoId == 5  &&  w.TypeOfAdjustmentId ==65 ).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
 
         [HttpGet("[action]")]
         public async Task<ActionResult<Int32>> GetQuantityCustomers()
