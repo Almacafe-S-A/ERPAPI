@@ -148,7 +148,22 @@ namespace ERPAPI.Controllers
                         //IdProceso = 1,
                         Estatus = "PENDIENTE",
                         Proceso = "GARANTIAS BANCARIAS VENCIDAS",
-                        PasoCierre = 3,
+                        PasoCierre = 5,
+                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                        FechaModificacion = DateTime.Now,
+                        FechaCierre = cierre.FechaCierre,
+                        FechaCreacion = DateTime.Now,
+
+                    };
+
+                    BitacoraCierreProcesos proceso7 = new BitacoraCierreProcesos
+                    {
+                        IdBitacoraCierre = cierre.Id,
+                        //IdProceso = 1,
+                        Estatus = "PENDIENTE",
+                        Proceso = "Comprobacion de Saldos",
+                        PasoCierre = 7,
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
                         FechaModificacion = DateTime.Now,
@@ -161,6 +176,7 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(proceso2);
                     _context.BitacoraCierreProceso.Add(proceso3);
                     _context.BitacoraCierreProceso.Add(proceso5);
+                    _context.BitacoraCierreProceso.Add(proceso7);
                     _context.SaveChanges();
 
                     BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
@@ -177,7 +193,24 @@ namespace ERPAPI.Controllers
                         FechaCreacion = DateTime.Now,
 
                     };
-                    _context.BitacoraCierreProceso.Add(proceso4);
+
+                    BitacoraCierreProcesos proceso6 = new BitacoraCierreProcesos
+                    {
+                        IdBitacoraCierre = cierre.Id,
+                        //IdProceso = 1,
+                        Estatus = "PENDIENTE",
+                        Proceso = "Ejecucion Presupuestaria Mensual",
+                        PasoCierre = 6,
+                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                        FechaModificacion = DateTime.Now,
+                        FechaCierre = cierre.FechaCierre,
+                        FechaCreacion = DateTime.Now,
+
+                    };
+
+                        _context.BitacoraCierreProceso.Add(proceso4);
+                        _context.BitacoraCierreProceso.Add(proceso6);
 
                     _context.SaveChanges();
                     await Paso4(proceso4, cierre);
@@ -203,8 +236,8 @@ namespace ERPAPI.Controllers
                 await Paso5(proceso5.IdProceso);
                 // POLIZAS VENCIDAS 
                 await Paso1(cierre.Id, proceso1.IdProceso); ////HISTORICOS
-                await ValidarPasos(cierre);
-                //cierre.Estatus = "Finalizado";
+                //await ValidarPasos(cierre);
+                cierre.Estatus = "FINALIZADO";
                 //_context.Update(cierre);
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok());
@@ -357,24 +390,22 @@ namespace ERPAPI.Controllers
             _context.BitacoraCierreProceso.Update(proceso);
             await _context.SaveChangesAsync();
 
-            //////////Actualiza el techo de los certificados mensuales
-            double suma = await _context.CertificadoDeposito.SumAsync(c => c.Total);
-            ElementoConfiguracion elemento = await _context.ElementoConfiguracion.Where(e => e.Descripcion == "VALOR MAXIMO CERTIFICADOS").FirstOrDefaultAsync();
-            if (elemento != null)
-            {
-                elemento.Valordecimal = suma;
-                _context.ElementoConfiguracion.Update(elemento);
-            }
-            else
+            ElementoConfiguracion elemento = await _context.ElementoConfiguracion.Where(e => e.Id == 92).FirstOrDefaultAsync();
+            if (elemento == null)
             {
                 proceso.Estatus = "ERROR";
                 proceso.Mensaje = "NO SE ENCONTRO EL ELEMENTO DE CONFIGURACION";
 
                 _context.BitacoraCierreProceso.Update(proceso);
-
+                await _context.SaveChangesAsync();
                 return;
 
             }
+            //////////Actualiza el techo de los certificados mensuales
+            double suma = await _context.CertificadoDeposito.SumAsync(c => c.Total);
+
+            elemento.Valordecimal = suma;
+            _context.ElementoConfiguracion.Update(elemento);
 
 
             proceso.Estatus = "FINALIZADO";
@@ -386,10 +417,10 @@ namespace ERPAPI.Controllers
 
         private async Task Paso3(int idProceso)
         {
-            TiposDocumento tipoDocumento = await _context.TiposDocumento.Where(d => d.Descripcion == "Polizas").FirstOrDefaultAsync();
+            TypeJournal tipoDocumento = await _context.TypeJournal.Where(d => d.TypeJournalId == 7).FirstOrDefaultAsync();
 
             JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                           .Where(q => q.TransactionId == tipoDocumento.IdTipoDocumento)
+                                                           .Where(q => q.TransactionId == tipoDocumento.TypeJournalId)
                                                            //.Where(q => q.BranchId == _Invoiceq.BranchId)
                                                            .Where(q => q.EstadoName == "Activo")
                                                            .Include(q => q.JournalEntryConfigurationLine)
@@ -425,7 +456,7 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
                         DocumentId = proceso.IdProceso,
                         TypeOfAdjustmentId = 65,
-                        VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),
+                        VoucherType = Convert.ToInt32(tipoDocumento.TypeJournalId),
 
                     };
                     _context.JournalEntry.Add(_je);
@@ -450,7 +481,7 @@ namespace ERPAPI.Controllers
 
 
                     }
-                    _context.JournalEntry.Update(_je);
+                    await _context.SaveChangesAsync();
                     proceso.Mensaje = "Generado Asiendo No. " + _je.JournalEntryId;
                     proceso.Estatus = "FINALIZADO";
 
@@ -606,20 +637,29 @@ namespace ERPAPI.Controllers
 
         private async Task Paso5(int pProcesoId)
         {
-            TiposDocumento tipoDocumento = await _context.TiposDocumento.Where(d => d.Descripcion == "Garantias Bancarias").FirstOrDefaultAsync();
-
-            JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                           .Where(q => q.TransactionId == tipoDocumento.IdTipoDocumento)
-                                                           //.Where(q => q.BranchId == _Invoiceq.BranchId)
-                                                           .Where(q => q.EstadoName == "Activo")
-                                                           .Include(q => q.JournalEntryConfigurationLine)
-                                                           ).FirstOrDefaultAsync();
             //////////////
             ///
             BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == pProcesoId).FirstOrDefaultAsync();
             proceso.Estatus = "EJECUTANDO";
             _context.BitacoraCierreProceso.Update(proceso);
-            //await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+
+            TypeJournal tipoDocumento = await _context.TypeJournal.Where(d => d.TypeJournalId == 11).FirstOrDefaultAsync();
+            if (tipoDocumento == null)
+            {
+                proceso.Mensaje = "No se encontro Configuracion de las garantias Bancarias";
+                proceso.Estatus = "ERROR";
+                await _context.SaveChangesAsync();
+                return;
+            }
+
+            JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                           .Where(q => q.TransactionId == tipoDocumento.TypeJournalId)
+                                                           //.Where(q => q.BranchId == _Invoiceq.BranchId)
+                                                           .Where(q => q.EstadoName == "Activo")
+                                                           .Include(q => q.JournalEntryConfigurationLine)
+                                                           ).FirstOrDefaultAsync();
+            
 
             List<GarantiaBancaria> garantias = await _context.GarantiaBancaria.Where(i => i.FechaFianlVigencia < DateTime.Now).ToListAsync();
 
@@ -645,7 +685,7 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
                         DocumentId = proceso.IdProceso,
                         TypeOfAdjustmentId = 65,
-                        VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),
+                        VoucherType = Convert.ToInt32(tipoDocumento.TypeJournalId),
 
                     };
                     _context.JournalEntry.Add(_je);
@@ -670,7 +710,7 @@ namespace ERPAPI.Controllers
 
 
                     }
-                    _context.JournalEntry.Update(_je);
+                    await _context.SaveChangesAsync();
                     proceso.Mensaje = "Generado Asiendo No. " + _je.JournalEntryId;
                     proceso.Estatus = "FINALIZADO";
 
@@ -681,12 +721,15 @@ namespace ERPAPI.Controllers
                     }
                     _context.GarantiaBancaria.UpdateRange(garantias);
                     proceso.Estatus = "FINALIZADO";
+                    await _context.SaveChangesAsync();
 
                 }
                 else
                 {
                     proceso.Mensaje = "No se encontro Configuracion de las garantias Bancarias";
                     proceso.Estatus = "ERROR";
+                    await _context.SaveChangesAsync();
+
                 }
                 //_context.BitacoraCierreProceso.Update(pProceso3);
                 return;
@@ -698,6 +741,8 @@ namespace ERPAPI.Controllers
             {
                 proceso.Mensaje = "No se encontraron Garantías Bancarias";
                 proceso.Estatus = "FINALIZADO";
+                await _context.SaveChangesAsync();
+
                 //_context.BitacoraCierreProceso.Update(pProceso3);
                 return;
             }
