@@ -15,7 +15,7 @@ namespace ERPAPI.Models
         public bool? IsEnabled { get; set; }
 
         [Display(Name = "Sucursal")]
-        public int BranchId { get; set; }
+      //  public int BranchId { get; set; } Se removio la sucursal la opcion paso a asignacion multiple de sucursales
 
         public DateTime LastPasswordChangedDate { get; set; }
         public DateTime FechaCreacion { get; set; }
@@ -23,8 +23,8 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        [ForeignKey("BranchId")]
-        public  Branch Branch { get; set; }
+        //[ForeignKey("BranchId")]
+        //public  Branch Branch { get; set; }
 
         public virtual List<PasswordHistory> PasswordHistory { get; set; } = new List<PasswordHistory>();
     }

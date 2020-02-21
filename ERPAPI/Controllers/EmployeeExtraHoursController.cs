@@ -108,7 +108,30 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene el Nombre del Empleado de Horas Extras Empleado por medio del Id enviado.
+        /// </summary>
+        /// <param name="EmployeeName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{EmployeeName}")]
+        public async Task<IActionResult> GetEmployeeExtraHoursByEmployeeName(String EmployeeName)
+        {
+            EmployeeExtraHours Items = new EmployeeExtraHours();
+            try
+            {
+                Items = await _context.EmployeeExtraHours.Where(q => q.EmployeeName == EmployeeName
+                                            ).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
         /// Inserta una nueva EmployeeExtraHours

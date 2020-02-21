@@ -7,7 +7,7 @@ namespace ERPAPI.Models
     public class RetentionReceipt
     {
         [Display(Name = "Id")]
-        [Key]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int RetentionReceiptId { get; set; }
 
         [Display(Name = "Fecha de vencimiento")]
@@ -40,9 +40,45 @@ namespace ERPAPI.Models
         [Display(Name = "Proveedor")]
         public Int64 VendorId { get; set; }
 
+        [Display(Name = "CAI Proveedor")]
+        public string VendorCAI { get; set; }
+
         [ForeignKey("IdEmpleado")]
         [Display(Name = "Empleado")]
         public long IdEmpleado { get; set; }
+
+        [ForeignKey("BranchId")]
+        [Display(Name = "Sucursal")]
+        public int BranchId { get; set; }
+
+        [Display(Name = "Nombre Sucursal")]
+        public string BranchName { get; set; }
+
+        [Display(Name = "Codigo Sucursal")]
+        public string BranchCode { get; set; }
+
+        [ForeignKey("IdPuntoEmision")]
+        [Display(Name = "Punto de emisión")]
+        public Int64 IdPuntoEmision { get; set; }
+
+        public Int64 IdEstado { get; set; }
+
+        public string Estado { get; set; }
+
+        [Display(Name = "Numero de Factura")]
+        public int NumeroDEI { get; set; }
+
+        [Display(Name = "Descripcion Impuesto Retenido")]
+        public string RetentionTaxDescription { get; set; }
+
+        [Display(Name = "Base Imponible")]
+        public double TaxableBase { get; set; }
+
+        [Display(Name = "Porcentaje")]
+        public double Percentage { get; set; }
+
+        [Display(Name = "Importe Total")]
+        public double TotalAmount { get; set; }
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

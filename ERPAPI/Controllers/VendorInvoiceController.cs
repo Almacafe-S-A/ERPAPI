@@ -144,7 +144,7 @@ namespace ERPAPI.Controllers
                         PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
                         PartyTypeName = _VendorInvoiceq.VendorName,
                         TotalDebit = _VendorInvoiceq.Total,
-                        TotalCredit = _VendorInvoiceq.Total,
+                        TotalCredit = _VendorInvoiceq.Total,                        
                         PartyTypeId = 3,
                         PartyName = "Proveedor",
                         TypeJournalName = "Factura de Compras",
@@ -163,8 +163,9 @@ namespace ERPAPI.Controllers
                         //Description = _VendorInvoiceq.Account.AccountName,
                         AccountName = account.AccountCode,
                         Description = account.AccountName,
-                        Credit = 0,
-                        Debit = _VendorInvoiceq.Total,
+                        Credit = _VendorInvoiceq.Total,
+                        Debit = 0,
+                        CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
                         CreatedUser = _VendorInvoiceq.UsuarioCreacion,
@@ -181,8 +182,9 @@ namespace ERPAPI.Controllers
                             AccountId = Convert.ToInt32(item.AccountId),
                             AccountName = account.AccountCode,
                             Description = account.AccountName,
-                            Credit = item.Total,
-                            Debit = 0,
+                            Credit = 0,
+                            Debit = item.Total,
+                            CostCenterId = Convert.ToInt64(item.CostCenterId),                            
                             CreatedDate = DateTime.Now,
                             ModifiedDate = DateTime.Now,
                             CreatedUser = _VendorInvoiceq.UsuarioCreacion,
@@ -191,18 +193,31 @@ namespace ERPAPI.Controllers
                         });
                     }
 
-                    await _context.SaveChangesAsync();
+                    JournalEntryConfiguration jec = _context.JournalEntryConfiguration.Where(w => w.TransactionId == 2).FirstOrDefault();
 
-                    double sumacreditos = 0, sumadebitos = 0;
-                    if (sumacreditos != sumadebitos)
+                    if (jec != null)
                     {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                        return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                        JournalEntryConfigurationLine jeclines = _context.JournalEntryConfigurationLine.Where(w => w.JournalEntryConfigurationId == jec.JournalEntryConfigurationId).FirstOrDefault();
+                        if (jeclines != null)
+                        {                            
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                AccountId = Convert.ToInt32(jeclines.AccountId),
+                                //AccountName = jeclines.AccountCode,
+                                Description = jeclines.AccountName,
+                                Credit = jeclines.DebitCredit == "Credito" ? _VendorInvoiceq.Tax : 0,
+                                Debit = jeclines.DebitCredit == "Debito" ? _VendorInvoiceq.Tax : 0,
+                                CostCenterId = Convert.ToInt64(jeclines.CostCenterId),
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedUser = _VendorInvoiceq.UsuarioCreacion,
+                                ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
+                                Memo = "",
+                            });
+                        }
                     }
 
-                    _je.TotalCredit = sumacreditos;
-                    _je.TotalDebit = sumadebitos;
+                    
                     _context.JournalEntry.Add(_je);
 
                     await _context.SaveChangesAsync();

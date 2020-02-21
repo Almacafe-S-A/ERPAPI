@@ -183,8 +183,19 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<CheckAccount>> Insert([FromBody]CheckAccount _CheckAccount)
         {
             CheckAccount _CheckAccountq = new CheckAccount();
+
+            //////Valida que solo exista una chequera activa para una cuenta bancaria 
+            ///
+            List<CheckAccount> checkAccounts = await _context.CheckAccount.Where(w => w.AccountManagementId == _CheckAccount.AccountManagementId && w.IdEstado == 1).ToListAsync();
+
+            if (checkAccounts.Count>0)
+            {
+                return BadRequest($"Ya existe una chequera Activa para esta cuenta bancaria");
+            }
+
             try
             {
+
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
@@ -192,8 +203,12 @@ namespace ERPAPI.Controllers
 
                         _CheckAccountq = _CheckAccount;
                         _CheckAccountq.NumeroActual = _CheckAccountq.NoInicial;
+                        _CheckAccountq.IdEstado = 1;
+                        _CheckAccountq.Estado = "Activo";
 
-                _context.CheckAccount.Add(_CheckAccountq);
+
+
+                        _context.CheckAccount.Add(_CheckAccountq);
                 await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -250,10 +265,11 @@ namespace ERPAPI.Controllers
                     try
                     {
 
-                        _CheckAccountq = await (from c in _context.CheckAccount
-                                 .Where(q => q.CheckAccountId == _CheckAccount.CheckAccountId)
-                                        select c
-                                ).FirstOrDefaultAsync();
+                        _CheckAccountq = await _context.CheckAccount.Where(w => w.CheckAccountId == _CheckAccount.CheckAccountId).FirstOrDefaultAsync();
+                        if (_CheckAccountq.NoInicial == _CheckAccountq.NumeroActual)
+                        {
+                            _CheckAccount.NumeroActual = _CheckAccount.NoInicial; 
+                        }
 
                 _context.Entry(_CheckAccountq).CurrentValues.SetValues((_CheckAccount));
 

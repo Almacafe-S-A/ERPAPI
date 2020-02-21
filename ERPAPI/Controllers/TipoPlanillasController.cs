@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -200,7 +201,63 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Elimina un Tipo de Planilla       
+        /// </summary>
+        /// <param name="_TipoPlanillas"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Delete([FromBody]TipoPlanillas _TipoPlanillas)
+        {
+            TipoPlanillas _TipoPlanillasq = new TipoPlanillas();
+            try
+            {
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _TipoPlanillasq = _context.TipoPlanillas
+                        .Where(x => x.IdTipoPlanilla == (Int64)_TipoPlanillas.IdTipoPlanilla)
+                        .FirstOrDefault();
 
+                        _context.TipoPlanillas.Remove(_TipoPlanillasq);
+                        await _context.SaveChangesAsync();
+
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _TipoPlanillasq.IdTipoPlanilla,
+                            DocType = "TipoPlanillas",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_TipoPlanillasq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Eliminar",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _TipoPlanillasq.Usuariocreacion,
+                            UsuarioModificacion = _TipoPlanillasq.Usuariomodificacion,
+                            UsuarioEjecucion = _TipoPlanillasq.Usuariomodificacion,
+
+                        });
+
+                        await _context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                        throw ex;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_TipoPlanillasq));
+
+        }
 
     }
 }

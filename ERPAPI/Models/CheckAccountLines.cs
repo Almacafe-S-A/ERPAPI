@@ -34,6 +34,8 @@ namespace ERPAPI.Models
 
         public string AmountWords { get; set; }
 
+        public string Sinopsis { get; set; }
+
         public string Address { get; set; }
 
         public string Estado { get; set; }
@@ -47,5 +49,13 @@ namespace ERPAPI.Models
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
+    }
+
+    public class CheckAccountLinesDTO : CheckAccountLines
+    {
+        public  List<JournalEntryLine> JournalEntryLines { get; set; }
+
+
+
     }
 }

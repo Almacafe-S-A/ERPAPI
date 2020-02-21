@@ -30,7 +30,7 @@ namespace ERPAPI.Controllers
         }
 
         // GET: api/SalesOrderLine
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetSalesOrderLine()
         {
             List<SalesOrderLine> Items = new List<SalesOrderLine>();
@@ -169,8 +169,9 @@ namespace ERPAPI.Controllers
             return salesOrderLine;
         }
 
-        private async void UpdateSalesOrder(int salesOrderId)
+        private void UpdateSalesOrder(int salesOrderId)
         {
+            //List<SalesOrderLine> _SalesOrders = new List<SalesOrderLine>();
             try
             {
                 SalesOrder salesOrder = new SalesOrder();
@@ -183,15 +184,38 @@ namespace ERPAPI.Controllers
                     List<SalesOrderLine> lines = new List<SalesOrderLine>();
                     lines = _context.SalesOrderLine.Where(x => x.SalesOrderId.Equals(salesOrderId)).ToList();
 
+                    double impuesto15 = 0;
+                    double impuesto18 = 0;
+                    double totalgravado15 = 0;
+                    double totalgravado18 = 0;
+
+                    foreach (var item in lines)
+                    {
+                        if (item.TaxCode == "I.V.A")
+                        {
+
+                            impuesto18 = impuesto18 + item.TaxAmount;
+                            totalgravado18 = totalgravado18 + (item.Total - item.TaxAmount);
+                        }
+                        else
+                        {
+
+                            impuesto15 = impuesto15 + item.TaxAmount;
+                            totalgravado15 = totalgravado15 + (item.Total - item.TaxAmount);
+                        }
+
+                    }
+
+
                     //update master data by its lines
                     salesOrder.Amount = lines.Sum(x => x.Amount);
                     salesOrder.SubTotal = lines.Sum(x => x.SubTotal);
                     salesOrder.Discount = lines.Sum(x => x.DiscountAmount);
                     salesOrder.Tax = lines.Sum(x => x.TaxAmount);
                     salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
-                    _context.Update(salesOrder);
-
-                    await _context.SaveChangesAsync();
+                    salesOrder.TotalGravado = totalgravado15;
+                    salesOrder.TotalGravado18 = totalgravado18;
+                    _context.SalesOrder.Update(salesOrder);
                 }
             }
             catch (Exception ex)
@@ -215,6 +239,12 @@ namespace ERPAPI.Controllers
                     , ProductName = payload.ProductName
                      , ProductId = payload.ProductId
                     , Description = payload.Description
+                    , UnitOfMeasureName = payload.UnitOfMeasureName
+                    , UnitOfMeasureId = payload.UnitOfMeasureId
+                    , TaxCode = payload.TaxCode
+                    , TaxId = payload.TaxId
+                    ,Porcentaje = payload.Porcentaje
+                    ,Valor = payload.Valor
                     ,DiscountPercentage=payload.DiscountPercentage };
                // salesOrderLine = payload;
 
@@ -261,8 +291,9 @@ namespace ERPAPI.Controllers
                 SalesOrderLine salesOrderLine = payload;
                 salesOrderLine = this.Recalculate(salesOrderLine);
                 _context.SalesOrderLine.Update(salesOrderLine);
-                await _context.SaveChangesAsync();
+                //
                 this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+                await _context.SaveChangesAsync();
                 //return Ok(salesOrderLine);
                 return await Task.Run(() => Ok(salesOrderLine));
             }
