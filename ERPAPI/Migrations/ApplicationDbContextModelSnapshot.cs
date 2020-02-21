@@ -228,8 +228,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<int>("BranchId");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -274,8 +272,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
@@ -412,6 +408,26 @@ namespace ERPAPI.Migrations
                     b.HasKey("BankId");
 
                     b.ToTable("Bank");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Biometrico", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Fecha");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<string>("Observacion")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdEstado");
+
+                    b.ToTable("Biometricos");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Bitacora", b =>
@@ -3318,6 +3334,43 @@ namespace ERPAPI.Migrations
                     b.ToTable("DebitNoteLine");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.DeduccionEmpleado", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CantidadCuotas");
+
+                    b.Property<long>("DeductionId");
+
+                    b.Property<long>("EmpleadoId");
+
+                    b.Property<int>("EstadoId");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<float>("Monto");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.Property<DateTime>("VigenciaFinaliza");
+
+                    b.Property<DateTime>("VigenciaInicio");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeductionId");
+
+                    b.HasIndex("EmpleadoId");
+
+                    b.ToTable("DeduccionesEmpleados");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.Deduction", b =>
                 {
                     b.Property<long>("DeductionId")
@@ -3468,6 +3521,30 @@ namespace ERPAPI.Migrations
                     b.ToTable("DepreciationFixedAsset");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.DetalleBiometrico", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("FechaHora");
+
+                    b.Property<long>("IdBiometrico");
+
+                    b.Property<long>("IdEmpleado");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdBiometrico");
+
+                    b.HasIndex("IdEmpleado");
+
+                    b.ToTable("DetallesBiometricos");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.Dimensions", b =>
                 {
                     b.Property<string>("Num")
@@ -3610,6 +3687,56 @@ namespace ERPAPI.Migrations
                     b.HasIndex("Idconfiguracion");
 
                     b.ToTable("ElementoConfiguracion");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.EmpleadoBiometrico", b =>
+                {
+                    b.Property<long>("EmpleadoId");
+
+                    b.Property<long>("BiometricoId");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("EmpleadoId");
+
+                    b.ToTable("EmpleadosBiometrico");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.EmpleadoHorario", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("EmpleadoId");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("HorarioId");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmpleadoId");
+
+                    b.HasIndex("HorarioId");
+
+                    b.HasIndex("IdEstado");
+
+                    b.ToTable("EmpleadoHorarios");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EmployeeAbsence", b =>
@@ -3832,6 +3959,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Genero");
 
+                    b.Property<bool?>("HorasExtra");
+
                     b.Property<long?>("IdActivoinactivo");
 
                     b.Property<long>("IdBank");
@@ -4019,6 +4148,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BankName");
 
+                    b.Property<double>("CantidadEndosada");
+
                     b.Property<double>("CantidadEndosar");
 
                     b.Property<long>("CurrencyId");
@@ -4033,7 +4164,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("ExpirationDate");
 
+                    b.Property<DateTime>("FechaCancelacion");
+
                     b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaLiberacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
@@ -4052,6 +4187,8 @@ namespace ERPAPI.Migrations
                     b.Property<long>("ProductId");
 
                     b.Property<string>("ProductName");
+
+                    b.Property<double>("Saldo");
 
                     b.Property<double>("TasaDeInteres");
 
@@ -4087,6 +4224,8 @@ namespace ERPAPI.Migrations
                     b.Property<double>("Price");
 
                     b.Property<double>("Quantity");
+
+                    b.Property<double>("Saldo");
 
                     b.Property<long>("SubProductId");
 
@@ -4125,7 +4264,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Saldo");
 
+                    b.Property<long>("SubProductId");
+
+                    b.Property<string>("SubProductName");
+
                     b.Property<string>("TipoEndoso");
+
+                    b.Property<long>("UnitOfMeasureId");
+
+                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -4330,6 +4477,38 @@ namespace ERPAPI.Migrations
                     b.HasIndex("CurrencyId");
 
                     b.ToTable("ExchangeRate");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Feriado", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Anio");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaFin");
+
+                    b.Property<DateTime>("FechaInicio");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdEstado");
+
+                    b.ToTable("Feriados");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.FixedAsset", b =>
@@ -4600,6 +4779,8 @@ namespace ERPAPI.Migrations
                     b.Property<long>("CostCenterId");
 
                     b.Property<int>("CurrencyId");
+
+                    b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaCreacion");
 
@@ -5141,6 +5322,38 @@ namespace ERPAPI.Migrations
                     b.ToTable("GrupoEstado");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.Horario", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<string>("HoraFinal")
+                        .IsRequired();
+
+                    b.Property<string>("HoraInicio")
+                        .IsRequired();
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdEstado");
+
+                    b.ToTable("Horarios");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.HoursWorked", b =>
                 {
                     b.Property<long>("IdHorastrabajadas")
@@ -5197,6 +5410,34 @@ namespace ERPAPI.Migrations
                     b.HasIndex("IdHorasTrabajadas");
 
                     b.ToTable("HoursWorkedDetail");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.ISR", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("De");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<double>("Hasta");
+
+                    b.Property<double>("Porcentaje");
+
+                    b.Property<string>("Tramo")
+                        .IsRequired();
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ISRConfiguracion");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Incidencias", b =>
@@ -6893,6 +7134,33 @@ namespace ERPAPI.Migrations
                     b.ToTable("PeriodicidadPago");
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.Periodo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Anio");
+
+                    b.Property<string>("Estado");
+
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<long>("IdEstado");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdEstado");
+
+                    b.ToTable("Periodo");
+                });
+
             modelBuilder.Entity("ERPAPI.Models.PhoneLines", b =>
                 {
                     b.Property<long>("PhoneLineId")
@@ -7070,7 +7338,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long>("Periodo");
+                    b.Property<int>("PeriodoId");
 
                     b.Property<decimal>("PresupuestoAbril");
 
@@ -7110,7 +7378,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("CostCenterId");
 
-                    b.HasIndex("Periodo");
+                    b.HasIndex("PeriodoId");
 
                     b.ToTable("Presupuesto");
                 });
@@ -10050,14 +10318,6 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("ParentAccountAccountId");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.ApplicationUserClaim", b =>
                 {
                     b.HasOne("ERPAPI.Models.ApplicationUser")
@@ -10100,6 +10360,14 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Biometrico", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Estados", "Estado")
+                        .WithMany()
+                        .HasForeignKey("IdEstado")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -10367,6 +10635,32 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.DeduccionEmpleado", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Deduction", "Deduccion")
+                        .WithMany()
+                        .HasForeignKey("DeductionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.Employees", "Empleado")
+                        .WithMany()
+                        .HasForeignKey("EmpleadoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.DetalleBiometrico", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Biometrico", "Encabezado")
+                        .WithMany("Detalle")
+                        .HasForeignKey("IdBiometrico")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.Employees", "Empleado")
+                        .WithMany()
+                        .HasForeignKey("IdEmpleado")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("ERPAPI.Models.Doc_CP", b =>
                 {
                     b.HasOne("ERPAPI.Models.Accounting", "Account")
@@ -10399,6 +10693,32 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.GrupoConfiguracion", "GrupoConfiguracion")
                         .WithMany()
                         .HasForeignKey("Idconfiguracion");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.EmpleadoBiometrico", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Employees", "Empleado")
+                        .WithMany()
+                        .HasForeignKey("EmpleadoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.EmpleadoHorario", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Employees", "Empleado")
+                        .WithMany()
+                        .HasForeignKey("EmpleadoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.Horario", "HorarioEmpleado")
+                        .WithMany()
+                        .HasForeignKey("HorarioId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.Estados", "Estado")
+                        .WithMany()
+                        .HasForeignKey("IdEstado")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.EmployeeExtraHours", b =>
@@ -10515,6 +10835,14 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.Feriado", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Estados", "Estado")
+                        .WithMany()
+                        .HasForeignKey("IdEstado")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("ERPAPI.Models.FixedAssetGroup", b =>
                 {
                     b.HasOne("ERPAPI.Models.Accounting", "DepreciationFixedAssetAccounting")
@@ -10542,7 +10870,7 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.Estados", "Estado")
+                    b.HasOne("ERPAPI.Models.Estados", "Estados")
                         .WithMany()
                         .HasForeignKey("IdEstado")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -10577,6 +10905,14 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Linea", "Linea")
                         .WithMany()
                         .HasForeignKey("LineaId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.Horario", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Estados", "Estado")
+                        .WithMany()
+                        .HasForeignKey("IdEstado")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -10759,6 +11095,14 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("ERPAPI.Models.Periodo", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Estados", "Estados")
+                        .WithMany()
+                        .HasForeignKey("IdEstado")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("ERPAPI.Models.PhoneLines", b =>
                 {
                     b.HasOne("ERPAPI.Models.Branch", "Branch")
@@ -10792,9 +11136,9 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("CostCenterId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "ElementoConfiguracion")
+                    b.HasOne("ERPAPI.Models.Periodo", "Periodo")
                         .WithMany()
-                        .HasForeignKey("Periodo")
+                        .HasForeignKey("PeriodoId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

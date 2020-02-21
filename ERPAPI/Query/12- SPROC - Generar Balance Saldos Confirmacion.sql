@@ -11,7 +11,7 @@ GO
 DROP PROCEDURE IF EXISTS [dbo].[BalanceDeSaldos]
 GO
 
-CREATE PROCEDURE [dbo].[BalanceDeSaldos]
+CREATE OR ALTER PROCEDURE [dbo].[BalanceDeSaldos]
     @MES INT,
 	@ANIO INT,	
 	@NIVEL INT,
@@ -93,7 +93,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinActual
+				WHERE Cab.Date < @FechaFinActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
@@ -110,7 +110,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaIniActual
+				WHERE Cab.Date < @FechaIniActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
@@ -126,7 +126,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual
+				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
@@ -143,7 +143,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinAnioPrev
+				WHERE Cab.Date < @FechaFinAnioPrev AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
@@ -169,7 +169,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinActual AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.Date < @FechaFinActual AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
@@ -186,7 +186,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaIniActual AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.Date < @FechaIniActual AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId 
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
@@ -202,7 +202,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
@@ -219,7 +219,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinAnioPrev AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.Date < @FechaFinAnioPrev AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
 			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado

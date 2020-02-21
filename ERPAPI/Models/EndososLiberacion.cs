@@ -23,6 +23,18 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de liberación")]
         public DateTime FechaLiberacion { get; set; }
 
+        [Display(Name = "Producto")]
+        public Int64 SubProductId { get; set; }
+
+        [Display(Name = "Producto")]
+        public string SubProductName { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public Int64 UnitOfMeasureId { get; set; }
+
+        [Display(Name = "Unidad de medida")]
+        public string UnitOfMeasureName { get; set; }
+
         [Display(Name = "Cantidad")]
         public double Quantity { get; set; }
 

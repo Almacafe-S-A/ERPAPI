@@ -82,6 +82,15 @@ namespace ERPAPI.Models
         [Display(Name = "Total endoso")]
         public double TotalEndoso { get; set; }
 
+        public DateTime FechaLiberacion { get; set; }/// automatica al cancelar un endoso
+
+        public DateTime FechaCancelacion { get; set; }/// solo sera editable en las liberaciones
+
+        public double CantidadEndosada { get; set; } ///Se ingresara manual al registrar un Endoso
+
+        public double Saldo { get; set; } /// solo se va mostrar en el grid Princial de endosos para referencias 
+
+
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }

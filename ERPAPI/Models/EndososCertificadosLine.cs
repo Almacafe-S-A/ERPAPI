@@ -32,13 +32,15 @@ namespace ERPAPI.Models
         public string SubProductName { get; set; }
 
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public double Quantity { get; set; }        
 
         [Display(Name = "Precio")]
         public double Price { get; set; }
 
         [Display(Name = "Valor endoso")]
         public double ValorEndoso { get; set; }
+
+        public double Saldo { get; set; }
 
 
     }
