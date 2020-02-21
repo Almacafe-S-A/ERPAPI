@@ -6,7 +6,8 @@ GO
 
 
 
-CREATE OR ALTER    PROCEDURE [dbo].[GenerarBalanceComparativo2]
+CREATE OR ALTER PROCEDURE [dbo].[GenerarBalanceComparativo2]
+	@MES INT,
 	@ANIO INT,	
 	@NIVEL INT,
 	@CENTROCOSTO BIGINT
@@ -22,10 +23,7 @@ BEGIN
 	DECLARE @SaldoPrev AS FLOAT;
 	DECLARE @Debe AS FLOAT;
 	DECLARE @Haber AS FLOAT;
-	DECLARE @Saldo AS FLOAT;	
-	DECLARE @MES INT;
-
-	SET @MES = 12;
+	DECLARE @Saldo AS FLOAT;
 
 	DROP TABLE IF EXISTS #BalanceSaldo;	
 	
@@ -81,10 +79,18 @@ BEGIN
 	WHERE Totaliza = 1
 	ORDER BY AccountCode;	
 
-	SET @FechaFinActual = STR(@ANIO+1) + '-01-01';
-	SET @FechaFinAnioPrev = STR(@ANIO) + '-01-01';
-	SET @FechaFinComparativo = STR(@ANIO) + '-01-01';
-
+	IF @MES = 12
+		BEGIN
+			SET @FechaFinActual = STR(@ANIO+1) + '-01-01';
+			SET @FechaFinAnioPrev = STR(@ANIO) + '-01-01';
+			SET @FechaFinComparativo = STR(@ANIO) + '-01-01';
+		END
+	ELSE
+		BEGIN
+			SET @FechaFinActual = STR(@ANIO) + '-' + RIGHT('00'+STR(@MES+1),2) + '-01';
+			SET @FechaFinAnioPrev = STR(@ANIO-1) + '-' + RIGHT('00'+STR(@MES+1),2) + '-01';
+			SET @FechaFinComparativo = STR(@ANIO-1) + '-' + RIGHT('00'+STR(@MES+1),2) + '-01';
+		END
 	SET @FechaIniActual = STR(@ANIO) + '-' + RIGHT('00'+STR(@MES),2) + '-01';
 	SET @FechaIniComparativo = STR(@ANIO) + '-01-01';
 
@@ -189,7 +195,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinActual AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
+				WHERE Cab.Date < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -207,7 +213,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaIniActual AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
+				WHERE Cab.Date < @FechaIniActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId 
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -224,7 +230,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
+				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -242,7 +248,7 @@ BEGIN
 				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinAnioPrev AND Det.CostCenterId = @CENTROCOSTO AND Cab.EstadoId = 6
+				WHERE Cab.Date < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -377,8 +383,20 @@ BEGIN
 	WHEN B.DeudoraAcreedora = 'A' THEN '2'
 	ELSE '1'
 	END AS 'DeudoraAcreedora', B.Estado, B.Totaliza, 
+	--CASE T2.AceptaNegativo
+	--WHEN 1 THEN
+	--	Round(B.SaldoPrevAnio,2) * -1
+	--ELSE
+	--	Round(B.SaldoPrevAnio,2)
+	--END
 	Round(B.SaldoPrevAnio,2) AS 'AñoAnterior', 
 	Round(B.SaldoPrev,2) SaldoPrev, Round(B.Debe,2) Debe, Round(B.Haber,2) Haber, 
+	--CASE T2.AceptaNegativo
+	--WHEN 1 THEN
+	--	Round(B.SaldoFinal,2) * -1
+	--ELSE
+	--	Round(B.SaldoFinal,2)
+	--END
 	Round(B.SaldoFinal,2) AS 'AñoActual'
 	, T2.TypeAccountId, T3.TypeAccountName AS 'TipoDeCuenta'
 	, T4.ParentAccountId AS 'SubCuentaId'
@@ -415,12 +433,12 @@ BEGIN
 
 	UPDATE #BalanceComparativo
 	SET Columna = Columna + 1
-	WHERE (CONVERT(BIGINT, (SUBSTRING(AccountCode, 1, 2))) > = 54)
+	WHERE (CAST(SUBSTRING(AccountCode, 1, 2) AS BIGINT) > = 54)
 
 	SET @id = (SELECT Columna FROM #BalanceComparativo WHERE AccountCode = '54') - 1
 	UPDATE #BalanceComparativo
 	SET @id = Columna = @id + 1
-	WHERE (CONVERT(BIGINT, (SUBSTRING(AccountCode, 1, 2))) BETWEEN 61 AND 63)
+	WHERE (CAST(SUBSTRING(AccountCode, 1, 2) AS BIGINT) BETWEEN 61 AND 63)
 
 	SET @id = @id + 1
 	INSERT INTO #BalanceComparativo 
