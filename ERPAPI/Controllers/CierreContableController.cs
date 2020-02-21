@@ -39,7 +39,7 @@ namespace ERPAPI.Controllers
             try
             {
                 BitacoraCierreContable cierre = new BitacoraCierreContable();
-                cierre = await _context.BitacoraCierreContable.OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
+                cierre = await _context.BitacoraCierreContable.Where(w => w.Estatus == "FINALIZADO").OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
                  return await Task.Run(() => Ok(cierre)); ;
 
             }
@@ -75,14 +75,6 @@ namespace ERPAPI.Controllers
 
             if (cierre != null)               
             {
-                //if (!CheckCierre(cierre))
-                //{
-                //    return await Task.Run(() =>Ok());
-                //}
-                //else
-                //{
-                //    return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
-                //}
                 return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
             }
 
@@ -171,30 +163,30 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(proceso5);
                     _context.SaveChanges();
 
+                    BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
+                    {
+                        IdBitacoraCierre = cierre.Id,
+                        //IdProceso = 1,
+                        Estatus = "PENDIENTE",
+                        Proceso = "Depreciacion de Activos",
+                        PasoCierre = 4,
+                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                        FechaModificacion = DateTime.Now,
+                        FechaCierre = cierre.FechaCierre,
+                        FechaCreacion = DateTime.Now,
+
+                    };
+                    _context.BitacoraCierreProceso.Add(proceso4);
+
+                    _context.SaveChanges();
+                    await Paso4(proceso4, cierre);
 
 
-
-                    if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
+            if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
                     {
                         //Paso4 Depreciacion de Activos 
-                        BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
-                        {
-                            IdBitacoraCierre = cierre.Id,
-                            //IdProceso = 1,
-                            Estatus = "PENDIENTE",
-                            Proceso = "Depreciacion de Activos",
-                            PasoCierre = 4,
-                            UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                            UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                            FechaModificacion = DateTime.Now,
-                            FechaCierre = cierre.FechaCierre,
-                            FechaCreacion = DateTime.Now,
-
-                        };
-                        _context.BitacoraCierreProceso.Add(proceso4);
-
-                        _context.SaveChanges();
-                        await Paso4(proceso4, cierre);
+                       
                     }
 
             
@@ -211,8 +203,9 @@ namespace ERPAPI.Controllers
                 await Paso5(proceso5.IdProceso);
                 // POLIZAS VENCIDAS 
                 await Paso1(cierre.Id, proceso1.IdProceso); ////HISTORICOS
-                cierre.Estatus = "Finalizado";
-                _context.Update(cierre);
+                await ValidarPasos(cierre);
+                //cierre.Estatus = "Finalizado";
+                //_context.Update(cierre);
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok());
 
@@ -712,11 +705,11 @@ namespace ERPAPI.Controllers
 
         }
 
-        private  void ValidarPasos(BitacoraCierreContable pCierre )
+        private  async Task ValidarPasos(BitacoraCierreContable pCierre )
         {
-            List<BitacoraCierreProcesos> procesos =  _context.BitacoraCierreProceso
+            List<BitacoraCierreProcesos> procesos = await _context.BitacoraCierreProceso
                            .Where(b => b.IdBitacoraCierre == pCierre.Id)
-                           .ToList();
+                           .ToListAsync();
             string mensaje = "";
             foreach (var item in procesos) ////REVISA QUE ALGUN PASO NO TENGA ERROR EN EL CIERRE AL VOLVER A EJECUTAR
             {
