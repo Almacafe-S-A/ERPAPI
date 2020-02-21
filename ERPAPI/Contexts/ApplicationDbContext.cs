@@ -36,6 +36,8 @@ namespace ERP.Contexts
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
 
+        public DbSet <Presupuesto> Presupuesto { get; set; }
+
 
         public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
         public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
@@ -322,6 +324,28 @@ namespace ERP.Contexts
 
         public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
 
+
+        public DbSet<DeduccionEmpleado> DeduccionesEmpleados { get; set; }
+
+        public DbSet<ISR> ISRConfiguracion { get; set; }
+
+        public DbSet<Feriado> Feriados { get; set; }
+
+        public DbSet<Horario> Horarios { get; set; }
+
+        public DbSet<EmpleadoHorario> EmpleadoHorarios { get; set; }
+
+        public DbSet<EmpleadoBiometrico> EmpleadosBiometrico { get; set; }
+
+        public DbSet<Biometrico> Biometricos { get; set; }
+
+        public DbSet<DetalleBiometrico> DetallesBiometricos { get; set; }
+
+        public DbSet<PhoneLines> PhoneLines { get; set; }
+
+        public DbSet<Periodo> Periodo { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
@@ -337,6 +361,11 @@ namespace ERP.Contexts
             modelBuilder.Entity<UserBranch>()
             .HasIndex(k => new { k.BranchId, k.UserId })
             .IsUnique(true);
+
+
+            modelBuilder.Entity<CheckAccount>()
+            .HasIndex(u => u.CheckAccountNo)
+            .IsUnique();
 
             //modelBuilder.Entity<UserBranch>()
             //.HasKey(k => new { k.BranchId, k.UserId });
@@ -466,8 +495,6 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<Quotation>()
             .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
-
-
 
 
         }

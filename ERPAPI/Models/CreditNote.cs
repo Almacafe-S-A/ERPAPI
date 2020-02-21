@@ -112,6 +112,12 @@ namespace ERPAPI.Models
         [Display(Name = "Moneda")]
         public string CurrencyName { get; set; }
 
+        [Display(Name = "SubProducto")]
+        public Int64? SubProductId { get; set; }
+
+        [Display(Name = "Nombre SubProducto")]
+        public string SubProductName { get; set; }
+
         [Display(Name = "Moneda tasa")]
         public double Currency { get; set; }
 

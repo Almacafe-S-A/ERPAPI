@@ -194,7 +194,34 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Devuelve la cantidad de productos que coinciden con los parametros
+        /// </summary>
+        /// <param name="Producto"></param>
+        /// <returns></returns>
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Int32>> GetProducto([FromBody]CustomerProduct Producto)
+        {
+            try
+            {
+                if (Producto.CustomerProductId == 0)
+                {
+                    var Items = await _context.CustomerProduct.Where(q => q.SubProductId == Producto.SubProductId && q.CustomerId == Producto.CustomerId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+                else
+                {
+                    var Items = await _context.CustomerProduct.Where(q => q.SubProductId == Producto.SubProductId && q.CustomerId == Producto.CustomerId && q.CustomerProductId != Producto.CustomerProductId).CountAsync();
+                    return await Task.Run(() => Ok(Items));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }            
+        }
 
 
 

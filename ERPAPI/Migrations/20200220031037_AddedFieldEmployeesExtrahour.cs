@@ -2,22 +2,21 @@
 
 namespace ERPAPI.Migrations
 {
-    public partial class AgregarCampoTipoDeducciones : Migration
+    public partial class AddedFieldEmployeesExtrahour : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "EsPorcentaje",
-                table: "Deduction",
-                nullable: false,
-                defaultValue: false);
+                name: "HorasExtra",
+                table: "Employees",
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "EsPorcentaje",
-                table: "Deduction");
+                name: "HorasExtra",
+                table: "Employees");
         }
     }
 }
