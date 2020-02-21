@@ -30,7 +30,10 @@ namespace ERPAPI.Models
         public double Ajuste { get; set; }
 
         public Int64 IdEstado { get; set; }
-        public Estados Estado { get; set; }
+        [ForeignKey("IdEstado")]
+        public Estados Estados { get; set; }
+        public string  Estado { get; set; }
+
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }

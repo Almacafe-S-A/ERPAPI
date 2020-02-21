@@ -11,13 +11,13 @@ namespace ERPAPI.Migrations
 
             migrationBuilder.Sql("DELETE FROM EmployeeExtraHoursDetail");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_EmployeeExtraHoursDetail_EmployeeExtraHours_EmployeeExtraHoursId",
-                table: "EmployeeExtraHoursDetail");
+            //migrationBuilder.DropForeignKey(
+            //    name: "FK_EmployeeExtraHoursDetail_EmployeeExtraHours_EmployeeExtraHoursId",
+            //    table: "EmployeeExtraHoursDetail");
 
-            migrationBuilder.DropIndex(
-                name: "IX_EmployeeExtraHoursDetail_EmployeeExtraHoursId",
-                table: "EmployeeExtraHoursDetail");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_EmployeeExtraHoursDetail_EmployeeExtraHoursId",
+            //    table: "EmployeeExtraHoursDetail");
 
             migrationBuilder.AddColumn<long>(
                 name: "CustomerId",

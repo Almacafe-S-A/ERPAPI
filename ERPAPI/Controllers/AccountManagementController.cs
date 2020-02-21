@@ -130,6 +130,32 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
+        /// </summary>
+        /// <param name="BankId"></param>
+        /// <param name="TypeAccountId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{BankId}/{TypeAccountId}")]
+        public async Task<IActionResult> GetAccountManagementByBankIdTypeAccountId(Int64 BankId, int TypeAccountId)
+        {
+            List<AccountManagement> Items = new List<AccountManagement>();
+            try
+            {
+                Items = await _context.AccountManagement.Where(q => q.BankId == BankId && q.TypeAccountId == TypeAccountId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
 
 
 

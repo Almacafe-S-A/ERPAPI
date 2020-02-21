@@ -293,8 +293,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
-
+        [HttpPost("[action]/{Id}/{Valor}/{usuario}")]
+        public async Task<ActionResult> UpdateElementoConfiguracionValorDecimal(long Id, double Valor, string usuario)
+        {
+            try
+            {
+                ElementoConfiguracion elemento = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == Id);
+                elemento.Valordecimal = Valor;
+                elemento.FechaModificacion = DateTime.Now;
+                elemento.UsuarioModificacion = usuario;
+                await _context.SaveChangesAsync();
+                return Ok(elemento);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Ocurrio un error al actualizar el elemento configuración No. " + Id);
+                return BadRequest(ex);
+            }
+        }
 
 
 

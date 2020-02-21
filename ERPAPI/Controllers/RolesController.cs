@@ -171,16 +171,14 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                ApplicationRole ApplicationRoleq = (from c in _context.Roles
-                                     .Where(q => q.Id == _rol.Id)
-                            select c
-                                    ).FirstOrDefault();
+                ApplicationRole ApplicationRoleq = await _context.Roles.Where(q => q.Id == _rol.Id).FirstOrDefaultAsync();
 
                 _rol.FechaCreacion = ApplicationRoleq.FechaCreacion;
                 _rol.UsuarioCreacion = ApplicationRoleq.UsuarioCreacion;
+                _rol.FechaModificacion = DateTime.Now;
 
 
-                _context.Roles.Update(_rol);
+                _context.Entry(ApplicationRoleq).CurrentValues.SetValues(_rol);
                 await _context.SaveChangesAsync();
 
             }
