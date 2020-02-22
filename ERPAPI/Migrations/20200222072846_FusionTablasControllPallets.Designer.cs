@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200222072846_FusionTablasControllPallets")]
+    partial class FusionTablasControllPallets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -985,10 +987,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Impreso");
 
-                    b.Property<int?>("InsuranceId");
-
-                    b.Property<long?>("InsurancePolicyId");
-
                     b.Property<string>("LugarFirma");
 
                     b.Property<string>("ManifiestoNo");
@@ -1031,10 +1029,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("IdCD");
 
-                    b.HasIndex("InsuranceId");
-
-                    b.HasIndex("InsurancePolicyId");
-
                     b.ToTable("CertificadoDeposito");
                 });
 
@@ -1053,8 +1047,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Description");
 
                     b.Property<long>("IdCD");
-
-                    b.Property<decimal?>("Merma");
 
                     b.Property<double>("Price");
 
@@ -6490,21 +6482,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("BranchId");
+                    b.Property<double>("Currency");
 
-                    b.Property<string>("BranchName");
-
-                    b.Property<long?>("ControlEstibaId");
-
-                    b.Property<string>("ControlEstibaName");
-
-                    b.Property<long?>("CostCenterId");
-
-                    b.Property<string>("CostCenterName");
-
-                    b.Property<double?>("Currency");
-
-                    b.Property<long?>("CurrencyId");
+                    b.Property<long>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
 
@@ -6518,7 +6498,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("DocumentDate");
 
-                    b.Property<long?>("DocumentId");
+                    b.Property<long>("DocumentId");
 
                     b.Property<string>("DocumentName");
 
@@ -6526,57 +6506,17 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<long?>("GoodsReceivedId");
-
                     b.Property<string>("Impreso");
 
                     b.Property<DateTime>("KardexDate");
 
-                    b.Property<double?>("MinimumExistance");
-
-                    b.Property<long?>("ProducId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<double?>("QuantityEntry");
-
-                    b.Property<double?>("QuantityEntryBags");
-
-                    b.Property<double?>("QuantityEntryCD");
-
-                    b.Property<double?>("QuantityOut");
-
-                    b.Property<double?>("QuantityOutBags");
-
-                    b.Property<double?>("QuantityOutCD");
-
-                    b.Property<double?>("SaldoAnterior");
-
-                    b.Property<long?>("SubProducId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<double?>("Total");
-
-                    b.Property<double?>("TotalBags");
-
-                    b.Property<double?>("TotalCD");
-
-                    b.Property<int?>("TypeOperationId");
+                    b.Property<int>("TypeOperationId");
 
                     b.Property<string>("TypeOperationName");
-
-                    b.Property<long?>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<long?>("WareHouseId");
-
-                    b.Property<string>("WareHouseName");
 
                     b.HasKey("KardexId");
 
@@ -10491,17 +10431,6 @@ namespace ERPAPI.Migrations
                         .WithMany("Branch")
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CertificadoDeposito", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Insurances", "Insurances")
-                        .WithMany()
-                        .HasForeignKey("InsuranceId");
-
-                    b.HasOne("ERPAPI.Models.InsurancePolicy", "InsurancePolicy")
-                        .WithMany()
-                        .HasForeignKey("InsurancePolicyId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CertificadoLine", b =>
