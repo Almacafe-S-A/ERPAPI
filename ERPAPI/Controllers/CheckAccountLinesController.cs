@@ -187,10 +187,10 @@ namespace ERPAPI.Controllers
 
                     JournalEntry _je = new JournalEntry
                     {
-                        Date = DateTime.Now,
+                        Date = check.Date,
                         //Memo = $"Cheque Numero {check.CheckNumber} ",
-                        Memo = _CheckAccountLinesq.Sinopsis,
-                        DatePosted = DateTime.Now,
+                        Memo = _CheckAccountLinesq.Sinopsis,                        
+                        DatePosted = check.Date,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
                         ModifiedUser = check.UsuarioModificacion,
