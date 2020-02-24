@@ -290,8 +290,8 @@ namespace ERPAPI.Controllers
 
 
 
-                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 8).FirstOrDefaultAsync();
-                if (jecheck != null)
+                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
+                if (jecheck != null )
                 {
 
                     JournalEntry jeAnulacion = new JournalEntry
