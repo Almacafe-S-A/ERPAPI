@@ -104,3 +104,46 @@ VALUES(4, 563812.30,10000000,'9,436,187.70',25,GetDate(),GetDate(),'erp@bi-dss.c
 
 SET IDENTITY_INSERT ISRConfiguracion OFF
 GO
+
+
+SET IDENTITY_INSERT GrupoConfiguracion ON
+GO
+
+INSERT INTO GrupoConfiguracion(IdConfiguracion,Nombreconfiguracion,Tipoconfiguracion, IdZona, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion)
+VALUES(110,'Parametros RRHH','RRHH',0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+GO
+
+SET IDENTITY_INSERT GrupoConfiguracion OFF
+GO
+
+SET IDENTITY_INSERT ElementoConfiguracion ON
+GO
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(140,'MINUTOS DE GRACIA ENTRADA','Minutos de gracia para considerar una llegada tarde',1,'Activo',110, 5,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(141,'MINUTOS DE GRACIA SALIDA','Minutos de gracia para considerar una salida tarde, posible hora extra',1,'Activo',110, 60,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT ElementoConfiguracion OFF
+GO
+
+
+SET IDENTITY_INSERT GrupoEstado ON
+GO
+INSERT INTO GrupoEstado (Id,Nombre,Modulo,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(10,'Estado Llegadas Tarde Horas Extra','RRHH','2020-01-01','2020-01-01','erp@bi-dss.com','erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT GrupoEstado OFF
+GO
+
+
+SET IDENTITY_INSERT Estados ON
+GO
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(70,'Cargado','Registro Cargado',10,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(71,'Aprobado','Registro Aprobado',10,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(72,'Rechazado','Registro Rechazado',10,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+GO
+SET IDENTITY_INSERT Estados OFF
+GO

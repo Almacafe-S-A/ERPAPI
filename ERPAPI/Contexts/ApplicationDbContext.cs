@@ -345,6 +345,11 @@ namespace ERP.Contexts
 
         public DbSet<Periodo> Periodo { get; set; }
 
+        public DbSet<HorasExtraBiometrico> HorasExtrasBiometrico { get; set; }
+
+        public DbSet<LlegadasTardeBiometrico> LlegadasTardeBiometrico { get; set; }
+
+        public DbSet<Inasistencia> Inasistencias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
