@@ -31,7 +31,7 @@ namespace ERPAPI.Controllers
         {
             var empleados = await (from emp in context.Employees
                 where !context.DetallesBiometricos.Any(
-                        d => d.Encabezado.Fecha.Equals(fecha) && d.IdEmpleado == emp.IdEmpleado) && 
+                        d => d.Encabezado.Fecha.Equals(fecha) && d.Encabezado.IdEstado == 62 && d.IdEmpleado == emp.IdEmpleado) && 
                       !context.Inasistencias.Any(i=> i.Fecha.Equals(fecha) && i.IdEmpleado == emp.IdEmpleado)
                 select emp).ToListAsync();
 
@@ -63,7 +63,11 @@ namespace ERPAPI.Controllers
             try
             {
                 await GenerarInasistencias(fecha);
-                var inasistencias = await context.Inasistencias.Where(i => i.Fecha.Equals(fecha) && i.IdEstado != 81).ToListAsync();
+                var inasistencias = await context.Inasistencias
+                    .Include(e=>e.Estado)
+                    .Include(e=>e.Tipo)
+                    .Include(e=>e.Empleado)
+                    .Where(i => i.Fecha.Equals(fecha) && i.IdEstado != 81).ToListAsync();
                 return Ok(inasistencias);
             }
             catch (Exception ex)
@@ -73,6 +77,7 @@ namespace ERPAPI.Controllers
             }
         }
 
+        [HttpPost("[action]")]
         public async Task<ActionResult> Guardar(Inasistencia inasistencia)
         {
             try

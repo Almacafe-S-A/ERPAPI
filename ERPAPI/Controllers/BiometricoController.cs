@@ -143,6 +143,17 @@ namespace ERPAPI.Controllers
                                 throw new Exception("Empleado sin horario asignado en el archivo del biometrico:" + detalle.Empleado.NombreEmpleado);
 
                             var horario = horarioEmpleado.HorarioEmpleado;
+                            
+                            //Eliminar inasistencia si existe
+
+                            var inasistencia = await context.Inasistencias.FirstOrDefaultAsync(r =>
+                                r.Fecha.Equals(biometrico.Fecha) && r.IdEmpleado == detalle.IdEmpleado);
+
+                            if (inasistencia != null)
+                            {
+                                context.Inasistencias.Remove(inasistencia);
+                            }
+
                             if (detalle.Tipo.ToUpper().Equals("E"))
                             {
                                 //Entradas
