@@ -147,3 +147,56 @@ VALUES(72,'Rechazado','Registro Rechazado',10,'erp@bi-dss.com','erp@bi-dss.com',
 GO
 SET IDENTITY_INSERT Estados OFF
 GO
+
+
+SET IDENTITY_INSERT GrupoConfiguracion ON
+GO
+
+INSERT INTO GrupoConfiguracion(IdConfiguracion,Nombreconfiguracion,Tipoconfiguracion, IdZona, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion)
+VALUES(120,'Tipos de Inasistencias','RRHH',0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+GO
+
+SET IDENTITY_INSERT GrupoConfiguracion OFF
+GO
+
+SET IDENTITY_INSERT ElementoConfiguracion ON
+GO
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(150,'DESCONOCIDO','Se desconoce la razón de la inasistencia',1,'Activo',120, 0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(151,'LLEGADA TARDE','Llegada Tarde',1,'Activo',120, 0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(152,'DOMINGO O DÍA LIBRE','Domingo o Día Libre',1,'Activo',120, 0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(153,'INCAPACIDAD','Incapacidad',1,'Activo',120, 0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(154,'VACACIONES','Vacaciones',1,'Activo',120, 0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(155,'PERMISO','Permiso',1,'Activo',120, 0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+
+GO
+SET IDENTITY_INSERT ElementoConfiguracion OFF
+GO
+
+SET IDENTITY_INSERT GrupoEstado ON
+GO
+INSERT INTO GrupoEstado (Id,Nombre,Modulo,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(20,'Estados Inasistencias','RRHH','2020-01-01','2020-01-01','erp@bi-dss.com','erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT GrupoEstado OFF
+GO
+
+
+SET IDENTITY_INSERT Estados ON
+GO
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(80,'Creado','Registro Creado',20,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(81,'Anulado','Registro Anulado',20,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(82,'Aprobado','Registro Aprobado',20,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(83,'Rechazado','Registro Rechazado',20,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+GO
+SET IDENTITY_INSERT Estados OFF
+GO
