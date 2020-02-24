@@ -265,6 +265,114 @@ namespace ERPAPI.Controllers
 
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityJournalEntriesAprovement()
+        {
+            try
+            {
+                var Items = await _context.JournalEntry.Where(w => w.EstadoId == 5  &&  w.TypeOfAdjustmentId ==65 ).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityJournalPendientes()
+        {
+            try
+            {
+                var Items = await _context.JournalEntry.Where(w => w.EstadoId == 5 && w.TypeOfAdjustmentId == 66).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityFacturasproveedor()
+        {
+            try
+            {
+                DateTime fechaactual = DateTime.Now.AddDays(-1);
+          
+            
+                var Items = await _context.VendorInvoice.Where(w => w.ExpirationDate.ToString("yyyy-MM-dd") == fechaactual.ToString("yyyy-MM-dd")).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityJournalEntriestotal()
+        {
+            try
+            {
+                DateTime fechadehoy = DateTime.Now;
+                var Items = await _context.JournalEntry.Where(w => w.CreatedDate.ToString("yyyy-MM-dd") == fechadehoy.ToString("yyyy-MM-dd") && w.TypeOfAdjustmentId ==65 ).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityJournalEntriestotaldehoy()
+        {
+            try
+            {
+                DateTime fechadehoy = DateTime.Now;
+                var Items = await _context.JournalEntry.Where(w => w.CreatedDate.ToString("yyyy-MM-dd") == fechadehoy.ToString("yyyy-MM-dd")).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityCheckAccountLines()
+        {
+            try
+            {
+                var Items = await _context.CheckAccountLines.Where(w => w.IdEstado == 53).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
 
         [HttpGet("[action]")]
         public async Task<ActionResult<Int32>> GetQuantityCustomers()
