@@ -1,3 +1,4 @@
+/****** Object:  StoredProcedure [dbo].[GenerarBalanceComparativo2]    Script Date: 21/2/2020 22:14:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -112,10 +113,10 @@ BEGIN
 					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinActual AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -130,10 +131,10 @@ BEGIN
 					0 SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaIniActual AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted < @FechaIniActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -147,10 +148,10 @@ BEGIN
 					0 SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted >= @FechaIniActual AND Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -165,10 +166,10 @@ BEGIN
 					0 SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinAnioPrev AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -192,10 +193,10 @@ BEGIN
 					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -210,10 +211,10 @@ BEGIN
 					0 SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaIniActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted < @FechaIniActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId 
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -227,10 +228,10 @@ BEGIN
 					0 SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date >= @FechaIniActual AND Cab.Date < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted >= @FechaIniActual AND Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)
@@ -245,10 +246,10 @@ BEGIN
 					0 SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
-				SELECT Cab.Date, Det.AccountId, Det.Credit, Det.Debit 
+				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.Date < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
 			WHERE Cta.AccountCode NOT LIKE '7%'
    AND Cta.TypeAccountId IN (5,6)

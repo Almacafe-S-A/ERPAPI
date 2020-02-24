@@ -46,10 +46,16 @@ namespace ERPAPI.Models
 
         public Int64 IdEstado { get; set; }
         public string Estado { get; set; }
+        public int? InsuranceId { get; set; }
+        [ForeignKey("InsuranceId")]
+        public Insurances Insurances { get; set; }
 
         [Display(Name = "Seguro")]
         public string EmpresaSeguro { get; set; }
 
+        public Int64? InsurancePolicyId { get; set; }
+        [ForeignKey("InsurancePolicyId")]
+        public InsurancePolicy InsurancePolicy { get; set; }
         [Display(Name = "No. Poliza")]
         public string NoPoliza { get; set; }
         [Display(Name = "Sujetos a pago")]

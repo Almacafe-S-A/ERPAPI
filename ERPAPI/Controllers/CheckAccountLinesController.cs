@@ -187,10 +187,10 @@ namespace ERPAPI.Controllers
 
                     JournalEntry _je = new JournalEntry
                     {
-                        Date = DateTime.Now,
+                        Date = check.Date,
                         //Memo = $"Cheque Numero {check.CheckNumber} ",
-                        Memo = _CheckAccountLinesq.Sinopsis,
-                        DatePosted = DateTime.Now,
+                        Memo = _CheckAccountLinesq.Sinopsis,                        
+                        DatePosted = check.Date,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
                         ModifiedUser = check.UsuarioModificacion,
@@ -203,7 +203,7 @@ namespace ERPAPI.Controllers
                         PartyTypeId = 3,
                         //PartyName = "Proveedor",
                         TypeJournalName = "Cheques",
-                        VoucherType = 8,
+                        VoucherType = 10,
                         EstadoId = 5,
                         EstadoName = "Enviada a Aprobacion",
                         TypeOfAdjustmentId = 65,
@@ -290,8 +290,8 @@ namespace ERPAPI.Controllers
 
 
 
-                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 8).FirstOrDefaultAsync();
-                if (jecheck != null)
+                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
+                if (jecheck != null )
                 {
 
                     JournalEntry jeAnulacion = new JournalEntry
@@ -309,8 +309,8 @@ namespace ERPAPI.Controllers
                         TotalCredit = jecheck.TotalCredit,
                         PartyTypeId = 3,
                         //PartyName = "Proveedor",
-                        TypeJournalName = "Cheques",
-                        VoucherType = 8,
+                        TypeJournalName = "Reversión",
+                        VoucherType = 23,
                         EstadoId = 5,
                         EstadoName = "Enviada a Aprobacion",
                         TypeOfAdjustmentId = 65,
