@@ -33,6 +33,8 @@ namespace ERPAPI.Models
         [Display(Name = "Peso de salida normal")]
         public bool s_manual { get; set; }
 
+        public bool? completo { get; set; }
+
         public virtual Boleto_Ent Boleto_Ent { get; set; }
 
     }

@@ -337,12 +337,33 @@ namespace ERPAPI.Controllers
                         });
                     }
                     _context.JournalEntry.Add(jeAnulacion);
+
+                    await _context.SaveChangesAsync();
+
+                    _context.JournalEntryCanceled.Add(new JournalEntryCanceled()
+                    {
+                        CanceledJournalentryId = Convert.ToInt32(jecheck.JournalEntryId),
+                        ReverseJournalEntryId = Convert.ToInt32(jeAnulacion.JournalEntryId),
+                        DocumentId = _CheckAccountLinesq.Id,
+                        VoucherType = 10,
+                        TypeJournalName = "Cheques"
+
+
+                    }
+
+                        );
+
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    await _context.SaveChangesAsync();
                 }
 
                 
 
                 //_context.CheckAccountLines.Update(_CheckAccountLinesq);
-                await _context.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {
