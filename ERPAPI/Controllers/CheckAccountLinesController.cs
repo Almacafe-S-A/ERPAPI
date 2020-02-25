@@ -319,8 +319,9 @@ namespace ERPAPI.Controllers
 
 
                     };
+                    var lineas = await _context.JournalEntryLine.Where(w => w.JournalEntryId == jecheck.JournalEntryId).ToListAsync();
 
-                    foreach (var item in jecheck.JournalEntryLines)
+                    foreach (var item in lineas)
                     {
                         jeAnulacion.JournalEntryLines.Add(new JournalEntryLine
                         {
