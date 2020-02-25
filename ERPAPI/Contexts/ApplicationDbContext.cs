@@ -57,7 +57,9 @@ namespace ERP.Contexts
 
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-          public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
+
+        public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
+        public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
