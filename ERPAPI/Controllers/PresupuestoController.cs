@@ -67,7 +67,7 @@ namespace ERPAPI.Controllers
             List<Presupuesto> Items = new List<Presupuesto>();
             try
             {
-                Items = await _context.Presupuesto.ToListAsync();
+                Items = await _context.Presupuesto.Include("Accounting").ToListAsync();
             }
             catch (Exception ex)
             {
@@ -120,6 +120,25 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        Accounting _Presupuestop = await (from c in _context.Accounting
+                                         .Where(q => q.AccountId == _Presupuesto.AccountigId
+                                         )
+                                                           select c
+                                        ).FirstOrDefaultAsync();
+                        _Presupuesto.AccountName = _Presupuestop.AccountName;
+
+                        _Presupuesto.TotalMontoPresupuesto = (_Presupuesto.PresupuestoEnero + _Presupuesto.PresupuestoFebrero +
+                            _Presupuesto.PresupuestoMarzo + _Presupuesto.PresupuestoAbril + _Presupuesto.PresupuestoMayo +
+                            _Presupuesto.PresupuestoJunio + _Presupuesto.PresupuestoJulio + _Presupuesto.PresupuestoAgosto +
+                           _Presupuesto.PresupuestoSeptiembre + _Presupuesto.PresupuestoOctubre + _Presupuesto.PresupuestoNoviembre +
+                           _Presupuesto.PresupuestoDiciembre);
+
+                        _Presupuesto.TotalMontoEjecucion = (_Presupuesto.EjecucionEnero + _Presupuesto.EjecucionFebrero +
+                           _Presupuesto.EjecucionMarzo + _Presupuesto.EjecucionAbril + _Presupuesto.EjecucionMayo +
+                           _Presupuesto.EjecucionJunio + _Presupuesto.EjecucionJulio + _Presupuesto.EjecucionAgosto +
+                          _Presupuesto.EjecucionSeptiembre + _Presupuesto.EjecucionOctubre + _Presupuesto.EjecucionNoviembre +
+                          _Presupuesto.EjecucionDiciembre);
+
                         _Presupuestoq = _Presupuesto;
                         _context.Presupuesto.Add(_Presupuestoq);
                         await _context.SaveChangesAsync();
@@ -176,6 +195,29 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+
+                        Presupuesto _Presupuestop = await (from c in _context.Presupuesto
+                                         .Where(q => q.Id == _Presupuesto.Id
+                                         )
+                                               select c
+                                        ).FirstOrDefaultAsync();
+                        _Presupuesto.CostCenterId = _Presupuestop.CostCenterId;
+                        _Presupuesto.PeriodoId = _Presupuestop.PeriodoId;
+
+
+                        _Presupuesto.TotalMontoPresupuesto = (_Presupuesto.PresupuestoEnero + _Presupuesto.PresupuestoFebrero +
+                          _Presupuesto.PresupuestoMarzo + _Presupuesto.PresupuestoAbril + _Presupuesto.PresupuestoMayo +
+                          _Presupuesto.PresupuestoJunio + _Presupuesto.PresupuestoJulio + _Presupuesto.PresupuestoAgosto +
+                         _Presupuesto.PresupuestoSeptiembre + _Presupuesto.PresupuestoOctubre + _Presupuesto.PresupuestoNoviembre +
+                         _Presupuesto.PresupuestoDiciembre);
+
+                        _Presupuesto.TotalMontoEjecucion = (_Presupuesto.EjecucionEnero + _Presupuesto.EjecucionFebrero +
+                           _Presupuesto.EjecucionMarzo + _Presupuesto.EjecucionAbril + _Presupuesto.EjecucionMayo +
+                           _Presupuesto.EjecucionJunio + _Presupuesto.EjecucionJulio + _Presupuesto.EjecucionAgosto +
+                          _Presupuesto.EjecucionSeptiembre + _Presupuesto.EjecucionOctubre + _Presupuesto.EjecucionNoviembre +
+                          _Presupuesto.EjecucionDiciembre);
+
+
                         _Presupuestoq = await (from c in _context.Presupuesto
                                          .Where(q => q.Id == _Presupuesto.Id
                                          )
