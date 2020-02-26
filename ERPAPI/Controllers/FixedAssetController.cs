@@ -71,7 +71,17 @@ namespace ERPAPI.Controllers
             List<FixedAsset> Items = new List<FixedAsset>();
             try
             {
-                Items = await _context.FixedAsset.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.FixedAsset.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.FixedAssetId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.FixedAsset.OrderByDescending(b => b.FixedAssetId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

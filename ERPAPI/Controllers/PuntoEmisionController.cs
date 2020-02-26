@@ -88,7 +88,17 @@ namespace ERPAPI.Controllers
             List<PuntoEmision> Items = new List<PuntoEmision>();
             try
             {
-                Items = await _context.PuntoEmision.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.PuntoEmision.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.IdPuntoEmision).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.PuntoEmision.OrderByDescending(b => b.IdPuntoEmision).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
