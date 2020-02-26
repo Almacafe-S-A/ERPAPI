@@ -73,7 +73,17 @@ namespace ERPAPI.Controllers
             List<CustomerArea> Items = new List<CustomerArea>();
             try
             {
-                Items = await _context.CustomerArea.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.CustomerArea.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.CustomerAreaId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.CustomerArea.OrderByDescending(b => b.CustomerAreaId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

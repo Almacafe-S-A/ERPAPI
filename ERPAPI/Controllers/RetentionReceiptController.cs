@@ -69,7 +69,17 @@ namespace ERPAPI.Controllers
             List<RetentionReceipt> Items = new List<RetentionReceipt>();
             try
             {
-                Items = await _context.RetentionReceipt.OrderBy(b => b.RetentionReceiptId).ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.RetentionReceipt.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.RetentionReceiptId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.RetentionReceipt.OrderByDescending(b => b.RetentionReceiptId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

@@ -69,14 +69,34 @@ namespace ERPAPI.Controllers
             List<Product> Items = new List<Product>();
             try
             {
-                Items = await _context.Product
-                                             .Include(c => c.Branch)
-                                              //.Include(c => c.Currency)
-                                              //.Include(c => c.UnitOfMeasure)
-                                              .Include(c => c.Marca)
-                                              .Include(c => c.Linea)
-                                              .Include(c => c.Grupo)
-                                              .ToListAsync();    
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.Product
+                            .Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
+                             .Include(c => c.Branch)
+                              //.Include(c => c.Currency)
+                              //.Include(c => c.UnitOfMeasure)
+                              .Include(c => c.Marca)
+                              .Include(c => c.Linea)
+                              .Include(c => c.Grupo)
+                              .OrderByDescending(b => b.ProductId)
+                              .ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.Product
+                             .Include(c => c.Branch)
+                              //.Include(c => c.Currency)
+                              //.Include(c => c.UnitOfMeasure)
+                              .Include(c => c.Marca)
+                              .Include(c => c.Linea)
+                              .Include(c => c.Grupo)
+                              .OrderByDescending(b => b.ProductId)
+                              .ToListAsync();
+                } 
                
                  
             }
