@@ -110,6 +110,41 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok( Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de sucursales.
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Policy = "Seguridad.Sucursales por Usuario")]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetBranchUserAssignement()
+        {
+            List<Branch> Items = new List<Branch>();
+            try
+            {
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.Branch.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.Branch.ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene la sucursal mediante el Id enviado.
         /// </summary>
