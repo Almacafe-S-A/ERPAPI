@@ -321,7 +321,7 @@ namespace ERPAPI.Controllers
                 Items = (from c in _cuentas
                          select new CierresAccountingDTO
                          {
-                             CierreAccountingId =c.CierreAccountingId,
+                             //CierreAccountingId =c.CierreAccountingId,
                              CompanyInfoId = c.CompanyInfoId,
                              AccountId = c.AccountId,
                              AccountName = c.AccountCode + "--" + c.AccountName,
@@ -374,7 +374,7 @@ namespace ERPAPI.Controllers
 
                 Items.Add(new CierresAccountingDTO
                 {
-                    CierreAccountingId = _ac.CierreAccountingId,
+                    //CierreAccountingId = _ac.CierreAccountingId,
                     AccountId = _ac.AccountId,
                     AccountName = _ac.AccountName,
                     AccountCode = _ac.AccountCode,
@@ -386,7 +386,7 @@ namespace ERPAPI.Controllers
             List<CierresAccounting> categoriasList = (from c in Items
                                                select new CierresAccounting
                                                {
-                                                   CierreAccountingId = c.CierreAccountingId,
+                                                   //CierreAccountingId = c.CierreAccountingId,
                                                    AccountId = c.AccountId,
                                                    AccountBalance = c.AccountBalance,
                                                    AccountCode = c.AccountCode,
@@ -401,7 +401,7 @@ namespace ERPAPI.Controllers
                            // where c.ParentAccountId == null || c.ParentAccountId == 0
                        select new CierresAccountingDTO
                        {
-                           CierreAccountingId = c.CierreAccountingId,
+                           //CierreAccountingId = c.CierreAccountingId,
                            AccountId = c.AccountId,
                            AccountName = c.AccountName,
                            AccountBalance = c.AccountBalance,
