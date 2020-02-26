@@ -39,10 +39,10 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetAccount()
 
         {
-            List<Accounting> Items = new List<Accounting>();
+            List<CierresAccounting> Items = new List<CierresAccounting>();
             try
             {
-                Items = await _context.Accounting.ToListAsync();
+                Items = await _context.CierresAccounting.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -64,10 +64,10 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetAccountDiary()
 
         {
-            List<Accounting> Items = new List<Accounting>();
+            List<CierresAccounting> Items = new List<CierresAccounting>();
             try
             {
-                Items = await _context.Accounting.Where(q => q.BlockedInJournal == false).ToListAsync();
+                Items = await _context.CierresAccounting.Where(q => q.BlockedInJournal == false).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -85,15 +85,15 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la Account por medio del Id enviado.
         /// </summary>
-        /// <param name="AccountId"></param>
+        /// <param name="CierreAccountingId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{AccountId}")]
-        public async Task<IActionResult> GetAccountById(Int64 AccountId)
+        [HttpGet("[action]/{CierreAccountingId}")]
+        public async Task<IActionResult> GetAccountById(Int64 CierreAccountingId)
         {
-            Accounting Items = new Accounting();
+            CierresAccounting Items = new CierresAccounting();
             try
             {
-                Items = await _context.Accounting.Where(q => q.AccountId == AccountId).FirstOrDefaultAsync();
+                Items = await _context.CierresAccounting.Where(q => q.CierreAccountingId == CierreAccountingId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -114,10 +114,10 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{AccountCode}")]
         public async Task<IActionResult> GetAccountingByAccountCode(String AccountCode)
         {
-            Accounting Items = new Accounting();
+            CierresAccounting Items = new CierresAccounting();
             try
             {
-                Items = await _context.Accounting.Where(q => q.AccountCode == AccountCode).FirstOrDefaultAsync();
+                Items = await _context.CierresAccounting.Where(q => q.AccountCode == AccountCode).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -137,10 +137,10 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{TypeAccounting}")]
         public async Task<IActionResult> GetFatherAccountById(Int64 TypeAccounting)
         {
-            Accounting Items = new Accounting();
+            CierresAccounting Items = new CierresAccounting();
             try
             {
-                Items = await _context.Accounting.Where(
+                Items = await _context.CierresAccounting.Where(
                                 q => q.TypeAccountId == TypeAccounting &&
                                      q.ParentAccountId == null
 
@@ -167,10 +167,10 @@ namespace ERPAPI.Controllers
 
             try
             {
-                Accounting _Accounting = new Accounting();
-                _Accounting = _context.Accounting.Where(a => a.TypeAccountId == _TypeAcountId)
+                CierresAccounting _CierresAccounting = new CierresAccounting();
+                _CierresAccounting = _context.CierresAccounting.Where(a => a.TypeAccountId == _TypeAcountId)
                     .OrderByDescending(b => b.HierarchyAccount).FirstOrDefault();
-                var Items = _Accounting.HierarchyAccount;
+                var Items = _CierresAccounting.HierarchyAccount;
                 return await Task.Run(() => Ok(Items));
                 //  return Ok(Items);
             }
@@ -191,10 +191,10 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetAccountingByTypeAccount(Int64 _TypeAcountId)
 
         {
-            List<Accounting> Items = new List<Accounting>();
+            List<CierresAccounting> Items = new List<CierresAccounting>();
             try
             {
-                Items = await _context.Accounting.Where(p => p.TypeAccountId == _TypeAcountId)
+                Items = await _context.CierresAccounting.Where(p => p.TypeAccountId == _TypeAcountId)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -210,27 +210,7 @@ namespace ERPAPI.Controllers
         }
 
 
-        /// <summary>
-        /// Obtiene el Listado de Cuentas sin hijos 
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetNoChildAccounts()
-        {
-            List<Accounting> Items = new List<Accounting>();
-            try
-            {
-                Items = await _context.Accounting.Where(q=> !q.Totaliza).OrderBy(q=>q.AccountCode).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-        }
+     
 
         /// <summary>
         /// Retorna los nodos padres de un padre contable 
@@ -242,10 +222,10 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetFathersAccounting(Int64 ParentAcountId)
 
         {
-            List<Accounting> Items = new List<Accounting>();
+            List<CierresAccounting> Items = new List<CierresAccounting>();
             try
             {
-                Items = await _context.Accounting.Where(p => p.ParentAccountId == ParentAcountId)
+                Items = await _context.CierresAccounting.Where(p => p.ParentAccountId == ParentAcountId)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -265,54 +245,83 @@ namespace ERPAPI.Controllers
         /// </summary>
         List<Int32> Parents = new List<Int32>();
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetAccountingType([FromBody]AccountingFilter _AccountingDTO)
+        public async Task<IActionResult> GetAccountingType([FromBody]CierresAccountingFilter _CierresAccountingDTO)
 
         {
-            List<AccountingDTO> Items = new List<AccountingDTO>();
+            List<CierresAccountingDTO> Items = new List<CierresAccountingDTO>();
             List<Int32> _parents = new List<int>();
             try
             {
-                List<Accounting> _cuentas = new List<Accounting>();
+                List<CierresAccounting> _cuentas = new List<CierresAccounting>();
 
-                if (_AccountingDTO.TypeAccountId == 0 && _AccountingDTO.estadocuenta==true)
+                if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta==true && _CierresAccountingDTO.FechaCierre==null)
                 {
-                    _cuentas = await _context.Accounting.Where(m => m.IdEstado ==1).ToListAsync();
+                    _cuentas = await _context.CierresAccounting.Where(m => m.IdEstado ==1).ToListAsync();
                 }
-                if (_AccountingDTO.TypeAccountId == 0 && _AccountingDTO.estadocuenta == false)
+                if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.FechaCierre == null)
                 {
-                    _cuentas = await _context.Accounting.Where(m => m.IdEstado == 2).ToListAsync();
+                    _cuentas = await _context.CierresAccounting.Where(m => m.IdEstado == 2).ToListAsync();
                     _parents = _cuentas.Select(q => q.ParentAccountId==null?0 : q.ParentAccountId.Value).ToList();
                     _cuentas.AddRange( ObtenerCategoriarJerarquia(_parents));
                 }
-                else  if (_AccountingDTO.TypeAccountId == 0 && _AccountingDTO.estadocuenta == null)
+                else  if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.FechaCierre == null)
                 {
-                    _cuentas = await _context.Accounting .ToListAsync();
+                    _cuentas = await _context.CierresAccounting.ToListAsync();
                 }
-                else if (_AccountingDTO.TypeAccountId > 0 && _AccountingDTO.estadocuenta == true)
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == true && _CierresAccountingDTO.FechaCierre == null)
                 {
-                    _cuentas = await _context.Accounting
-                        .Where(q => q.TypeAccountId == _AccountingDTO.TypeAccountId)
+                    _cuentas = await _context.CierresAccounting
+                        .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
                         .Where(m => m.IdEstado == 1)                        
                         .ToListAsync();
                 }
-                else if (_AccountingDTO.TypeAccountId > 0 && _AccountingDTO.estadocuenta == false)
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.FechaCierre == null)
                 {
-                    _cuentas = await _context.Accounting
-                        .Where(q => q.TypeAccountId == _AccountingDTO.TypeAccountId)
+                    _cuentas = await _context.CierresAccounting
+                        .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
                         .Where(m => m.IdEstado == 2)
                         .ToListAsync();
                 }
-                else if (_AccountingDTO.TypeAccountId> 0 && _AccountingDTO.estadocuenta == null)
+                else if (_CierresAccountingDTO.TypeAccountId> 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.FechaCierre == null)
                 {
-                    _cuentas = await _context.Accounting
-                        .Where(q => q.TypeAccountId == _AccountingDTO.TypeAccountId
+                    _cuentas = await _context.CierresAccounting
+                        .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId
                         )
                         .ToListAsync();
                 }
 
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == true && _CierresAccountingDTO.FechaCierre != null)
+                {
+                    _cuentas = await _context.CierresAccounting
+                        .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
+                        .Where(m => m.IdEstado == 1)
+                        .Where(m => m.FechaCierre == _CierresAccountingDTO.FechaCierre)
+                        .ToListAsync();
+                }
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.FechaCierre != null)
+                {
+                    _cuentas = await _context.CierresAccounting
+                        .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
+                        .Where(m => m.IdEstado == 2)
+                        .Where(m => m.FechaCierre == _CierresAccountingDTO.FechaCierre)
+                        .ToListAsync();
+                }
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.FechaCierre != null)
+                {
+                    _cuentas = await _context.CierresAccounting
+                        .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
+                        .Where(m => m.FechaCierre == _CierresAccountingDTO.FechaCierre
+                        )
+                        .ToListAsync();
+                }
+
+
+
+
                 Items = (from c in _cuentas
-                         select new AccountingDTO
+                         select new CierresAccountingDTO
                          {
+                             CierreAccountingId =c.CierreAccountingId,
                              CompanyInfoId = c.CompanyInfoId,
                              AccountId = c.AccountId,
                              AccountName = c.AccountCode + "--" + c.AccountName,
@@ -348,23 +357,24 @@ namespace ERPAPI.Controllers
 
         }
 
-        List<AccountingDTO> query = new List<AccountingDTO>();
-        private List<AccountingDTO> ObtenerCategoriarJerarquia(List<Int32> Parents)
+        List<CierresAccountingDTO> query = new List<CierresAccountingDTO>();
+        private List<CierresAccountingDTO> ObtenerCategoriarJerarquia(List<Int32> Parents)
         {
 
-            List<AccountingDTO> Items = new List<AccountingDTO>();
+            List<CierresAccountingDTO> Items = new List<CierresAccountingDTO>();
             List<Int32> _padre = new List<Int32>();
             foreach (var padre in Parents)
             {
-                Accounting _ac = _context.Accounting.Where(q => q.AccountId == padre).FirstOrDefault();
+                CierresAccounting _ac = _context.CierresAccounting.Where(q => q.CierreAccountingId == padre).FirstOrDefault();
 
                 if (_ac.ParentAccountId != null)
                 {
                     _padre.Add(_ac.ParentAccountId.Value);
                 }
 
-                Items.Add(new AccountingDTO
+                Items.Add(new CierresAccountingDTO
                 {
+                    CierreAccountingId = _ac.CierreAccountingId,
                     AccountId = _ac.AccountId,
                     AccountName = _ac.AccountName,
                     AccountCode = _ac.AccountCode,
@@ -373,9 +383,10 @@ namespace ERPAPI.Controllers
                 });
             }
 
-            List<Accounting> categoriasList = (from c in Items
-                                               select new Accounting
+            List<CierresAccounting> categoriasList = (from c in Items
+                                               select new CierresAccounting
                                                {
+                                                   CierreAccountingId = c.CierreAccountingId,
                                                    AccountId = c.AccountId,
                                                    AccountBalance = c.AccountBalance,
                                                    AccountCode = c.AccountCode,
@@ -388,8 +399,9 @@ namespace ERPAPI.Controllers
 
             var res = (from c in categoriasList
                            // where c.ParentAccountId == null || c.ParentAccountId == 0
-                       select new AccountingDTO
+                       select new CierresAccountingDTO
                        {
+                           CierreAccountingId = c.CierreAccountingId,
                            AccountId = c.AccountId,
                            AccountName = c.AccountName,
                            AccountBalance = c.AccountBalance,
@@ -402,7 +414,7 @@ namespace ERPAPI.Controllers
             {
                 foreach (var item in res)
                 {
-                    var existe = query.Where(q => q.AccountId == item.AccountId).ToList();
+                    var existe = query.Where(q => q.CierreAccountingId == item.CierreAccountingId).ToList();
                     if (existe.Count == 0)
                     {
                         query.Add(item);
@@ -433,174 +445,21 @@ namespace ERPAPI.Controllers
                     .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
         }
 
-        
-
-        /// <summary>
-        /// Inserta una nueva Account
-        /// </summary>
-        /// <param name="_Account"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<Accounting>> Insert([FromBody]Accounting _Account)
-        {
-            Accounting _Accountq = new Accounting();
-            
-           
-            try
-            {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        _Accountq = _Account;
-                        _context.Accounting.Add(_Accountq);
-                        await _context.SaveChangesAsync();
-                       
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _Accountq.AccountId,
-                            DocType = "Accounting",
-                            ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Accountq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Accountq.UsuarioCreacion,
-                            UsuarioModificacion = _Accountq.UsuarioModificacion,
-                            UsuarioEjecucion = _Accountq.UsuarioModificacion,
-
-                        });
-
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        throw ex;
-                        // return BadRequest($"Ocurrio un error:{ex.Message}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            return await Task.Run(() => Ok(_Accountq));
-            /*
-            return await Task.Run(() => Ok(_ConfigurationVendorq));
-       */
-        }
-
-        /// <summary>
-        /// Actualiza la Account
-        /// </summary>
-        /// <param name="_Account"></param>
-        /// <returns></returns>
-        [HttpPut("[action]")]
-        public async Task<ActionResult<Accounting>> Update([FromBody]Accounting _Account)
-        {
-            Accounting _Accountq = _Account;
-            try
-            {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        _Accountq = await (from c in _context.Accounting
-                                         .Where(q => q.AccountId == _Accountq.AccountId)
-                                                       select c
-                                        ).FirstOrDefaultAsync();
-
-                        _context.Entry(_Accountq).CurrentValues.SetValues((_Account));
-
-                        //_context.Alert.Update(_Alertq);
-                        await _context.SaveChangesAsync();
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _Accountq.AccountId,
-                            DocType = "Accounting",
-                            ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_Accountq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Account, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Actualizar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Account.UsuarioCreacion,
-                            UsuarioModificacion = _Account.UsuarioModificacion,
-                            UsuarioEjecucion = _Account.UsuarioModificacion,
-
-                        });
-
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        throw ex;
-                        // return BadRequest($"Ocurrio un error:{ex.Message}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
-            }
-
-            
-            return await Task.Run(() => Ok(_Accountq));
-        }
-
-        /// <summary>
-        /// Elimina una Account       
-        /// </summary>
-        /// <param name="_Account"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Accounting _Account)
-        {
-            Accounting _Accountq = new Accounting();
-            try
-            {
-                _Accountq = _context.Accounting
-                .Where(x => x.AccountId == (Int64)_Account.AccountId)
-                .FirstOrDefault();
-
-                _context.Accounting.Remove(_Accountq);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            return await Task.Run(() => Ok(_Accountq));
-
-        }
-
-        [HttpGet("[action]")]
-        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatron([FromQuery(Name = "Patron")] string patron)
-        {
-            try
-            {
-                var cuentas = await _context.Accounting
-                    .Where(c => c.AccountCode.StartsWith(patron) && c.BlockedInJournal == false && c.Totaliza == false)
-                    .ToListAsync();
-                return await Task.Run(() => Ok(cuentas));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-        }
+        //[HttpGet("[action]")]
+        //public async Task<ActionResult<List<CierresAccounting>>> GetCuentasDiariasPatron([FromQuery(Name = "Patron")] string patron)
+        //{
+        //    try
+        //    {
+        //        var cuentas = await _context.CierresAccounting
+        //            .Where(c => c.AccountCode.StartsWith(patron) && c.BlockedInJournal == false && c.Totaliza == false)
+        //            .ToListAsync();
+        //        return await Task.Run(() => Ok(cuentas));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+        //        return BadRequest($"Ocurrio un error:{ex.Message}");
+        //    }
+        //}
     }
 }
