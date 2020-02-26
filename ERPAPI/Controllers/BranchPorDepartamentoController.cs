@@ -41,7 +41,17 @@ namespace ERPAPI.Controllers
             List<BranchPorDepartamento> Items = new List<BranchPorDepartamento>();
             try
             {
-                Items = await _context.BranchPorDepartamento.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.BranchPorDepartamento.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.Id).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.BranchPorDepartamento.OrderByDescending(b => b.Id).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

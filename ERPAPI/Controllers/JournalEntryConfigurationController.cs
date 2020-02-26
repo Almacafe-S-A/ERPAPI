@@ -71,7 +71,17 @@ namespace ERPAPI.Controllers
             List<JournalEntryConfiguration> Items = new List<JournalEntryConfiguration>();
             try
             {
-                Items = await _context.JournalEntryConfiguration.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.JournalEntryConfiguration.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.JournalEntryConfigurationId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.JournalEntryConfiguration.OrderByDescending(b => b.JournalEntryConfigurationId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

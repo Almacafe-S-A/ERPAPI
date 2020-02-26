@@ -71,7 +71,17 @@ namespace ERPAPI.Controllers
             List<BoletaDeSalida> Items = new List<BoletaDeSalida>();
             try
             {
-                Items = await _context.BoletaDeSalida.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.BoletaDeSalida.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.BoletaDeSalidaId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.BoletaDeSalida.OrderByDescending(b => b.BoletaDeSalidaId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

@@ -66,8 +66,17 @@ namespace coderush.Controllers.Api
             List<Warehouse> Items = new List<Warehouse>();
             try
             {
-                Items =  await _context.Warehouse.ToListAsync();
-                //int Count = Items.Count();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.Warehouse.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.WarehouseId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.Warehouse.OrderByDescending(b => b.WarehouseId).ToListAsync();
+                }
 
             }
             catch (Exception ex)
