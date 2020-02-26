@@ -108,7 +108,7 @@ namespace ERPAPI.Models
     {
         public Int64 TypeAccountId { get; set; }
         public bool? estadocuenta { get; set; }
-        public DateTime FechaCierre { get; set; }
+        public Int64 BitacoraCierreContableId { get; set; }
 
     }
 

@@ -254,35 +254,35 @@ namespace ERPAPI.Controllers
             {
                 List<CierresAccounting> _cuentas = new List<CierresAccounting>();
 
-                if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta==true && _CierresAccountingDTO.FechaCierre==null)
+                if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta==true && _CierresAccountingDTO.BitacoraCierreContableId == 0)
                 {
                     _cuentas = await _context.CierresAccounting.Where(m => m.IdEstado ==1).ToListAsync();
                 }
-                if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.FechaCierre == null)
+                if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.BitacoraCierreContableId == 0)
                 {
                     _cuentas = await _context.CierresAccounting.Where(m => m.IdEstado == 2).ToListAsync();
                     _parents = _cuentas.Select(q => q.ParentAccountId==null?0 : q.ParentAccountId.Value).ToList();
                     _cuentas.AddRange( ObtenerCategoriarJerarquia(_parents));
                 }
-                else  if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.FechaCierre == null)
+                else  if (_CierresAccountingDTO.TypeAccountId == 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.BitacoraCierreContableId == 0)
                 {
                     _cuentas = await _context.CierresAccounting.ToListAsync();
                 }
-                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == true && _CierresAccountingDTO.FechaCierre == null)
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == true && _CierresAccountingDTO.BitacoraCierreContableId == 0)
                 {
                     _cuentas = await _context.CierresAccounting
                         .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
                         .Where(m => m.IdEstado == 1)                        
                         .ToListAsync();
                 }
-                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.FechaCierre == null)
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.BitacoraCierreContableId == 0)
                 {
                     _cuentas = await _context.CierresAccounting
                         .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
                         .Where(m => m.IdEstado == 2)
                         .ToListAsync();
                 }
-                else if (_CierresAccountingDTO.TypeAccountId> 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.FechaCierre == null)
+                else if (_CierresAccountingDTO.TypeAccountId> 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.BitacoraCierreContableId == 0)
                 {
                     _cuentas = await _context.CierresAccounting
                         .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId
@@ -290,27 +290,27 @@ namespace ERPAPI.Controllers
                         .ToListAsync();
                 }
 
-                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == true && _CierresAccountingDTO.FechaCierre != null)
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == true && _CierresAccountingDTO.BitacoraCierreContableId > 0)
                 {
                     _cuentas = await _context.CierresAccounting
                         .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
                         .Where(m => m.IdEstado == 1)
-                        .Where(m => m.FechaCierre == _CierresAccountingDTO.FechaCierre)
+                        .Where(m => m.BitacoraCierreContableId == _CierresAccountingDTO.BitacoraCierreContableId)
                         .ToListAsync();
                 }
-                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.FechaCierre != null)
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == false && _CierresAccountingDTO.BitacoraCierreContableId > 0)
                 {
                     _cuentas = await _context.CierresAccounting
                         .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
                         .Where(m => m.IdEstado == 2)
-                        .Where(m => m.FechaCierre == _CierresAccountingDTO.FechaCierre)
+                        .Where(m => m.BitacoraCierreContableId == _CierresAccountingDTO.BitacoraCierreContableId)
                         .ToListAsync();
                 }
-                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.FechaCierre != null)
+                else if (_CierresAccountingDTO.TypeAccountId > 0 && _CierresAccountingDTO.estadocuenta == null && _CierresAccountingDTO.BitacoraCierreContableId > 0)
                 {
                     _cuentas = await _context.CierresAccounting
                         .Where(q => q.TypeAccountId == _CierresAccountingDTO.TypeAccountId)
-                        .Where(m => m.FechaCierre == _CierresAccountingDTO.FechaCierre
+                        .Where(m => m.BitacoraCierreContableId == _CierresAccountingDTO.BitacoraCierreContableId
                         )
                         .ToListAsync();
                 }
