@@ -12,7 +12,7 @@ GO
 
 
 
-CREATE PROCEDURE [dbo].[rptMovimientosHistoricos]
+CREATE OR ALTER PROCEDURE [dbo].[rptMovimientosHistoricos]
     @MES INT,
 	@ANIO INT,	
 	@CENTROCOSTO BIGINT
@@ -29,7 +29,7 @@ SELECT T0.Date
 , T1.Credit
 INTO #Table00
 FROM CierresJournal T0
-INNER JOIN CierresJournalEntryLine T1 ON T0.CierresJournalEntryId = T1.CierresJournalEntryLineId
+INNER JOIN CierresJournalEntryLine T1 ON T0.JournalEntryId = T1.JournalEntryId
 WHERE YEAR(T0.FechaCierre) = @ANIO AND MONTH(T0.FechaCierre) = @MES
 
 IF(@CENTROCOSTO = 0)
