@@ -481,7 +481,7 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                ApplicationUser ApplicationUserq = _context.Users.FirstOrDefault();
+                ApplicationUser ApplicationUserq = _context.Users.Where(w => w.Id == _usuario.Id).FirstOrDefault();
                 ApplicationUserq.LastPasswordChangedDate = DateTime.Now;
                 ApplicationUserq.LockoutEnd = null;
                 
