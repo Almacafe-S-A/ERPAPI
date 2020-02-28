@@ -66,6 +66,8 @@ namespace ERP.Contexts
         public DbSet<InstallmentDelivery> InstallmentDelivery { get; set; }
         public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
 
+        public DbSet<PrecioCafe> PrecioCafe { get; set; }
+
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
