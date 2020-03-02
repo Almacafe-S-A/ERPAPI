@@ -450,8 +450,259 @@ namespace ERPAPI.Controllers
 
 
 
+        //=========================DAHSBOARD DE RIESGOS=================================================
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityAlerts()
+        {
+            try
+            {
+
+                DateTime _FechaActual = DateTime.Now;
+
+                var Items = await _context.Alert.Where(a => a.FechaCreacion.ToString("yyyy-MM-dd") == _FechaActual.ToString("yyyy-MM-dd")).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityInformacionMediatica()
+        {
+            try
+            {
+                var Items = await _context.BlackListCustomers.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityProductoProhibidos()
+        {
+            try
+            {
+                var Items = await _context.SubProduct.Where(x => x.ProductTypeId == 3 ).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityPEPS()
+        {
+            try
+            {
+                var Items = await _context.PEPS.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+        //=====================FIN DAHSBOARD DE RIESGOS=================================================
+
+
+        //=========================DAHSBOARD PRECIDENCIAS=================================================
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<decimal>> GetCertificadosbyFecha()
+        {
+            try
+            {
+                var MesAcual = DateTime.Now;
+                var Items = await _context.CertificadoDeposito.Where(b => b.FechaCertificado.ToString("MM-yyyy") == MesAcual.ToString("MM-yyyy")).ToListAsync();
 
 
 
+                decimal Total = Convert.ToDecimal(Items.Sum(s => s.Total));
+
+                Total.ToString("N2");
+                return await Task.Run(() => Ok(Total));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetCertificadosFechCatidad()
+        {
+            try
+            {
+                var MesAcual = DateTime.Now;
+                var Items = await _context.CertificadoDeposito.Where(b => b.FechaCertificado.ToString("MM-yyyy") == MesAcual.ToString("MM-yyyy")).CountAsync();                
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSaldoCuentasBanco()
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                Items = await (from c in _context.Accounting                                          
+                               join d in _context.AccountManagement on c.AccountId equals d.AccountId
+                               where c.AccountId == d.AccountId
+                               select c).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
+        //=========================FIN DAHSBOARD PRECIDENCIAS=============================================
+
+
+
+        //=========================DAHSBOARD RRHH=================================================
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityEmployees()
+        {
+            try
+            {
+                var Items = await _context.Employees.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityDepartamentos()
+        {
+            try
+            {
+                var Items = await _context.Departamento.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+        //===============================FIN DAHSBOARD RRHH========================================
+
+
+
+        //===================DAHSBOARD OPERACIONES=================================================
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityIngresos()
+        {
+            try
+            {
+
+                DateTime _FechaAcutal = DateTime.Now;
+
+                var Items = await _context.Boleto_Ent.Where(X => X.fecha_e.ToString("yyyy-MM-dd") == _FechaAcutal.ToString("yyyy-MM-dd")).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantitySalidas()
+        {
+            try
+            {
+
+                DateTime _FechaAcutal = DateTime.Now;
+
+                var Items = await _context.Boleto_Sal.Where(X => X.fecha_s.ToString("yyyy-MM-dd") == _FechaAcutal.ToString("yyyy-MM-dd")).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Int32>> GetQuantityAreasOcupadas()
+        {
+            try
+            {
+                var Items = await _context.CustomerArea.CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
+
+
+        //============================FIN DAHSBOARD OPERACIONES====================================
     }
 }

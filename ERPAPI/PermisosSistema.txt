@@ -81,12 +81,14 @@ Contabilidad.Estado de Resultado
 Contabilidad.Estado de Situacion Financiera
 Monitoreo
 Monitoreo.Alertas
+Monitoreo.Dashboard
 Monitoreo.Informacion Mediatica
 Monitoreo.Definicion de Severidad
 Monitoreo.PEPS
 Monitoreo.Productos Prohibidos
 Monitoreo.Paises GAFI
 Inventarios
+Inventarios.Dashboard
 Inventarios.Control de Ingresos
 Inventarios.Recibo de Mercaderia
 Inventarios.Kardex
@@ -113,6 +115,7 @@ Ventas.Factura
 Ventas.Nota de Debito
 Ventas.Nota de Credito
 RRHH
+RRHH.Dashboard
 RRHH.Empleados
 RRHH.Horas Trabajadas
 RRHH.Planilla de Sueldos
@@ -146,3 +149,5 @@ Seguridad.Usuarios
 Seguridad.Roles
 Seguridad.Roles por Usuario
 Seguridad.Sucursales por Usuario
+Precidencial
+Precidencial.Dashboard
