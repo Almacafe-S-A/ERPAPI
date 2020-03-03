@@ -210,34 +210,37 @@ namespace ERPAPI.Controllers
                                     var diferencia = horaSalidaBiometrico.Subtract(horasalidaHorario);
                                     if ((diferencia.Hours * 60 + diferencia.Minutes) >= periodoGraciaSalida)
                                     {
-                                        //Potencial Hora Extra
-                                        var registro = new HorasExtraBiometrico()
-                                                       {
-                                                           Id = 0,
-                                                           IdEmpleado = detalle.IdEmpleado,
-                                                           Horas = diferencia.Hours,
-                                                           Minutos = diferencia.Minutes,
-                                                           IdBiometrico = biometrico.Id,
-                                                           IdEstado = 70
-                                                       };
-                                        var registroExistente = await context.HorasExtrasBiometrico
-                                            .Include(b => b.Encabezado)
-                                            .FirstOrDefaultAsync(
-                                                r => r.IdEmpleado == detalle.IdEmpleado &&
-                                                     r.Encabezado.Fecha.Equals(biometrico.Fecha));
-
-                                        if (registroExistente != null)
+                                        if (detalle.Empleado.HorasExtra ?? false)
                                         {
-                                            if (registroExistente.Horas < registro.Horas)
+                                            //Potencial Hora Extra
+                                            var registro = new HorasExtraBiometrico()
                                             {
-                                                registroExistente.Horas = registro.Horas;
-                                                await context.SaveChangesAsync();
-                                                continue;
-                                            }
-                                        }
+                                                Id = 0,
+                                                IdEmpleado = detalle.IdEmpleado,
+                                                Horas = diferencia.Hours,
+                                                Minutos = diferencia.Minutes,
+                                                IdBiometrico = biometrico.Id,
+                                                IdEstado = 70
+                                            };
+                                            var registroExistente = await context.HorasExtrasBiometrico
+                                                .Include(b => b.Encabezado)
+                                                .FirstOrDefaultAsync(
+                                                    r => r.IdEmpleado == detalle.IdEmpleado &&
+                                                         r.Encabezado.Fecha.Equals(biometrico.Fecha));
 
-                                        context.HorasExtrasBiometrico.Add(registro);
-                                        await context.SaveChangesAsync();
+                                            if (registroExistente != null)
+                                            {
+                                                if (registroExistente.Horas < registro.Horas)
+                                                {
+                                                    registroExistente.Horas = registro.Horas;
+                                                    await context.SaveChangesAsync();
+                                                    continue;
+                                                }
+                                            }
+
+                                            context.HorasExtrasBiometrico.Add(registro);
+                                            await context.SaveChangesAsync();
+                                        }
                                     }
                                 }
                             }
