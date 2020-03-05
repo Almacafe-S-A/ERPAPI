@@ -433,6 +433,25 @@ namespace ERPAPI.Controllers
                     .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
         }
 
+        /// <summary>
+        /// Retorna la Jerarquia(Nivel) de la Cuenta Contable
+        /// </summary>
+        /// <param name="cuenta"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<long> GetAccountHierarchy(Accounting cuenta) {
+            Accounting cuentaPadre = await _context.Accounting.Where(q => q.AccountId == cuenta.ParentAccountId).FirstOrDefaultAsync();
+            if (cuentaPadre != null)
+            {
+                return cuentaPadre.HierarchyAccount + 1;
+
+            }
+            else
+            {
+                return 1;
+            }
+
+        }
         
 
         /// <summary>
@@ -443,9 +462,7 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Accounting>> Insert([FromBody]Accounting _Account)
         {
-            Accounting _Accountq = new Accounting();
-            
-           
+            Accounting _Accountq = new Accounting(); 
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -453,6 +470,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _Accountq = _Account;
+                        _Accountq.HierarchyAccount = await GetAccountHierarchy(_Accountq);
                         _context.Accounting.Add(_Accountq);
                         await _context.SaveChangesAsync();
                        
@@ -505,12 +523,14 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<Accounting>> Update([FromBody]Accounting _Account)
         {
             Accounting _Accountq = _Account;
+            
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
+                        _Account.HierarchyAccount = await GetAccountHierarchy(_Account);
                         _Accountq = await (from c in _context.Accounting
                                          .Where(q => q.AccountId == _Accountq.AccountId)
                                                        select c
