@@ -438,6 +438,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="cuenta"></param>
         /// <returns></returns>
+        [HttpGet]
         public async Task<long> GetAccountHierarchy(Accounting cuenta) {
             Accounting cuentaPadre = await _context.Accounting.Where(q => q.AccountId == cuenta.ParentAccountId).FirstOrDefaultAsync();
             if (cuentaPadre != null)
