@@ -251,6 +251,7 @@ Monitoreo
 Monitoreo.Alertas
 Monitoreo.Alertas.Editar Alertas
 Monitoreo.Alertas.Exportar Alertas
+Monitoreo.Dashboard
 Monitoreo.Informacion Mediatica
 Monitoreo.Informacion Mediatica.Agregar Informacion Mediatica
 Monitoreo.Informacion Mediatica.Editar Informacion Mediatica
@@ -277,6 +278,7 @@ Monitoreo.Paises GAFI.Editar Paises GAFI
 Monitoreo.Paises GAFI.Eliminar Paises GAFI
 Monitoreo.Paises GAFI.Exportar Paises GAFI
 Inventarios
+Inventarios.Dashboard
 Inventarios.Control de Ingresos
 Inventarios.Control de Ingresos.Agregar Control de Ingresos
 Inventarios.Control de Ingresos.Ver Detalle Control de Ingresos
@@ -465,6 +467,7 @@ Ventas.Nota de Credito.Editar Nota de Credito Detalle
 Ventas.Nota de Credito.Eliminar Nota de Credito Detalle
 Ventas.Nota de Credito.Exportar Nota de Credito Detalle
 RRHH
+RRHH.Dashboard
 RRHH.Empleados
 RRHH.Empleados.Agregar Empleados
 RRHH.Empleados.Editar Empleados
@@ -607,3 +610,6 @@ Seguridad.Roles por Usuario.Agregar Roles Por Usuario
 Seguridad.Roles por Usuario.Eliminar Roles Por Usuario
 Seguridad.Roles por Usuario.Exportar Roles Por Usuario
 Seguridad.Sucursales por Usuario
+Seguridad.Sucursales por Usuario
+Precidencial
+Precidencial.Dashboard
