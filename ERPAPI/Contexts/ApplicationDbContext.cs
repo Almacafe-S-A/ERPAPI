@@ -351,6 +351,14 @@ namespace ERP.Contexts
 
         public DbSet<Inasistencia> Inasistencias { get; set; }
 
+        public DbSet<TipoBonificacion> TiposBonificaciones { get; set; }
+
+        public DbSet<Bonificacion> Bonificaciones { get; set; }
+
+        public DbSet<ConfiguracionVacaciones> ConfiguracionVacaciones { get; set; }
+
+        public DbSet<PagoISR> PagosISR { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()

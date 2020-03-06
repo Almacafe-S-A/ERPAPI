@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class TipoBonificacion
+    public class ConfiguracionVacaciones
     {
         [Required]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
         [Required]
-        public string Nombre { get; set; }
+        public int Antiguedad { get; set; }
+
+        [Required]
+        public int DiasVacaciones { get; set; }
 
         [Required]
         public long EstadoId { get; set; }

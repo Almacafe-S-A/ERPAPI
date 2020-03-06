@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class TipoBonificacion
+    public class TipoPlanilla
     {
         [Required]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

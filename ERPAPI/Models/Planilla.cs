@@ -7,14 +7,31 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class TipoBonificacion
+    public class Planilla
     {
         [Required]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
         [Required]
+        public long TipoPlanillaId { get; set; }
+
+        [Required]
         public string Nombre { get; set; }
+
+        [Required]
+        public int Periodo { get; set; }
+
+        [Required]
+        public int Mes { get; set; }
+
+        [Required]
+        public int TotalEmpleados { get; set; }
+
+        [Required]
+        public double TotalPlanilla { get; set; }
+
+
 
         [Required]
         public long EstadoId { get; set; }
