@@ -530,11 +530,14 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _Account.HierarchyAccount = await GetAccountHierarchy(_Account);
+                        
                         _Accountq = await (from c in _context.Accounting
                                          .Where(q => q.AccountId == _Accountq.AccountId)
                                                        select c
                                         ).FirstOrDefaultAsync();
+
+                        _Account.HierarchyAccount = await GetAccountHierarchy(_Account);
+                        _Account.AccountBalance = _Accountq.AccountBalance;
 
                         _context.Entry(_Accountq).CurrentValues.SetValues((_Account));
 
