@@ -299,7 +299,54 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetBoletoSalida()
+        {
+            List<Boleto_Ent> Items = new List<Boleto_Ent>();
 
+
+            try
+            {
+                var query = (from c in _context.Boleto_Ent
+                             join d in _context.Boleto_Sal on c.clave_e equals d.clave_e  into ba                             
+                             from e in ba.DefaultIfEmpty()
+                             where c.peso_e < e.peso_s
+
+                             select new Boleto_Ent
+                             {
+                                 clave_e = c.clave_e,
+                                 bascula_e = c.bascula_e,
+                                 clave_C = c.clave_C,
+                                 clave_o = c.clave_o,
+                                 clave_p = c.clave_p,
+                                 clave_u = c.clave_u,
+                                 fecha_e = c.fecha_e,
+                                 completo = c.completo,
+                                 hora_e = c.hora_e,
+                                 conductor = c.conductor,
+                                 nombre_oe = c.nombre_oe,
+                                 observa_e = c.observa_e,
+                                 peso_e = c.peso_e,
+                                 placas = c.placas,
+                                 turno_oe = c.turno_oe,
+                                 t_entrada = c.t_entrada,
+                                 unidad_e = c.unidad_e,
+                                 Boleto_Sal = e
+                             
+                             }).AsQueryable();
+
+                Items = await query.OrderByDescending(q => q.clave_e).Include(q => q.Boleto_Sal).ToListAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(Items);
+        }
 
 
 

@@ -31,13 +31,13 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Sucursal")]
-        public Int64? BranchId { get; set; }
+        public Int64 BranchId { get; set; }
 
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
 
         [Display(Name = "Bodega")]
-        public Int64? WareHouseId { get; set; }
+        public int WareHouseId { get; set; }
 
         [Display(Name = "Bodega")]
         public string WareHouseName { get; set; }
@@ -58,7 +58,7 @@ namespace ERPAPI.Models
         public string ProductName { get; set; }
 
         [Display(Name = "Producto")]
-        public Int64? SubProducId { get; set; }
+        public int SubProducId { get; set; }
 
         [Display(Name = "Producto")]
         public string SubProductName { get; set; }
@@ -92,10 +92,10 @@ namespace ERPAPI.Models
         public double? QuantityOutCD { get; set; }
 
         [Display(Name = "Saldo Certificado depositos")]
-        public double? TotalCD { get; set; }
+        public double TotalCD { get; set; }
 
         [Display(Name = "Saldo sacos")]
-        public double? TotalBags { get; set; }
+        public double TotalBags { get; set; }
 
         [Display(Name = "Saldo")]
         public double? Total { get; set; }
