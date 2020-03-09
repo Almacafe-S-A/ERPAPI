@@ -53,7 +53,7 @@ namespace ERPAPI.Migrations
             //    column: "CustomerId",
             //    principalTable: "Customer",
             //    principalColumn: "CustomerId",
-            //    onDelete: ReferentialAction.Cascade);
+            //    onDelete: ReferentialAction.Restrict);
         }
     }
 }

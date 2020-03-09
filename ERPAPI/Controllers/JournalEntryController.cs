@@ -313,6 +313,7 @@ namespace ERPAPI.Controllers
        // public async Task<ActionResult<JournalEntry>> Update([FromBody]JournalEntry _JournalEntry)
         public async Task<ActionResult<JournalEntry>> Update([FromBody]dynamic dto)
         {
+            bool isapproved = new bool();
             //JournalEntry _JournalEntryq = _JournalEntry;
             JournalEntry _JournalEntry = new JournalEntry();
             JournalEntry _JournalEntryq = new JournalEntry();
@@ -329,6 +330,10 @@ namespace ERPAPI.Controllers
                                  select c
                                 ).FirstOrDefaultAsync();
 
+                        if(_JournalEntryq.EstadoId == 6)
+                        {
+                            isapproved = true;
+                        }
                 _context.Entry(_JournalEntryq).CurrentValues.SetValues((_JournalEntry));
 
                 await _context.SaveChangesAsync();
@@ -348,6 +353,50 @@ namespace ERPAPI.Controllers
                         });
 
                         await _context.SaveChangesAsync();
+
+                        if(!isapproved)
+                        {
+                            foreach(JournalEntryLine jel in _JournalEntry.JournalEntryLines)
+                            {
+                                bool continuar = true;
+                                Accounting _account = new Accounting();
+                                _account = await (from c in _context.Accounting
+                                 .Where(q => q.AccountId == jel.AccountId)
+                                                  select c
+                                ).FirstOrDefaultAsync();
+                                do
+                                {
+                                    if(_account.DeudoraAcreedora == "D")
+                                    {
+                                        _account.AccountBalance -= jel.Credit;
+                                        _account.AccountBalance += jel.Debit;
+                                    }
+                                    else if(_account.DeudoraAcreedora == "A")
+                                    {
+                                        _account.AccountBalance += jel.Credit;
+                                        _account.AccountBalance -= jel.Debit;
+                                    }
+                                    await _context.SaveChangesAsync();
+                                    if(!_account.ParentAccountId.HasValue)
+                                    {
+                                        continuar = false;
+                                    }
+                                    else
+                                    {
+                                        _account = await (from c in _context.Accounting
+                                        .Where(q => q.AccountId == _account.ParentAccountId)
+                                                          select c
+                                        ).FirstOrDefaultAsync();
+                                        if(_account == null)
+                                        {
+                                            continuar = false;
+                                        }
+                                    }
+                                }
+                                while (continuar);
+                            }
+                        }
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -438,8 +487,9 @@ namespace ERPAPI.Controllers
             {
                 var entradas = (from lineas in _context.JournalEntryLine
                     join cabeza in _context.JournalEntry on lineas.JournalEntryId equals cabeza.JournalEntryId
-                    where cabeza.Date >= fechaInicial && cabeza.Date <= fechaFinal.AddDays(1).AddTicks(-1) && lineas.AccountId == codigoCuenta
-                    select new JournalEntryLineDTO(lineas, cabeza.Date)).ToList();
+                    where cabeza.Date >= fechaInicial && cabeza.Date <= fechaFinal.AddDays(1).AddTicks(-1) && lineas.AccountId == codigoCuenta && cabeza.EstadoId == 6 
+                          && !_context.ConciliacionLinea.Any(l=> l.JournalEntryId == lineas.JournalEntryId && l.JournalEntryLineId == lineas.JournalEntryLineId)
+                    select new JournalEntryLineDTO(lineas, cabeza.Date, cabeza.TypeJournalName)).ToList();
                 return await Task.Run(() => Ok(entradas));
             }
             catch (Exception ex)

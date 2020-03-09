@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Web.CodeGeneration;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -92,6 +94,122 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Cambia la Contraseña a un usuario proporcionando el email y la contraseña actual
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("CambiarPasswordPoliticas")]
+        public async Task<ActionResult<ApplicationUser>> CambiarPasswordPoliticas([FromBody] UserInfo model)
+        {
+            try
+            {
+                ApplicationUser ApplicationUserq = _context.Users.Where(q => q.Email == model.Email).FirstOrDefault();
+                //string password = ApplicationUserq.PasswordHash;
+                var passwordValidator = new PasswordValidator<ApplicationUser>();
+                //_userManager.Options.Password.RequireDigit = true;
+                _userManager.Options.Password.RequiredLength = Convert.ToInt32(_context.ElementoConfiguracion.Where(w =>w.Id == 21).FirstOrDefault().Valordecimal);
+
+                var resultvalidador = await passwordValidator.ValidateAsync(_userManager, null, model.Password);
+                if (resultvalidador.Succeeded)
+                {
+                    //Verifica en los historicos 
+                    var validarhistoricos = _context.PasswordHistory.Where(w => w.UserId == ApplicationUserq.Id.ToString()).ToList();
+                    if (validarhistoricos != null)
+                    {
+                        foreach (var item in validarhistoricos)
+                        {
+                            PasswordVerificationResult passwordMatch = _userManager.PasswordHasher.VerifyHashedPassword(ApplicationUserq, item.PasswordHash, model.Password);
+                            if (passwordMatch == PasswordVerificationResult.Success)
+                            {
+                                return await Task.Run(() => BadRequest(@"Error Ya ha utilizado esta contraseña"));
+                            }
+                        }
+                    }                   
+
+                    ApplicationUserq.LastPasswordChangedDate = ApplicationUserq.LastPasswordChangedDate = DateTime.Now;
+                    var result = await _userManager.ChangePasswordAsync(ApplicationUserq, model.PasswordAnterior, model.Password);                    
+                    if (result.Succeeded)
+                    {
+                        
+                        
+                        _context.PasswordHistory.Add(new PasswordHistory()
+                        {
+                            UserId = ApplicationUserq.Id.ToString(),
+                            PasswordHash = ApplicationUserq.PasswordHash,
+                        });
+                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        {
+                            // IdOperacion =,
+                            Descripcion = ApplicationUserq.Id.ToString(),
+                            DocType = "Usuario",
+                            ClaseInicial =
+                            Newtonsoft.Json.JsonConvert.SerializeObject(ApplicationUserq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(ApplicationUserq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "ChangePassword",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = ApplicationUserq.UsuarioCreacion,
+                            UsuarioModificacion = ApplicationUserq.UsuarioModificacion,
+                            UsuarioEjecucion = ApplicationUserq.UsuarioModificacion,
+
+                        });
+
+                        //await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
+                        return await Task.Run(() => Ok(ApplicationUserq));
+                    }
+                    else
+                    {
+                        return await Task.Run(() => BadRequest(@"Contraseña o usuario incorrecto"));
+                        
+                    }
+
+
+                }
+                else
+                {
+                    string errores = "La Contraseña ";
+                    foreach (var item in resultvalidador.Errors)
+                    {
+                        switch (item.Code)
+                        {
+                            case ("PasswordTooShort"):
+                                errores += "es muy corta, ";
+                                break;
+                            case ("PasswordRequiresUniqueChars"):
+                                errores += "requiere caracteres unicos, ";
+                                break;
+                            case ("PasswordRequiresNonAlphanumeric"):
+                                errores += "requiere caracteres alfanumericos, ";
+                                break;
+                            case ("PasswordRequiresDigit"):
+                                errores += "requiere caracteres numeros, ";
+                                break;
+                            case ("PasswordRequiresLower"):
+                                errores += "requiere minúsculas, ";
+                                break;
+                            case ("PasswordRequiresUppe"):
+                                errores += "requiere mayúsculas, ";
+                                break;
+
+                        }
+                    }
+                    return await Task.Run(() => BadRequest($"{errores}"));
+                    //return await Task.Run(() => BadRequest($" El password debe tener mayusculas, minusculas y caracteres especiales!"));
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+               // ILogger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
+            }
+
+        }
+
+
 
         /// <summary>
         /// Le permite a un usuario creado , autenticarse y generar el web token para el uso de los endpoints de la API.
@@ -104,7 +222,9 @@ namespace ERPAPI.Controllers
 
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: false);
+
+                _signInManager.Options.Lockout.MaxFailedAccessAttempts = Convert.ToInt32(_context.ElementoConfiguracion.Where(w => w.Id == 15).FirstOrDefault().Valordecimal);
+                var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     ApplicationUser usuario = await _userManager.FindByEmailAsync(userInfo.Email);
@@ -129,7 +249,7 @@ namespace ERPAPI.Controllers
 
                     claims.Add(new Claim(ClaimTypes.Email, usuario.Email));
                     claims.Add(new Claim(ClaimTypes.Name, usuario.UserName));
-                    claims.Add(new Claim("Branch",usuario.BranchId.ToString()));
+                    //claims.Add(new Claim("Branch",usuario.BranchId.ToString()));
 
                     JwtSecurityToken token = await BuildToken(claims);
 
@@ -143,7 +263,7 @@ namespace ERPAPI.Controllers
                            {
                                Token = new JwtSecurityTokenHandler().WriteToken(token),
                                Expiration = token.ValidTo,
-                               BranchId = Convert.ToInt32(usuario.BranchId),
+                              // BranchId = Convert.ToInt32(usuario.BranchId),
                                IsEnabled = usuario.IsEnabled,
                                LastPasswordChangedDate = usuario.LastPasswordChangedDate,
                                Passworddias = cambiopassworddias.Value

@@ -104,7 +104,7 @@ namespace ERPAPI.Migrations
                         columns: x => new { x.QuotationCode, x.QuotationVersion },
                         principalTable: "Quotation",
                         principalColumns: new[] { "QuotationCode", "QuotationVersion" },
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

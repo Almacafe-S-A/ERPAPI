@@ -15,6 +15,11 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "Numero de cuenta")]
         public string AccountType { get; set; }
+        
+        public long? TypeAccountId { get; set; }
+
+        [ForeignKey("TypeAccountId")]
+        public ElementoConfiguracion TypeAccount { get; set; }
 
         [Display(Name = "Numero de cuenta")]
         public string AccountNumber { get; set; }
@@ -45,5 +50,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
+
+        [ForeignKey("AccountId")]
+        public Int64 AccountId { get; set; }
     }
 }

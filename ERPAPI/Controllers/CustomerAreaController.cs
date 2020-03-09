@@ -73,7 +73,17 @@ namespace ERPAPI.Controllers
             List<CustomerArea> Items = new List<CustomerArea>();
             try
             {
-                Items = await _context.CustomerArea.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.CustomerArea.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.CustomerAreaId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.CustomerArea.OrderByDescending(b => b.CustomerAreaId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -218,7 +228,128 @@ namespace ERPAPI.Controllers
 
 
 
+        /// <summary>
+        /// Elimina El customer área product      
+        /// </summary>
+        /// <param name="_ProductoArea"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DeleteProducto(CustomerAreaProduct _ProductoArea)
+        {
+            CustomerAreaProduct AreaProduct = new CustomerAreaProduct();
+            try
+            {
+                AreaProduct = _context.CustomerAreaProduct.Where(x => x.CustomerAreaProductId == _ProductoArea.CustomerAreaProductId).FirstOrDefault();
 
+                _context.CustomerAreaProduct.Remove(AreaProduct);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(AreaProduct));
+
+        }
+
+
+        /// <summary>
+        /// Elimina una City       
+        /// </summary>
+        /// <param name="_ProductoAreaInsert"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> InsertProducto([FromBody]CustomerAreaProduct _ProductoAreaInsert)
+        {
+            CustomerAreaProduct AreaProduct = new CustomerAreaProduct();
+            try
+            {
+                AreaProduct = _ProductoAreaInsert;
+                _context.CustomerAreaProduct.Add(AreaProduct);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(AreaProduct));
+
+        }
+
+
+
+        /// <summary>
+        /// Obtiene los Datos de la CustomerArea por medio del Id enviado.
+        /// </summary>
+        /// <param name="CustomerAreaId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerAreaId}")]
+        public async Task<IActionResult> GetCustomerAreaProduct(Int64 CustomerAreaId)
+        {
+            List<CustomerAreaProduct> Items = new List<CustomerAreaProduct>();
+            try
+            {
+                Items = await _context.CustomerAreaProduct.Where(q => q.CustomerAreaId == CustomerAreaId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return Ok(Items);
+        }
+
+
+
+        /// <summary>
+        /// Inserta una nueva CustomerArea
+        /// </summary>
+        /// <param name="_CustomerAreaProduct"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<ActionResult<CustomerArea>> InsertDetalleNuevo([FromBody]CustomerAreaProduct _CustomerAreaProduct)
+        {
+            CustomerAreaProduct _CustomerAreaq = new CustomerAreaProduct();
+            try
+            {
+               
+                    try
+                    {
+                    SubProduct NAMEPRODUCT = new SubProduct();
+
+                    NAMEPRODUCT.ProductName = await _context.SubProduct.Where(q => q.SubproductId == _CustomerAreaProduct.ProductId).Select(q => q.ProductName).FirstOrDefaultAsync();
+
+                    _CustomerAreaq = _CustomerAreaProduct;
+                    _CustomerAreaq.ProductName = NAMEPRODUCT.ProductName;
+                    _context.CustomerAreaProduct.Add(_CustomerAreaq);
+                        
+                        await _context.SaveChangesAsync();
+                       
+
+                    }
+                    catch (Exception ex)
+                    {
+                        
+                        throw ex;
+                    }
+                
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(_CustomerAreaq);
+        }
 
 
 

@@ -27,7 +27,7 @@ namespace ERPAPI.Migrations
                 column: "TipoDocumentoId",
                 principalTable: "TiposDocumento",
                 principalColumn: "IdTipoDocumento",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -52,7 +52,7 @@ namespace ERPAPI.Migrations
                 column: "EstadoId",
                 principalTable: "TiposDocumento",
                 principalColumn: "IdTipoDocumento",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
     }
 }

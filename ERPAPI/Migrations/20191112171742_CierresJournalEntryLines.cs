@@ -54,7 +54,7 @@ namespace ERPAPI.Migrations
                         column: x => x.JournalEntryId,
                         principalTable: "JournalEntry",
                         principalColumn: "JournalEntryId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

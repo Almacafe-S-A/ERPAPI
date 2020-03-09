@@ -22,7 +22,7 @@ namespace ERPAPI.Migrations
                 column: "IdPolicy",
                 principalTable: "Policy",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_PolicyRoles_AspNetRoles_IdRol",
@@ -30,7 +30,7 @@ namespace ERPAPI.Migrations
                 column: "IdRol",
                 principalTable: "AspNetRoles",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

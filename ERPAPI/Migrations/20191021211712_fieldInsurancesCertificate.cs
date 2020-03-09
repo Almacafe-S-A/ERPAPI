@@ -41,7 +41,7 @@ namespace ERPAPI.Migrations
                         column: x => x.InsurancesCertificateId,
                         principalTable: "InsurancesCertificate",
                         principalColumn: "InsurancesCertificateId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

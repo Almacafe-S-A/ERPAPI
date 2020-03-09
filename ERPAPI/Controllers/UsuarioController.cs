@@ -98,7 +98,8 @@ namespace ERPAPI.Controllers
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
-                _users = await _context.Users.Include(c => c.Branch).ToListAsync();
+                //_users = await _context.Users.Include(c => c.Branch).ToListAsync();
+                _users = await _context.Users.ToListAsync();
             }
             catch (System.Exception ex)
             {
@@ -120,10 +121,11 @@ namespace ERPAPI.Controllers
             List<ApplicationUser> _users = new List<ApplicationUser>();
             try
             {
-                 _users = await _context.Users.Include(c => c.Branch).ToListAsync();
-                    
-                  //  .Include(c => c.Branch)
-               // _users = await _context.Users.ToListAsync();
+                //_users = await _context.Users.Include(c => c.Branch).ToListAsync();
+                _users = await _context.Users.ToListAsync();
+
+                //  .Include(c => c.Branch)
+                // _users = await _context.Users.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -192,7 +194,7 @@ namespace ERPAPI.Controllers
                 {
                     UserName = _usuario.Email,
                     Email = _usuario.Email,
-                    BranchId = _usuario.BranchId,
+                    //BranchId = _usuario.BranchId,
                     PhoneNumber = _usuario.PhoneNumber,
                     IsEnabled = _usuario.IsEnabled,
                     LastPasswordChangedDate = DateTime.Now
@@ -281,7 +283,7 @@ namespace ERPAPI.Controllers
                   .Where(q => q.Id == _usuario.Id)
                                                 select c
                     ).FirstOrDefault();
-                _usuario.BranchId = _usuario.Branch.BranchId;
+                //_usuario.BranchId = _usuario.Branch.BranchId;
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
                 _usuario.FechaModificacion = DateTime.Now;
@@ -322,11 +324,11 @@ namespace ERPAPI.Controllers
                     }
 
                     ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
-                    _context.PasswordHistory.Add(new PasswordHistory()
-                    {
-                        UserId = ApplicationUserq.Id.ToString(),
-                        PasswordHash = _newpass.PasswordHash,
-                    });
+                    //_context.PasswordHistory.Add(new PasswordHistory()
+                    //{
+                    //    UserId = ApplicationUserq.Id.ToString(),
+                    //    PasswordHash = _newpass.PasswordHash,
+                    //});
 
                     await _context.SaveChangesAsync();
                 }
@@ -467,6 +469,40 @@ namespace ERPAPI.Controllers
             }
             return await Task.Run((() => Ok(permisos)));
         }
+
+
+        /// <summary>
+        /// Desbloquea un Usuario proporcionando su Id
+        /// </summary>
+        /// <param name="_usuario"></param>
+        /// <returns></returns>
+        [HttpPost("DesbloqueoUsuario")]
+        public async Task<ActionResult<ApplicationUser>> DesbloqueoUsuario([FromBody]ApplicationUserDTO _usuario)
+        {
+            try
+            {
+                ApplicationUser ApplicationUserq = _context.Users.Where(w => w.Id == _usuario.Id).FirstOrDefault();
+                ApplicationUserq.LastPasswordChangedDate = DateTime.Now;
+                ApplicationUserq.LockoutEnd = null;
+                
+
+                //_context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
+                await _context.SaveChangesAsync();
+                return await Task.Run(() => ApplicationUserq);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
+            }
+
+        }
+
+
+
+
+
 
     }
 }

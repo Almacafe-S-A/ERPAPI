@@ -15,14 +15,14 @@ namespace ERPAPI.Models
         public Int64 JournalEntryLineId { get; set; }
         [Display(Name = "Id Entrada diario")]
         public Int64 JournalEntryId { get; set; }
-        [StringLength(30)]
+        //[StringLength(30)]
         [Display(Name = "Numero de Centro de Costo")]
         public Int64 CostCenterId { get; set; }
 
         [Display(Name = "Centro de Costos")]
         public string CostCenterName { get; set; }
 
-        [StringLength(60)]
+        //[StringLength(60)]
         [Display(Name = "Nombre de Centro Costo")]
         public string Description { get; set; }
 
@@ -80,11 +80,12 @@ namespace ERPAPI.Models
 
     public class JournalEntryLineDTO : JournalEntryLine
     {
+
         public JournalEntryLineDTO()
         {
         }
 
-        public JournalEntryLineDTO(JournalEntryLine origen, DateTime fechaTransaccion)
+        public JournalEntryLineDTO(JournalEntryLine origen, DateTime fechaTransaccion, string tipoDocumento)
         {
             JournalEntryLineId = origen.JournalEntryLineId;
             JournalEntryId = origen.JournalEntryId;
@@ -105,9 +106,11 @@ namespace ERPAPI.Models
             CreatedDate = origen.CreatedDate;
             ModifiedDate = origen.ModifiedDate;
             FechaTransaccion = fechaTransaccion;
+            TipoDocumento = tipoDocumento;
         }
 
         public DateTime FechaTransaccion { get; set; }
+        public string TipoDocumento { get; set; }
     }
 
 

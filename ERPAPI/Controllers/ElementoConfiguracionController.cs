@@ -132,8 +132,38 @@ namespace ERPAPI.Controllers
             }
 
         }
-        
 
+        /// <summary>
+        /// Obtiene los Datos de la tabla Elementos de Configuración por clasificación de Grupos.
+        /// </summary>
+        /// <param name="GrupoConfiguracionId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{GrupoConfiguracionId}")]
+        public async Task<ActionResult> GetElementosConfiguracionByGrupoConfiguracion(Int64 GrupoConfiguracionId)
+        {
+            List<ElementoConfiguracion> Items = new List<ElementoConfiguracion>();
+            try
+            {
+                if (GrupoConfiguracionId == 0)
+                {
+                    Items = await _context.ElementoConfiguracion.ToListAsync();
+                    Items = Items.OrderByDescending(p => p.Id).ToList();
+                    return await Task.Run(() => Ok(Items));
+                }
+                else if (GrupoConfiguracionId > 0)
+                {
+                    Items = await _context.ElementoConfiguracion.Where(q => q.Idconfiguracion == GrupoConfiguracionId).ToListAsync();
+                    Items = Items.OrderByDescending(p => p.Id).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+
+        }
 
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetElementoConfiguracionByIdConfiguracion(Int64 Id)
@@ -263,8 +293,24 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
-
+        [HttpPost("[action]/{Id}/{Valor}/{usuario}")]
+        public async Task<ActionResult> UpdateElementoConfiguracionValorDecimal(long Id, double Valor, string usuario)
+        {
+            try
+            {
+                ElementoConfiguracion elemento = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == Id);
+                elemento.Valordecimal = Valor;
+                elemento.FechaModificacion = DateTime.Now;
+                elemento.UsuarioModificacion = usuario;
+                await _context.SaveChangesAsync();
+                return Ok(elemento);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Ocurrio un error al actualizar el elemento configuración No. " + Id);
+                return BadRequest(ex);
+            }
+        }
 
 
 

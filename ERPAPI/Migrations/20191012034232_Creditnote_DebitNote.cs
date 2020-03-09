@@ -182,7 +182,7 @@ namespace ERPAPI.Migrations
                         column: x => x.CreditNoteId,
                         principalTable: "CreditNote",
                         principalColumn: "CreditNoteId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

@@ -72,7 +72,17 @@ namespace ERPAPI.Controllers
             List<Invoice> Items = new List<Invoice>();
             try
             {
-                Items = await _context.Invoice.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.Invoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.InvoiceId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.Invoice.OrderByDescending(b => b.InvoiceId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -167,10 +177,10 @@ namespace ERPAPI.Controllers
                                                  .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
 
                          
-                        if(IdCai==0)
-                        {
-                            return BadRequest("No existe un CAI activo para el punto de emisión");
-                        }
+                        //if(IdCai==0)
+                        //{
+                        //    return BadRequest("No existe un CAI activo para el punto de emisión");
+                        //}
 
                         _Invoiceq.Sucursal =  await _context.Branch.Where(q => q.BranchId == _Invoice.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                         //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
@@ -250,7 +260,10 @@ namespace ERPAPI.Controllers
                                     if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
                                            && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
                                     {
-
+                                        if (_iline is null)
+                                        {
+                                            _iline = new InvoiceLine();
+                                        }
                                         _iline.AccountId = Convert.ToInt32(item.AccountId);
                                         _iline.AccountName = item.AccountName;
                                         _context.Entry(_iline).CurrentValues.SetValues((_iline));                                   
@@ -301,8 +314,8 @@ namespace ERPAPI.Controllers
                             if(sumacreditos!=sumadebitos)
                             {
                                 transaction.Rollback();
-                                _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                               //_logger.LogError($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico : {_journalentryconfiguration.JournalEntryConfigurationId}");
+                                return BadRequest($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico.");
                             }
 
                             _je.TotalCredit = sumacreditos;

@@ -341,6 +341,15 @@ namespace ERPAPI.Controllers
                             .Where(l => l.ConciliacionId == _Conciliacion.ConciliacionId).ToListAsync();
                         _Conciliacionq.ConciliacionLinea = lineas;
                         _context.Entry(_Conciliacionq).CurrentValues.SetValues((_Conciliacion));
+                        foreach (var linea in _Conciliacion.ConciliacionLinea.Where(l => l.ConciliacionLineaId != 0)
+                            .ToList())
+                        {
+                            var lineaCon = _Conciliacionq.ConciliacionLinea.FirstOrDefault(
+                                l => l.ConciliacionLineaId == linea.ConciliacionLineaId);
+                            if(lineaCon != null)
+                                lineaCon.Reconciled = linea.Reconciled;
+                        }
+
                         foreach (var linea in _Conciliacion.ConciliacionLinea.Where(l=> l.ConciliacionLineaId == 0).ToList())
                         {
                             _Conciliacionq.ConciliacionLinea.Add(linea);

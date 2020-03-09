@@ -58,7 +58,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdBitacoraCierre,
                         principalTable: "BitacoraCierreContable",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -119,7 +119,7 @@ namespace ERPAPI.Migrations
                         column: x => x.IdBitacoracierreContable,
                         principalTable: "CierreContable",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

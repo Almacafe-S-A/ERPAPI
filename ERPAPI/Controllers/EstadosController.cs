@@ -117,6 +117,26 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la tabla Grupo Estados.
+        /// </summary>
+        [HttpGet("[action]")]
+        public async Task<ActionResult> GetGrupoEstados()
+        {
+            try
+            {
+                List<GrupoEstado> Items = await _context.GrupoEstado.ToListAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
         [HttpGet("[action]/{idgrupoestado}")]
         public async Task<ActionResult> GetEstadosByGrupo(Int64 idgrupoestado)
         {
@@ -219,9 +239,37 @@ namespace ERPAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la tabla Estados por clasificación de Grupos.
+        /// </summary>
+        /// <param name="GrupoEstadoId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{GrupoEstadoId}")]
+        public async Task<ActionResult> GetEstadosByGrupoEstado(Int64 GrupoEstadoId)
+        {
+            List<Estados> Items = new List<Estados>();
+            try
+            {
+                if (GrupoEstadoId == 0)
+                {
+                    Items = await _context.Estados.ToListAsync();
+                    Items = Items.OrderByDescending(p => p.IdEstado).ToList();
+                    return await Task.Run(() => Ok(Items));
+                }
+                else if (GrupoEstadoId > 0)
+                {
+                    Items = await _context.Estados.Where(q => q.IdGrupoEstado == GrupoEstadoId).ToListAsync();
+                    Items = Items.OrderByDescending(p => p.IdEstado).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
 
-
-
+        }
 
     }
 }

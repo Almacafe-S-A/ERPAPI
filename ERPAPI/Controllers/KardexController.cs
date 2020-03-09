@@ -71,7 +71,17 @@ namespace ERPAPI.Controllers
             List<Kardex> Items = new List<Kardex>();
             try
             {
-                Items = await _context.Kardex.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.Kardex.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.KardexId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.Kardex.OrderByDescending(b => b.KardexId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

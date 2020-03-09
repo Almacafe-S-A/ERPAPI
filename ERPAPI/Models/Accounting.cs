@@ -22,6 +22,8 @@ namespace ERPAPI.Models
         [Display(Name = "Saldo Contable")]
         public double AccountBalance { get; set; }
 
+        public bool? AceptaNegativo { get; set; }
+
         [MaxLength(5000)]
         [Display(Name = "Descripcion de la cuenta")]
         public string Description { get; set; }

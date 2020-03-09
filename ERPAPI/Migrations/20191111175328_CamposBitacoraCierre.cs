@@ -34,7 +34,7 @@ namespace ERPAPI.Migrations
             //    column: "BitacoraCierreContableId",
             //    principalTable: "BitacoraCierreContable",
             //    principalColumn: "Id",
-            //    onDelete: ReferentialAction.Cascade);
+            //    onDelete: ReferentialAction.Restrict);
 
             //migrationBuilder.AddForeignKey(
             //    name: "FK_CierresJournal_BitacoraCierreContable_BitacoraCierreContableId",
@@ -42,7 +42,7 @@ namespace ERPAPI.Migrations
             //    column: "BitacoraCierreContableId",
             //    principalTable: "BitacoraCierreContable",
             //    principalColumn: "Id",
-            //    onDelete: ReferentialAction.Cascade);
+            //    onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -28,6 +28,10 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de modificación")]
         public DateTime? FechaModificacion { get; set; }
 
+        public Country Country { get; set; }
+
+
+
         public List<City> City { get; set; }
 
         public virtual List<Customer> Customer { get; set; }

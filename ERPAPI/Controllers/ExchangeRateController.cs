@@ -43,7 +43,7 @@ namespace ERPAPI.Controllers
             List<ExchangeRate> Items = new List<ExchangeRate>();
             try
             {
-                Items = await _context.ExchangeRate.ToListAsync();
+                Items = await _context.ExchangeRate.OrderByDescending(c => c.ExchangeRateId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -79,8 +79,12 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
-        [HttpPost("[action]")]
+        /// <summary>
+        /// Obtiene un Exchange Rate para la fecha y moneda
+        /// </summary>
+        /// <param name="_ExchangeRate"></param>
+        /// <returns></returns>
+        [HttpPost("[action]/{ExchangeRate}")]
         public async Task<IActionResult> GetExchangeRateByFecha([FromBody]ExchangeRate _ExchangeRate)
         {
             ExchangeRate Items = new ExchangeRate();

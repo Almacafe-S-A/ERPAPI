@@ -24,9 +24,17 @@ namespace ERPAPI.Models
 
         public string PaytoOrderOf { get; set; }
 
+        public string RTN { get; set; }
+
+        public int? RetencionId { get; set; }
+        [ForeignKey("RetencionId")]
+        public RetentionReceipt Retention { get; set; }
+
         public decimal Ammount { get; set; }
 
         public string AmountWords { get; set; }
+
+        public string Sinopsis { get; set; }
 
         public string Address { get; set; }
 
@@ -41,5 +49,13 @@ namespace ERPAPI.Models
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
+    }
+
+    public class CheckAccountLinesDTO : CheckAccountLines
+    {
+        public  List<JournalEntryLine> JournalEntryLines { get; set; }
+
+
+
     }
 }

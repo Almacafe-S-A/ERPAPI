@@ -1,24 +1,45 @@
 ﻿/*USUARIO INICIAL
-	"UserEmail": "erp@bi-dss.com"
+	"User": "Admin"
     "UserPassword": "Aa123456!"
 */
 
-SET IDENTITY_INSERT [dbo].[GrupoEstado] ON 
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (3, N'Copiar a Factura proforma', N'Copia cotizacióna a una factura a proforma', 2, N'freddy.chinchilla@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-04-15T00:00:00.0000000' AS DateTime2), CAST(N'2019-08-11T19:19:57.5447331' AS DateTime2))
 GO
-INSERT [dbo].[GrupoEstado] ([Id], [Nombre], [Modulo], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion]) VALUES (1, N'Activo/Inactivo', N'Todos', CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com')
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (4, N'Copiar a Factura Fiscal', N'Copia cotización a una factura fiscal', 2, N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', CAST(N'2019-04-15T08:51:24.9549875' AS DateTime2), CAST(N'2019-04-15T08:51:28.5466625' AS DateTime2))
 GO
-SET IDENTITY_INSERT [dbo].[GrupoEstado] OFF
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (5, N'Enviada a Aprobacion', N'Validacion', 3, N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', CAST(N'2019-07-30T14:24:35.3930000' AS DateTime2), CAST(N'2019-07-30T14:24:35.3930000' AS DateTime2))
 GO
-
-
-
-SET IDENTITY_INSERT [dbo].[Estados] ON 
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (7, N'Rechazado', N'Rechazado', 3, N'celia.suazo@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-08-11T19:09:51.6959632' AS DateTime2), CAST(N'2019-08-12T13:52:48.5514736' AS DateTime2))
 GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (1, N'Activo', N'Activo', 1, N'freddy.chinchilla@bi-dss.com', N'celia.suazo@bi-dss.com', CAST(N'2019-03-15T17:21:16.6966667' AS DateTime2), CAST(N'2019-08-11T19:17:11.7570904' AS DateTime2))
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (8, N'Pendiente', N'Ninguna', 3, N'celia.suazo@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-08-13T17:34:48.6879083' AS DateTime2), CAST(N'2019-08-30T00:38:53.8025191' AS DateTime2))
 GO
-INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (2, N'Inactivo', N'Estado Inactivo', 1, N'freddy.chinchilla@bi-dss.com', N'tania.sosa@bi-dss.com', CAST(N'2019-03-15T17:21:16.7000000' AS DateTime2), CAST(N'2019-09-02T14:43:28.9760922' AS DateTime2))
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (30, N'Intermedio', N'Intermedio', 2, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-10-09T10:12:05.3314552' AS DateTime2), CAST(N'2019-10-09T10:12:05.3314559' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (31, N'Avanzados', N'Avanzados', 2, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-10-09T10:53:30.2336475' AS DateTime2), CAST(N'2019-10-09T10:53:30.2336487' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (39, N'Aprobados', N'Aprobado por el Gerente', 2, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-11-08T11:54:59.5249553' AS DateTime2), CAST(N'2019-11-19T10:28:42.7384873' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (41, N'Pendiente de Analisis', N'Alerta Pendiente de Analisis', 4, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (42, N'Cerrada', N'Alerta Cerrada', 4, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (43, N'Analizada', N'Accion Tomada Alertas', 5, N'asd', N'erp@bi-dss.com', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (44, N'Pendiente de Analisis', N'Accion Tomada Alertas', 5, N'erp@bi-dss.com', N'asd', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (47, N'Depreciándose', N'Activos Fijos', 6, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-29T13:45:04.4897784' AS DateTime2), CAST(N'2019-12-29T13:45:04.4897798' AS DateTime2))
+GO
+INSERT [dbo].[Estados] ([IdEstado], [NombreEstado], [DescripcionEstado], [IdGrupoEstado], [UsuarioCreacion], [UsuarioModificacion], [FechaCreacion], [FechaModificacion]) VALUES (48, N'Depreciado', N'Activos Fijos', 6, N'erp@bi-dss.com', N'erp@bi-dss.com', CAST(N'2019-12-29T13:45:56.5081518' AS DateTime2), CAST(N'2019-12-29T13:45:56.5081529' AS DateTime2))
 GO
 SET IDENTITY_INSERT [dbo].[Estados] OFF
+GO
+SET IDENTITY_INSERT [dbo].[GrupoEstado] ON 
+GO
+INSERT [dbo].[GrupoEstado] ([Id], [Nombre], [Modulo], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion]) VALUES (4, N'Estado Alertas', N'Alertas', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), N'erp@bi-dss.com', N'erp@bi-dss.com')
+GO
+INSERT [dbo].[GrupoEstado] ([Id], [Nombre], [Modulo], [FechaCreacion], [FechaModificacion], [UsuarioCreacion], [UsuarioModificacion]) VALUES (5, N'Accion Tomada', N'Alertas', CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), CAST(N'2019-12-12T00:00:00.0000000' AS DateTime2), N'erp@bi-dss.com', N'erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT [dbo].[GrupoEstado] OFF
 GO
 
 
@@ -86,30 +107,18 @@ GO
 
 
 INSERT dbo.AspNetUsers(Id, UserName, NormalizedUserName, Email, NormalizedEmail, EmailConfirmed, PasswordHash, SecurityStamp, ConcurrencyStamp, PhoneNumber, PhoneNumberConfirmed, TwoFactorEnabled, LockoutEnd, LockoutEnabled, AccessFailedCount, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion, BranchId, IsEnabled, LastPasswordChangedDate)
- VALUES ('fc405b7d-9fe3-43c9-97b5-d87a174cab8a', N'erp@bi-dss.com', N'ERP@BI-DSS.COM', N'erp@bi-dss.com', N'ERP@BI-DSS.COM', CONVERT(bit, 'False'), N'AQAAAAEAACcQAAAAEB5L3ZP3Bpk0O3IgrIeSN3rGrrGauHAbwQ4ChaVZ42KTDXNNTu+qCmcHmHSzH0y7iw==', N'XF4HG6MSQ22VZLWDER4TLPWRJO2QOGLH', N'90679b58-5a10-4dc0-b285-a8e042edd68d', NULL, CONVERT(bit, 'False'), CONVERT(bit, 'False'), NULL, CONVERT(bit, 'True'), 0, '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', NULL, NULL, 1, CONVERT(bit, 'True'), '2019-08-14 07:48:48.0463866')
+ VALUES ('fc405b7d-9fe3-43c9-97b5-d87a174cab8a', N'Admin', N'Admin', N'erp@bi-dss.com', N'Admin', CONVERT(bit, 'False'), N'AQAAAAEAACcQAAAAEB5L3ZP3Bpk0O3IgrIeSN3rGrrGauHAbwQ4ChaVZ42KTDXNNTu+qCmcHmHSzH0y7iw==', N'XF4HG6MSQ22VZLWDER4TLPWRJO2QOGLH', N'90679b58-5a10-4dc0-b285-a8e042edd68d', NULL, CONVERT(bit, 'False'), CONVERT(bit, 'False'), NULL, CONVERT(bit, 'True'), 0, '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', NULL, NULL, 1, CONVERT(bit, 'True'), SYSDATETIME())
 GO
 
 
-INSERT dbo.AspNetRoles(Id, Name, NormalizedName, ConcurrencyStamp, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('7b9c3671-43f7-4339-7699-08d71082fbac', N'GA', N'GA', NULL, '2019-07-24 16:05:04.9071491', '2019-07-24 16:05:04.9071503', N'erp@bi-dss.com', N'erp@bi-dss.com')
-INSERT dbo.AspNetRoles(Id, Name, NormalizedName, ConcurrencyStamp, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('bc0e4be0-dca1-4530-b2e4-1645f6caf87c', N'GG', N'Gerente General', N'9ab83e3b-4299-4838-9ec7-dea18a277712', '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', N'', N'')
-INSERT dbo.AspNetRoles(Id, Name, NormalizedName, ConcurrencyStamp, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('ca1c6c85-63cd-4309-8176-3ea2d64943c8', N'CONTG', N'CONTG', N'2b7785ba-43d4-41f9-888f-a9d733c7ccd8', '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', N'', N'')
-INSERT dbo.AspNetRoles(Id, Name, NormalizedName, ConcurrencyStamp, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('1605e84a-604f-4cf0-abb7-69e996c97885', N'SOP', N'Supervisor de operaciones y riesgo', NULL, '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', N'', N'')
-INSERT dbo.AspNetRoles(Id, Name, NormalizedName, ConcurrencyStamp, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('6f708482-a918-430d-b56c-778914afbe4e', N'Admin', N'Admin', NULL, '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', N'', N'')
+INSERT dbo.AspNetRoles(Id, Name, NormalizedName, ConcurrencyStamp, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('6f708482-a918-430d-b56c-778914afbe4e', N'Administrador', N'Administrador', NULL, '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', N'', N'')
 GO
 
 
-INSERT dbo.AspNetUserRoles(UserId, RoleId, UserName, RoleName, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('fc405b7d-9fe3-43c9-97b5-d87a174cab8a', 'bc0e4be0-dca1-4530-b2e4-1645f6caf87c', NULL, NULL, '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', N'', N'')
 INSERT dbo.AspNetUserRoles(UserId, RoleId, UserName, RoleName, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) VALUES ('fc405b7d-9fe3-43c9-97b5-d87a174cab8a', '6f708482-a918-430d-b56c-778914afbe4e', NULL, NULL, '0001-01-01 00:00:00.0000000', '0001-01-01 00:00:00.0000000', N'', N'')
-GO
-
-INSERT dbo.Policy(Id, Name, Description, type, UsuarioCreacion, UsuarioModificacion, FechaCreacion, FechaModificacion, Estado, IdEstado) VALUES ('727f9108-fe76-4c7e-3efd-08d71a9a2950', N'GG', N'GG', N'Roles', N'erp@bi-dss.com', N'erp@bi-dss.com', '2019-08-06 12:16:11.5123064', '2019-08-06 12:16:11.5123081', N'Activo', 1)
-INSERT dbo.Policy(Id, Name, Description, type, UsuarioCreacion, UsuarioModificacion, FechaCreacion, FechaModificacion, Estado, IdEstado) VALUES ('5be222c7-375d-4efc-b02f-575d8a4d2f95', N'EscrituraAdmon', N'Escritura para modulos de administracion', N'UserClaimRequirement', N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', '2019-04-02 08:44:49.5633333', '2019-04-02 08:44:49.5633333', NULL, 0)
-INSERT dbo.Policy(Id, Name, Description, type, UsuarioCreacion, UsuarioModificacion, FechaCreacion, FechaModificacion, Estado, IdEstado) VALUES ('b64b6d6f-8a4f-4a5b-a608-cdd4442f305a', N'Admin', N'Permisos administrativos.', N'Roles', N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', '2019-04-01 00:00:00.0000000', '2019-04-01 00:00:00.0000000', NULL, 0)
-GO
-
-INSERT dbo.PolicyRoles(Id, IdPolicy, IdRol, UsuarioCreacion, UsuarioModificacion, Estado, IdEstado) VALUES ('560ba0c8-5e90-4cc5-a3f2-04f605969490', 'b64b6d6f-8a4f-4a5b-a608-cdd4442f305a', '6f708482-a918-430d-b56c-778914afbe4e', N'freddy.chinchilla@bi-dss.com', N'freddy.chinchilla@bi-dss.com', NULL, 0)
-INSERT dbo.PolicyRoles(Id, IdPolicy, IdRol, UsuarioCreacion, UsuarioModificacion, Estado, IdEstado) VALUES ('ed463f83-c71a-4ec8-f382-08d71a9a4b63', '727f9108-fe76-4c7e-3efd-08d71a9a2950', 'bc0e4be0-dca1-4530-b2e4-1645f6caf87c', N'erp@bi-dss.com', N'erp@bi-dss.com', N'Activo', 1)
 GO
 
 --INSERT dbo.AspNetUserClaims(Id, UserId, ClaimType, ClaimValue, PolicyId) VALUES (1, 'fc405b7d-9fe3-43c9-97b5-d87a174cab8a', N'EscrituraAdministracion', N'1', '5be222c7-375d-4efc-b02f-575d8a4d2f95')
 --GO
+
+update AspNetUsers set LastPasswordChangedDate = SYSDATETIME()

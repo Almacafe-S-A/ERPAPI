@@ -72,7 +72,17 @@ namespace ERPAPI.Controllers
             List<DebitNote> Items = new List<DebitNote>();
             try
             {
-                Items = await _context.DebitNote.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.DebitNote.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.DebitNoteId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.DebitNote.OrderByDescending(b => b.DebitNoteId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -154,6 +164,11 @@ namespace ERPAPI.Controllers
                             }
 
                             _DebitNoteq.Sucursal = await _context.Branch.Where(q => q.BranchId == _DebitNote.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                            _DebitNoteq.FechaLimiteEmision = await _context.NumeracionSAR
+                                                     .Where(q => q.BranchId == _DebitNoteq.BranchId)
+                                                     .Where(q => q.IdCAI == IdCai)
+                                                     .Where(q => q.IdPuntoEmision == _DebitNoteq.IdPuntoEmision)
+                                                     .Where(q => q.Estado == "Activo").Select(q => q.FechaLimite).FirstOrDefaultAsync();
                             //  _DebitNoteq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
                             _DebitNoteq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
                         }

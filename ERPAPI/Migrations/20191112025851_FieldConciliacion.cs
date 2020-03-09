@@ -23,7 +23,7 @@ namespace ERPAPI.Migrations
                 column: "ConciliacionId",
                 principalTable: "Conciliacion",
                 principalColumn: "ConciliacionId",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

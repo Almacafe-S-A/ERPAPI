@@ -36,19 +36,19 @@ namespace ERPAPI.Migrations
                         column: x => x.CostCenterId,
                         principalTable: "CostCenter",
                         principalColumn: "CostCenterId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GarantiaBancaria_Currency_CurrencyId",
                         column: x => x.CurrencyId,
                         principalTable: "Currency",
                         principalColumn: "CurrencyId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_GarantiaBancaria_Estados_IdEstado",
                         column: x => x.IdEstado,
                         principalTable: "Estados",
                         principalColumn: "IdEstado",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

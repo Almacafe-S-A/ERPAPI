@@ -28,10 +28,19 @@ namespace ERPAPI.Models
         [Display(Name = "Cantidad")]
         public double Quantity { get; set; }
         [Display(Name = "Precio")]
-        public double Price { get; set; }    
+        public double Price { get; set; }
+        [Display(Name = "Porcentaje de Merma")]
+        public decimal? Merma { get; set; }
 
         [Display(Name = "Total")]
         public double Amount { get; set; }
+
+
+        [Display(Name = "Bodega")]
+        public Int64 WarehouseId { get; set; }
+        [Display(Name = "Bodega")]
+        public string WarehouseName { get; set; }
+
 
         [Display(Name = "Total Cantidad")]
         public double TotalCantidad { get; set; }
