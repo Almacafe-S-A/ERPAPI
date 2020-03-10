@@ -23,6 +23,8 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public DateTimeOffset? AwayBlockEnd { get; set; }
+
         //[ForeignKey("BranchId")]
         //public  Branch Branch { get; set; }
 
