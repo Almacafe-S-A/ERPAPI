@@ -13,15 +13,27 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long IdTipoPlanilla { get; set; }
+
+        [Required]
         public string TipoPlanilla { get; set; }
+
+        [Required]
         public string Descripcion { get; set; }
+
+        [Required]
         public long EstadoId { get; set; }
+
+        [ForeignKey("EstadoId")]
         public string Estado { get; set; }
 
-
+        [Required]
         public string Usuariocreacion { get; set; }
+
+        [Required]
         public string Usuariomodificacion { get; set; }
+        
         public DateTime? FechaCreacion { get; set; }
+
         public DateTime? FechaModificacion { get; set; }
     }
 }

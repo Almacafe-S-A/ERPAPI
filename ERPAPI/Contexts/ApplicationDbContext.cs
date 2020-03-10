@@ -359,6 +359,12 @@ namespace ERP.Contexts
 
         public DbSet<PagoISR> PagosISR { get; set; }
 
+        public DbSet<Planilla> Planillas { get; set; }
+
+        public DbSet<DetallePlanilla> DetallePlanillas { get; set; }
+
+        public DbSet<DeduccionPlanilla> DeduccionesPlanilla { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()

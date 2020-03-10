@@ -30,14 +30,18 @@ namespace ERPAPI.Models
 
         [Required]
         public double TotalPlanilla { get; set; }
-
-
-
+        
         [Required]
         public long EstadoId { get; set; }
 
         [ForeignKey("EstadoId")]
         public Estados Estado { get; set; }
+
+        [ForeignKey("TipoPlanillaId")]
+        public TipoPlanillas TipoPlanilla { get; set; }
+
+        [ForeignKey("PlanillaId")]
+        public List<DetallePlanilla> Detalle { get; set; }
 
         [Required]
         public DateTime FechaCreacion { get; set; }

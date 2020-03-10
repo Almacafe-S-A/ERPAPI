@@ -19,6 +19,28 @@ namespace ERPAPI.Models
         [Required]
         public long EmpleadoId { get; set; }
 
+        [Required]
+        public double MontoBruto { get; set; }
 
+        [Required]
+        public double TotalDeducciones { get; set; }
+
+        [Required]
+        public double MontoNeto { get; set; }
+
+        [ForeignKey("DetallePlanillaId")]
+        public List<DeduccionPlanilla> Deducciones { get; set; }
+        
+        [Required]
+        public DateTime FechaCreacion { get; set; }
+
+        [Required]
+        public DateTime FechaModificacion { get; set; }
+
+        [Required]
+        public string UsuarioModificacion { get; set; }
+
+        [Required]
+        public string UsuarioCreacion { get; set; }
     }
 }
