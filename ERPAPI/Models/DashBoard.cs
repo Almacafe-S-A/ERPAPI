@@ -30,5 +30,8 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Modificacion")]
         public DateTime ModifiedDate { get; set; }
 
+
+        public decimal? TotalSalario { get; set; }
+
     }
 }
