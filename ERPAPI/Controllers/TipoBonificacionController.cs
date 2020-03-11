@@ -32,7 +32,7 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var registros = await context.TiposBonificaciones.ToListAsync();
+                var registros = await context.TiposBonificaciones.Include(r=>r.Estado).ToListAsync();
                 return Ok(registros);
             }
             catch (Exception ex)

@@ -200,3 +200,32 @@ VALUES(83,'Rechazado','Registro Rechazado',20,'erp@bi-dss.com','erp@bi-dss.com',
 GO
 SET IDENTITY_INSERT Estados OFF
 GO
+
+SET IDENTITY_INSERT GrupoEstado ON
+GO
+INSERT INTO GrupoEstado (Id,Nombre,Modulo,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(30,'Estados Bonificaciones','RRHH','2020-01-01','2020-01-01','erp@bi-dss.com','erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT GrupoEstado OFF
+GO
+
+
+SET IDENTITY_INSERT Estados ON
+GO
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(90,'Activo','Registro Activo',30,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+INSERT INTO Estados (IdEstado,NombreEstado,DescripcionEstado,IdGrupoEstado,UsuarioCreacion,UsuarioModificacion,FechaCreacion,FechaModificacion)
+VALUES(91,'Anulado','Registro Anulado',30,'erp@bi-dss.com','erp@bi-dss.com','2020-01-01','2020-01-01')
+GO
+SET IDENTITY_INSERT Estados OFF
+GO
+
+SET IDENTITY_INSERT TiposBonificaciones ON
+GO
+INSERT INTO TiposBonificaciones (Id, Nombre, EstadoId, FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(1,'Bono Estudiantil',90,'2020-01-01','2020-01-01','erp@bi-dss.com','erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT TiposBonificaciones OFF
+GO
+
+

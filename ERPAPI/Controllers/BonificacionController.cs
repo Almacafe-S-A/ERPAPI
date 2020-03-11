@@ -24,12 +24,17 @@ namespace ERPAPI.Controllers
             this.logger = logger;
         }
 
-        [HttpPost("[action]/{empleadoId}")]
-        public async Task<ActionResult> GetBonificacionesEmpleado(int empleadoId)
+        [HttpPost("[action]/{empleadoId}/{inactivos}")]
+        public async Task<ActionResult> GetBonificacionesEmpleado(int empleadoId, bool inactivos)
         {
             try
             {
-                var bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId).ToListAsync();
+                List<Bonificacion> bonificaciones = null;
+                if(inactivos)
+                    bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId).ToListAsync();
+                else
+                    bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId && r.EstadoId == 90).ToListAsync();
+
                 return Ok(bonificaciones);
             }
             catch (Exception ex)
