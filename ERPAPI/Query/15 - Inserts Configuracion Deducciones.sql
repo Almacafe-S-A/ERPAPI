@@ -228,4 +228,19 @@ GO
 SET IDENTITY_INSERT TiposBonificaciones OFF
 GO
 
+SET IDENTITY_INSERT GrupoConfiguracion ON
+GO
+INSERT INTO GrupoConfiguracion(IdConfiguracion,Nombreconfiguracion,Tipoconfiguracion, IdZona, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion)
+VALUES(130,'Planillas','RRHH',0,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT GrupoConfiguracion OFF
+GO
+
+SET IDENTITY_INSERT ElementoConfiguracion ON
+GO
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(160,'SALARIO MINIMO','Salario minimo aprobado por ALMACAFE',1,'Activo',130, 9271.95,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+GO
+SET IDENTITY_INSERT ElementoConfiguracion OFF
+GO
 

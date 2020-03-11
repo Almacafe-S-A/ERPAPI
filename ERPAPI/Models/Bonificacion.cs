@@ -34,6 +34,9 @@ namespace ERPAPI.Models
         [ForeignKey("EmpleadoId")]
         public Employees Empleado { get; set; }
 
+        [ForeignKey("TipoId")]
+        public TipoBonificacion Tipo { get; set; }
+
         [Required]
         public DateTime FechaCreacion { get; set; }
 

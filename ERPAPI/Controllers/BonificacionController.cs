@@ -24,7 +24,7 @@ namespace ERPAPI.Controllers
             this.logger = logger;
         }
 
-        [HttpPost("[action]/{empleadoId}/{inactivos}")]
+        [HttpGet("[action]/{empleadoId}/{inactivos}")]
         public async Task<ActionResult> GetBonificacionesEmpleado(int empleadoId, bool inactivos)
         {
             try
@@ -34,6 +34,36 @@ namespace ERPAPI.Controllers
                     bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId).ToListAsync();
                 else
                     bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId && r.EstadoId == 90).ToListAsync();
+
+                return Ok(bonificaciones);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al cargar las bonificaciones del empleado");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{Periodo}/{Mes}/{inactivos}")]
+        public async Task<ActionResult> GetBonificacionesMesPeriodo(int Periodo, int Mes, bool inactivos)
+        {
+            try
+            {
+                DateTime fchInicio = new DateTime(Periodo,Mes,1);
+                DateTime fchFin = new DateTime(Periodo, Mes, 1).AddMonths(1);
+                List<Bonificacion> bonificaciones = null;
+                if (inactivos)
+                    bonificaciones = await context.Bonificaciones
+                        .Include(e=> e.Empleado)
+                        .Include(t=>t.Tipo)
+                        .Include(e=>e.Estado)
+                        .Where(r => r.FechaBono>= fchInicio && r.FechaBono < fchFin).ToListAsync();
+                else
+                    bonificaciones = await context.Bonificaciones
+                        .Include(e => e.Empleado)
+                        .Include(t => t.Tipo)
+                        .Include(e => e.Estado)
+                        .Where(r => r.FechaBono >= fchInicio && r.FechaBono < fchFin && r.EstadoId == 90).ToListAsync();
 
                 return Ok(bonificaciones);
             }
