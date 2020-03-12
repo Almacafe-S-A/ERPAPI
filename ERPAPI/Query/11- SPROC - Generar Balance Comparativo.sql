@@ -378,7 +378,7 @@ BEGIN
 
 	INSERT INTO #BalanceComparativo
 	SELECT 
-	Nota = CASE WHEN B.HierarchyAccount != 2 THEN NULL ELSE ROW_NUMBER() OVER (PARTITION BY CASE WHEN B.HierarchyAccount != 2 THEN 1 ELSE 0 END ORDER BY B.AccountId) END + 3,
+	Nota = CASE WHEN B.HierarchyAccount != 2 THEN NULL ELSE ROW_NUMBER() OVER (PARTITION BY CASE WHEN B.HierarchyAccount != 2 THEN 1 ELSE 0 END ORDER BY B.AccountId) END + 21,
 	B.AccountId, B.AccountCode, B.AccountName AS 'Descripcion', B.ParentAccountId, 
 	CASE
 	WHEN B.DeudoraAcreedora = 'A' THEN '2'
