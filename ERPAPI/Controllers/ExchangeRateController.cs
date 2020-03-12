@@ -84,7 +84,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_ExchangeRate"></param>
         /// <returns></returns>
-        [HttpPost("[action]/{ExchangeRate}")]
+        [HttpPost("[action]")]
         public async Task<IActionResult> GetExchangeRateByFecha([FromBody]ExchangeRate _ExchangeRate)
         {
             ExchangeRate Items = new ExchangeRate();

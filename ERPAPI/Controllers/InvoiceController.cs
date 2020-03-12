@@ -72,7 +72,17 @@ namespace ERPAPI.Controllers
             List<Invoice> Items = new List<Invoice>();
             try
             {
-                Items = await _context.Invoice.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.Invoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.InvoiceId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.Invoice.OrderByDescending(b => b.InvoiceId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -304,8 +314,8 @@ namespace ERPAPI.Controllers
                             if(sumacreditos!=sumadebitos)
                             {
                                 transaction.Rollback();
-                                _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                               //_logger.LogError($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico : {_journalentryconfiguration.JournalEntryConfigurationId}");
+                                return BadRequest($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico.");
                             }
 
                             _je.TotalCredit = sumacreditos;

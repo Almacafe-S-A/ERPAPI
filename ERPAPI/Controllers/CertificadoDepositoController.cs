@@ -77,9 +77,17 @@ namespace ERPAPI.Controllers
             List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
             try
             {
-
-                Items = await _context.CertificadoDeposito.ToListAsync();
-
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.CertificadoDeposito.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.IdCD).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.CertificadoDeposito.OrderByDescending(b => b.IdCD).ToListAsync();
+                }
                 
             }
             catch (Exception ex)

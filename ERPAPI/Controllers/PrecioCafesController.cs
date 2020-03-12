@@ -13,81 +13,29 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Contrato")]
+    [Route("api/PrecioCafe")]
     [ApiController]
-    public class ContratoController : Controller
+    public class PrecioCafeController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public ContratoController(ILogger<ContratoController> logger, ApplicationDbContext context)
+        public PrecioCafeController(ILogger<PrecioCafeController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
-        // GET: /<controller>/
-        
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetContrato()
-        {
-            List<Contrato> Items = new List<Contrato>();
-            try
-            {
-                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
-                int count = user.Count();
-                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
-                if (branchlist.Count > 0)
-                {
-                    Items = await _context.Contrato.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ContratoId).ToListAsync();
-                }
-                else
-                {
-                    Items = await _context.Contrato.OrderByDescending(b => b.ContratoId).ToListAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-            
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-        }
-
-
-        [HttpGet("[action]/{ContratoId}")]
-        public async Task<ActionResult<Contrato>> GetContratoById(Int64 ContratoId)
-        {
-            Contrato Items = new Contrato();
-            try
-            {
-                Items = await _context.Contrato.Where(q => q.ContratoId == ContratoId).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetContratoPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetPrecioCafePag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<Contrato> Items = new List<Contrato>();
+            List<PrecioCafe> Items = new List<PrecioCafe>();
             try
             {
-                var query = _context.Contrato.AsQueryable();
+                var query = _context.PrecioCafe.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -108,38 +56,86 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene el Listado de PrecioCafees 
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<PrecioCafe>>> GetPrecioCafe()
+        {
+            List<PrecioCafe> Items = new List<PrecioCafe>();
+            try
+            {
+                Items = await _context.PrecioCafe.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
 
         /// <summary>
-        /// Inserta una nueva Contrato
+        /// Obtiene los Datos de la PrecioCafe por medio del Id enviado.
         /// </summary>
-        /// <param name="_Contrato"></param>
+        /// <param name="PrecioCafeId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{PrecioCafeId}")]
+        public async Task<ActionResult<PrecioCafe>> GetPrecioCafeById(Int64 PrecioCafeId)
+        {
+            PrecioCafe Items = new PrecioCafe();
+            try
+            {
+                Items = await _context.PrecioCafe.Where(q => q.Id == PrecioCafeId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Inserta una nueva PrecioCafe
+        /// </summary>
+        /// <param name="_PrecioCafe"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Contrato>> Insert([FromBody]Contrato _Contrato)
+        public async Task<ActionResult<PrecioCafe>> Insert([FromBody]PrecioCafe _PrecioCafe)
         {
-            Contrato _Contratoq = new Contrato();
+            PrecioCafe _PrecioCafeq = new PrecioCafe();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Contratoq = _Contrato;
-                        _context.Contrato.Add(_Contratoq);
+                        _PrecioCafeq = _PrecioCafe;
+                        _context.PrecioCafe.Add(_PrecioCafeq);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Contrato.ContratoId,
-                            DocType = "Contrato",
+                            IdOperacion = _PrecioCafe.Id,
+                            DocType = "PrecioCafe",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Contrato, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Newtonsoft.Json.JsonConvert.SerializeObject(_PrecioCafe, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Contrato.UsuarioCreacion,
-                            UsuarioModificacion = _Contrato.UsuarioModificacion,
-                            UsuarioEjecucion = _Contrato.UsuarioModificacion,
+                            UsuarioCreacion = _PrecioCafe.UsuarioCreacion,
+                            UsuarioModificacion = _PrecioCafe.UsuarioModificacion,
+                            UsuarioEjecucion = _PrecioCafe.UsuarioModificacion,
 
                         });
 
@@ -162,47 +158,48 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Contratoq));
+            return await Task.Run(() => Ok(_PrecioCafeq));
         }
 
         /// <summary>
-        /// Actualiza  Contrato
+        /// Actualiza la PrecioCafe
         /// </summary>
-        /// <param name="_Contrato"></param>
+        /// <param name="_PrecioCafe"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-
-        public async Task<ActionResult<Contrato>> Update([FromBody]Contrato _Contrato)
+        public async Task<ActionResult<PrecioCafe>> Update(PrecioCafe _PrecioCafe)
         {
-            Contrato _Contratoq = _Contrato;
+            PrecioCafe _PrecioCafeq = _PrecioCafe;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Contratoq = await (from c in _context.Contrato
-                                         .Where(q => q.ContratoId == _Contrato.ContratoId)
-                                            select c
+                        _PrecioCafeq = await (from c in _context.PrecioCafe
+                                         .Where(q => q.Id == _PrecioCafe.Id
+                                         )
+                                           select c
                                         ).FirstOrDefaultAsync();
 
-                        _context.Entry(_Contratoq).CurrentValues.SetValues((_Contrato));
+                        _context.Entry(_PrecioCafeq).CurrentValues.SetValues((_PrecioCafe));
 
-                        //_context.Contrato.Update(_Contratoq);
+                        //_context.PrecioCafe.Update(_PrecioCafeq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
-                            IdOperacion = _Contrato.ContratoId,
-                            DocType = "Contrato",
+                            IdOperacion = _PrecioCafe.Id
+                            ,
+                            DocType = "PrecioCafe",
                             ClaseInicial =
-                              Newtonsoft.Json.JsonConvert.SerializeObject(_Contratoq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_Contrato, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                              Newtonsoft.Json.JsonConvert.SerializeObject(_PrecioCafeq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_PrecioCafe, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Contrato.UsuarioCreacion,
-                            UsuarioModificacion = _Contrato.UsuarioModificacion,
-                            UsuarioEjecucion = _Contrato.UsuarioModificacion,
+                            UsuarioCreacion = _PrecioCafe.UsuarioCreacion,
+                            UsuarioModificacion = _PrecioCafe.UsuarioModificacion,
+                            UsuarioEjecucion = _PrecioCafe.UsuarioModificacion,
 
                         });
 
@@ -224,25 +221,25 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_Contratoq));
+            return await Task.Run(() => Ok(_PrecioCafeq));
         }
 
         /// <summary>
-        /// Elimina  Contrato       
+        /// Elimina una PrecioCafe       
         /// </summary>
-        /// <param name="_Contrato"></param>
+        /// <param name="_PrecioCafe"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Contrato>> Delete([FromBody]Contrato _Contrato)
+        public async Task<ActionResult<PrecioCafe>> Delete([FromBody]PrecioCafe _PrecioCafe)
         {
-            Contrato _Contratoq = new Contrato();
+            PrecioCafe _PrecioCafeq = new PrecioCafe();
             try
             {
-                _Contratoq = _context.Contrato
-                .Where(x => x.ContratoId == (Int64)_Contrato.ContratoId)
+                _PrecioCafeq = _context.PrecioCafe
+                .Where(x => x.Id == (Int64)_PrecioCafe.Id)
                 .FirstOrDefault();
 
-                _context.Contrato.Remove(_Contratoq);
+                _context.PrecioCafe.Remove(_PrecioCafeq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -251,10 +248,15 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_Contratoq));
+            return await Task.Run(() => Ok(_PrecioCafeq));
 
         }
 
-    }
 
+
+
+
+
+
+    }
 }

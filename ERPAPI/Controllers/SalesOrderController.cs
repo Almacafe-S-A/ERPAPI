@@ -74,7 +74,17 @@ namespace ERPAPI.Controllers
             List<SalesOrder> Items = new List<SalesOrder>();
             try
             {
-                Items = await _context.SalesOrder.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.SalesOrder.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.SalesOrderId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.SalesOrder.OrderByDescending(b => b.SalesOrderId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200225153757_JournalentryCanceled")]
+    partial class JournalentryCanceled
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,8 +229,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
-
-                    b.Property<DateTime?>("AwayBlockEnd");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -6347,27 +6347,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("JournalEntry");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.JournalEntryCanceled", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CanceledJournalentryId");
-
-                    b.Property<long>("DocumentId");
-
-                    b.Property<int>("ReverseJournalEntryId");
-
-                    b.Property<string>("TypeJournalName");
-
-                    b.Property<int>("VoucherType");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("JournalEntryCanceled");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.JournalEntryConfiguration", b =>
                 {
                     b.Property<long>("JournalEntryConfigurationId")
@@ -7399,67 +7378,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("IdRol");
 
                     b.ToTable("PolicyRoles");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PrecioCafe", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("BeneficiadoUSD");
-
-                    b.Property<decimal>("BrutoLPSConsumoInterno");
-
-                    b.Property<decimal>("BrutoLPSIngreso");
-
-                    b.Property<decimal>("DiferencialesUSD");
-
-                    b.Property<long>("ExchangeRateId");
-
-                    b.Property<DateTime>("Fecha");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<decimal>("FideicomisoUSD");
-
-                    b.Property<decimal>("NetoLPSConsumoInterno");
-
-                    b.Property<decimal>("NetoLPSIngreso");
-
-                    b.Property<decimal>("PercioQQPergamino");
-
-                    b.Property<decimal>("PermisoExportacionUSD");
-
-                    b.Property<decimal>("PorcentajeConsumoInterno");
-
-                    b.Property<decimal>("PorcentajeIngreso");
-
-                    b.Property<decimal>("PrecioBolsaUSD");
-
-                    b.Property<decimal>("PrecioQQOro");
-
-                    b.Property<decimal>("TotalLPSEgreso");
-
-                    b.Property<decimal>("TotalLPSIngreso");
-
-                    b.Property<decimal>("TotalUSD");
-
-                    b.Property<decimal>("TotalUSDEgreso");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<decimal>("UtilidadUSD");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExchangeRateId");
-
-                    b.ToTable("PrecioCafe");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Presupuesto", b =>
@@ -11296,14 +11214,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationRole", "Role")
                         .WithMany()
                         .HasForeignKey("IdRol")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.PrecioCafe", b =>
-                {
-                    b.HasOne("ERPAPI.Models.ExchangeRate", "ExchangeRate")
-                        .WithMany()
-                        .HasForeignKey("ExchangeRateId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

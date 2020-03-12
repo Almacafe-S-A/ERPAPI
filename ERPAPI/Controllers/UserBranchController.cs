@@ -85,12 +85,12 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]/{UserId}")]
-        public async Task<IActionResult> GetBranchesbyUserId(Int64 UserId)
+        public async Task<IActionResult> GetBranchesbyUserId(Guid UserId)
         {
             List<UserBranch> Items = new List<UserBranch>();
             try
             {
-                Items = await _context.UserBranch.Where(q => q.BranchId == UserId).ToListAsync();
+                Items = await _context.UserBranch.Where(q => q.UserId == UserId).ToListAsync();
             }
             catch (Exception ex)
             {

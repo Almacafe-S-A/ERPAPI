@@ -57,12 +57,16 @@ namespace ERP.Contexts
 
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-          public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
+
+        public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
+        public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
         public DbSet<InstallmentDelivery> InstallmentDelivery { get; set; }
         public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
+
+        public DbSet<PrecioCafe> PrecioCafe { get; set; }
 
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
