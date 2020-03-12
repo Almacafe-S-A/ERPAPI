@@ -65,6 +65,7 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<List<PrecioCafe>>> GetPrecioCafe()
         {
             List<PrecioCafe> Items = new List<PrecioCafe>();
+
             try
             {
                 Items = await _context.PrecioCafe.ToListAsync();
