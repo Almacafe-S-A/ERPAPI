@@ -165,6 +165,31 @@ namespace ERPAPI.Controllers
             else
             {
                 List<decimal> salariosHistoricos = new List<decimal>();
+
+                var today = DateTime.Today;
+
+                if (salarios[0].DayApplication < today)
+                {
+                    var ultimoSalario = salarios[0];
+                    //Recorrer los meses hasta llegar al mes de aplicacion del ultimo salario
+                    int mes = today.Month;
+                    int anio = today.Year;
+                    while (!(ultimoSalario.DayApplication.Year == anio && ultimoSalario.DayApplication.Month == mes))
+                    {
+                        salariosHistoricos.Add(ultimoSalario.QtySalary ?? 0);
+                        if (mes == 1)
+                        {
+                            mes = 12;
+                            anio--;
+                        }
+                        else
+                        {
+                            mes--;
+                        }
+                    }
+
+                }
+
                 for (int i = 0; i < salarios.Count - 1; i++)
                 {
                     if (i == salarios.Count - 1)
@@ -214,33 +239,34 @@ namespace ERPAPI.Controllers
             return salarioNominal;
         }
 
-        //public async Task<ActionResult> GetISREmpleado(long empleadoId)
-        //{
-        //    try
-        //    {
-        //        Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
-        //        if (empleado == null)
-        //        {
-        //            return Ok(0);
-        //        }
-        //        decimal salarioNominal = GetSalarioNominal(empleadoId);
+        public async Task<ActionResult> GetISREmpleado(long empleadoId)
+        {
+            try
+            {
+                Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+                if (empleado == null)
+                {
+                    throw new Exception("El empleado no existe");
+                }
 
-        //        if (empleado.FechaIngreso == null)
-        //        {
-        //            return Ok(0);
-        //        }
+                if (empleado.FechaIngreso == null)
+                {
+                    throw new Exception("La fecha de ingreso del empleado no es valida.");
+                }
 
-        //        if (empleado.FechaIngreso.Value.Year == DateTime.Today.Year)
-        //        {
+                decimal salarioNominal = GetSalarioNominal(empleadoId);
 
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error Guardar Deducción Empleado");
-        //        return BadRequest(ex);
-        //    }
-        //}
+                if (empleado.FechaIngreso.Value.Year == DateTime.Today.Year)
+                {
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error Guardar Deducción Empleado");
+                return BadRequest(ex.Message);
+            }
+        }
     }
 
     
