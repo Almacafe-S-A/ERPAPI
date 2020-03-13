@@ -352,8 +352,11 @@ namespace ERPAPI.Controllers
                                 //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
                                 //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
                                 QuantityEntryCD = item.Quantity,
-                                TotalCD = item.Quantity
-                             });
+                                TotalCD = item.Quantity,
+                                DocumentName = "Certficado de Depósito",
+                                DocumentId = item.IdCD,
+
+                            });
                             
                         }
 
