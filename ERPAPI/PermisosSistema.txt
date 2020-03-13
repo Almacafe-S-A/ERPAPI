@@ -55,6 +55,7 @@ Administracion.Moneda
 Administracion.Moneda.Agregar Moneda
 Administracion.Moneda.Editar Moneda
 Administracion.Moneda.Eliminar Moneda
+Administracion.PrecioCafe
 Administracion.Tipo de Cliente
 Administracion.Tipo de Cliente.Agregar Tipo de Cliente
 Administracion.Tipo de Cliente.Editar Tipo de Cliente
