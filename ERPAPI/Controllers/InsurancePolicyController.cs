@@ -106,6 +106,30 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene las polizas de la Aseguradora
+        /// </summary>
+        /// <param name="IdInsuranceId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdInsuranceId}")]
+        public async Task<IActionResult> GetInsurancePolicyByInsuranceId(Int64 IdInsuranceId)
+        {
+            List<InsurancePolicy> Items = new List<InsurancePolicy>();
+            try
+            {
+                Items = await _context.InsurancePolicy.Where(q => q.InsurancesId == IdInsuranceId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Inserta una nueva poliza con asiento contable
