@@ -254,10 +254,27 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Tasacambio ([FromBody]ExchangeRate pBitacoraCierre)
+        {
+
+           
+            ExchangeRate tasacambio = await _context.ExchangeRate
+                            .Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
+
+            if (tasacambio == null)//Revisa la tasa de cambio actualizada
+            {
+                return await Task.Run(() => BadRequest("Debe de Agregar una tasa de cambio actualizada"));
+            }
+
+            return await Task.Run(() => Ok(tasacambio));
+        }
 
 
 
 
 
-    }
+
+
+        }
 }
