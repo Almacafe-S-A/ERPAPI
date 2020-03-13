@@ -322,6 +322,7 @@ namespace ERPAPI.Controllers
                         //////////////////Certificado////////////////////////////////////////////
 
                         _CertificadoDepositoq = _CertificadoDeposito;
+                        _CertificadoDepositoq.NoCD = _SolicitudCertificado.IdSCD;
                         _context.CertificadoDeposito.Add(_CertificadoDepositoq);
                         // await _context.SaveChangesAsync();
 
@@ -330,71 +331,30 @@ namespace ERPAPI.Controllers
                             item.IdCD = _CertificadoDepositoq.IdCD;
                             _context.CertificadoLine.Add(item);
 
-                            //Kardex _kardexmax = await (from kdx in _context.Kardex
-                            //          .Where(q => q.CustomerId == _CertificadoDepositoq.CustomerId)
-                            //                           from kdxline in _context.KardexLine
-                            //                             .Where(q => q.KardexId == kdx.KardexId)
-                            //                               .Where(o => o.SubProducId == item.SubProductId)
-                            //                               .OrderByDescending(o => o.DocumentDate).Take(1)
-                            //                           select kdx).FirstOrDefaultAsync();
-
-                            Kardex _kardexmax = await (from c in _context.Kardex
-                                                          .OrderByDescending(q => q.DocumentDate)
-                                                           // .Take(1)
-                                                       join d in _context.KardexLine on c.KardexId equals d.KardexId
-                                                       where c.CustomerId == _CertificadoDepositoq.CustomerId && d.SubProducId == item.SubProductId
-                                                       && c.DocumentName =="CD"
-                                                       select c
-                                                       )
-                                                       .FirstOrDefaultAsync();
-
-                            if (_kardexmax == null) { _kardexmax = new Kardex(); }
-
-
-                            KardexLine _KardexLine = await _context.KardexLine
-                                                                         .Where(q => q.KardexId == _kardexmax.KardexId)
-                                                                         .Where(q => q.SubProducId == item.SubProductId)
-                                                                         .OrderByDescending(q => q.KardexLineId)
-                                                                         .Take(1)
-                                                                        .FirstOrDefaultAsync();
-
-                            if(_KardexLine==null)
-                            { _KardexLine = new KardexLine(); }
-
-                            SubProduct _subproduct = await (from c in _context.SubProduct
-                                                     .Where(q => q.SubproductId == item.SubProductId)
-                                                            select c
-                                                     ).FirstOrDefaultAsync();
-
-
-                          //  _context.GoodsReceivedLine.Add(item);
-
-                            item.Amount = item.Quantity + _KardexLine.Total;
-
-                            _CertificadoDeposito.Kardex._KardexLine.Add(new KardexLine
-                            {
+                            _context.Kardex.Add( new Kardex { 
                                 DocumentDate = _CertificadoDeposito.FechaCertificado,
-                               // ProducId = _CertificadoDeposito.,
-                               // ProductName = _GoodsReceivedq.ProductName,
-                                SubProducId = item.SubProductId,
+                                //ProducId = _CertificadoDeposito.,
+                                //ProductName = _GoodsReceivedq.ProductName,
+                                SubProducId = Convert.ToInt32(item.SubProductId),
                                 SubProductName = item.SubProductName,
                                 QuantityEntry = item.Quantity,
                                 QuantityOut = 0,
                                 QuantityEntryBags = item.TotalCantidad,
                                 BranchId = _CertificadoDeposito.BranchId,
                                 BranchName = _CertificadoDeposito.BranchName,
-                                //WareHouseId = _CertificadoDeposito.WarehouseId,
-                                //WareHouseName = _CertificadoDeposito.WarehouseName,
+                                WareHouseId = Convert.ToInt32(item.WarehouseId),
+                                WareHouseName = item.WarehouseName,
                                 UnitOfMeasureId = item.UnitMeasureId,
                                 UnitOfMeasureName = item.UnitMeasurName,
                                 TypeOperationId = 1,
                                 TypeOperationName = "Entrada",
-                               // Total = item.Amount,
+                                Total = item.Amount,
                                 //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
                                 //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
                                 QuantityEntryCD = item.Quantity,
-                                TotalCD = _KardexLine.TotalCD + (item.Quantity),
-                            });
+                                TotalCD = item.Quantity
+                             });
+                            
                         }
 
                         await _context.SaveChangesAsync();
@@ -437,23 +397,6 @@ namespace ERPAPI.Controllers
                             _context.RecibosCertificado.Add(_recibocertificado);
                         }
 
-                        _CertificadoDeposito.Kardex.DocType = 0;
-                        _CertificadoDeposito.Kardex.DocName = "CertificadoDeposito/CD";
-                        _CertificadoDeposito.Kardex.DocumentDate = _CertificadoDeposito.FechaCertificado;
-                        _CertificadoDeposito.Kardex.FechaCreacion = DateTime.Now;
-                        _CertificadoDeposito.Kardex.FechaModificacion = DateTime.Now;
-                        _CertificadoDeposito.Kardex.TypeOperationId = 1;
-                        _CertificadoDeposito.Kardex.TypeOperationName = "Entrada";
-                        _CertificadoDeposito.Kardex.KardexDate = DateTime.Now;
-                        _CertificadoDeposito.Kardex.DocumentName = "CD";
-                        
-                        _CertificadoDeposito.Kardex.CustomerId = _CertificadoDeposito.CustomerId;
-                        _CertificadoDeposito.Kardex.CustomerName = _CertificadoDeposito.CustomerName;
-                        _CertificadoDeposito.Kardex.CurrencyId = _CertificadoDeposito.CurrencyId;
-                        _CertificadoDeposito.Kardex.CurrencyName = _CertificadoDeposito.CurrencyName;
-                        _CertificadoDeposito.Kardex.DocumentId = _CertificadoDeposito.IdCD;
-                        _CertificadoDeposito.Kardex.UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion;
-                        _CertificadoDeposito.Kardex.UsuarioModificacion = _CertificadoDeposito.UsuarioModificacion;
 
                         _context.Kardex.Add(_CertificadoDeposito.Kardex);
 
