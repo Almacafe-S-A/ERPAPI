@@ -24,11 +24,11 @@ namespace ERPAPI.Models
         [ForeignKey("ExchangeRateId")]
         public ExchangeRate ExchangeRate { get; set; }
 
-        public decimal BrutoLPSIngreso { get; set; }
+        public decimal? BrutoLPSIngreso { get; set; }
 
         public decimal PorcentajeIngreso { get; set; }
 
-        public decimal NetoLPSIngreso { get; set; }
+        public decimal? NetoLPSIngreso { get; set; }
 
 
         public decimal BrutoLPSConsumoInterno { get; set; }
@@ -37,7 +37,7 @@ namespace ERPAPI.Models
 
         public decimal NetoLPSConsumoInterno { get; set; }
 
-        public decimal TotalLPSIngreso { get; set; }
+        public decimal? TotalLPSIngreso { get; set; }
 
         public decimal BeneficiadoUSD { get; set; }
 
@@ -49,11 +49,11 @@ namespace ERPAPI.Models
 
         public decimal TotalUSDEgreso { get; set; }
 
-        public decimal TotalLPSEgreso { get; set; }
+        public decimal? TotalLPSEgreso { get; set; }
 
-        public decimal PrecioQQOro { get; set; }
+        public decimal? PrecioQQOro { get; set; }
 
-        public decimal PercioQQPergamino { get; set; }
+        public decimal? PercioQQPergamino { get; set; }
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

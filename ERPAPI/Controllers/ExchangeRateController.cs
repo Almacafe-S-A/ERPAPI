@@ -90,8 +90,8 @@ namespace ERPAPI.Controllers
             ExchangeRate Items = new ExchangeRate();
             try
             {
-               // DateTime filtro = Convert.ToDateTime(fecha);
-                Items = await _context.ExchangeRate.Where(q => q.DayofRate.ToString("yyyy-MM-dd") == _ExchangeRate.DayofRate.ToString("yyyy-MM-dd") && q.CurrencyId== _ExchangeRate.CurrencyId).FirstOrDefaultAsync();
+                // DateTime filtro = Convert.ToDateTime(fecha);
+                Items = await _context.ExchangeRate.Where(q => q.DayofRate.ToString("yyyy-MM-dd") == _ExchangeRate.DayofRate.ToString("yyyy-MM-dd") && q.CurrencyId == _ExchangeRate.CurrencyId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -103,6 +103,34 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+
+
+        /// <summary>
+        /// Devuelve la tasa de cambio que coinciden con los parametros
+        /// </summary>
+        /// <param name="Exchange"></param>
+        /// <returns></returns>
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Int32>> GetTasadecambio([FromBody] ExchangeRate Exchange)
+        {
+            try
+            {
+                
+               //var Items = await _context.ExchangeRate.Where(q => q.DayofRate.ToString("yyyy-MM-dd") == Exchange.DayofRate.ToString("yyyy-MM-dd")).CountAsync();
+
+               // return await Task.Run(() => Ok(Items));
+                var Items = await _context.ExchangeRate.Where(q => q.ExchangeRateId >2).CountAsync();
+                return await Task.Run(() => Ok(Items));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
 
 
         /// <summary>
