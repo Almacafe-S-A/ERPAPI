@@ -94,13 +94,13 @@ SET IDENTITY_INSERT ISRConfiguracion ON
 GO
 
 INSERT INTO ISRConfiguracion(Id, De, Hasta, Tramo, Porcentaje, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion)
-VALUES(1, 0,158995.06,'',0,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
+VALUES(1, 0,165482.06,'Sin Pago',0,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
 INSERT INTO ISRConfiguracion(Id, De, Hasta, Tramo, Porcentaje, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion)
-VALUES(2, 158995.07,242439.28,'83,444.21',15,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
+VALUES(2, 165482.07,252330.80,'Escala 1',15,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
 INSERT INTO ISRConfiguracion(Id, De, Hasta, Tramo, Porcentaje, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion)
-VALUES(3, 242439.29,563812.29,'321,373.00',20,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
+VALUES(3, 252330.81,586815.84,'Escala 2',20,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
 INSERT INTO ISRConfiguracion(Id, De, Hasta, Tramo, Porcentaje, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion)
-VALUES(4, 563812.30,10000000,'9,436,187.70',25,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
+VALUES(4, 586815.85,10000000,'Escala 3',25,GetDate(),GetDate(),'erp@bi-dss.com','erp@bi-dss.com')
 
 SET IDENTITY_INSERT ISRConfiguracion OFF
 GO
