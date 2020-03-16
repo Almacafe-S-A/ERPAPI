@@ -151,11 +151,11 @@ namespace ERPAPI.Controllers
             }
         }
 
-        private decimal GetSalarioNominal(long empleadoId)
+        private async Task<decimal> GetSalarioNominal(long empleadoId)
         {
             //Calculo del salario nominal, basado en los ultimos 6 meses de salario
-            var salarios =  _context.EmployeeSalary.Where(s => s.IdEmpleado == empleadoId)
-                .OrderByDescending(f => f.DayApplication).ToList();
+            var salarios = await _context.EmployeeSalary.Where(s => s.IdEmpleado == empleadoId)
+                .OrderByDescending(f => f.DayApplication).ToListAsync();
             decimal salarioNominal = 0;
 
             if (salarios.Count() == 1)
@@ -239,6 +239,25 @@ namespace ERPAPI.Controllers
             return salarioNominal;
         }
 
+        private async Task<decimal> GetSalarioFecha(long empleadoId, DateTime fecha)
+        {
+            var salarios = _context.EmployeeSalary.Where(s => s.IdEmpleado == empleadoId)
+                .OrderByDescending(f => f.DayApplication).ToList();
+
+            decimal salario = 0;
+            foreach (var salarioHistorico in salarios)
+            {
+                if (salarioHistorico.DayApplication.Date <= fecha)
+                {
+                    salario = (decimal) (salarioHistorico.QtySalary ?? 0);
+                    break;
+                }
+            }
+
+            return salario;
+        }
+
+        [HttpGet("[action]/{empleadoId}")]
         public async Task<ActionResult> GetISREmpleado(long empleadoId)
         {
             try
@@ -254,16 +273,106 @@ namespace ERPAPI.Controllers
                     throw new Exception("La fecha de ingreso del empleado no es valida.");
                 }
 
-                decimal salarioNominal = GetSalarioNominal(empleadoId);
+                if (empleado.FechaNacimiento == null)
+                {
+                    throw new Exception("El empleado no tiene fecha de nacimiento en su registro.");
+                }
 
+                var salMinimo = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 160);
+                decimal salarioMinimo = (decimal) (salMinimo.Valordecimal ?? 0);
+                decimal salarioNominal = await GetSalarioNominal(empleadoId);
+                decimal valor13vo = 0;
+                decimal valor14vo = 0;
+                
                 if (empleado.FechaIngreso.Value.Year == DateTime.Today.Year)
                 {
-
+                    //Determinar los valores proporcionales del 13vo y 14vo
+                    if (empleado.FechaIngreso.Value.Month < 6)
+                    {
+                        valor13vo = salarioNominal;
+                        valor14vo = salarioNominal * (decimal)((6.00 - empleado.FechaIngreso.Value.Month) / 6.00);
+                    }
+                    else
+                    {
+                        valor14vo = 0;
+                        valor13vo = salarioNominal * (decimal)((12.00-empleado.FechaIngreso.Value.Month) / 6.00);
+                    }
                 }
+                else
+                {
+                    valor13vo = salarioNominal;
+                    valor14vo = salarioNominal;
+                }
+
+                decimal limiteExceso = salarioMinimo * 10;
+                decimal exceso13vo = (valor13vo > limiteExceso) ? valor13vo - limiteExceso : 0;
+                decimal exceso14vo = (valor14vo > limiteExceso) ? valor14vo - limiteExceso : 0;
+
+                decimal bonificaciones =  (decimal)(await _context.Bonificaciones
+                    .Where(b => b.FechaBono.Year == DateTime.Today.Year && b.EstadoId == 90).SumAsync(r=> r.Monto));
+                var horasExtras = await _context.HorasExtrasBiometrico.Include(r=>r.Encabezado).Where(h => h.Encabezado.Fecha.Year == DateTime.Today.Year && h.IdEstado == 71).ToListAsync();
+                decimal valorHorasExtra = 0;
+                foreach (var horaExtra in horasExtras)
+                {
+                    decimal salario = await GetSalarioFecha(empleadoId, horaExtra.Encabezado.Fecha);
+                    decimal salarioHora = salario / 30 / 8;
+                    valorHorasExtra += salarioHora * ((decimal) horaExtra.Horas + (decimal) horaExtra.Minutos / 60);
+                }
+
+                decimal colegiacionAnual = (decimal) (await _context.DeduccionesEmpleados
+                                               .Where(d => d.Deduccion.DeductionTypeId == 3 && d.EstadoId == 1)
+                                               .SumAsync(d=>d.Monto)) * 12;
+                decimal afpAnual = (decimal)(await _context.DeduccionesEmpleados
+                                       .Where(d => d.Deduccion.DeductionTypeId == 4 && d.EstadoId == 1)
+                                       .SumAsync(d => d.Monto)) * 12;
+
+                int edad = DateTime.Today.Subtract(empleado.FechaNacimiento.Value).Days / 365;
+                decimal gastosMedicos = edad < 60 ? 40000 : 70000;
+
+                decimal totalIngresosGravables =
+                    (salarioNominal * 12) + exceso13vo + exceso14vo + bonificaciones + valorHorasExtra;
+
+                decimal totalDeduccionAnual = gastosMedicos + colegiacionAnual + afpAnual;
+
+                decimal rentaNetaGravable = totalIngresosGravables - totalDeduccionAnual;
+
+                var tarifas = await _context.ISRConfiguracion.OrderByDescending(t=>t.Porcentaje).ToListAsync();
+
+                decimal montoTarifar = rentaNetaGravable;
+
+                decimal totalTarifar = 0;
+                foreach (var tarifa in tarifas)
+                {
+                    if (montoTarifar >= (decimal)tarifa.De)
+                    {
+                        totalTarifar += (montoTarifar - (decimal)(tarifa.De - 0.01)) * (decimal)(tarifa.Porcentaje / 100.0);
+                        montoTarifar -= (montoTarifar - (decimal) (tarifa.De - 0.01));
+                    }
+                }
+
+                var regPagado = await _context.PagosISR.FirstOrDefaultAsync(p =>
+                    p.EmpleadoId == empleadoId && p.Periodo == DateTime.Today.Year);
+                decimal totalPagado = (decimal) (regPagado?.PagoAcumulado ?? 0);
+                
+                decimal netoTarifar = totalTarifar - totalPagado;
+
+                var confISR = await _context.ElementoConfiguracion.FirstOrDefaultAsync(r => r.Id == 123);
+
+                int cuotasISR = (int) (confISR?.Valordecimal ?? 10);
+
+                decimal isr = 0;
+
+                if (DateTime.Today.Month < cuotasISR)
+                {
+                    cuotasISR -= DateTime.Today.Month;
+                    isr = netoTarifar / cuotasISR;
+                }
+
+                return Ok(isr);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error Guardar Deducción Empleado");
+                _logger.LogError(ex, "Error al calcular el ISR");
                 return BadRequest(ex.Message);
             }
         }
