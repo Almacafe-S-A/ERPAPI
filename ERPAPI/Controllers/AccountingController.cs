@@ -55,6 +55,33 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
             //return await _context.Dimensions.ToListAsync();
         }
+
+        // GET: api/Account
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountstartwith5y6()
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                var cuentas = await _context.Accounting
+                    .Where(q => q.AccountCode.StartsWith("5") || q.AccountCode.StartsWith("6"))
+                    .ToListAsync();
+                return await Task.Run(() => Ok(cuentas));
+
+
+                //Items.Where(q =>  q.AccountCode.StartsWith("5"));
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la Account en una lista.
         /// </summary>
