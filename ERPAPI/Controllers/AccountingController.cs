@@ -55,6 +55,33 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
             //return await _context.Dimensions.ToListAsync();
         }
+
+        // GET: api/Account
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountstartwith5y6()
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                var cuentas = await _context.Accounting
+                    .Where(q => q.AccountCode.StartsWith("5") || q.AccountCode.StartsWith("6"))
+                    .ToListAsync();
+                return await Task.Run(() => Ok(cuentas));
+
+
+                //Items.Where(q =>  q.AccountCode.StartsWith("5"));
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la Account en una lista.
         /// </summary>
@@ -610,13 +637,12 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatron([FromQuery(Name = "Patron")] string patron, [FromQuery(Name = "Patron1")] string patron1)
+        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatron([FromQuery(Name = "Patron")] string patron)
         {
             try
             {
-                var Arreglo = new string[] { patron, patron1 };
                 var cuentas = await _context.Accounting
-                    .Where(c => Arreglo.Any(p => c.AccountCode.ToString().StartsWith(p)) && c.BlockedInJournal == false && c.Totaliza == false)
+                    .Where(c => c.AccountCode.StartsWith(patron) && c.BlockedInJournal == false && c.Totaliza == false)
                     .ToListAsync();
                 return await Task.Run(() => Ok(cuentas));
             }
