@@ -610,12 +610,13 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatron([FromQuery(Name = "Patron")] string patron)
+        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatron([FromQuery(Name = "Patron")] string patron, [FromQuery(Name = "Patron1")] string patron1)
         {
             try
             {
+                var Arreglo = new string[] { patron, patron1 };
                 var cuentas = await _context.Accounting
-                    .Where(c => c.AccountCode.StartsWith(patron) && c.BlockedInJournal == false && c.Totaliza == false)
+                    .Where(c => Arreglo.Any(p => c.AccountCode.ToString().StartsWith(p)) && c.BlockedInJournal == false && c.Totaliza == false)
                     .ToListAsync();
                 return await Task.Run(() => Ok(cuentas));
             }

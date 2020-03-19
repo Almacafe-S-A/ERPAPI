@@ -56,7 +56,7 @@ namespace ERPAPI.Models
         public string WarehouseName { get; set; }
 
         [Display(Name = "Producto Cliente")]
-        public int SubProductId { get; set; }
+        public Int64 SubProductId { get; set; }
 
         [Display(Name = "Producto Cliente")]
         public string SubProductName { get; set; }

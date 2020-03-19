@@ -637,6 +637,48 @@ namespace ERPAPI.Controllers
             }
 
         }
+
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<decimal>> GetSalarioTotal()
+        {
+            try
+            {             
+                var Items = await _context.Employees.Where(b => b.IdEstado == 1).ToListAsync();
+
+                DashBoard salarios = new DashBoard();
+
+                var total = salarios.TotalSalario;
+
+                foreach (var employes in Items)
+                {
+                    
+                    EmployeeSalary Salario = await (from c in _context.EmployeeSalary.Where(x => x.IdEmpleado == employes.IdEmpleado)
+                                                    select c).FirstOrDefaultAsync();
+
+                    if (Salario != null)
+                    {
+                        total = (Salario.QtySalary + Convert.ToDecimal(total));
+                    }
+                    else
+                    {
+
+                    }                  
+
+                }
+
+                return await Task.Run(() => Ok(total));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
+
         //===============================FIN DAHSBOARD RRHH========================================
 
 

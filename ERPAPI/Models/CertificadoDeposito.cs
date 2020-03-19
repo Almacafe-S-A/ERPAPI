@@ -25,11 +25,7 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }  
 
-        [Display(Name = "Bodega")]
-        public Int64 WarehouseId { get; set; }
-        [Display(Name = "Bodega")]
-        public string WarehouseName { get; set; }
-
+       
         [Display(Name = "Tipo Servicio")]
         public Int64 ServicioId { get; set; }
 
