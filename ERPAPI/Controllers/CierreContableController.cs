@@ -96,7 +96,7 @@ namespace ERPAPI.Controllers
                     ///Carga los pasos al Cierre
                     ///
                     //Paso 1
-                    BitacoraCierreProcesos proceso1 = new BitacoraCierreProcesos
+                    BitacoraCierreProcesos procesohistoricos = new BitacoraCierreProcesos
                     {
                         IdBitacoraCierre = cierre.Id,
                         //IdProceso = 1,
@@ -111,7 +111,7 @@ namespace ERPAPI.Controllers
 
                     };
                     //Paso2
-                    BitacoraCierreProcesos proceso2 = new BitacoraCierreProcesos
+                    BitacoraCierreProcesos procesoValorMaximoCD = new BitacoraCierreProcesos
                     {
                         IdBitacoraCierre = cierre.Id,
                         //IdProceso = 1,
@@ -127,7 +127,7 @@ namespace ERPAPI.Controllers
                     };
 
                     //Paso3
-                    BitacoraCierreProcesos proceso3 = new BitacoraCierreProcesos
+                    BitacoraCierreProcesos procesoSegurosVencimineto = new BitacoraCierreProcesos
                     {
                         IdBitacoraCierre = cierre.Id,
                         //IdProceso = 1,
@@ -142,7 +142,7 @@ namespace ERPAPI.Controllers
 
                     };
 
-                    BitacoraCierreProcesos proceso5 = new BitacoraCierreProcesos
+                    BitacoraCierreProcesos procesoGarantiasVenc = new BitacoraCierreProcesos
                     {
                         IdBitacoraCierre = cierre.Id,
                         //IdProceso = 1,
@@ -157,7 +157,7 @@ namespace ERPAPI.Controllers
 
                     };
 
-                    BitacoraCierreProcesos proceso7 = new BitacoraCierreProcesos
+                    BitacoraCierreProcesos porcesoComprobacion = new BitacoraCierreProcesos
                     {
                         IdBitacoraCierre = cierre.Id,
                         //IdProceso = 1,
@@ -172,15 +172,15 @@ namespace ERPAPI.Controllers
 
                     };
 
-                    _context.BitacoraCierreProceso.Add(proceso1);
-                    _context.BitacoraCierreProceso.Add(proceso2);
-                    _context.BitacoraCierreProceso.Add(proceso3);
-                    _context.BitacoraCierreProceso.Add(proceso5);
-                    _context.BitacoraCierreProceso.Add(proceso7);               
+                    _context.BitacoraCierreProceso.Add(procesohistoricos);
+                    _context.BitacoraCierreProceso.Add(procesoValorMaximoCD);
+                    _context.BitacoraCierreProceso.Add(procesoSegurosVencimineto);
+                    _context.BitacoraCierreProceso.Add(procesoGarantiasVenc);
+                    _context.BitacoraCierreProceso.Add(porcesoComprobacion);               
 
             if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
                     {
-                            BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
+                            BitacoraCierreProcesos procesoDepreciacion = new BitacoraCierreProcesos
                             {
                                 IdBitacoraCierre = cierre.Id,
                                 //IdProceso = 1,
@@ -195,7 +195,7 @@ namespace ERPAPI.Controllers
 
                             };
 
-                            BitacoraCierreProcesos proceso6 = new BitacoraCierreProcesos
+                            BitacoraCierreProcesos procesoEjecucionPresupuestaria = new BitacoraCierreProcesos
                             {
                                 IdBitacoraCierre = cierre.Id,
                                 //IdProceso = 1,
@@ -210,15 +210,18 @@ namespace ERPAPI.Controllers
 
                             };
 
-                            _context.BitacoraCierreProceso.Add(proceso4);
-                            _context.BitacoraCierreProceso.Add(proceso6);
+                            _context.BitacoraCierreProceso.Add(procesoDepreciacion);
+                            _context.BitacoraCierreProceso.Add(procesoEjecucionPresupuestaria);
                             await _context.SaveChangesAsync();
 
-                await EjecucionPresupuestaria(proceso6.IdProceso);
-                await DepreciacionActivosFijos(proceso4, cierre);
+                await EjecucionPresupuestaria(procesoEjecucionPresupuestaria.IdProceso);
+                await DepreciacionActivosFijos(procesoDepreciacion, cierre);
 
             }
-            _context.SaveChanges();
+            else
+            {
+                _context.SaveChanges();
+            }
 
 
 
@@ -227,13 +230,13 @@ namespace ERPAPI.Controllers
                 //////Ejecuta el Cierre en db
                 //await _context.Database.ExecuteSqlCommandAsync("Cierres @p0", cierre.Id); ////Ejecuta SP Cierres
                 //ValidarPasos(cierre);
-                
-                await VencimientoPolizas(proceso3.IdProceso);
-                await ValorMaxiomoCD(proceso2.IdProceso);/// Valor Maximo de Certificados 
-                await VencimientoGarantiasBancarias(proceso5.IdProceso);
-                await ComprobacionSaldosCatalogo(proceso7.IdProceso);
+                await ComprobacionSaldosCatalogo(porcesoComprobacion.IdProceso);                    
+                await VencimientoPolizas(procesoSegurosVencimineto.IdProceso);
+                await ValorMaxiomoCD(procesoValorMaximoCD.IdProceso);/// Valor Maximo de Certificados 
+                await VencimientoGarantiasBancarias(procesoGarantiasVenc.IdProceso);
+                await ComprobacionSaldosCatalogo(porcesoComprobacion.IdProceso);
                 // POLIZAS VENCIDAS 
-                await Historicos(cierre.Id, proceso1.IdProceso); ////HISTORICOS
+                await Historicos(cierre.Id, procesohistoricos.IdProceso); ////HISTORICOS
                 //await ValidarPasos(cierre);
                 cierre.Estatus = "FINALIZADO";
                 //_context.Update(cierre);
@@ -420,7 +423,7 @@ namespace ERPAPI.Controllers
             JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
                                                            .Where(q => q.TransactionId == tipoDocumento.TypeJournalId)
                                                            //.Where(q => q.BranchId == _Invoiceq.BranchId)
-                                                           .Where(q => q.EstadoName == "Activo")
+                                                           .Where(q => q.EstadoId == 1)
                                                            .Include(q => q.JournalEntryConfigurationLine)
                                                            ).FirstOrDefaultAsync();
             //////////////
@@ -430,9 +433,9 @@ namespace ERPAPI.Controllers
             _context.BitacoraCierreProceso.Update(proceso);
             //await _context.SaveChangesAsync();
 
-            List<InsurancePolicy> insurancePolicies = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).ToListAsync();
+            List<InsurancePolicy> insurancePolicies = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.Status != "VENCIDA").ToListAsync();
 
-            double SumaPolizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now).SumAsync(s => s.LpsAmount);
+            double SumaPolizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.Status != "VENCIDA").SumAsync(s => s.LpsAmount);
 
             if (insurancePolicies.Count > 0)
             {
@@ -659,9 +662,9 @@ namespace ERPAPI.Controllers
                                                            ).FirstOrDefaultAsync();
             
 
-            List<GarantiaBancaria> garantias = await _context.GarantiaBancaria.Where(i => i.FechaFianlVigencia < DateTime.Now).ToListAsync();
+            List<GarantiaBancaria> garantias = await _context.GarantiaBancaria.Where(i => i.FechaFianlVigencia < DateTime.Now && i.IdEstado !=2).ToListAsync();
 
-            double SumaGarantias = await _context.GarantiaBancaria.Where(i => i.FechaFianlVigencia < DateTime.Now).SumAsync(s => s.Monto);
+            double SumaGarantias = await _context.GarantiaBancaria.Where(i => i.FechaFianlVigencia < DateTime.Now && i.IdEstado != 2).SumAsync(s => s.Monto);
 
             if (garantias.Count > 0)
             {
