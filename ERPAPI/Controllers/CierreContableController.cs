@@ -212,8 +212,10 @@ namespace ERPAPI.Controllers
 
                             _context.BitacoraCierreProceso.Add(proceso4);
                             _context.BitacoraCierreProceso.Add(proceso6);
+                            await _context.SaveChangesAsync();
 
-                await Paso4(proceso4, cierre);
+                await EjecucionPresupuestaria(proceso6.IdProceso);
+                await DepreciacionActivosFijos(proceso4, cierre);
 
             }
             _context.SaveChanges();
@@ -226,11 +228,12 @@ namespace ERPAPI.Controllers
                 //await _context.Database.ExecuteSqlCommandAsync("Cierres @p0", cierre.Id); ////Ejecuta SP Cierres
                 //ValidarPasos(cierre);
                 
-                await Paso3(proceso3.IdProceso);
-                await Paso2(proceso2.IdProceso);/// Valor Maximo de Certificados 
-                await Paso5(proceso5.IdProceso);
+                await VencimientoPolizas(proceso3.IdProceso);
+                await ValorMaxiomoCD(proceso2.IdProceso);/// Valor Maximo de Certificados 
+                await VencimientoGarantiasBancarias(proceso5.IdProceso);
+                await ComprobacionSaldosCatalogo(proceso7.IdProceso);
                 // POLIZAS VENCIDAS 
-                await Paso1(cierre.Id, proceso1.IdProceso); ////HISTORICOS
+                await Historicos(cierre.Id, proceso1.IdProceso); ////HISTORICOS
                 //await ValidarPasos(cierre);
                 cierre.Estatus = "FINALIZADO";
                 //_context.Update(cierre);
@@ -251,7 +254,7 @@ namespace ERPAPI.Controllers
 
 
         
-        private async Task Paso1(int idCierre,int idproceso)
+        private async Task Historicos(int idCierre,int idproceso)
         {
             //////////////
             ///
@@ -376,7 +379,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        private  async Task Paso2(int idProceso)
+        private  async Task ValorMaxiomoCD(int idProceso)
         {
             //////////////
             ///
@@ -410,7 +413,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        private async Task Paso3(int idProceso)
+        private async Task VencimientoPolizas(int idProceso)
         {
             TypeJournal tipoDocumento = await _context.TypeJournal.Where(d => d.TypeJournalId == 7).FirstOrDefaultAsync();
 
@@ -513,7 +516,7 @@ namespace ERPAPI.Controllers
         }
 
 
-        private async Task Paso4(BitacoraCierreProcesos pProceso, BitacoraCierreContable pCierre)
+        private async Task DepreciacionActivosFijos(BitacoraCierreProcesos pProceso, BitacoraCierreContable pCierre)
         {
             var depreciaciongrupos = await _context.FixedAsset
                 .GroupBy(g => new { 
@@ -630,7 +633,7 @@ namespace ERPAPI.Controllers
             
         }
 
-        private async Task Paso5(int pProcesoId)
+        private async Task VencimientoGarantiasBancarias(int pProcesoId)
         {
             //////////////
             ///
@@ -745,7 +748,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        private async Task Paso6(int procesoId) {
+        private async Task EjecucionPresupuestaria(int procesoId) {
             BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == procesoId).FirstOrDefaultAsync();
             proceso.Estatus = "EJECUTANDO";
             _context.BitacoraCierreProceso.Update(proceso);
@@ -807,7 +810,7 @@ namespace ERPAPI.Controllers
         
         }
 
-        private async Task Paso7(int procesoId) {
+        private async Task ComprobacionSaldosCatalogo(int procesoId) {
             BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == procesoId).FirstOrDefaultAsync();
             proceso.Estatus = "EJECUTANDO";
             _context.BitacoraCierreProceso.Update(proceso);
