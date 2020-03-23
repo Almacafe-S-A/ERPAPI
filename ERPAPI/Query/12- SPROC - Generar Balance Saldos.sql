@@ -1,10 +1,12 @@
-/****** Object:  StoredProcedure [dbo].[BalanceDeSaldos]    Script Date: 21/2/2020 22:16:18 ******/
+USE [ERP-PROD]
+GO
+/****** Object:  StoredProcedure [dbo].[BalanceDeSaldos]    Script Date: 20/03/2020 15:27:18 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE [dbo].[BalanceDeSaldos]
+ALTER   PROCEDURE [dbo].[BalanceDeSaldos]
     @MES INT,
 	@ANIO INT,	
 	@NIVEL INT,
@@ -24,6 +26,10 @@ BEGIN
 	DECLARE @Saldo AS FLOAT;	
 	DECLARE @Ingresos AS FLOAT;
 	DECLARE @Gastos AS FLOAT;
+	DECLARE @IngresosPrev AS FLOAT;
+	DECLARE @GastosPrev AS FLOAT;
+	DECLARE @IngresosPrevAnio AS FLOAT;
+	DECLARE @GastosPrevAnio AS FLOAT;
 
 	DROP TABLE IF EXISTS #BalanceSaldo;	
 	
@@ -41,6 +47,12 @@ BEGIN
 		Debe FLOAT,
 		Haber FLOAT,
 		SaldoFinal FLOAT
+	);
+
+	DROP TABLE IF EXISTS #PartExcl;	
+	CREATE TABLE #PartExcl(
+		Anio INT,
+		JournalEntryId BIGINT
 	);
 
 	DECLARE TotalizaBalance_CURSOR CURSOR FOR
@@ -70,6 +82,19 @@ BEGIN
 	SET @FechaIniActual = STR(@ANIO) + '-' + RIGHT('00'+STR(@MES),2) + '-01';
 	SET @FechaIniComparativo = STR(@ANIO) + '-01-01';
 
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2656);
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,3270);
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,1748);
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2015);
+	--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2170);
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5471);
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5472); 
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5473);
+	---------------------
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,2655); 
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,2162);
+
+
 	IF @CENTROCOSTO = 0 
 	BEGIN
 		INSERT INTO #BalanceSaldo
@@ -81,21 +106,21 @@ BEGIN
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
-					CASE WHEN AceptaNegativo = 0 THEN  ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)))
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoFinal
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = @ANIO AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) 
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrev,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrev,
 					0 Debe,
 					0 Haber,
 					0 SaldoFinal
@@ -106,7 +131,7 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted < @FechaIniActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
@@ -121,11 +146,11 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted >= @FechaIniActual AND Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) 
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrevAnio,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrevAnio,
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
@@ -135,9 +160,9 @@ BEGIN
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = (@ANIO-1) AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 		) Datos
 		GROUP BY AccountId, AccountCode, HierarchyAccount, AccountName, ParentAccountId, Totaliza, DeudoraAcreedora, Estado
 		ORDER BY AccountCode;
@@ -153,21 +178,21 @@ BEGIN
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) ELSE
-					SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoFinal
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = @ANIO AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)))
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrev,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrev,
 					0 Debe,
 					0 Haber,
 					0 SaldoFinal
@@ -178,7 +203,7 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted < @FechaIniActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId 
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
@@ -193,11 +218,11 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted >= @FechaIniActual AND Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) 
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrevAnio,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrevAnio,
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
@@ -207,9 +232,9 @@ BEGIN
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = (@ANIO-1) AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 		) Datos
 		GROUP BY AccountId, AccountCode, HierarchyAccount, AccountName, ParentAccountId, Totaliza, DeudoraAcreedora, Estado
 		ORDER BY AccountCode;	
@@ -227,7 +252,7 @@ BEGIN
 				FROM #BalanceSaldo
 				WHERE ParentAccountId = @AccountId
 
-				UPDATE #BalanceSaldo SET SaldoPrev = SaldoPrev + @SaldoPrev, Debe = Debe + @Debe, Haber = Haber + @Haber, SaldoFinal = SaldoFinal + @Saldo
+				UPDATE #BalanceSaldo SET SaldoPrevAnio = SaldoPrevAnio + @SaldoPrevAnio, SaldoPrev = SaldoPrev + @SaldoPrev, Debe = Debe + @Debe, Haber = Haber + @Haber, SaldoFinal = SaldoFinal + @Saldo
 				WHERE AccountId = @AccountId
 				
 				FETCH NEXT FROM TotalizaBalancePrev_CURSOR INTO @AccountId;
@@ -235,11 +260,11 @@ BEGIN
 		CLOSE TotalizaBalancePrev_CURSOR;
 	--Utilidades o Perdidas del Periodo
 
-	SELECT @Ingresos = SaldoFinal
+	SELECT @Ingresos = SaldoFinal, @IngresosPrev = SaldoPrev, @IngresosPrevAnio = SaldoPrevAnio
 	FROM #BalanceSaldo
 	WHERE AccountCode = '5'
 
-	SELECT @Gastos = SaldoFinal
+	SELECT @Gastos = SaldoFinal, @GastosPrev = SaldoPrev, @GastosPrevAnio = SaldoPrevAnio
 	FROM #BalanceSaldo
 	WHERE AccountCode = '6'
 
@@ -256,21 +281,21 @@ BEGIN
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
-					CASE WHEN AceptaNegativo = 0 THEN  ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)))
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoFinal
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = @ANIO AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) 
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrev,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrev,
 					0 Debe,
 					0 Haber,
 					0 SaldoFinal
@@ -281,7 +306,7 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted < @FechaIniActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
@@ -296,11 +321,11 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted >= @FechaIniActual AND Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) 
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrevAnio,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrevAnio,
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
@@ -310,9 +335,9 @@ BEGIN
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6
+				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = (@ANIO-1) AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 		) Datos
 		GROUP BY AccountId, AccountCode, HierarchyAccount, AccountName, ParentAccountId, Totaliza, DeudoraAcreedora, Estado
 		ORDER BY AccountCode;
@@ -328,21 +353,21 @@ BEGIN
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) ELSE
-					SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoFinal
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoFinal
 			FROM Accounting Cta
 			LEFT JOIN(
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = @ANIO AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)))
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrev,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrev,
 					0 Debe,
 					0 Haber,
 					0 SaldoFinal
@@ -353,7 +378,7 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted < @FechaIniActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId 
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
 					0 SaldoPrevAnio,
@@ -368,11 +393,11 @@ BEGIN
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
 				WHERE Cab.DatePosted >= @FechaIniActual AND Cab.DatePosted < @FechaFinActual AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 			UNION ALL
 			SELECT Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado,
-					CASE WHEN AceptaNegativo = 0 THEN ABS(SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))) 
-					ELSE SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0)) END SaldoPrevAnio,
+					CASE WHEN DeudoraAcreedora = 'D' THEN  SUM(ISNULL(Det.Debit,0) - ISNULL(Det.Credit,0))
+					ELSE SUM(ISNULL(Det.Credit,0) - ISNULL(Det.Debit,0)) END SaldoPrevAnio,
 					0 SaldoPrev,
 					0 Debe,
 					0 Haber,
@@ -382,9 +407,9 @@ BEGIN
 				SELECT Cab.DatePosted, Det.AccountId, Det.Credit, Det.Debit 
 				FROM JournalEntryLine Det
 				JOIN JournalEntry Cab ON Cab.JournalEntryId = Det.JournalEntryId
-				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO
+				WHERE Cab.DatePosted < @FechaFinAnioPrev AND Cab.EstadoId = 6 AND Det.CostCenterId = @CENTROCOSTO AND NOT EXISTS(SELECT 1 FROM #PartExcl E WHERE E.Anio = (@ANIO-1) AND Cab.JournalEntryId = E.JournalEntryId)
 				) Det ON Det.AccountId = Cta.AccountId
-			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado, Cta.AceptaNegativo
+			GROUP BY Cta.AccountId, Cta.AccountCode, Cta.HierarchyAccount, Cta.AccountName, Cta.ParentAccountId, Cta.Totaliza, Cta.DeudoraAcreedora, Cta.Estado
 		) Datos
 		GROUP BY AccountId, AccountCode, HierarchyAccount, AccountName, ParentAccountId, Totaliza, DeudoraAcreedora, Estado
 		ORDER BY AccountCode;	
@@ -394,6 +419,16 @@ BEGIN
 		UPDATE #BalanceSaldo SET SaldoFinal = @Ingresos - @Gastos WHERE AccountCode = '32502';
 	ELSE	
 		UPDATE #BalanceSaldo SET SaldoFinal = @Ingresos - @Gastos WHERE AccountCode = '32501';		
+
+	IF @GastosPrev > @IngresosPrev
+		UPDATE #BalanceSaldo SET SaldoPrev = @IngresosPrev - @GastosPrev WHERE AccountCode = '32502';
+	ELSE	
+		UPDATE #BalanceSaldo SET SaldoPrev = @IngresosPrev - @GastosPrev WHERE AccountCode = '32501';		
+
+	IF @GastosPrevAnio > @IngresosPrevAnio
+		UPDATE #BalanceSaldo SET SaldoPrevAnio = @IngresosPrevAnio - @GastosPrevAnio WHERE AccountCode = '32502';
+	ELSE	
+		UPDATE #BalanceSaldo SET SaldoPrevAnio = @IngresosPrevAnio - @GastosPrevAnio WHERE AccountCode = '32501';		
 	
 	OPEN TotalizaBalancePrev_CURSOR;
 		FETCH NEXT FROM TotalizaBalancePrev_CURSOR INTO @AccountId;
@@ -407,7 +442,7 @@ BEGIN
 				FROM #BalanceSaldo
 				WHERE ParentAccountId = @AccountId
 
-				UPDATE #BalanceSaldo SET SaldoPrev = SaldoPrev + @SaldoPrev, Debe = Debe + @Debe, Haber = Haber + @Haber, SaldoFinal = SaldoFinal + @Saldo
+				UPDATE #BalanceSaldo SET SaldoPrevAnio = SaldoPrevAnio + @SaldoPrevAnio, SaldoPrev = SaldoPrev + @SaldoPrev, Debe = Debe + @Debe, Haber = Haber + @Haber, SaldoFinal = SaldoFinal + @Saldo
 				WHERE AccountId = @AccountId
 				
 				FETCH NEXT FROM TotalizaBalancePrev_CURSOR INTO @AccountId;
@@ -419,6 +454,16 @@ BEGIN
 	BEGIN
 		UPDATE #BalanceSaldo SET SaldoFinal = @Ingresos - @Gastos WHERE AccountCode = '581';		
 		UPDATE #BalanceSaldo SET SaldoFinal = SaldoFinal + (@Ingresos - @Gastos) WHERE AccountCode = '58';		
+	END;
+	IF @GastosPrev < @IngresosPrev
+	BEGIN
+		UPDATE #BalanceSaldo SET SaldoPrev = @IngresosPrev - @GastosPrev WHERE AccountCode = '581';		
+		UPDATE #BalanceSaldo SET SaldoPrev = SaldoPrev + (@IngresosPrev - @GastosPrev) WHERE AccountCode = '58';		
+	END;
+	IF @GastosPrevAnio < @IngresosPrevAnio
+	BEGIN
+		UPDATE #BalanceSaldo SET SaldoPrevAnio = @IngresosPrevAnio - @GastosPrevAnio WHERE AccountCode = '581';		
+		UPDATE #BalanceSaldo SET SaldoPrevAnio = SaldoPrevAnio + (@IngresosPrevAnio - @GastosPrevAnio) WHERE AccountCode = '58';		
 	END;
 	
 
