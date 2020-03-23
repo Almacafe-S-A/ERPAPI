@@ -807,6 +807,27 @@ namespace ERPAPI.Controllers
         
         }
 
+        private async Task Paso7(int procesoId) {
+            BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == procesoId).FirstOrDefaultAsync();
+            proceso.Estatus = "EJECUTANDO";
+            _context.BitacoraCierreProceso.Update(proceso);
+            await _context.SaveChangesAsync();
+
+
+            List<Accounting> cuentas = await _context.Accounting.Where(q => q.AccountBalance < 0.00001).ToListAsync();
+
+            foreach (var item in cuentas)
+            {
+                item.AccountBalance = 0;
+            }
+
+            proceso.Estatus = "FINALIZADO";
+            await _context.SaveChangesAsync();
+
+
+
+        }
+
         private  async Task ValidarPasos(BitacoraCierreContable pCierre )
         {
             List<BitacoraCierreProcesos> procesos = await _context.BitacoraCierreProceso
