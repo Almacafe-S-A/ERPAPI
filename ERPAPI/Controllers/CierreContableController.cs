@@ -177,52 +177,54 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(proceso3);
                     _context.BitacoraCierreProceso.Add(proceso5);
                     _context.BitacoraCierreProceso.Add(proceso7);
-                    _context.SaveChanges();
+                   
 
-                    BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
-                    {
-                        IdBitacoraCierre = cierre.Id,
-                        //IdProceso = 1,
-                        Estatus = "PENDIENTE",
-                        Proceso = "Depreciacion de Activos",
-                        PasoCierre = 4,
-                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                        FechaModificacion = DateTime.Now,
-                        FechaCierre = cierre.FechaCierre,
-                        FechaCreacion = DateTime.Now,
+                    
 
-                    };
-
-                    BitacoraCierreProcesos proceso6 = new BitacoraCierreProcesos
-                    {
-                        IdBitacoraCierre = cierre.Id,
-                        //IdProceso = 1,
-                        Estatus = "PENDIENTE",
-                        Proceso = "Ejecucion Presupuestaria Mensual",
-                        PasoCierre = 6,
-                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                        FechaModificacion = DateTime.Now,
-                        FechaCierre = cierre.FechaCierre,
-                        FechaCreacion = DateTime.Now,
-
-                    };
-
-                        _context.BitacoraCierreProceso.Add(proceso4);
-                        _context.BitacoraCierreProceso.Add(proceso6);
-
-                    _context.SaveChanges();
-                    await Paso4(proceso4, cierre);
+                   
+                   
 
 
             if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
                     {
-                        //Paso4 Depreciacion de Activos 
-                       
-                    }
+                            BitacoraCierreProcesos proceso4 = new BitacoraCierreProcesos
+                            {
+                                IdBitacoraCierre = cierre.Id,
+                                //IdProceso = 1,
+                                Estatus = "PENDIENTE",
+                                Proceso = "Depreciacion de Activos",
+                                PasoCierre = 4,
+                                UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                FechaModificacion = DateTime.Now,
+                                FechaCierre = cierre.FechaCierre,
+                                FechaCreacion = DateTime.Now,
 
-            
+                            };
+
+                            BitacoraCierreProcesos proceso6 = new BitacoraCierreProcesos
+                            {
+                                IdBitacoraCierre = cierre.Id,
+                                //IdProceso = 1,
+                                Estatus = "PENDIENTE",
+                                Proceso = "Ejecucion Presupuestaria Mensual",
+                                PasoCierre = 6,
+                                UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                FechaModificacion = DateTime.Now,
+                                FechaCierre = cierre.FechaCierre,
+                                FechaCreacion = DateTime.Now,
+
+                            };
+
+                            _context.BitacoraCierreProceso.Add(proceso4);
+                            _context.BitacoraCierreProceso.Add(proceso6);
+
+                await Paso4(proceso4, cierre);
+
+            }
+            _context.SaveChanges();
+
 
 
             try
@@ -748,6 +750,11 @@ namespace ERPAPI.Controllers
             }
 
 
+        }
+
+        private async Task Paso6() {
+        
+        
         }
 
         private  async Task ValidarPasos(BitacoraCierreContable pCierre )
