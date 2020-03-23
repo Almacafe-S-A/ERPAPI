@@ -176,14 +176,7 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(proceso2);
                     _context.BitacoraCierreProceso.Add(proceso3);
                     _context.BitacoraCierreProceso.Add(proceso5);
-                    _context.BitacoraCierreProceso.Add(proceso7);
-                   
-
-                    
-
-                   
-                   
-
+                    _context.BitacoraCierreProceso.Add(proceso7);               
 
             if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
                     {
@@ -752,8 +745,65 @@ namespace ERPAPI.Controllers
 
         }
 
-        private async Task Paso6() {
-        
+        private async Task Paso6(int procesoId) {
+            BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == procesoId).FirstOrDefaultAsync();
+            proceso.Estatus = "EJECUTANDO";
+            _context.BitacoraCierreProceso.Update(proceso);
+            await _context.SaveChangesAsync();
+
+            var periodo = _context.Periodo.Where(q => q.IdEstado == 1).OrderByDescending(q => q.Anio).FirstOrDefaultAsync();
+            List<Presupuesto> cuentasPresupuesto = await _context.Presupuesto.Where(q => q.PeriodoId == periodo.Id).ToListAsync();
+            foreach (var item in cuentasPresupuesto)
+            {
+                Accounting cuenta = await _context.Accounting.Where(q => q.AccountId == item.AccountigId).FirstOrDefaultAsync();
+                var mes = DateTime.Now.Month;
+                switch (mes)
+                {
+                    case 1:
+                        item.EjecucionEnero = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 2:
+                        item.EjecucionFebrero = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 3:
+                        item.EjecucionMarzo = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 4:
+                        item.EjecucionAbril = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 5:
+                        item.EjecucionMayo = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 6:
+                        item.EjecucionJunio = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 7:
+                        item.EjecucionJulio = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 8:
+                        item.EjecucionAgosto = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 9:
+                        item.EjecucionSeptiembre = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 10:
+                        item.EjecucionOctubre = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 11:
+                        item.EjecucionNoviembre = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    case 12:
+                        item.EjecucionDiciembre = Convert.ToDecimal(cuenta.AccountBalance);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            
+            proceso.Estatus = "FINALIZADO";
+            await _context.SaveChangesAsync();
+            
         
         }
 
