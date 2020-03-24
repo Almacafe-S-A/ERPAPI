@@ -135,7 +135,7 @@ namespace ERPAPI.Controllers
                 try
                 {
                     _VendorInvoiceq.PurchaseOrderId = null;
-                    _VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoiceq.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                    //_VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoiceq.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                     Numalet let;
                     let = new Numalet();
                     let.SeparadorDecimalSalida = "Lempiras";
@@ -179,7 +179,7 @@ namespace ERPAPI.Controllers
                         Description = account.AccountName,
                         Credit = _VendorInvoiceq.Total,
                         Debit = 0,
-                        CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
+                        //CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
                         CreatedUser = _VendorInvoiceq.UsuarioCreacion,
