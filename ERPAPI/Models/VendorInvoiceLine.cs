@@ -23,11 +23,11 @@ namespace ERPAPI.Models
         public string ItemName { get; set; }
         
 
-        [Display(Name = "Unidad de Medida")]
-        public Int64 UnitOfMeasureId { get; set; }
+        //[Display(Name = "Unidad de Medida")]
+        //public Int64 UnitOfMeasureId { get; set; }
 
-        [Display(Name = "Unidad de Medida")]
-        public string UnitOfMeasureName { get; set; }
+        //[Display(Name = "Unidad de Medida")]
+        //public string UnitOfMeasureName { get; set; }
 
         public Int64? CostCenterId { get; set; }
         [ForeignKey("CostCenterId")]
@@ -38,20 +38,20 @@ namespace ERPAPI.Models
 
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
-        [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
-        [Display(Name = "Precio")]
-        public double Price { get; set; }
+        //[Display(Name = "Cantidad")]
+        //public double Quantity { get; set; }
+        //[Display(Name = "Precio")]
+        //public double Price { get; set; }
         [Display(Name = "Monto")]
         public double Amount { get; set; }
         
 
-        [Display(Name = "Porcentaje descuento")]
-        public double DiscountPercentage { get; set; }
-        [Display(Name = "Monto descuento")]
-        public double DiscountAmount { get; set; }
-        [Display(Name = "Subtotal")]
-        public double SubTotal { get; set; }
+        //[Display(Name = "Porcentaje descuento")]
+        //public double DiscountPercentage { get; set; }
+        //[Display(Name = "Monto descuento")]
+        //public double DiscountAmount { get; set; }
+        //[Display(Name = "Subtotal")]
+        //public double SubTotal { get; set; }
         [Display(Name = "% Impuesto")]
         public double TaxPercentage { get; set; }
         [Display(Name = "Código Impuesto")]
