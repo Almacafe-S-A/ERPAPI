@@ -122,6 +122,25 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _PrecioCafeq = _PrecioCafe;
+
+                        ExchangeRate tasacambio = await (from c in _context.ExchangeRate
+                                        .Where(q => q.ExchangeRateId == _PrecioCafe.ExchangeRateId
+                                        )
+                                                         select c
+                                       ).FirstOrDefaultAsync();
+
+
+
+                        _PrecioCafe.TotalUSD = (_PrecioCafe.PrecioBolsaUSD + _PrecioCafe.DiferencialesUSD);
+                        _PrecioCafe.BrutoLPSIngreso = (_PrecioCafe.TotalUSD * tasacambio.ExchangeRateValueCompra);
+                        _PrecioCafe.NetoLPSIngreso = (_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
+                        _PrecioCafe.NetoLPSConsumoInterno = (_PrecioCafe.BrutoLPSConsumoInterno * _PrecioCafe.PorcentajeConsumoInterno / 100);
+                        _PrecioCafe.TotalLPSIngreso = (_PrecioCafe.NetoLPSIngreso + _PrecioCafe.NetoLPSConsumoInterno);
+                        _PrecioCafe.TotalUSDEgreso = (_PrecioCafe.BeneficiadoUSD + _PrecioCafe.FideicomisoUSD + _PrecioCafe.UtilidadUSD + _PrecioCafe.PermisoExportacionUSD);
+                        _PrecioCafe.TotalLPSEgreso = (tasacambio.ExchangeRateValueCompra * _PrecioCafe.TotalUSDEgreso);
+                        _PrecioCafe.PrecioQQOro = (_PrecioCafe.TotalLPSIngreso - _PrecioCafe.TotalLPSEgreso);
+                        _PrecioCafe.PercioQQPergamino = (_PrecioCafe.PrecioQQOro / (Convert.ToDecimal(1.25)));
+
                         _context.PrecioCafe.Add(_PrecioCafeq);
                         await _context.SaveChangesAsync();
 
@@ -139,6 +158,7 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _PrecioCafe.UsuarioModificacion,
 
                         });
+
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
@@ -173,6 +193,27 @@ namespace ERPAPI.Controllers
             PrecioCafe _PrecioCafeq = _PrecioCafe;
             try
             {
+                _PrecioCafeq = _PrecioCafe;
+
+                ExchangeRate tasacambio = await (from c in _context.ExchangeRate
+                                .Where(q => q.ExchangeRateId == _PrecioCafe.ExchangeRateId
+                                )
+                                                 select c
+                               ).FirstOrDefaultAsync();
+
+
+
+                _PrecioCafe.TotalUSD = (_PrecioCafe.PrecioBolsaUSD + _PrecioCafe.DiferencialesUSD);
+                _PrecioCafe.BrutoLPSIngreso = (_PrecioCafe.TotalUSD * tasacambio.ExchangeRateValueCompra);
+                _PrecioCafe.NetoLPSIngreso = (_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
+                _PrecioCafe.NetoLPSConsumoInterno = (_PrecioCafe.BrutoLPSConsumoInterno * _PrecioCafe.PorcentajeConsumoInterno / 100);
+                _PrecioCafe.TotalLPSIngreso = (_PrecioCafe.NetoLPSIngreso + _PrecioCafe.NetoLPSConsumoInterno);
+                _PrecioCafe.TotalUSDEgreso = (_PrecioCafe.BeneficiadoUSD + _PrecioCafe.FideicomisoUSD + _PrecioCafe.UtilidadUSD + _PrecioCafe.PermisoExportacionUSD);
+                _PrecioCafe.TotalLPSEgreso = (tasacambio.ExchangeRateValueCompra * _PrecioCafe.TotalUSDEgreso);
+                _PrecioCafe.PrecioQQOro = (_PrecioCafe.TotalLPSIngreso - _PrecioCafe.TotalLPSEgreso);
+                _PrecioCafe.PercioQQPergamino = (_PrecioCafe.PrecioQQOro / (Convert.ToDecimal(1.25)));
+
+
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
@@ -185,7 +226,8 @@ namespace ERPAPI.Controllers
 
                         _context.Entry(_PrecioCafeq).CurrentValues.SetValues((_PrecioCafe));
 
-                        //_context.PrecioCafe.Update(_PrecioCafeq);
+                       
+
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
