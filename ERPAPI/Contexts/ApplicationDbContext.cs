@@ -39,6 +39,12 @@ namespace ERP.Contexts
         public DbSet <Presupuesto> Presupuesto { get; set; }
 
 
+        public DbSet <MantenimientoImpacto> MantenimientoImpacto { get; set; }
+
+
+        public DbSet <TipodeAccionderiesgo> TipodeAccionderiesgo { get; set; }
+
+
         public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
         public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
         public DbSet<Insurances> Insurances { get; set; }
