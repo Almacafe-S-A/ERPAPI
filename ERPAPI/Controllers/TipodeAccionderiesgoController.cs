@@ -53,6 +53,52 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Obtiene los Datos de la tipo de acciondes de riesgo por medio del Id enviado.
+        /// </summary>
+        /// <param name="TipodeAccionderiesgoId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{TipodeAccionderiesgoId}")]
+        public async Task<IActionResult> GetTipodeAccionderiesgoId(int TipodeAccionderiesgoId)
+        {
+            TipodeAccionderiesgo Items = new TipodeAccionderiesgo();
+            try
+            {
+                Items = await _context.TipodeAccionderiesgo.Where(q => q.TipodeAccionderiesgoId == TipodeAccionderiesgoId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
+
+        [HttpGet("[action]/{Tipodeaccion}")]
+        public async Task<IActionResult> GetTipodeAccionderiesgobyTipoAccion(string Tipodeaccion)
+        {
+            TipodeAccionderiesgo Items = new TipodeAccionderiesgo();
+            try
+            {
+                Items = await _context.TipodeAccionderiesgo.Where(q => q.Tipodeaccion == Tipodeaccion).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Inserta TipodeAccionderiesgo
@@ -82,8 +128,8 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_TipodeAccionderiesgo"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<TipodeAccionderiesgo>> Update([FromBody]TipodeAccionderiesgo _TipodeAccionderiesgo)
+        [HttpPut("[action]")]
+        public async Task<IActionResult> Update([FromBody]TipodeAccionderiesgo _TipodeAccionderiesgo)
         {
 
             try
@@ -96,7 +142,7 @@ namespace ERPAPI.Controllers
                 _TipodeAccionderiesgo.FechaCreacion = tipodeAccionderiesgo.FechaCreacion;
                 _TipodeAccionderiesgo.UsuarioCreacion = tipodeAccionderiesgo.UsuarioCreacion;
 
-                _context.Entry(tipodeAccionderiesgo).CurrentValues.SetValues((tipodeAccionderiesgo));
+                _context.Entry(tipodeAccionderiesgo).CurrentValues.SetValues((_TipodeAccionderiesgo));
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -114,7 +160,7 @@ namespace ERPAPI.Controllers
         /// <param name="_TipodeAccionderiesgo"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<TipodeAccionderiesgo>> Delete([FromBody]TipodeAccionderiesgo _TipodeAccionderiesgo)
+        public async Task<IActionResult> Delete([FromBody]TipodeAccionderiesgo _TipodeAccionderiesgo)
         {
             TipodeAccionderiesgo tipodeAccionderiesgo = new TipodeAccionderiesgo();
             try

@@ -242,6 +242,10 @@ Monitoreo.Paises GAFI
 Monitoreo.Paises GAFI.Agregar Paises GAFI
 Monitoreo.Paises GAFI.Editar Paises GAFI
 Monitoreo.Paises GAFI.Eliminar Paises GAFI
+Monitoreo.Tipo de accion de riesgo
+Monitoreo.Tipo de accion de riesgo.Agregar Tipo de accion de riesgo 
+Monitoreo.Tipo de accion de riesgo.Editar Tipo de accion de riesgo
+Monitoreo.Tipo de accion de riesgo.Eliminar Tipo de accion de riesgo
 Inventarios
 Inventarios.Dashboard
 Inventarios.Control de Ingresos
