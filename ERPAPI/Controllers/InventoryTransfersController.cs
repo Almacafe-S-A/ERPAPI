@@ -241,7 +241,7 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
                         _InventoryTransfers.Kardex.DocType = 0;
-                        _InventoryTransfers.Kardex.DocName = "FacturaProforma/InventoryTransfers";
+                        _InventoryTransfers.Kardex.DocumentName = "FacturaProforma/InventoryTransfers";
                         _InventoryTransfers.Kardex.DocumentDate = _InventoryTransfers.DateGenerated;
                         _InventoryTransfers.Kardex.FechaCreacion = DateTime.Now;
                         _InventoryTransfers.Kardex.FechaModificacion = DateTime.Now;
