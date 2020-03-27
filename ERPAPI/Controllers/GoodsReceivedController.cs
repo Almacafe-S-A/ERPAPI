@@ -377,14 +377,14 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
                         _GoodsReceived.Kardex.DocType = 0;                      
-                        _GoodsReceived.Kardex.DocName = "ReciboMercaderia/GoodsReceived";
+                        _GoodsReceived.Kardex.DocumentName = "ReciboMercaderia/GoodsReceived";
                         _GoodsReceived.Kardex.DocumentDate = _GoodsReceivedq.DocumentDate;
                         _GoodsReceived.Kardex.FechaCreacion = DateTime.Now;
                         _GoodsReceived.Kardex.FechaModificacion = DateTime.Now;
                         _GoodsReceived.Kardex.TypeOperationId = 1;
                         _GoodsReceived.Kardex.TypeOperationName = "Entrada";
                         _GoodsReceived.Kardex.KardexDate = DateTime.Now;
-                        _GoodsReceived.Kardex.DocumentName = "RM";
+                        //_GoodsReceived.Kardex.DocumentName = "RM";
 
                         _GoodsReceived.Kardex.CustomerId = _GoodsReceivedq.CustomerId;
                         _GoodsReceived.Kardex.CustomerName = _GoodsReceivedq.CustomerName;
@@ -406,7 +406,7 @@ namespace ERPAPI.Controllers
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
 
-                            if (item.ControlPalletsId == null) { item.ControlPalletsId = 0;  }
+                            if (item.ControlPalletsId== null) { item.ControlPalletsId = 0;  }
                             ControlPallets _ControlPalletsq = await _context.ControlPallets.Where(q => q.ControlPalletsId == item.ControlPalletsId)
                            .FirstOrDefaultAsync();
 

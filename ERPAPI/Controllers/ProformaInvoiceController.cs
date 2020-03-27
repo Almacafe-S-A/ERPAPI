@@ -313,7 +313,7 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
                         _ProformaInvoice.Kardex.DocType = 0;
-                        _ProformaInvoice.Kardex.DocName = "FacturaProforma/ProformaInvoice";
+                        _ProformaInvoice.Kardex.DocumentName = "FacturaProforma/ProformaInvoice";
                         _ProformaInvoice.Kardex.DocumentDate = _ProformaInvoice.OrderDate;
                         _ProformaInvoice.Kardex.FechaCreacion = DateTime.Now;
                         _ProformaInvoice.Kardex.FechaModificacion = DateTime.Now;
@@ -321,7 +321,7 @@ namespace ERPAPI.Controllers
                         _ProformaInvoice.Kardex.TypeOperationName = "Salida";
                         _ProformaInvoice.Kardex.KardexDate = DateTime.Now;
 
-                        _ProformaInvoice.Kardex.DocumentName = "FacturaProforma";
+                        //_ProformaInvoice.Kardex.DocumentName = "FacturaProforma";
 
                         _ProformaInvoice.Kardex.CustomerId = _ProformaInvoice.CustomerId;
                         _ProformaInvoice.Kardex.CustomerName = _ProformaInvoice.CustomerName;
