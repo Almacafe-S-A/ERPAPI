@@ -258,7 +258,7 @@ namespace ERPAPI.Controllers
 
                             if (_BuscarKardex.Total > item.Quantity)
                             {
-                                item.Total = _BuscarKardex.TotalCD - item.Quantity;
+                                item.Total = Convert.ToDouble(_BuscarKardex.TotalCD) - item.Quantity;
                             }
                             else
                             {
@@ -283,15 +283,15 @@ namespace ERPAPI.Controllers
                                 TypeOperationId = 1,
                                 TypeOperationName = "Salida",
                                 Total = item.Total,
-                                TotalBags = _BuscarKardex.TotalBags-item.QuantitySacos  ,
+                                TotalBags =Convert.ToDouble(_BuscarKardex.TotalBags)-item.QuantitySacos  ,
                                 QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                TotalCD = _BuscarKardex.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                                TotalCD = Convert.ToDouble(_BuscarKardex.TotalCD) - (item.Quantity - (item.Quantity * _subproduct.Merma)),
                             });
                         }
 
                         await _context.SaveChangesAsync();
                         _GoodsDelivered.Kardex.DocType = 0;
-                        _GoodsDelivered.Kardex.DocName = "EntregaMercaderia/GoodsDelivered";
+                        _GoodsDelivered.Kardex.DocumentName = "EntregaMercaderia/GoodsDelivered";
                         _GoodsDelivered.Kardex.DocumentDate = _GoodsDeliveredq.DocumentDate;
                         _GoodsDelivered.Kardex.FechaCreacion = DateTime.Now;
                         _GoodsDelivered.Kardex.FechaModificacion = DateTime.Now;

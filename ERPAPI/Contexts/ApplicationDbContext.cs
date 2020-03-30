@@ -74,6 +74,7 @@ namespace ERP.Contexts
 
         public DbSet<PrecioCafe> PrecioCafe { get; set; }
         public DbSet<ContextoRiesgo> ContextoRiesgo { get; set; }
+        public DbSet<ProbabilidadRiesgo> ProbabilidadRiesgo { get; set; }
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }

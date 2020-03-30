@@ -181,6 +181,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Query\EstadosFinancierosAlmacafe\" />
+  </ItemGroup>
+
   <ProjectExtensions>
     <VisualStudio>
       <UserProperties appsettings_1json__JSONSchema="" />

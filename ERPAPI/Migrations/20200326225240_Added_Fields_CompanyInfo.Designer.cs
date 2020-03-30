@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200326225240_Added_Fields_CompanyInfo")]
+    partial class Added_Fields_CompanyInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6538,7 +6540,7 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("BranchId");
+                    b.Property<long>("BranchId");
 
                     b.Property<string>("BranchName");
 
@@ -6550,6 +6552,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CostCenterName");
 
+                    b.Property<double?>("Currency");
+
                     b.Property<long?>("CurrencyId");
 
                     b.Property<string>("CurrencyName");
@@ -6557,6 +6561,8 @@ namespace ERPAPI.Migrations
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
+
+                    b.Property<string>("DocName");
 
                     b.Property<long>("DocType");
 
@@ -6570,7 +6576,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificacion");
 
+                    b.Property<long?>("GoodsReceivedId");
+
+                    b.Property<string>("Impreso");
+
                     b.Property<DateTime>("KardexDate");
+
+                    b.Property<double?>("MinimumExistance");
 
                     b.Property<long?>("ProducId");
 
@@ -6590,15 +6602,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<double?>("SaldoAnterior");
 
-                    b.Property<long?>("SubProducId");
+                    b.Property<int>("SubProducId");
 
                     b.Property<string>("SubProductName");
 
                     b.Property<double?>("Total");
 
-                    b.Property<double?>("TotalBags");
+                    b.Property<double>("TotalBags");
 
-                    b.Property<double?>("TotalCD");
+                    b.Property<double>("TotalCD");
 
                     b.Property<int?>("TypeOperationId");
 
@@ -6612,7 +6624,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion");
 
-                    b.Property<long?>("WareHouseId");
+                    b.Property<int>("WareHouseId");
 
                     b.Property<string>("WareHouseName");
 

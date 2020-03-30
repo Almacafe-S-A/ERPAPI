@@ -217,7 +217,7 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
                         _PurchaseOrders.Kardex.DocType = 0;
-                        _PurchaseOrders.Kardex.DocName = "FacturaProforma/PurchaseOrders";
+                        _PurchaseOrders.Kardex.DocumentName = "FacturaProforma/PurchaseOrders";
                         _PurchaseOrders.Kardex.DocumentDate = _PurchaseOrders.DatePlaced;
                         _PurchaseOrders.Kardex.FechaCreacion = DateTime.Now;
                         _PurchaseOrders.Kardex.FechaModificacion = DateTime.Now;
@@ -225,7 +225,7 @@ namespace ERPAPI.Controllers
                         _PurchaseOrders.Kardex.TypeOperationName = "Salida";
                         _PurchaseOrders.Kardex.KardexDate = DateTime.Now;
 
-                        _PurchaseOrders.Kardex.DocumentName = "FacturaProforma";
+                        //_PurchaseOrders.Kardex.DocumentName = "FacturaProforma";
 
                         _PurchaseOrders.Kardex.CustomerId = 0;
                         _PurchaseOrders.Kardex.CustomerName = "N/A";
