@@ -227,6 +227,10 @@ Monitoreo.Contexto de Riesgos
 Monitoreo.Contexto de Riesgos.Agregar Contexto de Riesgo
 Monitoreo.Contexto de Riesgos.Editar Contexto de Riesgo
 Monitoreo.Contexto de Riesgos.Eliminar Contexto de Riesgo
+Monitoreo.MantenimientoImpacto
+Monitoreo.MantenimientoImpacto.Agregar MantenimientoImpacto
+Monitoreo.MantenimientoImpacto.Editar MantenimientoImpacto
+Monitoreo.MantenimientoImpacto.Eliminar MantenimientoImpacto
 Monitoreo.PEPS
 Monitoreo.PEPS.Agregar PEPS
 Monitoreo.PEPS.Editar PEPS
