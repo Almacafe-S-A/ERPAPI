@@ -53,6 +53,31 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Obtiene los datos de MantenimientoImpacto con el id enviado
+        /// </summary>
+        /// <param name="MantenimientoImpactoId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{MantenimientoImpactoId}")]
+        public async Task<ActionResult<Currency>> GetMantenimientoImpactoById(int MantenimientoImpactoId)
+        {
+            MantenimientoImpacto Items = new MantenimientoImpacto();
+            try
+            {
+                Items = await _context.MantenimientoImpacto.Where(q => q.MantenimientoImpactoId == MantenimientoImpactoId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+
+            return Ok(Items);
+        }
+
+
 
         /// <summary>
         /// Inserta Mantenimiento de Impacto
@@ -82,8 +107,8 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_MantenimientoImpacto"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<MantenimientoImpacto>> Update([FromBody]MantenimientoImpacto _MantenimientoImpacto)
+        [HttpPut("[action]")]
+        public async Task<IActionResult> Update([FromBody]MantenimientoImpacto _MantenimientoImpacto)
         {
 
             try
@@ -96,7 +121,7 @@ namespace ERPAPI.Controllers
                 _MantenimientoImpacto.FechaCreacion = mantenimiento.FechaCreacion;
                 _MantenimientoImpacto.UsuarioCreacion = mantenimiento.UsuarioCreacion;
 
-                _context.Entry(mantenimiento).CurrentValues.SetValues((mantenimiento));
+                _context.Entry(mantenimiento).CurrentValues.SetValues((_MantenimientoImpacto));
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
