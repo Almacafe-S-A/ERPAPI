@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using ERP.Contexts;
+﻿using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ERPAPI.Controllers
 {
@@ -257,8 +255,146 @@ namespace ERPAPI.Controllers
             return salario;
         }
 
+        private async Task<decimal[]> CalcularISR(long empleadoId, int periodo, int mes)
+        {
+            Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+            if (empleado == null)
+            {
+                throw new Exception("El empleado no existe");
+            }
+
+            if (empleado.FechaIngreso == null)
+            {
+                throw new Exception($"La fecha de ingreso del empleado {empleado.NombreEmpleado} no es valida.");
+            }
+
+            if (empleado.FechaNacimiento == null)
+            {
+                throw new Exception($"El empleado {empleado.NombreEmpleado} no tiene fecha de nacimiento en su registro.");
+            }
+
+            var salMinimo = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 160);
+            decimal salarioMinimo = (decimal)(salMinimo.Valordecimal ?? 0);
+            decimal salarioNominal = await GetSalarioNominal(empleadoId);
+            decimal valor13vo = 0;
+            decimal valor14vo = 0;
+
+            if (empleado.FechaIngreso.Value.Year == periodo)
+            {
+                //Determinar los valores proporcionales del 13vo y 14vo
+                if (empleado.FechaIngreso.Value.Month < 6)
+                {
+                    valor13vo = salarioNominal;
+                    valor14vo = salarioNominal * (decimal)((6.00 - empleado.FechaIngreso.Value.Month) / 6.00);
+                }
+                else
+                {
+                    valor14vo = 0;
+                    valor13vo = salarioNominal * (decimal)((12.00 - empleado.FechaIngreso.Value.Month) / 6.00);
+                }
+            }
+            else
+            {
+                valor13vo = salarioNominal;
+                valor14vo = salarioNominal;
+            }
+
+            decimal limiteExceso = salarioMinimo * 10;
+            decimal exceso13vo = (valor13vo > limiteExceso) ? valor13vo - limiteExceso : 0;
+            decimal exceso14vo = (valor14vo > limiteExceso) ? valor14vo - limiteExceso : 0;
+
+            decimal bonificaciones = (decimal)(await _context.Bonificaciones
+                .Where(b => b.FechaBono.Year == periodo && b.EstadoId == 90).SumAsync(r => r.Monto));
+            var horasExtras = await _context.HorasExtrasBiometrico.Include(r => r.Encabezado).Where(h => h.Encabezado.Fecha.Year == periodo && h.IdEstado == 71).ToListAsync();
+            decimal valorHorasExtra = 0;
+            foreach (var horaExtra in horasExtras)
+            {
+                decimal salario = await GetSalarioFecha(empleadoId, horaExtra.Encabezado.Fecha);
+                decimal salarioHora = salario / 30 / 8;
+                valorHorasExtra += salarioHora * ((decimal)horaExtra.Horas + (decimal)horaExtra.Minutos / 60);
+            }
+
+            decimal colegiacionAnual = (decimal)(await _context.DeduccionesEmpleados
+                                           .Where(d => d.Deduccion.DeductionTypeId == 3 && d.EstadoId == 1)
+                                           .SumAsync(d => d.Monto)) * 12;
+            decimal afpAnual = (decimal)(await _context.DeduccionesEmpleados
+                                   .Where(d => d.Deduccion.DeductionTypeId == 4 && d.EstadoId == 1)
+                                   .SumAsync(d => d.Monto)) * 12;
+
+            int diaFin = 31;
+            if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+            {
+                diaFin = 30;
+            }else if (mes == 2 && periodo % 4 == 0)
+            {
+                diaFin = 29;
+            }else if (mes == 2)
+            {
+                diaFin = 28;
+            }
+
+            int edad = new DateTime(periodo,mes,diaFin).Subtract(empleado.FechaNacimiento.Value).Days / 365;
+            decimal gastosMedicos = edad < 60 ? 40000 : 70000;
+
+            decimal totalIngresosGravables =
+                (salarioNominal * 12) + exceso13vo + exceso14vo + bonificaciones + valorHorasExtra;
+
+            decimal totalDeduccionAnual = gastosMedicos + colegiacionAnual + afpAnual;
+
+            decimal rentaNetaGravable = totalIngresosGravables - totalDeduccionAnual;
+
+            var tarifas = await _context.ISRConfiguracion.OrderByDescending(t => t.Porcentaje).ToListAsync();
+
+            decimal montoTarifar = rentaNetaGravable;
+
+            decimal totalTarifar = 0;
+            foreach (var tarifa in tarifas)
+            {
+                if (montoTarifar >= (decimal)tarifa.De)
+                {
+                    totalTarifar += (montoTarifar - (decimal)(tarifa.De - 0.01)) * (decimal)(tarifa.Porcentaje / 100.0);
+                    montoTarifar -= (montoTarifar - (decimal)(tarifa.De - 0.01));
+                }
+            }
+
+            var regPagado = await _context.PagosISR.FirstOrDefaultAsync(p =>
+                p.EmpleadoId == empleadoId && p.Periodo == periodo);
+            decimal totalPagado = (decimal)(regPagado?.PagoAcumulado ?? 0);
+
+            decimal netoTarifar = totalTarifar - totalPagado;
+
+            var confISR = await _context.ElementoConfiguracion.FirstOrDefaultAsync(r => r.Id == 123);
+
+            int cuotasISR = (int)(confISR?.Valordecimal ?? 12);
+
+            decimal isr = 0;
+
+            if (mes < cuotasISR)
+            {
+                cuotasISR -= mes;
+                isr = netoTarifar / cuotasISR;
+            }
+
+            return new []{isr,totalTarifar};
+        }
+
         [HttpGet("[action]/{empleadoId}")]
         public async Task<ActionResult> GetISREmpleado(long empleadoId)
+        {
+            try
+            {
+                decimal isr = (await CalcularISR(empleadoId, DateTime.Today.Year, DateTime.Today.Month))[0];
+                return Ok(isr);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular el ISR");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{empleadoId}")]
+        public async Task<ActionResult> GetRAPEmpleado(long empleadoId)
         {
             try
             {
@@ -278,105 +414,570 @@ namespace ERPAPI.Controllers
                     throw new Exception("El empleado no tiene fecha de nacimiento en su registro.");
                 }
 
-                var salMinimo = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 160);
-                decimal salarioMinimo = (decimal) (salMinimo.Valordecimal ?? 0);
-                decimal salarioNominal = await GetSalarioNominal(empleadoId);
-                decimal valor13vo = 0;
-                decimal valor14vo = 0;
-                
-                if (empleado.FechaIngreso.Value.Year == DateTime.Today.Year)
+                var elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 124);
+                if (elmConf == null)
                 {
-                    //Determinar los valores proporcionales del 13vo y 14vo
-                    if (empleado.FechaIngreso.Value.Month < 6)
-                    {
-                        valor13vo = salarioNominal;
-                        valor14vo = salarioNominal * (decimal)((6.00 - empleado.FechaIngreso.Value.Month) / 6.00);
-                    }
-                    else
-                    {
-                        valor14vo = 0;
-                        valor13vo = salarioNominal * (decimal)((12.00-empleado.FechaIngreso.Value.Month) / 6.00);
-                    }
-                }
-                else
-                {
-                    valor13vo = salarioNominal;
-                    valor14vo = salarioNominal;
+                    throw new Exception("No esta configurado el techo del cálculo del RAP");
                 }
 
-                decimal limiteExceso = salarioMinimo * 10;
-                decimal exceso13vo = (valor13vo > limiteExceso) ? valor13vo - limiteExceso : 0;
-                decimal exceso14vo = (valor14vo > limiteExceso) ? valor14vo - limiteExceso : 0;
+                decimal techoRap = (decimal)(elmConf.Valordecimal??0);
 
-                decimal bonificaciones =  (decimal)(await _context.Bonificaciones
-                    .Where(b => b.FechaBono.Year == DateTime.Today.Year && b.EstadoId == 90).SumAsync(r=> r.Monto));
-                var horasExtras = await _context.HorasExtrasBiometrico.Include(r=>r.Encabezado).Where(h => h.Encabezado.Fecha.Year == DateTime.Today.Year && h.IdEstado == 71).ToListAsync();
-                decimal valorHorasExtra = 0;
-                foreach (var horaExtra in horasExtras)
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 125);
+                if (elmConf == null)
                 {
-                    decimal salario = await GetSalarioFecha(empleadoId, horaExtra.Encabezado.Fecha);
-                    decimal salarioHora = salario / 30 / 8;
-                    valorHorasExtra += salarioHora * ((decimal) horaExtra.Horas + (decimal) horaExtra.Minutos / 60);
+                    throw new Exception("No esta configurado el porcentaje de aportación del RAP para el empleado.");
                 }
 
-                decimal colegiacionAnual = (decimal) (await _context.DeduccionesEmpleados
-                                               .Where(d => d.Deduccion.DeductionTypeId == 3 && d.EstadoId == 1)
-                                               .SumAsync(d=>d.Monto)) * 12;
-                decimal afpAnual = (decimal)(await _context.DeduccionesEmpleados
-                                       .Where(d => d.Deduccion.DeductionTypeId == 4 && d.EstadoId == 1)
-                                       .SumAsync(d => d.Monto)) * 12;
+                decimal porcentajeAportacion = ((decimal)(elmConf.Valordecimal??0)/100);
 
-                int edad = DateTime.Today.Subtract(empleado.FechaNacimiento.Value).Days / 365;
-                decimal gastosMedicos = edad < 60 ? 40000 : 70000;
+                if (empleado.Salario < techoRap)
+                    return Ok((decimal)0);
 
-                decimal totalIngresosGravables =
-                    (salarioNominal * 12) + exceso13vo + exceso14vo + bonificaciones + valorHorasExtra;
+                decimal aporteRAP = (empleado.Salario??0) * porcentajeAportacion;
 
-                decimal totalDeduccionAnual = gastosMedicos + colegiacionAnual + afpAnual;
-
-                decimal rentaNetaGravable = totalIngresosGravables - totalDeduccionAnual;
-
-                var tarifas = await _context.ISRConfiguracion.OrderByDescending(t=>t.Porcentaje).ToListAsync();
-
-                decimal montoTarifar = rentaNetaGravable;
-
-                decimal totalTarifar = 0;
-                foreach (var tarifa in tarifas)
-                {
-                    if (montoTarifar >= (decimal)tarifa.De)
-                    {
-                        totalTarifar += (montoTarifar - (decimal)(tarifa.De - 0.01)) * (decimal)(tarifa.Porcentaje / 100.0);
-                        montoTarifar -= (montoTarifar - (decimal) (tarifa.De - 0.01));
-                    }
-                }
-
-                var regPagado = await _context.PagosISR.FirstOrDefaultAsync(p =>
-                    p.EmpleadoId == empleadoId && p.Periodo == DateTime.Today.Year);
-                decimal totalPagado = (decimal) (regPagado?.PagoAcumulado ?? 0);
-                
-                decimal netoTarifar = totalTarifar - totalPagado;
-
-                var confISR = await _context.ElementoConfiguracion.FirstOrDefaultAsync(r => r.Id == 123);
-
-                int cuotasISR = (int) (confISR?.Valordecimal ?? 10);
-
-                decimal isr = 0;
-
-                if (DateTime.Today.Month < cuotasISR)
-                {
-                    cuotasISR -= DateTime.Today.Month;
-                    isr = netoTarifar / cuotasISR;
-                }
-
-                return Ok(isr);
+                return Ok(aporteRAP);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error al calcular el ISR");
+                _logger.LogError(ex, "Error al calcular el aporte del RAP");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{empleadoId}")]
+        public async Task<ActionResult> GetRAPPatrono(long empleadoId)
+        {
+            try
+            {
+                Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+                if (empleado == null)
+                {
+                    throw new Exception("El empleado no existe");
+                }
+
+                if (empleado.FechaIngreso == null)
+                {
+                    throw new Exception("La fecha de ingreso del empleado no es valida.");
+                }
+
+                if (empleado.FechaNacimiento == null)
+                {
+                    throw new Exception("El empleado no tiene fecha de nacimiento en su registro.");
+                }
+
+                var elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 124);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el techo del cálculo del RAP");
+                }
+
+                decimal techoRap = (decimal)(elmConf.Valordecimal ?? 0);
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 126);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el porcentaje de aportación del RAP para el patrono.");
+                }
+
+                decimal porcentajeAportacion = ((decimal)(elmConf.Valordecimal ?? 0) / 100);
+
+                if (empleado.Salario < techoRap)
+                    return Ok((decimal)0);
+
+                decimal aporteRAP = (empleado.Salario ?? 0) * porcentajeAportacion;
+
+                return Ok(aporteRAP);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular el aporte patronal del RAP");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{empleadoId}")]
+        public async Task<ActionResult> GetRAPCesantia(long empleadoId)
+        {
+            try
+            {
+                Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+                if (empleado == null)
+                {
+                    throw new Exception("El empleado no existe");
+                }
+
+                if (empleado.FechaIngreso == null)
+                {
+                    throw new Exception("La fecha de ingreso del empleado no es valida.");
+                }
+
+                if (empleado.FechaNacimiento == null)
+                {
+                    throw new Exception("El empleado no tiene fecha de nacimiento en su registro.");
+                }
+
+                decimal salarioNominal = await GetSalarioNominal(empleadoId);
+
+                var elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 124);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el techo del cálculo del RAP");
+                }
+
+                decimal techoRap = (decimal)(elmConf.Valordecimal ?? 0);
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 127);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el factor de multiplicación para cesantias");
+                }
+
+                decimal factor = (decimal) (elmConf.Valordecimal ?? 0);
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 161);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el porcentaje de aportación del RAP para cesantias.");
+                }
+
+                decimal porcentajeAportacion = ((decimal)(elmConf.Valordecimal ?? 0) / 100);
+
+                decimal aporteRAPCesantia = salarioNominal * porcentajeAportacion;
+
+                if (aporteRAPCesantia > (techoRap * factor))
+                {
+                    aporteRAPCesantia = techoRap * factor;
+                }
+
+                return Ok(aporteRAPCesantia);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular el aporte por cesantia del RAP");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{empleadoId}")]
+        public async Task<ActionResult> GetIHSSEmpleado(long empleadoId)
+        {
+            try
+            {
+                Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+                if (empleado == null)
+                {
+                    throw new Exception("El empleado no existe");
+                }
+
+                if (empleado.FechaIngreso == null)
+                {
+                    throw new Exception("La fecha de ingreso del empleado no es valida.");
+                }
+
+                if (empleado.FechaNacimiento == null)
+                {
+                    throw new Exception("El empleado no tiene fecha de nacimiento en su registro.");
+                }
+
+                if (empleado.Salario == null)
+                {
+                    throw new Exception("El empleado no tiene un salario asignado.");
+                }
+
+                var elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 128);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el techo del cálculo del IVM del IHSS");
+                }
+
+                decimal techoIVM = (decimal)(elmConf.Valordecimal ?? 0);
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 131);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el techo del cálculo de Salud del IHSS");
+                }
+
+                decimal techoSalud = (decimal)(elmConf.Valordecimal ?? 0);
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 129);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el porcentaje de aportacion del IVM del empleado");
+                }
+
+                decimal porcentajeIVM = (decimal)(elmConf.Valordecimal ?? 0)/100;
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 132);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el porcentaje de aportacion de Salud del empleado");
+                }
+
+                decimal porcentajeSalud = (decimal)(elmConf.Valordecimal ?? 0)/100;
+
+                decimal aportIVM = 0;
+                decimal aportSalud = 0;
+                decimal salario = empleado.Salario.Value;
+
+                if (salario > techoIVM)
+                {
+                    aportIVM = techoIVM * porcentajeIVM;
+                }
+                else
+                {
+                    aportIVM = salario * porcentajeIVM;
+                }
+
+                if (salario > techoSalud)
+                {
+                    aportSalud = techoSalud * porcentajeSalud;
+                }
+                else
+                {
+                    aportSalud = salario * porcentajeSalud;
+                }
+
+                decimal aporteIHSS = aportIVM + aportSalud;
+
+                return Ok(aporteIHSS);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular deducción del IHSS");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{empleadoId}")]
+        public async Task<ActionResult> GetIHSSPatrono(long empleadoId)
+        {
+            try
+            {
+                Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+                if (empleado == null)
+                {
+                    throw new Exception("El empleado no existe");
+                }
+
+                if (empleado.FechaIngreso == null)
+                {
+                    throw new Exception("La fecha de ingreso del empleado no es valida.");
+                }
+
+                if (empleado.FechaNacimiento == null)
+                {
+                    throw new Exception("El empleado no tiene fecha de nacimiento en su registro.");
+                }
+
+                if (empleado.Salario == null)
+                {
+                    throw new Exception("El empleado no tiene un salario asignado.");
+                }
+
+                var elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 128);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el techo del cálculo del IVM del IHSS");
+                }
+
+                decimal techoIVM = (decimal)(elmConf.Valordecimal ?? 0);
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 131);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el techo del cálculo de Salud del IHSS");
+                }
+
+                decimal techoSalud = (decimal)(elmConf.Valordecimal ?? 0);
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 130);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el porcentaje de aportacion del IVM del patrono");
+                }
+
+                decimal porcentajeIVM = (decimal)(elmConf.Valordecimal ?? 0) / 100;
+
+                elmConf = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 133);
+                if (elmConf == null)
+                {
+                    throw new Exception("No esta configurado el porcentaje de aportacion de Salud del patrono");
+                }
+
+                decimal porcentajeSalud = (decimal)(elmConf.Valordecimal ?? 0) / 100;
+
+                decimal aportIVM = 0;
+                decimal aportSalud = 0;
+                decimal salario = empleado.Salario.Value;
+
+                if (salario > techoIVM)
+                {
+                    aportIVM = techoIVM * porcentajeIVM;
+                }
+                else
+                {
+                    aportIVM = salario * porcentajeIVM;
+                }
+
+                if (salario > techoSalud)
+                {
+                    aportSalud = techoSalud * porcentajeSalud;
+                }
+                else
+                {
+                    aportSalud = salario * porcentajeSalud;
+                }
+
+                decimal aporteIHSS = aportIVM + aportSalud;
+
+                return Ok(aporteIHSS);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular deducción del IHSS");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{empleadoId}/{periodo}")]
+        public async Task<ActionResult> GetImpuestoVecinal(long empleadoId, int periodo)
+        {
+            try
+            {
+                Employees empleado = _context.Employees.FirstOrDefault(e => e.IdEmpleado == empleadoId);
+                if (empleado == null)
+                {
+                    throw new Exception("El empleado no existe");
+                }
+
+                if (empleado.FechaIngreso == null)
+                {
+                    throw new Exception("La fecha de ingreso del empleado no es valida.");
+                }
+
+                if (empleado.FechaNacimiento == null)
+                {
+                    throw new Exception("El empleado no tiene fecha de nacimiento en su registro.");
+                }
+
+                if (empleado.Salario == null)
+                {
+                    throw new Exception("El empleado no tiene un salario asignado.");
+                }
+
+                var ingresos =
+                    await _context.IngresosAnuales.FirstOrDefaultAsync(
+                        i => i.EmpleadoId == empleadoId && i.Periodo == (periodo-1));
+
+                if (ingresos == null)
+                {
+                    throw new Exception($"El empleado no tiene ingresos anuales para el año {(periodo - 1)}");
+                }
+
+                var factores = await _context.ImpuestoVecinalConfiguraciones.OrderBy(c => c.De).ToListAsync();
+
+                if (factores.Count == 0)
+                {
+                    throw new Exception("No hay factores de impuesto vecinal, definidos en el sistema.");
+                }
+
+                decimal impuesto = 0;
+
+                foreach (var factor in factores)
+                {
+                    if (ingresos.IngresoAcumulado > factor.Hasta)
+                    {
+                        decimal millar = Decimal.Round((factor.Hasta - factor.De)) / 1000;
+                        impuesto += (millar * factor.FactorMillar);
+                    }
+                    else
+                    {
+                        decimal millar = (ingresos.IngresoAcumulado - factor.De) / 1000;
+                        impuesto += (millar * factor.FactorMillar);
+                        break;
+                    }
+                }
+
+                return Ok(impuesto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular el impuesto vecinal");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("[action]/{periodo}/{mes}/{usuario}")]
+        public async Task<ActionResult> CalcularISRGeneral(int periodo, int mes, string usuario)
+        {
+            try
+            {
+                using (var transaccion = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        int diaFin = 31;
+                        if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+                        {
+                            diaFin = 30;
+                        }
+                        else if (mes == 2 && periodo % 4 == 0)
+                        {
+                            diaFin = 29;
+                        }
+                        else if (mes == 2)
+                        {
+                            diaFin = 28;
+                        }
+
+                        var empleados = await _context.Employees.ToListAsync();
+                        var estadoActivo = await _context.Estados.FirstOrDefaultAsync(e => e.IdEstado == 1);
+                        foreach (var empleado in empleados)
+                        {
+                            var datosISR = await CalcularISR(empleado.IdEmpleado, periodo, mes);
+
+                            var deduccion = await _context.DeduccionesEmpleados
+                                .Where(r => r.DeductionId == 1 && r.EmpleadoId == empleado.IdEmpleado 
+                                            && r.VigenciaInicio >= new DateTime(periodo, mes, 1)
+                                            && r.VigenciaFinaliza <= new DateTime(mes == 12 ? (periodo + 1) : periodo,
+                                                mes == 12 ? 1 : (mes + 1), 1)).FirstOrDefaultAsync();
+
+                            if (deduccion == null)
+                            {
+                                deduccion = new DeduccionEmpleado()
+                                            {
+                                                CantidadCuotas = 12,
+                                                DeductionId = 1,
+                                                EmpleadoId = empleado.IdEmpleado,
+                                                EstadoId = 1,
+                                                Monto = (float) datosISR[0],
+                                                FechaCreacion = DateTime.Today,
+                                                FechaModificacion = DateTime.Today,
+                                                UsuarioCreacion = usuario,
+                                                UsuarioModificacion = usuario,
+                                                VigenciaInicio = new DateTime(periodo, mes, 1),
+                                                VigenciaFinaliza = new DateTime(periodo, mes, diaFin)
+                                            };
+                                await _context.DeduccionesEmpleados.AddAsync(deduccion);
+                            }
+                            else
+                            {
+                                deduccion.Monto = (float) datosISR[0];
+                                deduccion.UsuarioModificacion = usuario;
+                                deduccion.FechaModificacion = DateTime.Today;
+                            }
+
+                            var pagoISR =
+                                await _context.PagosISR.FirstOrDefaultAsync(
+                                    p => p.Periodo == periodo && p.EmpleadoId == empleado.IdEmpleado && p.EstadoId==1);
+                            if (pagoISR == null)
+                            {
+                                pagoISR = new PagoISR()
+                                          {
+                                              EmpleadoId = empleado.IdEmpleado,
+                                              EstadoId = 1,
+                                              Periodo = periodo,
+                                              PagoAcumulado = 0,
+                                              TotalAnual = (double) datosISR[1],
+                                              Saldo = (double) datosISR[1],
+                                              UsuarioCreacion = usuario,
+                                              UsuarioModificacion = usuario,
+                                              FechaCreacion = DateTime.Today,
+                                              FechaModificacion = DateTime.Today
+                                          };
+                                await _context.PagosISR.AddAsync(pagoISR);
+                                
+                            }
+                            else
+                            {
+                                
+                                pagoISR.TotalAnual = (double) datosISR[1];
+                                if (pagoISR.TotalAnual < pagoISR.PagoAcumulado)
+                                {
+                                    pagoISR.TotalAnual = pagoISR.PagoAcumulado;
+                                }
+
+                                pagoISR.Saldo = pagoISR.TotalAnual - pagoISR.PagoAcumulado;
+                                pagoISR.UsuarioModificacion = usuario;
+                                
+                            }
+                            await _context.SaveChangesAsync();
+                        }
+                        transaccion.Commit();
+                        return Ok();
+                    }
+                    catch (Exception)
+                    {
+                        transaccion.Rollback();
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular el ISR a nivel general para el periodo " + periodo);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{periodo}/{mes}")]
+        public async Task<ActionResult> GetPagosISRPeriodo(int periodo, int mes)
+        {
+            try
+            {
+                int diaFin = 31;
+                if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+                {
+                    diaFin = 30;
+                }
+                else if (mes == 2 && periodo % 4 == 0)
+                {
+                    diaFin = 29;
+                }
+                else if (mes == 2)
+                {
+                    diaFin = 28;
+                }
+
+                DateTime fechaInicio = new DateTime(periodo, mes, 1);
+                DateTime fechaFinal = new DateTime(periodo, mes, 1).AddMonths(1)
+                    .Subtract(new TimeSpan(0, 0, 0, 0, 1));
+
+                var qry = await _context.PagosISR
+                    .SelectMany(
+                        x => _context.DeduccionesEmpleados.Where(y=> y.EmpleadoId == x.EmpleadoId 
+                                                                     && y.VigenciaInicio >= fechaInicio
+                                                                     && y.VigenciaFinaliza <= fechaFinal
+                                                                     && y.DeductionId == 1).DefaultIfEmpty(),
+                        (pagos, y) => new PagosISRDTO()
+                                  {
+                                      Id = pagos.Id,
+                                      EmpleadoId = pagos.EmpleadoId,
+                                      FechaModificacion = pagos.FechaModificacion,
+                                      UsuarioModificacion = pagos.UsuarioModificacion,
+                                      UsuarioCreacion = pagos.UsuarioCreacion,
+                                      FechaCreacion = pagos.FechaCreacion,
+                                      Periodo = pagos.Periodo,
+                                      EstadoId = pagos.EstadoId,
+                                      TotalAnual = pagos.TotalAnual,
+                                      Estado = pagos.Estado,
+                                      Empleado = pagos.Empleado,
+                                      Saldo = pagos.Saldo,
+                                      PagoAcumulado = pagos.PagoAcumulado,
+                                      CuotaISR = Convert.ToDecimal(y == null ? 0 : y.Monto)
+                                  }
+                    ).ToListAsync();
+
+                return Ok(qry);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,$"Error al cargar los pagos del ISR, para el periodo {periodo} y mes {mes}");
                 return BadRequest(ex.Message);
             }
         }
     }
 
-    
 }

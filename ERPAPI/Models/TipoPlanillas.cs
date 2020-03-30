@@ -23,8 +23,14 @@ namespace ERPAPI.Models
         [Required]
         public long EstadoId { get; set; }
 
+        [Required]
+        public long CategoriaId { get; set; }
+
         [ForeignKey("EstadoId")]
-        public string Estado { get; set; }
+        public Estados Estado { get; set; }
+
+        [ForeignKey("CategoriaId")]
+        public CategoriaPlanilla Categoria { get; set; }
 
         [Required]
         public string Usuariocreacion { get; set; }

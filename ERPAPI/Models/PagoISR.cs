@@ -50,4 +50,9 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
 
     }
+
+    public class PagosISRDTO : PagoISR
+    {
+        public decimal CuotaISR { get; set; }
+    }
 }

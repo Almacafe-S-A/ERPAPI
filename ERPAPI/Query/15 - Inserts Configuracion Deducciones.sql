@@ -17,7 +17,7 @@ GO
 SET IDENTITY_INSERT ElementoConfiguracion ON
 GO
 INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
-VALUES(123,'CUOTAS ISR','En cuantas cuotas se va deducir el ISR a los empleados',1,'Activo',90, 10,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+VALUES(123,'CUOTAS ISR','En cuantas cuotas se va deducir el ISR a los empleados',1,'Activo',90, 12,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
 
 INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
 VALUES(124,'TECHO RAP','Salario minimo para aportación al RAP',1,'Activo',95, 8882.30,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
@@ -242,5 +242,43 @@ INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfig
 VALUES(160,'SALARIO MINIMO','Salario minimo aprobado por ALMACAFE',1,'Activo',130, 9271.95,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
 GO
 SET IDENTITY_INSERT ElementoConfiguracion OFF
+GO
+
+SET IDENTITY_INSERT ElementoConfiguracion ON
+GO
+INSERT INTO ElementoConfiguracion(Id,Nombre,Descripcion,IdEstado,Estado,Idconfiguracion,Valordecimal,FechaCreacion,FechaModificacion,UsuarioCreacion,UsuarioModificacion)
+VALUES(161,'PORC. RAP CESANTIA','Porcentaje de Aportación Mensual del Patrono para fondo de cesantias',1,'Activo',95, 4,'2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+SET IDENTITY_INSERT ElementoConfiguracion OFF
+GO
+
+SET IDENTITY_INSERT ImpuestoVecinalConfiguraciones ON
+GO
+
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(1, 1, 5000, 1.5, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(2, 5001, 10000, 2.0, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(3, 10001, 20000, 2.5, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(4, 20001, 30000, 3.0, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(5, 30001, 50000, 3.5, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(6, 50001, 75000, 3.75, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(7, 75001, 100000, 4.00, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(8, 100001, 150000, 5.00, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+INSERT INTO ImpuestoVecinalConfiguraciones (Id, De, Hasta, FactorMillar, FechaCreacion, FechaModificacion, UsuarioCreacion, UsuarioModificacion) 
+VALUES(9, 150001, 9999999, 5.25, '2020-01-31','2020-01-31','erp@bi-dss.com','erp@bi-dss.com')
+
+SET IDENTITY_INSERT ImpuestoVecinalConfiguraciones OFF
+GO
+
+UPDATE Employees SET IdTipoPlanilla = null
+GO
+
+DELETE FROM TipoPlanillas
 GO
 
