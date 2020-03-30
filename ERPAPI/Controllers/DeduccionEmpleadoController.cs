@@ -149,6 +149,72 @@ namespace ERPAPI.Controllers
             }
         }
 
+        private async Task<decimal[]> GetSalariosPeriodo(long empleadoId, int periodo)
+        {
+            var salarios = await _context.EmployeeSalary.Where(s => s.IdEmpleado == empleadoId && s.DayApplication.Year <= periodo)
+                .OrderByDescending(f => f.DayApplication).ToListAsync();
+            decimal[] salProyectados = new decimal[12];
+            if (salarios.Count() == 1)
+            {
+                for (int i = 0; i < 12; i++)
+                {
+                    salProyectados[i]= salarios[0].QtySalary ?? 0;
+                }
+            }
+            else
+            {
+                if (salarios[0].DayApplication.Year < periodo)
+                {
+                    for (int i = 0; i < 12; i++)
+                    {
+                        salProyectados[i] = salarios[0].QtySalary ?? 0;
+                    }
+                }
+                else
+                {
+                    var ultimoSalario = salarios[0];
+                    for (int i = ultimoSalario.DayApplication.Month - 1; i < 12; i++)
+                    {
+                        salProyectados[i] = ultimoSalario.QtySalary ?? 0;
+                    }
+
+                    int faltaLlenar = ultimoSalario.DayApplication.Month - 1;
+                    int siguienteSalario = 1;
+                    while (siguienteSalario < salarios.Count)
+                    {
+                        ultimoSalario = salarios[siguienteSalario];
+                        if (ultimoSalario.DayApplication.Year < periodo)
+                        {
+                            for (int i = 0; i < faltaLlenar; i++)
+                            {
+                                salProyectados[i] = ultimoSalario.QtySalary ?? 0;
+                            }
+                            faltaLlenar = 0;
+                            break;
+                        }
+                        for (int i = ultimoSalario.DayApplication.Month-1; i < faltaLlenar; i++)
+                        {
+                            salProyectados[i] = ultimoSalario.QtySalary ?? 0;
+                        }
+                        faltaLlenar = faltaLlenar - ultimoSalario.DayApplication.Month;
+                        if(faltaLlenar==0)
+                            break;
+                        siguienteSalario++;
+                    }
+
+                    if (faltaLlenar > 0)
+                    {
+                        for (int i = 0; i < faltaLlenar; i++)
+                        {
+                            salProyectados[i] = ultimoSalario.QtySalary ?? 0;
+                        }
+                    }
+                }
+            }
+
+            return salProyectados;
+        }
+
         private async Task<decimal> GetSalarioNominal(long empleadoId)
         {
             //Calculo del salario nominal, basado en los ultimos 6 meses de salario
@@ -275,29 +341,22 @@ namespace ERPAPI.Controllers
 
             var salMinimo = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 160);
             decimal salarioMinimo = (decimal)(salMinimo.Valordecimal ?? 0);
-            decimal salarioNominal = await GetSalarioNominal(empleadoId);
+            decimal[] salarios = await GetSalariosPeriodo(empleadoId, periodo);
             decimal valor13vo = 0;
             decimal valor14vo = 0;
 
             if (empleado.FechaIngreso.Value.Year == periodo)
             {
-                //Determinar los valores proporcionales del 13vo y 14vo
-                if (empleado.FechaIngreso.Value.Month < 6)
+                for (int i = 0 ; i < empleado.FechaIngreso.Value.Month-1; i++)
                 {
-                    valor13vo = salarioNominal;
-                    valor14vo = salarioNominal * (decimal)((6.00 - empleado.FechaIngreso.Value.Month) / 6.00);
+                    salarios[i] = 0;
                 }
-                else
-                {
-                    valor14vo = 0;
-                    valor13vo = salarioNominal * (decimal)((12.00 - empleado.FechaIngreso.Value.Month) / 6.00);
-                }
+
+                
+
             }
-            else
-            {
-                valor13vo = salarioNominal;
-                valor14vo = salarioNominal;
-            }
+            valor14vo = (salarios[0] + salarios[1] + salarios[2] + salarios[3] + salarios[4] + salarios[5]) / (decimal)6.00;
+            valor13vo = (salarios[6] + salarios[7] + salarios[8] + salarios[9] + salarios[10] + salarios[11]) / (decimal)6.00;
 
             decimal limiteExceso = salarioMinimo * 10;
             decimal exceso13vo = (valor13vo > limiteExceso) ? valor13vo - limiteExceso : 0;
@@ -336,8 +395,7 @@ namespace ERPAPI.Controllers
             int edad = new DateTime(periodo,mes,diaFin).Subtract(empleado.FechaNacimiento.Value).Days / 365;
             decimal gastosMedicos = edad < 60 ? 40000 : 70000;
 
-            decimal totalIngresosGravables =
-                (salarioNominal * 12) + exceso13vo + exceso14vo + bonificaciones + valorHorasExtra;
+            decimal totalIngresosGravables = (salarios.Sum()) + exceso13vo + exceso14vo + bonificaciones + valorHorasExtra;
 
             decimal totalDeduccionAnual = gastosMedicos + colegiacionAnual + afpAnual;
 
