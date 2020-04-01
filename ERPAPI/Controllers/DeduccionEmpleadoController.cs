@@ -341,7 +341,17 @@ namespace ERPAPI.Controllers
 
             var salMinimo = await _context.ElementoConfiguracion.FirstOrDefaultAsync(e => e.Id == 160);
             decimal salarioMinimo = (decimal)(salMinimo.Valordecimal ?? 0);
-            decimal[] salarios = await GetSalariosPeriodo(empleadoId, periodo);
+            decimal[] salarios;
+            try
+            {
+                 salarios = await GetSalariosPeriodo(empleadoId, periodo);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception($"El empleado {empleado.NombreEmpleado} no salario");
+            }
+            
             decimal valor13vo = 0;
             decimal valor14vo = 0;
 
@@ -866,8 +876,8 @@ namespace ERPAPI.Controllers
             }
         }
 
-        [HttpPost("[action]/{periodo}/{mes}/{usuario}")]
-        public async Task<ActionResult> CalcularISRGeneral(int periodo, int mes, string usuario)
+        [HttpGet("[action]/{periodo}/{mes}")]
+        public async Task<ActionResult> CalcularISRGeneral(int periodo, int mes)
         {
             try
             {
@@ -875,6 +885,7 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        var usuario = await  _context.Users.Where(w => w.UserName == User.Identity.Name.ToString()).FirstOrDefaultAsync();
                         int diaFin = 31;
                         if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
                         {
@@ -912,8 +923,8 @@ namespace ERPAPI.Controllers
                                                 Monto = (float) datosISR[0],
                                                 FechaCreacion = DateTime.Today,
                                                 FechaModificacion = DateTime.Today,
-                                                UsuarioCreacion = usuario,
-                                                UsuarioModificacion = usuario,
+                                                UsuarioCreacion = usuario.UserName,
+                                                UsuarioModificacion = usuario.UserName,
                                                 VigenciaInicio = new DateTime(periodo, mes, 1),
                                                 VigenciaFinaliza = new DateTime(periodo, mes, diaFin)
                                             };
@@ -922,7 +933,7 @@ namespace ERPAPI.Controllers
                             else
                             {
                                 deduccion.Monto = (float) datosISR[0];
-                                deduccion.UsuarioModificacion = usuario;
+                                deduccion.UsuarioModificacion = usuario.UserName;
                                 deduccion.FechaModificacion = DateTime.Today;
                             }
 
@@ -939,8 +950,8 @@ namespace ERPAPI.Controllers
                                               PagoAcumulado = 0,
                                               TotalAnual = (double) datosISR[1],
                                               Saldo = (double) datosISR[1],
-                                              UsuarioCreacion = usuario,
-                                              UsuarioModificacion = usuario,
+                                              UsuarioCreacion = usuario.UserName,
+                                              UsuarioModificacion = usuario.UserName,
                                               FechaCreacion = DateTime.Today,
                                               FechaModificacion = DateTime.Today
                                           };
@@ -957,7 +968,7 @@ namespace ERPAPI.Controllers
                                 }
 
                                 pagoISR.Saldo = pagoISR.TotalAnual - pagoISR.PagoAcumulado;
-                                pagoISR.UsuarioModificacion = usuario;
+                                pagoISR.UsuarioModificacion = usuario.UserName;
                                 
                             }
                             await _context.SaveChangesAsync();
