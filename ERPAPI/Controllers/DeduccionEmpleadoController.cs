@@ -1028,6 +1028,7 @@ namespace ERPAPI.Controllers
                                       UsuarioCreacion = pagos.UsuarioCreacion,
                                       FechaCreacion = pagos.FechaCreacion,
                                       Periodo = pagos.Periodo,
+                                      
                                       EstadoId = pagos.EstadoId,
                                       TotalAnual = pagos.TotalAnual,
                                       Estado = pagos.Estado,
@@ -1036,7 +1037,7 @@ namespace ERPAPI.Controllers
                                       PagoAcumulado = pagos.PagoAcumulado,
                                       CuotaISR = Convert.ToDecimal(y == null ? 0 : y.Monto)
                                   }
-                    ).ToListAsync();
+                    ).Where( q => q.Periodo == periodo ).ToListAsync();
 
                 return Ok(qry);
 
