@@ -223,7 +223,27 @@ namespace ERPAPI.Controllers
             }            
         }
 
+        /// <summary>
+        /// Devuelve si el customer tiene producto asignado
+        /// </summary>
+        /// <param name="ProductobyCustomerAsignado"></param>
+        /// <returns></returns>
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Int32>> GetProductbyCsutomer([FromBody]CustomerProduct ProductobyCustomerAsignado)
+        {
+            try
+            {
+                var Items = await _context.CustomerProduct.Where(q => q.SubProductId == ProductobyCustomerAsignado.SubProductId && q.CustomerId == ProductobyCustomerAsignado.CustomerId).CountAsync();
+                return await Task.Run(() => Ok(Items));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
 
 
     }

@@ -30,12 +30,12 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de Factura")]
         public int VendorInvoiceTypeId { get; set; }    
 
-        [Display(Name = "Sucursal")]
-        public string Sucursal { get; set; }
+        //[Display(Name = "Sucursal")]
+        //public string Sucursal { get; set; }
 
-        public Int64? CostCenterId { get; set; }
-        [ForeignKey("CostCenterId")]
-        public CostCenter CostCenter { get; set; }
+        //public Int64? CostCenterId { get; set; }
+        //[ForeignKey("CostCenterId")]
+        //public CostCenter CostCenter { get; set; }
 
 
         [Display(Name = "Numero de Factura")]

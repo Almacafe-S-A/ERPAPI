@@ -9,9 +9,12 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ERPAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class VendorInvoiceController : ControllerBase
@@ -68,7 +71,18 @@ namespace ERPAPI.Controllers
             List<VendorInvoice> Items = new List<VendorInvoice>();
             try
             {
-                Items = await _context.VendorInvoice.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                //string correo = User.Identity.Name.ToString();
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.VendorInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.VendorInvoice.OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -121,7 +135,7 @@ namespace ERPAPI.Controllers
                 try
                 {
                     _VendorInvoiceq.PurchaseOrderId = null;
-                    _VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoiceq.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                    //_VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoiceq.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
                     Numalet let;
                     let = new Numalet();
                     let.SeparadorDecimalSalida = "Lempiras";
@@ -165,7 +179,7 @@ namespace ERPAPI.Controllers
                         Description = account.AccountName,
                         Credit = _VendorInvoiceq.Total,
                         Debit = 0,
-                        CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
+                        //CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
                         CreatedUser = _VendorInvoiceq.UsuarioCreacion,

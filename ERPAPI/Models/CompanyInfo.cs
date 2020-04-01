@@ -63,7 +63,8 @@ namespace ERPAPI.Models
         public Int64? IdEstado { get; set; }
         [Display(Name = "Estado")]
         public string Estado { get; set; }
-
+        public string SocialNetworks { get; set; }
+        public string WebPage { get; set; }
 
         [Display(Name = "Fecha de Creación")]
         public DateTime FechaCreacion { get; set; }

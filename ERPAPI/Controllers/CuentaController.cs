@@ -114,7 +114,7 @@ namespace ERPAPI.Controllers
                 if (resultvalidador.Succeeded)
                 {
                     //Verifica en los historicos 
-                    var validarhistoricos = _context.PasswordHistory.Where(w => w.UserId == ApplicationUserq.Id.ToString()).ToList();
+                    var validarhistoricos = _context.PasswordHistory.Where(w => w.UserId == ApplicationUserq.Id.ToString() & w.CreatedDate >= DateTime.Now.AddMonths(-6)).ToList();
                     if (validarhistoricos != null)
                     {
                         foreach (var item in validarhistoricos)
@@ -272,9 +272,14 @@ namespace ERPAPI.Controllers
 
                     return await Task.Run(()=>userToken);
                 }
+                else if(result.IsLockedOut)
+                {
+                    ModelState.AddModelError(string.Empty, "Usuario bloqueado.");
+                    return await Task.Run(() => BadRequest(ModelState));
+                }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Usuario y contraseña invalidos.");
                     return await Task.Run(() => BadRequest(ModelState));
                 }
             }

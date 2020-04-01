@@ -143,6 +143,8 @@ namespace ERPAPI.Controllers
 
                 };
 
+                
+
 
                 int actual = Convert.ToInt32(check.CheckNumber);
 
@@ -174,6 +176,22 @@ namespace ERPAPI.Controllers
                     _context.Entry(_CheckAccountq).CurrentValues.SetValues((chequera));
                     await _context.SaveChangesAsync();
 
+
+                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                    {
+                        IdOperacion = check.Id,
+                        DocType = "JournalEntry",
+                        ClaseInicial =
+                          Newtonsoft.Json.JsonConvert.SerializeObject(check, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "Anular",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = check.UsuarioCreacion,
+                        UsuarioModificacion = check.UsuarioModificacion,
+                        UsuarioEjecucion = check.UsuarioModificacion,
+
+                    });
+
                     foreach (var item in journalEntryLines)
                     {
                         item.CreatedUser = _CheckAccountLinesq.UsuarioCreacion;
@@ -187,10 +205,10 @@ namespace ERPAPI.Controllers
 
                     JournalEntry _je = new JournalEntry
                     {
-                        Date = DateTime.Now,
+                        Date = check.Date,
                         //Memo = $"Cheque Numero {check.CheckNumber} ",
-                        Memo = _CheckAccountLinesq.Sinopsis,
-                        DatePosted = DateTime.Now,
+                        Memo = $"Cheque Numero {check.CheckNumber}  " + _CheckAccountLinesq.Sinopsis,                        
+                        DatePosted = check.Date,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
                         ModifiedUser = check.UsuarioModificacion,
@@ -203,7 +221,7 @@ namespace ERPAPI.Controllers
                         PartyTypeId = 3,
                         //PartyName = "Proveedor",
                         TypeJournalName = "Cheques",
-                        VoucherType = 8,
+                        VoucherType = 10,
                         EstadoId = 5,
                         EstadoName = "Enviada a Aprobacion",
                         TypeOfAdjustmentId = 65,
@@ -211,9 +229,29 @@ namespace ERPAPI.Controllers
 
                     };
 
+
+
                     _je.JournalEntryLines.AddRange(journalEntryLines);
 
                     _context.JournalEntry.Add(_je);
+
+                    await _context.SaveChangesAsync();
+
+
+                    BitacoraWrite _writeje = new BitacoraWrite(_context, new Bitacora
+                    {
+                        IdOperacion = _je.JournalEntryId,
+                        DocType = "JournalEntry",
+                        ClaseInicial =
+                          Newtonsoft.Json.JsonConvert.SerializeObject(_je, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "Anular",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = _je.CreatedUser,
+                        UsuarioModificacion = _je.ModifiedUser,
+                        UsuarioEjecucion = _je.ModifiedUser,
+
+                    });
 
                     await _context.SaveChangesAsync();
                 }
@@ -249,6 +287,21 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
 
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = _CheckAccountLinesq.Id,
+                    DocType = "JournalEntry",
+                    ClaseInicial =
+                          Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountLinesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Anular",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = _CheckAccountLinesq.UsuarioCreacion,
+                    UsuarioModificacion = _CheckAccountLinesq.UsuarioModificacion,
+                    UsuarioEjecucion = _CheckAccountLinesq.UsuarioModificacion,
+
+                });
+
                 //_context.CheckAccountLines.Update(_CheckAccountLinesq);
                 await _context.SaveChangesAsync();
             }
@@ -276,7 +329,8 @@ namespace ERPAPI.Controllers
             try
             {
                 _CheckAccountLinesq = await _context.CheckAccountLines.Where(w => w.Id == _CheckAccountLines.Id).FirstOrDefaultAsync();
-
+                _CheckAccountLines.AmountWords = "Anulado";
+                _CheckAccountLines.Ammount = 0;
                 _CheckAccountLinesq.Estado = "Anulado";
                 _CheckAccountLinesq.IdEstado = 53;
                 //_context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
@@ -290,8 +344,8 @@ namespace ERPAPI.Controllers
 
 
 
-                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 8).FirstOrDefaultAsync();
-                if (jecheck != null)
+                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
+                if (jecheck != null )
                 {
 
                     JournalEntry jeAnulacion = new JournalEntry
@@ -309,18 +363,19 @@ namespace ERPAPI.Controllers
                         TotalCredit = jecheck.TotalCredit,
                         PartyTypeId = 3,
                         //PartyName = "Proveedor",
-                        TypeJournalName = "Cheques",
-                        VoucherType = 8,
-                        EstadoId = 5,
-                        EstadoName = "Enviada a Aprobacion",
+                        TypeJournalName = "Reversión",
+                        VoucherType = 23,
+                        EstadoId = 6,
+                        EstadoName = "Aprobado",
                         TypeOfAdjustmentId = 65,
                         TypeOfAdjustmentName = "Asiento diario"
 
 
 
                     };
+                    var lineas = await _context.JournalEntryLine.Where(w => w.JournalEntryId == jecheck.JournalEntryId).ToListAsync();
 
-                    foreach (var item in jecheck.JournalEntryLines)
+                    foreach (var item in lineas)
                     {
                         jeAnulacion.JournalEntryLines.Add(new JournalEntryLine
                         {
@@ -337,12 +392,90 @@ namespace ERPAPI.Controllers
                         });
                     }
                     _context.JournalEntry.Add(jeAnulacion);
+
+                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                    {
+                        IdOperacion = jeAnulacion.JournalEntryId,
+                        DocType = "JournalEntry",
+                        ClaseInicial =
+                          Newtonsoft.Json.JsonConvert.SerializeObject(jeAnulacion, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "Anular",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = jeAnulacion.CreatedUser,
+                        UsuarioModificacion = jeAnulacion.ModifiedUser,
+                        UsuarioEjecucion = jeAnulacion.ModifiedUser,
+
+                    });
+
+                    await _context.SaveChangesAsync();
+
+
+
+                    foreach (JournalEntryLine jel in jeAnulacion.JournalEntryLines)
+                    {
+                        bool continuar = true;
+                        Accounting _account = new Accounting();
+                        _account = await (from c in _context.Accounting
+                         .Where(q => q.AccountId == jel.AccountId)
+                                          select c
+                        ).FirstOrDefaultAsync();
+                        do
+                        {
+                            if (_account.DeudoraAcreedora == "D")
+                            {
+                                _account.AccountBalance -= jel.Credit;
+                                _account.AccountBalance += jel.Debit;
+                            }
+                            else if (_account.DeudoraAcreedora == "A")
+                            {
+                                _account.AccountBalance += jel.Credit;
+                                _account.AccountBalance -= jel.Debit;
+                            }
+                            await _context.SaveChangesAsync();
+                            if (!_account.ParentAccountId.HasValue)
+                            {
+                                continuar = false;
+                            }
+                            else
+                            {
+                                _account = await (from c in _context.Accounting
+                                .Where(q => q.AccountId == _account.ParentAccountId)
+                                                  select c
+                                ).FirstOrDefaultAsync();
+                                if (_account == null)
+                                {
+                                    continuar = false;
+                                }
+                            }
+                        }
+                        while (continuar);
+                    }
+
+                    _context.JournalEntryCanceled.Add(new JournalEntryCanceled()
+                    {
+                        CanceledJournalentryId = Convert.ToInt32(jecheck.JournalEntryId),
+                        ReverseJournalEntryId = Convert.ToInt32(jeAnulacion.JournalEntryId),
+                        DocumentId = _CheckAccountLinesq.Id,
+                        VoucherType = 10,
+                        TypeJournalName = "Cheques"
+
+
+                    }
+
+                        );
+
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    await _context.SaveChangesAsync();
                 }
 
                 
 
                 //_context.CheckAccountLines.Update(_CheckAccountLinesq);
-                await _context.SaveChangesAsync();
+
             }
             catch (Exception ex)
             {

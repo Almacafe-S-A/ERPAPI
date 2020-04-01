@@ -110,13 +110,13 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        [HttpGet("[action]/{Name}")]
-        public async Task<IActionResult> GetCountryByName(String Name)
+        [HttpGet("[action]/{Name}/{_GAFI}")]
+        public async Task<IActionResult> GetCountryByName(String Name, bool _GAFI)
         {
             Country Items = new Country();
             try
             {
-                Items = await _context.Country.Where(q => q.Name == Name).FirstOrDefaultAsync();
+                Items = await _context.Country.Where(q => q.Name == Name && q.GAFI == _GAFI).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

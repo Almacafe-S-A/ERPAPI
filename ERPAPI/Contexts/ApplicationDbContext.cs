@@ -39,6 +39,12 @@ namespace ERP.Contexts
         public DbSet <Presupuesto> Presupuesto { get; set; }
 
 
+        public DbSet <MantenimientoImpacto> MantenimientoImpacto { get; set; }
+
+
+        public DbSet <TipodeAccionderiesgo> TipodeAccionderiesgo { get; set; }
+
+
         public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
         public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
         public DbSet<Insurances> Insurances { get; set; }
@@ -57,13 +63,18 @@ namespace ERP.Contexts
 
         public DbSet<JournalEntry> JournalEntry { get; set; }
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-          public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
+
+        public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
+        public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
         public DbSet<InstallmentDelivery> InstallmentDelivery { get; set; }
         public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
 
+        public DbSet<PrecioCafe> PrecioCafe { get; set; }
+        public DbSet<ContextoRiesgo> ContextoRiesgo { get; set; }
+        public DbSet<ProbabilidadRiesgo> ProbabilidadRiesgo { get; set; }
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }

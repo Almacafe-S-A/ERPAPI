@@ -73,7 +73,17 @@ namespace ERPAPI.Controllers
             List<ProformaInvoice> Items = new List<ProformaInvoice>();
             try
             {
-                Items = await _context.ProformaInvoice.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.ProformaInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ProformaId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.ProformaInvoice.OrderByDescending(b => b.ProformaId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -303,7 +313,7 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
                         _ProformaInvoice.Kardex.DocType = 0;
-                        _ProformaInvoice.Kardex.DocName = "FacturaProforma/ProformaInvoice";
+                        _ProformaInvoice.Kardex.DocumentName = "FacturaProforma/ProformaInvoice";
                         _ProformaInvoice.Kardex.DocumentDate = _ProformaInvoice.OrderDate;
                         _ProformaInvoice.Kardex.FechaCreacion = DateTime.Now;
                         _ProformaInvoice.Kardex.FechaModificacion = DateTime.Now;
@@ -311,7 +321,7 @@ namespace ERPAPI.Controllers
                         _ProformaInvoice.Kardex.TypeOperationName = "Salida";
                         _ProformaInvoice.Kardex.KardexDate = DateTime.Now;
 
-                        _ProformaInvoice.Kardex.DocumentName = "FacturaProforma";
+                        //_ProformaInvoice.Kardex.DocumentName = "FacturaProforma";
 
                         _ProformaInvoice.Kardex.CustomerId = _ProformaInvoice.CustomerId;
                         _ProformaInvoice.Kardex.CustomerName = _ProformaInvoice.CustomerName;

@@ -476,22 +476,19 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_usuario"></param>
         /// <returns></returns>
-        [HttpPut("DesbloqueoUsuario")]
+        [HttpPost("DesbloqueoUsuario")]
         public async Task<ActionResult<ApplicationUser>> DesbloqueoUsuario([FromBody]ApplicationUserDTO _usuario)
         {
             try
             {
-                ApplicationUser ApplicationUserq = (from c in _context.Users
-                  .Where(q => q.Id == _usuario.Id)
-                                                    select c
-                    ).FirstOrDefault();
-                _usuario.LastPasswordChangedDate = DateTime.Now;
-                _usuario.LockoutEnd = null;
+                ApplicationUser ApplicationUserq = _context.Users.Where(w => w.Id == _usuario.Id).FirstOrDefault();
+                ApplicationUserq.LastPasswordChangedDate = DateTime.Now;
+                ApplicationUserq.LockoutEnd = null;
                 
 
-                _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
+                //_context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
                 await _context.SaveChangesAsync();
-                return await Task.Run(() => _usuario);
+                return await Task.Run(() => ApplicationUserq);
 
             }
             catch (Exception ex)

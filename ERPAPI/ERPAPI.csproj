@@ -145,6 +145,12 @@
     <Compile Remove="Migrations\20191211161708_fieldjournalentrychanged.Designer.cs" />
     <Compile Remove="Migrations\20200121045855_AddedField_ExhangeRateCompra.cs" />
     <Compile Remove="Migrations\20200121045855_AddedField_ExhangeRateCompra.Designer.cs" />
+    <Compile Remove="Migrations\20200222074509_AddedFksCErtificadoDeposito.cs" />
+    <Compile Remove="Migrations\20200222074509_AddedFksCErtificadoDeposito.Designer.cs" />
+    <Compile Remove="Migrations\20200222080212_FusionKardexDetalleMaestro.cs" />
+    <Compile Remove="Migrations\20200222080212_FusionKardexDetalleMaestro.Designer.cs" />
+    <Compile Remove="Migrations\20200222080732_FusionKardexDetalleMaestro.cs" />
+    <Compile Remove="Migrations\20200222080732_FusionKardexDetalleMaestro.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />
@@ -173,6 +179,10 @@
     <None Update="PermisosSistema.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Query\EstadosFinancierosAlmacafe\" />
   </ItemGroup>
 
   <ProjectExtensions>

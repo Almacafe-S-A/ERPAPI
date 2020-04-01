@@ -70,19 +70,31 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetGoodsDelivered()
         {
             List<GoodsDelivered> Items = new List<GoodsDelivered>();
-            try
-            {
-                Items = await _context.GoodsDelivered.ToListAsync();
-            }
-            catch (Exception ex)
-            {
 
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
+           
+           try
+           {
+               var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+               int count = user.Count();
+               List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+               if (branchlist.Count > 0)
+               {
+                   Items = await _context.GoodsDelivered.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.GoodsDeliveredId).ToListAsync();
+               }
+               else
+               {
+                   Items = await _context.GoodsDelivered.OrderByDescending(b => b.GoodsDeliveredId).ToListAsync();
+               }
+           }
+           catch (Exception ex)
+           {
 
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
+               _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+               return BadRequest($"Ocurrio un error:{ex.Message}");
+           }
+
+           //  int Count = Items.Count();
+           return await Task.Run(() => Ok(Items));
         }
 
 
@@ -188,34 +200,65 @@ namespace ERPAPI.Controllers
                             item.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
                             _context.GoodsDeliveredLine.Add(item);
 
-                            Kardex _kardexmax = await ( from c in _context.Kardex
-                                                        .OrderByDescending(q => q.DocumentDate)
-                                                        // .Take(1)
-                                                        join d in _context.KardexLine on c.KardexId equals d.KardexId
-                                                        where c.CustomerId == _GoodsDeliveredq.CustomerId && d.SubProducId == item.SubProductId
-                                                        && c.DocumentName !="CD"  && d.WareHouseId == item.WareHouseId
-                                                        select c
-                                                      )
-                                                      .FirstOrDefaultAsync();
 
-                            if (_kardexmax == null) { _kardexmax = new Kardex(); }
-                            KardexLine _KardexLine = await _context.KardexLine
-                                                                         .Where(q => q.KardexId == _kardexmax.KardexId)
-                                                                         .Where(q => q.SubProducId == item.SubProductId)
-                                                                          .Where(q => q.WareHouseId == item.WareHouseId)
-                                                                         .Where(q => q.BranchId == _GoodsDeliveredq.BranchId)
-                                                                         .OrderByDescending(q => q.KardexLineId)
-                                                                         .Take(1)
-                                                                        .FirstOrDefaultAsync();
+                            //var _BuscarKardex = await _context.Kardex.Where(x =>   x.CustomerId == _GoodsDeliveredq.CustomerId 
+                            //                                                    && x.DocumentName != "CD"
+                            //                                                    && x.WareHouseId == item.WareHouseId
+                            //                                                    && x.SubProducId == item.SubProductId
+                            //                                                    && x.BranchId == _GoodsDeliveredq.BranchId).ToListAsync();
+
+
+                            //var cc = _context.Kardex.ToListAsync();
+
+                            //Kardex _BuscarKardexs = await (from x in _context.Kardex
+                            //                             where x.CustomerId == _GoodsDeliveredq.CustomerId
+                            //                                && x.DocumentName != "CD"
+                            //                                && x.WareHouseId == item.WareHouseId
+                            //                                && x.SubProducId == item.SubProductId
+                            //                                && x.BranchId == _GoodsDeliveredq.BranchId
+                            //                             select x
+                            //                          )
+                            //                          .FirstOrDefaultAsync();
+
+
+
+                            Kardex _BuscarKardex =  _context.Kardex.Where(x => x.CustomerId == _GoodsDeliveredq.CustomerId
+                                                            && x.DocumentName != "CD"
+                                                            && x.WareHouseId == item.WareHouseId
+                                                            && x.SubProducId == item.SubProductId
+                                                            && x.BranchId == _GoodsDeliveredq.BranchId).FirstOrDefault();
+                                    
+                                   
+
+
+                            //Kardex _kardexmax = await ( from c in _context.Kardex
+                            //                            .OrderByDescending(q => q.DocumentDate)
+                            //                            // .Take(1)
+                            //                            join d in _context.KardexLine on c.KardexId equals d.KardexId
+                            //                            where c.CustomerId == _GoodsDeliveredq.CustomerId && d.SubProducId == item.SubProductId
+                            //                            && c.DocumentName !="CD"  && d.WareHouseId == item.WareHouseId
+                            //                            select c
+                            //                          )
+                            //                          .FirstOrDefaultAsync();
+
+                            //if (_kardexmax == null) { _kardexmax = new Kardex(); }
+                            //KardexLine _KardexLine = await _context.KardexLine
+                            //                                             .Where(q => q.KardexId == _kardexmax.KardexId)
+                            //                                             .Where(q => q.SubProducId == item.SubProductId)
+                            //                                              .Where(q => q.WareHouseId == item.WareHouseId)
+                            //                                             .Where(q => q.BranchId == _GoodsDeliveredq.BranchId)
+                            //                                             .OrderByDescending(q => q.KardexLineId)
+                            //                                             .Take(1)
+                            //                                            .FirstOrDefaultAsync();
 
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                       .Where(q=>q.SubproductId==item.SubProductId)
                                                       select c
                                                       ).FirstOrDefaultAsync();
 
-                            if (_KardexLine.Total > item.Quantity)
+                            if (_BuscarKardex.Total > item.Quantity)
                             {
-                                item.Total = _KardexLine.TotalCD - item.Quantity;
+                                item.Total = Convert.ToDouble(_BuscarKardex.TotalCD) - item.Quantity;
                             }
                             else
                             {
@@ -240,15 +283,15 @@ namespace ERPAPI.Controllers
                                 TypeOperationId = 1,
                                 TypeOperationName = "Salida",
                                 Total = item.Total,
-                                TotalBags = _KardexLine.TotalBags-item.QuantitySacos  ,
+                                TotalBags =Convert.ToDouble(_BuscarKardex.TotalBags)-item.QuantitySacos  ,
                                 QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                                TotalCD = Convert.ToDouble(_BuscarKardex.TotalCD) - (item.Quantity - (item.Quantity * _subproduct.Merma)),
                             });
                         }
 
                         await _context.SaveChangesAsync();
                         _GoodsDelivered.Kardex.DocType = 0;
-                        _GoodsDelivered.Kardex.DocName = "EntregaMercaderia/GoodsDelivered";
+                        _GoodsDelivered.Kardex.DocumentName = "EntregaMercaderia/GoodsDelivered";
                         _GoodsDelivered.Kardex.DocumentDate = _GoodsDeliveredq.DocumentDate;
                         _GoodsDelivered.Kardex.FechaCreacion = DateTime.Now;
                         _GoodsDelivered.Kardex.FechaModificacion = DateTime.Now;

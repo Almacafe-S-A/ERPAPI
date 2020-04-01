@@ -55,6 +55,59 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
             //return await _context.Dimensions.ToListAsync();
         }
+
+        // GET: api/Account
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountstartwith5y6()
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                var cuentas = await _context.Accounting
+                    .Where(q => q.AccountCode.StartsWith("5") || q.AccountCode.StartsWith("6"))
+                    .ToListAsync();
+                return await Task.Run(() => Ok(cuentas));
+
+
+                //Items.Where(q =>  q.AccountCode.StartsWith("5"));
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
+
+        // GET: api/Account
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAccountfacturaproveedor()
+
+        {
+            List<Accounting> Items = new List<Accounting>();
+            try
+            {
+                var cuentas = await _context.Accounting
+                    .Where(q => q.AccountCode.StartsWith("2"))
+                    .ToListAsync();
+                return await Task.Run(() => Ok(cuentas));
+
+
+                //Items.Where(q =>  q.AccountCode.StartsWith("5"));
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la Account en una lista.
         /// </summary>
@@ -433,6 +486,25 @@ namespace ERPAPI.Controllers
                     .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);
         }
 
+        /// <summary>
+        /// Retorna la Jerarquia(Nivel) de la Cuenta Contable
+        /// </summary>
+        /// <param name="cuenta"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<long> GetAccountHierarchy(Accounting cuenta) {
+            Accounting cuentaPadre = await _context.Accounting.Where(q => q.AccountId == cuenta.ParentAccountId).FirstOrDefaultAsync();
+            if (cuentaPadre != null)
+            {
+                return cuentaPadre.HierarchyAccount + 1;
+
+            }
+            else
+            {
+                return 1;
+            }
+
+        }
         
 
         /// <summary>
@@ -443,9 +515,7 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Accounting>> Insert([FromBody]Accounting _Account)
         {
-            Accounting _Accountq = new Accounting();
-            
-           
+            Accounting _Accountq = new Accounting(); 
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -453,6 +523,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _Accountq = _Account;
+                        _Accountq.HierarchyAccount = await GetAccountHierarchy(_Accountq);
                         _context.Accounting.Add(_Accountq);
                         await _context.SaveChangesAsync();
                        
@@ -505,16 +576,21 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<Accounting>> Update([FromBody]Accounting _Account)
         {
             Accounting _Accountq = _Account;
+            
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
+                        
                         _Accountq = await (from c in _context.Accounting
                                          .Where(q => q.AccountId == _Accountq.AccountId)
                                                        select c
                                         ).FirstOrDefaultAsync();
+
+                        _Account.HierarchyAccount = await GetAccountHierarchy(_Account);
+                        _Account.AccountBalance = _Accountq.AccountBalance;
 
                         _context.Entry(_Accountq).CurrentValues.SetValues((_Account));
 
@@ -593,6 +669,24 @@ namespace ERPAPI.Controllers
             {
                 var cuentas = await _context.Accounting
                     .Where(c => c.AccountCode.StartsWith(patron) && c.BlockedInJournal == false && c.Totaliza == false)
+                    .ToListAsync();
+                return await Task.Run(() => Ok(cuentas));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatron2([FromQuery(Name = "Patron")] string patron, [FromQuery(Name = "Patron1")] string patron1)
+        {
+            try
+            {
+                var Arreglo = new string[] { patron, patron1 };
+                var cuentas = await _context.Accounting
+                    .Where(c => Arreglo.Any(p => c.AccountCode.ToString().StartsWith(p)) && c.BlockedInJournal == false && c.Totaliza == false)
                     .ToListAsync();
                 return await Task.Run(() => Ok(cuentas));
             }

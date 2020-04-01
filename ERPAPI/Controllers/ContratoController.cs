@@ -38,7 +38,17 @@ namespace ERPAPI.Controllers
             List<Contrato> Items = new List<Contrato>();
             try
             {
-                Items = await _context.Contrato.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.Contrato.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ContratoId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.Contrato.OrderByDescending(b => b.ContratoId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {

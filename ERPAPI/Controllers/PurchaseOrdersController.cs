@@ -72,7 +72,17 @@ namespace ERPAPI.Controllers
             List<PurchaseOrder> Items = new List<PurchaseOrder>();
             try
             {
-                Items = await _context.PurchaseOrder.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.PurchaseOrder.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.Id).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.PurchaseOrder.OrderByDescending(b => b.Id).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -207,7 +217,7 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
                         _PurchaseOrders.Kardex.DocType = 0;
-                        _PurchaseOrders.Kardex.DocName = "FacturaProforma/PurchaseOrders";
+                        _PurchaseOrders.Kardex.DocumentName = "FacturaProforma/PurchaseOrders";
                         _PurchaseOrders.Kardex.DocumentDate = _PurchaseOrders.DatePlaced;
                         _PurchaseOrders.Kardex.FechaCreacion = DateTime.Now;
                         _PurchaseOrders.Kardex.FechaModificacion = DateTime.Now;
@@ -215,7 +225,7 @@ namespace ERPAPI.Controllers
                         _PurchaseOrders.Kardex.TypeOperationName = "Salida";
                         _PurchaseOrders.Kardex.KardexDate = DateTime.Now;
 
-                        _PurchaseOrders.Kardex.DocumentName = "FacturaProforma";
+                        //_PurchaseOrders.Kardex.DocumentName = "FacturaProforma";
 
                         _PurchaseOrders.Kardex.CustomerId = 0;
                         _PurchaseOrders.Kardex.CustomerName = "N/A";

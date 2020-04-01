@@ -72,7 +72,17 @@ namespace ERPAPI.Controllers
             List<CostCenter> Items = new List<CostCenter>();
             try
             {
-                Items = await _context.CostCenter.ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.CostCenter.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.CostCenterId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.CostCenter.OrderByDescending(b => b.CostCenterId).ToListAsync();
+                }
             }
             catch (Exception ex)
             {
