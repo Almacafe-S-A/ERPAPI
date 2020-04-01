@@ -24,7 +24,7 @@ namespace ERPAPI.Models
         public string Estado { get; set; }
 
         [Display(Name = "UOM")]
-        public int? UnitOfMeasureId { get; set; } = null;
+        public int UnitOfMeasureId { get; set; }
         [ForeignKey("UnitOfMeasureId")]
         public  UnitOfMeasure UnitOfMeasure { get; set; }
         public double DefaultBuyingPrice { get; set; } = 0.0;
