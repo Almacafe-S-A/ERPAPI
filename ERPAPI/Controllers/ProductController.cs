@@ -96,9 +96,9 @@ namespace ERPAPI.Controllers
                               .Include(c => c.Grupo)
                               .OrderByDescending(b => b.ProductId)
                               .ToListAsync();
-                } 
-               
-                 
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -125,7 +125,7 @@ namespace ERPAPI.Controllers
                                               .Include(c => c.Marca)
                                               .Include(c => c.Linea)
                                               .Include(c => c.Grupo)
-                                              .Where(q=>q.ProductId== ProductId).FirstOrDefaultAsync();
+                                              .Where(q => q.ProductId == ProductId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -133,6 +133,32 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
             return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Obtiene los datos del producto con el id enviado
+        /// </summary>
+        /// <param name="ProductName"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ProductName}")]
+        public async Task<ActionResult<Product>> GetProductName(string ProductName)
+        {
+            Product Items = new Product();
+            try
+            {
+                Items = await _context.Product.Where(q => q.ProductName == ProductName).FirstOrDefaultAsync();
+                // int Count = Items.Count();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+
+            return Ok(Items);
         }
 
 
