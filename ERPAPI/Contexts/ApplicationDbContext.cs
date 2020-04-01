@@ -356,7 +356,32 @@ namespace ERP.Contexts
 
         public DbSet<Periodo> Periodo { get; set; }
 
+        public DbSet<HorasExtraBiometrico> HorasExtrasBiometrico { get; set; }
 
+        public DbSet<LlegadasTardeBiometrico> LlegadasTardeBiometrico { get; set; }
+
+        public DbSet<Inasistencia> Inasistencias { get; set; }
+
+        public DbSet<TipoBonificacion> TiposBonificaciones { get; set; }
+
+        public DbSet<Bonificacion> Bonificaciones { get; set; }
+
+        public DbSet<ConfiguracionVacaciones> ConfiguracionVacaciones { get; set; }
+
+        public DbSet<PagoISR> PagosISR { get; set; }
+
+        public DbSet<Planilla> Planillas { get; set; }
+
+        public DbSet<DetallePlanilla> DetallePlanillas { get; set; }
+
+        public DbSet<DeduccionPlanilla> DeduccionesPlanilla { get; set; }
+
+        public DbSet<IngresoAnual> IngresosAnuales { get; set; }
+
+        public DbSet<ImpuestoVecinalConfiguracion> ImpuestoVecinalConfiguraciones { get; set; }
+
+        public DbSet<CategoriaPlanilla> CategoriasPlanillas { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
@@ -487,12 +512,6 @@ namespace ERP.Contexts
              .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Employees>()
-            .HasOne(i => i.Estados)
-            .WithMany(c => c.Employees)
-            //.IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Employees>()
           .HasOne(i => i.State)
           .WithMany(c => c.Employees)
           //.IsRequired()
@@ -507,7 +526,13 @@ namespace ERP.Contexts
             modelBuilder.Entity<Quotation>()
             .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
 
-
+            modelBuilder.Entity<CategoriaPlanilla>().HasData(new[]
+                                                             {
+                                                                new CategoriaPlanilla(){Id=1, Nombre = "NOMINA"},
+                                                                new CategoriaPlanilla(){Id=2, Nombre = "NOMINA CONFIDENCIAL"},
+                                                                new CategoriaPlanilla(){Id=3, Nombre = "NOMINA EXTRAORDINARIA"},
+                                                                new CategoriaPlanilla(){Id=4, Nombre = "OTRO"},
+                                                             });
         }
 
 
