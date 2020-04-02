@@ -417,14 +417,14 @@ namespace ERPAPI.Controllers
             //   return Ok(subproduct);
         }
 
-        [HttpGet("[action]/{SubproductId}")]
-        public async Task<ActionResult<SubProduct>> Delete(Int64 SubproductId)
+        [HttpPost("[action]")]
+        public async Task<ActionResult<SubProduct>> Delete([FromBody]SubProduct _SubProduct)
         {
             SubProduct subproduct = new SubProduct();
             try
             {
                 subproduct = _context.SubProduct
-               .Where(x => x.SubproductId == SubproductId)
+               .Where(x => x.SubproductId == _SubProduct.SubproductId)
                .FirstOrDefault();
                 _context.SubProduct.Remove(subproduct);
                 await _context.SaveChangesAsync();
