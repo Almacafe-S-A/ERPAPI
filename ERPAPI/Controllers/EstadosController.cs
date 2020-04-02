@@ -101,7 +101,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{NombreEstado}/{IdConfi}")]
         public async Task<IActionResult> GetEstadoByNombreEstado(String NombreEstado, Int64 IdConfi)
         {
             Estados Items = new Estados();
