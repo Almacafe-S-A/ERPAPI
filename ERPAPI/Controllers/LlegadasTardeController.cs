@@ -1,0 +1,108 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using ERP.Contexts;
+using ERPAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+
+namespace ERPAPI.Controllers
+{
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Route("api/[controller]")]
+    [ApiController]
+    public class LlegadasTardeController : ControllerBase
+    {
+        private readonly ApplicationDbContext context;
+        private readonly ILogger logger;
+
+        public LlegadasTardeController(ApplicationDbContext context, ILogger<LlegadasTardeController> logger)
+        {
+            this.context = context;
+            this.logger = logger;
+        }
+
+        [HttpGet("[action]/{fecha}/{todos}")]
+        public async Task<ActionResult> GetLlegadasTardesDisponibles(DateTime fecha, int todos)
+        {
+            try
+            {
+                DateTime fechaBusqueda = new DateTime(fecha.Year, fecha.Month,fecha.Day,0,0,0);
+                if (todos == 1)
+                {
+                    var llegadas = await context.LlegadasTardeBiometrico
+                        .Include(e => e.Empleado)
+                        .Include(e => e.Estado)
+                        .Where(l => l.Encabezado.Fecha.Equals(fechaBusqueda))
+                        .ToListAsync();
+                    return Ok(llegadas);
+                }
+                else
+                {
+                    var llegadas = await context.LlegadasTardeBiometrico
+                        .Include(e => e.Empleado)
+                        .Include(e => e.Estado)
+                        .Where(l => l.Encabezado.Fecha.Equals(fechaBusqueda) && l.IdEstado == 70)
+                        .ToListAsync();
+                    return Ok(llegadas);
+                }
+                
+
+                
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex,"Error al cargar las llegadas tardes cargadas.");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("[action]/{idLlegadaTarde}")]
+        public async Task<ActionResult> AprobarLlegadaTarde(long idLlegadaTarde)
+        {
+            try
+            {
+                var registro = await context.LlegadasTardeBiometrico.FirstOrDefaultAsync(r => r.Id == idLlegadaTarde);
+                if (registro == null)
+                    throw new Exception("El registro de la llegada tarde a aprobar no existe.");
+                if (registro.IdEstado != 70)
+                    throw new Exception("Solo se puede aprobar registros en estado de Cargado.");
+                registro.IdEstado = 71;
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex,"Error al aprobar la llegada tarde");
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("[action]/{idLlegadaTarde}")]
+        public async Task<ActionResult> RechazarLlegadaTarde(long idLlegadaTarde)
+        {
+            try
+            {
+                var registro = await context.LlegadasTardeBiometrico.FirstOrDefaultAsync(r => r.Id == idLlegadaTarde);
+                if (registro == null)
+                    throw new Exception("El registro de la llegada tarde a rechazar no existe.");
+                if (registro.IdEstado != 70)
+                    throw new Exception("Solo se puede rechazar registros en estado de Cargado.");
+                registro.IdEstado = 72;
+                await context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al rechazar la llegada tarde");
+                return BadRequest(ex.Message);
+            }
+        }
+
+    }
+}

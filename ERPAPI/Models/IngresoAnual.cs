@@ -7,26 +7,34 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class Estados
+    public class IngresoAnual
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 IdEstado { get; set; }
         [Required]
-        public string NombreEstado { get; set; }
-        public string DescripcionEstado { get; set; }
-        public long IdGrupoEstado { get; set; }        
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Id { get; set; }
 
         [Required]
-        public string UsuarioCreacion { get; set; }
+        public int Periodo { get; set; }
+
         [Required]
-        public string UsuarioModificacion { get; set; }
+        public long EmpleadoId { get; set; }
+
+        [Required]
+        public decimal IngresoAcumulado { get; set; }
+
+        [ForeignKey("EmpleadoId")]
+        public Employees Empleado { get; set; }
+
         [Required]
         public DateTime FechaCreacion { get; set; }
 
         [Required]
         public DateTime FechaModificacion { get; set; }
 
-        //public virtual List<Employees> Employees { get; set; }
+        [Required]
+        public string UsuarioModificacion { get; set; }
 
+        [Required]
+        public string UsuarioCreacion { get; set; }
     }
 }

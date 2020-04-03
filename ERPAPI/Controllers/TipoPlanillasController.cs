@@ -85,7 +85,7 @@ namespace ERPAPI.Controllers
             List<TipoPlanillas> Items = new List<TipoPlanillas>();
             try
             {
-                Items = await _context.TipoPlanillas.ToListAsync();
+                Items = await _context.TipoPlanillas.Include(e=>e.Estado).Include(c=>c.Categoria).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -109,7 +109,7 @@ namespace ERPAPI.Controllers
             TipoPlanillas Items = new TipoPlanillas();
             try
             {
-                Items = await _context.TipoPlanillas.Where(q => q.IdTipoPlanilla == Id).FirstOrDefaultAsync();
+                Items = await _context.TipoPlanillas.Include(e => e.Estado).Include(c => c.Categoria).Where(q => q.IdTipoPlanilla == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -128,7 +128,7 @@ namespace ERPAPI.Controllers
             TipoPlanillas Items = new TipoPlanillas();
             try
             {
-                Items = await _context.TipoPlanillas.Where(q => q.TipoPlanilla == TipoPlanilla).FirstOrDefaultAsync();
+                Items = await _context.TipoPlanillas.Include(e => e.Estado).Include(c => c.Categoria).Where(q => q.TipoPlanilla == TipoPlanilla).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

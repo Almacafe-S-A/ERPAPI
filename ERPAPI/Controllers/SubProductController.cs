@@ -418,13 +418,13 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<SubProduct>> Delete([FromBody]SubProduct _Currency)
+        public async Task<ActionResult<SubProduct>> Delete([FromBody]SubProduct _SubProduct)
         {
             SubProduct subproduct = new SubProduct();
             try
             {
                 subproduct = _context.SubProduct
-               .Where(x => x.SubproductId == _Currency.SubproductId)
+               .Where(x => x.SubproductId == _SubProduct.SubproductId)
                .FirstOrDefault();
                 _context.SubProduct.Remove(subproduct);
                 await _context.SaveChangesAsync();

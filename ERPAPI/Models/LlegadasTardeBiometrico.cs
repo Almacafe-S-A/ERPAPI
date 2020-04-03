@@ -7,29 +7,31 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class Biometrico
+    public class LlegadasTardeBiometrico
     {
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
         [Required]
-        public DateTime Fecha { get; set; }
+        public long IdBiometrico { get; set; }
 
         [Required]
-        public string Observacion { get; set; }
+        public long IdEmpleado { get; set; }
+
+        [Required]
+        public int Horas { get; set; }
+
+        [Required]
+        public int Minutos { get; set; }
+
+        public Biometrico Encabezado { get; set; }
+
+        [ForeignKey("IdEmpleado")]
+        public Employees Empleado { get; set; }
 
         [Required]
         public long IdEstado { get; set; }
-
-        [ForeignKey("IdBiometrico")]
-        public List<DetalleBiometrico> Detalle { get; set; }
-
-        [ForeignKey("IdBiometrico")]
-        public List<LlegadasTardeBiometrico> LlegadasTarde { get; set; }
-
-        [ForeignKey("IdBiometrico")]
-        public List<HorasExtraBiometrico> HorasExtra { get; set; }
 
         [ForeignKey("IdEstado")]
         public Estados Estado { get; set; }

@@ -40,6 +40,8 @@ namespace ERPAPI.Models
         [ForeignKey("IdPuesto")]
         public Puesto Puesto { get; set; }
         public Int64 IdEstado { get; set; }
+
+        [ForeignKey("IdEstado")]
         public Estados Estados { get; set; }
 
         public long IdCity { get; set; }
