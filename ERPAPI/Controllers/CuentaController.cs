@@ -233,6 +233,13 @@ namespace ERPAPI.Controllers
                     {
                         return BadRequest($"El Usuario no tiene ningun rol asignado");
                     }
+
+                    ApplicationUserRole rolesusuario = _context.UserRoles.Where(r => r.UserId == usuario.Id).FirstOrDefault();
+                    ApplicationRole applicationRole =  _context.Roles.Where(r => r.Id == rolesusuario.RoleId).FirstOrDefault();
+                    if (applicationRole.IdEstado ==2)
+                    {
+                        return BadRequest($"El Rol del Usuario esta Inactivo");
+                    }
                     var claims = (List<Claim>) await _userManager.GetClaimsAsync(usuario);
                     var listaRoles = _approle.Select(async x => await _rolemanager.FindByNameAsync(x));
                     var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result.Where(c=>c.Value.Equals("true")).ToList());
