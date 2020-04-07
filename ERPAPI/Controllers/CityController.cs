@@ -203,6 +203,10 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                if (((System.Data.SqlClient.SqlException)ex.InnerException).Number == 547)
+                {
+                    return await Task.Run(() => BadRequest($"No se puede eliminar este registro porque está siendo utilizado."));
+                }
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
