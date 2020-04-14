@@ -123,7 +123,12 @@ namespace ERPAPI.Models
         [Display(Name = "Pertenece a la empresa u otra organización")]
         public string PerteneceEmpresa { get; set; }
 
-        
+        public double? ValorSeveridadRiesgo { get; set; }
+        [NotMapped]
+        public string NivelSeveridad { get; set; }
+        [NotMapped]
+        public string ColorHexadecimal { get; set; }
+
         public string Fax { get; set; }
         public long? TaxId { get; set; }
         public string SolicitadoPor { get; set; }
@@ -151,4 +156,6 @@ namespace ERPAPI.Models
         public List<VendorOfCustomer> _Vendor { get; set; }
 
     }
+
+    
 }

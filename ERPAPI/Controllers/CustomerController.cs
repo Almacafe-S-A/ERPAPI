@@ -72,9 +72,27 @@ namespace ERPAPI.Controllers
 
             try
             {
-                List<Customer> Items = await _context.Customer.OrderByDescending(c => c.CustomerId).Take(100).ToListAsync();
+                List<Customer> Items = await _context.Customer.OrderByDescending(c => c.CustomerId).ToListAsync();
+                List<SeveridadRiesgo> riesgos = await _context.SeveridadRiesgo.ToListAsync();
+                SeveridadRiesgo severidad = new SeveridadRiesgo();
+                foreach (var item in Items)
+                {
+
+                    if (item.ValorSeveridadRiesgo > 0)
+                    {
+                        severidad = riesgos.Where(w => w.RangoInferiorSeveridad <= item.ValorSeveridadRiesgo && w.RangoSuperiorSeveridad >= item.ValorSeveridadRiesgo).FirstOrDefault();
+                        if (severidad == null)
+                        {
+                            item.NivelSeveridad = "Fuera de Rango";
+                        }
+                        else
+                        {
+                            item.NivelSeveridad = severidad.Nivel;
+                            item.ColorHexadecimal = severidad.ColorHexadecimal;
+                        }
+                    }
+                }
                 return await Task.Run(() => Ok(Items));
-                //  return Ok(Items);
             }
             catch (Exception ex)
             {
@@ -83,6 +101,7 @@ namespace ERPAPI.Controllers
             }
            
         }
+
 
         [HttpGet("[action]")]
         public async Task<ActionResult<Int32>> GetQuantityCustomer()

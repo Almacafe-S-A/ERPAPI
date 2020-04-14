@@ -79,7 +79,7 @@ namespace ERP.Contexts
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
 
-        public DbSet<CustomerRisk> CustomerRisk { get; set; }
+       
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
         public DbSet<CustomerType> CustomerType { get; set; }
         public DbSet<Vendor> Vendor { get; set; }
