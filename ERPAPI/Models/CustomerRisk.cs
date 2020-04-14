@@ -16,6 +16,8 @@ namespace ERPAPI.Models
         [ForeignKey("CustomerId")]
         public Customer Customer { get; set; }
 
+        public decimal ValorSeveridad { get; set; }
+
         public string NivelSeveridad { get; set; }
 
         [Display(Name = "Fecha de creación")]
