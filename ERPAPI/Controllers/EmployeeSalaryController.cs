@@ -138,17 +138,19 @@ namespace ERPAPI.Controllers
 
                         //////////////Alerta al guardar un nuevo Salario/////////////
 
-                        _Alertq.AlertName = "Cambio de Salario";
-                        _Alertq.DocumentName = "EMPLEADO";
-                        _Alertq.Code = "PERSON005";
-                        _Alertq.FechaCreacion = DateTime.Now;
-                        _Alertq.FechaModificacion = DateTime.Now;
-                        _Alertq.UsuarioCreacion = _EmployeeSalary.CreatedUser;
-                        _Alertq.UsuarioModificacion = _EmployeeSalary.ModifiedUser;
-                        _Alertq.AlertType = "PERSONA";
-                        _Alertq.Description = "Se Modifico el Salario al Empleado: " + employeeName;
+                        //_Alertq.AlertName = "Cambio de Salario";
+                        //_Alertq.DocumentName = "EMPLEADO";
+                        //_Alertq.Code = "PERSON005";
+                        //_Alertq.FechaCreacion = DateTime.Now;
+                        //_Alertq.FechaModificacion = DateTime.Now;
+                        //_Alertq.UsuarioCreacion = _EmployeeSalary.CreatedUser;
+                        //_Alertq.UsuarioModificacion = _EmployeeSalary.ModifiedUser;
+                        //_Alertq.AlertType = "PERSONA";
+                        //_Alertq.Description = "Se Modifico el Salario al Empleado: " + employeeName;
 
-                        _context.Alert.Add(_Alertq);
+                        //_context.Alert.Add(_Alertq);
+
+                        //Alerta comendata para que ya no la genere
 
                         await _context.SaveChangesAsync();
 
@@ -167,6 +169,7 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _EmployeeSalary.ModifiedUser,
 
                         });
+
                         List<EmployeeSalary> _EmployeeSalaryU = new List<EmployeeSalary>();
                         _EmployeeSalaryU = await (from c in _context.EmployeeSalary
                                          .Where(q => q.IdEmpleado == _EmployeeSalary.IdEmpleado && q.EmployeeSalaryId != _EmployeeSalary.EmployeeSalaryId) select c ).ToListAsync();
