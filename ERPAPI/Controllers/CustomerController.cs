@@ -134,6 +134,23 @@ namespace ERPAPI.Controllers
             try
             {
                 Customer Items = await _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefaultAsync();
+                List<SeveridadRiesgo> riesgos = await _context.SeveridadRiesgo.ToListAsync();
+                SeveridadRiesgo severidad = new SeveridadRiesgo();
+                if (Items.ValorSeveridadRiesgo > 0)
+                {
+                    severidad = riesgos.Where(w => w.RangoInferiorSeveridad <= Items.ValorSeveridadRiesgo && w.RangoSuperiorSeveridad >= Items.ValorSeveridadRiesgo).FirstOrDefault();
+                    if (severidad == null)
+                    {
+                        Items.NivelSeveridad = "Fuera de Rango";
+                    }
+                    else
+                    {
+                        Items.NivelSeveridad = severidad.Nivel;
+                        Items.ColorHexadecimal = severidad.ColorHexadecimal;
+                    }
+                }
+
+
                 return await Task.Run(() => Ok(Items));
                 //return Ok(Items);
             }
