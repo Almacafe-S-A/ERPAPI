@@ -274,6 +274,10 @@ namespace ERPAPI.Controllers
                     Alerta.FechaModificacion = Convert.ToDateTime(_GoodsReceivedLine.FechaModificacion);
                     Alerta.UsuarioCreacion = _GoodsReceivedLine.UsuarioCreacion;
                     Alerta.UsuarioModificacion = _GoodsReceivedLine.UsuarioModificacion;
+                    Alerta.Description = $"Producto Prohibido {_GoodsReceivedLine.SubProductName} en recibo de mercaderia";
+                    Alerta.DescriptionAlert = $"Producto Prohibido {_GoodsReceivedLine.SubProductName} en recibo de mercaderia";
+                    Alerta.Type = "169";
+                    Alerta.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 169).FirstOrDefault().Nombre;
                     var AlertaP = await InsertAlert(Alerta);
                 }
                 using (var transaction = _context.Database.BeginTransaction())

@@ -466,6 +466,11 @@ namespace ERPAPI.Controllers
                             _alert.FechaModificacion = DateTime.Now;
                             _alert.UsuarioCreacion = _invoice.UsuarioCreacion;
                             _alert.UsuarioModificacion = _invoice.UsuarioModificacion;
+                            _alert.PersonName = _invoice.CustomerName;
+                            _alert.Description = $"Factura {_invoice.InvoiceName}";
+                            _alert.DescriptionAlert = $"Factura {_invoice.InvoiceName}";
+                            _alert.Type = "170";
+                            _alert.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 170).FirstOrDefault().Nombre;
                             _context.Alert.Add(_alert);
 
                             //se agrega la informacion a la tabla InvoiceTransReport
