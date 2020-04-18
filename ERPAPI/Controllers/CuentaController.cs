@@ -248,11 +248,11 @@ namespace ERPAPI.Controllers
                         claims.AddRange(claimsRole.ToArray());
                     }
                     //Verificacion manual debido a que la accion permite que se invoque de forma anonima
-                    var permiso = claims.FirstOrDefault(x => x.Type.Equals("Seguridad.Iniciar Sesion") && x.Value.Equals("true"));
-                    if (permiso == null)
-                    {
-                        return BadRequest($"El Usuario no tiene permiso para iniciar sesión");
-                    }
+                    //var permiso = claims.FirstOrDefault(x => x.Type.Equals("Seguridad.Iniciar Sesion") && x.Value.Equals("true"));
+                    //if (permiso == null)
+                    //{
+                    //    return BadRequest($"El Usuario no tiene permiso para iniciar sesión");
+                    //}
 
                     claims.Add(new Claim(ClaimTypes.Email, usuario.Email));
                     claims.Add(new Claim(ClaimTypes.Name, usuario.UserName));
