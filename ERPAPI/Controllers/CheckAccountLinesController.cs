@@ -244,7 +244,7 @@ namespace ERPAPI.Controllers
                         DocType = "JournalEntry",
                         ClaseInicial =
                           Newtonsoft.Json.JsonConvert.SerializeObject(_je, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                        Accion = "Anular",
+                        Accion = "Asiento Contable",
                         FechaCreacion = DateTime.Now,
                         FechaModificacion = DateTime.Now,
                         UsuarioCreacion = _je.CreatedUser,
@@ -293,7 +293,7 @@ namespace ERPAPI.Controllers
                     DocType = "JournalEntry",
                     ClaseInicial =
                           Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountLinesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                    Accion = "Anular",
+                    Accion = "Actualizar",
                     FechaCreacion = DateTime.Now,
                     FechaModificacion = DateTime.Now,
                     UsuarioCreacion = _CheckAccountLinesq.UsuarioCreacion,
@@ -469,6 +469,23 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
+                    JournalEntry jecheque = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
+                    jecheck.EstadoId = 8;
+                    jecheck.EstadoName = "Anulado Cerrado";
+                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                    {
+                        IdOperacion = jecheck.JournalEntryId,
+                        DocType = "JournalEntry",
+                        ClaseInicial =
+                          Newtonsoft.Json.JsonConvert.SerializeObject(jecheck, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "Rechazar Asiento Contable",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = jecheck.CreatedUser,
+                        UsuarioModificacion = jecheck.ModifiedUser,
+                        UsuarioEjecucion = jecheck.ModifiedUser,
+
+                    });
                     await _context.SaveChangesAsync();
                 }
 
