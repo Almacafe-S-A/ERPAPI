@@ -471,7 +471,7 @@ namespace ERPAPI.Controllers
                 {
                     JournalEntry jecheque = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
                     jecheck.EstadoId = 8;
-                    jecheck.EstadoName = "Rechazado";
+                    jecheck.EstadoName = "Anulado Cerrado";
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                     {
                         IdOperacion = jecheck.JournalEntryId,
