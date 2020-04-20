@@ -441,9 +441,9 @@ namespace ERP.Contexts
              .HasIndex(p => new { p.UnitOfMeasureName })
               .IsUnique(true);
 
-            modelBuilder.Entity<Country>()
-           .HasIndex(p => new { p.Name })
-           .IsUnique(true);
+           // modelBuilder.Entity<Country>()
+           //.HasIndex(p => new { p.Name })
+           //.IsUnique(true);
 
            // modelBuilder.Entity<SubProduct>()
            //.HasIndex(p => new { p.ProductCode })
