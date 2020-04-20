@@ -104,6 +104,15 @@ Bancos.Conciliacion Bancaria
 Bancos.Conciliacion Bancaria.Agregar
 Bancos.Conciliacion Bancaria.Editar
 Bancos.Conciliacion Bancaria.Detalle
+Presupuesto
+Presupuesto.Presupuesto
+Presupuesto.Presupuesto.Agregar
+Presupuesto.Presupuesto.Editar
+Presupuesto.Presupuesto.Eliminar
+Presupuesto.Periodo
+Presupuesto.Periodo.Agregar
+Presupuesto.Periodo.Editar
+Presupuesto.Periodo.Eliminar
 Contabilidad
 Contabilidad.Dashboard
 Contabilidad.Activos
@@ -233,10 +242,8 @@ Inventarios.Boleta de Salida
 Inventarios.Boleta de Salida.Agregar Boleta de Salida
 Inventarios.Boleta de Salida.Editar Boleta de Salida
 Inventarios.Endosos
-Inventarios.Endosos.Agregar Endosos
-Inventarios.Endosos.Cancelacion Endosos
-Inventarios.Endosos.Editar Endosos Detalle
-Inventarios.Endosos.Eliminar Endosos Detalle
+Inventarios.Endosos.Agregar
+Inventarios.Endosos.Cancelacion
 Clientes
 Clientes.Datos de Clientes
 Clientes.Datos de Clientes.Agregar
@@ -253,32 +260,25 @@ Clientes.Horas Extra.Editar
 Clientes.Subservicios Utilizados
 Clientes.Subservicios Utilizados.Agregar
 Clientes.Subservicios Utilizados.Editar
-Presupuesto
-Presupuesto.Presupuesto
-Presupuesto.Presupuesto.Agregar
-Presupuesto.Presupuesto.Editar
-Presupuesto.Presupuesto.Eliminar
-Presupuesto.Periodo
-Presupuesto.Periodo.Agregar
-Presupuesto.Periodo.Editar
-Presupuesto.Periodo.Eliminar
 Compras
-Compras.Factura
-Compras.Factura.Agregar
-Compras.Factura.Ver Detalle
-Compras.Factura.Reporte Libro de Compras
+Compras.Factura Proveedores
+Compras.Factura Proveedores.Agregar
+Compras.Factura Proveedores.Ver Detalle
+Compras.Factura Proveedores.Pagar
+Compras.Factura Proveedores.Reporte Libro de Compras
 Ventas
 Ventas.Cotizaciones
 Ventas.Cotizaciones.Agregar
 Ventas.Cotizaciones.Editar
 Ventas.Cotizaciones.Imprimir
+Ventas.Cotizaciones.Crear Cliente
 Ventas.Cotizaciones.Aprobar
 Ventas.Cotizaciones.Generar Contrato
 Ventas.Factura Proforma
 Ventas.Factura Proforma.Agregar
 Ventas.Factura Proforma.Editar
 Ventas.Factura Proforma.Imprimir
-Ventas.Factura Proforma.Generar Fiscal
+Ventas.Factura Proforma.Generar Factura Fiscal
 Ventas.Factura
 Ventas.Factura.Agregar
 Ventas.Factura.Ver
