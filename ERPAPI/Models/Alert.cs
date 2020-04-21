@@ -46,7 +46,7 @@ namespace ERPAPI.Models
         public bool FalsoPositivo { get; set; }
 
         [Display(Name = "Fecha de cierre")]
-        public DateTime CloseDate { get; set; }
+        public DateTime? CloseDate { get; set; }
 
         [Display(Name = "Descripción de la alerta")]
         public string DescriptionAlert { get; set; }

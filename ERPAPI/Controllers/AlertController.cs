@@ -114,13 +114,14 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<Alert>> Insert([FromBody]Alert _Alert)
         {
             Alert _Alertq = new Alert();
+            _Alertq.CloseDate = null;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
-                        _Alertq = _Alert;
+                        
                         _context.Alert.Add(_Alertq);
                         await _context.SaveChangesAsync();
 
