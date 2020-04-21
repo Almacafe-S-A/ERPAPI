@@ -131,7 +131,7 @@ namespace ERPAPI.Controllers
 
 
 
-                        _PrecioCafe.TotalUSD = (_PrecioCafe.PrecioBolsaUSD + _PrecioCafe.DiferencialesUSD);
+                        _PrecioCafe.TotalUSD = (_PrecioCafe.PrecioBolsaUSD - _PrecioCafe.DiferencialesUSD);
                         _PrecioCafe.BrutoLPSIngreso = (_PrecioCafe.TotalUSD * tasacambio.ExchangeRateValueCompra);
                         _PrecioCafe.NetoLPSIngreso = (_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
                         _PrecioCafe.NetoLPSConsumoInterno = (_PrecioCafe.BrutoLPSConsumoInterno * _PrecioCafe.PorcentajeConsumoInterno / 100);
