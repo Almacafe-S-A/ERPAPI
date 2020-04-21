@@ -115,6 +115,22 @@ namespace ERPAPI.Controllers
         {
             Alert _Alertq = new Alert();
             _Alertq.CloseDate = null;
+            int idcliente = 0;
+            try
+            {
+                idcliente = Convert.ToInt32(_Alertq.DescriptionAlert);
+            }
+            catch (Exception)
+            {
+                idcliente = 0;
+
+            }
+            if (idcliente !=0)
+            {
+                var customer = _context.Customer.Where(c => c.CustomerId == idcliente).FirstOrDefault();
+                _Alertq.NivelRiesgoCliente = customer.NivelSeveridad;
+                _Alertq.DescriptionAlert = "Cliente: " + customer.CustomerName; 
+            }
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
