@@ -102,6 +102,11 @@ namespace ERPAPI.Controllers
         [HttpPost("CambiarPasswordPoliticas")]
         public async Task<ActionResult<ApplicationUser>> CambiarPasswordPoliticas([FromBody] UserInfo model)
         {
+            //////Validacion: la contraseña no debe de contener el nombre del usuario////////
+            if (model.Password.Contains(model.Email))
+            {
+                return await Task.Run(() => BadRequest(@"La contraseña no puede contener el nombre de usuario"));
+            }
             try
             {
                 ApplicationUser ApplicationUserq = _context.Users.Where(q => q.Email == model.Email).FirstOrDefault();
@@ -189,7 +194,7 @@ namespace ERPAPI.Controllers
                             case ("PasswordRequiresLower"):
                                 errores += "requiere minúsculas, ";
                                 break;
-                            case ("PasswordRequiresUppe"):
+                            case ("PasswordRequiresUpper"):
                                 errores += "requiere mayúsculas, ";
                                 break;
 
@@ -281,13 +286,13 @@ namespace ERPAPI.Controllers
                 }
                 else if(result.IsLockedOut)
                 {
-                    ModelState.AddModelError(string.Empty, "Usuario bloqueado.");
-                    return await Task.Run(() => BadRequest(ModelState));
+                   // ModelState.AddModelError( "Usuario bloqueado.");
+                    return await Task.Run(() => BadRequest("Usuario bloqueado."));
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Usuario y contraseña invalidos.");
-                    return await Task.Run(() => BadRequest(ModelState));
+                    ModelState.AddModelError(string.Empty, "Usuario y/o contraseña invalidos.");
+                    return await Task.Run(() => BadRequest("Usuario y/o contraseña invalidos."));
                 }
             }
             catch (Exception ex)

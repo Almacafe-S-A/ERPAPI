@@ -350,6 +350,11 @@ namespace ERPAPI.Controllers
         [HttpPost("ChangePassword")]
         public async Task<ActionResult<ApplicationUser>> ChangePassword([FromBody]UserInfo _cambio)
         {
+            //////Validacion: la contraseña no debe de contener el nombre del usuario////////
+            if (_cambio.Password.Contains(_cambio.Email))
+            {
+                return await Task.Run(() => BadRequest(@"La contraseña no puede contener el nombre de usuario"));
+            }
             try
             {
                 ApplicationUser usuarioActualizar = await _context.Users.Where(q => q.Email == _cambio.Email).FirstOrDefaultAsync();
