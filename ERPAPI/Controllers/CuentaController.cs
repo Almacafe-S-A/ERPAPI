@@ -57,7 +57,7 @@ namespace ERPAPI.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                JwtSecurityToken token = await BuildToken(new List<Claim>());
+                JwtSecurityToken token =  BuildToken(new List<Claim>());
                 UserToken userToken = new UserToken()
                                       {
                                           Token = new JwtSecurityTokenHandler().WriteToken(token),
@@ -89,7 +89,7 @@ namespace ERPAPI.Controllers
             }
             else
             {
-                return await Task.Run(() => BadRequest(@"Contrasña o usuario incorrecto"));
+                return await Task.Run(() => BadRequest(@"Contraseña o usuario incorrecto"));
             }
         }
 
@@ -102,7 +102,9 @@ namespace ERPAPI.Controllers
         [HttpPost("CambiarPasswordPoliticas")]
         public async Task<ActionResult<ApplicationUser>> CambiarPasswordPoliticas([FromBody] UserInfo model)
         {
-            //////Validacion: la contraseña no debe de contener el nombre del usuario////////
+            //////Validacion: la contraseña no debe de contener el nombre del usuario
+            ///
+            SetParametrosSeguridad();
             if (model.Password.Contains(model.Email))
             {
                 return await Task.Run(() => BadRequest(@"La contraseña no puede contener el nombre de usuario"));
@@ -113,7 +115,7 @@ namespace ERPAPI.Controllers
                 //string password = ApplicationUserq.PasswordHash;
                 var passwordValidator = new PasswordValidator<ApplicationUser>();
                 //_userManager.Options.Password.RequireDigit = true;
-                _userManager.Options.Password.RequiredLength = Convert.ToInt32(_context.ElementoConfiguracion.Where(w =>w.Id == 21).FirstOrDefault().Valordecimal);
+                
 
                 var resultvalidador = await passwordValidator.ValidateAsync(_userManager, null, model.Password);
                 if (resultvalidador.Succeeded)
@@ -149,8 +151,8 @@ namespace ERPAPI.Controllers
                             Descripcion = ApplicationUserq.Id.ToString(),
                             DocType = "Usuario",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(ApplicationUserq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(ApplicationUserq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            JsonConvert.SerializeObject(ApplicationUserq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = JsonConvert.SerializeObject(ApplicationUserq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "ChangePassword",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
@@ -224,15 +226,15 @@ namespace ERPAPI.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<UserToken>> Login([FromBody] UserInfo userInfo)
         {
-
             try
             {
-
-                _signInManager.Options.Lockout.MaxFailedAccessAttempts = Convert.ToInt32(_context.ElementoConfiguracion.Where(w => w.Id == 15).FirstOrDefault().Valordecimal);
+                ///////Setea los parametros de seguridad de la aplicacion///////////////
+                SetParametrosSeguridad();
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     ApplicationUser usuario = await _userManager.FindByEmailAsync(userInfo.Email);
+                    //////////Roles de Usuario//////////////
                     var _approle = await _userManager.GetRolesAsync(usuario);
                     if (_approle == null)
                     {
@@ -244,6 +246,10 @@ namespace ERPAPI.Controllers
                     if (applicationRole.IdEstado ==2)
                     {
                         return BadRequest($"El Rol del Usuario esta Inactivo");
+                    }
+                    if (!Convert.ToBoolean(usuario.IsEnabled))
+                    {
+                        return BadRequest($"Usuario No Habilitado");
                     }
                     var claims = (List<Claim>) await _userManager.GetClaimsAsync(usuario);
                     var listaRoles = _approle.Select(async x => await _rolemanager.FindByNameAsync(x));
@@ -263,24 +269,26 @@ namespace ERPAPI.Controllers
                     claims.Add(new Claim(ClaimTypes.Name, usuario.UserName));
                     //claims.Add(new Claim("Branch",usuario.BranchId.ToString()));
 
-                    JwtSecurityToken token = await BuildToken(claims);
 
-                    Int32? cambiopassworddias = (Int32?)_context.ElementoConfiguracion.Where(q => q.Id == 20).Select(q => q.Valordecimal).FirstOrDefault();
+                    ///////////////////////Paraetro cambio de contraseña////////////////
+                    Int32? cambiopassworddias = (Int32?)_context.ElementoConfiguracion.Where(q => q.Id == 20 && q.IdEstado == 1).Select(q => q.Valordecimal).FirstOrDefault();
                     if (cambiopassworddias == null)
                     {
-                        cambiopassworddias = 0;
+                        cambiopassworddias = 30;
                     }
 
-                    UserToken userToken = new UserToken()
-                           {
-                               Token = new JwtSecurityTokenHandler().WriteToken(token),
-                               Expiration = token.ValidTo,
-                              // BranchId = Convert.ToInt32(usuario.BranchId),
-                               IsEnabled = usuario.IsEnabled,
-                               LastPasswordChangedDate = usuario.LastPasswordChangedDate,
-                               Passworddias = cambiopassworddias.Value
+                    JwtSecurityToken token =  BuildToken(claims);
 
-                           };
+                    UserToken userToken = new UserToken()
+                    {
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        Expiration = token.ValidTo,
+                        // BranchId = Convert.ToInt32(usuario.BranchId),
+                        IsEnabled = usuario.IsEnabled,
+                        LastPasswordChangedDate = usuario.LastPasswordChangedDate,
+                        Passworddias = cambiopassworddias.Value
+
+                    };
 
                     return await Task.Run(()=>userToken);
                 }
@@ -302,7 +310,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        private async Task<JwtSecurityToken> BuildToken(List<Claim> claims)
+        private JwtSecurityToken BuildToken(List<Claim> claims)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -317,6 +325,25 @@ namespace ERPAPI.Controllers
                );
 
             return token;
+        }
+
+        private  void SetParametrosSeguridad() {
+            var intentosmaximos = _context.ElementoConfiguracion.Where(w => w.Id == 15 && w.IdEstado == 1).FirstOrDefault().Valordecimal;
+            if (intentosmaximos != null)
+            {
+                _signInManager.Options.Lockout.MaxFailedAccessAttempts = Convert.ToInt32(intentosmaximos);
+
+            }
+            ///////////////////Longitud Maxima Contraseña
+            var longitudmaxpassword = _context.ElementoConfiguracion.Where(w => w.Id == 21 && w.IdEstado == 1).FirstOrDefault().Valordecimal;
+
+            if (longitudmaxpassword !=null)
+            {
+                _userManager.Options.Password.RequiredLength = Convert.ToInt32(longitudmaxpassword);
+            }
+
+            
+
         }
 
 
