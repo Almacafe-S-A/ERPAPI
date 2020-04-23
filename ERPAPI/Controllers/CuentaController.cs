@@ -305,7 +305,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Ocurrio un error: {ex.Message}");
+                return BadRequest($"Server Error");
             }
 
         }
@@ -328,18 +328,18 @@ namespace ERPAPI.Controllers
         }
 
         private  void SetParametrosSeguridad() {
-            var intentosmaximos = _context.ElementoConfiguracion.Where(w => w.Id == 15 && w.IdEstado == 1).FirstOrDefault().Valordecimal;
+            var intentosmaximos = _context.ElementoConfiguracion.Where(w => w.Id == 15 && w.IdEstado == 1).FirstOrDefault();
             if (intentosmaximos != null)
             {
-                _signInManager.Options.Lockout.MaxFailedAccessAttempts = Convert.ToInt32(intentosmaximos);
+                _signInManager.Options.Lockout.MaxFailedAccessAttempts = Convert.ToInt32(intentosmaximos.Valordecimal);
 
             }
             ///////////////////Longitud Maxima Contraseña
-            var longitudmaxpassword = _context.ElementoConfiguracion.Where(w => w.Id == 21 && w.IdEstado == 1).FirstOrDefault().Valordecimal;
+            var longitudmaxpassword = _context.ElementoConfiguracion.Where(w => w.Id == 21 && w.IdEstado == 1).FirstOrDefault();
 
             if (longitudmaxpassword !=null)
             {
-                _userManager.Options.Password.RequiredLength = Convert.ToInt32(longitudmaxpassword);
+                _userManager.Options.Password.RequiredLength = Convert.ToInt32(longitudmaxpassword.Valordecimal);
             }
 
             
