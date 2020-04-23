@@ -114,11 +114,11 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<Alert>> Insert([FromBody]Alert _Alert)
         {
             Alert _Alertq = new Alert();
-            _Alertq.CloseDate = null;
+            _Alert.CloseDate = null;
             int idcliente = 0;
             try
             {
-                idcliente = Convert.ToInt32(_Alertq.DescriptionAlert);
+                idcliente = Convert.ToInt32(_Alert.DescriptionAlert);
             }
             catch (Exception)
             {
@@ -128,8 +128,8 @@ namespace ERPAPI.Controllers
             if (idcliente !=0)
             {
                 var customer = _context.Customer.Where(c => c.CustomerId == idcliente).FirstOrDefault();
-                _Alertq.NivelRiesgoCliente = customer.NivelSeveridad;
-                _Alertq.DescriptionAlert = "Cliente: " + customer.CustomerName; 
+                _Alert.NivelRiesgoCliente = customer.NivelSeveridad;
+                _Alert.DescriptionAlert = "Cliente: " + customer.CustomerName; 
             }
             try
             {
@@ -138,7 +138,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         
-                        _context.Alert.Add(_Alertq);
+                        _context.Alert.Add(_Alert);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -175,7 +175,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Alertq));
+            return await Task.Run(() => Ok(_Alert));
         }
 
         /// <summary>
