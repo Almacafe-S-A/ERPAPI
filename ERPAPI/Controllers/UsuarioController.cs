@@ -274,7 +274,7 @@ namespace ERPAPI.Controllers
         /// <param name="_usuario"></param>
         /// <returns></returns>
         [HttpPut("PutUsuario")]
-        public async Task<ActionResult<ApplicationUser>> PutUsuario([FromBody]ApplicationUserDTO _usuario)
+        public async Task<ActionResult<ApplicationUser>> PutUsuario([FromBody]ApplicationUser _usuario)
         {
             try
             {
@@ -288,9 +288,14 @@ namespace ERPAPI.Controllers
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
                 _usuario.FechaModificacion = DateTime.Now;
 
+                if (_usuario.LockoutEnd == null)
+                {
+                    _usuario.LockoutEnd = ApplicationUserq.LockoutEnd;
+                }
+
                 string password = "";
 
-                if (_usuario.cambiarpassword) { password= _usuario.PasswordHash; _usuario.LastPasswordChangedDate = new DateTime();  }
+                if (_usuario.PasswordHash!=null) { password= _usuario.PasswordHash; _usuario.LastPasswordChangedDate = new DateTime();  }
                 else
                 {
                     _usuario.PasswordHash = ApplicationUserq.PasswordHash;
@@ -307,7 +312,7 @@ namespace ERPAPI.Controllers
                 await _context.SaveChangesAsync();
 
                 //await _userManager.UpdateAsync(_usuario);
-                if (_usuario.cambiarpassword)
+                if (_usuario.PasswordHash != null)
                 {
                     var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
                     var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
@@ -315,10 +320,31 @@ namespace ERPAPI.Controllers
                     var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
                     if (!resultadadd.Succeeded)
                     {
-                        string errores = "";
+                        string errores = "La Contraseña ";
                         foreach (var item in resultadadd.Errors)
                         {
-                            errores += item.Description;
+                            switch (item.Code)
+                            {
+                                case ("PasswordTooShort"):
+                                    errores += "es muy corta, ";
+                                    break;
+                                case ("PasswordRequiresUniqueChars"):
+                                    errores += "requiere caracteres unicos, ";
+                                    break;
+                                case ("PasswordRequiresNonAlphanumeric"):
+                                    errores += "requiere caracteres alfanumericos, ";
+                                    break;
+                                case ("PasswordRequiresDigit"):
+                                    errores += "requiere caracteres numeros, ";
+                                    break;
+                                case ("PasswordRequiresLower"):
+                                    errores += "requiere minúsculas, ";
+                                    break;
+                                case ("PasswordRequiresUpper"):
+                                    errores += "requiere mayúsculas, ";
+                                    break;
+
+                            }
                         }
                         return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
@@ -369,10 +395,31 @@ namespace ERPAPI.Controllers
                         _cambio.PasswordAnterior, _cambio.Password);
                     if (!resultCambio.Succeeded)
                     {
-                        string errores = "";
+                        string errores = "La Contraseña ";
                         foreach (var item in resultCambio.Errors)
                         {
-                            errores += item.Description;
+                            switch (item.Code)
+                            {
+                                case ("PasswordTooShort"):
+                                    errores += "es muy corta, ";
+                                    break;
+                                case ("PasswordRequiresUniqueChars"):
+                                    errores += "requiere caracteres unicos, ";
+                                    break;
+                                case ("PasswordRequiresNonAlphanumeric"):
+                                    errores += "requiere caracteres alfanumericos, ";
+                                    break;
+                                case ("PasswordRequiresDigit"):
+                                    errores += "requiere caracteres numeros, ";
+                                    break;
+                                case ("PasswordRequiresLower"):
+                                    errores += "requiere minúsculas, ";
+                                    break;
+                                case ("PasswordRequiresUpper"):
+                                    errores += "requiere mayúsculas, ";
+                                    break;
+
+                            }
                         }
                         return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
