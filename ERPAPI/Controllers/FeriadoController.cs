@@ -58,6 +58,33 @@ namespace ERPAPI.Controllers
             }
         }
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult> Delete(Feriado feriado)
+        {
+            try
+            {
+                var vferiado = context.Feriados.Where(q => q.Id == feriado.Id).FirstOrDefault();
+                if (vferiado!=null)
+                {
+                    context.Feriados.Remove(vferiado);
+                    await context.SaveChangesAsync();
+                    return Ok(feriado);
+                }
+                else
+                {
+                    return BadRequest("No se encontro el Feriado");
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al guardar el registro del feriado");
+                return BadRequest(ex);
+            }
+        }
+
+
         [HttpGet("[action]")]
         public async Task<ActionResult> GetFeriados()
         {
@@ -102,5 +129,8 @@ namespace ERPAPI.Controllers
                 return BadRequest(ex);
             }
         }
+
+
+
     }
 }
