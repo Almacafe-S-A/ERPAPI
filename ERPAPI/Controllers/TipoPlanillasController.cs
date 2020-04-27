@@ -241,6 +241,13 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
                         transaction.Commit();
                     }
+                    catch (DbUpdateException ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError(ex.ToString());
+                        //throw ex;
+                        return BadRequest("El registro esta siendo utilizado");
+                    }
                     catch (Exception ex)
                     {
                         transaction.Rollback();
