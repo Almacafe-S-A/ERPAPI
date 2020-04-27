@@ -6,16 +6,16 @@ namespace ERPAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_Country_Name",
-                table: "Country");
+            //migrationBuilder.DropIndex(
+            //    name: "IX_Country_Name",
+            //    table: "Country");
 
-            migrationBuilder.AlterColumn<string>(
-                name: "Name",
-                table: "Country",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldNullable: true);
+            //migrationBuilder.AlterColumn<string>(
+            //    name: "Name",
+            //    table: "Country",
+            //    nullable: true,
+            //    oldClrType: typeof(string),
+            //    oldNullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
