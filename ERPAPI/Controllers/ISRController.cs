@@ -40,6 +40,15 @@ namespace ERPAPI.Controllers
                         if (configuracion.Id == 0)
                         {
                             _context.ISRConfiguracion.Add(configuracion);
+
+                            ISR rango = _context.ISRConfiguracion.Where(w => w.De <= configuracion.De && w.Hasta >= configuracion.De).FirstOrDefault();
+                             rango = _context.ISRConfiguracion.Where(w => w.De <= configuracion.Hasta && w.Hasta >= configuracion.Hasta).FirstOrDefault();
+                            if (rango!=null)
+                            {
+                                return BadRequest("Rango debe ser unico");
+                            }
+
+
                             await _context.SaveChangesAsync();
                             BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                                                                                {
@@ -61,6 +70,12 @@ namespace ERPAPI.Controllers
                         }
                         else
                         {
+                            ISR rango = _context.ISRConfiguracion.Where(w => w.De <= configuracion.De && w.Hasta >= configuracion.De).FirstOrDefault();
+                            rango = _context.ISRConfiguracion.Where(w => w.De <= configuracion.Hasta && w.Hasta >= configuracion.Hasta).FirstOrDefault();
+                            if (rango != null&&rango.Id!=configuracion.Id)
+                            {
+                                return BadRequest("Rango debe ser unico");
+                            }
                             var configuracionActual = await _context.ISRConfiguracion.Where(c => c.Id == configuracion.Id)
                                 .FirstOrDefaultAsync();
                             _context.Entry(configuracionActual).CurrentValues.SetValues(configuracion);
