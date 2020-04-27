@@ -917,7 +917,7 @@ namespace ERPAPI.Controllers
                                 deduccion = new DeduccionEmpleado()
                                             {
                                                 CantidadCuotas = 12,
-                                                DeductionId = 1,
+                                                DeductionId = 2,
                                                 EmpleadoId = empleado.IdEmpleado,
                                                 EstadoId = 1,
                                                 Monto = (float) datosISR[0],
@@ -1045,6 +1045,235 @@ namespace ERPAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex,$"Error al cargar los pagos del ISR, para el periodo {periodo} y mes {mes}");
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpGet("[action]/{periodo}/{mes}")]
+        public async Task<ActionResult> CalcularRAPGeneral(int periodo, int mes)
+        {
+            try
+            {
+                using (var transaccion = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var usuario = await _context.Users.Where(w => w.UserName == User.Identity.Name.ToString()).FirstOrDefaultAsync();
+                        int diaFin = 31;
+                        if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+                        {
+                            diaFin = 30;
+                        }
+                        else if (mes == 2 && periodo % 4 == 0)
+                        {
+                            diaFin = 29;
+                        }
+                        else if (mes == 2)
+                        {
+                            diaFin = 28;
+                        }
+
+                        var empleados = await _context.Employees.ToListAsync();
+                        var estadoActivo = await _context.Estados.FirstOrDefaultAsync(e => e.IdEstado == 1);
+                        foreach (var empleado in empleados)
+                        {
+                            var datosISR = await CalcularISR(empleado.IdEmpleado, periodo, mes);
+
+                            var deduccion = await _context.DeduccionesEmpleados
+                                .Where(r => r.DeductionId == 1 && r.EmpleadoId == empleado.IdEmpleado
+                                            && r.VigenciaInicio >= new DateTime(periodo, mes, 1)
+                                            && r.VigenciaFinaliza <= new DateTime(mes == 12 ? (periodo + 1) : periodo,
+                                                mes == 12 ? 1 : (mes + 1), 1)).FirstOrDefaultAsync();
+
+                            if (deduccion == null)
+                            {
+                                deduccion = new DeduccionEmpleado()
+                                {
+                                    CantidadCuotas = 1,
+                                    DeductionId = 1,
+                                    EmpleadoId = empleado.IdEmpleado,
+                                    EstadoId = 1,
+                                    Monto = (float)datosISR[0],
+                                    FechaCreacion = DateTime.Today,
+                                    FechaModificacion = DateTime.Today,
+                                    UsuarioCreacion = usuario.UserName,
+                                    UsuarioModificacion = usuario.UserName,
+                                    VigenciaInicio = new DateTime(periodo, mes, 1),
+                                    VigenciaFinaliza = new DateTime(periodo, mes, diaFin)
+                                };
+                                await _context.DeduccionesEmpleados.AddAsync(deduccion);
+                            }
+                            else
+                            {
+                                deduccion.Monto = (float)datosISR[0];
+                                deduccion.UsuarioModificacion = usuario.UserName;
+                                deduccion.FechaModificacion = DateTime.Today;
+                            }
+
+                            var pagoISR =
+                                await _context.PagosISR.FirstOrDefaultAsync(
+                                    p => p.Periodo == periodo && p.EmpleadoId == empleado.IdEmpleado && p.EstadoId == 1);
+                            if (pagoISR == null)
+                            {
+                                pagoISR = new PagoISR()
+                                {
+                                    EmpleadoId = empleado.IdEmpleado,
+                                    EstadoId = 1,
+                                    Periodo = periodo,
+                                    PagoAcumulado = 0,
+                                    TotalAnual = (double)datosISR[1],
+                                    Saldo = (double)datosISR[1],
+                                    UsuarioCreacion = usuario.UserName,
+                                    UsuarioModificacion = usuario.UserName,
+                                    FechaCreacion = DateTime.Today,
+                                    FechaModificacion = DateTime.Today
+                                };
+                                await _context.PagosISR.AddAsync(pagoISR);
+
+                            }
+                            else
+                            {
+
+                                pagoISR.TotalAnual = (double)datosISR[1];
+                                if (pagoISR.TotalAnual < pagoISR.PagoAcumulado)
+                                {
+                                    pagoISR.TotalAnual = pagoISR.PagoAcumulado;
+                                }
+
+                                pagoISR.Saldo = pagoISR.TotalAnual - pagoISR.PagoAcumulado;
+                                pagoISR.UsuarioModificacion = usuario.UserName;
+
+                            }
+                            await _context.SaveChangesAsync();
+                        }
+                        transaccion.Commit();
+                        return Ok();
+                    }
+                    catch (Exception)
+                    {
+                        transaccion.Rollback();
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular el ISR a nivel general para el periodo " + periodo);
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]/{periodo}/{mes}")]
+        public async Task<ActionResult> CalcularIHSSGeneral(int periodo, int mes)
+        {
+            try
+            {
+                using (var transaccion = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var usuario = await _context.Users.Where(w => w.UserName == User.Identity.Name.ToString()).FirstOrDefaultAsync();
+                        int diaFin = 31;
+                        if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+                        {
+                            diaFin = 30;
+                        }
+                        else if (mes == 2 && periodo % 4 == 0)
+                        {
+                            diaFin = 29;
+                        }
+                        else if (mes == 2)
+                        {
+                            diaFin = 28;
+                        }
+
+                        var empleados = await _context.Employees.ToListAsync();
+                        var estadoActivo = await _context.Estados.FirstOrDefaultAsync(e => e.IdEstado == 1);
+                        foreach (var empleado in empleados)
+                        {
+                            var datosISR = await CalcularISR(empleado.IdEmpleado, periodo, mes);
+
+                            var deduccion = await _context.DeduccionesEmpleados
+                                .Where(r => r.DeductionId == 1 && r.EmpleadoId == empleado.IdEmpleado
+                                            && r.VigenciaInicio >= new DateTime(periodo, mes, 1)
+                                            && r.VigenciaFinaliza <= new DateTime(mes == 12 ? (periodo + 1) : periodo,
+                                                mes == 12 ? 1 : (mes + 1), 1)).FirstOrDefaultAsync();
+
+                            if (deduccion == null)
+                            {
+                                deduccion = new DeduccionEmpleado()
+                                {
+                                    CantidadCuotas = 1,
+                                    DeductionId = 1,
+                                    EmpleadoId = empleado.IdEmpleado,
+                                    EstadoId = 1,
+                                    Monto = (float)datosISR[0],
+                                    FechaCreacion = DateTime.Today,
+                                    FechaModificacion = DateTime.Today,
+                                    UsuarioCreacion = usuario.UserName,
+                                    UsuarioModificacion = usuario.UserName,
+                                    VigenciaInicio = new DateTime(periodo, mes, 1),
+                                    VigenciaFinaliza = new DateTime(periodo, mes, diaFin)
+                                };
+                                await _context.DeduccionesEmpleados.AddAsync(deduccion);
+                            }
+                            else
+                            {
+                                deduccion.Monto = (float)datosISR[0];
+                                deduccion.UsuarioModificacion = usuario.UserName;
+                                deduccion.FechaModificacion = DateTime.Today;
+                            }
+
+                            var pagoISR =
+                                await _context.PagosISR.FirstOrDefaultAsync(
+                                    p => p.Periodo == periodo && p.EmpleadoId == empleado.IdEmpleado && p.EstadoId == 1);
+                            if (pagoISR == null)
+                            {
+                                pagoISR = new PagoISR()
+                                {
+                                    EmpleadoId = empleado.IdEmpleado,
+                                    EstadoId = 1,
+                                    Periodo = periodo,
+                                    PagoAcumulado = 0,
+                                    TotalAnual = (double)datosISR[1],
+                                    Saldo = (double)datosISR[1],
+                                    UsuarioCreacion = usuario.UserName,
+                                    UsuarioModificacion = usuario.UserName,
+                                    FechaCreacion = DateTime.Today,
+                                    FechaModificacion = DateTime.Today
+                                };
+                                await _context.PagosISR.AddAsync(pagoISR);
+
+                            }
+                            else
+                            {
+
+                                pagoISR.TotalAnual = (double)datosISR[1];
+                                if (pagoISR.TotalAnual < pagoISR.PagoAcumulado)
+                                {
+                                    pagoISR.TotalAnual = pagoISR.PagoAcumulado;
+                                }
+
+                                pagoISR.Saldo = pagoISR.TotalAnual - pagoISR.PagoAcumulado;
+                                pagoISR.UsuarioModificacion = usuario.UserName;
+
+                            }
+                            await _context.SaveChangesAsync();
+                        }
+                        transaccion.Commit();
+                        return Ok();
+                    }
+                    catch (Exception)
+                    {
+                        transaccion.Rollback();
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al calcular el ISR a nivel general para el periodo " + periodo);
                 return BadRequest(ex.Message);
             }
         }
