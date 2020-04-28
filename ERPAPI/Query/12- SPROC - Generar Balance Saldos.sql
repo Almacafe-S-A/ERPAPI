@@ -1,10 +1,12 @@
-USE [ERP-PROD]
+USE [ERP]
 GO
-/****** Object:  StoredProcedure [dbo].[BalanceDeSaldos]    Script Date: 20/03/2020 15:27:18 ******/
+/****** Object:  StoredProcedure [dbo].[BalanceDeSaldos]    Script Date: 28/04/2020 17:21:10 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 ALTER   PROCEDURE [dbo].[BalanceDeSaldos]
     @MES INT,
@@ -88,11 +90,12 @@ BEGIN
 	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2015);
 	--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2170);
 	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5471);
-	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5472); 
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5472);
 	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5473);
 	---------------------
-	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,2655); 
-	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,2162);
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2655); 
+	---INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,2162); 
+	INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2016); 
 
 
 	IF @CENTROCOSTO = 0 
@@ -474,7 +477,7 @@ BEGIN
 	WHERE ParentAccountId IS NULL;
 
 	SELECT B.AccountId, B.AccountCode, B.AccountName, B.ParentAccountId, B.DeudoraAcreedora, B.Estado, B.Totaliza, Round(B.SaldoPrevAnio,2) SaldoPrevAnio, 
-	Round(B.SaldoPrev,2) SaldoPrev, Round(B.Debe,2) Debe, Round(B.Haber,2) Haber, Round(B.SaldoFinal,2) SaldoFinal
+	Round(B.SaldoPrev,2) SaldoPrev, Round(B.Debe,2) Debe, Round(B.Haber,2) Haber, Round(B.SaldoFinal,2) SaldoFinal,B.HierarchyAccount
 	FROM #BalanceSaldo B	
 	WHERE B.HierarchyAccount <= @NIVEL
 	ORDER BY B.AccountCode
