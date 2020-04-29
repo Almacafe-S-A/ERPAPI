@@ -183,7 +183,7 @@ namespace ERPAPI.Controllers
                         DocType = "JournalEntry",
                         ClaseInicial =
                           Newtonsoft.Json.JsonConvert.SerializeObject(check, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                        Accion = "Anular",
+                        Accion = "Insertar Asiento",
                         FechaCreacion = DateTime.Now,
                         FechaModificacion = DateTime.Now,
                         UsuarioCreacion = check.UsuarioCreacion,
@@ -469,9 +469,14 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
-                    JournalEntry jecheque = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
+                    JournalEntry jecheque = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 ).FirstOrDefaultAsync();
+                    if (jecheque==null)
+                    {
+                        await _context.SaveChangesAsync();
+                        return await Task.Run(() => Ok(_CheckAccountLinesq));
+                    }
                     jecheck.EstadoId = 8;
-                    jecheck.EstadoName = "Anulado Cerrado";
+                    jecheck.EstadoName = "Anulado";
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                     {
                         IdOperacion = jecheck.JournalEntryId,
