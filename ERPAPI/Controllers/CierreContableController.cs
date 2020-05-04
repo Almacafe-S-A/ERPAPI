@@ -178,7 +178,7 @@ namespace ERPAPI.Controllers
                     _context.BitacoraCierreProceso.Add(procesoGarantiasVenc);
                     _context.BitacoraCierreProceso.Add(porcesoComprobacion);               
 
-            if (cierre.FechaCierre.Day == DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month)) ///////Se ejecuta solo si es fin de mes
+            if (cierre.FechaCierre.Day == DateTime.DaysInMonth(cierre.FechaCierre.Year, cierre.FechaCierre.Month)) ///////Se ejecuta solo si es fin de mes
                     {
                             BitacoraCierreProcesos procesoDepreciacion = new BitacoraCierreProcesos
                             {
