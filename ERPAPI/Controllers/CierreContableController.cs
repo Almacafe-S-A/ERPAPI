@@ -61,25 +61,37 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> EjecutarCierreContable([FromBody]BitacoraCierreContable pBitacoraCierre)
             {
-
-             BitacoraCierreContable cierre = await _context.BitacoraCierreContable
-                                    .Where(b => b.FechaCierre.Date == pBitacoraCierre.FechaCierre.Date).FirstOrDefaultAsync();
+            /////obtiene el ultimo cierre
+             BitacoraCierreContable cierre = await _context.BitacoraCierreContable.Where(w => w.FechaCierre.Date == pBitacoraCierre.FechaCierre.Date).OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
             ExchangeRate tasacambio = await _context.ExchangeRate
                             //.Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
                             .Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
+
+            BitacoraCierreContable ultimocierre = await _context.BitacoraCierreContable.Where(w => w.Estatus == "FINALIZADO").OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
 
             if (tasacambio == null)//Revisa la tasa de cambio actualizada
             {
                 return await Task.Run(() => BadRequest("Debe de Agregar una tasa de cambio actualizada"));
             }
 
-            if (cierre != null)               
+            if (cierre != null&&cierre.Estatus != "FINALIZADO")               
             {
-                return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
+                cierre.Estatus =  await CheckCierre(cierre);
+                await _context.SaveChangesAsync();
+                return Ok(cierre);
+
+            }
+            if (cierre != null && cierre.Estatus == "FINALIZADO")
+            {
+                return BadRequest("Ya existe un cierre para esta fecha");
+            }
+            if (ultimocierre.FechaCierre>pBitacoraCierre.FechaCierre)
+            {
+                return await Task.Run(() => BadRequest($"La fecha no puede anterior al ultimo cierre"));
             }
 
-                    ////Si no existe Ciere lo crea
-                    cierre = new BitacoraCierreContable
+            ////Si no existe Ciere lo crea
+            cierre = new BitacoraCierreContable
                     {
                         FechaCierre = pBitacoraCierre.FechaCierre.Date,
                         FechaCreacion = DateTime.Now,
@@ -215,7 +227,7 @@ namespace ERPAPI.Controllers
                             await _context.SaveChangesAsync();
 
                 await EjecucionPresupuestaria(procesoEjecucionPresupuestaria.IdProceso);
-                await DepreciacionActivosFijos(procesoDepreciacion, cierre);
+                await DepreciacionActivosFijos(procesoDepreciacion, cierre , cierre.FechaCierre);
 
             }
             else
@@ -237,8 +249,8 @@ namespace ERPAPI.Controllers
                 await ComprobacionSaldosCatalogo(porcesoComprobacion.IdProceso);
                 // POLIZAS VENCIDAS 
                 await Historicos(cierre.Id, procesohistoricos.IdProceso); ////HISTORICOS
-                //await ValidarPasos(cierre);
-                cierre.Estatus = "FINALIZADO";
+                
+                cierre.Estatus = await ValidarPasos(cierre);
                 //_context.Update(cierre);
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok());
@@ -519,118 +531,199 @@ namespace ERPAPI.Controllers
         }
 
 
-        private async Task DepreciacionActivosFijos(BitacoraCierreProcesos pProceso, BitacoraCierreContable pCierre)
+        private async Task DepreciacionActivosFijos(BitacoraCierreProcesos pProceso, BitacoraCierreContable pCierre, DateTime pfecha)
         {
-            var depreciaciongrupos = await _context.FixedAsset
-                .GroupBy(g => new { 
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+
+                    var depreciaciongrupos = await _context.FixedAsset
+                .GroupBy(g => new
+                {
                     g.FixedAssetGroupId,
                     g.CenterCostId,
-                    g.CenterCostName })
-                .Select(g => new {
-                    CentroCostoName = g.Key.CenterCostName, 
-                    CentroCostoID = g.Key.CenterCostId, 
-                    Grupo = g.Key.FixedAssetGroupId, 
-                    Depreciacion = g.Sum(s => s.ToDepreciate) })
+                    g.CenterCostName
+                })
+                .Select(g => new
+                {
+                    CentroCostoName = g.Key.CenterCostName,
+                    CentroCostoID = g.Key.CenterCostId,
+                    Grupo = g.Key.FixedAssetGroupId,
+                    Depreciacion = g.Sum(s => s.ToDepreciate)
+                })
                 .ToListAsync();
 
-            var activos = await _context.FixedAsset.ToListAsync();
+                    var activos = await _context.FixedAsset.Where(p => p.ResidualValue > 0 && p.IdEstado != 51).ToListAsync();
 
 
 
-            if (depreciaciongrupos.Count>0)
-            {
-                //////////DEPRECIACION /////////////////
-                foreach (var item in activos)
-                {
-                    item.AccumulatedDepreciation += item.ToDepreciate;
-                    item.NetValue -= item.ToDepreciate;
-
-                    _context.DepreciationFixedAsset.Add(new DepreciationFixedAsset {
-                        FixedAssetId = item.FixedAssetId,
-                        Year = DateTime.Now.Year,
-                        January = DateTime.Now.ToString("MMMM") == "January" ? item.ToDepreciate : 0,
-                        February = DateTime.Now.ToString("MMMM") == "February" ? item.ToDepreciate : 0,
-                        March = DateTime.Now.ToString("MMMM") == "March" ? item.ToDepreciate : 0,
-                        April = DateTime.Now.ToString("MMMM") == "April" ? item.ToDepreciate : 0,
-                        May = DateTime.Now.ToString("MMMM") == "May" ? item.ToDepreciate : 0,
-                        June = DateTime.Now.ToString("MMMM") == "June" ? item.ToDepreciate : 0,
-                        July = DateTime.Now.ToString("MMMM") == "July" ? item.ToDepreciate : 0,
-                        August = DateTime.Now.ToString("MMMM") == "August" ? item.ToDepreciate : 0,
-                        September = DateTime.Now.ToString("MMMM") == "September" ? item.ToDepreciate : 0,
-                        October = DateTime.Now.ToString("MMMM") == "October" ? item.ToDepreciate : 0,
-                        November = DateTime.Now.ToString("MMMM") == "November" ? item.ToDepreciate : 0,
-                        December = DateTime.Now.ToString("MMMM") == "December" ? item.ToDepreciate : 0,
-                        FechaCreacion = DateTime.Now,
-                        FechaModificacion = DateTime.Now,
-                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                    });
-                }
-
-                //////////////////ASIENTO CONTABLE//////////////////////////
-                
-                foreach (var item in depreciaciongrupos)
-                {
-                    FixedAssetGroup grupo = await _context.FixedAssetGroup.Where(w => w.FixedAssetGroupId == item.Grupo).FirstOrDefaultAsync();
-
-                    if (grupo.DepreciationAccountingId == null || grupo.FixedAssetAccountingId == null)
+                    if (depreciaciongrupos.Count > 0)
                     {
-                        pProceso.Mensaje = "Los grupos de activos deben de tener las cuentas contables asignadas";
-                        pProceso.Estatus = "FINALIZADO";
-                        return ;
+                        //////////DEPRECIACION /////////////////
+                        foreach (var item in activos)
+                        {
+                            var adepreciar = item.ToDepreciate;
+                            if (adepreciar > item.ResidualValue)
+                            {
+                                adepreciar = item.ResidualValue;
+                            }
+                            if (item.ResidualValue - adepreciar <= 0 )
+                            {
+                                item.IdEstado = 51;
+                                item.Estado = "Depreciado";
+                            }
+                            else
+                            {
+                                item.IdEstado =  47;
+                                item.Estado = "Depreciandose";
+                            }
+
+                            item.AccumulatedDepreciation += item.ToDepreciate;
+                            item.NetValue -= item.ToDepreciate;
+                            var depreciacion = _context.DepreciationFixedAsset.Where(q => q.FixedAssetId == item.FixedAssetId && q.Year == pfecha.Year).FirstOrDefault();
+                            if (depreciacion != null)
+                            {
+                                depreciacion.FixedAssetId = item.FixedAssetId;
+                                depreciacion.Year = pfecha.Year;
+                                var mes = pfecha.ToString("MMMM");
+                                depreciacion.January = pfecha.ToString("MMMM") == "January" ? adepreciar : depreciacion.January;
+                                depreciacion.February = pfecha.ToString("MMMM") == "February" ? adepreciar : depreciacion.February;
+                                depreciacion.March = pfecha.ToString("MMMM") == "March" ? adepreciar : depreciacion.March;
+                                depreciacion.April = pfecha.ToString("MMMM") == "April" ? adepreciar : depreciacion.April;
+                                depreciacion.May = pfecha.ToString("MMMM") == "May" ? adepreciar : depreciacion.May;
+                                depreciacion.June = pfecha.ToString("MMMM") == "June" ? adepreciar : depreciacion.June;
+                                depreciacion.July = pfecha.ToString("MMMM") == "July" ? adepreciar : depreciacion.July;
+                                depreciacion.August = pfecha.ToString("MMMM") == "August" ? adepreciar : depreciacion.August;
+                                depreciacion.September = pfecha.ToString("MMMM") == "September" ? adepreciar : depreciacion.September;
+                                depreciacion.October = pfecha.ToString("MMMM") == "October" ? adepreciar : depreciacion.October;
+                                depreciacion.November = pfecha.ToString("MMMM") == "November" ? adepreciar : depreciacion.November;
+                                depreciacion.December = pfecha.ToString("MMMM") == "December" ? adepreciar : depreciacion.December;
+                                depreciacion.FechaCreacion = DateTime.Now;
+                                depreciacion.FechaModificacion = DateTime.Now;
+                                depreciacion.UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString();
+                                depreciacion.UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString();
+                            }
+                            else
+                            {
+                                _context.DepreciationFixedAsset.Add(new DepreciationFixedAsset
+                                {
+                                    FixedAssetId = item.FixedAssetId,
+                                    Year = pfecha.Year,
+                                    January = pfecha.ToString("MMMM") == "January" ? adepreciar : 0,
+                                    February = pfecha.ToString("MMMM") == "February" ? adepreciar : 0,
+                                    March = pfecha.ToString("MMMM") == "March" ? adepreciar : 0,
+                                    April = pfecha.ToString("MMMM") == "April" ? adepreciar : 0,
+                                    May = pfecha.ToString("MMMM") == "May" ? adepreciar : 0,
+                                    June = pfecha.ToString("MMMM") == "June" ? adepreciar : 0,
+                                    July = pfecha.ToString("MMMM") == "July" ? adepreciar : 0,
+                                    August = pfecha.ToString("MMMM") == "August" ? adepreciar : 0,
+                                    September = pfecha.ToString("MMMM") == "September" ? adepreciar : 0,
+                                    October = pfecha.ToString("MMMM") == "October" ? adepreciar : 0,
+                                    November = pfecha.ToString("MMMM") == "November" ? adepreciar : 0,
+                                    December = pfecha.ToString("MMMM") == "December" ? adepreciar : 0,
+                                    FechaCreacion = DateTime.Now,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                });
+                            }
+
+
+                            //////////////////ASIENTO CONTABLE//////////////////////////
+
+                            FixedAssetGroup grupoactivo = await _context.FixedAssetGroup.Where(q => q.FixedAssetGroupId == item.FixedAssetGroupId).FirstOrDefaultAsync();
+                            if (grupoactivo == null)
+                            {
+                                pProceso.Mensaje = $"No se encontraron grupos de Activos para el activo {item.FixedAssetId} - {item.FixedAssetDescription}";
+                                pProceso.Estatus = "PENDIENTE - ERROR";
+
+                            }
+                            Accounting cuentaDepreciacion = await _context.Accounting.Where(w => w.AccountId == grupoactivo.DepreciationAccountingId).FirstOrDefaultAsync();
+                            if (cuentaDepreciacion == null)
+                            {
+                                pProceso.Mensaje = $"No se encontro la cuenta de Depreciacion para el grupo -{grupoactivo.FixedAssetGroupDescription}";
+                                pProceso.Estatus = "PENDIENTE - ERROR";
+
+                            }
+                            Accounting cuentaActivo = await _context.Accounting.Where(w => w.AccountId == grupoactivo.FixedAssetAccountingId).FirstOrDefaultAsync();
+                            if (cuentaActivo == null)
+                            {
+                                pProceso.Mensaje = $"No se encontro la cuenta de Activo para el grupo -{grupoactivo.FixedAssetGroupDescription}";
+                                pProceso.Estatus = "PENDIENTE - ERROR";
+
+                            }
+
+                            JournalEntry _je = new JournalEntry
+                            {
+                                Date = DateTime.Now,
+                                Memo = "Depreciacion de Activo " + item.FixedAssetDescription,
+                                DatePosted = pfecha,
+                                ModifiedDate = DateTime.Now,
+                                CreatedDate = DateTime.Now,
+                                ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                                CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                                DocumentId = item.FixedAssetId,
+                                VoucherType = 21,
+                                TypeJournalName = "Depreciacion",
+                                EstadoId = 5,
+                                EstadoName = "Aprobado Sistema",
+                                TypeOfAdjustmentId = 65,
+                                //VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),                      
+
+                            };
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                JournalEntryId = _je.JournalEntryId,
+                                AccountId = Convert.ToInt32(cuentaDepreciacion.AccountId),
+                                AccountName = cuentaDepreciacion.AccountName,
+                                Debit = adepreciar,
+                                DebitME = adepreciar,
+                                CostCenterId = item.CenterCostId,
+                                CostCenterName = item.CenterCostName,
+                                CreatedUser = "SYSTEM",
+                                CreatedDate = DateTime.Now,
+                            });
+
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                JournalEntryId = _je.JournalEntryId,
+                                AccountId = Convert.ToInt32(cuentaActivo.AccountId),
+                                AccountName = cuentaActivo.AccountName,
+                                Credit = adepreciar,
+                                CreditME = adepreciar,
+                                CostCenterId = item.CenterCostId,
+                                CostCenterName = item.CenterCostName,
+                                CreatedUser = "SYSTEM",
+                                CreatedDate = DateTime.Now,
+                            });
+                            _context.JournalEntry.Add(_je);
+
+
+
+                        }
+
+
                     }
-                    Accounting cuentaDepreciacion = await _context.Accounting.Where(w => w.AccountId == grupo.DepreciationAccountingId).FirstOrDefaultAsync();
-                    Accounting cuentaActivo = await _context.Accounting.Where(w => w.AccountId == grupo.FixedAssetAccountingId).FirstOrDefaultAsync();
-
-
-                    JournalEntry _je = new JournalEntry
+                    else
                     {
-                        Date = DateTime.Now,
-                        Memo = "Depreciacion de Activos",
-                        DatePosted = DateTime.Now,
-                        ModifiedDate = DateTime.Now,
-                        CreatedDate = DateTime.Now,
-                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        //DocumentId = pProceso3.IdProceso,
-                        TypeOfAdjustmentId = 65,
-                        //VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),                      
+                        pProceso.Mensaje = "No se encontraron grupos de Activos";
+                        pProceso.Estatus = "FINALIZADO";
+                        return;
 
-                    };                    
-                    _je.JournalEntryLines.Add(new JournalEntryLine {
-                           JournalEntryId = _je.JournalEntryId,
-                           AccountId = Convert.ToInt32(cuentaDepreciacion.AccountId),
-                           AccountName = cuentaDepreciacion.AccountName,
-                           Debit = item.Depreciacion,
-                           DebitME = item.Depreciacion,
-                           CostCenterId = item.CentroCostoID,
-                           CostCenterName = item.CentroCostoName,
-                           CreatedUser = "SYSTEM",
-                           CreatedDate = DateTime.Now,
-                    });
+                    }
+                    pProceso.Estatus = "FINALIZADO";
+                    pProceso.Mensaje = "";
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
 
-                    _je.JournalEntryLines.Add(new JournalEntryLine
-                    {
-                        JournalEntryId = _je.JournalEntryId,
-                        AccountId = Convert.ToInt32(cuentaActivo.AccountId),
-                        AccountName = cuentaActivo.AccountName,
-                        Credit = item.Depreciacion,
-                        CreditME = item.Depreciacion,
-                        CostCenterId = item.CentroCostoID,
-                        CostCenterName = item.CentroCostoName,
-                        CreatedUser = "SYSTEM",
-                        CreatedDate = DateTime.Now,
-                    });
                 }
-                pProceso.Estatus = "FINALIZADO";
-                return;
-            }
-            else
-            {
-                pProceso.Mensaje = "No se encontraron grupos de Activos";
-                pProceso.Estatus = "FINALIZADO";
-                return;
-
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    pProceso.Estatus = "ERROR";
+                    //throw;
+                }
             }
                 
             
@@ -834,7 +927,7 @@ namespace ERPAPI.Controllers
 
         }
 
-        private  async Task ValidarPasos(BitacoraCierreContable pCierre )
+        private async Task<string> ValidarPasos(BitacoraCierreContable pCierre )
         {
             List<BitacoraCierreProcesos> procesos = await _context.BitacoraCierreProceso
                            .Where(b => b.IdBitacoraCierre == pCierre.Id)
@@ -853,51 +946,56 @@ namespace ERPAPI.Controllers
                 mensaje += "con Errores ";
                 pCierre.Mensaje = mensaje;
                 
-                return;
+                return "Finalizado con Errores";
             }
             else
             {
                 pCierre.Estatus = "FINALIZADO";                
-                return ;
+                return pCierre.Estatus;
 
             }
 
         }
 
 
-        private bool CheckCierre(BitacoraCierreContable pCierre)
+        private async Task<string> CheckCierre(BitacoraCierreContable pCierre)
         {
             List<BitacoraCierreProcesos> procesos =  _context.BitacoraCierreProceso
-                           .Where(b => b.IdBitacoraCierre == pCierre.Id)
+                           .Where(b => b.IdBitacoraCierre == pCierre.Id &&b.Estatus =="ERROR")
                            .ToList();
-            bool repetido = true;
+            
             foreach (var item in procesos) ////REVISA QUE ALGUN PASO NO TENGA ERROR EN EL CIERRE AL VOLVER A EJECUTAR
             {
-                if (item.Estatus == "ERROR" || item.Estatus == "PENDIENTE")
+                switch (item.PasoCierre)
                 {
-                    repetido = false;
-                    if (item.PasoCierre == 3)
-                    {
-                        //Paso3(item);
-                        _context.SaveChanges();
+                    case 1:
+                        await Historicos(item.IdBitacoraCierre, item.IdProceso);
                         break;
-                    }
-                    else
-                    {
-                        _context.Database.ExecuteSqlCommand("Cierres @p0", pCierre.Id); ////Ejecuta SP para ejecutar pasos con errores
+                    case 2:
+                        await VencimientoPolizas(item.IdProceso);
                         break;
-                    }
-
+                    case 3:
+                        await VencimientoGarantiasBancarias(item.IdProceso);
+                        break;
+                    case 4:
+                        await DepreciacionActivosFijos(item, pCierre, item.FechaCierre);
+                        break;
+                    case 5:
+                        await VencimientoGarantiasBancarias(item.IdProceso);
+                        break;
+                    case 6:
+                        await EjecucionPresupuestaria(item.IdProceso);
+                        break;
+                    case 7:
+                        await ComprobacionSaldosCatalogo(item.IdProceso);
+                        break;
+                    default:
+                        break;
                 }
             }
-            //if (repetido)
-            //{
-            //    return await Task.Run(() => BadRequest("Ya existe un Cierre Contable para esta Fecha"));
-
-            //}
-           // ValidarPasos(pCierre);
             _context.SaveChanges();
-            return repetido;
+            return await ValidarPasos(pCierre);
+            
            
             //return await Task.Run(() => Ok());
 
