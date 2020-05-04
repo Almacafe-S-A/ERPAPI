@@ -34,6 +34,13 @@ namespace ERPAPI.Controllers
             {
                 if (feriado.Id == 0)
                 {
+                    Feriado f =  context.Feriados
+                        .Where(q => q.Nombre == feriado.Nombre || (q.FechaInicio >= feriado.FechaInicio &&  feriado.FechaInicio<=q.FechaFin) ||
+                        (q.FechaFin >= feriado.FechaFin && feriado.FechaFin<=q.FechaFin )).FirstOrDefault();
+                    if (f != null)
+                    {
+                        return BadRequest("Ya existe un Feriado con esta configuracion");
+                    }
                     context.Feriados.Add(feriado);
                     await context.SaveChangesAsync();
                     return Ok(feriado);

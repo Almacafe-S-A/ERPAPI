@@ -34,10 +34,19 @@ namespace ERPAPI.Controllers
         {
             try
             {
+                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == biometrico.Fecha.Date).FirstOrDefault();
+                if (biometricofecha != null)
+                {
+                    return BadRequest("Ya existe una carga para esta fecha");
+                }
+
+
+
                 if (biometrico.Detalle == null)
                 {
                     throw new Exception("Archivo Biometrico sin Detalle");
                 }
+
 
                 foreach (var det in biometrico.Detalle)
                 {
@@ -52,7 +61,7 @@ namespace ERPAPI.Controllers
 
                         det.IdEmpleado = relacion.EmpleadoId;
 
-                        var inasistencia = await 
+                        var inasistencia = await
                             context.Inasistencias.FirstOrDefaultAsync(
                                 i => i.Fecha.Equals(biometrico.Fecha) && i.IdEmpleado == det.IdEmpleado);
 
@@ -74,7 +83,7 @@ namespace ERPAPI.Controllers
                 context.Entry(registroExistente).CurrentValues.SetValues(biometrico);
                 await context.SaveChangesAsync();
                 return Ok(biometrico);
-            }
+            } 
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error al guardar los registros del biometrico");
