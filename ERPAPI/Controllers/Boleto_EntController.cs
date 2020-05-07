@@ -89,6 +89,85 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+
+        [HttpGet("[action]/{customerid}/{entrada}/{completo}")]
+        public async Task<IActionResult> GetBoletasdePesoByCustomer(long customerid,bool entrada,bool completo)
+        {
+            List<Boleto_Ent> Items = new List<Boleto_Ent>();
+            Customer customer = _context.Customer.Where(q => q.CustomerId == customerid ).FirstOrDefault();
+            List<Boleto_Ent> boletas = new List<Boleto_Ent>();
+            if (customer == null || customer.CustomerRefNumber == null)
+            {
+                return BadRequest("No se Cliente");
+            }
+            try
+            {
+                   // List<Boleto_Ent> boletas = await _context.Boleto_Ent.Where(q => q.clave_C == customer.CustomerRefNumber && q.completo == completo).ToListAsync();
+                    var query = (from c in _context.Boleto_Ent.Where(q => q.clave_C == customer.CustomerRefNumber && q.completo == completo)
+                                 join d in _context.Boleto_Sal on c.clave_e equals d.clave_e
+                                 //where c.peso_e > d.peso_s
+                                 into ba
+                                 from e in ba.DefaultIfEmpty()
+                                 select new Boleto_Ent
+                                 {
+                                     clave_e = c.clave_e,
+                                     bascula_e = c.bascula_e,
+                                     clave_C = c.clave_C,
+                                     clave_o = c.clave_o,
+                                     clave_p = c.clave_p,
+                                     clave_u = c.clave_u,
+                                     fecha_e = c.fecha_e,
+                                     completo = c.completo,
+                                     hora_e = c.hora_e,
+                                     conductor = c.conductor,
+                                     nombre_oe = c.nombre_oe,
+                                     observa_e = c.observa_e,
+                                     peso_e = c.peso_e,
+                                     placas = c.placas,
+                                     turno_oe = c.turno_oe,
+                                     t_entrada = c.t_entrada,
+                                     unidad_e = c.unidad_e,
+                                     Boleto_Sal = e
+
+                                 }).AsQueryable();
+       
+                if (entrada)
+                {
+                    Items = await query
+                    .OrderByDescending(q => q.clave_e)
+                         .Include(q => q.Boleto_Sal)
+                         //.Where(q => q.peso_e > q.Boleto_Sal.peso_s)
+                                     .ToListAsync();
+                    Items = Items.Where(q => q.Boleto_Sal != null).ToList();
+                    Items = Items.Where(q => q.peso_e > q.Boleto_Sal.peso_s).ToList();
+                }
+                else
+                {
+                    Items = await query
+                    .OrderByDescending(q => q.clave_e)
+                         .Include(q => q.Boleto_Sal)
+                    //     .Where(q => q.peso_e < q.Boleto_Sal.peso_s)
+                                     .ToListAsync();
+                    Items = Items.Where(q => q.Boleto_Sal != null).ToList();
+                    Items = Items.Where(q => q.peso_e < q.Boleto_Sal.peso_s).ToList();
+                }
+                
+                
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
+
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetBoleto_EntPag(int numeroDePagina=1,int cantidadDeRegistros=3500)
         {
