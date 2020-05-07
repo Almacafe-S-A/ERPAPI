@@ -149,10 +149,11 @@ namespace ERPAPI.Controllers
                          .Include(q => q.Boleto_Sal)
                     //     .Where(q => q.peso_e < q.Boleto_Sal.peso_s)
                                      .ToListAsync();
-                    Items = Items.Where(q => q.Boleto_Sal != null).ToList();
-                    Items = Items.Where(q => q.peso_e < q.Boleto_Sal.peso_s).ToList();
+                    Items = Items.Where(q => q.Boleto_Sal != null).ToList();  //////Elimina los posibles errores por boletas de entrada que no tengan salidas
+                    Items = Items.Where(q => q.peso_e < q.Boleto_Sal.peso_s).ToList(); 
                 }
-                
+
+                Items = Items.Where(q => !_context.ControlPallets.Select(c => c.WeightBallot).Contains(q.clave_e)).ToList(); ///Filtra las Boletas de peso que no han sido utilizadas en ningun Control de salidas o ingresos
                 
             }
             catch (Exception ex)
