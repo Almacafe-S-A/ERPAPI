@@ -91,11 +91,11 @@ namespace ERPAPI.Controllers
 
 
 
-        [HttpGet("[action]/{customerid}/{entrada}/{completo}")]
-        public async Task<IActionResult> GetBoletasdePesoByCustomer(long customerid,bool entrada,bool completo)
+        [HttpGet("[action]/{customerId}/{esIngreso}/{completo}")]
+        public async Task<IActionResult> GetBoletasdePesoByCustomer(long customerId,bool esIngreso,bool completo)
         {
             List<Boleto_Ent> Items = new List<Boleto_Ent>();
-            Customer customer = _context.Customer.Where(q => q.CustomerId == customerid ).FirstOrDefault();
+            Customer customer = _context.Customer.Where(q => q.CustomerId == customerId).FirstOrDefault();
             List<Boleto_Ent> boletas = new List<Boleto_Ent>();
             if (customer == null || customer.CustomerRefNumber == null)
             {
@@ -132,7 +132,7 @@ namespace ERPAPI.Controllers
 
                                  }).AsQueryable();
        
-                if (entrada)
+                if (esIngreso)
                 {
                     Items = await query
                     .OrderByDescending(q => q.clave_e)
