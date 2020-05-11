@@ -214,7 +214,7 @@ Inventarios.Recibo de Mercaderia.Agregar
 Inventarios.Recibo de Mercaderia.Editar
 Inventarios.Recibo de Mercaderia.Imprimir
 Inventarios.Recibo de Mercaderia.Imprimir Boleta
-Inventarios.Areas ocupadas en bodega
+Inventarios.Areas Ocupadas Bodega
 Inventarios.Areas Ocupadas Bodega.Agregar
 Inventarios.Areas Ocupadas Bodega.Editar
 Inventarios.Kardex
