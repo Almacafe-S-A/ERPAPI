@@ -95,6 +95,9 @@ Bancos.Cuentas Bancarias
 Bancos.Cuentas Bancarias.Agregar
 Bancos.Cuentas Bancarias.Editar
 Bancos.Cuentas Bancarias.Eliminar
+Bancos.Chequera
+Bancos.Chequera.Agregar
+Bancos.Chequera.Editar
 Bancos.Cheques
 Bancos.Cheques.Agregar
 Bancos.Cheques.Editar
