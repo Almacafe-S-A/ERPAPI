@@ -132,7 +132,7 @@ namespace ERPAPI.Controllers
             CheckAccount Items = new CheckAccount();
             try
             {
-                Items = await _context.CheckAccount.Where(q => q.CheckAccountId == CheckAccountId).FirstOrDefaultAsync();
+                Items = await _context.CheckAccount.Include(q => q.AccountManagement).Where(q => q.CheckAccountId == CheckAccountId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

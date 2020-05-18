@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200512204045_AddedJournalEntryToCheck")]
+    partial class AddedJournalEntryToCheck
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1238,10 +1240,6 @@ namespace ERPAPI.Migrations
                     b.Property<bool?>("Impreso");
 
                     b.Property<long?>("JournalEntrId");
-
-                    b.Property<int?>("PartyId");
-
-                    b.Property<int?>("PartyTypeId");
 
                     b.Property<string>("PaytoOrderOf");
 

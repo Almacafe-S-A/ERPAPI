@@ -151,6 +151,8 @@
     <Compile Remove="Migrations\20200222080212_FusionKardexDetalleMaestro.Designer.cs" />
     <Compile Remove="Migrations\20200222080732_FusionKardexDetalleMaestro.cs" />
     <Compile Remove="Migrations\20200222080732_FusionKardexDetalleMaestro.Designer.cs" />
+    <Compile Remove="Migrations\20200518163545_AddedPartytoCheck.cs" />
+    <Compile Remove="Migrations\20200518163545_AddedPartytoCheck.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />
