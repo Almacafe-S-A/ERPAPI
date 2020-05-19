@@ -64,12 +64,5 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
     }
 
-    public class CheckAccountLinesDTO : CheckAccountLines
-    {
-        public  List<JournalEntryLine> JournalEntryLines { get; set; }
-
-        public int PartyTypeId { get; set; }
-
-
-    }
+    
 }
