@@ -65,12 +65,15 @@ namespace ERPAPI.Controllers
             CheckAccountLines Items = new CheckAccountLines();
             try
             {
-                Items = await _context.CheckAccountLines.Include( i => i.JournalEntry).Where(q => q.Id == CheckAccountLinesId).FirstOrDefaultAsync();
+                Items = await _context.CheckAccountLines
+                    .Include( i => i.JournalEntry)
+                    .Include(i => i.CheckAccount.AccountManagement)
+                    .Where(q => q.Id == CheckAccountLinesId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
 
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                _logger.LogError($"Ocurrio un error: { ex }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
@@ -90,7 +93,7 @@ namespace ERPAPI.Controllers
             List<CheckAccountLines> Items = new List<CheckAccountLines>();
             try
             {
-                Items = await _context.CheckAccountLines
+                Items = await _context.CheckAccountLines                             
                              .Where(q => q.CheckAccountId == CheckAccountId).ToListAsync();
             }
             catch (Exception ex)
@@ -112,12 +115,12 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<CheckAccountLines>> Insert([FromBody]dynamic _CheckAccountLines)
         {
-            CheckAccountLinesDTO _CheckAccountLinesq = new CheckAccountLinesDTO();
+            CheckAccountLines _CheckAccountLinesq = new CheckAccountLines();
             CheckAccountLines check = new CheckAccountLines();
             try
             {
 
-                _CheckAccountLinesq = JsonConvert.DeserializeObject<CheckAccountLinesDTO>(_CheckAccountLines.ToString());
+                _CheckAccountLinesq = JsonConvert.DeserializeObject<CheckAccountLines>(_CheckAccountLines.ToString());
 
                 List<JournalEntryLine> journalEntryLines = _CheckAccountLinesq.JournalEntry.JournalEntryLines;
 
@@ -273,42 +276,61 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Actualiza la CheckAccountLines
         /// </summary>
-        /// <param name="_CheckAccountLines"></param>
+        /// <param name="check"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<CheckAccountLines>> Update([FromBody]CheckAccountLines _CheckAccountLines)
+        public async Task<ActionResult<CheckAccountLines>> Update([FromBody]dynamic check)
         {
-            CheckAccountLines check = _CheckAccountLines;
+            CheckAccountLines _CheckAccountLines = new CheckAccountLines();
+            _CheckAccountLines = JsonConvert.DeserializeObject<CheckAccountLines>(check.ToString());
             CheckAccountLines _CheckAccountLinesq = new CheckAccountLines();
             List<JournalEntryLine> journalEntryLines = new List<JournalEntryLine>();
             JournalEntry journalEntry = new JournalEntry();
             try
             {
-                _CheckAccountLinesq = await (from c in _context.CheckAccountLines
-                                 .Where(q => q.Id == check.Id)
-                                             select c
-                                ).FirstOrDefaultAsync();
-                //journalEntryLines = _CheckAccountLines.JournalEntry.JournalEntryLines;
+                _CheckAccountLinesq = await _context.CheckAccountLines
+                    .Where(w => w.Id == _CheckAccountLines.Id).FirstOrDefaultAsync();
+
+                _context.JournalEntryLine.UpdateRange(_CheckAccountLines.JournalEntry.JournalEntryLines);
+
+                journalEntry = _context.JournalEntry.Include(j => j.JournalEntryLines).
+                    Where(q => q.JournalEntryId == _CheckAccountLinesq.JournalEntrId).FirstOrDefault();
 
 
-
-                journalEntry = _context.JournalEntry.Where(q => q.JournalEntryId == check.JournalEntry.JournalEntryId).FirstOrDefault();
                 journalEntry.PartyId = _CheckAccountLines.PartyId;
                 journalEntry.PartyName = _CheckAccountLines.PaytoOrderOf;
                 journalEntry.PartyTypeId = Convert.ToInt32(_CheckAccountLines.PartyTypeId);
+                //journalEntry.JournalEntryLines = _CheckAccountLines.JournalEntry.JournalEntryLines;
 
-                double suma = check.JournalEntry.JournalEntryLines.Sum(s => s.Debit);
+
+                
+
+                double suma = journalEntry.JournalEntryLines.Sum(s => s.Debit);
 
                 journalEntry.TotalCredit = suma;
                 journalEntry.TotalDebit = suma;
 
-                _CheckAccountLines.JournalEntry = null;
-                _CheckAccountLines.JournalEntry.JournalEntryLines = null;
-                _CheckAccountLines.IdEstado = 97;
-                _CheckAccountLines.Estado = "Pendiente Aprobacion";
+                //_CheckAccountLines.JournalEntry = null;
+                //_CheckAccountLines.JournalEntry.JournalEntryLines = null;
+                _CheckAccountLinesq.IdEstado = 97;
+                _CheckAccountLinesq.Estado = "Pendiente Aprobacion";
+                _CheckAccountLinesq.UsuarioModificacion = User.Identity.Name;
+                _CheckAccountLinesq.FechaModificacion = DateTime.Now;
+                _CheckAccountLinesq.Address = _CheckAccountLines.Address;
+                _CheckAccountLinesq.Sinopsis = _CheckAccountLines.Sinopsis;
+                _CheckAccountLinesq.PartyId = _CheckAccountLines.PartyId;
+                _CheckAccountLinesq.PartyTypeId = _CheckAccountLines.PartyTypeId;
+                _CheckAccountLinesq.Place = _CheckAccountLines.Place;
+                _CheckAccountLinesq.Ammount = _CheckAccountLines.Ammount;
+                Numalet let;
+                let = new Numalet();
+                let.SeparadorDecimalSalida = "Lempiras";
+                let.MascaraSalidaDecimal = "00/100 ";
+                let.ApocoparUnoParteEntera = true;
+                _CheckAccountLinesq.AmountWords = let.ToCustomCardinal((_CheckAccountLines.Ammount)).ToUpper();
 
 
-                _context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
+                //_context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
 
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                 {
@@ -316,7 +338,7 @@ namespace ERPAPI.Controllers
                     DocType = "Cheques",
                     ClaseInicial =
                           Newtonsoft.Json.JsonConvert.SerializeObject(_CheckAccountLinesq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                    Accion = "Actualizar",
+                    Accion = "Edivion de Cheque",
                     FechaCreacion = DateTime.Now,
                     FechaModificacion = DateTime.Now,
                     UsuarioCreacion = _CheckAccountLinesq.UsuarioCreacion,
@@ -325,7 +347,6 @@ namespace ERPAPI.Controllers
 
                 });
 
-                //_context.CheckAccountLines.Update(_CheckAccountLinesq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -345,16 +366,14 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="CheckId"></param>
         /// <returns></returns>
-        [HttpPut("[action]")]
-        public async Task<ActionResult<CheckAccountLines>> SetImpreso([FromBody]int CheckId)
+        [HttpGet("[action]/{CheckId}")]
+        public async Task<ActionResult<CheckAccountLines>> SetImpreso(int CheckId)
         {
             CheckAccountLines _CheckAccountLinesq = new CheckAccountLines();
             try
             {
-                 _CheckAccountLinesq = await (from c in _context.CheckAccountLines
-                                 .Where(q => q.Id == CheckId)
-                                             select c
-                                ).FirstOrDefaultAsync();
+                 _CheckAccountLinesq = await _context.CheckAccountLines
+                                 .Where(q => q.Id == CheckId).FirstOrDefaultAsync();
                 _CheckAccountLinesq.Impreso = true;
                 _CheckAccountLinesq.Estado = "Emitido";
                 _CheckAccountLinesq.IdEstado = 52;
