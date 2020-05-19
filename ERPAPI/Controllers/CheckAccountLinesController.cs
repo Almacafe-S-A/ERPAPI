@@ -291,7 +291,18 @@ namespace ERPAPI.Controllers
                 _CheckAccountLinesq = await _context.CheckAccountLines
                     .Where(w => w.Id == _CheckAccountLines.Id).FirstOrDefaultAsync();
 
-                _context.JournalEntryLine.UpdateRange(_CheckAccountLines.JournalEntry.JournalEntryLines);
+                foreach (var item in _CheckAccountLines.JournalEntry.JournalEntryLines)
+                {
+                    if (item.JournalEntryId == 0)
+                    {
+                        item.JournalEntryId = Convert.ToInt64(_CheckAccountLinesq.JournalEntrId ) ;
+                        _context.JournalEntryLine.Add(item);
+                    }
+                    else
+                    {
+                        _context.JournalEntryLine.Update(item);
+                    }
+                }
 
                 journalEntry = _context.JournalEntry.Include(j => j.JournalEntryLines).
                     Where(q => q.JournalEntryId == _CheckAccountLinesq.JournalEntrId).FirstOrDefault();
