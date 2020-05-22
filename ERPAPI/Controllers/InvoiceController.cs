@@ -321,7 +321,7 @@ namespace ERPAPI.Controllers
                             {
                                 transaction.Rollback();
                                //_logger.LogError($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico : {_journalentryconfiguration.JournalEntryConfigurationId}");
-                                return BadRequest($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico.");
+                                return BadRequest($"Error en la Configuración de Asiento Contable Automatico. No coinciden los creditos y debitos del asiento autogenerado");
                             }
 
                             _je.TotalCredit = sumacreditos;
