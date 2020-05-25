@@ -1,10 +1,11 @@
 
+/****** Object:  StoredProcedure [dbo].[BalanceDeSaldos2]    Script Date: 22/5/2020 08:42:50 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-create or ALTER   PROCEDURE [dbo].[BalanceDeSaldos2]
+ALTER     PROCEDURE [dbo].[BalanceDeSaldos2]
     @MES INT,
 	@ANIO INT,	
 	@NIVEL INT,
@@ -92,7 +93,8 @@ BEGIN
 
   IF  @ANIOATUAL >2018 
 	BEGIN
-		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2016); 
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2016); 
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2655); 
 		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5471);
 		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5472);
 		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5473);
@@ -100,15 +102,17 @@ BEGIN
 	ELSE
 		BEGIN
 		
-		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2656);
-		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,3270);
-		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,1748);
-		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2655); 
-		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2015);
-		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2016); 
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2656);
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,3270);
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,1748);
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2655); 
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2015);
+		--INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2018,2016); 
 		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5471);
 		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5472);
 		INSERT INTO #PartExcl (Anio, JournalEntryId) VALUES (2019,5473);
+		
+
 		---------------------
 		END
 
