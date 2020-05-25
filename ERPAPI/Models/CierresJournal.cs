@@ -100,6 +100,8 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Modificacion")]
         public DateTime ModifiedDate { get; set; }
 
+        public List<CierresJournalEntryLine>CierresJournalEntryLines { get; set; }
+
     }
 }
 

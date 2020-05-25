@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
+using System.Collections;
+using AutoMapper.Configuration.Conventions;
 
 namespace ERPAPI.Controllers
 {
@@ -85,7 +87,7 @@ namespace ERPAPI.Controllers
             {
                 return BadRequest("Ya existe un cierre para esta fecha");
             }
-            if (ultimocierre.FechaCierre>pBitacoraCierre.FechaCierre)
+            if (ultimocierre!=null&& ultimocierre.FechaCierre>pBitacoraCierre.FechaCierre)
             {
                 return await Task.Run(() => BadRequest($"La fecha no puede anterior al ultimo cierre"));
             }
@@ -311,11 +313,10 @@ namespace ERPAPI.Controllers
 
 
                 /////////Cierre Journal entries
-                ///
-                var cerradosJE = await _context.CierresJournal.Select(x => x.JournalEntryId).ToListAsync();
-                List<JournalEntry> cierreJE = await _context.JournalEntry.Where(c => !cerradosJE.Any(x => x == c.JournalEntryId )&& c.EstadoId ==6 ).ToListAsync(); ////Busca los Journal Entry a Cerrar (los no cerrados)
-                List<CierresJournal> cierreCuentas = new List<CierresJournal>();
-                foreach (var item in cierreJE)
+                //var cerradosJE = await _context.CierresJournal.Select(x => x.JournalEntryId).ToListAsync();
+                List<JournalEntry> pendientes = await _context.JournalEntry.Include(j =>j.JournalEntryLines).Where(c => c.EstadoId ==6 &&(c.Posted==false|| c.Posted == null)).ToListAsync(); ////Busca los Journal Entry a Cerrar (los no cerrados)
+                
+                foreach (var item in pendientes)
                 {
                     CierresJournal je = new CierresJournal
                     {
@@ -333,49 +334,32 @@ namespace ERPAPI.Controllers
                         CreatedDate = item.CreatedDate,
                         ModifiedDate = item.ModifiedDate,
 
-
                     };
-
-                    cierreCuentas.Add(je);
-
-                }
-
-                await _context.CierresJournal.AddRangeAsync(cierreCuentas);
-                /////////Cierre Journal entries Lineas
-                ///
-
-                List<JournalEntryLine> cierreJEL = await _context.JournalEntryLine.Where(c => cierreJE.Any(x => c.JournalEntryId == x.JournalEntryId)).ToListAsync();
-                List<CierresJournalEntryLine> cierreLineas = new List<CierresJournalEntryLine>();
-
-                foreach (var item in cierreJEL)
-                {
-                    CierresJournalEntryLine jel = new CierresJournalEntryLine
+                    je.CierresJournalEntryLines = new List<CierresJournalEntryLine>();
+                    foreach (var detalle in item.JournalEntryLines)
                     {
-                        JournalEntryId = item.JournalEntryId,
-                        JournalEntryLineId = item.JournalEntryLineId,
-                        AccountId = item.AccountId,
-                        AccountName = item.AccountName,
-                        Debit = item.Debit,
-                        Credit = item.Credit,
-                        BitacoraCierreContableId = proceso.IdBitacoraCierre,
-                        FechaCierre = proceso.FechaCierre,
-                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        CreatedDate = item.CreatedDate,
-                        ModifiedDate = item.ModifiedDate,
-
-
-
-                    };
-
-                    cierreLineas.Add(jel);
-
-
+                        CierresJournalEntryLine jel = new CierresJournalEntryLine
+                        {
+                            JournalEntryId = detalle.JournalEntryId,
+                            JournalEntryLineId = detalle.JournalEntryLineId,
+                            AccountId = detalle.AccountId,
+                            AccountName = detalle.AccountName,
+                            Debit = detalle.Debit,
+                            Credit = detalle.Credit,
+                            BitacoraCierreContableId = proceso.IdBitacoraCierre,
+                            FechaCierre = proceso.FechaCierre,
+                            CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                            ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                            CreatedDate = detalle.CreatedDate,
+                            ModifiedDate = detalle.ModifiedDate,
+                        };
+                        je.CierresJournalEntryLines.Add(jel);
+                        
+                    }
+                    item.Posted = true;
+                    _context.CierresJournal.Add(je);
 
                 }
-
-                await _context.CierresJournalEntryLine.AddRangeAsync(cierreLineas);
-
                 proceso.Estatus = "FINALIZADO";
                 _context.BitacoraCierreProceso.Update(proceso);
                 await _context.SaveChangesAsync();
@@ -432,101 +416,98 @@ namespace ERPAPI.Controllers
         {
             TypeJournal tipoDocumento = await _context.TypeJournal.Where(d => d.TypeJournalId == 7).FirstOrDefaultAsync();
 
-            JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                           .Where(q => q.TransactionId == tipoDocumento.TypeJournalId)
-                                                           //.Where(q => q.BranchId == _Invoiceq.BranchId)
-                                                           .Where(q => q.EstadoId == 1)
-                                                           .Include(q => q.JournalEntryConfigurationLine)
-                                                           ).FirstOrDefaultAsync();
-            //////////////
-            ///
             BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == idProceso).FirstOrDefaultAsync();
             proceso.Estatus = "EJECUTANDO";
             _context.BitacoraCierreProceso.Update(proceso);
             //await _context.SaveChangesAsync();
 
-            List<InsurancePolicy> insurancePolicies = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.Status != "VENCIDA").ToListAsync();
+            JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                          .Where(q => q.TransactionId == tipoDocumento.TypeJournalId)
+                                                          //.Where(q => q.BranchId == _Invoiceq.BranchId)
+                                                          .Where(q => q.EstadoId == 1)
+                                                          .Include(q => q.JournalEntryConfigurationLine)
+                                                          ).FirstOrDefaultAsync();
 
-            double SumaPolizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.Status != "VENCIDA").SumAsync(s => s.LpsAmount);
-
-            if (insurancePolicies.Count > 0)
+            if (_journalentryconfiguration == null)
             {
-
-
-                if (_journalentryconfiguration != null)
-                {
-
-                    //Crear el asiento contable configurado
-                    //.............................///////
-                    JournalEntry _je = new JournalEntry
-                    {
-                        Date = DateTime.Now,
-                        Memo = "Vecimiento de Polizas",
-                        DatePosted = DateTime.Now,
-                        ModifiedDate = DateTime.Now,
-                        CreatedDate = DateTime.Now,
-                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        DocumentId = proceso.IdProceso,
-                        TypeOfAdjustmentId = 65,
-                        VoucherType = Convert.ToInt32(tipoDocumento.TypeJournalId),
-
-                    };
-                    _context.JournalEntry.Add(_je);
-                    foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
-                    {
-
-
-                        _je.JournalEntryLines.Add(new JournalEntryLine
-                        {
-                            JournalEntryId = _je.JournalEntryId,
-                            AccountId = Convert.ToInt32(item.AccountId),
-                            AccountName = item.AccountName,
-                            Description = item.AccountName,
-                            Credit = item.DebitCredit == "Credito" ? SumaPolizas : 0,
-                            Debit = item.DebitCredit == "Debito" ? SumaPolizas : 0,
-                            CreatedDate = DateTime.Now,
-                            ModifiedDate = DateTime.Now,
-                            CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                            ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                            Memo = "",
-                        }); ;
-
-
-                    }
-                    await _context.SaveChangesAsync();
-                    proceso.Mensaje = "Generado Asiendo No. " + _je.JournalEntryId;
-                    proceso.Estatus = "FINALIZADO";
-
-                    foreach (var item in insurancePolicies)
-                    {
-                        item.Status = "VENCIDA";
-                    }
-                    _context.InsurancePolicy.UpdateRange(insurancePolicies);
-                    proceso.Estatus = "FINALIZADO";
-
-                }
-                else
-                {
-                    proceso.Mensaje = "No se encontro Configuracion del asiento del vencimiento de pólizas";
-                    proceso.Estatus = "ERROR";
-                }
-                //_context.BitacoraCierreProceso.Update(pProceso3);
+                proceso.Mensaje = "No se encontro Configuracion del asiento del vencimiento de pólizas";
+                proceso.Estatus = "ERROR";
+                await _context.SaveChangesAsync();
                 return;
             }
 
-                
+            List<InsurancePolicy> polizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.Status != "VENCIDA").ToListAsync();
+
             
-            else
+            if (polizas.Count > 0)
             {
-                proceso.Mensaje = "No se encontraron pólizas vencidas";
+                proceso.Mensaje = "No se encontraron Polizas Vencidas";
                 proceso.Estatus = "FINALIZADO";
-                //_context.BitacoraCierreProceso.Update(pProceso3);
+                await _context.SaveChangesAsync();
                 return;
             }
 
+            //double SumaPolizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.Status != "VENCIDA").SumAsync(s => s.LpsAmount);
+            foreach (var item in polizas)
+            {
+                //Crear el asiento contable configurado
+                //.............................///////
+                JournalEntry _je = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    Memo = $"Vecimiento de Poliza Id - {item.InsurancePolicyId}, Aseguradora {item.InsurancesName} , Valor {item.LpsAmount}",
+                    DatePosted = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                    CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                    DocumentId = item.InsurancePolicyId,
+                    TypeOfAdjustmentId = 65,
+                    VoucherType =7,
+                    TypeJournalName = "Polizas",
+                    EstadoId = 6,
+                    EstadoName = "Aprobado",
+
+                };
+                _je.JournalEntryLines = new List<JournalEntryLine>();
+                foreach (var conf in _journalentryconfiguration.JournalEntryConfigurationLine)
+                {
 
 
+                    _je.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        JournalEntryId = _je.JournalEntryId,
+                        AccountId = Convert.ToInt32(conf.AccountId),
+                        AccountName = conf.AccountName,
+                        Description = conf.AccountName,
+                        Credit = conf.DebitCredit == "Credito" ? item.LpsAmount : 0,
+                        Debit = conf.DebitCredit == "Debito" ? item.LpsAmount : 0,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        Memo = "",
+                    }); ;
+
+
+                }
+                if (_je.JournalEntryLines.Sum(s =>s.Debit)!= _je.JournalEntryLines.Sum(s => s.Credit))
+                {
+                    proceso.Mensaje = "Error en Configuracion de Asientos contables No coinciden los Creditos y debitos del asiento";
+                    proceso.Estatus = "ERROR";
+                    await _context.SaveChangesAsync();
+                    return;
+                }
+                
+                item.Status = "VENCIDA";
+                
+                
+                
+            }
+            proceso.Mensaje = $"Generados {polizas.Count} Asientos " ;
+            proceso.Estatus = "FINALIZADO";
+            await _context.SaveChangesAsync();
+            return;
 
         }
 
@@ -753,95 +734,104 @@ namespace ERPAPI.Controllers
                                                            .Where(q => q.EstadoName == "Activo")
                                                            .Include(q => q.JournalEntryConfigurationLine)
                                                            ).FirstOrDefaultAsync();
+
+            if (_journalentryconfiguration == null)
+            {
+                proceso.Mensaje = "No se encontro Configuracion de las garantias Bancarias";
+                proceso.Estatus = "ERROR";
+                await _context.SaveChangesAsync();
+                return;
+            }
             
+            
+
 
             List<GarantiaBancaria> garantias = await _context.GarantiaBancaria.Where(i => i.FechaFianlVigencia < DateTime.Now && i.IdEstado !=2).ToListAsync();
 
-            double SumaGarantias = await _context.GarantiaBancaria.Where(i => i.FechaFianlVigencia < DateTime.Now && i.IdEstado != 2).SumAsync(s => s.Monto);
-
-            if (garantias.Count > 0)
+            if (garantias.Count == 0)
             {
-
-
-                if (_journalentryconfiguration != null)
-                {
-
-                    //Crear el asiento contable configurado
-                    //.............................///////
-                    JournalEntry _je = new JournalEntry
-                    {
-                        Date = DateTime.Now,
-                        Memo = "Vecimiento de Garantias Bancarias",
-                        DatePosted = DateTime.Now,
-                        ModifiedDate = DateTime.Now,
-                        CreatedDate = DateTime.Now,
-                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                        DocumentId = proceso.IdProceso,
-                        TypeOfAdjustmentId = 65,
-                        VoucherType = Convert.ToInt32(tipoDocumento.TypeJournalId),
-
-                    };
-                    _context.JournalEntry.Add(_je);
-                    foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
-                    {
-
-
-                        _je.JournalEntryLines.Add(new JournalEntryLine
-                        {
-                            JournalEntryId = _je.JournalEntryId,
-                            AccountId = Convert.ToInt32(item.AccountId),
-                            AccountName = item.AccountName,
-                            Description = item.AccountName,
-                            Credit = item.DebitCredit == "Credito" ? SumaGarantias : 0,
-                            Debit = item.DebitCredit == "Debito" ? SumaGarantias : 0,
-                            CreatedDate = DateTime.Now,
-                            ModifiedDate = DateTime.Now,
-                            CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                            ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
-                            Memo = "",
-                        }); ;
-
-
-                    }
-                    await _context.SaveChangesAsync();
-                    proceso.Mensaje = "Generado Asiendo No. " + _je.JournalEntryId;
-                    proceso.Estatus = "FINALIZADO";
-
-                    foreach (var item in garantias)
-                    {
-                        item.Estado = "Inactiva";
-                        item.IdEstado = 2;
-                    }
-                    _context.GarantiaBancaria.UpdateRange(garantias);
-                    proceso.Estatus = "FINALIZADO";
-                    await _context.SaveChangesAsync();
-
-                }
-                else
-                {
-                    proceso.Mensaje = "No se encontro Configuracion de las garantias Bancarias";
-                    proceso.Estatus = "ERROR";
-                    await _context.SaveChangesAsync();
-
-                }
-                //_context.BitacoraCierreProceso.Update(pProceso3);
-                return;
-            }
-
-
-
-            else
-            {
-                proceso.Mensaje = "No se encontraron Garantías Bancarias";
+                proceso.Mensaje = "No se encontraron garantias Bancarias";
                 proceso.Estatus = "FINALIZADO";
                 await _context.SaveChangesAsync();
-
-                //_context.BitacoraCierreProceso.Update(pProceso3);
                 return;
+
             }
 
+            foreach (var item in garantias)
+            {
+                //Crear el asiento contable configurado
+                //.............................///////
+                JournalEntry _je = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    Memo = "Vecimiento de Garantias Bancarias",
+                    DatePosted = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                    CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                    DocumentId = 11,
+                    TypeJournalName = "Garantias Bancarias",
+                    TypeOfAdjustmentId = 65,
+                    VoucherType = 11,
 
+
+                };
+                _je.JournalEntryLines = new List<JournalEntryLine>();
+                foreach (var conf in _journalentryconfiguration.JournalEntryConfigurationLine)
+                {
+
+
+                    _je.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        JournalEntryId = _je.JournalEntryId,
+                        AccountId = Convert.ToInt32(conf.AccountId),
+                        AccountName = conf.AccountName,
+                        Description = conf.AccountName,
+                        Credit = conf.DebitCredit == "Credito" ? item.Monto : 0,
+                        Debit = conf.DebitCredit == "Debito" ? item.Monto : 0,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
+                        Memo = "",
+                    }); ;
+
+
+                }
+
+                _context.JournalEntry.Add(_je);
+                item.Estado = "Inactiva";
+                item.IdEstado = 2;
+            }
+
+            proceso.Mensaje = $"Generado {garantias.Count} Asientos";
+            proceso.Estatus = "FINALIZADO";
+            await _context.SaveChangesAsync();
+
+            return;
+
+
+        }
+        [HttpGet("[action]")]
+        public int apariciones() {
+            int apariciones = 0;
+            string numeros="";
+            for (int i = 0; i < 1537; i++)
+            {
+                numeros += i;
+            }
+
+            foreach (var item in numeros)
+            {
+                if (item == '6')
+                {
+                    apariciones++;
+                }
+            }
+
+            return apariciones;
+        
         }
 
         private async Task EjecucionPresupuestaria(int procesoId) {
