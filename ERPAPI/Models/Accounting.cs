@@ -19,8 +19,9 @@ namespace ERPAPI.Models
         [Display(Name = "Id de la Empresa")]
         public Int64 CompanyInfoId { get; set; }
 
+        [Column(TypeName = "Money")]
         [Display(Name = "Saldo Contable")]
-        public double AccountBalance { get; set; }
+        public decimal AccountBalance { get; set; }
 
         public bool? AceptaNegativo { get; set; }
 
@@ -62,11 +63,11 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de modificacion")]
         public DateTime FechaModificacion { get; set; }
 
-        [Column(TypeName = "timestamp")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        [MaxLength(8)]
-        [Display(Name = "Version Fila")]
-        public byte[] RowVersion { get; set; }
+        //[Column(TypeName = "timestamp")]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        //[MaxLength(8)]
+        //[Display(Name = "Version Fila")]
+        //public byte[] RowVersion { get; set; }
         [Display(Name = "Padre de la cuenta")]
         public virtual Accounting ParentAccount { get; set; }
 
@@ -90,13 +91,13 @@ namespace ERPAPI.Models
             
         }
     
-        public double Debit { get; set; }
+        public decimal Debit { get; set; }
 
-        public double Credit { get; set; }
+        public decimal Credit { get; set; }
 
-        public double TotalDebit { get; set; }
+        public decimal TotalDebit { get; set; }
 
-        public double TotalCredit { get; set; }
+        public decimal TotalCredit { get; set; }
 
         public bool? estadocuenta { get; set; }
 

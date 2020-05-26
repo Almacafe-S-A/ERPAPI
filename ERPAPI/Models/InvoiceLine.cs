@@ -61,13 +61,13 @@ namespace ERPAPI.Models
         public string CostCenterName { get; set; }
 
         [Display(Name = "Porcentaje descuento")]
-        public double DiscountPercentage { get; set; }
+        public decimal DiscountPercentage { get; set; }
           [Display(Name = "Monto descuento")]
         public double DiscountAmount { get; set; }
           [Display(Name = "Subtotal")]
-        public double SubTotal { get; set; }
+        public decimal SubTotal { get; set; }
          [Display(Name = "% Impuesto")]
-        public double TaxPercentage { get; set; }
+        public decimal TaxPercentage { get; set; }
 
         [Display(Name = "Código Impuesto")]
         public Int64 TaxId { get; set; }
@@ -76,7 +76,7 @@ namespace ERPAPI.Models
         public string TaxCode { get; set; }
 
         [Display(Name = "Monto Impuesto")]
-        public double TaxAmount { get; set; }
-        public double Total { get; set; }
+        public decimal TaxAmount { get; set; }
+        public decimal Total { get; set; }
     }
 }

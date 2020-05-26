@@ -175,7 +175,7 @@ namespace ERPAPI.Controllers
 
                         // await _context.SaveChangesAsync();
 
-                        double sumacreditos = 0, sumadebitos = 0;
+                        decimal sumacreditos = 0, sumadebitos = 0;
                         if (_journalentryconfiguration != null)
                         {
                             //Crear el asiento contable configurado
@@ -346,7 +346,7 @@ namespace ERPAPI.Controllers
 
                                 // await _context.SaveChangesAsync();
 
-                                double sumacreditos = 0, sumadebitos = 0;
+                                decimal sumacreditos = 0, sumadebitos = 0;
                                 if (_journalentryconfiguration != null)
                                 {
                                     //Crear el asiento contable configurado

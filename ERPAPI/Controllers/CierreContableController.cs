@@ -436,7 +436,7 @@ namespace ERPAPI.Controllers
                 return;
             }
 
-            List<InsurancePolicy> polizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.Status != "VENCIDA").ToListAsync();
+            List<InsurancePolicy> polizas = await _context.InsurancePolicy.Where(i => i.PolicyDueDate < DateTime.Now && i.EstadoId == 1).ToListAsync();
 
             
             if (polizas.Count > 0)
@@ -480,7 +480,7 @@ namespace ERPAPI.Controllers
                         AccountId = Convert.ToInt32(conf.AccountId),
                         AccountName = conf.AccountName,
                         Description = conf.AccountName,
-                        Credit = conf.DebitCredit == "Credito" ? item.LpsAmount : 0,
+                        Credit = conf.DebitCredit == "Credito" ?item.LpsAmount : 0,
                         Debit = conf.DebitCredit == "Debito" ? item.LpsAmount : 0,
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
@@ -499,7 +499,9 @@ namespace ERPAPI.Controllers
                     return;
                 }
                 
-                item.Status = "VENCIDA";
+                item.EstadoId = 2;
+                item.Estado = "Vencida";
+                     
                 
                 
                 
@@ -903,7 +905,7 @@ namespace ERPAPI.Controllers
             await _context.SaveChangesAsync();
 
 
-            List<Accounting> cuentas = await _context.Accounting.Where(q => q.AccountBalance < 0.00001).ToListAsync();
+            List<Accounting> cuentas = await _context.Accounting.Where(q => q.AccountBalance < (decimal)0.00001).ToListAsync();
 
             foreach (var item in cuentas)
             {

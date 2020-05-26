@@ -120,7 +120,7 @@ namespace ERPAPI.Models
         public string CurrencyName { get; set; }
 
         [Display(Name = "Moneda tasa")]
-        public double Currency { get; set; }
+        public decimal Currency { get; set; }
 
         [Display(Name = "Número de referencia de cliente")]
         public string CustomerRefNumber { get; set; }
@@ -131,38 +131,38 @@ namespace ERPAPI.Models
         public string Remarks { get; set; }
 
         [Display(Name = "Monto")]
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
 
         [Display(Name = "Sub total")]
-        public double SubTotal { get; set; }
+        public decimal SubTotal { get; set; }
 
         [Display(Name = "Descuento")]
-        public double Discount { get; set; }
+        public decimal Discount { get; set; }
 
 
         [Display(Name = "Impuesto")]
-        public double Tax { get; set; }
+        public decimal Tax { get; set; }
 
         [Display(Name = "Impuesto 18%")]
-        public double Tax18 { get; set; }
+        public decimal Tax18 { get; set; }
 
 
         [Display(Name = "Flete")]
-        public double Freight { get; set; }
+        public decimal Freight { get; set; }
 
         [Display(Name = "Total exento")]
-        public double TotalExento { get; set; }
+        public decimal TotalExento { get; set; }
 
         [Display(Name = "Total exonerado")]
-        public double TotalExonerado { get; set; }
+        public decimal TotalExonerado { get; set; }
 
         [Display(Name = "Total Gravado")]
-        public double TotalGravado { get; set; }
+        public decimal TotalGravado { get; set; }
 
         [Display(Name = "Total Gravado 18%")]
-        public double TotalGravado18 { get; set; }
+        public decimal TotalGravado18 { get; set; }
 
-        public double Total { get; set; }
+        public decimal Total { get; set; }
 
         public string TotalLetras { get; set; }
 

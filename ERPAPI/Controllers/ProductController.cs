@@ -77,11 +77,6 @@ namespace ERPAPI.Controllers
                     Items = await _context.Product
                             .Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
                              .Include(c => c.Branch)
-                              //.Include(c => c.Currency)
-                              //.Include(c => c.UnitOfMeasure)
-                              .Include(c => c.Marca)
-                              .Include(c => c.Linea)
-                              .Include(c => c.Grupo)
                               .OrderByDescending(b => b.ProductId)
                               .ToListAsync();
                 }
@@ -89,11 +84,6 @@ namespace ERPAPI.Controllers
                 {
                     Items = await _context.Product
                              .Include(c => c.Branch)
-                              //.Include(c => c.Currency)
-                              //.Include(c => c.UnitOfMeasure)
-                              .Include(c => c.Marca)
-                              .Include(c => c.Linea)
-                              .Include(c => c.Grupo)
                               .OrderByDescending(b => b.ProductId)
                               .ToListAsync();
                 }
@@ -120,11 +110,6 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.Product.Include(c => c.Branch)
-                                              //.Include(c => c.Currency)
-                                              //.Include(c => c.UnitOfMeasure)
-                                              .Include(c => c.Marca)
-                                              .Include(c => c.Linea)
-                                              .Include(c => c.Grupo)
                                               .Where(q => q.ProductId == ProductId).FirstOrDefaultAsync();
             }
             catch (Exception ex)

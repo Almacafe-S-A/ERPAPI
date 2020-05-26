@@ -29,10 +29,10 @@ namespace ERPAPI.Models
         public DateTime EndTime { get; set; }
 
         [Display(Name = "Cantidad de horas")]
-        public double QuantityHours { get; set; }
+        public decimal QuantityHours { get; set; }
 
         [Display(Name = "Factor Salario")]
-        public double HourlySalary { get; set; }
+        public decimal HourlySalary { get; set; }
 
         [Display(Name = "Usuario de creación")]
         public string UsuarioCreacion { get; set; }

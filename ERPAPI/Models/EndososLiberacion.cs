@@ -36,10 +36,10 @@ namespace ERPAPI.Models
         public string UnitOfMeasureName { get; set; }
 
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Display(Name = "Saldo")]
-        public double Saldo { get; set; }
+        public decimal Saldo { get; set; }
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

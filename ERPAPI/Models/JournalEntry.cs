@@ -65,12 +65,12 @@ namespace ERPAPI.Models
         public Int64? EstadoId { get; set; }
         [Display(Name = "Estado")]
         public string EstadoName { get; set; }
-
+        [Column(TypeName = "Money")]
         [Display(Name = "Total Débito")]
-        public double TotalDebit { get; set; }
-
+        public decimal TotalDebit { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Total Crédito")]
-        public double TotalCredit { get; set; }
+        public decimal TotalCredit { get; set; }
 
         [Display(Name = "Tipo de ajuste")]
         public Int32 TypeOfAdjustmentId { get; set; }

@@ -27,7 +27,7 @@ namespace ERPAPI.Models
         public Int64 LogicalConditionId { get; set; }
         public string LogicalCondition { get; set; }
         public string ValueToEvaluate { get; set; }
-        public double ValueDecimal { get; set; }
+        public decimal ValueDecimal { get; set; }
         public string ValueString { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

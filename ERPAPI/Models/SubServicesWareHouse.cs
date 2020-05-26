@@ -62,7 +62,7 @@ namespace ERPAPI.Models
         public DateTime EndTime { get; set; }
 
         [Display(Name = "Cantidad de horas")]
-        public double QuantityHours { get; set; }
+        public decimal QuantityHours { get; set; }
 
         [Display(Name = "Empleado")]
         public Int64 EmployeeId { get; set; }

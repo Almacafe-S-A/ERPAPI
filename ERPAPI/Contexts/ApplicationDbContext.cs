@@ -30,7 +30,6 @@ namespace ERP.Contexts
 
         }
         public DbSet<Accounting> Accounting { get; set; }
-        public DbSet<InsurancesCertificate> InsurancesCertificate { get; set; }
 
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
@@ -45,6 +44,8 @@ namespace ERP.Contexts
         public DbSet <TipodeAccionderiesgo> TipodeAccionderiesgo { get; set; }
 
 
+        public DbSet<Concept> Concept { get; set; }
+
         public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
         public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
         public DbSet<Insurances> Insurances { get; set; }
@@ -55,7 +56,6 @@ namespace ERP.Contexts
 
         public DbSet<UserBranch> UserBranch { get; set; }
 
-        public DbSet<Concept> Concept { get; set; }
 
         public DbSet<GrupoEstado> GrupoEstado { get; set; }
 
@@ -65,7 +65,6 @@ namespace ERP.Contexts
         public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
 
         public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
-        public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
@@ -112,7 +111,6 @@ namespace ERP.Contexts
         public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
         public DbSet<AccountManagement> AccountManagement { get; set; }
 
-        public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
 
         public DbSet<PayrollDeduction> PayrollDeduction { get; set; }
         /// <summary>
@@ -133,8 +131,6 @@ namespace ERP.Contexts
         public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
 
         public DbSet<InsuranceEndorsement> InsuranceEndorsement { get; set; }
-
-        public DbSet<InsuranceEndorsementLine> InsuranceEndorsementLine { get; set; }
 
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
@@ -240,9 +236,6 @@ namespace ERP.Contexts
         public DbSet<ERPAPI.Models.CuentaBancoEmpleados> CuentaBancoEmpleados { get; set; }
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
         public DbSet<ERPAPI.Models.TipoPlanillas> TipoPlanillas { get; set; }
-        public DbSet<Linea> Linea { get; set; }
-        public DbSet<Marca> Marca { get; set; }
-        public DbSet<Grupo> Grupo { get; set; }
         public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
         public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
         public DbSet<EmployeeAbsence> EmployeeAbsence { get; set; }
@@ -266,12 +259,8 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryPlaceOfBirthItemM> sdnListSdnEntryPlaceOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
         public DbSet<CheckAccount> CheckAccount { get; set; }
-
-        public DbSet<Material> Material { get; set; }
         public DbSet<Substratum> Substratum { get; set; }
 
-        public DbSet<Quotation> Quotation { get; set; }
-        public DbSet<QuotationDetail> QuotationDetail { get; set; }
         ///// <summary>
         ////////
         /// <summary>
@@ -318,13 +307,8 @@ namespace ERP.Contexts
         public DbSet<PaymentTerms> PaymentTerms { get; set; }
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
 
-        public DbSet<Colors> Colors { get; set; }
-        public DbSet<ColorsDetailQuotation> ColorsDetailQuotation { get; set; }
-
-        public DbSet<Recipe> Recipe { get; set; }
+     
         public DbSet<RecipeDetail> RecipeDetail { get; set; }
-
-        public DbSet<MaterialDetail> MaterialDetail { get; set; }
 
         // Gestion de Contratos para Modulo CxC
 
@@ -519,15 +503,6 @@ namespace ERP.Contexts
           .WithMany(c => c.Employees)
           //.IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<QuotationDetail>()
-            .HasKey(t => new { t.QuotationDetailId, t.QuotationCode });
-
-            modelBuilder.Entity<MaterialDetail>()
-            .HasKey(t => new { t.MaterialDetailId, t.MaterialId });
-
-            modelBuilder.Entity<Quotation>()
-            .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
 
             modelBuilder.Entity<CategoriaPlanilla>().HasData(new[]
                                                              {

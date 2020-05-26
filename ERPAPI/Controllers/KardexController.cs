@@ -47,7 +47,7 @@ namespace ERPAPI.Controllers
                     .ToListAsync();
 
                 Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
-                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
+                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((decimal)totalRegistro / cantidadDeRegistros)).ToString();
             }
             catch (Exception ex)
             {
@@ -256,13 +256,13 @@ namespace ERPAPI.Controllers
                                         dias = item.DocumentDate.Day <= 15 ? 15 : 30;
                                     }
 
-                                    double totalfacturar = 0;
-                                    double totalfacturarmerma = 0;
+                                    decimal totalfacturar = 0;
+                                    decimal totalfacturarmerma = 0;
                                     foreach (var condicion in _cc)
                                     {
                                         foreach (var lineascertificadas in _cd._CertificadoLine)
                                         {
-                                            double cantidad = 0;
+                                            decimal cantidad = 0;
                                             if (item.TypeOperationName == "Entrada")
                                             {
                                                 cantidad =   (item._KardexLine
@@ -287,7 +287,7 @@ namespace ERPAPI.Controllers
                                                                ).FirstOrDefault();
                                                 }
 
-                                               double entrada =  (item._KardexLine
+                                               decimal entrada =  (item._KardexLine
                                                                 .Where(q => q.SubProducId == lineascertificadas.SubProductId)
                                                                 .Select(q => q.QuantityEntry)
                                                              ).FirstOrDefault();
@@ -301,27 +301,27 @@ namespace ERPAPI.Controllers
                                             switch (condicion.LogicalCondition)
                                             {
                                                 case ">=":
-                                                    if (lineascertificadas.Price >= Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    if (lineascertificadas.Price >= Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
                                                         totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "<=":
-                                                    if (lineascertificadas.Price <= Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    if (lineascertificadas.Price <= Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
                                                         totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case ">":
-                                                    if (lineascertificadas.Price > Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    if (lineascertificadas.Price > Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
                                                         totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "<":
-                                                    if (lineascertificadas.Price < Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    if (lineascertificadas.Price < Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
                                                         totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "=":
-                                                    if (lineascertificadas.Price == Convert.ToDouble(condicion.ValueToEvaluate))
+                                                    if (lineascertificadas.Price == Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
                                                         totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
@@ -337,7 +337,7 @@ namespace ERPAPI.Controllers
                                         CertificadoLine cdline = _cd._CertificadoLine
                                                    .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
 
-                                        double cantidad = 0;
+                                        decimal cantidad = 0;
                                         if (item.TypeOperationName == "Entrada")
                                         {
                                             cantidad = (item._KardexLine
@@ -362,7 +362,7 @@ namespace ERPAPI.Controllers
                                                             ).FirstOrDefault();
                                             }
 
-                                            double entrada = (item._KardexLine
+                                            decimal entrada = (item._KardexLine
                                                              .Where(q => q.SubProducId == cdline.SubProductId)
                                                              .Select(q => q.QuantityEntry)
                                                           ).FirstOrDefault();
@@ -374,7 +374,7 @@ namespace ERPAPI.Controllers
                                                                       .Where(q => q.SubproductId == linea.SubProducId).FirstOrDefaultAsync();
 
 
-                                        double valormerma = ((cantidad / (1 - _subproduct.Merma)) * _subproduct.Merma) * cdline.Price;
+                                        decimal valormerma = ((cantidad / (1 - _subproduct.Merma)) * _subproduct.Merma) * cdline.Price;
 
                                         _context.InvoiceCalculation.Add(new InvoiceCalculation
                                         {
@@ -437,7 +437,7 @@ namespace ERPAPI.Controllers
                         //1. Almacenaje
                         _su = await _context.SubProduct.Where(q => q.SubproductId == 1).FirstOrDefaultAsync();
                         _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-                        double valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q=>q.ValorAFacturarMerma);
+                        decimal valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q=>q.ValorAFacturarMerma);
                         List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
                         ProformaInvoiceLineT.Add(new ProformaInvoiceLine
                         {
@@ -463,9 +463,9 @@ namespace ERPAPI.Controllers
                         _soline = new SalesOrderLine();
                         _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
 
-                        double preciocot = 0;
-                        double quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
-                        double taxamount = ((preciocot * valfacturar) / 1000) * (_tax.TaxPercentage/100);
+                        decimal preciocot = 0;
+                        var quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
+                        decimal taxamount = ((preciocot * valfacturar) / 1000) * (_tax.TaxPercentage/100);
                         if (_soline != null)
                         {
                              preciocot = _soline.Price;                           
@@ -508,7 +508,7 @@ namespace ERPAPI.Controllers
                                                                    .Where(q=> IdsRecibos.Contains(q.GoodsReceivedId))
                                                                    .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
                                                                    .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
-                            double sumaentradas = 0;
+                            decimal sumaentradas = 0;
                             foreach (var entrada in _entradas)
                             {
                                 sumaentradas += entrada._GoodsReceivedLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
@@ -522,13 +522,13 @@ namespace ERPAPI.Controllers
                                                                     .Where(q => IdsEntregas.Contains(q.GoodsDeliveredId))
                                                                   .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
                                                                   .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
-                            double sumasalidas = 0;
+                            decimal sumasalidas = 0;
                             foreach (var _salida in _salidas)
                             {
                                 sumasalidas += _salida._GoodsDeliveredLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
                             }
 
-                            double totalentradassalidas = 0;
+                            decimal totalentradassalidas = 0;
                             totalentradassalidas = sumaentradas + sumasalidas;
                             quantitycot = totalentradassalidas;
                             taxamount = ((preciocot * totalentradassalidas)) * (_tax.TaxPercentage / 100);
@@ -751,7 +751,7 @@ namespace ERPAPI.Controllers
                                                .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
                                                .ToListAsync();
 
-                            double subtotal = 0;
+                            decimal subtotal = 0;
                            
                             foreach (var item in _schedule)
                             {

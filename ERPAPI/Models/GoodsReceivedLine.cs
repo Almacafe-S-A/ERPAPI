@@ -35,14 +35,14 @@ namespace ERPAPI.Models
         [Display(Name = "Estiba")]
         public Int64 ControlPalletsId { get; set; }
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
         [Display(Name = "Sacos")]
         public int QuantitySacos { get; set; }
 
         [Display(Name = "Precio")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         [Display(Name = "Total")]
-        public double Total { get; set; }
+        public decimal Total { get; set; }
         [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
 
@@ -93,9 +93,9 @@ namespace ERPAPI.Models
         public int QuantitySacos { get; set; }
 
         [Display(Name = "Precio")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
         [Display(Name = "Total")]
-        public double Total { get; set; }
+        public decimal Total { get; set; }
         [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
         [Display(Name = "Centro de costos")]

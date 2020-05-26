@@ -105,7 +105,7 @@ namespace ERPAPI.Models
         public string CurrencyName { get; set; }
 
         [Display(Name = "Moneda tasa")]
-        public double Currency { get; set; }
+        public decimal Currency { get; set; }
 
         [Display(Name = "Numero de referencia de Proveedor")]
         public string VendorRefNumber { get; set; }
@@ -114,38 +114,39 @@ namespace ERPAPI.Models
 
         [Display(Name = "Observacion")]
         public string Remarks { get; set; }
-
+        [Column(TypeName = "Money")]
         [Display(Name = "Monto")]
-        public double Amount { get; set; }
-        public double SubTotal { get; set; }
-
+        public decimal Amount { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal SubTotal { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Descuento")]
-        public double Discount { get; set; }
+        public decimal Discount { get; set; }
 
-
+        [Column(TypeName = "Money")]
         [Display(Name = "Impuesto")]
-        public double Tax { get; set; }
-
+        public decimal Tax { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Impuesto 18%")]
-        public double Tax18 { get; set; }
+        public decimal Tax18 { get; set; }
 
-
+        [Column(TypeName = "Money")]
         [Display(Name = "Flete")]
-        public double Freight { get; set; }
-
+        public decimal Freight { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Total exento")]
-        public double TotalExento { get; set; }
-
+        public decimal TotalExento { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Total exonerado")]
-        public double TotalExonerado { get; set; }
-
+        public decimal TotalExonerado { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Total Gravado")]
-        public double TotalGravado { get; set; }
-
+        public decimal TotalGravado { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Total Gravado 18%")]
-        public double TotalGravado18 { get; set; }
-
-        public double Total { get; set; }
+        public decimal TotalGravado18 { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal Total { get; set; }
 
         public string TotalLetras { get; set; }
 

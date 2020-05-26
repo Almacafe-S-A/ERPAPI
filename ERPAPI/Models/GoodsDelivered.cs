@@ -46,7 +46,7 @@ namespace ERPAPI.Models
         public string CurrencyName { get; set; }
 
         [Display(Name = "Moneda tasa")]
-        public double Currency { get; set; }
+        public decimal Currency { get; set; }
 
 
         [Display(Name = "Bodega")]
@@ -80,15 +80,15 @@ namespace ERPAPI.Models
         [Display(Name = "Boleta de peso")]
         public Int64 WeightBallot { get; set; }
 
-        public double PesoBruto { get; set; }
+        public decimal PesoBruto { get; set; }
 
-        public double TaraTransporte { get; set; }
+        public decimal TaraTransporte { get; set; }
 
-        public double PesoNeto { get; set; }
+        public decimal PesoNeto { get; set; }
 
-        public double TaraUnidadMedida { get; set; }
+        public decimal TaraUnidadMedida { get; set; }
 
-        public double PesoNeto2 { get; set; }
+        public decimal PesoNeto2 { get; set; }
 
 
         [Display(Name = "Comentarios")]
