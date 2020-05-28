@@ -28,11 +28,13 @@ namespace ERPAPI.Models
         [Display(Name = "Cantidad")]
         public decimal Quantity { get; set; }
         [Display(Name = "Precio")]
+        [Column(TypeName = "Money")]
         public decimal Price { get; set; }
         [Display(Name = "Porcentaje de Merma")]
         public decimal? Merma { get; set; }
 
         [Display(Name = "Total")]
+        [Column(TypeName = "Money")]
         public decimal Amount { get; set; }
 
 

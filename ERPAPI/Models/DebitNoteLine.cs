@@ -46,8 +46,10 @@ namespace ERPAPI.Models
         public string Description { get; set; }
           [Display(Name = "Cantidad")]
         public double Quantity { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Precio")]
         public double Price { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Monto")]
         public decimal Amount { get; set; }
 
@@ -63,6 +65,7 @@ namespace ERPAPI.Models
           [Display(Name = "Monto descuento")]
         public decimal DiscountAmount { get; set; }
           [Display(Name = "Subtotal")]
+        [Column(TypeName = "Money")]
         public decimal SubTotal { get; set; }
          [Display(Name = "% Impuesto")]
         public decimal TaxPercentage { get; set; }
@@ -74,7 +77,9 @@ namespace ERPAPI.Models
         public string TaxCode { get; set; }
 
         [Display(Name = "Monto Impuesto")]
+        [Column(TypeName = "Money")]
         public decimal TaxAmount { get; set; }
+        [Column(TypeName = "Money")]
         public decimal Total { get; set; }
     }
 }

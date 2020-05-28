@@ -130,35 +130,43 @@ namespace ERPAPI.Models
         public string Remarks { get; set; }
 
         [Display(Name = "Monto")]
+        [Column(TypeName = "Money")]
         public decimal Amount { get; set; }
+        [Column(TypeName = "Money")]
         public decimal SubTotal { get; set; }
 
         [Display(Name = "Descuento")]
+        [Column(TypeName = "Money")]
         public decimal Discount { get; set; }
 
-
+        [Column(TypeName = "Money")]
         [Display(Name = "Impuesto")]
         public decimal Tax { get; set; }
-
+        [Column(TypeName = "Money")]
         [Display(Name = "Impuesto 18%")]
         public decimal Tax18 { get; set; }
 
 
         [Display(Name = "Flete")]
+        [Column(TypeName = "Money")]
         public decimal Freight { get; set; }
 
         [Display(Name = "Total exento")]
+        [Column(TypeName = "Money")]
         public decimal TotalExento { get; set; }
 
         [Display(Name = "Total exonerado")]
+        [Column(TypeName = "Money")]
         public decimal TotalExonerado { get; set; }
 
         [Display(Name = "Total Gravado")]
+        [Column(TypeName = "Money")]
         public decimal TotalGravado { get; set; }
 
         [Display(Name = "Total Gravado 18%")]
+        [Column(TypeName = "Money")]
         public decimal TotalGravado18 { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal Total { get; set; }
 
         public string TotalLetras { get; set; }

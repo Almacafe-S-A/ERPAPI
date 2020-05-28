@@ -141,20 +141,25 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Flete")]
+        [Column(TypeName = "Money")]
         public decimal Freight { get; set; }
 
         [Display(Name = "Total exento")]
+        [Column(TypeName = "Money")]
         public decimal TotalExento { get; set; }
 
         [Display(Name = "Total exonerado")]
+        [Column(TypeName = "Money")]
         public decimal TotalExonerado { get; set; }
 
         [Display(Name = "Total Gravado")]
+        [Column(TypeName = "Money")]
         public decimal TotalGravado { get; set; }
 
         [Display(Name = "Total Gravado 18%")]
+        [Column(TypeName = "Money")]
         public decimal TotalGravado18 { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal Total { get; set; }
 
         public string TotalLetras { get; set; }
