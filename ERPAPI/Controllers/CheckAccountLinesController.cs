@@ -201,7 +201,7 @@ namespace ERPAPI.Controllers
 
 
                     }
-                    double suma = journalEntryLines.Sum(s => s.Debit);
+                    decimal suma = journalEntryLines.Sum(s => s.Debit);
 
                     JournalEntry _je = new JournalEntry
                     {
@@ -316,7 +316,7 @@ namespace ERPAPI.Controllers
 
                 
 
-                double suma = journalEntry.JournalEntryLines.Sum(s => s.Debit);
+                decimal suma = journalEntry.JournalEntryLines.Sum(s => s.Debit);
 
                 journalEntry.TotalCredit = suma;
                 journalEntry.TotalDebit = suma;

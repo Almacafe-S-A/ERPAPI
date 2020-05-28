@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200527190142_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5971,53 +5973,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("Insurances");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InsuredAssets", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("AssetDeductible");
-
-                    b.Property<decimal>("AssetInsuredValue");
-
-                    b.Property<string>("AssetName");
-
-                    b.Property<int>("BranchId");
-
-                    b.Property<long>("EstadoId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("InsurancePolicyId");
-
-                    b.Property<decimal>("InsuredDiference");
-
-                    b.Property<decimal>("MerchadiseTotalValue");
-
-                    b.Property<decimal>("MerchandiseInsuredValue");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<int?>("WarehouseId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("EstadoId");
-
-                    b.HasIndex("InsurancePolicyId");
-
-                    b.HasIndex("WarehouseId");
-
-                    b.ToTable("InsuredAssets");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.InventoryTransfer", b =>
                 {
                     b.Property<int>("Id")
@@ -11370,28 +11325,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("EstadoId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InsuredAssets", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.InsurancePolicy", "InsurancePolicy")
-                        .WithMany()
-                        .HasForeignKey("InsurancePolicyId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")
-                        .WithMany()
-                        .HasForeignKey("WarehouseId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InventoryTransfer", b =>

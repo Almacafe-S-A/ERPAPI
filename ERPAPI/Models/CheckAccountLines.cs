@@ -29,7 +29,7 @@ namespace ERPAPI.Models
         public int? RetencionId { get; set; }
         [ForeignKey("RetencionId")]
         public RetentionReceipt Retention { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal Ammount { get; set; }
 
         public string AmountWords { get; set; }

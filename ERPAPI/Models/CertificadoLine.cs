@@ -26,14 +26,16 @@ namespace ERPAPI.Models
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
         [Display(Name = "Precio")]
-        public double Price { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal Price { get; set; }
         [Display(Name = "Porcentaje de Merma")]
         public decimal? Merma { get; set; }
 
         [Display(Name = "Total")]
-        public double Amount { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal Amount { get; set; }
 
 
         [Display(Name = "Bodega")]
@@ -43,10 +45,10 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Total Cantidad")]
-        public double TotalCantidad { get; set; }
+        public decimal TotalCantidad { get; set; }
 
         [Display(Name = "Saldo endoso")]
-        public double SaldoEndoso { get; set; }
+        public decimal SaldoEndoso { get; set; }
 
         [Display(Name = "Centro de costos")]
         public Int64 CenterCostId { get; set; }

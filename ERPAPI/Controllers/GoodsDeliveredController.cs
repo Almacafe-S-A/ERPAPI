@@ -256,9 +256,9 @@ namespace ERPAPI.Controllers
                                                       select c
                                                       ).FirstOrDefaultAsync();
 
-                            if (_BuscarKardex.Total > item.Quantity)
+                            if (_BuscarKardex.Total > Convert.ToDecimal(item.Quantity))
                             {
-                                item.Total = Convert.ToDouble(_BuscarKardex.TotalCD) - item.Quantity;
+                                item.Total = Convert.ToDecimal(_BuscarKardex.TotalCD) - item.Quantity;
                             }
                             else
                             {
@@ -283,9 +283,9 @@ namespace ERPAPI.Controllers
                                 TypeOperationId = 1,
                                 TypeOperationName = "Salida",
                                 Total = item.Total,
-                                TotalBags =Convert.ToDouble(_BuscarKardex.TotalBags)-item.QuantitySacos  ,
+                                TotalBags =Convert.ToDecimal(_BuscarKardex.TotalBags)-item.QuantitySacos  ,
                                 QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                TotalCD = Convert.ToDouble(_BuscarKardex.TotalCD) - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                                TotalCD = Convert.ToDecimal(_BuscarKardex.TotalCD) - (item.Quantity - (item.Quantity * _subproduct.Merma)),
                             });
                         }
 

@@ -433,13 +433,13 @@ namespace ERPAPI.Controllers
             return query;
         }
 
-        private double Debit(Int64 AccountId)
+        private decimal Debit(Int64 AccountId)
         {
             return _context.JournalEntryLine
                     .Where(q => q.AccountId == AccountId).Sum(q => q.Debit);
         }
 
-        private double Credit(Int64 AccountId)
+        private decimal Credit(Int64 AccountId)
         {
             return _context.JournalEntryLine
                     .Where(q => q.AccountId == AccountId).Sum(q => q.Credit);

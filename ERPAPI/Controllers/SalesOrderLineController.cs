@@ -151,8 +151,8 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var discount = salesOrderLine.DiscountPercentage==0?0: salesOrderLine.DiscountPercentage / 100.0;
-                var taxamount = (salesOrderLine.TaxPercentage == 0 ? 0 : (salesOrderLine.TaxPercentage / 100.0));
+                var discount = salesOrderLine.DiscountPercentage==0?0: salesOrderLine.DiscountPercentage / (decimal)100.0;
+                var taxamount = (salesOrderLine.TaxPercentage == 0 ? 0 : (salesOrderLine.TaxPercentage / (decimal)100.0));
                 salesOrderLine.Amount = Math.Round((salesOrderLine.Quantity * salesOrderLine.Price),2,MidpointRounding.AwayFromZero);
                 salesOrderLine.DiscountAmount = Math.Round((((discount) * salesOrderLine.Amount) ),2,MidpointRounding.AwayFromZero);
                 salesOrderLine.SubTotal = Math.Round((salesOrderLine.Amount - salesOrderLine.DiscountAmount),2,MidpointRounding.AwayFromZero);
@@ -184,10 +184,10 @@ namespace ERPAPI.Controllers
                     List<SalesOrderLine> lines = new List<SalesOrderLine>();
                     lines = _context.SalesOrderLine.Where(x => x.SalesOrderId.Equals(salesOrderId)).ToList();
 
-                    double impuesto15 = 0;
-                    double impuesto18 = 0;
-                    double totalgravado15 = 0;
-                    double totalgravado18 = 0;
+                    decimal impuesto15 = 0;
+                    decimal impuesto18 = 0;
+                    decimal totalgravado15 = 0;
+                    decimal totalgravado18 = 0;
 
                     foreach (var item in lines)
                     {

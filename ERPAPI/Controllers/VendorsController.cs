@@ -374,10 +374,7 @@ namespace coderush.Controllers.Api
                                        ProductName =e.ProductName,
                                        DefaultBuyingPrice = e.DefaultBuyingPrice,
                                        DefaultSellingPrice = e.DefaultSellingPrice,
-                                       Description = e.Description,
-                                       MarcaId = e.MarcaId,
-                                       LineaId = e.LineaId,
-                                       GrupoId = e.GrupoId,
+                                       Description = e.Description
                                        
                                    }
                                ).ToListAsync();

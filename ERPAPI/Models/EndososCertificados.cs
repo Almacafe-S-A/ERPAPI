@@ -42,7 +42,7 @@ namespace ERPAPI.Models
         public string BankName { get; set; }
 
         [Display(Name = "Cantidad a endosar")]
-        public double CantidadEndosar { get; set; }
+        public decimal CantidadEndosar { get; set; }
 
         [Display(Name = "Moneda")]
         public Int64 CurrencyId { get; set; }
@@ -51,7 +51,7 @@ namespace ERPAPI.Models
         public string CurrencyName { get; set; }
 
         [Display(Name = "Valor a endosar")]
-        public double ValorEndosar { get; set; }
+        public decimal ValorEndosar { get; set; }
 
         [Display(Name = "Tipo de endoso")]
         public Int64 TipoEndosoId { get; set; }
@@ -77,18 +77,18 @@ namespace ERPAPI.Models
         public DateTime FechaOtorgado { get; set; }
 
         [Display(Name = "Tasa de interes")]
-        public double TasaDeInteres { get; set; }
+        public decimal TasaDeInteres { get; set; }
 
         [Display(Name = "Total endoso")]
-        public double TotalEndoso { get; set; }
+        public decimal TotalEndoso { get; set; }
 
         public DateTime FechaLiberacion { get; set; }/// automatica al cancelar un endoso
 
         public DateTime FechaCancelacion { get; set; }/// solo sera editable en las liberaciones
 
-        public double CantidadEndosada { get; set; } ///Se ingresara manual al registrar un Endoso
+        public decimal CantidadEndosada { get; set; } ///Se ingresara manual al registrar un Endoso
 
-        public double Saldo { get; set; } /// solo se va mostrar en el grid Princial de endosos para referencias 
+        public decimal Saldo { get; set; } /// solo se va mostrar en el grid Princial de endosos para referencias 
 
 
         public DateTime FechaCreacion { get; set; }

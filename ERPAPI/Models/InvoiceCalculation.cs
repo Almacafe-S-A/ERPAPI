@@ -42,34 +42,34 @@ namespace ERPAPI.Models
         public int Dias { get; set; }
 
         [Display(Name = "Precio unitario")]
-        public double UnitPrice { get; set; }
+        public decimal UnitPrice { get; set; }
 
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Display(Name = "Valor en Lps.")]
-        public double ValorLps { get; set; }
+        public decimal ValorLps { get; set; }
 
         [Display(Name = "Valor a facturar")]
-        public double ValorFacturar { get; set; }
+        public decimal ValorFacturar { get; set; }
 
         [Display(Name = "Valor a facturar")]
-        public double IngresoMercadería { get; set; }
+        public decimal IngresoMercadería { get; set; }
 
         [Display(Name = "Valor a facturar")]
-        public double MercaderiaCertificada { get; set; }
+        public decimal MercaderiaCertificada { get; set; }
 
         [Display(Name = "Dias")]
         public int Dias2 { get; set; }
 
         [Display(Name = "Porcentaje Merma")]
-        public double PorcentajeMerma { get; set; }
+        public decimal PorcentajeMerma { get; set; }
 
         [Display(Name = "Valor en Lps.")]
-        public double ValorLpsMerma { get; set; }
+        public decimal ValorLpsMerma { get; set; }
 
         [Display(Name = "Valor a Facturar")]
-        public double ValorAFacturarMerma { get; set; }
+        public decimal ValorAFacturarMerma { get; set; }
 
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }

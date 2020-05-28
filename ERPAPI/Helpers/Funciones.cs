@@ -24,7 +24,7 @@ namespace ERPAPI.Helpers
         /// <param name="_branchid"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, JournalEntry _je, double _Monto, int? _branchid)
+        public async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, JournalEntry _je, decimal _Monto, int? _branchid)
         {
             JournalEntryConfiguration _journalentryconfiguration;
             if (_branchid.HasValue)
@@ -45,7 +45,7 @@ namespace ERPAPI.Helpers
                                                                   ).FirstOrDefaultAsync();
             }
 
-            double sumacreditos = 0, sumadebitos = 0;
+            decimal sumacreditos = 0, sumadebitos = 0;
             if (_journalentryconfiguration != null)
             {
 
@@ -108,7 +108,7 @@ namespace ERPAPI.Helpers
         /// <param name="_branchid"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, long _DocumentId, int _TypeOfAdjustmentId, int _VoucherType, DateTime _date, DateTime _postdate, double _Monto, string _usuario, string _memo, int? _branchid)
+        public async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, long _DocumentId, int _TypeOfAdjustmentId, int _VoucherType, DateTime _date, DateTime _postdate, decimal _Monto, string _usuario, string _memo, int? _branchid)
         {
             JournalEntryConfiguration _journalentryconfiguration;
             if (_branchid.HasValue)
@@ -129,7 +129,7 @@ namespace ERPAPI.Helpers
                                                                   ).FirstOrDefaultAsync();
             }
 
-            double sumacreditos = 0, sumadebitos = 0;
+            decimal sumacreditos = 0, sumadebitos = 0;
             if (_journalentryconfiguration != null)
             {
 

@@ -244,7 +244,7 @@ namespace ERPAPI.Controllers
                         _JournalEntryq = _JournalEntry;
                         _context.JournalEntry.Add(_JournalEntryq);
                         // await _context.SaveChangesAsync();
-                        double sumacreditos = 0, sumadebitos = 0;
+                        decimal sumacreditos = 0, sumadebitos = 0;
                         foreach (var item in _JournalEntryq.JournalEntryLines)
                         {
                             item.JournalEntryId = _JournalEntryq.JournalEntryId;

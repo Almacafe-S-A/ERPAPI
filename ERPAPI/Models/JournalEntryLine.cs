@@ -34,19 +34,23 @@ namespace ERPAPI.Models
         //[Display(Name = "Tipo de Movimiento")]
        // public DrOrCrSide DrCr { get; set; }
         [Display(Name = "Débito")]
-        public double Debit { get; set; }
+        [Column(TypeName = "Money")]
+        public decimal Debit { get; set; }
         [Display(Name = "Crédito")]
-        public double Credit { get; set; }
-
+        [Column(TypeName = "Money")]
+        public decimal Credit { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Débito moneda del sistema ")]
-        public double DebitSy { get; set; }
+        public decimal DebitSy { get; set; }
         [Display(Name = "Crédito moneda del sistema")]
-        public double CreditSy { get; set; }
-
+        [Column(TypeName = "Money")]
+        public decimal CreditSy { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Débito moneda extranjera ")]
-        public double DebitME { get; set; }
+        public decimal DebitME { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Crédito moneda extranjera")]
-        public double CreditME { get; set; }
+        public decimal CreditME { get; set; }
 
         public string Memo { get; set; }
 

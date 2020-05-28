@@ -233,7 +233,7 @@ namespace ERPAPI.Controllers
 
                         // await _context.SaveChangesAsync();
 
-                        double sumacreditos=0, sumadebitos = 0;
+                        decimal sumacreditos=0, sumadebitos = 0;
                         if (_journalentryconfiguration!=null)
                         {
                             //Crear el asiento contable configurado
@@ -434,7 +434,7 @@ namespace ERPAPI.Controllers
                         {
                             if (_Invoiceq.CurrencyId == 1)
                             {
-                                if (_Invoiceq.Total > _elemento.Valordecimal)
+                                if (_Invoiceq.Total >Convert.ToDecimal(_elemento.Valordecimal))
                                 {
                                     GenerateAlert = true;
                                 }
@@ -445,7 +445,7 @@ namespace ERPAPI.Controllers
                                 rate = await _context.ExchangeRate.Where(q => q.DayofRate == _Invoiceq.InvoiceDate && q.CurrencyId == _Invoiceq.CurrencyId).FirstOrDefaultAsync();
                                 if (rate != null)
                                 {
-                                    if (((double)rate.ExchangeRateValue * _Invoiceq.Total) > _elemento.Valordecimal)
+                                    if ((rate.ExchangeRateValue * _Invoiceq.Total) >(decimal) _elemento.Valordecimal)
                                     {
                                         GenerateAlert = true;
                                     }
@@ -524,7 +524,7 @@ namespace ERPAPI.Controllers
 
                         // await _context.SaveChangesAsync();
 
-                        double sumacreditos = 0, sumadebitos = 0;
+                        decimal sumacreditos = 0, sumadebitos = 0;
                         if (_journalentryconfiguration != null)
                         {
                             //Crear el asiento contable configurado

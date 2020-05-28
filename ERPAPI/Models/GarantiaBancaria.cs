@@ -21,13 +21,13 @@ namespace ERPAPI.Models
         [ForeignKey("CostCenterId")]
         public CostCenter CostCenter { get; set; }
 
-        public double Monto { get; set; }
+        public decimal Monto { get; set; }
 
         public int CurrencyId { get; set; }
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
 
-        public double Ajuste { get; set; }
+        public decimal Ajuste { get; set; }
 
         public Int64 IdEstado { get; set; }
         [ForeignKey("IdEstado")]

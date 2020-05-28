@@ -36,23 +36,23 @@ namespace ERPAPI.Models
         public string WarehouseName { get; set; }
 
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Display(Name = "Precio")]
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         [Display(Name = "Descripción")]
         public string Description { get; set; }
         [Display(Name = "Valor del certificado")]
-        public double valorcertificado { get; set; }
+        public decimal valorcertificado { get; set; }
         [Display(Name = "Valor financiado")]
-        public double valorfinanciado { get; set; }
+        public decimal valorfinanciado { get; set; }
 
         [Display(Name = "Valor a pagar impuestos")]
-        public double ValorImpuestos { get; set; }
+        public decimal ValorImpuestos { get; set; }
 
         [Display(Name = "Saldo de producto")]
-        public double SaldoProducto { get; set; }
+        public decimal SaldoProducto { get; set; }
 
 
     }

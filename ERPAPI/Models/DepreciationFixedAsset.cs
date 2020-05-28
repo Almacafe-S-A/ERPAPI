@@ -20,43 +20,43 @@ namespace ERPAPI.Models
         public Int32 Year { get; set; }
 
         [Display(Name = "Enero")]
-        public double January { get; set; }
+        public decimal January { get; set; }
 
         [Display(Name = "Febrero")]
-        public double February { get; set; }
+        public decimal February { get; set; }
 
         [Display(Name = "Marzo")]
-        public double March { get; set; }
+        public decimal March { get; set; }
 
         [Display(Name = "Abril")]
-        public double April { get; set; }
+        public decimal April { get; set; }
 
         [Display(Name = "Mayo")]
-        public double May { get; set; }
+        public decimal May { get; set; }
 
         [Display(Name = "Junio")]
-        public double June { get; set; }
+        public decimal June { get; set; }
 
         [Display(Name = "Julio")]
-        public double July { get; set; }
+        public decimal July { get; set; }
 
         [Display(Name = "Agosto")]
-        public double August { get; set; }
+        public decimal August { get; set; }
 
         [Display(Name = "Septiembre")]
-        public double September { get; set; }
+        public decimal September { get; set; }
 
         [Display(Name = "Octubre")]
-        public double October { get; set; }
+        public decimal October { get; set; }
 
         [Display(Name = "Noviembre")]
-        public double November { get; set; }
+        public decimal November { get; set; }
 
         [Display(Name = "Diciembre")]
-        public double December { get; set; }
+        public decimal December { get; set; }
 
         [Display(Name = "Depreciado")]
-        public double TotalDepreciated { get; set; }
+        public decimal TotalDepreciated { get; set; }
 
 
         [Display(Name = "Fecha de creación")]

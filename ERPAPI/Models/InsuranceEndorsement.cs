@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,39 +12,35 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int InsuranceEndorsementId { get; set; }
+        public DateTime DateGenerated { get; set; }
+        public Int64 InsurancePolicyId { get; set; }
+        [ForeignKey("InsurancePolicyId")]
+        public InsurancePolicy InsurancePolicy { get; set; }
 
         [Display(Name = "Centro de costos")]
         public Int64 CostCenterId { get; set; }
+        [ForeignKey ("CostCenterId")]
+        public CostCenter CostCenter { get; set; }
 
-        public Int64 CustomerId { get; set; }
-
-        public string Customername { get; set; }
-
-        public int WarehouseId { get; set; }
-
-        public string WarehouseName { get; set; }
-
-        public int WarehouseTypeId { get; set; }
-
-        public string WarehouseTypeName { get; set; }
-
-        public DateTime DateGenerated { get; set; }
-
-        public int InsurancePolicyId { get; set; }
-
-        public int ProductdId { get; set; }
+        /// /Servicio        
+        public Int64 ProductdId { get; set; }
+        [ForeignKey("ProductdId")]
+        public Product Product { get; set; }
 
         public string ProductName { get; set; }
 
-        public double TotalAmountLp { get; set; }
+        public decimal TotalAmountLp { get; set; }
 
-        public double TotalAmountDl { get; set; }
+        public decimal TotalAmountDl { get; set; }
 
-        public double TotalCertificateBalalnce { get; set; }
+        public decimal TotalCertificateBalalnce { get; set; }
 
-        public double TotalAssuredDifernce { get; set; }
+        public decimal TotalAssuredDifernce { get; set; }
 
         public Int64 EstadoId { get; set; }
+
+        public string Estado { get; set; }
+
         [ForeignKey("EstadoId")]
         public Estados Estados { get; set; }
         public DateTime FechaCreacion { get; set; }
@@ -51,7 +48,6 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public List<InsuranceEndorsementLine> InsuranceEndorsementLines { get; set; }
 
     }
 }
