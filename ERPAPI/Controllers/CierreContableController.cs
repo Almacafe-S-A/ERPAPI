@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Collections;
 using AutoMapper.Configuration.Conventions;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ERPAPI.Controllers
 {
@@ -546,7 +547,8 @@ namespace ERPAPI.Controllers
                         //////////DEPRECIACION /////////////////
                         foreach (var item in activos)
                         {
-                            var adepreciar = item.ToDepreciate;
+                            var adepreciar = item.TotalDepreciated;
+                            
                             if (adepreciar > item.ResidualValue)
                             {
                                 adepreciar = item.ResidualValue;
@@ -569,19 +571,31 @@ namespace ERPAPI.Controllers
                             {
                                 depreciacion.FixedAssetId = item.FixedAssetId;
                                 depreciacion.Year = pfecha.Year;
-                                var mes = pfecha.ToString("MMMM");
-                                depreciacion.January = pfecha.ToString("MMMM") == "January" ? adepreciar : depreciacion.January;
-                                depreciacion.February = pfecha.ToString("MMMM") == "February" ? adepreciar : depreciacion.February;
-                                depreciacion.March = pfecha.ToString("MMMM") == "March" ? adepreciar : depreciacion.March;
-                                depreciacion.April = pfecha.ToString("MMMM") == "April" ? adepreciar : depreciacion.April;
-                                depreciacion.May = pfecha.ToString("MMMM") == "May" ? adepreciar : depreciacion.May;
-                                depreciacion.June = pfecha.ToString("MMMM") == "June" ? adepreciar : depreciacion.June;
-                                depreciacion.July = pfecha.ToString("MMMM") == "July" ? adepreciar : depreciacion.July;
-                                depreciacion.August = pfecha.ToString("MMMM") == "August" ? adepreciar : depreciacion.August;
-                                depreciacion.September = pfecha.ToString("MMMM") == "September" ? adepreciar : depreciacion.September;
-                                depreciacion.October = pfecha.ToString("MMMM") == "October" ? adepreciar : depreciacion.October;
-                                depreciacion.November = pfecha.ToString("MMMM") == "November" ? adepreciar : depreciacion.November;
-                                depreciacion.December = pfecha.ToString("MMMM") == "December" ? adepreciar : depreciacion.December;
+                                depreciacion.January = pfecha.Month == 1 ? adepreciar : depreciacion.January;
+                                depreciacion.February = pfecha.Month == 2 ? adepreciar : depreciacion.February;
+                                depreciacion.March = pfecha.Month == 3 ? adepreciar : depreciacion.March;
+                                depreciacion.April = pfecha.Month == 4 ? adepreciar : depreciacion.April;
+                                depreciacion.May = pfecha.Month == 5 ? adepreciar : depreciacion.May;
+                                depreciacion.June = pfecha.Month == 6 ? adepreciar : depreciacion.June;
+                                depreciacion.July = pfecha.Month == 7 ? adepreciar : depreciacion.July;
+                                depreciacion.August = pfecha.Month == 8 ? adepreciar : depreciacion.August;
+                                depreciacion.September = pfecha.Month == 9 ? adepreciar : depreciacion.September;
+                                depreciacion.October = pfecha.Month == 10 ? adepreciar : depreciacion.October;
+                                depreciacion.November = pfecha.Month == 11 ? adepreciar : depreciacion.November;
+                                depreciacion.December = pfecha.Month == 12 ? adepreciar : depreciacion.December;
+                                depreciacion.TotalDepreciated = depreciacion.January
+                                                                + depreciacion.February
+                                                                + depreciacion.March
+                                                                + depreciacion.April
+                                                                + depreciacion.May
+                                                                + depreciacion.June
+                                                                + depreciacion.July
+                                                                + depreciacion.August
+                                                                + depreciacion.September
+                                                                + depreciacion.October
+                                                                + depreciacion.November
+                                                                + depreciacion.December;
+
                                 depreciacion.FechaCreacion = DateTime.Now;
                                 depreciacion.FechaModificacion = DateTime.Now;
                                 depreciacion.UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString();
@@ -589,22 +603,39 @@ namespace ERPAPI.Controllers
                             }
                             else
                             {
+                                //////Si el activo se adquirio del 15 en adelante se calcula una depreciacion diaria si se Aquirio el ultimo del mes no se deprecia en el mes actual
+
+                                if (_context.DepreciationFixedAsset.Where(w=>w.FixedAssetId== item.FixedAssetId).ToList()!= null)
+                                {
+                                    if (item.AssetDate.Day >= DateTime.DaysInMonth(item.AssetDate.Year, item.AssetDate.Month)-1 
+                                        && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
+                                    {
+                                        continue;
+                                    }
+                                    if (item.AssetDate.Day > 14 && item.AssetDate.Day < 30 && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
+                                    {
+                                        adepreciar = (item.TotalDepreciated / 30) * item.AssetDate.Day;
+                                    }
+                                }
+                               
+                                
                                 _context.DepreciationFixedAsset.Add(new DepreciationFixedAsset
                                 {
                                     FixedAssetId = item.FixedAssetId,
                                     Year = pfecha.Year,
-                                    January = pfecha.ToString("MMMM") == "January" ? adepreciar : 0,
-                                    February = pfecha.ToString("MMMM") == "February" ? adepreciar : 0,
-                                    March = pfecha.ToString("MMMM") == "March" ? adepreciar : 0,
-                                    April = pfecha.ToString("MMMM") == "April" ? adepreciar : 0,
-                                    May = pfecha.ToString("MMMM") == "May" ? adepreciar : 0,
-                                    June = pfecha.ToString("MMMM") == "June" ? adepreciar : 0,
-                                    July = pfecha.ToString("MMMM") == "July" ? adepreciar : 0,
-                                    August = pfecha.ToString("MMMM") == "August" ? adepreciar : 0,
-                                    September = pfecha.ToString("MMMM") == "September" ? adepreciar : 0,
-                                    October = pfecha.ToString("MMMM") == "October" ? adepreciar : 0,
-                                    November = pfecha.ToString("MMMM") == "November" ? adepreciar : 0,
-                                    December = pfecha.ToString("MMMM") == "December" ? adepreciar : 0,
+                                    January = pfecha.Month == 1 ? adepreciar : 0,
+                                    February = pfecha.Month == 2 ? adepreciar : 0,
+                                    March = pfecha.Month == 3 ? adepreciar : 0,
+                                    April = pfecha.Month == 4 ? adepreciar : 0,
+                                    May = pfecha.Month == 5 ? adepreciar : 0,
+                                    June = pfecha.Month == 6 ? adepreciar : 0,
+                                    July = pfecha.Month == 7 ? adepreciar : 0,
+                                    August = pfecha.Month == 8 ? adepreciar : 0,
+                                    September = pfecha.Month == 9 ? adepreciar : 0,
+                                    October = pfecha.Month == 10 ? adepreciar : 0,
+                                    November = pfecha.Month == 11 ? adepreciar : 0,
+                                    December = pfecha.Month == 12? adepreciar : 0,
+                                    TotalDepreciated = adepreciar,
                                     FechaCreacion = DateTime.Now,
                                     FechaModificacion = DateTime.Now,
                                     UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
@@ -612,14 +643,21 @@ namespace ERPAPI.Controllers
                                 });
                             }
 
+                            /////Actualiza los 
+                            item.AccumulatedDepreciation += adepreciar;
+                            item.NetValue -= adepreciar;
 
                             //////////////////ASIENTO CONTABLE//////////////////////////
 
                             FixedAssetGroup grupoactivo = await _context.FixedAssetGroup.Where(q => q.FixedAssetGroupId == item.FixedAssetGroupId).FirstOrDefaultAsync();
                             if (grupoactivo == null)
                             {
+                                transaction.Rollback();
                                 pProceso.Mensaje = $"No se encontraron grupos de Activos para el activo {item.FixedAssetId} - {item.FixedAssetDescription}";
                                 pProceso.Estatus = "PENDIENTE - ERROR";
+                                await _context.SaveChangesAsync();
+                                return;
+
 
                             }
                             Accounting cuentaDepreciacion = await _context.Accounting.Where(w => w.AccountId == grupoactivo.DepreciationAccountingId).FirstOrDefaultAsync();
@@ -627,6 +665,8 @@ namespace ERPAPI.Controllers
                             {
                                 pProceso.Mensaje = $"No se encontro la cuenta de Depreciacion para el grupo -{grupoactivo.FixedAssetGroupDescription}";
                                 pProceso.Estatus = "PENDIENTE - ERROR";
+                                await _context.SaveChangesAsync();
+                                return;
 
                             }
                             Accounting cuentaActivo = await _context.Accounting.Where(w => w.AccountId == grupoactivo.FixedAssetAccountingId).FirstOrDefaultAsync();
@@ -634,6 +674,8 @@ namespace ERPAPI.Controllers
                             {
                                 pProceso.Mensaje = $"No se encontro la cuenta de Activo para el grupo -{grupoactivo.FixedAssetGroupDescription}";
                                 pProceso.Estatus = "PENDIENTE - ERROR";
+                                await _context.SaveChangesAsync();
+                                return;
 
                             }
 
@@ -652,6 +694,7 @@ namespace ERPAPI.Controllers
                                 EstadoId = 5,
                                 EstadoName = "Aprobado Sistema",
                                 TypeOfAdjustmentId = 65,
+                                
                                 //VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),                      
 
                             };
@@ -661,7 +704,6 @@ namespace ERPAPI.Controllers
                                 AccountId = Convert.ToInt32(cuentaDepreciacion.AccountId),
                                 AccountName = cuentaDepreciacion.AccountName,
                                 Debit = adepreciar,
-                                DebitME = adepreciar,
                                 CostCenterId = item.CenterCostId,
                                 CostCenterName = item.CenterCostName,
                                 CreatedUser = "SYSTEM",
@@ -674,7 +716,6 @@ namespace ERPAPI.Controllers
                                 AccountId = Convert.ToInt32(cuentaActivo.AccountId),
                                 AccountName = cuentaActivo.AccountName,
                                 Credit = adepreciar,
-                                CreditME = adepreciar,
                                 CostCenterId = item.CenterCostId,
                                 CostCenterName = item.CenterCostName,
                                 CreatedUser = "SYSTEM",
@@ -706,6 +747,8 @@ namespace ERPAPI.Controllers
                     transaction.Rollback();
                     pProceso.Estatus = "ERROR";
                     //throw;
+                    await _context.SaveChangesAsync();
+                    return;
                 }
             }
                 
