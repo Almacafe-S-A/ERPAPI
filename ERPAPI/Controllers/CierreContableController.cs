@@ -738,8 +738,8 @@ namespace ERPAPI.Controllers
                     }
                     pProceso.Estatus = "FINALIZADO";
                     pProceso.Mensaje = "";
-                    await _context.SaveChangesAsync();
                     transaction.Commit();
+                    await _context.SaveChangesAsync();
 
                 }
                 catch (Exception ex)
