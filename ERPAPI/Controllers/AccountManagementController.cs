@@ -93,7 +93,7 @@ namespace ERPAPI.Controllers
             AccountManagement Items = new AccountManagement();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.AccountManagementId == AccountManagementId).FirstOrDefaultAsync();
+                Items = await _context.AccountManagement.Include(i => i.Accounting).Where(q => q.AccountManagementId == AccountManagementId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

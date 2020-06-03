@@ -50,8 +50,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
+        public Int64 AccountId { get; set; }
 
         [ForeignKey("AccountId")]
-        public Int64 AccountId { get; set; }
+        public Accounting Accounting { get; set; }
     }
 }

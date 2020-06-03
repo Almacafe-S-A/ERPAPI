@@ -293,7 +293,7 @@ namespace ERPAPI.Controllers
 
                 foreach (var item in _CheckAccountLines.JournalEntry.JournalEntryLines)
                 {
-                    if (item.JournalEntryId == 0)
+                    if (item.JournalEntryLineId == 0)
                     {
                         item.JournalEntryId = Convert.ToInt64(_CheckAccountLinesq.JournalEntrId ) ;
                         _context.JournalEntryLine.Add(item);
@@ -333,6 +333,7 @@ namespace ERPAPI.Controllers
                 _CheckAccountLinesq.PartyTypeId = _CheckAccountLines.PartyTypeId;
                 _CheckAccountLinesq.Place = _CheckAccountLines.Place;
                 _CheckAccountLinesq.Ammount = _CheckAccountLines.Ammount;
+                _CheckAccountLinesq.PaytoOrderOf = _CheckAccountLines.PaytoOrderOf;
                 Numalet let;
                 let = new Numalet();
                 let.SeparadorDecimalSalida = "Lempiras";
@@ -444,7 +445,7 @@ namespace ERPAPI.Controllers
                     _CheckAccountLinesq.Estado = "Autorizado";
                     _CheckAccountLinesq.IdEstado = 98;
                     journalEntry.EstadoId = 6;
-                    journalEntry.EstadoName = "Aporbado";
+                    journalEntry.EstadoName = "Aprobado";
                     foreach (JournalEntryLine jel in journalEntry.JournalEntryLines)
                     {
                         bool continuar = true;
