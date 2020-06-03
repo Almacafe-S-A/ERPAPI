@@ -403,6 +403,15 @@ namespace ERPAPI.Controllers
                                 while (continuar);
                             }
                         }
+                        else
+                        {
+                            CheckAccountLines check = _context.CheckAccountLines.Where(w => w.JournalEntrId == _JournalEntryq.JournalEntryId).FirstOrDefault();
+                            if (check != null)
+                            {
+                                check.Estado = "Rechazado";
+                                check.IdEstado = 99;
+                            }
+                        }
 
                         transaction.Commit();
                         await _context.SaveChangesAsync();
