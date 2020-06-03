@@ -335,6 +335,7 @@ namespace ERPAPI.Controllers
                             isapproved = true;
                         }
                 _context.Entry(_JournalEntryq).CurrentValues.SetValues((_JournalEntry));
+                        
 
                 await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -356,6 +357,12 @@ namespace ERPAPI.Controllers
 
                         if(!isapproved)
                         {
+                            CheckAccountLines check = _context.CheckAccountLines.Where(w => w.JournalEntrId == _JournalEntryq.JournalEntryId).FirstOrDefault();
+                            if (check != null )
+                            {
+                                check.Estado = "Autorizado";
+                                check.IdEstado = 98;
+                            }
                             foreach(JournalEntryLine jel in _JournalEntry.JournalEntryLines)
                             {
                                 bool continuar = true;
@@ -398,6 +405,7 @@ namespace ERPAPI.Controllers
                         }
 
                         transaction.Commit();
+                        await _context.SaveChangesAsync();
                     }
                     catch (Exception ex)
                     {
