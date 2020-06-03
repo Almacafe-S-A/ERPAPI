@@ -198,6 +198,7 @@ namespace ERPAPI.Controllers
                         item.ModifiedUser = _CheckAccountLinesq.UsuarioCreacion;
                         item.CreatedDate = DateTime.Now;
                         item.ModifiedDate = DateTime.Now;
+                        item.JournalEntryLineId = 0;
 
 
                     }
