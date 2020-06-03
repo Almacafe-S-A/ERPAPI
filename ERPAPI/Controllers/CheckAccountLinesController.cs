@@ -447,6 +447,8 @@ namespace ERPAPI.Controllers
                     _CheckAccountLinesq.IdEstado = 98;
                     journalEntry.EstadoId = 6;
                     journalEntry.EstadoName = "Aprobado";
+                    journalEntry.ApprovedBy = User.Identity.Name;
+                    journalEntry.ApprovedDate = DateTime.Now;
                     foreach (JournalEntryLine jel in journalEntry.JournalEntryLines)
                     {
                         bool continuar = true;
