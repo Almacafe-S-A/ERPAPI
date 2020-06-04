@@ -443,7 +443,7 @@ namespace ERPAPI.Controllers
                 
                 if (Aprobado)
                 {
-                    _CheckAccountLinesq.Estado = "Autorizado";
+                    _CheckAccountLinesq.Estado = "Aprobado";
                     _CheckAccountLinesq.IdEstado = 98;
                     journalEntry.EstadoId = 6;
                     journalEntry.EstadoName = "Aprobado";
