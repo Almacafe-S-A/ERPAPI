@@ -68,7 +68,7 @@ namespace ERPAPI.Controllers
              BitacoraCierreContable cierre = await _context.BitacoraCierreContable.Where(w => w.FechaCierre.Date == pBitacoraCierre.FechaCierre.Date).OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
             ExchangeRate tasacambio = await _context.ExchangeRate
                             //.Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
-                            .Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
+                            .Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)&&b.CurrencyId == 2).FirstOrDefaultAsync();
 
             BitacoraCierreContable ultimocierre = await _context.BitacoraCierreContable.Where(w => w.Estatus == "FINALIZADO").OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
 
