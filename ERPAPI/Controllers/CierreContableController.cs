@@ -68,13 +68,13 @@ namespace ERPAPI.Controllers
              BitacoraCierreContable cierre = await _context.BitacoraCierreContable.Where(w => w.FechaCierre.Date == pBitacoraCierre.FechaCierre.Date).OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
             ExchangeRate tasacambio = await _context.ExchangeRate
                             //.Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
-                            .Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
+                            .Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)&&b.CurrencyId == 2).FirstOrDefaultAsync();
 
             BitacoraCierreContable ultimocierre = await _context.BitacoraCierreContable.Where(w => w.Estatus == "FINALIZADO").OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
 
             if (tasacambio == null)//Revisa la tasa de cambio actualizada
             {
-                return await Task.Run(() => BadRequest("Debe de Agregar una tasa de cambio actualizada"));
+                return await Task.Run(() => BadRequest("Debe de Agregar una tasa de cambio de Dolar Estadounidense actualizada"));
             }
 
             if (cierre != null&&cierre.Estatus != "FINALIZADO")               
