@@ -74,7 +74,7 @@ namespace ERPAPI.Controllers
 
             if (tasacambio == null)//Revisa la tasa de cambio actualizada
             {
-                return await Task.Run(() => BadRequest("Debe de Agregar una tasa de cambio actualizada"));
+                return await Task.Run(() => BadRequest("Debe de Agregar una tasa de cambio de Dolar Estadounidense actualizada"));
             }
 
             if (cierre != null&&cierre.Estatus != "FINALIZADO")               
