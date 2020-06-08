@@ -34,6 +34,8 @@ namespace ERPAPI.Models
 
         public decimal MerchadiseTotalValue { get; set; }
 
+        public decimal MerchandiseDeductible { get; set; }
+
         public decimal MerchandiseInsuredValue { get; set; }
 
         public decimal InsuredDiference { get; set; }
