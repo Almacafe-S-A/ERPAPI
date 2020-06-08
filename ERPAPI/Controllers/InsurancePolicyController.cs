@@ -140,6 +140,8 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<InsurancePolicy>> Insert([FromBody]InsurancePolicy _InsurancePolicy)
         {
             InsurancePolicy InsurancePolicyq = new InsurancePolicy();
+            long asientogenerado = 0;
+
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -151,7 +153,7 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
                         JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                                      .Where(q => q.TransactionId == 1)
+                                                                      .Where(q => q.TransactionId == 7)
                                                                       //.Where(q => q.BranchId == InsurancePolicyq.BranchId)
                                                                       .Where(q => q.EstadoName == "Activo")
                                                                       .Include(q => q.JournalEntryConfigurationLine)
@@ -227,12 +229,13 @@ namespace ERPAPI.Controllers
                                 transaction.Rollback();
                                 //_logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
                                 //return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                return BadRequest($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico.");
+                                return BadRequest($"Error :No Coincide la suma del debe y el haber generada por el asiento automatico");
                             }
 
                             _je.TotalCredit = sumacreditos;
                             _je.TotalDebit = sumadebitos;
                             _context.JournalEntry.Add(_je);
+                            asientogenerado = _je.JournalEntryId;
 
                             await _context.SaveChangesAsync();
                         }
@@ -270,7 +273,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(InsurancePolicyq));
+            return await Task.Run(() => Ok(asientogenerado));
         }
 
         /// <summary>

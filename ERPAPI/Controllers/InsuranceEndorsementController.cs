@@ -81,6 +81,31 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de InsuranceEndorsementes de una Poliza 
+        /// </summary>
+        /// <param name="InsurancePolicyId"></param>       
+        /// <returns></returns>
+        [HttpGet("[action]/{InsurancePolicyId}")]
+        public async Task<IActionResult> GetInsuranceEndorsementByInsurancePolicyId( int InsurancePolicyId)
+        {
+            List<InsuranceEndorsement> Items = new List<InsuranceEndorsement>();
+            try
+            {
+                Items = await _context.InsuranceEndorsement.Where(w => w.InsurancePolicyId == InsurancePolicyId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la InsuranceEndorsement por medio del Id enviado.
         /// </summary>
