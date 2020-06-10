@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200610014236_AddedCategory_Insuredassets")]
+    partial class AddedCategory_Insuredassets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4118,7 +4120,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Direccion");
 
-                    b.Property<int?>("Extension");
+                    b.Property<int>("Extension");
 
                     b.Property<DateTime?>("FechaCreacion");
 
@@ -11394,7 +11396,7 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("BranchId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "Category")
+                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "Categoria")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade);
