@@ -78,7 +78,7 @@ namespace ERPAPI.Models
 
         public DateTime? FechaFinContrato { get; set; }
         public string Telefono { get; set; }
-        public int Extension { get; set; }
+        public int? Extension { get; set; }
         public string Notas { get; set; }
 
         public string TipoSangre { get; set; }

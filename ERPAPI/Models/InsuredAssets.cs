@@ -40,6 +40,11 @@ namespace ERPAPI.Models
 
         public decimal InsuredDiference { get; set; }
 
+        public long CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+
+        public ElementoConfiguracion Category { get; set; }
+
         public Int64 EstadoId { get; set; }
         [ForeignKey("EstadoId")]
         public Estados Estados { get; set; }
