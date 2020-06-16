@@ -140,7 +140,7 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<InsurancePolicy>> Insert([FromBody]InsurancePolicy _InsurancePolicy)
         {
             InsurancePolicy InsurancePolicyq = new InsurancePolicy();
-            long asientogenerado = 0;
+            
 
             try
             {
@@ -149,96 +149,12 @@ namespace ERPAPI.Controllers
                     try
                     {
                         InsurancePolicyq = _InsurancePolicy;
+                        InsurancePolicyq.EstadoId = 1;
+                        InsurancePolicyq.Estado = "Activo";
+
                         _context.InsurancePolicy.Add(InsurancePolicyq);
                         await _context.SaveChangesAsync();
-
-                        JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                                      .Where(q => q.TransactionId == 7)
-                                                                      //.Where(q => q.BranchId == InsurancePolicyq.BranchId)
-                                                                      .Where(q => q.EstadoName == "Activo")
-                                                                      .Include(q => q.JournalEntryConfigurationLine)
-                                                                      ).FirstOrDefaultAsync();
-
-                        BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = InsurancePolicyq.CustomerId,
-                            DocType = "JournalEntryConfiguration",
-                            ClaseInicial =
-                             Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "InsertPolicy",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = InsurancePolicyq.UsuarioCreacion,
-                            UsuarioModificacion = InsurancePolicyq.UsuarioModificacion,
-                            UsuarioEjecucion = InsurancePolicyq.UsuarioModificacion,
-
-                        });
-
-                        // await _context.SaveChangesAsync();
-
-                        decimal sumacreditos = 0, sumadebitos = 0;
-                        if (_journalentryconfiguration != null)
-                        {
-                            //Crear el asiento contable configurado
-                            //.............................///////
-                            JournalEntry _je = new JournalEntry
-                            {
-                                Date = InsurancePolicyq.PolicyDate,
-                                Memo = "Partidad Ingreso de Poliza",
-                                DatePosted = InsurancePolicyq.PolicyDate,
-                                ModifiedDate = DateTime.Now,
-                                CreatedDate = DateTime.Now,
-                                ModifiedUser = InsurancePolicyq.UsuarioModificacion,
-                                CreatedUser = InsurancePolicyq.UsuarioCreacion,
-                                DocumentId = InsurancePolicyq.InsurancePolicyId,
-                                TypeOfAdjustmentId = 65,
-                                VoucherType = 1,
-
-                            };
-
-
-
-                            foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
-                            {
-
-                                _je.JournalEntryLines.Add(new JournalEntryLine
-                                {
-                                    AccountId = Convert.ToInt32(item.AccountId),
-                                    AccountName = item.AccountName,
-                                    Description = item.AccountName,
-                                    Credit = item.DebitCredit == "Credito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0,
-                                    Debit = item.DebitCredit == "Debito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0,
-                                    CreatedDate = DateTime.Now,
-                                    ModifiedDate = DateTime.Now,
-                                    CreatedUser = InsurancePolicyq.UsuarioCreacion,
-                                    ModifiedUser = InsurancePolicyq.UsuarioModificacion,
-                                    Memo = "",
-                                });
-
-                                sumacreditos += item.DebitCredit == "Credito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0;
-                                sumadebitos += item.DebitCredit == "Debito" ? (InsurancePolicyq.LpsAmount > 0 ? InsurancePolicyq.LpsAmount : InsurancePolicyq.DollarAmount) : 0;
-
-                                // _context.JournalEntryLine.Add(_je);
-
-                            }
-
-
-                            if (sumacreditos != sumadebitos)
-                            {
-                                transaction.Rollback();
-                                //_logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                //return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                return BadRequest($"Error :No Coincide la suma del debe y el haber generada por el asiento automatico");
-                            }
-
-                            _je.TotalCredit = sumacreditos;
-                            _je.TotalDebit = sumadebitos;
-                            _context.JournalEntry.Add(_je);
-                            asientogenerado = _je.JournalEntryId;
-
-                            await _context.SaveChangesAsync();
-                        }
+                       
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -273,7 +189,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(asientogenerado));
+            return await Task.Run(() => Ok(InsurancePolicyq));
         }
 
         /// <summary>
