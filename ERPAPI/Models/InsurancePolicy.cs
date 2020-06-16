@@ -19,7 +19,7 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Aseguradora")]
         public string InsurancesName { get; set; }
 
-        public bool? Propias { get; set; }
+        public bool Propias { get; set; }
 
         [Display(Name = "Id Cliente")]
         public Int64? CustomerId { get; set; }
