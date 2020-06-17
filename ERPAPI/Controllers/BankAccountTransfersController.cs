@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -16,30 +15,30 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/Bank")]
+    [Route("api/BankAccountTransfers")]
     [ApiController]
-    public class BankController : Controller
+    public class BankAccountTransfersController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public BankController(ILogger<BankController> logger, ApplicationDbContext context)
+        public BankAccountTransfersController(ILogger<BankAccountTransfersController> logger, ApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
         }
 
         /// <summary>
-        /// Obtiene el Listado de Bank
+        /// Obtiene el Listado de BankAccountTransfers
         /// </summary>
         /// <returns></returns>    
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetBankPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        public async Task<IActionResult> GetBankAccountTransfersPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
         {
-            List<Bank> Items = new List<Bank>();
+            List<BankAccountTransfers> Items = new List<BankAccountTransfers>();
             try
             {
-                var query = _context.Bank.AsQueryable();
+                var query = _context.BankAccountTransfers.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
@@ -62,17 +61,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de Bankes 
+        /// Obtiene el Listado de BankAccountTransferses 
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetBank()
+        public async Task<IActionResult> Get()
         {
-            List<Bank> Items = new List<Bank>();
+            List<BankAccountTransfers> Items = new List<BankAccountTransfers>();
             try
             {
-                Items = await _context.Bank.OrderBy(b=>b.BankName).ToListAsync();
+                Items = await _context.BankAccountTransfers.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -86,17 +85,17 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene los Datos de la Bank por medio del Id enviado.
+        /// Obtiene los Datos de la BankAccountTransfers por medio del Id enviado.
         /// </summary>
-        /// <param name="BankId"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{BankId}")]
-        public async Task<IActionResult> GetBankById(Int64 BankId)
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetBankAccountTransfersById(Int64 Id)
         {
-            Bank Items = new Bank();
+            BankAccountTransfers Items = new BankAccountTransfers();
             try
             {
-                Items = await _context.Bank.Where(q => q.BankId == BankId).FirstOrDefaultAsync();
+                Items = await _context.BankAccountTransfers.Where(q => q.Id == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -111,59 +110,22 @@ namespace ERPAPI.Controllers
 
 
 
-        [HttpGet("[action]/{BankName}")]
-        public async Task<IActionResult> GetBankByName(string BankName)
-        {
-            Bank Items = new Bank();
-            try
-            {
-                Items = await _context.Bank.Where(q => q.BankName==BankName).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-        [HttpGet("[action]/{BankId}")]
-        public async Task<ActionResult<Int32>> ValidationDelete(Int64 BankId)
-        {
-            try
-            {
-                //var Items = await _context.Product.CountAsync();
-                Int32 Items = await _context.CheckAccount.Where(a => a.BankId == BankId)
-                                    .CountAsync();
-                return await Task.Run(() => Ok(Items));
-
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
-            }
-
-        }
+        
 
 
         /// <summary>
-        /// Inserta una nueva Bank
+        /// Inserta una nueva BankAccountTransfers
         /// </summary>
-        /// <param name="_Bank"></param>
+        /// <param name="_BankAccountTransfers"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Bank>> Insert([FromBody]Bank _Bank)
+        public async Task<ActionResult<BankAccountTransfers>> Insert([FromBody] BankAccountTransfers _BankAccountTransfers)
         {
-            Bank _Bankq = new Bank();
+            BankAccountTransfers _BankAccountTransfersq = new BankAccountTransfers();
             try
             {
-                _Bankq = _Bank;
-                _context.Bank.Add(_Bankq);
+                _BankAccountTransfersq = _BankAccountTransfers;
+                _context.BankAccountTransfers.Add(_BankAccountTransfersq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -173,28 +135,28 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Bankq));
+            return await Task.Run(() => Ok(_BankAccountTransfersq));
         }
 
         /// <summary>
-        /// Actualiza la Bank
+        /// Actualiza la BankAccountTransfers
         /// </summary>
-        /// <param name="_Bank"></param>
+        /// <param name="_BankAccountTransfers"></param>
         /// <returns></returns>
         [HttpPut("[action]")]
-        public async Task<ActionResult<Bank>> Update([FromBody]Bank _Bank)
+        public async Task<ActionResult<BankAccountTransfers>> Update([FromBody] BankAccountTransfers _BankAccountTransfers)
         {
-            Bank _Bankq = _Bank;
+            BankAccountTransfers _BankAccountTransfersq = _BankAccountTransfers;
             try
             {
-                _Bankq = await (from c in _context.Bank
-                                 .Where(q => q.BankId == _Bank.BankId)
+                _BankAccountTransfersq = await (from c in _context.BankAccountTransfers
+                                 .Where(q => q.Id == _BankAccountTransfers.Id)
                                 select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_Bankq).CurrentValues.SetValues((_Bank));
+                _context.Entry(_BankAccountTransfersq).CurrentValues.SetValues((_BankAccountTransfers));
 
-                //_context.Bank.Update(_Bankq);
+                //_context.BankAccountTransfers.Update(_BankAccountTransfersq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -204,25 +166,25 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Bankq));
+            return await Task.Run(() => Ok(_BankAccountTransfersq));
         }
 
         /// <summary>
-        /// Elimina una Bank       
+        /// Elimina una BankAccountTransfers       
         /// </summary>
-        /// <param name="_Bank"></param>
+        /// <param name="_BankAccountTransfers"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Bank _Bank)
+        public async Task<IActionResult> Delete([FromBody] BankAccountTransfers _BankAccountTransfers)
         {
-            Bank _Bankq = new Bank();
+            BankAccountTransfers _BankAccountTransfersq = new BankAccountTransfers();
             try
             {
-                _Bankq = _context.Bank
-                .Where(x => x.BankId == (Int64)_Bank.BankId)
+                _BankAccountTransfersq = _context.BankAccountTransfers
+                .Where(x => x.Id == (Int64)_BankAccountTransfers.Id)
                 .FirstOrDefault();
 
-                _context.Bank.Remove(_Bankq);
+                _context.BankAccountTransfers.Remove(_BankAccountTransfersq);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -231,11 +193,11 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Bankq));
+            return await Task.Run(() => Ok(_BankAccountTransfersq));
 
         }
 
-       
+
 
 
 
