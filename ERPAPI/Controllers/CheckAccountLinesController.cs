@@ -198,10 +198,11 @@ namespace ERPAPI.Controllers
                         item.ModifiedUser = _CheckAccountLinesq.UsuarioCreacion;
                         item.CreatedDate = DateTime.Now;
                         item.ModifiedDate = DateTime.Now;
+                        item.JournalEntryLineId = 0;
 
 
                     }
-                    double suma = journalEntryLines.Sum(s => s.Debit);
+                    decimal suma = journalEntryLines.Sum(s => s.Debit);
 
                     JournalEntry _je = new JournalEntry
                     {
@@ -293,7 +294,7 @@ namespace ERPAPI.Controllers
 
                 foreach (var item in _CheckAccountLines.JournalEntry.JournalEntryLines)
                 {
-                    if (item.JournalEntryId == 0)
+                    if (item.JournalEntryLineId == 0)
                     {
                         item.JournalEntryId = Convert.ToInt64(_CheckAccountLinesq.JournalEntrId ) ;
                         _context.JournalEntryLine.Add(item);
@@ -316,7 +317,7 @@ namespace ERPAPI.Controllers
 
                 
 
-                double suma = journalEntry.JournalEntryLines.Sum(s => s.Debit);
+                decimal suma = journalEntry.JournalEntryLines.Sum(s => s.Debit);
 
                 journalEntry.TotalCredit = suma;
                 journalEntry.TotalDebit = suma;
@@ -333,6 +334,7 @@ namespace ERPAPI.Controllers
                 _CheckAccountLinesq.PartyTypeId = _CheckAccountLines.PartyTypeId;
                 _CheckAccountLinesq.Place = _CheckAccountLines.Place;
                 _CheckAccountLinesq.Ammount = _CheckAccountLines.Ammount;
+                _CheckAccountLinesq.PaytoOrderOf = _CheckAccountLines.PaytoOrderOf;
                 Numalet let;
                 let = new Numalet();
                 let.SeparadorDecimalSalida = "Lempiras";
@@ -441,10 +443,12 @@ namespace ERPAPI.Controllers
                 
                 if (Aprobado)
                 {
-                    _CheckAccountLinesq.Estado = "Autorizado";
+                    _CheckAccountLinesq.Estado = "Aprobado";
                     _CheckAccountLinesq.IdEstado = 98;
                     journalEntry.EstadoId = 6;
-                    journalEntry.EstadoName = "Aporbado";
+                    journalEntry.EstadoName = "Aprobado";
+                    journalEntry.ApprovedBy = User.Identity.Name;
+                    journalEntry.ApprovedDate = DateTime.Now;
                     foreach (JournalEntryLine jel in journalEntry.JournalEntryLines)
                     {
                         bool continuar = true;

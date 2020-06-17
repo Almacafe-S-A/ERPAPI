@@ -61,35 +61,35 @@ namespace ERPAPI.Models
         public string UnitOfMeasureName { get; set; }
 
         [Display(Name = "Saldo Anterior")]
-        public double SaldoAnterior { get; set; }
+        public decimal SaldoAnterior { get; set; }
 
 
         [Display(Name = "Entrada")]
-        public double QuantityEntry { get; set; }
+        public decimal QuantityEntry { get; set; }
 
         [Display(Name = "Salida")]
-        public double QuantityOut { get; set; }
+        public decimal QuantityOut { get; set; }
 
         [Display(Name = "Entrada de sacos")]
-        public double QuantityEntryBags { get; set; }
+        public decimal QuantityEntryBags { get; set; }
 
         [Display(Name = "Salida de sacos")]
-        public double QuantityOutBags { get; set; }
+        public decimal QuantityOutBags { get; set; }
 
         [Display(Name = "Entrada certificado deposito")]
-        public double QuantityEntryCD { get; set; }
+        public decimal QuantityEntryCD { get; set; }
 
         [Display(Name = "Salida de certificado de deposito")]
-        public double QuantityOutCD { get; set; }
+        public decimal QuantityOutCD { get; set; }
 
         [Display(Name = "Saldo Certificado depositos")]
-        public double TotalCD { get; set; }
+        public decimal TotalCD { get; set; }
 
         [Display(Name = "Saldo sacos")]
-        public double TotalBags { get; set; }
+        public decimal TotalBags { get; set; }
 
         [Display(Name = "Saldo")]
-        public double Total { get; set; }
+        public decimal Total { get; set; }
 
         [Display(Name = "Entrada/Salida")]
         public Int32 TypeOperationId { get; set; }
@@ -104,7 +104,7 @@ namespace ERPAPI.Models
         public string CostCenterName { get; set; }
 
         [Display(Name = "Cantidad minima en existencia por producto")]
-        public double MinimumExistance { get; set; }
+        public decimal MinimumExistance { get; set; }
 
     }
 }

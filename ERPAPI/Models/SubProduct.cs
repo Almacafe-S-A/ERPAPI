@@ -32,7 +32,7 @@ namespace ERPAPI.Models
         public string Estado { get; set; }
 
         [Display(Name = "Saldo Quintales")]
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
 
         [Display(Name = "Saldo Sacos")]
         public Int64 BagBalance { get; set; }
@@ -46,7 +46,7 @@ namespace ERPAPI.Models
         public int? UnitOfMeasureId { get; set; }
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
-        public double Merma { get; set; }
+        public decimal Merma { get; set; }
 
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }

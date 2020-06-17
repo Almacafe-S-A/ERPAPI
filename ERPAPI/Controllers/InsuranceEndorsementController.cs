@@ -81,6 +81,31 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de InsuranceEndorsementes de una Poliza 
+        /// </summary>
+        /// <param name="InsurancePolicyId"></param>       
+        /// <returns></returns>
+        [HttpGet("[action]/{InsurancePolicyId}")]
+        public async Task<IActionResult> GetInsuranceEndorsementByInsurancePolicyId( int InsurancePolicyId)
+        {
+            List<InsuranceEndorsement> Items = new List<InsuranceEndorsement>();
+            try
+            {
+                Items = await _context.InsuranceEndorsement.Where(w => w.InsurancePolicyId == InsurancePolicyId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la InsuranceEndorsement por medio del Id enviado.
         /// </summary>
@@ -120,84 +145,13 @@ namespace ERPAPI.Controllers
             {
                 try
                 {
-                    
-                    Numalet let;
-                    let = new Numalet();
-                    let.SeparadorDecimalSalida = "Lempiras";
-                    let.MascaraSalidaDecimal = "00/100 ";
-                    let.ApocoparUnoParteEntera = true;
-                    
-
                     _context.InsuranceEndorsement.Add(_InsuranceEndorsementq);
-                    //await _context.SaveChangesAsync();
-
-                    JournalEntry _je = new JournalEntry
-                    {
-                        Date = _InsuranceEndorsementq.DateGenerated,
-                        Memo = "Factura de Compra a Proveedores",
-                        DatePosted = _InsuranceEndorsementq.DateGenerated,
-                        ModifiedDate = DateTime.Now,
-                        CreatedDate = DateTime.Now,
-                        ModifiedUser = _InsuranceEndorsementq.UsuarioModificacion,
-                        CreatedUser = _InsuranceEndorsementq.UsuarioCreacion,
-                        //DocumentId = _InsuranceEndorsementq.InsuranceEndorsementId,
-                    };
-
-                    //Accounting account = await _context.Accounting.Where(acc => acc.AccountId == _InsuranceEndorsementq.AccountId).FirstOrDefaultAsync();
-                    //_je.JournalEntryLines.Add(new JournalEntryLine
-                    //{
-                    //    AccountId = Convert.ToInt32(_InsuranceEndorsementq.AccountId),
-                    //    //Description = _InsuranceEndorsementq.Account.AccountName,
-                    //    Description = account.AccountName,
-                    //    Credit = 0,
-                    //    Debit = _InsuranceEndorsementq.Total,
-                    //    CreatedDate = DateTime.Now,
-                    //    ModifiedDate = DateTime.Now,
-                    //    CreatedUser = _InsuranceEndorsementq.UsuarioCreacion,
-                    //    ModifiedUser = _InsuranceEndorsementq.UsuarioModificacion,
-                    //    Memo = "",
-                    //});
-                    //foreach (var item in _InsuranceEndorsementq.InsuranceEndorsementLines)
-                    //{
-                    //    account = await _context.Accounting.Where(acc => acc.AccountId == _InsuranceEndorsementq.AccountId).FirstOrDefaultAsync();
-                    //    item.InsuranceEndorsementId = _InsuranceEndorsementq.Id;
-                    //    _context.InsuranceEndorsementLine.Add(item);
-                    //    _je.JournalEntryLines.Add(new JournalEntryLine
-                    //    {
-                    //        AccountId = Convert.ToInt32(item.AccountId),
-                    //        Description = account.AccountName,
-                    //        Credit = item.Total,
-                    //        Debit = 0,
-                    //        CreatedDate = DateTime.Now,
-                    //        ModifiedDate = DateTime.Now,
-                    //        CreatedUser = _InsuranceEndorsementq.UsuarioCreacion,
-                    //        ModifiedUser = _InsuranceEndorsementq.UsuarioModificacion,
-                    //        Memo = "",
-                    //    });
-                    //}
-
-                    await _context.SaveChangesAsync();
-
-                    double sumacreditos = 0, sumadebitos = 0;
-                    if (sumacreditos != sumadebitos)
-                    {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                        return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                    }
-
-                    _je.TotalCredit = sumacreditos;
-                    _je.TotalDebit = sumadebitos;
-                    _context.JournalEntry.Add(_je);
-
-                    await _context.SaveChangesAsync();
-
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                     {
                         IdOperacion = 4, ///////Falta definir los Id de las Operaciones
-                        DocType = "InsuranceEndorsement",
+                        DocType = "Endoso de Seguros",
                         ClaseInicial =
-                        Newtonsoft.Json.JsonConvert.SerializeObject(_InsuranceEndorsementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                           Newtonsoft.Json.JsonConvert.SerializeObject(_InsuranceEndorsementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                         ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_InsuranceEndorsementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                         Accion = "Insert",
                         FechaCreacion = DateTime.Now,
@@ -209,7 +163,107 @@ namespace ERPAPI.Controllers
                     });
                     await _context.SaveChangesAsync();
 
-                    transaction.Commit();
+                    JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                                     .Where(q => q.TransactionId == 7)
+                                                                     //.Where(q => q.BranchId == _InsuranceEndorsementq.BranchId)
+                                                                     .Where(q => q.EstadoName == "Activo")
+                                                                     .Include(q => q.JournalEntryConfigurationLine)
+                                                                     ).FirstOrDefaultAsync();
+
+                    
+
+                    // await _context.SaveChangesAsync();
+
+                    decimal sumacreditos = 0, sumadebitos = 0;
+                    if (_journalentryconfiguration != null)
+                    {
+                        //Crear el asiento contable configurado
+                        //.............................///////
+                        JournalEntry _je = new JournalEntry
+                        {
+                            Date = _InsuranceEndorsementq.DateGenerated,
+                            Memo = "Partidad Ingreso de Poliza",
+                            DatePosted = _InsuranceEndorsementq.DateGenerated,
+                            ModifiedDate = DateTime.Now,
+                            CreatedDate = DateTime.Now,
+                            ModifiedUser = _InsuranceEndorsementq.UsuarioModificacion,
+                            CreatedUser = _InsuranceEndorsementq.UsuarioCreacion,
+                            DocumentId = _InsuranceEndorsementq.InsurancePolicyId,
+                            TypeOfAdjustmentId = 65,
+                            VoucherType = 1,
+
+                        };
+
+
+
+                        foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
+                        {
+
+                            _je.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                AccountId = Convert.ToInt32(item.AccountId),
+                                AccountName = item.AccountName,
+                                Description = item.AccountName,
+                                Credit = item.DebitCredit == "Credito" ? _InsuranceEndorsementq.TotalAmountLp : 0,
+                                Debit = item.DebitCredit == "Debito" ? _InsuranceEndorsementq.TotalAmountLp : 0,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                CreatedUser = _InsuranceEndorsementq.UsuarioCreacion,
+                                ModifiedUser = _InsuranceEndorsementq.UsuarioModificacion,
+                                Memo = "",
+                            });
+
+                            sumacreditos += item.DebitCredit == "Credito" ? _InsuranceEndorsementq.TotalAmountLp : 0;
+                            sumadebitos += item.DebitCredit == "Debito" ? _InsuranceEndorsementq.TotalAmountLp : 0;
+
+                            // _context.JournalEntryLine.Add(_je);
+
+                        }
+
+
+                        if (sumacreditos != sumadebitos)
+                        {
+                            transaction.Rollback();
+                            //_logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            //return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            return BadRequest($"Error :No Coincide la suma del debe y el haber generada por el asiento automatico");
+                        }
+
+                        _je.TotalCredit = sumacreditos;
+                        _je.TotalDebit = sumadebitos;
+                        _context.JournalEntry.Add(_je);
+                        //asientogenerado = _je.JournalEntryId;
+
+                        if (sumacreditos != sumadebitos)
+                        {
+                            transaction.Rollback();
+                            _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                            return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                        }
+
+                        _je.TotalCredit = sumacreditos;
+                        _je.TotalDebit = sumadebitos;
+                        _context.JournalEntry.Add(_je);
+
+                        await _context.SaveChangesAsync();
+                        BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
+                        {
+                            IdOperacion = _InsuranceEndorsementq.InsuranceEndorsementId,
+                            DocType = "Asiento Configurado para Endosos",
+                            ClaseInicial =
+                         Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            Accion = "Insertado Asiento de Endoso",
+                            FechaCreacion = DateTime.Now,
+                            FechaModificacion = DateTime.Now,
+                            UsuarioCreacion = _InsuranceEndorsementq.UsuarioCreacion,
+                            UsuarioModificacion = _InsuranceEndorsementq.UsuarioModificacion,
+                            UsuarioEjecucion = _InsuranceEndorsementq.UsuarioModificacion,
+
+                        });
+
+                        transaction.Commit();
+                    }
                 }
                 catch (Exception ex)
                 {

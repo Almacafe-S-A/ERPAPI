@@ -272,7 +272,7 @@ namespace ERPAPI.Controllers
                                 Total = _kardexmax.Total -  item.valorcertificado,
                                 //TotalBags = item. + _KardexLine.TotalBags,
                                 QuantityEntryCD = 0,
-                                QuantityOutCD = item.Quantity / (1 + _subproduct.Merma),
+                                QuantityOutCD = item.Quantity / (1 + Convert.ToDecimal(_subproduct.Merma)),
                                 TotalCD = item.valorcertificado,
                             });
 

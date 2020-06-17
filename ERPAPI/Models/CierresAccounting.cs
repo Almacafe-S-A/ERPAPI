@@ -67,11 +67,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de modificacion")]
         public DateTime FechaModificacion { get; set; }
 
-        [Column(TypeName = "timestamp")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        [MaxLength(8)]
-        [Display(Name = "Version Fila")]
-        public byte[] RowVersion { get; set; }
+        
         [Display(Name = "Padre de la cuenta")]
         public virtual Accounting ParentAccount { get; set; }
 

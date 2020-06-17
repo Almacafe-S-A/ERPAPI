@@ -26,14 +26,14 @@ namespace ERPAPI.Models
         [Display(Name = "Descripcion")]
         public string Description { get; set; }
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
         [Display(Name = "Precio")]
-        public double Price { get; set; }    
+        public decimal Price { get; set; }    
 
         [Display(Name = "Total")]
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
 
         [Display(Name = "Total Cantidad")]
-        public double TotalCantidad { get; set; }
+        public decimal TotalCantidad { get; set; }
     }
 }

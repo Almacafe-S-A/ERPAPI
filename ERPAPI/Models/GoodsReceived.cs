@@ -52,7 +52,7 @@ namespace ERPAPI.Models
         public string CurrencyName { get; set; }
 
         [Display(Name = "Moneda tasa")]
-        public double Currency { get; set; }
+        public decimal Currency { get; set; }
 
 
         [Display(Name = "Bodega")]

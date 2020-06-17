@@ -148,6 +148,16 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<Invoice>> Insert([FromBody]Invoice _Invoice)
         {
             Invoice _Invoiceq = new Invoice();
+            JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                                       .Where(q => q.TransactionId == 1)
+                                                                       .Where(q => q.BranchId == _Invoice.BranchId)
+                                                                       .Where(q => q.EstadoId == 1)
+                                                                       .Include(q => q.JournalEntryConfigurationLine)
+                                                                       ).FirstOrDefaultAsync();
+            if (_journalentryconfiguration == null || _journalentryconfiguration.JournalEntryConfigurationLine == null)
+            {
+                return BadRequest("No existe configuracion de asiento contable que coincida con los parametros de la factura");
+            }
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -203,12 +213,7 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
-                        JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                                       .Where(q => q.TransactionId == 1)
-                                                                       .Where(q=>q.BranchId==_Invoiceq.BranchId)
-                                                                       .Where(q => q.EstadoName == "Activo")
-                                                                       .Include(q => q.JournalEntryConfigurationLine)
-                                                                       ).FirstOrDefaultAsync();
+                        
 
                         BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
                         {
@@ -228,7 +233,7 @@ namespace ERPAPI.Controllers
 
                         // await _context.SaveChangesAsync();
 
-                        double sumacreditos=0, sumadebitos = 0;
+                        decimal sumacreditos=0, sumadebitos = 0;
                         if (_journalentryconfiguration!=null)
                         {
                             //Crear el asiento contable configurado
@@ -245,6 +250,7 @@ namespace ERPAPI.Controllers
                                 DocumentId = _Invoiceq.InvoiceId,
                                 TypeOfAdjustmentId = 65,                               
                                 VoucherType = 1,
+                                
                                
                             };
 
@@ -315,7 +321,7 @@ namespace ERPAPI.Controllers
                             {
                                 transaction.Rollback();
                                //_logger.LogError($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico : {_journalentryconfiguration.JournalEntryConfigurationId}");
-                                return BadRequest($"Ocurrio un error: Error en la Configuración de Asiento Contable Automatico.");
+                                return BadRequest($"Error en la Configuración de Asiento Contable Automatico. No coinciden los creditos y debitos del asiento autogenerado");
                             }
 
                             _je.TotalCredit = sumacreditos;
@@ -428,7 +434,7 @@ namespace ERPAPI.Controllers
                         {
                             if (_Invoiceq.CurrencyId == 1)
                             {
-                                if (_Invoiceq.Total > _elemento.Valordecimal)
+                                if (_Invoiceq.Total >Convert.ToDecimal(_elemento.Valordecimal))
                                 {
                                     GenerateAlert = true;
                                 }
@@ -439,7 +445,7 @@ namespace ERPAPI.Controllers
                                 rate = await _context.ExchangeRate.Where(q => q.DayofRate == _Invoiceq.InvoiceDate && q.CurrencyId == _Invoiceq.CurrencyId).FirstOrDefaultAsync();
                                 if (rate != null)
                                 {
-                                    if (((double)rate.ExchangeRateValue * _Invoiceq.Total) > _elemento.Valordecimal)
+                                    if ((rate.ExchangeRateValue * _Invoiceq.Total) >(decimal) _elemento.Valordecimal)
                                     {
                                         GenerateAlert = true;
                                     }
@@ -518,7 +524,7 @@ namespace ERPAPI.Controllers
 
                         // await _context.SaveChangesAsync();
 
-                        double sumacreditos = 0, sumadebitos = 0;
+                        decimal sumacreditos = 0, sumadebitos = 0;
                         if (_journalentryconfiguration != null)
                         {
                             //Crear el asiento contable configurado

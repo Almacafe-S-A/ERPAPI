@@ -35,13 +35,13 @@ namespace ERPAPI.Models
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
 
-        public double? QtyOrdered { get; set; }
+        public decimal? QtyOrdered { get; set; }
 
-        public double? QtyReceived { get; set; }
+        public decimal? QtyReceived { get; set; }
 
-        public double? QtyReceivedToDate { get; set; }
+        public decimal? QtyReceivedToDate { get; set; }
 
-        public double? Price { get; set; }
+        public decimal? Price { get; set; }
 
         public string TaxName { get; set; }
 
@@ -51,13 +51,13 @@ namespace ERPAPI.Models
 
         [ForeignKey("TaxId")]
         public Tax Tax { get; set; }
-        public double Amount { get; set; }
-        public double TaxPercentage { get; set; }
-        public double TaxAmount { get; set; }
+        public decimal Amount { get; set; }
+        public decimal TaxPercentage { get; set; }
+        public decimal TaxAmount { get; set; }
         public int DiscountAmount { get; set; }
         public int DiscountPercentage { get; set; }
-        public double SubTotal { get; set; }
-        public double Total { get; set; }
+        public decimal SubTotal { get; set; }
+        public decimal Total { get; set; }
 
         public int UnitOfMeasureId { get; set; }
 

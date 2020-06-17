@@ -20,7 +20,7 @@ namespace ERPAPI.Helpers
     public partial class FacturacionMensual
     {
         public Nullable<int> FacturacionID { get; set; }
-        public Nullable<double> Facturacion { get; set; }
+        public Nullable<decimal> Facturacion { get; set; }
         public System.DateTime Date { get; set; }
     }
 }

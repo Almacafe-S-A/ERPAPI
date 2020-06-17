@@ -244,7 +244,7 @@ namespace ERPAPI.Controllers
                         _JournalEntryq = _JournalEntry;
                         _context.JournalEntry.Add(_JournalEntryq);
                         // await _context.SaveChangesAsync();
-                        double sumacreditos = 0, sumadebitos = 0;
+                        decimal sumacreditos = 0, sumadebitos = 0;
                         foreach (var item in _JournalEntryq.JournalEntryLines)
                         {
                             item.JournalEntryId = _JournalEntryq.JournalEntryId;
@@ -335,6 +335,7 @@ namespace ERPAPI.Controllers
                             isapproved = true;
                         }
                 _context.Entry(_JournalEntryq).CurrentValues.SetValues((_JournalEntry));
+                        
 
                 await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -356,6 +357,12 @@ namespace ERPAPI.Controllers
 
                         if(!isapproved)
                         {
+                            CheckAccountLines check = _context.CheckAccountLines.Where(w => w.JournalEntrId == _JournalEntryq.JournalEntryId).FirstOrDefault();
+                            if (check != null )
+                            {
+                                check.Estado = "Autorizado";
+                                check.IdEstado = 98;
+                            }
                             foreach(JournalEntryLine jel in _JournalEntry.JournalEntryLines)
                             {
                                 bool continuar = true;
@@ -396,8 +403,18 @@ namespace ERPAPI.Controllers
                                 while (continuar);
                             }
                         }
+                        else
+                        {
+                            CheckAccountLines check = _context.CheckAccountLines.Where(w => w.JournalEntrId == _JournalEntryq.JournalEntryId).FirstOrDefault();
+                            if (check != null)
+                            {
+                                check.Estado = "Rechazado";
+                                check.IdEstado = 99;
+                            }
+                        }
 
                         transaction.Commit();
+                        await _context.SaveChangesAsync();
                     }
                     catch (Exception ex)
                     {

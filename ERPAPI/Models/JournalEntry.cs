@@ -23,8 +23,6 @@ namespace ERPAPI.Models
         [Display(Name = "Id de la Moneda")]
         public int CurrencyId { get; set; }
 
-
-
         [Display(Name = "Tipo de Socio de negocios")]
         public int PartyTypeId { get; set; }
 
@@ -65,12 +63,15 @@ namespace ERPAPI.Models
         public Int64? EstadoId { get; set; }
         [Display(Name = "Estado")]
         public string EstadoName { get; set; }
+        [ForeignKey("EstadoId")]
+        public Estados Estados { get; set; }
 
+        [Column(TypeName = "Money")]
         [Display(Name = "Total Débito")]
-        public double TotalDebit { get; set; }
-
+        public decimal TotalDebit { get; set; }
+        [Column(TypeName = "Money")]
         [Display(Name = "Total Crédito")]
-        public double TotalCredit { get; set; }
+        public decimal TotalCredit { get; set; }
 
         [Display(Name = "Tipo de ajuste")]
         public Int32 TypeOfAdjustmentId { get; set; }

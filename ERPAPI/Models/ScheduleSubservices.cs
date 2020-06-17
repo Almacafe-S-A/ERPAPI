@@ -27,7 +27,7 @@ namespace ERPAPI.Models
         public DateTime EndTime { get; set; }
 
         [Display(Name = "Cantidad de horas")]
-        public double QuantityHours { get; set; }
+        public decimal QuantityHours { get; set; }
 
         [Display(Name = "Servicio")]
         public Int64 ServiceId { get; set; }
@@ -42,19 +42,19 @@ namespace ERPAPI.Models
         public string SubServiceName { get; set; }
 
         [Display(Name = "Subservicio")]
-        public double FactorHora { get; set; }
+        public decimal FactorHora { get; set; }
 
         [Display(Name = "Desayuno")]
-        public double Desayuno { get; set; }
+        public decimal Desayuno { get; set; }
 
         [Display(Name = "Almuerzo")]
-        public double Almuerzo { get; set; }
+        public decimal Almuerzo { get; set; }
 
         [Display(Name = "Cena")]
-        public double Cena { get; set; }
+        public decimal Cena { get; set; }
 
         [Display(Name = "Desayuno")]
-        public double Transporte { get; set; }
+        public decimal Transporte { get; set; }
 
 
         [Display(Name = "Id Condición")]

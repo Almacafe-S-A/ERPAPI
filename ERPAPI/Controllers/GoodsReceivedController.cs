@@ -352,7 +352,7 @@ namespace ERPAPI.Controllers
 
                             _context.GoodsReceivedLine.Add(item);
 
-                            item.Total = item.Quantity + _KardexLine.Total;
+                            item.Total =((decimal)item.Quantity + _KardexLine.Total);
                            
 
                             _GoodsReceived.Kardex._KardexLine.Add(new KardexLine
@@ -462,7 +462,7 @@ namespace ERPAPI.Controllers
 
                         // await _context.SaveChangesAsync();
 
-                        double sumacreditos = 0, sumadebitos = 0;
+                        decimal sumacreditos = 0, sumadebitos = 0;
                         if (_journalentryconfiguration != null)
                         {
                             //Crear el asiento contable configurado
@@ -689,10 +689,10 @@ namespace ERPAPI.Controllers
                                 SubProductName = result["SubProductName"].ToString(),
                                 UnitOfMeasureId = Convert.ToInt64(result["UnitOfMeasureId"]),
                                 UnitOfMeasureName = result["UnitOfMeasureName"].ToString(),
-                                Quantity = Convert.ToDouble(result["Cantidad"]),
+                                Quantity = Convert.ToDecimal(result["Cantidad"]),
                                 QuantitySacos = Convert.ToInt32(result["CantidadSacos"]),
-                                Price = Convert.ToDouble(result["Precio"]),
-                                Total = Convert.ToDouble(result["Total"]),
+                                Price = Convert.ToDecimal(result["Precio"]),
+                                Total = Convert.ToDecimal(result["Total"]),
                                 
                             });
                         }

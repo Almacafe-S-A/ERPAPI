@@ -20,7 +20,7 @@ namespace ERPAPI.Models
 
         [Required]
         [Display(Name = "Monto")]
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

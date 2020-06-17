@@ -22,10 +22,7 @@ namespace ERPAPI.Models
         [ForeignKey("BitacoraCierreContableId")]
         public BitacoraCierreContable BitacoraCierreContable { get; set; }
 
-        public CierresJournal()
-        {
-            //  JournalEntryLines = new HashSet<JournalEntryLine>();
-        }
+       
 
         [Display(Name = "Id Libro Mayor")]
         public int? GeneralLedgerHeaderId { get; set; }
@@ -75,10 +72,10 @@ namespace ERPAPI.Models
         public string EstadoName { get; set; }
 
         [Display(Name = "Total Débito")]
-        public double TotalDebit { get; set; }
+        public decimal TotalDebit { get; set; }
 
         [Display(Name = "Total Crédito")]
-        public double TotalCredit { get; set; }
+        public decimal TotalCredit { get; set; }
 
         [Display(Name = "Tipo de ajuste")]
         public Int32 TypeOfAdjustmentId { get; set; }
@@ -99,6 +96,8 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "Fecha de Modificacion")]
         public DateTime ModifiedDate { get; set; }
+
+        public List<CierresJournalEntryLine>CierresJournalEntryLines { get; set; }
 
     }
 }
