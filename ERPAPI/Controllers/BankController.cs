@@ -1,19 +1,4 @@
-﻿/********************************************************************************************************
--- NAME   :  CRUDBank
--- PROPOSE:  show records Bank
-REVISIONS:
-version              Date                Author                        Description
-----------           -------------       ---------------               -------------------------------
-8.0                  23/12/2019          Marvin.Guillen                     Validation to eliminate record
-7.0                  10/12/2019          Carlos.Solorzano                   Changes of Mdificacion de endpoints de conciliaciones para las cuenta debanco
-6.0                  26/11/2019          Brayan.Interiano                   Changes of Validacion duplicados
-5.0                  08/11/2019          Cristopher.Arias                   Changes of Cambios en conciliacion
-4.0                  21/10/2019          Ana.Jimenez                        Changes of BanckController
-3.0                  16/09/2019          Freddy.Chinchilla                  Changes of Pagination of Controller
-2.0                  19/06/2019          Freddy.Chinchilla                  Changes of Task.Run return model
-1.0                  06/06/2019          Freddy.Chinchilla                  Creation of Controller
-********************************************************************************************************/
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
