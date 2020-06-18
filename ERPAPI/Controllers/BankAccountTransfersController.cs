@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -71,7 +72,10 @@ namespace ERPAPI.Controllers
             List<BankAccountTransfers> Items = new List<BankAccountTransfers>();
             try
             {
-                Items = await _context.BankAccountTransfers.ToListAsync();
+                Items = await _context.BankAccountTransfers
+                    .Include(o => o.DestinationAccountManagement)
+                    .Include(o => o.SourceAccountManagement)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -125,7 +129,95 @@ namespace ERPAPI.Controllers
             try
             {
                 _BankAccountTransfersq = _BankAccountTransfers;
+                _BankAccountTransfersq.UsuarioCreacion = User.Identity.Name;
+                _BankAccountTransfersq.FechaCreacion = DateTime.Now;
+
+                AccountManagement cuentaortigen = _context.AccountManagement
+                    .Include(a => a.Accounting)
+                    .Where(w => w.AccountManagementId == _BankAccountTransfersq.SourceAccountManagementId).FirstOrDefault();
+                AccountManagement cuentadestino = _context.AccountManagement
+                    .Include(a => a.Accounting)
+                    .Where(w => w.AccountManagementId == _BankAccountTransfersq.DestinationAccountManagementId).FirstOrDefault();
+
+                JournalEntry je = new JournalEntry {
+                    Date = DateTime.Now,
+                    DatePosted = _BankAccountTransfersq.TransactionDate,
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    Memo = _BankAccountTransfersq.Notes,
+                    TotalCredit = _BankAccountTransfersq.SourceAmount,
+                    TotalDebit = _BankAccountTransfersq.SourceAmount,
+                    EstadoId = 5,
+                    EstadoName = "Enviada a Aprobacion",
+                    CurrencyId = 1,
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento Diario",
+
+
+
+                };
+
+                je.JournalEntryLines.Add(new JournalEntryLine {
+                    AccountId= Convert.ToInt32(cuentadestino.AccountId),
+                    AccountName = cuentadestino.Accounting.AccountName,
+                    Debit = _BankAccountTransfersq.SourceAmount,
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+
+                });
+
+                je.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = Convert.ToInt32(cuentaortigen.AccountId),
+                    AccountName = cuentaortigen.Accounting.AccountName,
+                    Credit = _BankAccountTransfersq.SourceAmount,
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+
+                });
+
+                _BankAccountTransfersq.JournalEntry = je;
+
+
+                
+
                 _context.BankAccountTransfers.Add(_BankAccountTransfersq);
+                await _context.SaveChangesAsync();
+
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = _BankAccountTransfers.Id,
+                    DocType = "BankTransfer",
+                    ClaseInicial =
+ Newtonsoft.Json.JsonConvert.SerializeObject(_BankAccountTransfersq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
+                    UsuarioEjecucion = User.Identity.Name,
+
+                });
+                BitacoraWrite _write2 = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = je.JournalEntryId,
+                    DocType = "Asiento Contable",
+                    ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
+                    UsuarioEjecucion = User.Identity.Name,
+
+                });
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
