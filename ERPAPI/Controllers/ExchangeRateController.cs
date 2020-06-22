@@ -104,6 +104,31 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene un Exchange Rate para la fecha y moneda
+        /// </summary>
+        /// <param name="_ExchangeRate"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetExchangeRateByDateNCurrency([FromBody] ExchangeRate _ExchangeRate)
+        {
+            ExchangeRate Items = new ExchangeRate();
+            try
+            {
+                // DateTime filtro = Convert.ToDateTime(fecha);
+                Items = await _context.ExchangeRate.Where(q => q.DayofRate.Date == _ExchangeRate.DayofRate && q.CurrencyId ==_ExchangeRate.CurrencyId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Devuelve la tasa de cambio que coinciden con los parametros

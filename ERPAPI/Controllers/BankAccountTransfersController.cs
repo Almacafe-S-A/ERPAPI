@@ -132,12 +132,53 @@ namespace ERPAPI.Controllers
                 _BankAccountTransfersq.UsuarioCreacion = User.Identity.Name;
                 _BankAccountTransfersq.FechaCreacion = DateTime.Now;
 
+                
+
+
                 AccountManagement cuentaortigen = _context.AccountManagement
                     .Include(a => a.Accounting)
                     .Where(w => w.AccountManagementId == _BankAccountTransfersq.SourceAccountManagementId).FirstOrDefault();
                 AccountManagement cuentadestino = _context.AccountManagement
                     .Include(a => a.Accounting)
                     .Where(w => w.AccountManagementId == _BankAccountTransfersq.DestinationAccountManagementId).FirstOrDefault();
+
+
+                decimal cantidadorigen = 0;
+                decimal cantidaddestino = 0;
+
+                ///////////Conversion a Moneda Local para registros Contables
+
+                if (cuentaortigen.CurrencyId != 1)
+                {
+                    ExchangeRate ex = _context.ExchangeRate
+                        .Where(q => q.CurrencyId == cuentaortigen.CurrencyId && q.DayofRate.Date == _BankAccountTransfersq.TransactionDate.Date).FirstOrDefault();
+                    if (ex == null)
+                    {
+                        return BadRequest($"No se encontro una tasa para la moneda origen {ex.CurrencyName} en la fecha de transacción seleccionada");
+                    }
+                    cantidadorigen = _BankAccountTransfersq.SourceAmount * ex.ExchangeRateValue;
+
+                }
+                else
+                {
+                    cantidadorigen = _BankAccountTransfersq.SourceAmount;
+                }
+
+                if (cuentadestino.CurrencyId != 1)
+                {
+                    ExchangeRate ex = _context.ExchangeRate
+                        .Where(q => q.CurrencyId == cuentadestino.CurrencyId && q.DayofRate.Date == _BankAccountTransfersq.TransactionDate.Date).FirstOrDefault();
+                    if (ex == null)
+                    {
+                        return BadRequest($"No se encontro una tasa para la moneda destino {ex.CurrencyName} en la fecha de transacción seleccionada");
+                    }
+                    cantidadorigen = _BankAccountTransfersq.SourceAmount * ex.ExchangeRateValue;
+                }
+                else
+                {
+                    cantidaddestino = _BankAccountTransfersq.DestinationAmount;
+                }
+
 
                 JournalEntry je = new JournalEntry {
                     Date = DateTime.Now,
@@ -162,7 +203,7 @@ namespace ERPAPI.Controllers
                 je.JournalEntryLines.Add(new JournalEntryLine {
                     AccountId= Convert.ToInt32(cuentadestino.AccountId),
                     AccountName = cuentadestino.Accounting.AccountName,
-                    Debit = _BankAccountTransfersq.SourceAmount,
+                    Debit = cantidadorigen,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedUser = User.Identity.Name,
@@ -174,7 +215,7 @@ namespace ERPAPI.Controllers
                 {
                     AccountId = Convert.ToInt32(cuentaortigen.AccountId),
                     AccountName = cuentaortigen.Accounting.AccountName,
-                    Credit = _BankAccountTransfersq.SourceAmount,
+                    Credit = cantidaddestino,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedUser = User.Identity.Name,
