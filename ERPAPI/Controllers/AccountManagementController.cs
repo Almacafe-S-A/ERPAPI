@@ -82,6 +82,34 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        
+        /// <summary>
+        /// Obtiene el Listado de mantenimiento de cuentas
+        /// </summary>
+        /// <param name="BankId"></param>
+        /// <param name="CurrencyId"></param>/// 
+        /// <returns></returns>
+        [HttpGet("[action]/{BankId}/{CurrencyId}")]
+        public async Task<IActionResult> GetAccountManagementByBankNCurrency(long BankId, int CurrencyId)
+        {
+            List<AccountManagement> Items = new List<AccountManagement>();
+            try
+            {
+                Items = await _context.AccountManagement
+                    .Where(w => w.CurrencyId == CurrencyId && w.BankId == BankId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos del mantenimiento de cuentas por medio del Id enviado.
         /// </summary>
