@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -28,6 +29,8 @@ namespace ERPAPI.Models
        
         [Display(Name = "Tipo Servicio")]
         public Int64 ServicioId { get; set; }
+        [ForeignKey("ServicioId")]
+        public Product Servicio { get; set; }
 
         [Display(Name = "Servicio")]
         public string ServicioName { get; set; }

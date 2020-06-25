@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,18 +35,23 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public Int64 ProductId { get; set; }
 
+        [ForeignKey("ProductId")]
+        public Product Product { get; set; }
+
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
         [Display(Name = "Producto Cliente")]
         public Int64 SubProductId { get; set; }
-
+        [ForeignKey("SubProductId")]
+        public SubProduct SubProduct { get; set; }
         [Display(Name = "Producto Cliente")]
         public string SubProductName { get; set; }
 
         [Display(Name = "Cliente")]
-        public Int64 CustomerId { get; set; }      
-
+        public Int64 CustomerId { get; set; }
+        [ForeignKey("CustomerId")]
+        public Customer Customer { get; set; }
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
         [Display(Name = "Descripción de producto")]
@@ -55,7 +61,9 @@ namespace ERPAPI.Models
         public string Marca { get; set; }
 
         [Display(Name = "Unidad de medida")]
-        public Int64 UnitOfMeasureId { get; set; }
+        public int UnitOfMeasureId { get; set; }
+        [ForeignKey("UnitOfMeasureId")]
+        public UnitOfMeasure unitOfMeasure { get; set; }
 
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }

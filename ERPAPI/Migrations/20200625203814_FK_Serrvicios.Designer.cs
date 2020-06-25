@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200625203814_FK_Serrvicios")]
+    partial class FK_Serrvicios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5404,8 +5406,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("ProducId");
 
-                    b.Property<long?>("ProductId");
-
                     b.Property<string>("ProductName");
 
                     b.Property<decimal>("Quantity");
@@ -5433,10 +5433,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("GoodsReceiveLinedId");
 
                     b.HasIndex("GoodsReceivedId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SubProductId");
 
                     b.ToTable("GoodsReceivedLine");
                 });
@@ -8812,11 +8808,7 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("SalesOrderLineId");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("SalesOrderId");
-
-                    b.HasIndex("SubProductId");
 
                     b.ToTable("SalesOrderLine");
                 });
@@ -9100,8 +9092,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("CertificadoLineId");
 
                     b.HasIndex("IdSCD");
-
-                    b.HasIndex("SubProductId");
 
                     b.ToTable("SolicitudCertificadoLine");
                 });
@@ -11343,15 +11333,6 @@ namespace ERPAPI.Migrations
                         .WithMany("_GoodsReceivedLine")
                         .HasForeignKey("GoodsReceivedId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Horario", b =>
@@ -11845,19 +11826,9 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
                         .HasForeignKey("SalesOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -11866,11 +11837,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.SolicitudCertificadoDeposito")
                         .WithMany("_SolicitudCertificadoLine")
                         .HasForeignKey("IdSCD")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "Product")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

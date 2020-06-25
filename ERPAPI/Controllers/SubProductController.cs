@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
@@ -429,6 +430,13 @@ namespace ERPAPI.Controllers
                 _context.SubProduct.Remove(subproduct);
                 await _context.SaveChangesAsync();
             }
+            catch(DbUpdateException ex) {
+                return await Task.Run(() => BadRequest("Este registro esta siendo utilizado no se puede eliminar"));
+            
+            
+            }
+
+
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");

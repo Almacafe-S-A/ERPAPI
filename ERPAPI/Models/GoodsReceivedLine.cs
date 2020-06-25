@@ -18,15 +18,18 @@ namespace ERPAPI.Models
 
         [Display(Name = "Unidad de Medida")]
         public string UnitOfMeasureName { get; set; }
-        
+
         [Display(Name = "Producto")]
         public Int64 ProducId { get; set; }
+        [ForeignKey("ProductId")]
+        public Product Product { get; set; }
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
         [Display(Name = "Producto Cliente")]
         public Int64 SubProductId { get; set; }
-
+        [ForeignKey("SubProductId")]
+        public SubProduct SubProduct { get; set; }
         [Display(Name = "Producto Cliente")]
         public string SubProductName { get; set; }
 
