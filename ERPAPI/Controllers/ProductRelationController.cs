@@ -67,19 +67,19 @@ namespace ERPAPI.Controllers
             List<ProductRelation> Items = new List<ProductRelation>();
             try
             {
-                //Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
-                Items = await (from c in _context.ProductRelation
-                               join d in _context.SubProduct on c.SubProductId equals d.SubproductId
-                               join e in _context.Product on c.ProductId equals e.ProductId
-                               select new ProductRelation {
-                                    RelationProductId =c.RelationProductId,
-                                    SubProductId = c.SubProductId,
-                                    ProductId = c.ProductId,
-                                    SubProduct = d,
-                                    Product = e
+                Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
+                //Items = await (from c in _context.ProductRelation
+                //               join d in _context.SubProduct on c.SubProductId equals d.SubproductId
+                //               join e in _context.Product on c.ProductId equals e.ProductId
+                //               select new ProductRelation {
+                //                    RelationProductId =c.RelationProductId,
+                //                    SubProductId = c.SubProductId,
+                //                    ProductId = c.ProductId,
+                //                    SubProduct = d,
+                //                    Product = e
 
-                               }
-                               ).ToListAsync();
+                //               }
+                //               ).ToListAsync();
                 // Items = await _context.ProductRelation.ToListAsync();
             }
             catch (Exception ex)
@@ -164,6 +164,10 @@ namespace ERPAPI.Controllers
                 _context.ProductRelation.Add(_productrelation);
                 await _context.SaveChangesAsync();
             }
+            catch (DbUpdateException ex) {
+                return BadRequest("Ya esxite una relacion de los servicios seleccionado");
+            
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
@@ -183,6 +187,11 @@ namespace ERPAPI.Controllers
                 _context.ProductRelation.Update(_productrelation);
                 await _context.SaveChangesAsync();
             }
+            catch (DbUpdateException ex)
+            {
+                return BadRequest("Ya esxite una relacion de los servicios seleccionado");
+
+            }
             catch (Exception ex)
             {
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
@@ -191,15 +200,19 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_productrelation));
             //   return Ok(subproduct);
         }
-
-        [HttpPost("[action]")]
-        public async Task<ActionResult<ProductRelation>> Delete([FromBody]ProductRelation ProductRelation)
+        /// <summary>
+        /// Metodo para suprimir una relacion de servicios con subservicios por medio del id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("[action]/{id}")]
+        public async Task<ActionResult<ProductRelation>> Delete(long id)
         {
             ProductRelation _ProductRelation = new ProductRelation();
             try
             {
                 _ProductRelation = _context.ProductRelation
-               .Where(x => x.RelationProductId == ProductRelation.RelationProductId)
+               .Where(x => x.RelationProductId == id)
                .FirstOrDefault();
                 _context.ProductRelation.Remove(_ProductRelation);
                 await _context.SaveChangesAsync();

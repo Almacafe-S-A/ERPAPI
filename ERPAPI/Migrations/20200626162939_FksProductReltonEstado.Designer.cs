@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200626162939_FksProductReltonEstado")]
+    partial class FksProductReltonEstado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -412,62 +414,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("BankId");
 
                     b.ToTable("Bank");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.BankAccountTransfers", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("DestinationAccountManagementId");
-
-                    b.Property<decimal>("DestinationAmount")
-                        .HasColumnType("Money");
-
-                    b.Property<long?>("ExchangeRateId");
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<long>("JournalEntryId");
-
-                    b.Property<string>("Notes");
-
-                    b.Property<decimal>("Rate")
-                        .HasColumnType("Money");
-
-                    b.Property<long>("SourceAccountManagementId");
-
-                    b.Property<decimal>("SourceAmount")
-                        .HasColumnType("Money");
-
-                    b.Property<string>("SourceBank");
-
-                    b.Property<string>("SourceCurrency");
-
-                    b.Property<string>("TargetBank");
-
-                    b.Property<string>("TargetCurrency");
-
-                    b.Property<DateTime>("TransactionDate");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DestinationAccountManagementId");
-
-                    b.HasIndex("ExchangeRateId");
-
-                    b.HasIndex("JournalEntryId");
-
-                    b.HasIndex("SourceAccountManagementId");
-
-                    b.ToTable("BankAccountTransfers");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Biometrico", b =>
@@ -10770,28 +10716,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.BankAccountTransfers", b =>
-                {
-                    b.HasOne("ERPAPI.Models.AccountManagement", "DestinationAccountManagement")
-                        .WithMany()
-                        .HasForeignKey("DestinationAccountManagementId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.ExchangeRate", "ExchangeRate")
-                        .WithMany()
-                        .HasForeignKey("ExchangeRateId");
-
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.AccountManagement", "SourceAccountManagement")
-                        .WithMany()
-                        .HasForeignKey("SourceAccountManagementId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

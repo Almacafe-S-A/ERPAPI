@@ -402,6 +402,12 @@ namespace ERP.Contexts
            .IsUnique(true);
 
 
+            modelBuilder.Entity<ProductRelation>()
+           .HasIndex(p => new { p.ProductId, p.SubProductId })
+           .IsUnique(true);
+
+
+
             modelBuilder.Entity<Contrato_plan_pagos>().HasKey(t => new { t.Nro_cuota, t.ContratoId });
 
 

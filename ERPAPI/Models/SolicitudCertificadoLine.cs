@@ -14,7 +14,10 @@ namespace ERPAPI.Models
         [Display(Name = "Certificado")]
         public Int64 IdSCD { get; set; }
         [Display(Name = "Producto")]
+
         public Int64 SubProductId { get; set; }
+        [ForeignKey("SubProductId")]
+        public SubProduct Product { get; set; }
         [Display(Name = "Nombre producto")]
         public string SubProductName { get; set; }
 
