@@ -388,9 +388,24 @@ namespace ERPAPI.Controllers
                  _CheckAccountLinesq = await _context.CheckAccountLines
                                  .Where(q => q.Id == CheckId).FirstOrDefaultAsync();
                 _CheckAccountLinesq.Impreso = true;
-                _CheckAccountLinesq.Estado = "Emitido";
-                _CheckAccountLinesq.IdEstado = 52;
+                bool cambio = false;
 
+                if (_CheckAccountLinesq.IdEstado == 98)
+                {
+                    _CheckAccountLinesq.Estado = "Emitido";
+                    _CheckAccountLinesq.IdEstado = 52;
+                    cambio = true;
+                }
+                if (_CheckAccountLinesq.IdEstado == 52)
+                {
+                    _CheckAccountLinesq.Estado = "Emitido - Reimpreso";
+                    _CheckAccountLinesq.IdEstado = 100;
+                    cambio = true;
+                }
+                if (!cambio)
+                {
+                    return await Task.Run(() => Ok(_CheckAccountLinesq));
+                }
                 //_context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
 
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
