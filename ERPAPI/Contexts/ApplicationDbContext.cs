@@ -46,7 +46,7 @@ namespace ERP.Contexts
 
         public DbSet<InsuranceCertificate> InsuranceCertificate { get; set; }
 
-        public DbSet<InsuranceCertificaLine> InsurancesCertificateLines { get; set; }
+        public DbSet<InsuranceCertificateLine> InsurancesCertificateLines { get; set; }
 
         public DbSet<Concept> Concept { get; set; }
 

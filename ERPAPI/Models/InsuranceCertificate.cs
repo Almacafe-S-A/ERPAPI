@@ -36,5 +36,8 @@ namespace ERPAPI.Models
 
         public DateTime DueDate { get; set; }
 
+
+        public List<InsuranceCertificateLine> InsuranceCertificaLines { get; set; }
+
     }
 }

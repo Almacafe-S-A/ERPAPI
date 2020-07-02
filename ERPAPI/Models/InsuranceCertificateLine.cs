@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class InsuranceCertificaLine
+    public class InsuranceCertificateLine
     {
         public int Id { get; set; }
 
