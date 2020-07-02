@@ -44,6 +44,10 @@ namespace ERP.Contexts
         public DbSet <TipodeAccionderiesgo> TipodeAccionderiesgo { get; set; }
 
 
+        public DbSet<InsuranceCertificate> InsuranceCertificate { get; set; }
+
+        public DbSet<InsuranceCertificaLine> InsurancesCertificateLines { get; set; }
+
         public DbSet<Concept> Concept { get; set; }
 
         public DbSet<InventoryTransfer> InventoryTransfer { get; set; }

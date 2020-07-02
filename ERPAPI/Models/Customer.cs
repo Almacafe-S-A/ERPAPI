@@ -32,7 +32,7 @@ namespace ERPAPI.Models
 
         [Required]
         [Display(Name = "RTN del cliente")]
-        public string RTN { get; set; }        
+        public string RTN { get; set; }
 
         [Display(Name = "Tipo de cliente")]
         public long? CustomerTypeId { get; set; } = null;
@@ -94,7 +94,7 @@ namespace ERPAPI.Models
         public string Estado { get; set; }
 
         [Display(Name = "Grupo económico")]
-        public Int64? GrupoEconomicoId { get; set; } 
+        public Int64? GrupoEconomicoId { get; set; }
 
         [Display(Name = "Grupo económico")]
         public string GrupoEconomico { get; set; }
@@ -134,6 +134,10 @@ namespace ERPAPI.Models
         public string SolicitadoPor { get; set; }
         public bool? EsExonerado { get; set; }
         public string Observaciones { get; set; }
+
+        public Int64? ProductTypeId { get; set; }
+        [ForeignKey("ProductTypeId")]
+        public ProductType ProductType { get; set; }
 
 
         [Display(Name = "Confirmación por correo")]
