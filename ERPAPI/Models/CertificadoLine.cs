@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace ERPAPI.Models
@@ -41,7 +42,9 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Bodega")]
-        public Int64 WarehouseId { get; set; }
+        public int WarehouseId { get; set; }
+        //[ForeignKey("WarehouseId")]
+        ///public Warehouse Warehouse { get; set; }
         [Display(Name = "Bodega")]
         public string WarehouseName { get; set; }
 

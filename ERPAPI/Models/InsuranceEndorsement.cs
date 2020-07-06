@@ -33,10 +33,6 @@ namespace ERPAPI.Models
 
         public decimal TotalAmountDl { get; set; }
 
-        public decimal TotalCertificateBalalnce { get; set; }
-
-        public decimal TotalAssuredDifernce { get; set; }
-
         public Int64 EstadoId { get; set; }
 
         public string Estado { get; set; }
