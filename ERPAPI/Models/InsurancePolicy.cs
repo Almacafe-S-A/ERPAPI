@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -41,6 +42,8 @@ namespace ERPAPI.Models
         public string AttachmentURL { get; set; }
 
         public string AttachementFileName { get; set; }
+
+        public List<CertificadoDeposito> CertificadoDepositos { get; set; }
 
         public Int64? EstadoId { get; set; }
         [ForeignKey("EstadoId")]

@@ -22,7 +22,9 @@ namespace ERPAPI.Models
         public string CustomerName { get; set; }
 
         [Display(Name = "Sucursal")]
-        public Int64 BranchId { get; set; }
+        public int BranchId { get; set; }
+        [ForeignKey("BranchId")]
+        public Branch Branch { get; set; }
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }  
 
@@ -131,6 +133,8 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
         public string Impreso { get; set; }
+
+        
 
         public List<CertificadoLine> _CertificadoLine { get; set; } = new List<CertificadoLine>();
     }

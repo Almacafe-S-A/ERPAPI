@@ -15,12 +15,21 @@ namespace ERPAPI.Models
 
         public Int64 CustomerId { get; set; }
 
+        public string CustomerName { get; set; }
+
         [ForeignKey("CustomerId")]
         public Customer Customer { get; set; }
 
         public int InsuranceId { get; set; }
         [ForeignKey("InsuranceId")]
         public Insurances Insurace { get; set; }
+
+        public string InsuranceName { get; set; }
+
+        public string InsurancePolicyNumber { get; set; }
+
+        public string DatePlace { get; set; }
+
 
         public decimal Amount { get; set; }
 
@@ -35,6 +44,16 @@ namespace ERPAPI.Models
         public DateTime Date { get; set; }
 
         public DateTime DueDate { get; set; }
+
+        public Int64 EstadoId { get; set; }
+        [ForeignKey("EstadoId")]
+        public Estados Estados { get; set; }
+
+        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaModificacion { get; set; }
+        public string UsuarioCreacion { get; set; }
+        public string UsuarioModificacion { get; set; }
+
 
 
         public List<InsuranceCertificateLine> InsuranceCertificaLines { get; set; }

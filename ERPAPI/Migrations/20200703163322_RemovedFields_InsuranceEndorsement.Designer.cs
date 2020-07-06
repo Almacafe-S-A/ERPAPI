@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200703163322_RemovedFields_InsuranceEndorsement")]
+    partial class RemovedFields_InsuranceEndorsement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1215,7 +1217,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("UnitMeasureId");
 
-                    b.Property<int>("WarehouseId");
+                    b.Property<long>("WarehouseId");
 
                     b.Property<string>("WarehouseName");
 
@@ -5927,25 +5929,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CustomerId");
 
-                    b.Property<string>("CustomerName");
-
                     b.Property<DateTime>("Date");
 
-                    b.Property<string>("DatePlace");
-
                     b.Property<DateTime>("DueDate");
-
-                    b.Property<long>("EstadoId");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<int>("InsuranceId");
-
-                    b.Property<string>("InsuranceName");
-
-                    b.Property<string>("InsurancePolicyNumber");
 
                     b.Property<long?>("ProductTypeId");
 
@@ -5958,8 +5950,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("EstadoId");
 
                     b.HasIndex("InsuranceId");
 
@@ -11602,11 +11592,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Insurances", "Insurace")
