@@ -123,6 +123,15 @@ namespace ERPAPI.Controllers
         {
             try
             {
+                ////Actualiza como vencidos los demas Certificados 
+                List<InsuranceCertificate> insuracesCerticates = _context.InsuranceCertificate.Where(q => q.EstadoId == 1).ToList();
+
+                foreach (var certificado in insuracesCerticates)
+                {
+                    certificado.EstadoId = 2;
+                }
+
+
                 List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).ToListAsync();
                 DateTime fechavencimiento = DateTime.Now;
             foreach (var customer in customers)
