@@ -95,8 +95,8 @@ namespace ERPAPI.Controllers
             List<JournalEntry> Items = new List<JournalEntry>();
             try
             {
-                //Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 65).ToListAsync();
-                Items = await _context.JournalEntry.ToListAsync();
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 65).ToListAsync();
+                //Items = await _context.JournalEntry.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -115,8 +115,8 @@ namespace ERPAPI.Controllers
             List<JournalEntry> Items = new List<JournalEntry>();
             try
             {
-                //Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 66).ToListAsync();
-                Items = await _context.JournalEntry.ToListAsync();
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 66).ToListAsync();
+                //Items = await _context.JournalEntry.ToListAsync();
             }
             catch (Exception ex)
             {
