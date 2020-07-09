@@ -130,68 +130,74 @@ namespace ERPAPI.Controllers
                 {
                     certificado.EstadoId = 2;
                 }
+                Numalet let;
+                let = new Numalet();
+                let.SeparadorDecimalSalida = "Lempiras";
+                let.MascaraSalidaDecimal = "00/100 ";
+                let.ApocoparUnoParteEntera = true;
 
-
-                List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
-                DateTime fechavencimiento = DateTime.Now;
-
+                //List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
+                List<InsurancePolicy> policies = await _context.InsurancePolicy.Where(q => q.EstadoId == 1).ToListAsync();
             
-            foreach (var customer in customers)
+            foreach (var policy in policies)
                 {
-                    List<CertificadoDeposito> certificadoDepositos = await  _context.CertificadoDeposito
+                    List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
+
+                    foreach (var customer in customers)
+                    {
+
+                        
+                        List<CertificadoDeposito> certificadoDepositos = await _context.CertificadoDeposito
                         .Include(i => i.InsurancePolicy)
                         .Include(i => i._CertificadoLine)
                         .Include(i => i.Branch)
-                        .Where(c => c.CustomerId == customer.CustomerId).ToListAsync();
+                        //.Where(c => c.CustomerId == customer.CustomerId)
+                        .Where(c => c.InsurancePolicyId == policy.InsurancePolicyId && c.CustomerId == customer.CustomerId)
+                        .ToListAsync();
+                        if (certificadoDepositos.Count() == 0 )
+                        {
+                            continue;
+                        }
 
-                    
-
-                    foreach (var certificado in certificadoDepositos)
-                    {
-                        Numalet let;
-                        let = new Numalet();
-                        let.SeparadorDecimalSalida = "Lempiras";
-                        let.MascaraSalidaDecimal = "00/100 ";
-                        let.ApocoparUnoParteEntera = true;
-                        //check.AmountWords = let.ToCustomCardinal((check.Ammount)).ToUpper();
                         InsuranceCertificate insurance = new InsuranceCertificate
                         {
-                            Code = certificado.Branch.BranchCode,
-                            CustomerId = certificado.CustomerId,
-                            CustomerName = certificado.CustomerName,
-                            InsuranceId = Convert.ToInt32(certificado.InsuranceId),
-                            Amount = Convert.ToDecimal(certificado.Total),
-                            Date = DateTime.Now.AddDays(( DateTime.Now.Day * -1)+1),
+                            //Code = certificado.Branch.BranchCode,
+                            CustomerId = customer.CustomerId,
+                            CustomerName = customer.CustomerName,
+                            InsuranceId = Convert.ToInt32(policy.InsurancesId),
+                            Amount = 0,
+                            Date = DateTime.Now.AddDays((DateTime.Now.Day * -1) + 1),
                             DueDate = DateTime.Now.AddDays(DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - DateTime.Now.Day),
-                            AmountWords = let.ToCustomCardinal((certificado.Total)).ToUpper(),
+                            AmountWords = "",
                             ProductTypeId = customer.ProductTypeId,
                             ProductTypes = customer.ProductType.ProductTypeName,
-                            EstadoId =1,     
-                            InsurancePolicyNumber = certificado.InsurancePolicy.PolicyNumber,
+                            EstadoId = 1,
+                            InsurancePolicyNumber = policy.PolicyNumber,
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
                             UsuarioCreacion = User.Identity.Name,
                             UsuarioModificacion = User.Identity.Name,
                         };
-
-                        //certificadoLines = await _context.CertificadoLine.Where(w => w.IdCD == certificado.IdCD).ToListAsync();
-
-                        insurance.InsuranceCertificaLines = new List<InsuranceCertificateLine>();
-
-                        foreach (var certificadoline in certificado._CertificadoLine)
+                        foreach (var certificado in certificadoDepositos)
                         {
-                            insurance.InsuranceCertificaLines.Add(new InsuranceCertificateLine
+                            insurance.Amount +=Convert.ToDecimal(certificado.Total);
+                            insurance.InsuranceCertificaLines = new List<InsuranceCertificateLine>();
+                            foreach (var certificadoline in certificado._CertificadoLine)
                             {
-                                WarehouseId = certificadoline.WarehouseId,
-                                Amount = certificadoline.Amount,
-                                FechaCreacion = DateTime.Now,
-                                FechaModificacion = DateTime.Now,
-                                UsuarioCreacion = User.Identity.Name,
-                                UsuarioModificacion = User.Identity.Name,
+                                insurance.InsuranceCertificaLines.Add(new InsuranceCertificateLine
+                                {
+                                    WarehouseId = certificadoline.WarehouseId,
+                                    Amount = certificadoline.Amount,
+                                    FechaCreacion = DateTime.Now,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioCreacion = User.Identity.Name,
+                                    UsuarioModificacion = User.Identity.Name,
 
-                            });
+                                });
 
+                            }
                         }
+                        insurance.AmountWords = let.ToCustomCardinal((insurance.Amount)).ToUpper();
 
                         _context.InsuranceCertificate.Add(insurance);
 
