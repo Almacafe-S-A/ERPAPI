@@ -49,6 +49,8 @@ namespace ERPAPI.Models
         [Display(Name = "Id de Línea de Asiento Contable")]
         public Int64? JournalEntryLineId { get; set; }
 
+        public string PartyName { get; set; }
+
         [Display(Name = "Tipos de Voucher/Documento")]
         public Int64? VoucherTypeId { get; set; }
 
