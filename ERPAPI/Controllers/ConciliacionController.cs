@@ -75,6 +75,35 @@ namespace ERPAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Obtiene el Saldo de la cuenta hasta la fecha
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetSaldoLibrosCuenta([FromBody] dynamic dto)
+        {
+            try
+            {
+
+                int accountingId = dto.accountingId;
+                DateTime fecha = dto.fecha;
+                decimal debe = _context.JournalEntryLine.Include(i => i.JournalEntry)
+                    .Where(q => q.AccountId == accountingId && q.JournalEntry.DatePosted<fecha && q.JournalEntry.EstadoId == 6).Sum(s => s.Debit);
+
+                decimal haber = _context.JournalEntryLine.Include(i => i.JournalEntry)
+                    .Where(q => q.AccountId == accountingId && q.JournalEntry.DatePosted < fecha && q.JournalEntry.EstadoId == 6).Sum(s => s.Credit);
+                decimal saldo = debe - haber;
+                                
+                return await Task.Run(() => Ok(saldo));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
+
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GetConciliacionById([FromRoute(Name = "Id")] Int64 id)
         {
@@ -113,147 +142,6 @@ namespace ERPAPI.Controllers
             }
         }
 
-
-        /*
-        /// <summary>
-        /// Obtiene los Datos de la JournalEntryLine por medio del Conciliacion.
-        /// </summary>
-        /// 
-        /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<IActionResult> GetJournalEntryByDateAccount([FromBody]Conciliacion _ConciliacionP)
-        {
-            //  JournalEntry Items = new JournalEntry();
-            List<ConciliacionLinea> LineConciliacionLinea = new List<ConciliacionLinea>();
-            try
-            {
-
-                var consulta = from journale in _context.JournalEntry
-                               join journalel in _context.JournalEntryLine
-                               on journale.JournalEntryId equals journalel.JournalEntryId
-                               where journale.Date >= _ConciliacionP.DateBeginReconciled &&
-                                     journale.Date <= _ConciliacionP.DateEndReconciled
-
-                select new ConciliacionLinea
-                {
-                   Debit = journalel.Debit,
-                   Credit = journalel.Credit,
-                   Monto = journalel.Debit - journalel.Credit,
-                   JournalEntryId = journalel.JournalEntryId,
-                   JournalEntryLineId = journalel.JournalEntryLineId,
-                   FechaCreacion = DateTime.Now,
-                   UsuarioCreacion = _ConciliacionP.UsuarioCreacion,
-                   ConciliacionId = _ConciliacionP.ConciliacionId,
-                   ReferenceTrans = journale.ReferenceNo,
-                   VoucherTypeId = (int)journale.VoucherType,
-                   TransDate = journale.Date,
-                   CurrencyId = journale.CurrencyId,
-                   MonedaName = _context.Currency.Where(
-                       p => p.CurrencyId ==  journale.CurrencyId
-                       ).FirstOrDefault().CurrencyName,
-                };
-
-                LineConciliacionLinea = consulta.ToList();
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        foreach (var NodeConciline in LineConciliacionLinea)
-                        {
-                            _context.ConciliacionLinea.Add(NodeConciline);
-                            BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                            {
-                                IdOperacion = NodeConciline.ConciliacionId,
-                                DocType = "Conciliacion",
-                                ClaseInicial = Newtonsoft.Json.JsonConvert.SerializeObject(NodeConciline, 
-                                    new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                Accion = "Insertar",
-                                FechaCreacion = DateTime.Now,
-                                FechaModificacion = DateTime.Now,
-                                UsuarioCreacion = NodeConciline.UsuarioCreacion,
-                                UsuarioModificacion = NodeConciline.UsuarioModificacion,
-                                UsuarioEjecucion = NodeConciline.UsuarioModificacion,
-
-                            });
-                        }
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        return BadRequest($"Ocurrio un error:{ex.Message}");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(LineConciliacionLinea));
-        }
-        
-        /// <summary>
-        /// Obtiene los Datos de la Conciliacion por medio del Id enviado.
-        /// </summary>
-        /// <param name="ConciliacionId"></param>
-        /// <returns></returns>
-        [HttpGet("[action]/{ConciliacionId}")]
-        public async Task<IActionResult> GetConciliacionById(int ConciliacionId)
-        {
-            Conciliacion Items = new Conciliacion();
-            try
-            {
-                Items = await _context.Conciliacion.Where(q => q.ConciliacionId == ConciliacionId)
-                    .Include(q => q.ConciliacionLinea).FirstOrDefaultAsync();
-                
-
-
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(Items));
-        }
-
-        /// <summary>
-        /// Obtiene los Datos de la Conciliacion por medio de la Fecha enviado.
-        /// </summary>
-        /// <param name="_Conciliacion"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<Conciliacion>> GetConciliacionByDate([FromBody]Conciliacion _Conciliacion)
-        {
-            Conciliacion Items = new Conciliacion();
-            try
-            {
-                Items = await _context.Conciliacion.Where(
-                        q => q.DateBeginReconciled >= _Conciliacion.DateBeginReconciled  &&
-                             q.DateEndReconciled <= _Conciliacion.DateEndReconciled &&
-                             q.AccountId == _Conciliacion.AccountId
-                        )
-                    .Include(q => q.ConciliacionLinea).FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //return await Task.Run(() => Ok(_Conciliacionq));
-            return await Task.Run(() => Ok(Items));
-        }
-        */
         /// <summary>
         /// Inserta una nueva Conciliacion
         /// </summary>
@@ -393,68 +281,6 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_Conciliacionq));
         }
-        /*
-        /// <summary>
-        /// Elimina una Conciliacion       
-        /// </summary>
-        /// <param name="_Conciliacion"></param>
-        /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Delete([FromBody]Conciliacion _Conciliacion)
-        {
-            Conciliacion _Conciliacionq = new Conciliacion();
-            try
-            {
-                using (var transaction = _context.Database.BeginTransaction())
-                {
-                    try
-                    {
-
-                        _Conciliacionq = _context.Conciliacion
-                .Where(x => x.ConciliacionId == (Int64)_Conciliacion.ConciliacionId)
-                .FirstOrDefault();
-
-                _context.Conciliacion.Remove(_Conciliacionq);
-                await _context.SaveChangesAsync();
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _Conciliacionq.ConciliacionId,
-                            DocType = "Conciliacion",
-                            ClaseInicial =
-    Newtonsoft.Json.JsonConvert.SerializeObject(_Conciliacionq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Eliminar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Conciliacionq.UsuarioCreacion,
-                            UsuarioModificacion = _Conciliacionq.UsuarioModificacion,
-                            UsuarioEjecucion = _Conciliacionq.UsuarioModificacion,
-
-                        });
-
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        throw ex;
-                        // return BadRequest($"Ocurrio un error:{ex.Message}");
-                    }
-                }
-
-
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            return await Task.Run(() => Ok(_Conciliacionq));
-
-        }
-        */
+  
     }
 }

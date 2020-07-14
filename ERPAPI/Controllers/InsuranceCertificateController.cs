@@ -137,7 +137,7 @@ namespace ERPAPI.Controllers
                 let.ApocoparUnoParteEntera = true;
 
                 //List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
-                List<InsurancePolicy> policies = await _context.InsurancePolicy.Where(q => q.EstadoId == 1).ToListAsync();
+                List<InsurancePolicy> policies = await _context.InsurancePolicy.Where(q => q.EstadoId == 1 && q.Propias).ToListAsync();
             
             foreach (var policy in policies)
                 {
