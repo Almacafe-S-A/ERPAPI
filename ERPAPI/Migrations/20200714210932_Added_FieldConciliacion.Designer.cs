@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200714210932_Added_FieldConciliacion")]
+    partial class Added_FieldConciliacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1708,10 +1710,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("DateEndReconciled");
 
-                    b.Property<string>("Estado");
-
-                    b.Property<long>("EstadoId");
-
                     b.Property<DateTime>("FechaConciliacion");
 
                     b.Property<DateTime>("FechaCreacion");
@@ -1731,8 +1729,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("ConciliacionId");
-
-                    b.HasIndex("EstadoId");
 
                     b.ToTable("Conciliacion");
                 });
@@ -11088,14 +11084,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.State", "State")
                         .WithMany("City")
                         .HasForeignKey("StateId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Conciliacion", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Estados", "Estados")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ConciliacionLinea", b =>
