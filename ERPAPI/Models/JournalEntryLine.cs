@@ -105,6 +105,7 @@ namespace ERPAPI.Models
             DebitME = origen.DebitME;
             CreditME = origen.CreditME;
             Memo = origen.Memo;
+            PartyName = origen.PartyName;
             CreatedUser = origen.CreatedUser;
             ModifiedUser = origen.ModifiedUser;
             CreatedDate = origen.CreatedDate;

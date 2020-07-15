@@ -41,7 +41,7 @@ namespace ERPAPI.Models
         [Display(Name = "SaldoConciliado")]
         public Double SaldoConciliado { get; set; }
 
-
+        public string Estado { get; set; }
         public Int64 EstadoId { get; set; }
         [ForeignKey("EstadoId")]
         public Estados Estados { get; set; }
@@ -97,6 +97,7 @@ namespace ERPAPI.Models
             SaldoBanco = a.SaldoBanco;
             SaldoLibro = a.SaldoLibro;
             NombreCuenta = nombreCuenta;
+            Estado = a.Estado;
         }
         public string NombreCuenta { get; set; }
     }
