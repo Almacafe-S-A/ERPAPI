@@ -70,6 +70,8 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name="Saldo en Libro Mayor de Banco")]
         public decimal SaldoLibro { get; set; }
+        [Display(Name = "Saldo en Libro Mayor de Banco Hasta la Fecha Inicial")]
+        public decimal SaldoLibroInicial { get; set; }
 
         public List<ConciliacionLinea> ConciliacionLinea { get; set; }
 
