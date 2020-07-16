@@ -73,6 +73,7 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.BankAccountTransfers
+                    .Include(i => i.Estados)
                     .Include(o => o.DestinationAccountManagement)
                     .Include(o => o.SourceAccountManagement)
                     .ToListAsync();
@@ -114,7 +115,7 @@ namespace ERPAPI.Controllers
 
 
 
-        
+
 
 
         /// <summary>
@@ -132,7 +133,7 @@ namespace ERPAPI.Controllers
                 _BankAccountTransfersq.UsuarioCreacion = User.Identity.Name;
                 _BankAccountTransfersq.FechaCreacion = DateTime.Now;
 
-                
+
 
 
                 AccountManagement cuentaortigen = _context.AccountManagement
@@ -201,7 +202,7 @@ namespace ERPAPI.Controllers
                 };
 
                 je.JournalEntryLines.Add(new JournalEntryLine {
-                    AccountId= Convert.ToInt32(cuentadestino.AccountId),
+                    AccountId = Convert.ToInt32(cuentadestino.AccountId),
                     AccountName = cuentadestino.Accounting.AccountName,
                     Debit = cantidadorigen,
                     CreatedDate = DateTime.Now,
@@ -226,7 +227,7 @@ namespace ERPAPI.Controllers
                 _BankAccountTransfersq.JournalEntry = je;
 
 
-                
+
 
                 _context.BankAccountTransfers.Add(_BankAccountTransfersq);
                 await _context.SaveChangesAsync();
@@ -270,6 +271,61 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
 
             return await Task.Run(() => Ok(_BankAccountTransfersq));
         }
+
+        /// <summary>
+        /// Metodo que Recibe el id de la transaccion y el valor booleano para aprobarla o rechazarla 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="aprobado"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]/{Id}/{aprobado}")]
+        public async Task<ActionResult<BankAccountTransfers>> Aprobar(int Id, bool aprobado) {
+            try
+            {
+                BankAccountTransfers transfers = _context.BankAccountTransfers
+                    .Include(i => i.JournalEntry)
+                    .Where(q => q.Id == Id).FirstOrDefault();
+                int estado = 7;
+                string estadoname = "Rechazado";
+                if (aprobado)
+                {
+                    estado = 6;
+                    estadoname = "Aprobado";
+                }
+                transfers.EstadoId = estado;
+                transfers.UsuarioModificacion = User.Identity.Name;
+                transfers.FechaModificacion = DateTime.Now;
+                transfers.JournalEntry.EstadoId = estado;
+                transfers.JournalEntry.EstadoName = estadoname;
+
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = transfers.Id,
+                    DocType = "BankTransfer",
+                    ClaseInicial =
+                    Newtonsoft.Json.JsonConvert.SerializeObject(transfers, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Aprobar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
+                    UsuarioEjecucion = User.Identity.Name,
+
+                });
+
+                _context.SaveChanges();
+                return await Task.Run(() => Ok(transfers));
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        
+        
+        }
+
 
         /// <summary>
         /// Actualiza la BankAccountTransfers
