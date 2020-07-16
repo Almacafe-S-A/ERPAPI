@@ -48,7 +48,7 @@ namespace ERPAPI.Models
         public JournalEntry JournalEntry { get; set; }
 
         public Int64 EstadoId { get; set; }
-
+        [ForeignKey("EstadoId")]
         public Estados Estados { get; set; }
 
         public DateTime FechaCreacion { get; set; }

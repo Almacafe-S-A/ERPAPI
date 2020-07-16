@@ -73,6 +73,7 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.BankAccountTransfers
+                    .Include(i => i.Estados)
                     .Include(o => o.DestinationAccountManagement)
                     .Include(o => o.SourceAccountManagement)
                     .ToListAsync();
