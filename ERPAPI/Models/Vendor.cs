@@ -64,7 +64,7 @@ namespace ERPAPI.Models
         public int CurrencyId { get; set; }
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
-        [Required]
+        [NotMapped]
         [Display(Name = "Limite Mensual")]
         public double QtyMonth { get; set; }
         [Display(Name = "Telefono Referencia")]
