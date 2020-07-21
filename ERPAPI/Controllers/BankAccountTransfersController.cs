@@ -337,19 +337,64 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
         /// <returns></returns>
         [HttpPut("[action]")]
         public async Task<ActionResult<BankAccountTransfers>> Update([FromBody] BankAccountTransfers _BankAccountTransfers)
-        {
-            BankAccountTransfers _BankAccountTransfersq = _BankAccountTransfers;
+        {            
             try
             {
-                _BankAccountTransfersq = await (from c in _context.BankAccountTransfers
-                                 .Where(q => q.Id == _BankAccountTransfers.Id)
-                                select c
-                                ).FirstOrDefaultAsync();
+                BankAccountTransfers BankAccountTransfersq = new BankAccountTransfers();
+                BankAccountTransfersq = await _context.BankAccountTransfers
+                    .Include(i => i.DestinationAccountManagement.Accounting)
+                    .Include(i => i.SourceAccountManagement.Accounting)
+                    .Include(i => i.JournalEntry)
+                    .Include(i =>i.JournalEntry.JournalEntryLines).Where(q => q.Id == _BankAccountTransfers.Id).FirstOrDefaultAsync();
 
-                _context.Entry(_BankAccountTransfersq).CurrentValues.SetValues((_BankAccountTransfers));
+
+
+                _context.Entry(BankAccountTransfersq).CurrentValues.SetValues((_BankAccountTransfers));
+
+                _BankAccountTransfers = await _context.BankAccountTransfers
+                    .Include(i => i.DestinationAccountManagement.Accounting)
+                    .Include(i => i.SourceAccountManagement.Accounting)
+                    .Include(i => i.JournalEntry)
+                    .Include(i => i.JournalEntry.JournalEntryLines).Where(q => q.Id == _BankAccountTransfers.Id).FirstOrDefaultAsync();
+
+                if (_BankAccountTransfers.EstadoId == 7)
+                {
+                    _BankAccountTransfers.EstadoId = 5;
+                    BankAccountTransfersq.JournalEntry.EstadoId = 5;
+                    BankAccountTransfersq.JournalEntry.EstadoName = "Enviado a Aprobacion";
+
+                }
+
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[0].AccountId = Convert.ToInt32(_BankAccountTransfers.DestinationAccountManagement.AccountId);
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[0].AccountName = _BankAccountTransfers.DestinationAccountManagement.Accounting.AccountName;
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[0].Debit = _BankAccountTransfers.DestinationAmount;
+
+
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[1].AccountId = Convert.ToInt32(_BankAccountTransfers.SourceAccountManagement.AccountId);
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[1].AccountName = _BankAccountTransfers.DestinationAccountManagement.Accounting.AccountName;
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[1].Credit = _BankAccountTransfers.SourceAmount;
+
+                _BankAccountTransfers.JournalEntry.Memo = _BankAccountTransfers.Notes;
+                _BankAccountTransfers.JournalEntry.TotalCredit = _BankAccountTransfers.SourceAmount;
+                _BankAccountTransfers.JournalEntry.TotalDebit = _BankAccountTransfers.SourceAmount;
 
                 //_context.BankAccountTransfers.Update(_BankAccountTransfersq);
                 await _context.SaveChangesAsync();
+
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = _BankAccountTransfers.Id,
+                    DocType = "BankTransfer",
+                    ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(BankAccountTransfersq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Modificar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
+                    UsuarioEjecucion = User.Identity.Name,
+
+                });
             }
             catch (Exception ex)
             {
@@ -358,7 +403,7 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_BankAccountTransfersq));
+            return await Task.Run(() => Ok(_BankAccountTransfers));
         }
 
         /// <summary>
