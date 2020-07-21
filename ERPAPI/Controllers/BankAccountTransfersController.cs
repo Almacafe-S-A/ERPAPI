@@ -100,7 +100,10 @@ namespace ERPAPI.Controllers
             BankAccountTransfers Items = new BankAccountTransfers();
             try
             {
-                Items = await _context.BankAccountTransfers.Where(q => q.Id == Id).FirstOrDefaultAsync();
+                Items = await _context.BankAccountTransfers
+                    .Include(i => i.DestinationAccountManagement)
+                    .Include(i => i.SourceAccountManagement)
+                    .Where(q => q.Id == Id).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
