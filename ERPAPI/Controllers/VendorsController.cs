@@ -87,6 +87,12 @@ namespace coderush.Controllers.Api
             try
             {
                 Items = await _context.Vendor.Where(q => q.VendorId.Equals(Id)).FirstOrDefaultAsync();
+                if (Items == null)
+                {
+                    return await Task.Run(() => NotFound());
+                }
+                double? limite =  _context.ElementoConfiguracion.Where(q => q.Id == 181).FirstOrDefault().Valordecimal;
+                Items.QtyMonth = limite == null? 0 : Convert.ToDouble(limite) ;
             }
             catch (Exception ex)
             {
@@ -96,6 +102,24 @@ namespace coderush.Controllers.Api
             }
 
             return await Task.Run(() => Ok(Items));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<double>> GetVendorLimit()
+        {
+            try
+            {
+                double? limite = _context.ElementoConfiguracion.Where(q => q.Id == 181).FirstOrDefault().Valordecimal;
+                return await Task.Run(() => Ok(limite));
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+           
         }
 
 
