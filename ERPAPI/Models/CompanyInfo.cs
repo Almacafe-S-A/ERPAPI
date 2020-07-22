@@ -41,6 +41,8 @@ namespace ERPAPI.Models
         [Display(Name = "Imagen")]
         public string image { get; set; }
 
+        public string imageDir { get; set; }
+
         [Display(Name = "Director General")]
         public string Manager { get; set; }
 
