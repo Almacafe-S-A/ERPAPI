@@ -229,7 +229,7 @@ namespace ERPAPI.Controllers
             try
             {
                 ///////Setea los parametros de seguridad de la aplicacion///////////////
-                SetParametrosSeguridad();
+                    SetParametrosSeguridad();
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {

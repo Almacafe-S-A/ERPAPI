@@ -13,6 +13,10 @@ namespace ERPAPI.Models
 
         public string Code { get; set; }
 
+        public int BranchId { get; set; }
+        [ForeignKey("BranchId")]
+        public Branch Branch { get; set; }
+
         public Int64 CustomerId { get; set; }
 
         public string CustomerName { get; set; }
