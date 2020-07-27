@@ -22,6 +22,10 @@ namespace ERPAPI.Models
         [Display(Name = "Telefono")]
         public string Phone { get; set; }
 
+
+        [Display(Name = "Telefono Movil")]
+        public string MobilePhone { get; set; }
+
         [Display(Name = "Fax")]
         public string Fax { get; set; }
 
