@@ -392,6 +392,9 @@ namespace ERP.Contexts
             .IsUnique(true);
 
 
+            
+
+
             modelBuilder.Entity<CheckAccount>()
             .HasIndex(u => u.CheckAccountNo)
             .IsUnique();

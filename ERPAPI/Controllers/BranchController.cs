@@ -10,6 +10,7 @@ using ERPAPI.Models;
 using ERP.Contexts;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Newtonsoft.Json;
 
 namespace ERPAPI.Controllers
 {
@@ -93,6 +94,7 @@ namespace ERPAPI.Controllers
                 if(branchlist.Count > 0)
                 {
                     Items = await _context.Branch.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).ToListAsync();
+                    Items = Items.Where(q => q.CustomerId == null).ToList();
                 }
                 else
                 {
@@ -189,7 +191,74 @@ namespace ERPAPI.Controllers
             {
                 branch = payload;
                 _context.Branch.Add(branch);
-              await  _context.SaveChangesAsync();
+
+               
+
+                await  _context.SaveChangesAsync();
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = branch.BranchId,
+                    DocType = "Sucursal",
+                    ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(branch, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
+                    UsuarioEjecucion = User.Identity.Name,
+
+                });
+                if (branch.CustomerId != null)
+                {
+                    CostCenter costCenter = new CostCenter
+                    {
+                        CostCenterName = branch.BranchName,
+                        BranchId = branch.BranchId,
+                        BranchName = branch.BranchName,
+                        Estado = "Activo",
+                        IdEstado = 1,
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name
+
+                    };
+                    _context.CostCenter.Add(costCenter);
+                    await _context.SaveChangesAsync();
+
+                    BitacoraWrite _write2 = new BitacoraWrite(_context, new Bitacora
+                    {
+                        IdOperacion = costCenter.CostCenterId,
+                        DocType = "Centro de Costo",
+                        ClaseInicial =
+Newtonsoft.Json.JsonConvert.SerializeObject(branch, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "Insertar",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name,
+                        UsuarioEjecucion = User.Identity.Name,
+
+                    });
+
+                    ApplicationUser applicationUser = _context.Users.Where(q => q.UserName == User.Identity.Name).FirstOrDefault();
+
+                    UserBranch userbranch = new UserBranch {
+                        BranchId = branch.BranchId,
+                        UserId = applicationUser.Id,                        
+                        BranchName = branch.BranchName,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+
+                    };
+
+                    _context.UserBranch.Add(userbranch);
+                    await _context.SaveChangesAsync();
+
+                }
             }
             catch (Exception ex)
             {
