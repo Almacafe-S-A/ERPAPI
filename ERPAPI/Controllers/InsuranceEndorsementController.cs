@@ -68,7 +68,7 @@ namespace ERPAPI.Controllers
             List<InsuranceEndorsement> Items = new List<InsuranceEndorsement>();
             try
             {
-                Items = await _context.InsuranceEndorsement.ToListAsync();
+                Items = await _context.InsuranceEndorsement.Include(i => i.CostCenter).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -93,7 +93,9 @@ namespace ERPAPI.Controllers
             List<InsuranceEndorsement> Items = new List<InsuranceEndorsement>();
             try
             {
-                Items = await _context.InsuranceEndorsement.Where(w => w.InsurancePolicyId == InsurancePolicyId).ToListAsync();
+                Items = await _context.InsuranceEndorsement
+                    .Include(i => i.CostCenter)
+                    .Where(w => w.InsurancePolicyId == InsurancePolicyId).ToListAsync();
             }
             catch (Exception ex)
             {

@@ -43,6 +43,8 @@ namespace ERPAPI.Models
 
         public string AttachementFileName { get; set; }
 
+        public bool? ExchangeDifferential { get; set; }
+
         public List<CertificadoDeposito> CertificadoDepositos { get; set; }
 
         public Int64? EstadoId { get; set; }
