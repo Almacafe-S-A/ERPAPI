@@ -89,7 +89,7 @@ namespace ERPAPI.Models
         {
         }
 
-        public JournalEntryLineDTO(JournalEntryLine origen, DateTime fechaTransaccion, string tipoDocumento)
+        public JournalEntryLineDTO(JournalEntryLine origen, DateTime fechaTransaccion, string tipoDocumento,long numeroDocumento)
         {
             JournalEntryLineId = origen.JournalEntryLineId;
             JournalEntryId = origen.JournalEntryId;
@@ -112,10 +112,13 @@ namespace ERPAPI.Models
             ModifiedDate = origen.ModifiedDate;
             FechaTransaccion = fechaTransaccion;
             TipoDocumento = tipoDocumento;
+            NumeroDocumento = numeroDocumento;
         }
 
         public DateTime FechaTransaccion { get; set; }
         public string TipoDocumento { get; set; }
+
+        public long NumeroDocumento { get; set; }
     }
 
 

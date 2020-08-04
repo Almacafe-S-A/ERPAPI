@@ -514,7 +514,7 @@ namespace ERPAPI.Controllers
                                  cabeza.DatePosted <= fechaFinal.AddDays(1).AddTicks(-1) &&
                                 lineas.AccountId == codigoCuenta && cabeza.EstadoId == 6
                                       && !_context.ConciliacionLinea.Any(l => l.JournalEntryId == lineas.JournalEntryId && l.JournalEntryLineId == lineas.JournalEntryLineId)
-                                select new JournalEntryLineDTO(lineas, cabeza.DatePosted, cabeza.TypeJournalName)).ToList();
+                                select new JournalEntryLineDTO(lineas, cabeza.DatePosted, cabeza.TypeJournalName,cabeza.DocumentId)).ToList();
                 return await Task.Run(() => Ok(entradas));
             }
             catch (Exception ex)
