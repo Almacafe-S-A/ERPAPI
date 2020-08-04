@@ -509,11 +509,12 @@ namespace ERPAPI.Controllers
                     select new JournalEntryLineDTO(lineas, cabeza.Date, cabeza.TypeJournalName)).ToList();*/
                 var entradas = (from lineas in _context.JournalEntryLine
                                 join cabeza in _context.JournalEntry on lineas.JournalEntryId equals cabeza.JournalEntryId
-                                where 
+                                where
                                 //cabeza.Date >= fechaInicial && cabeza.Date <= fechaFinal.AddDays(1).AddTicks(-1) && 
+                                 cabeza.DatePosted <= fechaFinal.AddDays(1).AddTicks(-1) &&
                                 lineas.AccountId == codigoCuenta && cabeza.EstadoId == 6
                                       && !_context.ConciliacionLinea.Any(l => l.JournalEntryId == lineas.JournalEntryId && l.JournalEntryLineId == lineas.JournalEntryLineId)
-                                select new JournalEntryLineDTO(lineas, cabeza.Date, cabeza.TypeJournalName)).ToList();
+                                select new JournalEntryLineDTO(lineas, cabeza.DatePosted, cabeza.TypeJournalName)).ToList();
                 return await Task.Run(() => Ok(entradas));
             }
             catch (Exception ex)

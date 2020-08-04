@@ -378,10 +378,30 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        InsurancePolicyq = await (from c in _context.InsurancePolicy
-                        .Where(q => q.InsurancePolicyId == _InsurancePolicy.InsurancePolicyId)
-                                                  select c
-                        ).FirstOrDefaultAsync();
+
+                        
+                        InsurancePolicyq = await _context.InsurancePolicy                            
+                            .Where(q => q.InsurancePolicyId == _InsurancePolicy.InsurancePolicyId).FirstOrDefaultAsync();
+                        if (InsurancePolicyq == null)
+                        {
+                            return NotFound();
+                        }
+
+
+                        if (_InsurancePolicy.Propias)
+                        {
+                            List<InsuranceEndorsement> endosos = await _context.InsuranceEndorsement
+                                .Where(q => q.InsurancePolicyId == InsurancePolicyq.InsurancePolicyId).ToListAsync();
+                            _context.InsuranceEndorsement.RemoveRange(endosos);
+                        }
+                        else
+                        {
+                            List<InsuredAssets> activos = await _context.InsuredAssets
+                                .Where(q => q.InsurancePolicyId == InsurancePolicyq.InsurancePolicyId).ToListAsync();
+                            _context.InsuredAssets.RemoveRange(activos);
+                        }
+
+
 
                         _context.Entry(InsurancePolicyq).CurrentValues.SetValues((_InsurancePolicy));
 
