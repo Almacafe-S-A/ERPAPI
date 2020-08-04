@@ -54,6 +54,9 @@ namespace ERPAPI.Models
         [Display(Name = "Tipos de Voucher/Documento")]
         public Int64? VoucherTypeId { get; set; }
 
+        [Display(Name = "No Documento")]
+        public Int64? NumeroDocumento { get; set; }
+
         [Display(Name = "Conciliado")]
         public bool Reconciled { get; set; }
 
