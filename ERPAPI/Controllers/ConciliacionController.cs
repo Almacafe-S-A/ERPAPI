@@ -65,7 +65,8 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                List<Conciliacion> Items = await _context.Conciliacion.ToListAsync();
+                List<Conciliacion> Items = await _context.Conciliacion.OrderByDescending(q => q.ConciliacionId).ToListAsync();
+                //Items = Items
                 return await Task.Run(() => Ok(Items));
             }
             catch (Exception ex)
