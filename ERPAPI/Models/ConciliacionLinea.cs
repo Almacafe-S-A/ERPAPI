@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace ERPAPI.Models
@@ -56,6 +57,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "No Documento")]
         public Int64? NumeroDocumento { get; set; }
+
+        public string TipoDocumento { get; set; }
 
         [Display(Name = "Conciliado")]
         public bool Reconciled { get; set; }
