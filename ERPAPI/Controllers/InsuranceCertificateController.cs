@@ -118,18 +118,15 @@ namespace ERPAPI.Controllers
         /// Genera los Certificados de Seguro para el mes acutal.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GenerateInsuranceCertificates()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GenerateInsuranceCertificates(dynamic dto)
         {
+            int? clienteid = dto.ClienteId;
+            DateTime fecha = dto.Fecha;
             try
             {
                 ////Actualiza como vencidos los demas Certificados 
-                List<InsuranceCertificate> insuracesCerticates = _context.InsuranceCertificate.Where(q => q.EstadoId == 1).ToList();
-
-                foreach (var certificado in insuracesCerticates)
-                {
-                    certificado.EstadoId = 2;
-                }
+                
                 Numalet let;
                 let = new Numalet();
                 let.SeparadorDecimalSalida = "Lempiras";
@@ -138,7 +135,30 @@ namespace ERPAPI.Controllers
 
                 //List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
                 List<InsurancePolicy> policies = await _context.InsurancePolicy.Where(q => q.EstadoId == 1 && q.Propias).ToListAsync();
-                List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
+                List<Customer> customers = new List<Customer>();
+                List<InsuranceCertificate> insurancesCerticates = new List<InsuranceCertificate>();
+                    
+                   
+
+                
+                if (clienteid == 0 || clienteid == null)
+                {
+                    customers =  await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
+                    insurancesCerticates = _context.InsuranceCertificate.Where(q => q.EstadoId == 1).ToList();
+                }
+                else
+                {
+                    customers = await _context.Customer.Where(w => w.IdEstado == 1 && w.CustomerId == clienteid)
+                        .Include(p => p.ProductType).ToListAsync();
+                    insurancesCerticates = _context.InsuranceCertificate.Where(q => q.EstadoId == 1 && q.CustomerId == clienteid).ToList();
+
+                }
+
+                foreach (var certificado in insurancesCerticates)
+                {
+                    certificado.EstadoId = 2;
+                }
+
                 List<Branch> branches = await _context.Branch.ToListAsync();
 
                 foreach (var policy in policies)
@@ -169,8 +189,8 @@ namespace ERPAPI.Controllers
                                 CustomerName = customer.CustomerName,
                                 InsuranceId = Convert.ToInt32(policy.InsurancesId),
                                 Amount = 0,
-                                Date = DateTime.Now.AddDays((DateTime.Now.Day * -1) + 1),
-                                DueDate = DateTime.Now.AddDays(DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - DateTime.Now.Day),
+                                Date = fecha.AddDays((DateTime.Now.Day * -1) + 1),
+                                DueDate = fecha.AddDays(DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - DateTime.Now.Day),
                                 AmountWords = "",
                                 ProductTypeId = customer.ProductTypeId,
                                 ProductTypes = customer.ProductType.ProductTypeName,
