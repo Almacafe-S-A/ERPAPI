@@ -174,7 +174,7 @@ namespace ERPAPI.Controllers
                             JournalEntry _je = new JournalEntry
                             {
                                 Date = _GarantiaBancariaq.FechaCreacion,
-                                Memo = "Partidad Ingreso de Garantia Bancaria",
+                                Memo = _GarantiaBancariaq.strign,
                                 DatePosted = _GarantiaBancariaq.FechaCreacion,
                                 ModifiedDate = DateTime.Now,
                                 CreatedDate = DateTime.Now,
