@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Helpers;
+using ERPAPI.Helpers;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -363,45 +365,7 @@ namespace ERPAPI.Controllers
                                 check.Estado = "Autorizado";
                                 check.IdEstado = 98;
                             }
-                            foreach(JournalEntryLine jel in _JournalEntry.JournalEntryLines)
-                            {
-                                bool continuar = true;
-                                Accounting _account = new Accounting();
-                                _account = await (from c in _context.Accounting
-                                 .Where(q => q.AccountId == jel.AccountId)
-                                                  select c
-                                ).FirstOrDefaultAsync();
-                                do
-                                {
-                                    if(_account.DeudoraAcreedora == "D")
-                                    {
-                                        _account.AccountBalance -= jel.Credit;
-                                        _account.AccountBalance += jel.Debit;
-                                    }
-                                    else if(_account.DeudoraAcreedora == "A")
-                                    {
-                                        _account.AccountBalance += jel.Credit;
-                                        _account.AccountBalance -= jel.Debit;
-                                    }
-                                    await _context.SaveChangesAsync();
-                                    if(!_account.ParentAccountId.HasValue)
-                                    {
-                                        continuar = false;
-                                    }
-                                    else
-                                    {
-                                        _account = await (from c in _context.Accounting
-                                        .Where(q => q.AccountId == _account.ParentAccountId)
-                                                          select c
-                                        ).FirstOrDefaultAsync();
-                                        if(_account == null)
-                                        {
-                                            continuar = false;
-                                        }
-                                    }
-                                }
-                                while (continuar);
-                            }
+                            
                         }
                         else
                         {
@@ -414,7 +378,10 @@ namespace ERPAPI.Controllers
                         }
 
                         transaction.Commit();
+                        
                         await _context.SaveChangesAsync();
+                        ///Actualiza el Saldo del Catalogo contable                       
+                        Funciones.ActualizarSaldoCuentas(_context, _JournalEntry);
                     }
                     catch (Exception ex)
                     {

@@ -10,9 +10,63 @@ using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Helpers
 {
-    public class Funciones
+    public static class Funciones
     {
+        
+        /// <summary>
+        ///Funcion que Actualiza el Saldo de las Cuentas conttables del Catalogo Contable recibe el contexto y el asiento que afecta el saldo 
+        /// </summary>
+        /// <param name="_context"></param>
+        /// <param name="_JournalEntry"></param>
+         public static void ActualizarSaldoCuentas(ApplicationDbContext _context, JournalEntry _JournalEntry) { 
+            foreach (JournalEntryLine jel in _JournalEntry.JournalEntryLines)
+            {
+                bool continuar = true;
+                Accounting _account = new Accounting();
+                _account = (from c in _context.Accounting
+                .Where(q => q.AccountId == jel.AccountId)
+                                 select c
+                ).FirstOrDefault();
+                do
+                {
+                    if (_account.DeudoraAcreedora == "D")
+                    {
+                        _account.AccountBalance -= jel.Credit;
+                        _account.AccountBalance += jel.Debit;
+                    }
+                    else if (_account.DeudoraAcreedora == "A")
+                    {
+                        _account.AccountBalance += jel.Credit;
+                        _account.AccountBalance -= jel.Debit;
+                    }
+                     _context.SaveChanges();
+                    if (!_account.ParentAccountId.HasValue)
+                    {
+                        continuar = false;
+                    }
+                    else
+                    {
+                        _account = (from c in _context.Accounting
+                       .Where(q => q.AccountId == _account.ParentAccountId)
+                                         select c
+                        ).FirstOrDefault();
+                        if (_account == null)
+                        {
+                            continuar = false;
+                        }
+                    }
+                }
+                while (continuar);
+                
+            }
+            _context.SaveChanges();
 
+          
+
+
+
+
+        }
         /// <summary>
         /// Funcion para agregar Asiento Contable, enviando la informacion del asiento como parametro, retorna nulo si algo falla
         /// </summary>
@@ -24,7 +78,7 @@ namespace ERPAPI.Helpers
         /// <param name="_branchid"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, JournalEntry _je, decimal _Monto, int? _branchid)
+        public static async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, JournalEntry _je, decimal _Monto, int? _branchid)
         {
             JournalEntryConfiguration _journalentryconfiguration;
             if (_branchid.HasValue)
@@ -108,7 +162,7 @@ namespace ERPAPI.Helpers
         /// <param name="_branchid"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, long _DocumentId, int _TypeOfAdjustmentId, int _VoucherType, DateTime _date, DateTime _postdate, decimal _Monto, string _usuario, string _memo, int? _branchid)
+        public  static async Task<ActionResult<JournalEntry>> AddJournalEntry(ApplicationDbContext _context, ILogger _logger, int _TransactionId, long _DocumentId, int _TypeOfAdjustmentId, int _VoucherType, DateTime _date, DateTime _postdate, decimal _Monto, string _usuario, string _memo, int? _branchid)
         {
             JournalEntryConfiguration _journalentryconfiguration;
             if (_branchid.HasValue)
@@ -191,4 +245,7 @@ namespace ERPAPI.Helpers
             return null;
         }
     }
+
+    
+    
 }

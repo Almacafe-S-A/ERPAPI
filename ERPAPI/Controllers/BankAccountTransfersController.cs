@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Helpers;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -299,7 +300,8 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
             try
             {
                 BankAccountTransfers transfers = _context.BankAccountTransfers
-                    .Include(i => i.JournalEntry)
+                    .Include(i => i.JournalEntry.JournalEntryLines)
+                    //.Include(i => )
                     .Where(q => q.Id == Id).FirstOrDefault();
                 int estado = 7;
                 string estadoname = "Rechazado";
@@ -330,6 +332,9 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
                 });
 
                 _context.SaveChanges();
+
+                ////Actualiza el saldo de  las cuentas del catalogo contable 
+                Funciones.ActualizarSaldoCuentas(_context, transfers.JournalEntry);
                 return await Task.Run(() => Ok(transfers));
             }
             catch (Exception)
