@@ -116,7 +116,7 @@ namespace ERPAPI.Controllers
             try
             {
                 // DateTime filtro = Convert.ToDateTime(fecha);
-                Items = await _context.ExchangeRate.Where(q => q.DayofRate.Date == _ExchangeRate.DayofRate && q.CurrencyId ==_ExchangeRate.CurrencyId).FirstOrDefaultAsync();
+                Items = await _context.ExchangeRate.Where(q => q.DayofRate.Date == _ExchangeRate.DayofRate.Date && q.CurrencyId ==_ExchangeRate.CurrencyId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
