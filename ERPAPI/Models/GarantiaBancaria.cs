@@ -27,6 +27,8 @@ namespace ERPAPI.Models
         [ForeignKey("CurrencyId")]
         public Currency Currency { get; set; }
 
+
+
         public decimal Ajuste { get; set; }
 
         public Int64 IdEstado { get; set; }

@@ -116,7 +116,19 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
+          bool ValidarSaldo(BankAccountTransfers bankAccountTransfers) {
+            decimal saldo =   _context.Accounting.Where(b => b.AccountId == bankAccountTransfers.SourceAccountManagementId).FirstOrDefault().AccountBalance;
+            if (bankAccountTransfers.SourceAmount < saldo)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        
+        
+        }
 
 
 
@@ -135,10 +147,10 @@ namespace ERPAPI.Controllers
                 _BankAccountTransfersq = _BankAccountTransfers;
                 _BankAccountTransfersq.UsuarioCreacion = User.Identity.Name;
                 _BankAccountTransfersq.FechaCreacion = DateTime.Now;
-
-
-
-
+                if (! ValidarSaldo(_BankAccountTransfersq))
+                {
+                    return BadRequest("La cuenta no tiene saldo suficiente ");
+                }
                 AccountManagement cuentaortigen = _context.AccountManagement
                     .Include(a => a.Accounting)
                     .Where(w => w.AccountManagementId == _BankAccountTransfersq.SourceAccountManagementId).FirstOrDefault();
@@ -340,6 +352,7 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
         {            
             try
             {
+
                 BankAccountTransfers BankAccountTransfersq = new BankAccountTransfers();
                 BankAccountTransfersq = await _context.BankAccountTransfers
                     .Include(i => i.DestinationAccountManagement.Accounting)
@@ -347,7 +360,10 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
                     .Include(i => i.JournalEntry)
                     .Include(i =>i.JournalEntry.JournalEntryLines).Where(q => q.Id == _BankAccountTransfers.Id).FirstOrDefaultAsync();
 
-
+                if (! ValidarSaldo(_BankAccountTransfers))
+                {
+                    return BadRequest("La cuenta no tiene saldo suficiente ");
+                }
 
                 _context.Entry(BankAccountTransfersq).CurrentValues.SetValues((_BankAccountTransfers));
 
