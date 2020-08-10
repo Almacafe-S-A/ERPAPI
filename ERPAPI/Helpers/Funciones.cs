@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
-
+using System.Collections.Generic;
 
 namespace ERPAPI.Helpers
 {
@@ -67,6 +67,8 @@ namespace ERPAPI.Helpers
 
 
         }
+
+       
         /// <summary>
         /// Funcion para agregar Asiento Contable, enviando la informacion del asiento como parametro, retorna nulo si algo falla
         /// </summary>
