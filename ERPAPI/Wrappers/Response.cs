@@ -19,7 +19,7 @@ namespace ERPAPI.Wrappers
             Message = string.Empty;
             Errors = null;
             Data = data;
-
+            
 
         }
 

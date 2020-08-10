@@ -47,6 +47,8 @@ namespace ERPAPI.Models
 
         public List<CertificadoDeposito> CertificadoDepositos { get; set; }
 
+        public List<InsuredAssets> InsuredAssets { get; set; }
+
         public Int64? EstadoId { get; set; }
         [ForeignKey("EstadoId")]
         public Estados Estados { get; set; }

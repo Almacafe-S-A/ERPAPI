@@ -95,7 +95,7 @@ namespace ERPAPI.Controllers
             {
                 Items = await _context.InsuredAssets
                     .Include(b => b.Branch)
-                    .Include(e => e.Category)
+                    //.Include(e => e.Warehouse)
                     .Where(w => w.InsurancePolicyId == insurancePolicyId).ToListAsync();
             }
             catch (Exception ex)
