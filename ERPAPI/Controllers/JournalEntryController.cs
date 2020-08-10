@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Filters;
+using ERPAPI.Helpers;
+using ERPAPI.Helpers;
 using ERPAPI.Models;
+using ERPAPI.Wrappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,36 +34,24 @@ namespace ERPAPI.Controllers
             _context = context;
             _logger = logger;
         }
-
         /// <summary>
-        /// Obtiene el Listado de JournalEntry paginado
+        /// btiene el Listado de JournalEntry paginado
         /// </summary>
-        /// <returns></returns>    
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetJournalEntryPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
+        /// <param name="pageNumer"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+
+        [HttpGet("[action]/{pageNumer}/{pageSize}")]
+        public async Task<IActionResult> GetJournalEntryPag(int pageNumer, int pageSize)
         {
-            List<JournalEntry> Items = new List<JournalEntry>();
-            try
-            {
-                var query = _context.JournalEntry.AsQueryable();
-                var totalRegistro = query.Count();
-
-                Items = await query
-                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
-                   .Take(cantidadDeRegistros)
-                    .ToListAsync();
-
-                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
-                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-        
-            return await Task.Run(() => Ok(Items));
+            var validFilter = new PaginationFilter(pageNumer, pageSize);
+            var pagedData = await _context.JournalEntry
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize)
+                .ToListAsync();
+            var totalRegistros = await _context.JournalEntry.CountAsync();
+            return Ok(new PagedResponse<List<JournalEntry>>(pagedData, validFilter.PageNumber, validFilter.PageSize));
+           
         }
 
         /// <summary>
@@ -363,45 +355,7 @@ namespace ERPAPI.Controllers
                                 check.Estado = "Autorizado";
                                 check.IdEstado = 98;
                             }
-                            foreach(JournalEntryLine jel in _JournalEntry.JournalEntryLines)
-                            {
-                                bool continuar = true;
-                                Accounting _account = new Accounting();
-                                _account = await (from c in _context.Accounting
-                                 .Where(q => q.AccountId == jel.AccountId)
-                                                  select c
-                                ).FirstOrDefaultAsync();
-                                do
-                                {
-                                    if(_account.DeudoraAcreedora == "D")
-                                    {
-                                        _account.AccountBalance -= jel.Credit;
-                                        _account.AccountBalance += jel.Debit;
-                                    }
-                                    else if(_account.DeudoraAcreedora == "A")
-                                    {
-                                        _account.AccountBalance += jel.Credit;
-                                        _account.AccountBalance -= jel.Debit;
-                                    }
-                                    await _context.SaveChangesAsync();
-                                    if(!_account.ParentAccountId.HasValue)
-                                    {
-                                        continuar = false;
-                                    }
-                                    else
-                                    {
-                                        _account = await (from c in _context.Accounting
-                                        .Where(q => q.AccountId == _account.ParentAccountId)
-                                                          select c
-                                        ).FirstOrDefaultAsync();
-                                        if(_account == null)
-                                        {
-                                            continuar = false;
-                                        }
-                                    }
-                                }
-                                while (continuar);
-                            }
+                            
                         }
                         else
                         {
@@ -414,7 +368,10 @@ namespace ERPAPI.Controllers
                         }
 
                         transaction.Commit();
+                        
                         await _context.SaveChangesAsync();
+                        ///Actualiza el Saldo del Catalogo contable                       
+                        Funciones.ActualizarSaldoCuentas(_context, _JournalEntry);
                     }
                     catch (Exception ex)
                     {

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200810211213_Edificios_InsuranceCertificates")]
+    partial class Edificios_InsuranceCertificates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5996,6 +5998,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Amount");
 
+                    b.Property<string>("Edificio");
+
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -10106,9 +10110,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("BranchId");
 
-                    b.Property<double>("CapacidadBodega");
+                    b.Property<double>("CantidadPoliza");
 
-                    b.Property<long?>("CategoriaActivoId");
+                    b.Property<double>("CapacidadBodega");
 
                     b.Property<long>("CurrencyId");
 
@@ -10124,13 +10128,19 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaCreacion");
 
+                    b.Property<DateTime>("FechaEmisionPoliza");
+
                     b.Property<DateTime?>("FechaHabilitacion");
 
                     b.Property<DateTime?>("FechaLibertadGravamen");
 
                     b.Property<DateTime>("FechaModificacion");
 
+                    b.Property<DateTime>("FechaVencimientoPoliza");
+
                     b.Property<long>("IdEstado");
+
+                    b.Property<string>("NoPoliza");
 
                     b.Property<int>("UnitOfMeasureId");
 
@@ -10146,8 +10156,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("WarehouseId");
-
-                    b.HasIndex("CategoriaActivoId");
 
                     b.ToTable("Warehouse");
                 });
@@ -12246,13 +12254,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Vendor")
                         .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Warehouse", b =>
-                {
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "CategoriaActivo")
-                        .WithMany()
-                        .HasForeignKey("CategoriaActivoId");
                 });
 
             modelBuilder.Entity("OFAC.sdnListM", b =>

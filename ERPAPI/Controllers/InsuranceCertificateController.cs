@@ -170,7 +170,7 @@ namespace ERPAPI.Controllers
                         foreach (var branch in branches)
                         {
                             List<CertificadoDeposito> certificadoDepositos = await _context.CertificadoDeposito
-                       .Include(i => i.InsurancePolicy)
+                       .Include(i => i.InsurancePolicy.InsuredAssets)
                        .Include(i => i._CertificadoLine)
                        .Include(i => i.Branch)
                        //.Where(c => c.CustomerId == customer.CustomerId)
@@ -180,6 +180,8 @@ namespace ERPAPI.Controllers
                             {
                                 continue;
                             }
+
+                           
 
                             InsuranceCertificate insurance = new InsuranceCertificate
                             {
@@ -207,10 +209,12 @@ namespace ERPAPI.Controllers
                                 insurance.InsuranceCertificaLines = new List<InsuranceCertificateLine>();
                                 foreach (var certificadoline in certificado._CertificadoLine)
                                 {
+                                    
+
                                     insurance.InsuranceCertificaLines.Add(new InsuranceCertificateLine
                                     {
                                         WarehouseId = certificadoline.WarehouseId,
-                                        Amount = certificadoline.Amount,
+                                        Amount = certificadoline.Amount,                                        
                                         FechaCreacion = DateTime.Now,
                                         FechaModificacion = DateTime.Now,
                                         UsuarioCreacion = User.Identity.Name,

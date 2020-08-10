@@ -34,6 +34,8 @@ namespace ERPAPI.Models
 
         public string DatePlace { get; set; }
 
+        
+
 
         public decimal Amount { get; set; }
 
