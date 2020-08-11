@@ -47,9 +47,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
-        [Display(Name = "Categoria de Clasificacion para los activos asegurados")]
-        public long? CategoriaActivoId { get; set; }
-        public ElementoConfiguracion CategoriaActivo { get; set; }
+        //[Display(Name = "Categoria de Clasificacion para los activos asegurados")]
+        //public long? CategoriaActivoId { get; set; }
+        //public ElementoConfiguracion CategoriaActivo { get; set; }
         [Display(Name = "Fecha libertad de gravamen")]
         //Cada 6 meses -> 1 mes antes
         public DateTime? FechaLibertadGravamen { get; set; }
