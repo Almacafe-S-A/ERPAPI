@@ -117,9 +117,9 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-          bool ValidarSaldo(BankAccountTransfers bankAccountTransfers) {
+          bool ValidarSaldo(BankAccountTransfers bankAccountTransfers, decimal cantidad) {
             decimal saldo =   _context.Accounting.Where(b => b.AccountId == bankAccountTransfers.SourceAccountManagementId).FirstOrDefault().AccountBalance;
-            if (bankAccountTransfers.SourceAmount < saldo)
+            if (cantidad< saldo)
             {
                 return false;
             }
@@ -148,10 +148,7 @@ namespace ERPAPI.Controllers
                 _BankAccountTransfersq = _BankAccountTransfers;
                 _BankAccountTransfersq.UsuarioCreacion = User.Identity.Name;
                 _BankAccountTransfersq.FechaCreacion = DateTime.Now;
-                if (! ValidarSaldo(_BankAccountTransfersq))
-                {
-                    return BadRequest("La cuenta no tiene saldo suficiente ");
-                }
+                
                 AccountManagement cuentaortigen = _context.AccountManagement
                     .Include(a => a.Accounting)
                     .Where(w => w.AccountManagementId == _BankAccountTransfersq.SourceAccountManagementId).FirstOrDefault();
@@ -160,42 +157,32 @@ namespace ERPAPI.Controllers
                     .Where(w => w.AccountManagementId == _BankAccountTransfersq.DestinationAccountManagementId).FirstOrDefault();
 
 
-                decimal cantidadorigen = 0;
-                decimal cantidaddestino = 0;
+                decimal cantidad = 0;
 
                 ///////////Conversion a Moneda Local para registros Contables
 
-                if (cuentaortigen.CurrencyId != 1)
+                if (cuentaortigen.CurrencyId == 1)
                 {
-                    ExchangeRate ex = _context.ExchangeRate
-                        .Where(q => q.CurrencyId == cuentaortigen.CurrencyId && q.DayofRate.Date == _BankAccountTransfersq.TransactionDate.Date).FirstOrDefault();
-                    if (ex == null)
-                    {
-                        return BadRequest($"No se encontro una tasa para la moneda origen {ex.CurrencyName} en la fecha de transacción seleccionada");
-                    }
-                    cantidadorigen = _BankAccountTransfersq.SourceAmount * ex.ExchangeRateValue;
+                    cantidad = _BankAccountTransfersq.SourceAmount;
 
                 }
                 else
                 {
-                    cantidadorigen = _BankAccountTransfersq.SourceAmount;
-                }
-
-                if (cuentadestino.CurrencyId != 1)
-                {
-                    ExchangeRate ex = _context.ExchangeRate
-                        .Where(q => q.CurrencyId == cuentadestino.CurrencyId && q.DayofRate.Date == _BankAccountTransfersq.TransactionDate.Date).FirstOrDefault();
-                    if (ex == null)
+                    if (cuentadestino.CurrencyId == 1)
                     {
-                        return BadRequest($"No se encontro una tasa para la moneda destino {ex.CurrencyName} en la fecha de transacción seleccionada");
+                        cantidad = _BankAccountTransfersq.DestinationAmount;
+
                     }
-                    cantidadorigen = _BankAccountTransfersq.SourceAmount * ex.ExchangeRateValue;
-                }
-                else
-                {
-                    cantidaddestino = _BankAccountTransfersq.DestinationAmount;
+                    else
+                    {
+                        cantidad = _BankAccountTransfersq.SourceAmount / _BankAccountTransfersq.Rate;
+                    }
                 }
 
+                if (!ValidarSaldo(_BankAccountTransfersq,cantidad))
+                {
+                    return BadRequest("La cuenta no tiene saldo suficiente ");
+                }
 
                 JournalEntry je = new JournalEntry {
                     Date = DateTime.Now,
@@ -205,8 +192,8 @@ namespace ERPAPI.Controllers
                     CreatedUser = User.Identity.Name,
                     ModifiedUser = User.Identity.Name,
                     Memo = _BankAccountTransfersq.Notes,
-                    TotalCredit = _BankAccountTransfersq.SourceAmount,
-                    TotalDebit = _BankAccountTransfersq.SourceAmount,
+                    TotalCredit = cantidad,
+                    TotalDebit = cantidad,
                     EstadoId = 5,
                     EstadoName = "Enviada a Aprobacion",
                     CurrencyId = 1,
@@ -220,7 +207,7 @@ namespace ERPAPI.Controllers
                 je.JournalEntryLines.Add(new JournalEntryLine {
                     AccountId = Convert.ToInt32(cuentadestino.AccountId),
                     AccountName = cuentadestino.Accounting.AccountName,
-                    Debit = cantidadorigen,
+                    Debit = cantidad,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedUser = User.Identity.Name,
@@ -232,7 +219,7 @@ namespace ERPAPI.Controllers
                 {
                     AccountId = Convert.ToInt32(cuentaortigen.AccountId),
                     AccountName = cuentaortigen.Accounting.AccountName,
-                    Credit = cantidaddestino,
+                    Credit = cantidad,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedUser = User.Identity.Name,
@@ -241,10 +228,6 @@ namespace ERPAPI.Controllers
                 });
 
                 _BankAccountTransfersq.JournalEntry = je;
-
-
-
-
                 _context.BankAccountTransfers.Add(_BankAccountTransfersq);
                 await _context.SaveChangesAsync();
 
@@ -365,12 +348,38 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
                     .Include(i => i.JournalEntry)
                     .Include(i =>i.JournalEntry.JournalEntryLines).Where(q => q.Id == _BankAccountTransfers.Id).FirstOrDefaultAsync();
 
-                if (! ValidarSaldo(_BankAccountTransfers))
-                {
-                    return BadRequest("La cuenta no tiene saldo suficiente ");
-                }
+
+                AccountManagement cuentaortigen = _context.AccountManagement
+                    .Include(a => a.Accounting)
+                    .Where(w => w.AccountManagementId == BankAccountTransfersq.SourceAccountManagementId).FirstOrDefault();
+                AccountManagement cuentadestino = _context.AccountManagement
+                    .Include(a => a.Accounting)
+                    .Where(w => w.AccountManagementId == BankAccountTransfersq.DestinationAccountManagementId).FirstOrDefault();
+                decimal cantidad = 0;
+
+                
 
                 _context.Entry(BankAccountTransfersq).CurrentValues.SetValues((_BankAccountTransfers));
+
+                ///////////Conversion a Moneda Local para registros Contables
+
+                if (cuentaortigen.CurrencyId == 1)
+                {
+                    cantidad = BankAccountTransfersq.SourceAmount;
+
+                }
+                else
+                {
+                    if (cuentadestino.CurrencyId == 1)
+                    {
+                        cantidad = BankAccountTransfersq.DestinationAmount;
+
+                    }
+                    else
+                    {
+                        cantidad = BankAccountTransfersq.SourceAmount / BankAccountTransfersq.Rate;
+                    }
+                }
 
                 _BankAccountTransfers = await _context.BankAccountTransfers
                     .Include(i => i.DestinationAccountManagement.Accounting)
@@ -388,16 +397,16 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
 
                 BankAccountTransfersq.JournalEntry.JournalEntryLines[0].AccountId = Convert.ToInt32(_BankAccountTransfers.DestinationAccountManagement.AccountId);
                 BankAccountTransfersq.JournalEntry.JournalEntryLines[0].AccountName = _BankAccountTransfers.DestinationAccountManagement.Accounting.AccountName;
-                BankAccountTransfersq.JournalEntry.JournalEntryLines[0].Debit = _BankAccountTransfers.DestinationAmount;
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[0].Debit = cantidad;
 
 
                 BankAccountTransfersq.JournalEntry.JournalEntryLines[1].AccountId = Convert.ToInt32(_BankAccountTransfers.SourceAccountManagement.AccountId);
                 BankAccountTransfersq.JournalEntry.JournalEntryLines[1].AccountName = _BankAccountTransfers.DestinationAccountManagement.Accounting.AccountName;
-                BankAccountTransfersq.JournalEntry.JournalEntryLines[1].Credit = _BankAccountTransfers.SourceAmount;
+                BankAccountTransfersq.JournalEntry.JournalEntryLines[1].Credit = cantidad;
 
                 _BankAccountTransfers.JournalEntry.Memo = _BankAccountTransfers.Notes;
-                _BankAccountTransfers.JournalEntry.TotalCredit = _BankAccountTransfers.SourceAmount;
-                _BankAccountTransfers.JournalEntry.TotalDebit = _BankAccountTransfers.SourceAmount;
+                _BankAccountTransfers.JournalEntry.TotalCredit = cantidad;
+                _BankAccountTransfers.JournalEntry.TotalDebit = cantidad;
 
                 //_context.BankAccountTransfers.Update(_BankAccountTransfersq);
                 await _context.SaveChangesAsync();
