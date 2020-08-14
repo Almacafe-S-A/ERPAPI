@@ -199,9 +199,10 @@ namespace ERPAPI.Controllers
                     CurrencyId = 1,
                     TypeOfAdjustmentId = 65,
                     TypeOfAdjustmentName = "Asiento Diario",
+                    TypeJournalName = "Transferencias",
+                    VoucherType = 17
 
-
-
+                    
                 };
 
                 je.JournalEntryLines.Add(new JournalEntryLine {
