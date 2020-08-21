@@ -32,13 +32,11 @@ namespace ERPAPI.Models
 
         public decimal AssetInsuredValue { get; set; }
 
-        public decimal MerchadiseTotalValue { get; set; }
 
         public decimal MerchandiseDeductible { get; set; }
 
         public decimal MerchandiseInsuredValue { get; set; }
-
-        public decimal InsuredDiference { get; set; }
+        
 
         public long CategoryId { get; set; }
         [ForeignKey("CategoryId")]
