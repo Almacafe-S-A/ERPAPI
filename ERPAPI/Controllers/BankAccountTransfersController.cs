@@ -175,7 +175,7 @@ namespace ERPAPI.Controllers
                     }
                     else
                     {
-                        cantidad = _BankAccountTransfersq.SourceAmount / _BankAccountTransfersq.Rate;
+                        cantidad = _BankAccountTransfersq.SourceAmount * _BankAccountTransfersq.Rate;
                     }
                 }
 
