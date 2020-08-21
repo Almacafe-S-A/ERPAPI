@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200817150820_InsuranceNetValues")]
+    partial class InsuranceNetValues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1082,7 +1084,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Almacenaje");
 
-                    b.Property<long?>("BankId");
+                    b.Property<long>("BankId");
 
                     b.Property<string>("BankName");
 
@@ -1108,11 +1110,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaCreacion");
 
-                    b.Property<DateTime?>("FechaInicioComputo");
+                    b.Property<DateTime>("FechaFirma");
+
+                    b.Property<DateTime>("FechaInicioComputo");
 
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<DateTime>("FechaPagoBanco");
+
+                    b.Property<DateTime>("FechaVencimiento");
 
                     b.Property<DateTime>("FechaVencimientoDeposito");
 
@@ -1128,13 +1134,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ManifiestoNo");
 
-                    b.Property<double?>("MontoGarantia");
+                    b.Property<double>("MontoGarantia");
 
                     b.Property<long>("NoCD");
 
                     b.Property<string>("NoPoliza");
 
-                    b.Property<long?>("NoTraslado");
+                    b.Property<long>("NoTraslado");
 
                     b.Property<string>("NombreEmpresa");
 
@@ -1142,7 +1148,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("OtrosCargos");
 
-                    b.Property<double?>("PorcentajeInteresesInsolutos");
+                    b.Property<double>("PorcentajeInteresesInsolutos");
 
                     b.Property<double>("Quantitysum");
 
@@ -9151,7 +9157,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Almacenaje");
 
-                    b.Property<long?>("BankId");
+                    b.Property<long>("BankId");
 
                     b.Property<string>("BankName");
 
@@ -9173,17 +9179,17 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaCreacion");
 
-                    b.Property<DateTime?>("FechaFirma");
+                    b.Property<DateTime>("FechaFirma");
 
-                    b.Property<DateTime?>("FechaInicioComputo");
+                    b.Property<DateTime>("FechaInicioComputo");
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<DateTime?>("FechaPagoBanco");
+                    b.Property<DateTime>("FechaPagoBanco");
 
                     b.Property<DateTime>("FechaVencimiento");
 
-                    b.Property<DateTime?>("FechaVencimientoDeposito");
+                    b.Property<DateTime>("FechaVencimientoDeposito");
 
                     b.Property<long>("IdEstado");
 
@@ -9193,13 +9199,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ManifiestoNo");
 
-                    b.Property<double?>("MontoGarantia");
+                    b.Property<double>("MontoGarantia");
 
                     b.Property<long>("NoCD");
 
                     b.Property<string>("NoPoliza");
 
-                    b.Property<long?>("NoTraslado");
+                    b.Property<long>("NoTraslado");
 
                     b.Property<string>("NombreEmpresa");
 
@@ -9207,7 +9213,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("OtrosCargos");
 
-                    b.Property<double?>("PorcentajeInteresesInsolutos");
+                    b.Property<double>("PorcentajeInteresesInsolutos");
 
                     b.Property<double>("Quantitysum");
 

@@ -49,6 +49,11 @@ namespace ERPAPI.Models
 
         public List<InsuredAssets> InsuredAssets { get; set; }
 
+        [NotMapped]
+        public decimal MerchadiseTotalValue { get; set; }
+        [NotMapped]
+        public decimal InsuredDiference { get; set; }
+
         public Int64? EstadoId { get; set; }
         [ForeignKey("EstadoId")]
         public Estados Estados { get; set; }

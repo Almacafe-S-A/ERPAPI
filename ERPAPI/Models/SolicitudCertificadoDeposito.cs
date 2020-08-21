@@ -50,10 +50,10 @@ namespace ERPAPI.Models
         [Display(Name = "Sujetos a pago")]
         public double SujetasAPago { get; set; }
         [Display(Name = "Fecha de vencimiento")]
-        public DateTime FechaVencimientoDeposito { get; set; }
+        public DateTime? FechaVencimientoDeposito { get; set; }
 
         [Display(Name = "Número de traslado")]
-        public Int64 NoTraslado { get; set; }
+        public Int64? NoTraslado { get; set; }
 
         [Display(Name = "Fecha de vencimiento")]
         public DateTime FechaVencimiento { get; set; }
@@ -73,7 +73,7 @@ namespace ERPAPI.Models
         public string OtrosCargos { get; set; }
 
         [Display(Name = "Banco")]
-        public Int64 BankId { get; set; }
+        public Int64? BankId { get; set; }
         [Display(Name = "Banco")]
         public string BankName { get; set; }
         [Display(Name = "Moneda")]
@@ -81,21 +81,21 @@ namespace ERPAPI.Models
         [Display(Name = "Moneda")]
         public string CurrencyName { get; set; }
         [Display(Name = "Monto de garantia")]
-        public double MontoGarantia { get; set; }
+        public double? MontoGarantia { get; set; }
         [Display(Name = "Fecha pago")]
-        public DateTime FechaPagoBanco { get; set; }
+        public DateTime? FechaPagoBanco { get; set; }
 
         [Display(Name = "Porcentaje intereses")]
-        public double PorcentajeInteresesInsolutos { get; set; }
+        public double? PorcentajeInteresesInsolutos { get; set; }
 
         [Display(Name = "Fecha de inicio")]
-        public DateTime FechaInicioComputo { get; set; }
+        public DateTime? FechaInicioComputo { get; set; }
 
         [Display(Name = "Lugar de firma")]
         public string LugarFirma { get; set; }
 
         [Display(Name = "Fecha de firma")]
-        public DateTime FechaFirma { get; set; }
+        public DateTime? FechaFirma { get; set; }
 
         [Display(Name = "Nombre prestatario")]
         public string NombrePrestatario { get; set; }
