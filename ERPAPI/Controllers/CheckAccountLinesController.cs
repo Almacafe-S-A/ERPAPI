@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ERPAPI.Helpers;
 using Newtonsoft.Json;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace ERPAPI.Controllers
 {
@@ -389,19 +390,20 @@ namespace ERPAPI.Controllers
                                  .Where(q => q.Id == CheckId).FirstOrDefaultAsync();
                 _CheckAccountLinesq.Impreso = true;
                 bool cambio = false;
-
-                if (_CheckAccountLinesq.IdEstado == 98)
-                {
-                    _CheckAccountLinesq.Estado = "Emitido";
-                    _CheckAccountLinesq.IdEstado = 52;
-                    cambio = true;
-                }
-                if (_CheckAccountLinesq.IdEstado == 52)
+                
+                if (_CheckAccountLinesq.IdEstado == 52) // si ya habia sido emitido se cambia emitido reimpreso 
                 {
                     _CheckAccountLinesq.Estado = "Emitido - Reimpreso";
                     _CheckAccountLinesq.IdEstado = 100;
                     cambio = true;
                 }
+                if (_CheckAccountLinesq.IdEstado == 98) // si solamente estaba aprobado se pasa a emitido
+                {
+                    _CheckAccountLinesq.Estado = "Emitido";
+                    _CheckAccountLinesq.IdEstado = 52;
+                    cambio = true;
+                }
+                
                 if (!cambio)
                 {
                     return await Task.Run(() => Ok(_CheckAccountLinesq));
@@ -464,46 +466,8 @@ namespace ERPAPI.Controllers
                     journalEntry.EstadoName = "Aprobado";
                     journalEntry.ApprovedBy = User.Identity.Name;
                     journalEntry.ApprovedDate = DateTime.Now;
-                    foreach (JournalEntryLine jel in journalEntry.JournalEntryLines)
-                    {
-                        bool continuar = true;
-                        Accounting _account = new Accounting();
-                        _account = await (from c in _context.Accounting
-                         .Where(q => q.AccountId == jel.AccountId)
-                                          select c
-                        ).FirstOrDefaultAsync();
-                        do
-                        {
-                            if (_account.DeudoraAcreedora == "D")
-                            {
-                                _account.AccountBalance -= jel.Credit;
-                                _account.AccountBalance += jel.Debit;
-                            }
-                            else if (_account.DeudoraAcreedora == "A")
-                            {
-                                _account.AccountBalance += jel.Credit;
-                                _account.AccountBalance -= jel.Debit;
-                            }
-                            await _context.SaveChangesAsync();
-                            if (!_account.ParentAccountId.HasValue)
-                            {
-                                continuar = false;
-                            }
-                            else
-                            {
-                                _account = await (from c in _context.Accounting
-                                .Where(q => q.AccountId == _account.ParentAccountId)
-                                                  select c
-                                ).FirstOrDefaultAsync();
-                                if (_account == null)
-                                {
-                                    continuar = false;
-                                }
-                            }
-                        }
-                        while (continuar);
-                    }
-
+                    ////Actualiza el saldo de las cuentas contables del catalogo 
+                    Funciones.ActualizarSaldoCuentas(_context, journalEntry);
                 }
                 else
                 {
@@ -543,23 +507,37 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Actualiza la CheckAccountLines
+        /// Anula el cheque del id proporcionado reversando el asiento del cheque 
         /// </summary>
-        /// <param name="_CheckAccountLines"></param>
+        /// <param name="checkid"></param>
         /// <returns></returns>
-        [HttpPut("[action]")]
-        public async Task<ActionResult<CheckAccountLines>> AnularCheque([FromBody]CheckAccountLines _CheckAccountLines)
+        [HttpGet("[action]/{checkid}")]
+        public async Task<ActionResult<CheckAccountLines>> AnularCheque(int checkid)
         {
-            CheckAccountLines _CheckAccountLinesq = _CheckAccountLines;
+            
             
             try
             {
-                _CheckAccountLinesq = await _context.CheckAccountLines.Where(w => w.Id == _CheckAccountLines.Id).FirstOrDefaultAsync();
-                _CheckAccountLines.AmountWords = "Anulado";
-                _CheckAccountLines.Ammount = 0;
+                CheckAccountLines _CheckAccountLinesq = await _context.CheckAccountLines
+                    .Include(i => i.JournalEntry)
+                    .Where(w => w.Id == checkid).FirstOrDefaultAsync();
+                if (_CheckAccountLinesq == null)
+                {
+                    return NotFound("No se encontro el Cheque");
+                }
+                if (_CheckAccountLinesq.IdEstado == 53)
+                {
+                    return BadRequest("Este Cheque ya ha sido Anulado anteriormente");
+                }
+                if (_CheckAccountLinesq.IdEstado != 52 && _CheckAccountLinesq.IdEstado !=  98 && _CheckAccountLinesq.IdEstado !=100 )
+                    
+                {
+                    return BadRequest("Solo se pueden anular cheques de estado Emitido, Aprobado, o Emitido Reimpreso");
+                }
+                _CheckAccountLinesq.AmountWords = "Anulado";
+                _CheckAccountLinesq.Ammount = 0;
                 _CheckAccountLinesq.Estado = "Anulado";
-                _CheckAccountLinesq.IdEstado = 53;
-                //_context.Entry(_CheckAccountLinesq).CurrentValues.SetValues((_CheckAccountLines));
+                _CheckAccountLinesq.IdEstado = 53;                
 
                 if (_CheckAccountLinesq.RetencionId != null)
                 {
@@ -568,12 +546,15 @@ namespace ERPAPI.Controllers
                     retention.Estado = "Inactiva";
                 }
 
-
-
-                JournalEntry jecheck = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
+                JournalEntry jecheck = _CheckAccountLinesq.JournalEntry;     
+                
+                if (jecheck == null)// Validacion en caso de que no se encuentre el asiento en el cheque, por validaciones anteriores, no aplica para nuevos cheques
+                {
+                    jecheck= await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 && w.EstadoId == 6).FirstOrDefaultAsync();
+                    _CheckAccountLinesq.JournalEntrId = jecheck == null ? 0 : jecheck.JournalEntryId;
+                }
                 if (jecheck != null )
                 {
-
                     JournalEntry jeAnulacion = new JournalEntry
                     {
                         Date = DateTime.Now,
@@ -587,17 +568,14 @@ namespace ERPAPI.Controllers
                         PartyTypeName = _CheckAccountLinesq.PaytoOrderOf,
                         TotalDebit = jecheck.TotalDebit,
                         TotalCredit = jecheck.TotalCredit,
-                        PartyTypeId = 3,
-                        //PartyName = "Proveedor",
+                        PartyTypeId = jecheck.PartyTypeId,
+                        PartyName = jecheck.PartyName,
                         TypeJournalName = "Reversión",
                         VoucherType = 23,
                         EstadoId = 6,
                         EstadoName = "Aprobado",
                         TypeOfAdjustmentId = 65,
                         TypeOfAdjustmentName = "Asiento diario"
-
-
-
                     };
                     var lineas = await _context.JournalEntryLine.Where(w => w.JournalEntryId == jecheck.JournalEntryId).ToListAsync();
 
@@ -633,50 +611,10 @@ namespace ERPAPI.Controllers
                         UsuarioEjecucion = jeAnulacion.ModifiedUser,
 
                     });
-
                     await _context.SaveChangesAsync();
-
-
-
-                    foreach (JournalEntryLine jel in jeAnulacion.JournalEntryLines)
-                    {
-                        bool continuar = true;
-                        Accounting _account = new Accounting();
-                        _account = await (from c in _context.Accounting
-                         .Where(q => q.AccountId == jel.AccountId)
-                                          select c
-                        ).FirstOrDefaultAsync();
-                        do
-                        {
-                            if (_account.DeudoraAcreedora == "D")
-                            {
-                                _account.AccountBalance -= jel.Credit;
-                                _account.AccountBalance += jel.Debit;
-                            }
-                            else if (_account.DeudoraAcreedora == "A")
-                            {
-                                _account.AccountBalance += jel.Credit;
-                                _account.AccountBalance -= jel.Debit;
-                            }
-                            await _context.SaveChangesAsync();
-                            if (!_account.ParentAccountId.HasValue)
-                            {
-                                continuar = false;
-                            }
-                            else
-                            {
-                                _account = await (from c in _context.Accounting
-                                .Where(q => q.AccountId == _account.ParentAccountId)
-                                                  select c
-                                ).FirstOrDefaultAsync();
-                                if (_account == null)
-                                {
-                                    continuar = false;
-                                }
-                            }
-                        }
-                        while (continuar);
-                    }
+                    //Actualizar el saldo de las cuentas con el asiento reversado 
+                    
+                    Funciones.ActualizarSaldoCuentas(_context, jeAnulacion);
 
                     _context.JournalEntryCanceled.Add(new JournalEntryCanceled()
                     {
@@ -687,42 +625,15 @@ namespace ERPAPI.Controllers
                         TypeJournalName = "Cheques"
 
 
-                    }
-
-                        );
-
+                    });
                     await _context.SaveChangesAsync();
                 }
                 else
                 {
-                    JournalEntry jecheque = await _context.JournalEntry.Where(w => w.DocumentId == _CheckAccountLinesq.Id && w.VoucherType == 10 ).FirstOrDefaultAsync();
-                    if (jecheque==null)
-                    {
-                        await _context.SaveChangesAsync();
-                        return await Task.Run(() => Ok(_CheckAccountLinesq));
-                    }
-                    jecheck.EstadoId = 8;
-                    jecheck.EstadoName = "Anulado";
-                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                    {
-                        IdOperacion = jecheck.JournalEntryId,
-                        DocType = "JournalEntry",
-                        ClaseInicial =
-                          Newtonsoft.Json.JsonConvert.SerializeObject(jecheck, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                        Accion = "Rechazar Asiento Contable",
-                        FechaCreacion = DateTime.Now,
-                        FechaModificacion = DateTime.Now,
-                        UsuarioCreacion = jecheck.CreatedUser,
-                        UsuarioModificacion = jecheck.ModifiedUser,
-                        UsuarioEjecucion = jecheck.ModifiedUser,
-
-                    });
-                    await _context.SaveChangesAsync();
+                    return BadRequest("No se encontro el asiento contable del cheque seleccionado");
                 }
 
                 
-
-                //_context.CheckAccountLines.Update(_CheckAccountLinesq);
 
             }
             catch (Exception ex)
@@ -732,7 +643,7 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
 
-            return await Task.Run(() => Ok(_CheckAccountLinesq));
+            return await Task.Run(() => Ok());
         }
 
 
