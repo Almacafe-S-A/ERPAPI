@@ -220,7 +220,10 @@ namespace ERPAPI.Controllers
             CertificadoDeposito Items = new CertificadoDeposito();
             try
             {
+                EndososCertificados endoso = _context.EndososCertificados.Where(q => q.IdCD == IdCD ).FirstOrDefault();
+
                 Items = await _context.CertificadoDeposito.Include(q=>q._CertificadoLine).Where(q => q.IdCD == IdCD).FirstOrDefaultAsync();
+                Items.Endoso = endoso;
             }
             catch (Exception ex)
             {
@@ -256,8 +259,8 @@ namespace ERPAPI.Controllers
                         {
                             CurrencyId = _CertificadoDeposito.CurrencyId,
                             CurrencyName = _CertificadoDeposito.CurrencyName,
-                            BankName = _CertificadoDeposito.BankName,
-                            BankId = _CertificadoDeposito.BankId,
+                            //BankName = _CertificadoDeposito.BankName,
+                            //BankId = _CertificadoDeposito.BankId,
                             Almacenaje = _CertificadoDeposito.Almacenaje,
                             CustomerId = _CertificadoDeposito.CustomerId,
                             CustomerName = _CertificadoDeposito.CustomerName,
@@ -266,19 +269,19 @@ namespace ERPAPI.Controllers
                             Estado = _CertificadoDeposito.Estado,
                             FechaCertificado = _CertificadoDeposito.FechaCertificado,
                             //FechaFirma = _CertificadoDeposito.FechaFirma,
-                            FechaInicioComputo = _CertificadoDeposito.FechaInicioComputo,
+                            //FechaInicioComputo = _CertificadoDeposito.FechaInicioComputo,
                             FechaVencimientoDeposito = _CertificadoDeposito.FechaVencimientoDeposito,
                             //FechaVencimiento = _CertificadoDeposito.FechaVencimiento,
                             NoCD = _CertificadoDeposito.NoCD,
-                            FechaPagoBanco = _CertificadoDeposito.FechaPagoBanco,
+                            //FechaPagoBanco = _CertificadoDeposito.FechaPagoBanco,
                             NombreEmpresa= _CertificadoDeposito.NombreEmpresa,
-                            LugarFirma = _CertificadoDeposito.LugarFirma,
-                            MontoGarantia = _CertificadoDeposito.MontoGarantia,
+                            //LugarFirma = _CertificadoDeposito.LugarFirma,
+                            //MontoGarantia = _CertificadoDeposito.MontoGarantia,
                             NoPoliza = _CertificadoDeposito.NoPoliza,
-                            NombrePrestatario = _CertificadoDeposito.NombrePrestatario,
+                            //NombrePrestatario = _CertificadoDeposito.NombrePrestatario,
                             NoTraslado = _CertificadoDeposito.NoTraslado,
                             OtrosCargos = _CertificadoDeposito.OtrosCargos,
-                            PorcentajeInteresesInsolutos = _CertificadoDeposito.PorcentajeInteresesInsolutos,
+                            //PorcentajeInteresesInsolutos = _CertificadoDeposito.PorcentajeInteresesInsolutos,
                             Seguro = _CertificadoDeposito.Seguro,
                             ServicioId = _CertificadoDeposito.ServicioId,
                             ServicioName = _CertificadoDeposito.ServicioName,

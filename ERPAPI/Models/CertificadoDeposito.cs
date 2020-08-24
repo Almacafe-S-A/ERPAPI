@@ -83,32 +83,13 @@ namespace ERPAPI.Models
         public string OtrosCargos { get; set; }
 
         [Display(Name = "Banco")]
-        public Int64? BankId { get; set; }
-        [Display(Name = "Banco")]
-        public string BankName { get; set; }
-        [Display(Name = "Moneda")]
+        
         public Int64 CurrencyId { get; set; }
         [Display(Name = "Moneda")]
         public string CurrencyName { get; set; }
-        [Display(Name = "Monto de garantia")]
-        public double? MontoGarantia { get; set; }
-        [Display(Name = "Fecha pago")]
-        public DateTime FechaPagoBanco { get; set; }
 
-        [Display(Name = "Porcentaje intereses")]
-        public double? PorcentajeInteresesInsolutos { get; set; }
-
-        [Display(Name = "Fecha de inicio")]
-        public DateTime? FechaInicioComputo { get; set; }
-
-        [Display(Name = "Lugar de firma")]
-        public string LugarFirma { get; set; }
-
-
-
-        [Display(Name = "Nombre prestatario")]
-        public string NombrePrestatario { get; set; }
-
+        [Display(Name = "Fecha de Vencimiento")]
+        public DateTime? FechaVencimientoCertificado { get; set; }
 
         /// <summary>
         /// Totales de Detalle de Linea
@@ -129,7 +110,7 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
         [NotMapped]
-        public EndososCertificados Endoso { get; set; } = new EndososCertificados();
+        public EndososCertificados Endoso { get; set; } 
 
         public string Impreso { get; set; }
         
