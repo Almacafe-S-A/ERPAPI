@@ -60,5 +60,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Centro de costos")]
         public string CenterCostName { get; set; }
+
+        public string Observaciones { get; set; }
+
+        public decimal DerechosFiscales { get; set; }
     }
 }

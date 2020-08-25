@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 
 namespace ERPAPI.Models
@@ -91,6 +92,21 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Vencimiento")]
         public DateTime? FechaVencimientoCertificado { get; set; }
 
+
+        public string SituadoEn { get; set; }
+
+        public decimal PorcentajeDeudas { get; set; }
+
+        public decimal?  TotalDerechos { get; set; }
+
+       
+
+        public string Comentario { get; set; }
+        [NotMapped]
+        public string NoRecibo { get; set; }
+
+        public bool? PolizaPropia { get; set; }
+
         /// <summary>
         /// Totales de Detalle de Linea
         /// </summary>
@@ -116,6 +132,7 @@ namespace ERPAPI.Models
         
         public List<CertificadoLine> _CertificadoLine { get; set; } = new List<CertificadoLine>();
     }
+
 
 
 

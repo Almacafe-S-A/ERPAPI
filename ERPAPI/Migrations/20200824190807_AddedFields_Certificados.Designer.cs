@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200824190807_AddedFields_Certificados")]
+    partial class AddedFields_Certificados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1132,8 +1134,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("OtrosCargos");
 
-                    b.Property<bool?>("PolizaPropia");
-
                     b.Property<decimal>("PorcentajeDeudas");
 
                     b.Property<double>("Quantitysum");
@@ -1149,8 +1149,6 @@ namespace ERPAPI.Migrations
                     b.Property<double>("SujetasAPago");
 
                     b.Property<double>("Total");
-
-                    b.Property<decimal?>("TotalDerechos");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -1182,15 +1180,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CenterCostName");
 
-                    b.Property<decimal>("DerechosFiscales");
-
                     b.Property<string>("Description");
 
                     b.Property<long>("IdCD");
 
                     b.Property<decimal?>("Merma");
-
-                    b.Property<string>("Observaciones");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("Money");
