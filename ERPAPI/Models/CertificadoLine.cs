@@ -12,6 +12,7 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 CertificadoLineId { get; set; }
+        public int? PdaNo { get; set; }
         [Display(Name = "Certificado")]
         public Int64 IdCD { get; set; }
         [Display(Name = "Producto")]
@@ -63,6 +64,6 @@ namespace ERPAPI.Models
 
         public string Observaciones { get; set; }
 
-        public decimal DerechosFiscales { get; set; }
+        public decimal? DerechosFiscales { get; set; }
     }
 }
