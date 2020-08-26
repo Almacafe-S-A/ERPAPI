@@ -223,6 +223,10 @@ namespace ERPAPI.Controllers
                 EndososCertificados endoso = _context.EndososCertificados.Where(q => q.IdCD == IdCD ).FirstOrDefault();
 
                 Items = await _context.CertificadoDeposito.Include(q=>q._CertificadoLine).Where(q => q.IdCD == IdCD).FirstOrDefaultAsync();
+                if (Items == null)
+                {
+                    return NotFound();
+                }
                 Items.Endoso = endoso;
             }
             catch (Exception ex)

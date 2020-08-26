@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200825135135_RemoveFields_InsuranceCertificates")]
+    partial class RemoveFields_InsuranceCertificates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1182,17 +1184,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CenterCostName");
 
-                    b.Property<decimal?>("DerechosFiscales");
-
                     b.Property<string>("Description");
 
                     b.Property<long>("IdCD");
 
                     b.Property<decimal?>("Merma");
-
-                    b.Property<string>("Observaciones");
-
-                    b.Property<int?>("PdaNo");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("Money");

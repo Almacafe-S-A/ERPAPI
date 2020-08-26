@@ -132,6 +132,40 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
+        /// Obtiene el listado de Polizas dependiendo si es poliza propia o de los clientes
+        /// </summary>
+        /// <param name="polizaPropia"></param>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{polizaPropia}/{CustomerId}")]
+        public async Task<IActionResult> GetInsuracesPoliciesByProperty(bool polizaPropia,int CustomerId)
+        {
+            List<InsurancePolicy> Items = new List<InsurancePolicy>();
+            try
+            {
+                if (polizaPropia)
+                {
+                    Items = await _context.InsurancePolicy.Where(q => q.Propias).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.InsurancePolicy.Where(q => q.CustomerId == CustomerId).ToListAsync();
+                }
+                
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
         /// Inserta una nueva poliza con asiento contable
         /// </summary>
         /// <param name="_InsurancePolicy"></param>

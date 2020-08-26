@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200825135335_AddedFields_CD_Lines")]
+    partial class AddedFields_CD_Lines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1182,7 +1184,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CenterCostName");
 
-                    b.Property<decimal?>("DerechosFiscales");
+                    b.Property<decimal>("DerechosFiscales");
 
                     b.Property<string>("Description");
 
@@ -1191,8 +1193,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal?>("Merma");
 
                     b.Property<string>("Observaciones");
-
-                    b.Property<int?>("PdaNo");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("Money");
