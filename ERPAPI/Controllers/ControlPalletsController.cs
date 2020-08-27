@@ -77,7 +77,7 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.ControlPallets.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ControlPalletsId).ToListAsync();
+                    Items = await _context.ControlPallets.Where(p => p.EsIngreso ==1 && branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ControlPalletsId).ToListAsync();
                 }
                 else
                 {
@@ -129,8 +129,10 @@ namespace ERPAPI.Controllers
             List<ControlPallets> controlPalletsAvailable = new List<ControlPallets>();
             try
             {
-               
-                controlPalletsAvailable = await _context.ControlPallets.Where(q => _context.GoodsReceived.Any(a => a.ControlId != q.ControlPalletsId) ).ToListAsync();
+               /////Selecciona todos los control de ingresos con boleta de peso asociada y completos
+                controlPalletsAvailable = await _context.ControlPallets.
+                    Where(q => q.EsIngreso == 1 && _context.GoodsReceived.Any(a => a.ControlId != q.ControlPalletsId) 
+                                && _context.Boleto_Ent.Include( b => b.Boleto_Sal).Any(a => a.clave_e == q.WeightBallot && a.Boleto_Sal != null) ).ToListAsync();
 
 
             }

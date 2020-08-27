@@ -318,31 +318,42 @@ namespace ERPAPI.Controllers
                             _context.GoodsReceivedLine.Add(item);
 
                             //item.Total =((decimal)item.Quantity + _KardexLine.Total);
-                           
 
-                            //_GoodsReceived.Kardex._KardexLine.Add(new KardexLine
-                            //{
-                            //    DocumentDate = _GoodsReceivedq.DocumentDate,
-                            //    ProducId = item.ProducId,
-                            //    ProductName = item.ProductName,
-                            //    SubProducId = item.SubProductId,
-                            //    SubProductName = item.SubProductName,
-                            //    QuantityEntry = item.Quantity,
-                            //    QuantityOut = 0,
-                            //    QuantityEntryBags = item.QuantitySacos,
-                            //    BranchId = _GoodsReceivedq.BranchId,
-                            //    BranchName = _GoodsReceivedq.BranchName,
-                            //    WareHouseId = item.WareHouseId,
-                            //    WareHouseName = item.WareHouseName,
-                            //    UnitOfMeasureId = item.UnitOfMeasureId,
-                            //    UnitOfMeasureName = item.UnitOfMeasureName,
-                            //    TypeOperationId = 1,
-                            //    TypeOperationName = "Entrada",
-                            //    Total = item.Total,
-                            //    TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
-                            //    QuantityEntryCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                            //    TotalCD = _KardexLine.TotalCD + (item.Quantity - (item.Quantity * _subproduct.Merma)),
-                            //});
+
+                            _context.Kardex.Add(new Kardex
+                            {
+                                DocumentDate = _GoodsReceivedq.DocumentDate,
+                                DocumentName = "ReciboMercaderia/GoodsReceived",
+                                DocType = 1, 
+                                ProducId = item.ProducId,
+                                ProductName = item.ProductName,
+                                SubProducId = item.SubProductId,
+                                SubProductName = item.SubProductName,
+                                QuantityEntry = item.Quantity,
+                                QuantityOut = 0,
+                                QuantityEntryBags = item.QuantitySacos,
+                                BranchId = _GoodsReceivedq.BranchId,
+                                BranchName = _GoodsReceivedq.BranchName,
+                                WareHouseId = item.WareHouseId,
+                                WareHouseName = item.WareHouseName,
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                TypeOperationId = 1,
+                                TypeOperationName = "Entrada",
+                                Total = item.Total,
+                                TotalBags = item.QuantitySacos ,
+                                QuantityEntryCD = item.Quantity - (item.Quantity * _subproduct.Merma),                                
+                                FechaCreacion = DateTime.Now,
+                                FechaModificacion = DateTime.Now,
+                                KardexDate = DateTime.Now,
+                                CustomerId = _GoodsReceivedq.CustomerId,
+                                CustomerName = _GoodsReceivedq.CustomerName,
+                                CurrencyId = _GoodsReceivedq.CurrencyId,
+                                CurrencyName = _GoodsReceivedq.CurrencyName,
+                                DocumentId = _GoodsReceivedq.GoodsReceivedId,
+                                UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion,
+                                UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion,
+                            });
                         }//Fin Foreach
 
                         await _context.SaveChangesAsync();
