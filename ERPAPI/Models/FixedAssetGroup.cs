@@ -32,6 +32,11 @@ namespace ERPAPI.Models
         [ForeignKey("DepreciationAccountingId")]
         public Accounting DepreciationFixedAssetAccounting { get; set; }
 
+
+        public Int64? ResidualValueFixedAssetAccountingId { get; set; }
+        [ForeignKey("ResidualValueFixedAssetAccountingId")]
+        public Accounting ResidualValueFixedAssetAccounting { get; set; }
+
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
 

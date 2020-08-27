@@ -77,14 +77,14 @@ namespace ERPAPI.Controllers
                     Items = await _context.Product
                             .Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
                              .Include(c => c.Branch)
-                              .OrderByDescending(b => b.ProductId)
+                              //.OrderByDescending(b => b.ProductId)
                               .ToListAsync();
                 }
                 else
                 {
                     Items = await _context.Product
                              .Include(c => c.Branch)
-                              .OrderByDescending(b => b.ProductId)
+                              //.OrderByDescending(b => b.ProductId)
                               .ToListAsync();
                 }
 

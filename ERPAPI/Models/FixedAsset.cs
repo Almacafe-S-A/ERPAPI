@@ -25,6 +25,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Grupo del activo fijo")]
         public Int64 FixedAssetGroupId { get; set; }
+        [ForeignKey("FixedAssetGroupId")]
+        public FixedAssetGroup FixedAssetGroup { get; set; }
 
         [Display(Name = "Código de grupo")]
         public string FixedAssetCode { get; set; }
