@@ -276,6 +276,7 @@ namespace ERPAPI.Controllers
                     AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
                     CostCenterId = _FixedAssetq.CenterCostId,
                     CostCenterName = _FixedAssetq.CenterCostName,
+                    Debit = valordepreciado
                     
                 });
                 _je.JournalEntryLines.Add(new JournalEntryLine()
