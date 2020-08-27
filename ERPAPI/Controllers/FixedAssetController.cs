@@ -208,7 +208,7 @@ namespace ERPAPI.Controllers
                 //    return BadRequest("no se encontro la cuenta de Valor Residual");
                 //}
 
-                decimal valordepreciado = _FixedAssetq.TotalDepreciated;
+                decimal valordepreciado = _FixedAssetq.AccumulatedDepreciation;
                 decimal valorresidual = _FixedAssetq.ResidualValue;
                 decimal valorasiento = 0;
                 valorasiento = valordepreciado;
@@ -276,6 +276,7 @@ namespace ERPAPI.Controllers
                     AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
                     CostCenterId = _FixedAssetq.CenterCostId,
                     CostCenterName = _FixedAssetq.CenterCostName,
+                    Debit = valordepreciado
                     
                 });
                 _je.JournalEntryLines.Add(new JournalEntryLine()
