@@ -268,47 +268,12 @@ namespace ERPAPI.Controllers
                             item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
 
 
-                            Kardex _kardexmax = await (from c in _context.Kardex
-                                                        .OrderByDescending(q => q.DocumentDate)
-                                                           // .Take(1)
-                                                       join d in _context.KardexLine on c.KardexId equals d.KardexId
-                                                       where c.CustomerId == _GoodsReceivedq.CustomerId && d.SubProducId == item.SubProductId
-                                                        && c.DocumentName != "CD" && d.WareHouseId == item.WareHouseId
-                                                       select c
-                                                      ).FirstOrDefaultAsync();
+                            
 
-                            //Kardex _kardexmax = await (from kdx in _context.Kardex
-                            //            .Where(q => q.CustomerId == _GoodsReceivedq.CustomerId)
-                            //            from kdxline in _context.KardexLine
-                            //                .Where(q => q.KardexId == kdx.KardexId)
-                            //                .Where(o => o.SubProducId == item.SubProductId)
-                            //                //.Where(q=>q.BranchId ==  _GoodsReceivedq.BranchId)
-                            //                //.Where(q => q.WareHouseId == _GoodsReceivedq.WarehouseId)
-                            //                .OrderByDescending(o => o.DocumentDate).Take(1)
-                            //            select kdx).FirstOrDefaultAsync();
-
-                            if (_kardexmax == null) { _kardexmax = new Kardex(); }
-
-
-                            KardexLine _KardexLine = await _context.KardexLine
-                                                                         .Where(q=>q.KardexId== _kardexmax.KardexId)
-                                                                         .Where(q => q.SubProducId == item.SubProductId)
-                                                                         .Where(q=>q.WareHouseId==item.WareHouseId)
-                                                                         .Where(q => q.BranchId == _GoodsReceivedq.BranchId)
-                                                                         .OrderByDescending(q => q.KardexLineId)
-                                                                         .Take(1)
-                                                                        .FirstOrDefaultAsync();
-
-                            if (_KardexLine == null)
-                            {
-                                _KardexLine = new KardexLine();
-
-                            }
-
-                            SubProduct _subproduct = await (from c in _context.SubProduct
-                                                     .Where(q => q.SubproductId == item.SubProductId)
-                                                            select c
-                                                     ).FirstOrDefaultAsync();
+                            SubProduct _subproduct = _context.SubProduct
+                                .Where(q => q.SubproductId == item.SubProductId).FirstOrDefault();
+                                
+                                
                             if (_subproduct.ProductTypeId == 3)
                             {
                                 //Alert AlertP = new Alert();
@@ -352,58 +317,58 @@ namespace ERPAPI.Controllers
 
                             _context.GoodsReceivedLine.Add(item);
 
-                            item.Total =((decimal)item.Quantity + _KardexLine.Total);
+                            //item.Total =((decimal)item.Quantity + _KardexLine.Total);
                            
 
-                            _GoodsReceived.Kardex._KardexLine.Add(new KardexLine
-                            {
-                                DocumentDate = _GoodsReceivedq.DocumentDate,
-                                ProducId = item.ProducId,
-                                ProductName = item.ProductName,
-                                SubProducId = item.SubProductId,
-                                SubProductName = item.SubProductName,
-                                QuantityEntry = item.Quantity,
-                                QuantityOut = 0,
-                                QuantityEntryBags = item.QuantitySacos,
-                                BranchId = _GoodsReceivedq.BranchId,
-                                BranchName = _GoodsReceivedq.BranchName,
-                                WareHouseId = item.WareHouseId,
-                                WareHouseName = item.WareHouseName,
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 1,
-                                TypeOperationName = "Entrada",
-                                Total = item.Total,
-                                TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
-                                QuantityEntryCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                TotalCD = _KardexLine.TotalCD + (item.Quantity - (item.Quantity * _subproduct.Merma)),
-                            });
+                            //_GoodsReceived.Kardex._KardexLine.Add(new KardexLine
+                            //{
+                            //    DocumentDate = _GoodsReceivedq.DocumentDate,
+                            //    ProducId = item.ProducId,
+                            //    ProductName = item.ProductName,
+                            //    SubProducId = item.SubProductId,
+                            //    SubProductName = item.SubProductName,
+                            //    QuantityEntry = item.Quantity,
+                            //    QuantityOut = 0,
+                            //    QuantityEntryBags = item.QuantitySacos,
+                            //    BranchId = _GoodsReceivedq.BranchId,
+                            //    BranchName = _GoodsReceivedq.BranchName,
+                            //    WareHouseId = item.WareHouseId,
+                            //    WareHouseName = item.WareHouseName,
+                            //    UnitOfMeasureId = item.UnitOfMeasureId,
+                            //    UnitOfMeasureName = item.UnitOfMeasureName,
+                            //    TypeOperationId = 1,
+                            //    TypeOperationName = "Entrada",
+                            //    Total = item.Total,
+                            //    TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
+                            //    QuantityEntryCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                            //    TotalCD = _KardexLine.TotalCD + (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                            //});
                         }//Fin Foreach
 
                         await _context.SaveChangesAsync();
-                        _GoodsReceived.Kardex.DocType = 0;                      
-                        _GoodsReceived.Kardex.DocumentName = "ReciboMercaderia/GoodsReceived";
-                        _GoodsReceived.Kardex.DocumentDate = _GoodsReceivedq.DocumentDate;
-                        _GoodsReceived.Kardex.FechaCreacion = DateTime.Now;
-                        _GoodsReceived.Kardex.FechaModificacion = DateTime.Now;
-                        _GoodsReceived.Kardex.TypeOperationId = 1;
-                        _GoodsReceived.Kardex.TypeOperationName = "Entrada";
-                        _GoodsReceived.Kardex.KardexDate = DateTime.Now;
-                        //_GoodsReceived.Kardex.DocumentName = "RM";
+                        //_GoodsReceived.Kardex.DocType = 0;                      
+                        //_GoodsReceived.Kardex.DocumentName = "ReciboMercaderia/GoodsReceived";
+                        //_GoodsReceived.Kardex.DocumentDate = _GoodsReceivedq.DocumentDate;
+                        //_GoodsReceived.Kardex.FechaCreacion = DateTime.Now;
+                        //_GoodsReceived.Kardex.FechaModificacion = DateTime.Now;
+                        //_GoodsReceived.Kardex.TypeOperationId = 1;
+                        //_GoodsReceived.Kardex.TypeOperationName = "Entrada";
+                        //_GoodsReceived.Kardex.KardexDate = DateTime.Now;
+                        ////_GoodsReceived.Kardex.DocumentName = "RM";
 
-                        _GoodsReceived.Kardex.CustomerId = _GoodsReceivedq.CustomerId;
-                        _GoodsReceived.Kardex.CustomerName = _GoodsReceivedq.CustomerName;
-                        _GoodsReceived.Kardex.CurrencyId = _GoodsReceivedq.CurrencyId;
-                        _GoodsReceived.Kardex.CurrencyName = _GoodsReceivedq.CurrencyName;
-                        _GoodsReceived.Kardex.DocumentId = _GoodsReceivedq.GoodsReceivedId;
-                        _GoodsReceived.Kardex.UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion;
-                        _GoodsReceived.Kardex.UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion;
+                        //_GoodsReceived.Kardex.CustomerId = _GoodsReceivedq.CustomerId;
+                        //_GoodsReceived.Kardex.CustomerName = _GoodsReceivedq.CustomerName;
+                        //_GoodsReceived.Kardex.CurrencyId = _GoodsReceivedq.CurrencyId;
+                        //_GoodsReceived.Kardex.CurrencyName = _GoodsReceivedq.CurrencyName;
+                        //_GoodsReceived.Kardex.DocumentId = _GoodsReceivedq.GoodsReceivedId;
+                        //_GoodsReceived.Kardex.UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion;
+                        //_GoodsReceived.Kardex.UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion;
 
                         
 
                         if (_GoodsReceived.ControlId > 0)
                         {
-                            _context.Kardex.Add(_GoodsReceived.Kardex);
+                            //_context.Kardex.Add(_GoodsReceived.Kardex);
                         }
 
                         await _context.SaveChangesAsync();
@@ -444,29 +409,31 @@ namespace ERPAPI.Controllers
                                                                        .Include(q => q.JournalEntryConfigurationLine)
                                                                        ).FirstOrDefaultAsync();
 
-                        BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _GoodsReceived.CustomerId,
-                            DocType = "JournalEntryConfiguration",
-                            ClaseInicial =
-                             Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "InsertGoodsReceived",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
-                            UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
-                            UsuarioEjecucion = _GoodsReceived.UsuarioModificacion,
-
-                        });
+                        
 
                         // await _context.SaveChangesAsync();
 
                         decimal sumacreditos = 0, sumadebitos = 0;
-                        if (_journalentryconfiguration != null)
-                        {
+                        //if (_journalentryconfiguration != null)
+                            if (_journalentryconfiguration == null)
+                            {
                             //Crear el asiento contable configurado
                             //.............................///////
+                            BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
+                            {
+                                IdOperacion = _GoodsReceived.CustomerId,
+                                DocType = "JournalEntryConfiguration",
+                                ClaseInicial =
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                                Accion = "InsertGoodsReceived",
+                                FechaCreacion = DateTime.Now,
+                                FechaModificacion = DateTime.Now,
+                                UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
+                                UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
+                                UsuarioEjecucion = _GoodsReceived.UsuarioModificacion,
+
+                            });
                             JournalEntry _je = new JournalEntry
                             {
                                 Date = _GoodsReceivedq.OrderDate,
@@ -543,6 +510,11 @@ namespace ERPAPI.Controllers
 
                             await _context.SaveChangesAsync();
                         }
+                        //else
+                        //{
+                        //    transaction.Rollback();
+                        //    return BadRequest("no existe configuracion para el asiento automatico del recibo de mercaderia");
+                        //}
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {

@@ -120,32 +120,18 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Controles de ingresos 
+        /// Controles de ingresos Dsiponibles para nuevos Recibos de Mercaderias 
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetControlPalletsNoSelected()
         {
-            List<ControlPallets> Items = new List<ControlPallets>();
+            List<ControlPallets> controlPalletsAvailable = new List<ControlPallets>();
             try
             {
-                List<Int64> listayaprocesada = _context.GoodsReceived.Where(q => q.ControlId > 0).Select(q=>q.ControlId).ToList();
+               
+                controlPalletsAvailable = await _context.ControlPallets.Where(q => _context.GoodsReceived.Any(a => a.ControlId != q.ControlPalletsId) ).ToListAsync();
 
-                //_context.GoodsReceivedLine
-                //                          .Where(q=>q.ControlPalletsId>0)
-                //                          .Select(q => q.ControlPalletsId).ToList();
-
-                var query =  (from s in _context.ControlPallets
-                where !_context.GoodsReceived.Any(es => (es.ControlId == s.ControlPalletsId))
-                                select s);
-
-                Items = query.ToList();
-                //var val = await _context.ControlPallets.Where(q=> !listayaprocesada.Contains(q.ControlPalletsId) ).ToListAsync();
-
-                List<Int64> _listaint = Items.Select(q => q.WeightBallot).ToList();
-                List<Boleto_Ent> _weightballot = _context.Boleto_Ent.Where(q => _listaint.Contains(q.clave_e)).ToList();
-                List<Int64> finalizados = _weightballot.Where(q => q.completo == true).Select(q=>q.clave_e).ToList();
-                Items = Items.Where(q => finalizados.Contains(q.WeightBallot)).ToList();
 
             }
             catch (Exception ex)
@@ -156,7 +142,7 @@ namespace ERPAPI.Controllers
             }
 
             //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
+            return await Task.Run(() => Ok(controlPalletsAvailable));
         }
 
         /// <summary>
