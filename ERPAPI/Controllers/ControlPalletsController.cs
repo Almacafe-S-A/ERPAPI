@@ -77,7 +77,7 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.ControlPallets.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ControlPalletsId).ToListAsync();
+                    Items = await _context.ControlPallets.Where(p => p.EsIngreso ==1 && branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ControlPalletsId).ToListAsync();
                 }
                 else
                 {
@@ -120,32 +120,20 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Controles de ingresos 
+        /// Controles de ingresos Dsiponibles para nuevos Recibos de Mercaderias 
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetControlPalletsNoSelected()
         {
-            List<ControlPallets> Items = new List<ControlPallets>();
+            List<ControlPallets> controlPalletsAvailable = new List<ControlPallets>();
             try
             {
-                List<Int64> listayaprocesada = _context.GoodsReceived.Where(q => q.ControlId > 0).Select(q=>q.ControlId).ToList();
+               /////Selecciona todos los control de ingresos con boleta de peso asociada y completos
+                controlPalletsAvailable = await _context.ControlPallets.
+                    Where(q => q.EsIngreso == 1 && _context.GoodsReceived.Any(a => a.ControlId != q.ControlPalletsId) 
+                                && _context.Boleto_Ent.Include( b => b.Boleto_Sal).Any(a => a.clave_e == q.WeightBallot && a.Boleto_Sal != null) ).ToListAsync();
 
-                //_context.GoodsReceivedLine
-                //                          .Where(q=>q.ControlPalletsId>0)
-                //                          .Select(q => q.ControlPalletsId).ToList();
-
-                var query =  (from s in _context.ControlPallets
-                where !_context.GoodsReceived.Any(es => (es.ControlId == s.ControlPalletsId))
-                                select s);
-
-                Items = query.ToList();
-                //var val = await _context.ControlPallets.Where(q=> !listayaprocesada.Contains(q.ControlPalletsId) ).ToListAsync();
-
-                List<Int64> _listaint = Items.Select(q => q.WeightBallot).ToList();
-                List<Boleto_Ent> _weightballot = _context.Boleto_Ent.Where(q => _listaint.Contains(q.clave_e)).ToList();
-                List<Int64> finalizados = _weightballot.Where(q => q.completo == true).Select(q=>q.clave_e).ToList();
-                Items = Items.Where(q => finalizados.Contains(q.WeightBallot)).ToList();
 
             }
             catch (Exception ex)
@@ -156,7 +144,7 @@ namespace ERPAPI.Controllers
             }
 
             //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
+            return await Task.Run(() => Ok(controlPalletsAvailable));
         }
 
         /// <summary>
