@@ -204,6 +204,17 @@ namespace ERPAPI.Controllers
 
                     }
                     decimal suma = journalEntryLines.Sum(s => s.Debit);
+                    int numcheque = 0;
+                    try
+                    {
+                        numcheque = Convert.ToInt32(check.CheckNumber);
+
+                    }
+                    catch (Exception)
+                    {
+
+                        numcheque = 0;
+                    }
 
                     JournalEntry _je = new JournalEntry
                     {
@@ -217,7 +228,7 @@ namespace ERPAPI.Controllers
                         CreatedUser = check.UsuarioCreacion,
                         //PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
                         PartyName = check.PaytoOrderOf,
-                        DocumentId = check.Id,
+                        DocumentId =numcheque,
                         TotalDebit = suma,
                         TotalCredit = suma,
                         PartyTypeId = 3,
