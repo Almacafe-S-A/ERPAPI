@@ -208,7 +208,7 @@ namespace ERPAPI.Controllers
                 //    return BadRequest("no se encontro la cuenta de Valor Residual");
                 //}
 
-                decimal valordepreciado = _FixedAssetq.TotalDepreciated;
+                decimal valordepreciado = _FixedAssetq.AccumulatedDepreciation;
                 decimal valorresidual = _FixedAssetq.ResidualValue;
                 decimal valorasiento = 0;
                 valorasiento = valordepreciado;
