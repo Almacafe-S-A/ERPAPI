@@ -330,23 +330,22 @@ namespace ERPAPI.Controllers
 
                         _CertificadoDepositoq = _CertificadoDeposito;
                         _CertificadoDepositoq.NoCD = _SolicitudCertificado.IdSCD;
-                        _context.CertificadoDeposito.Add(_CertificadoDepositoq);
-                        // await _context.SaveChangesAsync();
+
+                        _CertificadoDepositoq._CertificadoLine = new List<CertificadoLine>();
 
                         foreach (var item in _CertificadoDeposito._CertificadoLine)
                         {
-                            item.IdCD = _CertificadoDepositoq.IdCD;
-                            _context.CertificadoLine.Add(item);
 
+                            _CertificadoDepositoq._CertificadoLine.Add(item);
                             _context.Kardex.Add( new Kardex { 
                                 DocumentDate = _CertificadoDeposito.FechaCertificado,
-                                //ProducId = _CertificadoDeposito.,
-                                //ProductName = _GoodsReceivedq.ProductName,
+                                ProducId = _CertificadoDeposito.ServicioId,
+                                ProductName = _CertificadoDeposito.ServicioName,
                                 SubProducId = Convert.ToInt32(item.SubProductId),
                                 SubProductName = item.SubProductName,
                                 QuantityEntry = item.Quantity,
                                 QuantityOut = 0,
-                                QuantityEntryBags = item.TotalCantidad,
+                                QuantityEntryBags = item.Quantity,
                                 BranchId = _CertificadoDeposito.BranchId,
                                 BranchName = _CertificadoDeposito.BranchName,
                                 WareHouseId = Convert.ToInt32(item.WarehouseId),
@@ -362,10 +361,12 @@ namespace ERPAPI.Controllers
                                 TotalCD = item.Quantity,
                                 DocumentName = "Certficado de Depósito",
                                 DocumentId = item.IdCD,
+                                DocType = 2
 
                             });
-                            
-                        }
+
+                    }
+                        _context.CertificadoDeposito.Add(_CertificadoDepositoq);
 
                         await _context.SaveChangesAsync();
 

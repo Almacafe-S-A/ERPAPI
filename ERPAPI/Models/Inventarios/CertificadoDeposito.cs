@@ -55,6 +55,9 @@ namespace ERPAPI.Models
         [Display(Name = "Seguro")]
         public string EmpresaSeguro { get; set; }
 
+
+        public string Recibos { get; set; }
+
         public Int64? InsurancePolicyId { get; set; }
         [ForeignKey("InsurancePolicyId")]
         public InsurancePolicy InsurancePolicy { get; set; }
@@ -93,7 +96,7 @@ namespace ERPAPI.Models
         public DateTime? FechaVencimientoCertificado { get; set; }
 
 
-        public string SituadoEn { get; set; }
+        //public string SituadoEn { get; set; }
 
         public decimal PorcentajeDeudas { get; set; }
 
