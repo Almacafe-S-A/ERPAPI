@@ -72,7 +72,7 @@ namespace ERP.Contexts
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
         public DbSet<TypeAccount> TypeAccount { get; set; }
-        public DbSet<InstallmentDelivery> InstallmentDelivery { get; set; }
+        
         public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
 
         public DbSet<PrecioCafe> PrecioCafe { get; set; }
@@ -265,7 +265,7 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryPlaceOfBirthItemM> sdnListSdnEntryPlaceOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
         public DbSet<CheckAccount> CheckAccount { get; set; }
-        public DbSet<Substratum> Substratum { get; set; }
+        
 
         ///// <summary>
         ////////
@@ -314,7 +314,7 @@ namespace ERP.Contexts
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
 
      
-        public DbSet<RecipeDetail> RecipeDetail { get; set; }
+        
 
         // Gestion de Contratos para Modulo CxC
 
