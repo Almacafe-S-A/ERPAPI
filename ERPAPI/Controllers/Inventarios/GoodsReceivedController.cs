@@ -626,9 +626,9 @@ namespace ERPAPI.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsReceived>> AgruparRecibos([FromBody]List<Int64> listarecibos)
+        public async Task<ActionResult<List<GoodsReceivedLine>>> AgruparRecibos([FromBody]List<Int64> listarecibos)
         {
-            GoodsReceived _goodsreceivedlis = new GoodsReceived();
+            List<GoodsReceivedLine> _goodsreceivedlis = new List<GoodsReceivedLine>();
             try
             {
                 string inparams = "";
@@ -639,7 +639,12 @@ namespace ERPAPI.Controllers
 
                 inparams = inparams.Substring(0,inparams.Length-1);
                 // string[] ids = listarecibos.Split(',');
-                _goodsreceivedlis = await _context.GoodsReceived.Where(q => q.GoodsReceivedId == Convert.ToInt64(listarecibos[0])).FirstOrDefaultAsync();
+                _goodsreceivedlis = await _context.GoodsReceivedLine
+                    //.Select(s => s.)
+                    .Where(q => listarecibos.Any(a => a == q.GoodsReceivedId))
+                    //.GroupBy(g => g.SubProductId)
+                    .Include(i => i.GoodsReceived)
+                    .ToListAsync();
                 //List<GoodsReceivedLineDTO> d = _context.Query<GoodsReceivedLineDTO>().FromSql (
                 //("  SELECT  grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName         "
                 // + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
@@ -651,36 +656,38 @@ namespace ERPAPI.Controllers
                 //.Where(q => listarecibos.Contains(q.GoodsReceivedId)).ToList();
 
               //  List<GoodsReceivedLineDTO> d = new List<GoodsReceivedLineDTO>();
-                using (var command = _context.Database.GetDbConnection().CreateCommand())
-                {
-                    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName         "
-                 + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
-                  //+ "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
-                  + "  , grl.Price as Precio, SUM(grl.Quantity) * (grl.Price)  AS Total                            "
-                 + $"  FROM GoodsReceivedLine grl                 where  GoodsReceivedId in ({inparams})                                "
-                 + "  GROUP BY grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName,grl.Price        "
-                 );
 
-                   _context.Database.OpenConnection();
-                    using (var result = command.ExecuteReader())
-                    {
-                        // do something with result
-                        while (await result.ReadAsync())
-                        {
-                            _goodsreceivedlis._GoodsReceivedLine.Add(new GoodsReceivedLine {
-                                SubProductId = Convert.ToInt64(result["SubProductId"]),
-                                SubProductName = result["SubProductName"].ToString(),
-                                UnitOfMeasureId = Convert.ToInt64(result["UnitOfMeasureId"]),
-                                UnitOfMeasureName = result["UnitOfMeasureName"].ToString(),
-                                Quantity = Convert.ToDecimal(result["Cantidad"]),
-                                QuantitySacos = Convert.ToInt32(result["CantidadSacos"]),
-                                Price = Convert.ToDecimal(result["Precio"]),
-                                Total = Convert.ToDecimal(result["Total"]),
+                //var goodreceived = _context.GoodsReceived.
+                //using (var command = _context.Database.GetDbConnection().CreateCommand())
+                //{
+                //    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName         "
+                // + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
+                //  //+ "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
+                //  + "  , grl.Price as Precio, SUM(grl.Quantity) * (grl.Price)  AS Total                            "
+                // + $"  FROM GoodsReceivedLine grl                 where  GoodsReceivedId in ({inparams})                                "
+                // + "  GROUP BY grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName,grl.Price        "
+                // );
+
+                //   _context.Database.OpenConnection();
+                //    using (var result = command.ExecuteReader())
+                //    {
+                //        // do something with result
+                //        while (await result.ReadAsync())
+                //        {
+                //            _goodsreceivedlis._GoodsReceivedLine.Add(new GoodsReceivedLine {
+                //                SubProductId = Convert.ToInt64(result["SubProductId"]),
+                //                SubProductName = result["SubProductName"].ToString(),
+                //                UnitOfMeasureId = Convert.ToInt64(result["UnitOfMeasureId"]),
+                //                UnitOfMeasureName = result["UnitOfMeasureName"].ToString(),
+                //                Quantity = Convert.ToDecimal(result["Cantidad"]),
+                //                QuantitySacos = Convert.ToInt32(result["CantidadSacos"]),
+                //                Price = Convert.ToDecimal(result["Precio"]),
+                //                Total = Convert.ToDecimal(result["Total"]),
                                 
-                            });
-                        }
-                    }
-                }
+                //            });
+                //        }
+                //    }
+                //}
 
 
             }

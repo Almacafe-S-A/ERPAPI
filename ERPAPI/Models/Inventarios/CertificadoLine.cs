@@ -65,5 +65,10 @@ namespace ERPAPI.Models
         public string Observaciones { get; set; }
 
         public decimal? DerechosFiscales { get; set; }
+        [NotMapped]
+        public int? ReciboId { get; set; }
+        [NotMapped]
+        public double? CantidadDisponible { get; set; }
     }
+
 }
