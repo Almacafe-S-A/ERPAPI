@@ -150,7 +150,7 @@ namespace ERPAPI.Controllers
                     _context.InsuranceEndorsement.Add(_InsuranceEndorsementq);
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                     {
-                        IdOperacion = 4, ///////Falta definir los Id de las Operaciones
+                        IdOperacion = 24, ///////Falta definir los Id de las Operaciones
                         DocType = "Endoso de Seguros",
                         ClaseInicial =
                            Newtonsoft.Json.JsonConvert.SerializeObject(_InsuranceEndorsementq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),

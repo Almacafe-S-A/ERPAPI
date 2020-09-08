@@ -189,6 +189,7 @@ namespace ERPAPI.Controllers
                     {
                         _ControlPalletsq = _ControlPallets;
                         _context.ControlPallets.Add(_ControlPalletsq);
+
                       
                         foreach (var item in _ControlPalletsq._ControlPalletsLine)
                         {

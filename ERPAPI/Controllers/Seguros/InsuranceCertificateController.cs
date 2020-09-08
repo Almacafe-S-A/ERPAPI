@@ -159,7 +159,7 @@ namespace ERPAPI.Controllers
                     certificado.EstadoId = 2;
                 }
 
-                List<Branch> branches = await _context.Branch.ToListAsync();
+                List<Branch> branches = await _context.Branch.Where(q => q.CustomerId == null).ToListAsync();
 
                 foreach (var policy in policies)
                 {

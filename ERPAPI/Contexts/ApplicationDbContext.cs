@@ -29,13 +29,59 @@ namespace ERP.Contexts
         {
 
         }
-        public DbSet<Accounting> Accounting { get; set; }
+
+        #region DbSet's Contabilidad
+            public DbSet<Accounting> Accounting { get; set; }
+            public DbSet<TypeAccount> TypeAccount { get; set; }
+            public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
+            public DbSet<AccountManagement> AccountManagement { get; set; }
+            public DbSet<CierresAccounting> CierresAccounting { get; set; }
+            public DbSet<CierresJournal> CierresJournal { get; set; }
+            public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
+            public DbSet<Bank> Bank { get; set; }
+            public DbSet<BankAccountTransfers> BankAccountTransfers { get; set; }
+            public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
+            public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
+            public DbSet<CheckAccount> CheckAccount { get; set; }
+            public DbSet<GarantiaBancaria> GarantiaBancaria { get; set; }
+            public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
+            public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
+            public DbSet<MotivoConciliacion> MotivoConciliacion { get; set; }
+            public DbSet<Conciliacion> Conciliacion { get; set; }
+            public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
+            public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
+            public DbSet<FixedAsset> FixedAsset { get; set; }
+            public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
+            public DbSet<TypeJournal> TypeJournal { get; set; }
+            public DbSet<JournalEntry> JournalEntry { get; set; }
+            public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
+            public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
+            public DbSet<Presupuesto> Presupuesto { get; set; }
+
+
+
+
+
+        #endregion
+
+
+        #region Seguros
+        public DbSet<InsuranceCertificate> InsuranceCertificate { get; set; }
+
+        public DbSet<InsuranceCertificateLine> InsurancesCertificateLines { get; set; }
+        public DbSet<Insurances> Insurances { get; set; }
+        #endregion
+
+        #region Inventarios
+        public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
+        public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
+        #endregion
 
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
 
-        public DbSet <Presupuesto> Presupuesto { get; set; }
+ 
 
 
         public DbSet <MantenimientoImpacto> MantenimientoImpacto { get; set; }
@@ -44,17 +90,14 @@ namespace ERP.Contexts
         public DbSet <TipodeAccionderiesgo> TipodeAccionderiesgo { get; set; }
 
 
-        public DbSet<InsuranceCertificate> InsuranceCertificate { get; set; }
-
-        public DbSet<InsuranceCertificateLine> InsurancesCertificateLines { get; set; }
+       
 
         public DbSet<Concept> Concept { get; set; }
 
-        public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
-        public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
-        public DbSet<Insurances> Insurances { get; set; }
+     
+      
         public DbSet<ContactPerson> ContactPerson { get; set; }
-        public DbSet<TypeJournal> TypeJournal { get; set; }
+
         public DbSet<CostListItem> CostListItem { get; set; }
         public DbSet<CostCenter> CostCenter { get; set; }
 
@@ -65,15 +108,10 @@ namespace ERP.Contexts
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 
-        public DbSet<JournalEntry> JournalEntry { get; set; }
-        public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
 
-        public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
-        public DbSet<TypeAccount> TypeAccount { get; set; }
-        
-        public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
+
 
         public DbSet<PrecioCafe> PrecioCafe { get; set; }
         public DbSet<ContextoRiesgo> ContextoRiesgo { get; set; }
@@ -106,15 +144,13 @@ namespace ERP.Contexts
 
         public DbSet<DebitNote> DebitNote { get; set; }
         public DbSet<DebitNoteLine> DebitNoteLine { get; set; }
-        public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
-        public DbSet<FixedAsset> FixedAsset { get; set; }
-        public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
+
 
         public DbSet<SeveridadRiesgo> SeveridadRiesgo { get; set; }
         public DbSet<InvoiceTransReport> InvoiceTransReport { get; set; }
         public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
         public DbSet<InsuredAssets> InsuredAssets { get; set; }
-        public DbSet<AccountManagement> AccountManagement { get; set; }
+
 
 
         public DbSet<PayrollDeduction> PayrollDeduction { get; set; }
@@ -123,18 +159,9 @@ namespace ERP.Contexts
         /// </summary>
         /// 
 
-        public DbSet<GarantiaBancaria> GarantiaBancaria { get; set; }
 
 
-        public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
-        public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
-
-        public DbSet<CierresAccounting> CierresAccounting { get; set; }
-
-        public DbSet<CierresJournal> CierresJournal { get; set; }
-
-        public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
-
+     
         public DbSet<InsuranceEndorsement> InsuranceEndorsement { get; set; }
 
         public DbSet<Estados> Estados { get; set; }
@@ -183,8 +210,8 @@ namespace ERP.Contexts
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
         public DbSet<PEPS> PEPS { get; set; }
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
-        public DbSet<Bank> Bank { get; set; }
-        public DbSet<BankAccountTransfers> BankAccountTransfers { get; set; }
+
+
         public DbSet<City> City { get; set; }
         public DbSet<State> State { get; set; }
         public DbSet<Country> Country { get; set; }
@@ -210,6 +237,8 @@ namespace ERP.Contexts
         public DbSet<SolicitudCertificadoDeposito> SolicitudCertificadoDeposito { get; set; }
         public DbSet<SolicitudCertificadoLine> SolicitudCertificadoLine { get; set; }
         public DbSet<Kardex> Kardex { get; set; }
+
+
         public DbSet<KardexLine> KardexLine { get; set; }
         public DbSet<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; }
         public DbSet<GoodsDeliveryAuthorization> GoodsDeliveryAuthorization { get; set; }
@@ -242,8 +271,7 @@ namespace ERP.Contexts
         public DbSet<ERPAPI.Models.CuentaBancoEmpleados> CuentaBancoEmpleados { get; set; }
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
         public DbSet<ERPAPI.Models.TipoPlanillas> TipoPlanillas { get; set; }
-        public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
-        public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
+
         public DbSet<EmployeeAbsence> EmployeeAbsence { get; set; }
         public DbSet<PeriodicidadPago> PeriodicidadPago { get; set; }
         public DbSet<BranchPorDepartamento> BranchPorDepartamento { get; set; }
@@ -264,7 +292,7 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryDateOfBirthItemM> sdnListSdnEntryDateOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryPlaceOfBirthItemM> sdnListSdnEntryPlaceOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
-        public DbSet<CheckAccount> CheckAccount { get; set; }
+
         
 
         ///// <summary>
@@ -295,10 +323,7 @@ namespace ERP.Contexts
 
         public DbSet<VendorProduct> VendorProduct { get; set; }
 
-        public DbSet<MotivoConciliacion> MotivoConciliacion { get; set; }
 
-        public DbSet<Conciliacion> Conciliacion { get; set; }
-        public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
 
         public DbSet<PurchaseOrder> PurchaseOrder { get; set; }
 
@@ -395,9 +420,7 @@ namespace ERP.Contexts
             
 
 
-            modelBuilder.Entity<CheckAccount>()
-            .HasIndex(u => u.CheckAccountNo)
-            .IsUnique();
+
 
             //modelBuilder.Entity<UserBranch>()
             //.HasKey(k => new { k.BranchId, k.UserId });
@@ -423,6 +446,10 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
+
+            modelBuilder.Entity<CheckAccount>()
+          .HasIndex(u => u.CheckAccountNo)
+          .IsUnique();
 
 
 
@@ -526,6 +553,10 @@ namespace ERP.Contexts
                                                                 new CategoriaPlanilla(){Id=3, Nombre = "NOMINA EXTRAORDINARIA"},
                                                                 new CategoriaPlanilla(){Id=4, Nombre = "OTRO"},
                                                              });
+
+            
+
+            
         }
 
 
