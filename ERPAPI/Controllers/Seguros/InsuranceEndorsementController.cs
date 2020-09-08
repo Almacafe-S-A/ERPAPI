@@ -192,7 +192,10 @@ namespace ERPAPI.Controllers
                             CreatedUser = _InsuranceEndorsementq.UsuarioCreacion,
                             DocumentId = _InsuranceEndorsementq.InsurancePolicyId,
                             TypeOfAdjustmentId = 65,
-                            VoucherType = 1,
+                            TypeOfAdjustmentName = "Asiento de diario",
+                            
+                            VoucherType = 24,
+                            TypeJournalName = "Endosos"
 
                         };
 
