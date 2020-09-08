@@ -137,10 +137,9 @@ namespace ERPAPI.Models
         [Display(Name = "Centro de costos")]
         public string CostCenterName { get; set; }
 
-        public int? KardexTypeId { get; set; }
+        public KardexTypes KardexTypeId { get; set; }
 
-        [ForeignKey("KardexTypeId")]
-        public KardexType KardexType { get; set; }
+      
 
         //[Display(Name = "Cantidad minima en existencia por producto")]
         //public decimal? MinimumExistance { get; set; }
@@ -166,5 +165,13 @@ namespace ERPAPI.Models
 
     }
 
+
+    public enum KardexTypes {
+        InventarioFisico = 1,
+        MercaderriaCertificada = 2,
+        MercaderiaAutorizadaSaida = 3,
+        MercaderiaEndosada = 4
+    
+    }
 
 }

@@ -238,7 +238,6 @@ namespace ERP.Contexts
         public DbSet<SolicitudCertificadoLine> SolicitudCertificadoLine { get; set; }
         public DbSet<Kardex> Kardex { get; set; }
 
-        public DbSet<KardexType> KardexType { get; set; }
 
         public DbSet<KardexLine> KardexLine { get; set; }
         public DbSet<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; }
@@ -555,13 +554,7 @@ namespace ERP.Contexts
                                                                 new CategoriaPlanilla(){Id=4, Nombre = "OTRO"},
                                                              });
 
-            modelBuilder.Entity<KardexType>().HasData(new[]
-                {
-                    new KardexType() { Id = KardexTypes.KardexInventariofisico, KardexTypeName = "Kardex" }
-
-
-                }
-                );
+            
 
             
         }
