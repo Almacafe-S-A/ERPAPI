@@ -203,16 +203,16 @@ namespace ERPAPI.Controllers
                     return BadRequest("no se encontro la cuenta de Depreciacion");
                 }
 
-                //if (_FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting == null)
-                //{
-                //    return BadRequest("no se encontro la cuenta de Valor Residual");
-                //}
+                if (_FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting == null)
+                {
+                    return BadRequest("no se encontro la cuenta de Valor Residual");
+                }
 
                 decimal valordepreciado = _FixedAssetq.AccumulatedDepreciation;
                 decimal valorresidual = _FixedAssetq.ResidualValue;
                 decimal valorasiento = 0;
-                valorasiento = valordepreciado;
-                //valorasiento= valorresidual + valordepreciado;
+                //valorasiento = valordepreciado;
+                valorasiento= valorresidual + valordepreciado;
 
                 JournalEntry _je = new JournalEntry
                 {
@@ -241,32 +241,32 @@ namespace ERPAPI.Controllers
                 };
                 _je.JournalEntryLines = new List<JournalEntryLine>();
 
-                //////////Lineas de Asiento por valor residual//////////////
-                //_je.JournalEntryLines.Add(new JournalEntryLine({
-                //    ModifiedDate = DateTime.Now,
-                //    CreatedDate = DateTime.Now,
-                //    ModifiedUser = User.Identity.Name,
-                //    CreatedUser = User.Identity.Name,
-                //    AccountId =Convert.ToInt32( _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccountingId),
-                //    AccountName = _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting.AccountName,
-                //    CostCenterId = _FixedAssetq.CenterCostId,
-                //    CostCenterName = _FixedAssetq.CenterCostName,
-                //    Debit  = valorresidual      
-                //})) ;
-                //_je.JournalEntryLines.Add(new JournalEntryLine({
-                //    ModifiedDate = DateTime.Now,
-                //    CreatedDate = DateTime.Now,
-                //    ModifiedUser = User.Identity.Name,
-                //    CreatedUser = User.Identity.Name,
-                //    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.FixedAssetAccountingId),
-                //    AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
-                //    CostCenterId = _FixedAssetq.CenterCostId,
-                //    CostCenterName = _FixedAssetq.CenterCostName,
-                //    Credit = valorresidual
-                //}));
+                ////////Lineas de Asiento por valor residual//////////////
+                _je.JournalEntryLines.Add(new JournalEntryLine(){
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    CreatedUser = User.Identity.Name,
+                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccountingId),
+                    AccountName = _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting.AccountName,
+                    CostCenterId = _FixedAssetq.CenterCostId,
+                    CostCenterName = _FixedAssetq.CenterCostName,
+                    Debit = valorresidual
+                }) ;
+                _je.JournalEntryLines.Add(new JournalEntryLine(){
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    CreatedUser = User.Identity.Name,
+                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.FixedAssetAccountingId),
+                    AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
+                    CostCenterId = _FixedAssetq.CenterCostId,
+                    CostCenterName = _FixedAssetq.CenterCostName,
+                    Credit = valorresidual
+                });
 
                 /////////Lineas de Asiento por valor vida util valor depreciado ////////
-                
+
                 _je.JournalEntryLines.Add(new JournalEntryLine(){
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
