@@ -55,7 +55,7 @@ namespace ERPAPI.Models
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
     
-        public List<FixedAssetGroup> _FixedAssetGroup { get; set; } = new List<FixedAssetGroup>();
+        //public List<FixedAssetGroup> _FixedAssetGroup { get; set; } = new List<FixedAssetGroup>();
 
 
     }
