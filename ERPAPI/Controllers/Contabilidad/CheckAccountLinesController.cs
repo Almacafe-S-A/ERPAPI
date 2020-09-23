@@ -540,7 +540,7 @@ namespace ERPAPI.Controllers
                 {
                     return BadRequest("Este Cheque ya ha sido Anulado anteriormente");
                 }
-                if (_CheckAccountLinesq.IdEstado != 52 && _CheckAccountLinesq.IdEstado !=  98 && _CheckAccountLinesq.IdEstado !=100 )
+                if (_CheckAccountLinesq.IdEstado != 51 &&_CheckAccountLinesq.IdEstado != 52 && _CheckAccountLinesq.IdEstado !=  98 && _CheckAccountLinesq.IdEstado !=100 )
                     
                 {
                     return BadRequest("Solo se pueden anular cheques de estado Emitido, Aprobado, o Emitido Reimpreso");
