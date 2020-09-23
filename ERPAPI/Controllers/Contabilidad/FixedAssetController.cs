@@ -190,7 +190,7 @@ namespace ERPAPI.Controllers
                 _FixedAssetq = _context.FixedAsset
                     .Include(q => q.FixedAssetGroup.DepreciationFixedAssetAccounting)
                     .Include(q => q.FixedAssetGroup.FixedAssetAccounting)
-                    //.Include(q => q.FixedAssetGroup.ResidualValueFixedAssetAccounting)
+                    .Include(q => q.FixedAssetGroup.ResidualValueFixedAssetAccounting)
                 .Where(x => x.FixedAssetId == (Int64)_FixedAsset.FixedAssetId)
                 .FirstOrDefault();
 
