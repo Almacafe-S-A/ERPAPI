@@ -190,7 +190,7 @@ namespace ERPAPI.Controllers
                 _FixedAssetq = _context.FixedAsset
                     .Include(q => q.FixedAssetGroup.DepreciationFixedAssetAccounting)
                     .Include(q => q.FixedAssetGroup.FixedAssetAccounting)
-                    .Include(q => q.FixedAssetGroup.ResidualValueFixedAssetAccounting)
+                    .Include(q => q.FixedAssetGroup.AccumulatedDepreciationAccounting)
                 .Where(x => x.FixedAssetId == (Int64)_FixedAsset.FixedAssetId)
                 .FirstOrDefault();
 
@@ -203,7 +203,7 @@ namespace ERPAPI.Controllers
                     return BadRequest("no se encontro la cuenta de Depreciacion");
                 }
 
-                if (_FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting == null)
+                if (_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting == null)
                 {
                     return BadRequest("no se encontro la cuenta de Valor Residual");
                 }
@@ -260,8 +260,8 @@ namespace ERPAPI.Controllers
                     CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
                     CreatedUser = User.Identity.Name,
-                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccountingId),
-                    AccountName = _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting.AccountName,
+                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccountingId),
+                    AccountName = _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountName,
                     CostCenterId = _FixedAssetq.CenterCostId,
                     CostCenterName = _FixedAssetq.CenterCostName,
                     Debit = depreciacionacumulada

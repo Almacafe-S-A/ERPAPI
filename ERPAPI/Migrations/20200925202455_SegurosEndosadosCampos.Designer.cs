@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200925202455_SegurosEndosadosCampos")]
+    partial class SegurosEndosadosCampos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4861,8 +4863,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("AccumulatedDepreciationAccountingId");
-
                     b.Property<long?>("DepreciationAccountingId");
 
                     b.Property<string>("Estado");
@@ -4881,17 +4881,19 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
+                    b.Property<long?>("ResidualValueFixedAssetAccountingId");
+
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("FixedAssetGroupId");
 
-                    b.HasIndex("AccumulatedDepreciationAccountingId");
-
                     b.HasIndex("DepreciationAccountingId");
 
                     b.HasIndex("FixedAssetAccountingId");
+
+                    b.HasIndex("ResidualValueFixedAssetAccountingId");
 
                     b.ToTable("FixedAssetGroup");
                 });
@@ -11413,10 +11415,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.FixedAssetGroup", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "AccumulatedDepreciationAccounting")
-                        .WithMany()
-                        .HasForeignKey("AccumulatedDepreciationAccountingId");
-
                     b.HasOne("ERPAPI.Models.Accounting", "DepreciationFixedAssetAccounting")
                         .WithMany()
                         .HasForeignKey("DepreciationAccountingId");
@@ -11424,6 +11422,10 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Accounting", "FixedAssetAccounting")
                         .WithMany()
                         .HasForeignKey("FixedAssetAccountingId");
+
+                    b.HasOne("ERPAPI.Models.Accounting", "ResidualValueFixedAssetAccounting")
+                        .WithMany()
+                        .HasForeignKey("ResidualValueFixedAssetAccountingId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GarantiaBancaria", b =>
