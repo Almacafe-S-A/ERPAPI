@@ -208,11 +208,22 @@ namespace ERPAPI.Controllers
                     return BadRequest("no se encontro la cuenta de Valor Residual");
                 }
 
-                decimal valordepreciado = _FixedAssetq.AccumulatedDepreciation;
+                ////////Colocar valores en cero para el activo///////
+
+
+                decimal valorlibros = _FixedAssetq.NetValue;
+                decimal depreciacionacumulada = _FixedAssetq.AccumulatedDepreciation;
                 decimal valorresidual = _FixedAssetq.ResidualValue;
-                decimal valorasiento = 0;
+                decimal valoractivo = _FixedAssetq.ActiveTotalCost;
+                //decimal valorasiento = 0;
                 //valorasiento = valordepreciado;
-                valorasiento= valorresidual + valordepreciado;
+
+                _FixedAssetq.ResidualValue = 0;
+                _FixedAssetq.AccumulatedDepreciation = 0;
+                _FixedAssetq.NetValue = 0;
+                 var valorasiento = valoractivo;
+
+                
 
                 JournalEntry _je = new JournalEntry
                 {
@@ -241,6 +252,8 @@ namespace ERPAPI.Controllers
                 };
                 _je.JournalEntryLines = new List<JournalEntryLine>();
 
+
+               
                 ////////Lineas de Asiento por valor residual//////////////
                 _je.JournalEntryLines.Add(new JournalEntryLine(){
                     ModifiedDate = DateTime.Now,
@@ -248,49 +261,40 @@ namespace ERPAPI.Controllers
                     ModifiedUser = User.Identity.Name,
                     CreatedUser = User.Identity.Name,
                     AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccountingId),
-                    AccountName = _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting.AccountName,
+                    AccountName = _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.ResidualValueFixedAssetAccounting.AccountName,
                     CostCenterId = _FixedAssetq.CenterCostId,
                     CostCenterName = _FixedAssetq.CenterCostName,
-                    Debit = valorresidual
+                    Debit = depreciacionacumulada
                 }) ;
                 _je.JournalEntryLines.Add(new JournalEntryLine(){
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
                     CreatedUser = User.Identity.Name,
-                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.FixedAssetAccountingId),
-                    AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
+                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.DepreciationAccountingId),
+                    AccountName = _FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting.AccountCode + "--" +  _FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting.AccountName,
                     CostCenterId = _FixedAssetq.CenterCostId,
                     CostCenterName = _FixedAssetq.CenterCostName,
-                    Credit = valorresidual
+                    Debit = valorlibros
                 });
 
-                /////////Lineas de Asiento por valor vida util valor depreciado ////////
-
-                _je.JournalEntryLines.Add(new JournalEntryLine(){
-                    ModifiedDate = DateTime.Now,
-                    CreatedDate = DateTime.Now,
-                    ModifiedUser = User.Identity.Name,
-                    CreatedUser = User.Identity.Name,                    
-                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.FixedAssetAccountingId),
-                    AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
-                    CostCenterId = _FixedAssetq.CenterCostId,
-                    CostCenterName = _FixedAssetq.CenterCostName,
-                    Debit = valordepreciado
-                    
-                });
+                
+                ////////Valor del Activo
                 _je.JournalEntryLines.Add(new JournalEntryLine()
                 {
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
                     CreatedUser = User.Identity.Name,
-                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.DepreciationAccountingId),
-                    AccountName = _FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting.AccountName,
+                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.FixedAssetAccountingId),
+                    AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
                     CostCenterId = _FixedAssetq.CenterCostId,
                     CostCenterName = _FixedAssetq.CenterCostName,
-                    Credit = valordepreciado
+                    Credit = valoractivo
+
                 });
+
+
                 ///////Actualiza el saldo de las cuentas ///////////
                 Funciones.ActualizarSaldoCuentas(_context, _je);
                 _context.JournalEntry.Add(_je);
