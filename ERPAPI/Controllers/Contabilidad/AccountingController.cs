@@ -696,5 +696,24 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
         }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Accounting>>> GetCuentasDiariasPatronArray([FromQuery(Name = "Patron")] string[] patrones)
+        {
+            
+            try
+            {
+                
+                var cuentas = await _context.Accounting
+                    .Where(c => patrones.Any(p => c.AccountCode.ToString().StartsWith(p)) && c.BlockedInJournal == false && c.Totaliza == false)
+                    .ToListAsync();
+                return await Task.Run(() => Ok(cuentas));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+        }
     }
 }

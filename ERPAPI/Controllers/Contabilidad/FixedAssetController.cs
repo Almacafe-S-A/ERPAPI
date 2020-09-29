@@ -205,7 +205,7 @@ namespace ERPAPI.Controllers
 
                 if (_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting == null)
                 {
-                    return BadRequest("no se encontro la cuenta de Valor Residual");
+                    return BadRequest("no se encontro la cuenta de Depreciacion Acumulada");
                 }
 
                 ////////Colocar valores en cero para el activo///////
