@@ -188,6 +188,14 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _ControlPalletsq = _ControlPallets;
+                        _ControlPalletsq.SubProductId = _ControlPalletsq.SubProductId == 0 ? null : _ControlPalletsq.SubProductId;
+                        _ControlPalletsq.WarehouseId = _ControlPalletsq.WarehouseId == 0 ? null : _ControlPalletsq.WarehouseId;
+                        _ControlPalletsq.UnitOfMeasureId = _ControlPalletsq.UnitOfMeasureId == 0 ? null : _ControlPalletsq.UnitOfMeasureId;
+
+                        if (_ControlPalletsq.SubProductId ==0)
+                        {
+
+                        }
                         _context.ControlPallets.Add(_ControlPalletsq);
 
                       

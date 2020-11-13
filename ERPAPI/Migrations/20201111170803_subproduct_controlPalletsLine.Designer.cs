@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201111170803_subproduct_controlPalletsLine")]
+    partial class subproduct_controlPalletsLine
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2207,7 +2209,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Placa");
 
-                    b.Property<long?>("ProductId");
+                    b.Property<long>("ProductId");
 
                     b.Property<string>("ProductName");
 
@@ -2219,7 +2221,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("SacosDevueltos");
 
-                    b.Property<long?>("SubProductId");
+                    b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
 
@@ -2235,7 +2237,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<double?>("Totallinea");
 
-                    b.Property<int?>("UnitOfMeasureId");
+                    b.Property<int>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
 
@@ -2243,11 +2245,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion");
 
-                    b.Property<int?>("WarehouseId");
+                    b.Property<int>("WarehouseId");
 
                     b.Property<string>("WarehouseName");
 
-                    b.Property<long?>("WeightBallot");
+                    b.Property<long>("WeightBallot");
 
                     b.Property<int?>("cantidadPoliEtileno");
 
@@ -2294,21 +2296,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("SubProductId");
 
-                    b.Property<string>("SubProductName");
-
                     b.Property<double>("Totallinea");
 
                     b.Property<int?>("UnitofMeasureId");
-
-                    b.Property<string>("UnitofMeasureName");
 
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
 
                     b.Property<int?>("WarehouseId");
-
-                    b.Property<string>("WarehouseName");
 
                     b.Property<int>("cantidadPoliEtileno");
 
@@ -11112,15 +11108,18 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()
-                        .HasForeignKey("SubProductId");
+                        .HasForeignKey("SubProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "unitOfMeasure")
                         .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
+                        .HasForeignKey("UnitOfMeasureId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPalletsLine", b =>

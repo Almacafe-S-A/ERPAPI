@@ -25,7 +25,7 @@ namespace ERPAPI.Models
         public string Estado { get; set; }    
 
         [Display(Name = "Bodega")]    
-        public int WarehouseId { get; set; }
+        public int? WarehouseId { get; set; }
 
         [Display(Name = "Bodega")]
         public string WarehouseName { get; set; }
@@ -33,7 +33,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha control de estiba")]
         public DateTime DocumentDate { get; set; }
         [Display(Name = "Producto")]
-        public Int64 ProductId { get; set; }
+        public Int64? ProductId { get; set; }
 
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
@@ -42,7 +42,7 @@ namespace ERPAPI.Models
         public string ProductName { get; set; }
 
         [Display(Name = "Producto Cliente")]
-        public Int64 SubProductId { get; set; }
+        public Int64? SubProductId { get; set; }
         [ForeignKey("SubProductId")]
         public SubProduct SubProduct { get; set; }
         [Display(Name = "Producto Cliente")]
@@ -61,12 +61,14 @@ namespace ERPAPI.Models
         public string Marca { get; set; }
 
         [Display(Name = "Unidad de medida")]
-        public int UnitOfMeasureId { get; set; }
+        public int? UnitOfMeasureId { get; set; }
         [ForeignKey("UnitOfMeasureId")]
         public UnitOfMeasure unitOfMeasure { get; set; }
 
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
+
+
 
         [Display(Name = "Id Control")]
         public int PalletId { get; set; }
@@ -105,7 +107,7 @@ namespace ERPAPI.Models
         public string Impreso { get; set; }
 
         [Display(Name = "Boleta de peso")]
-        public Int64 WeightBallot { get; set; }
+        public Int64? WeightBallot { get; set; }
 
         [Display(Name = "Id Autorización")]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
