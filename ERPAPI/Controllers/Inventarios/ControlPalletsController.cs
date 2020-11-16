@@ -191,11 +191,9 @@ namespace ERPAPI.Controllers
                         _ControlPalletsq.SubProductId = _ControlPalletsq.SubProductId == 0 ? null : _ControlPalletsq.SubProductId;
                         _ControlPalletsq.WarehouseId = _ControlPalletsq.WarehouseId == 0 ? null : _ControlPalletsq.WarehouseId;
                         _ControlPalletsq.UnitOfMeasureId = _ControlPalletsq.UnitOfMeasureId == 0 ? null : _ControlPalletsq.UnitOfMeasureId;
+                        _ControlPalletsq.SubProductName = _ControlPalletsq.SubProductName == "" ? "Productos Varios" : _ControlPalletsq.SubProductName;
 
-                        if (_ControlPalletsq.SubProductId ==0)
-                        {
-
-                        }
+                        
                         _context.ControlPallets.Add(_ControlPalletsq);
 
                       
@@ -239,8 +237,8 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-
-            return await Task.Run(() => Ok(_ControlPalletsq));
+            ControlPallets controlPallets = new ControlPallets();
+            return await Task.Run(() => Ok(controlPallets));
         }
 
         /// <summary>
