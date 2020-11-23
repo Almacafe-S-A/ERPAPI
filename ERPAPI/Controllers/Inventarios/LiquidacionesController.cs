@@ -148,6 +148,9 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> Insert(Liquidacion liquidacion) {
             try
             {
+                liquidacion.UsuarioCreacion = User.Identity.Name;
+                liquidacion.FechaCreacion = DateTime.Now;
+
                
                 foreach (var item in liquidacion.detalleliquidacion)
                 {

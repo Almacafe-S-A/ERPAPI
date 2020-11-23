@@ -62,7 +62,6 @@ namespace ERPAPI.Models
 
         public string Comentarios { get; set; }
 
-
         public List<LiquidacionLine> detalleliquidacion { get; set; }
 
     }
