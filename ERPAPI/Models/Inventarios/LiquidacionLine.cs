@@ -54,6 +54,8 @@ namespace ERPAPI.Models
 
         public decimal TotalDerechosmasImpuestos { get; set; }
 
+        //public decimal PrecioUnitario { get; set; }
+
         public decimal TotalFinal{ get; set; }
 
 

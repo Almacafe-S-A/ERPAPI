@@ -114,7 +114,8 @@ namespace ERPAPI.Controllers
                     Items = await _context.GoodsReceived
                         .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
                             && p.CustomerId == clienteid
-                            && p.ProductId == servicioid)
+                            && p.ProductId == servicioid
+                            && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == p.GoodsReceivedId)) 
                         .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
                 }
                 else

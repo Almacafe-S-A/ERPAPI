@@ -40,7 +40,7 @@ namespace ERPAPI.Controllers
 
             try
             {
-                liquidacions = _context.Liquidacion.ToList();
+                liquidacions = _context.Liquidacion.Include(i => i.Estados).ToList();
                 return Ok(liquidacions);
             }
             catch (Exception ex)
@@ -113,15 +113,46 @@ namespace ERPAPI.Controllers
                 return BadRequest("Ocurrio un error:" + ex.Message);
             }
         }
+
+
+        /// <summary>
+        /// Obtienne los productos de los recibos de mercaderias que no han sido liquidados 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{liquidacionid}")]
+        public async Task<IActionResult> LiquidacionDetalle(int liquidacionid)
+        {
+
+            List<LiquidacionLine> recibospendientes = new List<LiquidacionLine>();
+
+            try
+            {
+                recibospendientes = await _context.LiquidacionLine
+                    .Include(i => i.GoodsReceivedLine)
+                    .Where(q => q.LiquidacionId == liquidacionid).ToListAsync();
+
+                return Ok(recibospendientes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
         /// <summary>
         /// Inserta una liquidacion en la base de datos
         /// </summary>
         /// <param name="liquidacion"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> InsertLiquidacion(Liquidacion liquidacion) {
+        public async Task<IActionResult> Insert(Liquidacion liquidacion) {
             try
             {
+               
+                foreach (var item in liquidacion.detalleliquidacion)
+                {
+                    item.GoodsReceivedLine = null;
+                }
                 _context.Liquidacion.Add(liquidacion);
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                 {
@@ -156,7 +187,7 @@ namespace ERPAPI.Controllers
         /// <returns></returns>
 
         [HttpPut("[action]")]
-        public async Task<IActionResult> UpdateLiquidacion(Liquidacion liquidacion) {
+        public async Task<IActionResult> Update(Liquidacion liquidacion) {
             try
             {
                 _context.Liquidacion.Update(liquidacion);
