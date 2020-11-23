@@ -75,6 +75,12 @@ namespace ERP.Contexts
         #region Inventarios
         public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
         public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
+
+        public DbSet<Liquidacion> Liquidacion { get; set; }
+
+        public DbSet<LiquidacionLine> LiquidacionLine { get; set; }
+
+
         #endregion
 
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201119205023_LiquidacionesPrecios")]
+    partial class LiquidacionesPrecios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5483,8 +5485,6 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("GoodsReceivedId");
 
-                    b.HasIndex("CustomerId");
-
                     b.ToTable("GoodsReceived");
                 });
 
@@ -7042,8 +7042,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("CustomerId");
 
-                    b.Property<string>("CustomerName");
-
                     b.Property<decimal>("DerechosImportacion");
 
                     b.Property<long>("EstadoId");
@@ -7061,8 +7059,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("Otros");
 
                     b.Property<long>("ProductId");
-
-                    b.Property<string>("ProductName");
 
                     b.Property<string>("Recibos");
 
@@ -11601,14 +11597,6 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.GoodsReceived", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("ERPAPI.Models.GoodsReceivedLine", b =>
                 {
                     b.HasOne("ERPAPI.Models.GoodsReceived", "GoodsReceived")
@@ -11942,7 +11930,7 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Liquidacion", "Liqudacion")
-                        .WithMany("detalleliquidacion")
+                        .WithMany()
                         .HasForeignKey("LiquidacionId")
                         .OnDelete(DeleteBehavior.Cascade);
 
