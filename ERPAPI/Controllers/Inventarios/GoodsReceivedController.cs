@@ -95,6 +95,44 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{clienteid}/{servicioid}")]
+        public async Task<IActionResult> GoodsReceivedCustomerService(int clienteid, int servicioid)
+        {
+            List<GoodsReceived> Items = new List<GoodsReceived>();
+            try
+            {
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.GoodsReceived
+                        .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
+                            && p.CustomerId == clienteid
+                            && p.ProductId == servicioid)
+                        .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la GoodsReceived por medio del Id enviado.
         /// </summary>
