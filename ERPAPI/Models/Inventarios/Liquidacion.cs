@@ -60,6 +60,8 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Creación")]
         public string UsuarioModificacion { get; set; }
 
+        public string Comentarios { get; set; }
+
         public List<LiquidacionLine> detalleliquidacion { get; set; }
 
     }
