@@ -29,39 +29,104 @@ namespace ERP.Contexts
         {
 
         }
-        public DbSet<Accounting> Accounting { get; set; }
-        public DbSet<InsurancesCertificate> InsurancesCertificate { get; set; }
+
+        #region DbSet's Contabilidad
+            public DbSet<Accounting> Accounting { get; set; }
+            public DbSet<TypeAccount> TypeAccount { get; set; }
+            public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
+            public DbSet<AccountManagement> AccountManagement { get; set; }
+            public DbSet<CierresAccounting> CierresAccounting { get; set; }
+            public DbSet<CierresJournal> CierresJournal { get; set; }
+            public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
+            public DbSet<Bank> Bank { get; set; }
+            public DbSet<BankAccountTransfers> BankAccountTransfers { get; set; }
+            public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
+            public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
+            public DbSet<CheckAccount> CheckAccount { get; set; }
+            public DbSet<GarantiaBancaria> GarantiaBancaria { get; set; }
+            public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
+            public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
+            public DbSet<MotivoConciliacion> MotivoConciliacion { get; set; }
+            public DbSet<Conciliacion> Conciliacion { get; set; }
+            public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
+            public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
+            public DbSet<FixedAsset> FixedAsset { get; set; }
+            public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
+            public DbSet<TypeJournal> TypeJournal { get; set; }
+            public DbSet<JournalEntry> JournalEntry { get; set; }
+            public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
+            public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
+            public DbSet<Presupuesto> Presupuesto { get; set; }
+
+
+
+
+
+        #endregion
+
+
+        #region Seguros
+        public DbSet<InsuranceCertificate> InsuranceCertificate { get; set; }
+
+        public DbSet<InsuranceCertificateLine> InsurancesCertificateLines { get; set; }
+        public DbSet<Insurances> Insurances { get; set; }
+        #endregion
+
+        #region Inventarios
+        public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
+        public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
+
+        public DbSet<Liquidacion> Liquidacion { get; set; }
+
+        public DbSet<LiquidacionLine> LiquidacionLine { get; set; }
+
+
+        #endregion
 
         public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
 
+ 
 
-        public DbSet<InventoryTransfer> InventoryTransfer { get; set; }
-        public DbSet<InventoryTransferLine> InventoryTransferLine { get; set; }
-        public DbSet<Insurances> Insurances { get; set; }
+
+        public DbSet <MantenimientoImpacto> MantenimientoImpacto { get; set; }
+
+
+        public DbSet <TipodeAccionderiesgo> TipodeAccionderiesgo { get; set; }
+
+
+       
+
+        public DbSet<Concept> Concept { get; set; }
+
+     
+      
         public DbSet<ContactPerson> ContactPerson { get; set; }
-        public DbSet<TypeJournal> TypeJournal { get; set; }
+
         public DbSet<CostListItem> CostListItem { get; set; }
         public DbSet<CostCenter> CostCenter { get; set; }
 
-        public DbSet<Concept> Concept { get; set; }
+        public DbSet<UserBranch> UserBranch { get; set; }
+
 
         public DbSet<GrupoEstado> GrupoEstado { get; set; }
 
         public DbSet<ExchangeRate> ExchangeRate { get; set; }
 
-        public DbSet<JournalEntry> JournalEntry { get; set; }
-        public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
-          public DbSet<InsurancesCertificateLine> InsurancesCertificateLine { get; set; }
+
         public DbSet<VendorDocument> VendorDocument { get; set; }
         public DbSet<Measure> Measure { get; set; }
-        public DbSet<TypeAccount> TypeAccount { get; set; }
-        public DbSet<InstallmentDelivery> InstallmentDelivery { get; set; }
-        public DbSet<CheckAccountLines> CheckAccountLines { get; set; }
 
+
+        public DbSet<PrecioCafe> PrecioCafe { get; set; }
+        public DbSet<ContextoRiesgo> ContextoRiesgo { get; set; }
+        public DbSet<ProbabilidadRiesgo> ProbabilidadRiesgo { get; set; }
+        public DbSet<MatrizRiesgoCustomers> MatrizRiesgoCustomers { get; set; }
         public DbSet<Dimensions> Dimensions { get; set; }
         public DbSet<Customer> Customer { get; set; }
+
+       
         public DbSet<CustomersOfCustomer> CustomersOfCustomer { get; set; }
         public DbSet<CustomerType> CustomerType { get; set; }
         public DbSet<Vendor> Vendor { get; set; }
@@ -85,16 +150,14 @@ namespace ERP.Contexts
 
         public DbSet<DebitNote> DebitNote { get; set; }
         public DbSet<DebitNoteLine> DebitNoteLine { get; set; }
-        public DbSet<FixedAssetGroup> FixedAssetGroup { get; set; }
-        public DbSet<FixedAsset> FixedAsset { get; set; }
-        public DbSet<DepreciationFixedAsset> DepreciationFixedAsset { get; set; }
+
 
         public DbSet<SeveridadRiesgo> SeveridadRiesgo { get; set; }
         public DbSet<InvoiceTransReport> InvoiceTransReport { get; set; }
         public DbSet<InsurancePolicy> InsurancePolicy { get; set; }
-        public DbSet<AccountManagement> AccountManagement { get; set; }
+        public DbSet<InsuredAssets> InsuredAssets { get; set; }
 
-        public DbSet<ConfiguracionesGenerales> ConfiguracionesGenerales { get; set; }
+
 
         public DbSet<PayrollDeduction> PayrollDeduction { get; set; }
         /// <summary>
@@ -102,21 +165,10 @@ namespace ERP.Contexts
         /// </summary>
         /// 
 
-        public DbSet<GarantiaBancaria> GarantiaBancaria { get; set; }
 
 
-        public DbSet<BitacoraCierreContable> BitacoraCierreContable { get; set; }
-        public DbSet<BitacoraCierreProcesos> BitacoraCierreProceso { get; set; }
-
-        public DbSet<CierresAccounting> CierresAccounting { get; set; }
-
-        public DbSet<CierresJournal> CierresJournal { get; set; }
-
-        public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
-
+     
         public DbSet<InsuranceEndorsement> InsuranceEndorsement { get; set; }
-
-        public DbSet<InsuranceEndorsementLine> InsuranceEndorsementLine { get; set; }
 
         public DbSet<Estados> Estados { get; set; }
         public DbSet<Policy> Policy { get; set; }
@@ -164,7 +216,8 @@ namespace ERP.Contexts
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
         public DbSet<PEPS> PEPS { get; set; }
         public DbSet<BlackListCustomers> BlackListCustomers { get; set; }
-        public DbSet<Bank> Bank { get; set; }  
+
+
         public DbSet<City> City { get; set; }
         public DbSet<State> State { get; set; }
         public DbSet<Country> Country { get; set; }
@@ -190,6 +243,8 @@ namespace ERP.Contexts
         public DbSet<SolicitudCertificadoDeposito> SolicitudCertificadoDeposito { get; set; }
         public DbSet<SolicitudCertificadoLine> SolicitudCertificadoLine { get; set; }
         public DbSet<Kardex> Kardex { get; set; }
+
+
         public DbSet<KardexLine> KardexLine { get; set; }
         public DbSet<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; }
         public DbSet<GoodsDeliveryAuthorization> GoodsDeliveryAuthorization { get; set; }
@@ -222,11 +277,7 @@ namespace ERP.Contexts
         public DbSet<ERPAPI.Models.CuentaBancoEmpleados> CuentaBancoEmpleados { get; set; }
         public DbSet<ERPAPI.Models.TipoDocumento> TipoDocumento { get; set; }
         public DbSet<ERPAPI.Models.TipoPlanillas> TipoPlanillas { get; set; }
-        public DbSet<Linea> Linea { get; set; }
-        public DbSet<Marca> Marca { get; set; }
-        public DbSet<Grupo> Grupo { get; set; }
-        public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
-        public DbSet<IncomeAndExpenseAccountLine> IncomeAndExpenseAccountLine { get; set; }
+
         public DbSet<EmployeeAbsence> EmployeeAbsence { get; set; }
         public DbSet<PeriodicidadPago> PeriodicidadPago { get; set; }
         public DbSet<BranchPorDepartamento> BranchPorDepartamento { get; set; }
@@ -247,13 +298,9 @@ namespace ERP.Contexts
         public DbSet<sdnListSdnEntryDateOfBirthItemM> sdnListSdnEntryDateOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryPlaceOfBirthItemM> sdnListSdnEntryPlaceOfBirthItem { get; set; }
         public DbSet<sdnListSdnEntryVesselInfoM> sdnListSdnEntryVesselInfo { get; set; }
-        public DbSet<CheckAccount> CheckAccount { get; set; }
 
-        public DbSet<Material> Material { get; set; }
-        public DbSet<Substratum> Substratum { get; set; }
+        
 
-        public DbSet<Quotation> Quotation { get; set; }
-        public DbSet<QuotationDetail> QuotationDetail { get; set; }
         ///// <summary>
         ////////
         /// <summary>
@@ -282,10 +329,7 @@ namespace ERP.Contexts
 
         public DbSet<VendorProduct> VendorProduct { get; set; }
 
-        public DbSet<MotivoConciliacion> MotivoConciliacion { get; set; }
 
-        public DbSet<Conciliacion> Conciliacion { get; set; }
-        public DbSet<ConciliacionLinea> ConciliacionLinea { get; set; }
 
         public DbSet<PurchaseOrder> PurchaseOrder { get; set; }
 
@@ -300,13 +344,8 @@ namespace ERP.Contexts
         public DbSet<PaymentTerms> PaymentTerms { get; set; }
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
 
-        public DbSet<Colors> Colors { get; set; }
-        public DbSet<ColorsDetailQuotation> ColorsDetailQuotation { get; set; }
-
-        public DbSet<Recipe> Recipe { get; set; }
-        public DbSet<RecipeDetail> RecipeDetail { get; set; }
-
-        public DbSet<MaterialDetail> MaterialDetail { get; set; }
+     
+        
 
         // Gestion de Contratos para Modulo CxC
 
@@ -316,7 +355,57 @@ namespace ERP.Contexts
         public DbSet<Contrato_plan_pagos> Contrato_plan_pagos { get; set; }
         public DbSet<Contrato_movimientos> Contrato_movimientos { get; set; }
 
+        public DbSet<Deduction> Deduction { get; set; }
 
+        public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
+
+
+        public DbSet<DeduccionEmpleado> DeduccionesEmpleados { get; set; }
+
+        public DbSet<ISR> ISRConfiguracion { get; set; }
+
+        public DbSet<Feriado> Feriados { get; set; }
+
+        public DbSet<Horario> Horarios { get; set; }
+
+        public DbSet<EmpleadoHorario> EmpleadoHorarios { get; set; }
+
+        public DbSet<EmpleadoBiometrico> EmpleadosBiometrico { get; set; }
+
+        public DbSet<Biometrico> Biometricos { get; set; }
+
+        public DbSet<DetalleBiometrico> DetallesBiometricos { get; set; }
+
+        public DbSet<PhoneLines> PhoneLines { get; set; }
+
+        public DbSet<Periodo> Periodo { get; set; }
+
+        public DbSet<HorasExtraBiometrico> HorasExtrasBiometrico { get; set; }
+
+        public DbSet<LlegadasTardeBiometrico> LlegadasTardeBiometrico { get; set; }
+
+        public DbSet<Inasistencia> Inasistencias { get; set; }
+
+        public DbSet<TipoBonificacion> TiposBonificaciones { get; set; }
+
+        public DbSet<Bonificacion> Bonificaciones { get; set; }
+
+        public DbSet<ConfiguracionVacaciones> ConfiguracionVacaciones { get; set; }
+
+        public DbSet<PagoISR> PagosISR { get; set; }
+
+        public DbSet<Planilla> Planillas { get; set; }
+
+        public DbSet<DetallePlanilla> DetallePlanillas { get; set; }
+
+        public DbSet<DeduccionPlanilla> DeduccionesPlanilla { get; set; }
+
+        public DbSet<IngresoAnual> IngresosAnuales { get; set; }
+
+        public DbSet<ImpuestoVecinalConfiguracion> ImpuestoVecinalConfiguraciones { get; set; }
+
+        public DbSet<CategoriaPlanilla> CategoriasPlanillas { get; set; }
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()
@@ -329,9 +418,30 @@ namespace ERP.Contexts
 
             //modelBuilder.Entity<ConfiguracionesGenerales>().HasBaseType<CamposAuditoria>();
 
+            modelBuilder.Entity<UserBranch>()
+            .HasIndex(k => new { k.BranchId, k.UserId })
+            .IsUnique(true);
+
+
+            
+
+
+
+
+            //modelBuilder.Entity<UserBranch>()
+            //.HasKey(k => new { k.BranchId, k.UserId });
+            ////.IsUnique(true);
+
+
             modelBuilder.Entity<VendorProduct>()
            .HasIndex(p => new { p.ProductId,p.VendorId })
            .IsUnique(true);
+
+
+            modelBuilder.Entity<ProductRelation>()
+           .HasIndex(p => new { p.ProductId, p.SubProductId })
+           .IsUnique(true);
+
 
 
             modelBuilder.Entity<Contrato_plan_pagos>().HasKey(t => new { t.Nro_cuota, t.ContratoId });
@@ -342,6 +452,10 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
+
+            modelBuilder.Entity<CheckAccount>()
+          .HasIndex(u => u.CheckAccountNo)
+          .IsUnique();
 
 
 
@@ -359,13 +473,13 @@ namespace ERP.Contexts
              .HasIndex(p => new { p.UnitOfMeasureName })
               .IsUnique(true);
 
-            modelBuilder.Entity<Country>()
-           .HasIndex(p => new { p.Name })
-           .IsUnique(true);
+           // modelBuilder.Entity<Country>()
+           //.HasIndex(p => new { p.Name })
+           //.IsUnique(true);
 
-            modelBuilder.Entity<SubProduct>()
-           .HasIndex(p => new { p.ProductCode })
-           .IsUnique(true);
+           // modelBuilder.Entity<SubProduct>()
+           //.HasIndex(p => new { p.ProductCode })
+           //.IsUnique(true);
 
             modelBuilder.Entity<Customer>()
            .HasIndex(p => new { p.RTN })
@@ -433,45 +547,22 @@ namespace ERP.Contexts
              .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Employees>()
-            .HasOne(i => i.Estados)
-            .WithMany(c => c.Employees)
-            //.IsRequired()
-            .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Employees>()
           .HasOne(i => i.State)
           .WithMany(c => c.Employees)
           //.IsRequired()
           .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<QuotationDetail>()
-            .HasKey(t => new { t.QuotationDetailId, t.QuotationCode });
+            modelBuilder.Entity<CategoriaPlanilla>().HasData(new[]
+                                                             {
+                                                                new CategoriaPlanilla(){Id=1, Nombre = "NOMINA"},
+                                                                new CategoriaPlanilla(){Id=2, Nombre = "NOMINA CONFIDENCIAL"},
+                                                                new CategoriaPlanilla(){Id=3, Nombre = "NOMINA EXTRAORDINARIA"},
+                                                                new CategoriaPlanilla(){Id=4, Nombre = "OTRO"},
+                                                             });
 
-            modelBuilder.Entity<MaterialDetail>()
-            .HasKey(t => new { t.MaterialDetailId, t.MaterialId });
+            
 
-            modelBuilder.Entity<Quotation>()
-            .HasKey(t => new { t.QuotationCode, t.QuotationVersion });
-
-            //modelBuilder.Entity<Dimensions>()
-            //    .HasIndex(p => new { p.Num, p.DimCode })
-            //    .IsUnique(true);
-            //modelBuilder.Entity<SubProduct>(entity => {
-            //    entity.HasIndex(e => e.ProductCode).IsUnique();
-            //});
-
-
-            // .HasIndex(p => new { p.FirstColumn, p.SecondColumn }).IsUnique();
-
-
-            //modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("AspNetUserClaims");
-            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
-
-            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims"); 
-            //modelBuilder.Entity<ApplicationUserClaim>().ToTable("AspNetUserClaims");
-
-
-
+            
         }
 
 
