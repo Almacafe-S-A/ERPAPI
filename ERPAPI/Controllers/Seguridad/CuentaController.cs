@@ -229,7 +229,7 @@ namespace ERPAPI.Controllers
             try
             {
                 ///////Setea los parametros de seguridad de la aplicacion///////////////
-                    SetParametrosSeguridad();
+                SetParametrosSeguridad();
                 var result = await _signInManager.PasswordSignInAsync(userInfo.Email, userInfo.Password, isPersistent: false, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
@@ -251,13 +251,14 @@ namespace ERPAPI.Controllers
                     {
                         return BadRequest($"Usuario No Habilitado");
                     }
+
                     var claims = (List<Claim>) await _userManager.GetClaimsAsync(usuario);
                     var listaRoles = _approle.Select(async x => await _rolemanager.FindByNameAsync(x));
-                    var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result.Where(c=>c.Value.Equals("true")).ToList());
-                    foreach (IList<Claim> claimsRole in listClaims)
-                    {
-                        claims.AddRange(claimsRole.ToArray());
-                    }
+                    // var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result.Where(c=>c.Value.Equals("true")).ToList());
+                    //foreach (IList<Claim> claimsRole in listClaims)
+                    // {
+                        //claims.AddRange(claimsRole.ToArray());
+                    // }
                     //Verificacion manual debido a que la accion permite que se invoque de forma anonima
                     //var permiso = claims.FirstOrDefault(x => x.Type.Equals("Seguridad.Iniciar Sesion") && x.Value.Equals("true"));
                     //if (permiso == null)
