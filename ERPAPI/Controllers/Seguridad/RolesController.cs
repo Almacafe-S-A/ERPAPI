@@ -223,7 +223,7 @@ namespace ERPAPI.Controllers
            
         }
 
-        [Authorize(Policy = "Seguridad.Listar Permisos")]
+        
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> ListarPermisos([FromRoute(Name = "id")]string idRol)
         {
@@ -244,7 +244,6 @@ namespace ERPAPI.Controllers
             return await Task.Run((() => Ok(permisos)));
         }
 
-        [Authorize(Policy = "Seguridad.Modificar Permisos Rol")]
         [HttpPost("[action]")]
         public async Task<IActionResult> GuardarPermisosAsignados([FromBody] PostAsignacionesPermisoRol asignaciones)
         {
