@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
 
-    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
     public class RolesController : ControllerBase
@@ -30,12 +30,12 @@ namespace ERPAPI.Controllers
         public RolesController(ILogger<RolesController> logger,
             ApplicationDbContext context
             , RoleManager<ApplicationRole> rolemanager
-            ,IMapper mapper)
+            , IMapper mapper)
         {
             this.mapper = mapper;
             _context = context;
             _rolemanager = rolemanager;
-             _logger = logger;
+            _logger = logger;
         }
 
         /// <summary>
@@ -54,10 +54,10 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-           
+
         }
         /// <summary>
         /// Obtiene un rol , filtrado por su Nombre.
@@ -97,7 +97,7 @@ namespace ERPAPI.Controllers
             }
             catch (System.Exception ex)
             {
-                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error: {ex.Message}");
             }
             return await Task.Run(() => Ok(_users));
@@ -120,7 +120,7 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
 
@@ -128,7 +128,7 @@ namespace ERPAPI.Controllers
         }
 
 
-   
+
 
         /// <summary>
         /// Crea un rol que permite tener accesos a recursos del API.
@@ -154,10 +154,59 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-         
+
+        }
+
+        /// <summary>
+        /// Clonar un rol que permite tener accesos a recursos del API.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost("CloneRole")]
+        public async Task<ActionResult<ApplicationRole>> CloneRole([FromBody] dynamic data)
+        {
+            try
+            {
+                string IdRoleSource = Convert.ToString(data.rolId);
+                string Name = Convert.ToString(data.rolName);
+                var _appRole = await _rolemanager.FindByIdAsync(IdRoleSource);
+                if (_appRole == null){
+                    return await Task.Run(() => BadRequest($"No se pudo clonar las permisos del rol"));
+                }
+                ApplicationRole model = new ApplicationRole
+                {
+                    Name = Name,
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    IdEstado = 1,
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
+                };
+                var result = await _rolemanager.CreateAsync(model);
+                
+                if (!result.Succeeded){
+                    return await Task.Run(() => BadRequest("No se pudo crear el rol"));
+                }
+                else{
+                    var listClaims = await _rolemanager.GetClaimsAsync(_appRole);
+                    await this.GuardarPermisosAsignados(
+                        new PostAsignacionesPermisoRol
+                        {
+                            IdRol = model.Id.ToString(),
+                            Permisos = (from claim in listClaims
+                                       select new RolPermisoAsignacion { Id = claim.Type, Asignado = true }).ToList()
+                        }
+                    );
+                    return Ok();
+                }
+            }
+            catch (Exception ex){
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
         }
 
 
@@ -223,7 +272,7 @@ namespace ERPAPI.Controllers
            
         }
 
-        [Authorize(Policy = "Seguridad.Listar Permisos")]
+        
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> ListarPermisos([FromRoute(Name = "id")]string idRol)
         {
@@ -244,7 +293,6 @@ namespace ERPAPI.Controllers
             return await Task.Run((() => Ok(permisos)));
         }
 
-        [Authorize(Policy = "Seguridad.Modificar Permisos Rol")]
         [HttpPost("[action]")]
         public async Task<IActionResult> GuardarPermisosAsignados([FromBody] PostAsignacionesPermisoRol asignaciones)
         {
