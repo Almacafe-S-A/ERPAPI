@@ -276,47 +276,27 @@ namespace ERPAPI.Controllers
         [HttpPut("PutUsuario")]
         public async Task<ActionResult<ApplicationUser>> PutUsuario([FromBody]ApplicationUser _usuario)
         {
-            try
-            {
+            try{
                
                 ApplicationUser ApplicationUserq = (from c in _context.Users
                   .Where(q => q.Id == _usuario.Id)
                                                 select c
                     ).FirstOrDefault();
-                //_usuario.BranchId = _usuario.Branch.BranchId;
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
                 _usuario.FechaModificacion = DateTime.Now;
-
-                if (_usuario.LockoutEnd == null)
-                {
+                string password = "";
+                if (_usuario.LockoutEnd == null){
                     _usuario.LockoutEnd = ApplicationUserq.LockoutEnd;
                 }
-
-                string password = "";
-
-                if (_usuario.PasswordHash!=null) { password= _usuario.PasswordHash; _usuario.LastPasswordChangedDate = new DateTime();  }
-                else
-                {
+                if (_usuario.PasswordHash == null ){
                     _usuario.PasswordHash = ApplicationUserq.PasswordHash;
-                    //_context.Entry(ApplicationUserq).Property(x => x.PasswordHash).IsModified = false;
-                    //_context.Entry(ApplicationUserq).Property(x => x.PhoneNumber).IsModified = true;
-                    //_context.Entry(ApplicationUserq).Property(x => x.IsEnabled).IsModified = true;
-
-
-                    // _context.Users.Property(x => x.Password).IsModified = true;
-                    //password = _userManager.PasswordHasher.HashPassword(ApplicationUserq,ApplicationUserq.PasswordHash);
                 }
-
-                _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
-                await _context.SaveChangesAsync();
-
-                //await _userManager.UpdateAsync(_usuario);
-                if (_usuario.PasswordHash != null)
-                {
+                else{
+                    password = _usuario.PasswordHash;
+                    _usuario.LastPasswordChangedDate = new DateTime();
                     var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
                     var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
-
                     var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
                     if (!resultadadd.Succeeded)
                     {
@@ -343,33 +323,23 @@ namespace ERPAPI.Controllers
                                 case ("PasswordRequiresUpper"):
                                     errores += "requiere mayúsculas, ";
                                     break;
-
                             }
                         }
                         return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
-
                     ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
-                    //_context.PasswordHistory.Add(new PasswordHistory()
-                    //{
-                    //    UserId = ApplicationUserq.Id.ToString(),
-                    //    PasswordHash = _newpass.PasswordHash,
-                    //});
-
                     await _context.SaveChangesAsync();
                 }
 
+                _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
+                await _context.SaveChangesAsync();
                 return await Task.Run(() => _usuario);
-
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error: {ex.Message}"));
             }
-          
         }
-
 
 
         /// <returns></returns>
