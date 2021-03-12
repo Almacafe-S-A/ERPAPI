@@ -277,27 +277,19 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<ApplicationUser>> PutUsuario([FromBody]ApplicationUser _usuario)
         {
             try{
-               
-                ApplicationUser ApplicationUserq = (from c in _context.Users
-                  .Where(q => q.Id == _usuario.Id)
-                                                select c
-                    ).FirstOrDefault();
+                ApplicationUser ApplicationUserq = await _userManager.FindByIdAsync(_usuario.Id.ToString() );
+
                 _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
                 _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
                 _usuario.FechaModificacion = DateTime.Now;
-                string password = "";
                 if (_usuario.LockoutEnd == null){
                     _usuario.LockoutEnd = ApplicationUserq.LockoutEnd;
                 }
-                if (_usuario.PasswordHash == null ){
-                    _usuario.PasswordHash = ApplicationUserq.PasswordHash;
-                }
-                else{
-                    password = _usuario.PasswordHash;
+                if (_usuario.PasswordHash != null ){
                     _usuario.LastPasswordChangedDate = new DateTime();
-                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
                     var unlock = await _userManager.SetLockoutEnabledAsync(ApplicationUserq, true);
-                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, password);
+                    var resultremove = await _userManager.RemovePasswordAsync(ApplicationUserq);
+                    var resultadadd = await _userManager.AddPasswordAsync(ApplicationUserq, _usuario.PasswordHash);
                     if (!resultadadd.Succeeded)
                     {
                         string errores = "La Contraseña ";
@@ -327,9 +319,9 @@ namespace ERPAPI.Controllers
                         }
                         return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
                     }
-                    ApplicationUser _newpass = await _context.Users.Where(q => q.Id == ApplicationUserq.Id).FirstOrDefaultAsync();
-                    await _context.SaveChangesAsync();
                 }
+
+                _usuario.PasswordHash = ApplicationUserq.PasswordHash;
 
                 _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
                 await _context.SaveChangesAsync();
@@ -520,11 +512,6 @@ namespace ERPAPI.Controllers
             }
 
         }
-
-
-
-
-
 
     }
 }
