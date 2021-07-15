@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210624145900_CotizacionPlazo")]
+    partial class CotizacionPlazo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8914,17 +8916,19 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<decimal>("Amount");
+
                     b.Property<int>("BranchId");
 
                     b.Property<string>("BranchName");
 
-                    b.Property<decimal?>("ComisionMax");
-
-                    b.Property<decimal?>("ComisionMin");
-
                     b.Property<string>("Correo");
 
-                    b.Property<string>("Customer");
+                    b.Property<decimal>("Currency");
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
 
                     b.Property<int>("CustomerId");
 
@@ -8932,7 +8936,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerRefNumber");
 
+                    b.Property<DateTime>("DeliveryDate");
+
                     b.Property<string>("Direccion");
+
+                    b.Property<decimal>("Discount");
 
                     b.Property<string>("Estado");
 
@@ -8941,6 +8949,8 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<decimal>("Freight");
 
                     b.Property<long>("IdEstado");
 
@@ -8954,12 +8964,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int?>("PlazoMeses");
 
-                    b.Property<bool?>("PolizaPropia");
-
-                    b.Property<decimal?>("PrecioBaseProducto");
-
-                    b.Property<decimal?>("PrecioServicio");
-
                     b.Property<long>("ProductId");
 
                     b.Property<string>("ProductName");
@@ -8968,23 +8972,33 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Remarks");
 
-                    b.Property<string>("Representante");
-
                     b.Property<string>("SalesOrderName");
 
                     b.Property<int>("SalesTypeId");
 
+                    b.Property<decimal>("SubTotal");
+
+                    b.Property<decimal>("Tax");
+
+                    b.Property<decimal>("Tax18");
+
                     b.Property<string>("Tefono");
+
+                    b.Property<decimal>("Total");
+
+                    b.Property<decimal>("TotalExento");
+
+                    b.Property<decimal>("TotalExonerado");
+
+                    b.Property<decimal>("TotalGravado");
+
+                    b.Property<decimal>("TotalGravado18");
 
                     b.Property<long>("TypeContractId");
 
                     b.Property<long>("TypeInvoiceId");
 
                     b.Property<string>("TypeInvoiceName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -9013,6 +9027,10 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Price");
 
+                    b.Property<long>("ProductId");
+
+                    b.Property<string>("ProductName");
+
                     b.Property<decimal>("Quantity");
 
                     b.Property<int>("SalesOrderId");
@@ -9040,6 +9058,8 @@ namespace ERPAPI.Migrations
                     b.Property<decimal?>("Valor");
 
                     b.HasKey("SalesOrderLineId");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("SalesOrderId");
 
@@ -12184,6 +12204,11 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>
                 {
+                    b.HasOne("ERPAPI.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("ERPAPI.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
                         .HasForeignKey("SalesOrderId")
