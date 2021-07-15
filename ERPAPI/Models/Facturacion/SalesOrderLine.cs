@@ -16,13 +16,6 @@ namespace ERPAPI.Models
         [Display(Name = "Cotizacion")]
         public SalesOrder SalesOrder { get; set; }
 
-        [Display(Name = "Id")]
-        public Int64 ProductId { get; set; }
-        [ForeignKey("ProductId")]
-        public Product Product { get; set; }
-        [Display(Name = "Nombre Producto")]
-        public string ProductName { get; set; }
-
         [Display(Name = "SubProducto")]
         public Int64 SubProductId { get; set; }
         [ForeignKey("SubProductId")]

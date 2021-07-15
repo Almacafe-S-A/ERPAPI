@@ -206,15 +206,6 @@ namespace ERPAPI.Controllers
 
                     }
 
-
-                    //update master data by its lines
-                    salesOrder.Amount = lines.Sum(x => x.Amount);
-                    salesOrder.SubTotal = lines.Sum(x => x.SubTotal);
-                    salesOrder.Discount = lines.Sum(x => x.DiscountAmount);
-                    salesOrder.Tax = lines.Sum(x => x.TaxAmount);
-                    salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
-                    salesOrder.TotalGravado = totalgravado15;
-                    salesOrder.TotalGravado18 = totalgravado18;
                     _context.SalesOrder.Update(salesOrder);
                 }
             }
@@ -236,8 +227,8 @@ namespace ERPAPI.Controllers
                     ,TaxPercentage=payload.TaxPercentage
                     ,SubProductId = payload.SubProductId
                     ,SubProductName = payload.SubProductName
-                    , ProductName = payload.ProductName
-                     , ProductId = payload.ProductId
+                    //, ProductName = payload.ProductName
+                     //, ProductId = payload.ProductId
                     , Description = payload.Description
                     , UnitOfMeasureName = payload.UnitOfMeasureName
                     , UnitOfMeasureId = payload.UnitOfMeasureId

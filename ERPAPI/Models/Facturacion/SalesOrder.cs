@@ -57,17 +57,28 @@ namespace ERPAPI.Models
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
+
+        public string Customer { get; set; }
+
+        public string Representante { get; set; }
         public DateTime OrderDate { get; set; }
-        public DateTime DeliveryDate { get; set; }
         public DateTime ExpirationDate { get; set; }
 
-        [Display(Name = "Currency")]
-        public int CurrencyId { get; set; }
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
+        public int? PlazoMeses { get; set; }
+        /// <summary>
+        /// Precio Base del proucto a Almacenar
+        /// </summary>
+        public decimal? PrecioBaseProducto { get; set; }
 
-        [Display(Name = "Moneda tasa")]
-        public decimal Currency { get; set; }
+        public decimal? ComisionMin { get; set; }
+
+        public decimal? ComisionMax { get; set; }
+
+        public decimal? PrecioServicio { get; set; }
+
+        public bool? PolizaPropia { get; set; }
+
+        
 
         [Display(Name = "Id")]
         public Int64 ProductId { get; set; }
@@ -75,41 +86,17 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Producto")]
         public string ProductName { get; set; }
 
+        [Display(Name = "Unidad de Medida")]
+        public Int64 UnitOfMeasureId { get; set; }
+        [ForeignKey("UnitOfMeasureId")]
+        [Display(Name = "Unidad de Medida")]
+        public string UnitOfMeasureName { get; set; }
+
         [Display(Name = "Numero de referencia de cliente")]
         public string CustomerRefNumber { get; set; }
         [Display(Name = "Tipo de ventas")]
         public int SalesTypeId { get; set; }
-        public string Remarks { get; set; }
-
-        [Display(Name = "Monto")]
-        public decimal Amount { get; set; }
-        public decimal SubTotal { get; set; }
-
-        [Display(Name = "Descuento")]
-        public decimal Discount { get; set; }
-
-        [Display(Name = "Impuesto")]
-        public decimal Tax { get; set; }
-
-        [Display(Name = "Impuesto 18%")]
-        public decimal Tax18 { get; set; }
-
-        [Display(Name = "Flete")]
-        public decimal Freight { get; set; }
-
-        [Display(Name = "Total exento")]
-        public decimal TotalExento { get; set; }
-
-        [Display(Name = "Total exonerado")]
-        public decimal TotalExonerado { get; set; }
-
-        [Display(Name = "Total Gravado")]
-        public decimal TotalGravado { get; set; }
-
-        [Display(Name = "Total Gravado 18%")]
-        public decimal TotalGravado18 { get; set; }
-
-        public decimal Total { get; set; }
+        public string Remarks { get; set; }       
 
         public Int64 IdEstado { get; set; }
         public string Estado { get; set; }

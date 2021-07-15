@@ -201,13 +201,7 @@ namespace ERPAPI.Controllers
                     List<SalesOrderLine> lines = new List<SalesOrderLine>();
                     lines = _context.SalesOrderLine.Where(x => x.SalesOrderId.Equals(salesOrderId)).ToList();
 
-                    //update master data by its lines
-                    salesOrder.Amount = lines.Sum(x => x.Amount);
-                    salesOrder.SubTotal = lines.Sum(x => x.SubTotal);
-
-                    salesOrder.Discount = lines.Sum(x => x.DiscountAmount);
-                    salesOrder.Tax = lines.Sum(x => x.TaxAmount);
-                    salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
+                   
 
                     _context.Update(salesOrder);
 
@@ -229,6 +223,10 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
+                    if (salesOrder.CustomerId == 0)
+                    {
+                        salesOrder.NameContract = "Cliente Potencial - " + salesOrder.CustomerName;
+                    }
                     try
                     {
                         _context.SalesOrder.Add(salesOrder);
@@ -236,6 +234,7 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in salesorder.SalesOrderLines)
                         {
+                            item.SalesOrderLineId = 0;
                             item.SalesOrderId = salesorder.SalesOrderId;
                             _context.SalesOrderLine.Add(item);
                         }
