@@ -34,6 +34,10 @@ namespace ERPAPI.Models
 
         public string Observacion { get; set; }
 
+        public decimal? IncrementoAnual { get; set; }
+
+
+
 
 
         //[EmailAddress(ErrorMessage ="Agregue una direccion de correo valida")]
@@ -61,6 +65,8 @@ namespace ERPAPI.Models
         public string Customer { get; set; }
 
         public string Representante { get; set; }
+
+        public string CargoContactoRepresentante { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime ExpirationDate { get; set; }
 

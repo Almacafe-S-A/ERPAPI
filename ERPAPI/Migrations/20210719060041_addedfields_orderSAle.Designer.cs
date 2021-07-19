@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210719060041_addedfields_orderSAle")]
+    partial class addedfields_orderSAle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8948,8 +8950,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Impreso");
 
-                    b.Property<decimal?>("IncrementoAnual");
-
                     b.Property<string>("NameContract");
 
                     b.Property<string>("Observacion");
@@ -9038,8 +9038,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("TaxPercentage");
 
                     b.Property<long?>("TipoCobroId");
-
-                    b.Property<string>("TipoCobroName");
 
                     b.Property<decimal>("Total");
 
