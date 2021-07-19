@@ -48,6 +48,14 @@ namespace ERPAPI.Models
         public decimal? Valor { get; set; }
 
         public decimal? Porcentaje { get; set; }
+        
+        public Int64? TipoCobroId { get; set; }
+        [ForeignKey("TipoCobroId")]
+        public ElementoConfiguracion TipoCobro { get; set; }
+
+        public string TipoCobroName { get; set; }
+
+        public int PeriodoCobro { get; set; }
 
 
         public decimal SubTotal { get; set; }

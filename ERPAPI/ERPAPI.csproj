@@ -26,6 +26,8 @@
     <Compile Remove="Controllers\PurchDocumentController.cs" />
     <Compile Remove="Controllers\PurchDocumentsController.cs" />
     <Compile Remove="Controllers\PurchPartnersController.cs" />
+    <Compile Remove="Migrations\20210719055715_addedfields_orderSAles.cs" />
+    <Compile Remove="Migrations\20210719055715_addedfields_orderSAles.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />
