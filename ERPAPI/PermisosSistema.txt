@@ -269,6 +269,9 @@ Clientes.Cotizaciones.Imprimir
 Clientes.Cotizaciones.Crear Cliente
 Clientes.Cotizaciones.Aprobar
 Clientes.Cotizaciones.Generar Contrato
+Clientes.Contratos
+Clientes.Contratos.Aprobar
+Clientes.Contratos.Anular
 Clientes.Reglas de Cobro
 Clientes.Reglas de Cobro.Agregar
 Clientes.Reglas de Cobro.Editar
