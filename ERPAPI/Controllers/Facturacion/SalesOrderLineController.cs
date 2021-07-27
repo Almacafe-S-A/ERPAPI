@@ -239,31 +239,16 @@ namespace ERPAPI.Controllers
                     ,DiscountPercentage=payload.DiscountPercentage };
                // salesOrderLine = payload;
 
-                salesOrderLine = this.Recalculate(salesOrderLine);
+                
 
-                List<string> _propiedadesAComparar = new List<string>();
-                _propiedadesAComparar.Add("Amount");
-                 _propiedadesAComparar.Add("DiscountAmount");
-                 _propiedadesAComparar.Add("SubTotal");                
-                 _propiedadesAComparar.Add("TaxAmount");
-                _propiedadesAComparar.Add("Total");
-
-                EntityComparer<SalesOrderLine> comparer = new EntityComparer<SalesOrderLine>(_propiedadesAComparar,"SalesOrderId", 0);
-                var res =  comparer.Compare(payload, salesOrderLine);
-
-                if (res)
-                {
-                    _context.SalesOrderLine.Add(salesOrderLine);
+               
+                    _context.SalesOrderLine.Add(payload);
                     await _context.SaveChangesAsync();
                     //Falta comparar los totales , haciendo suma de las lineas
                     //this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
                     //return Ok(salesOrderLine);
                     return await Task.Run(() => Ok(salesOrderLine));
-                }
-                else
-                {
-                     return BadRequest($"Ocurrio un error, en el envio de los datos!");
-                }
+               
                
             }
             catch (Exception ex)

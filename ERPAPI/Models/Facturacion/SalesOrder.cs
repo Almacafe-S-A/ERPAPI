@@ -66,6 +66,11 @@ namespace ERPAPI.Models
 
         public string Representante { get; set; }
 
+        public string FirmaAlmacafeCargo {get; set; }
+
+        public string FirmaAlmacafe { get; set; }
+
+
         public string CargoContactoRepresentante { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime ExpirationDate { get; set; }
