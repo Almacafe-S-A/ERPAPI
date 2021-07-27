@@ -218,7 +218,14 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Insert([FromBody]SalesOrder salesorder)
         {
-             SalesOrder salesOrder = salesorder;
+
+            var validacotizacion = ValidSalesOrder(salesorder);
+
+            if (validacotizacion is BadRequestObjectResult)
+            {
+                return validacotizacion;
+            }
+            SalesOrder salesOrder = salesorder;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -279,9 +286,51 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(salesOrder));
         }
 
+        /// <summary>
+        /// Valida las Cotizaciones
+        /// </summary>
+        /// <returns></returns>
+
+         IActionResult ValidSalesOrder(SalesOrder salesOrder) {
+            int? plazoPrecioFijo = salesOrder.PlazoMeses;
+            int? plazoPrecioVariable = salesOrder.PlazoMeses;
+            string error = "";
+
+            if (salesOrder.PlazoMeses<=0)
+            {
+                return BadRequest("El plazo de la cotizacion no puede ser cero");
+            }
+
+            foreach (var item in salesOrder.SalesOrderLines)
+            {
+                plazoPrecioFijo = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Fijo")?item.PeriodoCobro:0);
+                plazoPrecioVariable = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Variable") ? item.PeriodoCobro : 0);
+
+            }
+            if (plazoPrecioFijo!= 0)
+            {
+                return BadRequest("El plazo del detalle de costos fijos no coincide con el plazo de la cotizacion , Favor haga coincidir el encabezado con el detalle");
+            }
+
+            if (plazoPrecioVariable < 0)
+            {
+                return BadRequest("El plazo del detalle de costos fijos no coincide con el plazo de la cotizacion , Favor haga coincidir el encabezado con el detalle");
+            }
+
+            return Ok();
+        
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> Update([FromBody]SalesOrder _salesorder)
         {
+
+            var validacotizacion =  ValidSalesOrder(_salesorder);
+
+            if (validacotizacion is BadRequestObjectResult)
+            {
+                return validacotizacion;
+            }
         
             try
             {
