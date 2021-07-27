@@ -216,16 +216,33 @@ namespace ERPAPI.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Insert([FromBody]SalesOrder salesorder)
+        public async Task<IActionResult> Insert([FromBody]SalesOrder _salesorder)
         {
 
-            var validacotizacion = ValidSalesOrder(salesorder);
+            var validacotizacion = ValidSalesOrder(_salesorder);
 
             if (validacotizacion is BadRequestObjectResult)
             {
                 return validacotizacion;
             }
-            SalesOrder salesOrder = salesorder;
+
+
+            if (_salesorder.TypeInvoiceId == 84)
+            {
+                _salesorder.PrecioServicio = _salesorder.PrecioBaseProducto;
+
+            }
+            else
+            {
+                decimal precioservicio = 0;
+                foreach (var item in _salesorder.SalesOrderLines)
+                {
+                    precioservicio += item.SubProductName.ToLower().Equals("almacenaje") ? item.Price : 0;
+                }
+            }
+
+
+            SalesOrder salesOrder = _salesorder;
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -239,10 +256,10 @@ namespace ERPAPI.Controllers
                         _context.SalesOrder.Add(salesOrder);
                         //await _context.SaveChangesAsync();
 
-                        foreach (var item in salesorder.SalesOrderLines)
+                        foreach (var item in _salesorder.SalesOrderLines)
                         {
                             item.SalesOrderLineId = 0;
-                            item.SalesOrderId = salesorder.SalesOrderId;
+                            item.SalesOrderId = _salesorder.SalesOrderId;
                             _context.SalesOrderLine.Add(item);
                         }
                         await _context.SaveChangesAsync();
@@ -253,7 +270,7 @@ namespace ERPAPI.Controllers
                             DocType = "SalesOrder",
 
                             ClaseInicial =
-                             Newtonsoft.Json.JsonConvert.SerializeObject(salesorder, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                             Newtonsoft.Json.JsonConvert.SerializeObject(_salesorder, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(salesOrder, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
@@ -301,20 +318,30 @@ namespace ERPAPI.Controllers
                 return BadRequest("El plazo de la cotizacion no puede ser cero");
             }
 
+            if (salesOrder.TypeInvoiceId == 84)
+            {
+                salesOrder.PrecioServicio = salesOrder.PrecioBaseProducto;
+
+            }
+
             foreach (var item in salesOrder.SalesOrderLines)
             {
-                plazoPrecioFijo = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Fijo")?item.PeriodoCobro:0);
-                plazoPrecioVariable = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Variable") ? item.PeriodoCobro : 0);
+                if (item.SubProductName.ToLower().Equals("almacenaje"))
+                {
+                    plazoPrecioFijo = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Fijo") ? item.PeriodoCobro : 0);
+                    plazoPrecioVariable = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Variable") ? item.PeriodoCobro : 0);
+                }
+                
 
             }
             if (plazoPrecioFijo!= 0)
             {
-                return BadRequest("El plazo del detalle de costos fijos no coincide con el plazo de la cotizacion , Favor haga coincidir el encabezado con el detalle");
+                return BadRequest("El plazo del detalle del almacenaje de costos fijos no coincide con el plazo de la cotizacion , Favor haga coincidir el encabezado con el detalle");
             }
 
             if (plazoPrecioVariable < 0)
             {
-                return BadRequest("El plazo del detalle de costos fijos no coincide con el plazo de la cotizacion , Favor haga coincidir el encabezado con el detalle");
+                return BadRequest("El plazo del detalle del almacenaje de costos variables esta fuera del rango del plazo, Favor haga coincidir el encabezado con el detalle");
             }
 
             return Ok();
@@ -330,8 +357,23 @@ namespace ERPAPI.Controllers
             if (validacotizacion is BadRequestObjectResult)
             {
                 return validacotizacion;
+            }            
+
+            if (_salesorder.TypeInvoiceId ==84)
+            {
+                _salesorder.PrecioServicio = _salesorder.PrecioBaseProducto;
+
             }
-        
+            else
+            {
+                decimal precioservicio = 0;
+                foreach (var item in _salesorder.SalesOrderLines)
+                {
+                    precioservicio += item.SubProductName.ToLower().Equals("almacenaje") ? item.Price : 0;
+                }
+            }
+            
+            
             try
             {
                 SalesOrder salesOrderq   = (from c in _context.SalesOrder
