@@ -107,8 +107,10 @@ namespace ERPAPI.Controllers
                     var query = (from c in _context.Boleto_Ent.Where(q => q.clave_C == customer.CustomerRefNumber && q.completo == completo)
                                  join d in _context.Boleto_Sal on c.clave_e equals d.clave_e
                                  //where c.peso_e > d.peso_s
+                                 //
                                  into ba
                                  from e in ba.DefaultIfEmpty()
+                                 join p in _context.SubProduct on c.clave_p equals p.ProductCode
                                  select new Boleto_Ent
                                  {
                                      clave_e = c.clave_e,
@@ -128,7 +130,8 @@ namespace ERPAPI.Controllers
                                      turno_oe = c.turno_oe,
                                      t_entrada = c.t_entrada,
                                      unidad_e = c.unidad_e,
-                                     Boleto_Sal = e
+                                     Boleto_Sal = e,
+                                     NombreProducto = p.ProductName
 
                                  }).AsQueryable();
        

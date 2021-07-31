@@ -19,6 +19,8 @@ namespace ERPAPI.Models
         [Display(Name = "Clave del operador")]
         public string clave_o { get; set; }
         [Display(Name = "Clave del producto")]
+        [NotMapped]
+        public string NombreProducto { get; set; }
         public string clave_p { get; set; }
         [Display(Name = "Salida")]
         public bool completo { get; set; }
