@@ -253,15 +253,16 @@ namespace ERPAPI.Controllers
                     }
                     try
                     {
-                        _context.SalesOrder.Add(salesOrder);
+                        
                         //await _context.SaveChangesAsync();
 
-                        foreach (var item in _salesorder.SalesOrderLines)
+                        foreach (var item in salesOrder.SalesOrderLines)
                         {
                             item.SalesOrderLineId = 0;
                             item.SalesOrderId = _salesorder.SalesOrderId;
-                            _context.SalesOrderLine.Add(item);
+                            //_context.SalesOrderLine.Add(item);
                         }
+                        _context.SalesOrder.Add(salesOrder);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -311,38 +312,67 @@ namespace ERPAPI.Controllers
          IActionResult ValidSalesOrder(SalesOrder salesOrder) {
             int? plazoPrecioFijo = salesOrder.PlazoMeses;
             int? plazoPrecioVariable = salesOrder.PlazoMeses;
-            string error = "";
+            bool validaralmacenaje = true;
 
             if (salesOrder.PlazoMeses<=0)
             {
                 return BadRequest("El plazo de la cotizacion no puede ser cero");
             }
 
-            if (salesOrder.TypeInvoiceId == 84)
+
+            ///////////Si la cotizacion es por incremento anual o por comision no valida el almacenaje en el detalle 84 = por comision 7 184 por incremento anual
+            if (salesOrder.TypeInvoiceId == 85 || salesOrder.TypeInvoiceId == 113) ///////
             {
-                salesOrder.PrecioServicio = salesOrder.PrecioBaseProducto;
+                foreach (var item in salesOrder.SalesOrderLines)
+                {
+                    if (item.SubProductName.ToLower().Equals("almacenaje"))
+                    {
+                        plazoPrecioFijo = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Fijo") ? item.PeriodoCobro : 0);
+                        plazoPrecioVariable = plazoPrecioVariable - (item.TipoCobroName.Equals("Cobro Variable") ? item.PeriodoCobro : 0);
+                    }
+
+
+                }
+                if (plazoPrecioFijo != 0)
+                {
+                    return BadRequest("El plazo de los cobros fijos del almacenaje no coincidecon el plazo del contrato, Favor haga coincidir el encabezado con el detalle");
+                }
+
+                if (plazoPrecioVariable < 0)
+                {
+                    return BadRequest("El plazo del detalle del almacenaje de costos variables esta fuera del rango del plazo, Favor haga coincidir el encabezado con el detalle");
+                }
 
             }
+
+
+            ///////Valida el plazo de los demas subservicios /////////////
+            ///
 
             foreach (var item in salesOrder.SalesOrderLines)
             {
-                if (item.SubProductName.ToLower().Equals("almacenaje"))
+                int i = 0;
+
+                if (item.SubProductName.ToLower().Contains("almacenaje"))
                 {
-                    plazoPrecioFijo = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Fijo") ? item.PeriodoCobro : 0);
-                    plazoPrecioVariable = plazoPrecioFijo - (item.TipoCobroName.Equals("Cobro Variable") ? item.PeriodoCobro : 0);
+                    continue;
                 }
-                
+
+                foreach (var item2 in salesOrder.SalesOrderLines)
+                {
+                    if (item2.SubProductId == item.SubProductId)
+                    {
+                        i += item2.PeriodoCobro;
+                    }
+                }
+
+                if (i!= salesOrder.PlazoMeses)
+                {
+                    return BadRequest("El plazo del del subservicio " + item.SubProductName+" no coincide con el del contrato");
+                }    
 
             }
-            if (plazoPrecioFijo!= 0)
-            {
-                return BadRequest("El plazo del detalle del almacenaje de costos fijos no coincide con el plazo de la cotizacion , Favor haga coincidir el encabezado con el detalle");
-            }
 
-            if (plazoPrecioVariable < 0)
-            {
-                return BadRequest("El plazo del detalle del almacenaje de costos variables esta fuera del rango del plazo, Favor haga coincidir el encabezado con el detalle");
-            }
 
             return Ok();
         
