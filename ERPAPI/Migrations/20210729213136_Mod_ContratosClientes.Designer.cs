@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210729213136_Mod_ContratosClientes")]
+    partial class Mod_ContratosClientes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3029,10 +3031,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal?>("ComisionMax");
-
-                    b.Property<decimal?>("ComisionMin");
-
                     b.Property<string>("Correo1");
 
                     b.Property<string>("CustomerConstitution");
@@ -3045,33 +3043,25 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerName");
 
+                    b.Property<double>("DelegateSalary");
+
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaContrato");
 
                     b.Property<DateTime>("FechaCreacion");
 
-                    b.Property<DateTime>("FechaInicioContrato");
-
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaVencimiento");
 
                     b.Property<long?>("IdEstado");
 
                     b.Property<string>("Manager");
 
-                    b.Property<string>("NameContract");
+                    b.Property<string>("Mercancias");
 
                     b.Property<string>("Observcion");
 
                     b.Property<double>("Papeleria");
-
-                    b.Property<bool?>("PolizaPropia");
-
-                    b.Property<decimal?>("PrecioBaseProducto");
-
-                    b.Property<decimal?>("PrecioServicio");
 
                     b.Property<long>("ProductId");
 
@@ -3083,15 +3073,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Reception");
 
+                    b.Property<string>("Resolution");
+
                     b.Property<long>("SalesOrderId");
 
                     b.Property<string>("StorageTime");
-
-                    b.Property<long>("TypeContractId");
-
-                    b.Property<long>("TypeInvoiceId");
-
-                    b.Property<string>("TypeInvoiceName");
 
                     b.Property<long>("UnitOfMeasureId");
 
@@ -3103,54 +3089,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("WareHouses");
 
+                    b.Property<string>("WarehouseRequirements");
+
                     b.HasKey("CustomerContractId");
 
                     b.HasIndex("IdEstado");
 
                     b.ToTable("CustomerContract");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerContractLines", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CustomerContractId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<int>("PeriodoCobro");
-
-                    b.Property<decimal?>("Porcentaje");
-
-                    b.Property<decimal>("Price");
-
-                    b.Property<decimal>("Quantity");
-
-                    b.Property<long>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<long?>("TipoCobroId");
-
-                    b.Property<string>("TipoCobroName");
-
-                    b.Property<long>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<decimal?>("Valor");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerContractId");
-
-                    b.HasIndex("SubProductId");
-
-                    b.HasIndex("TipoCobroId");
-
-                    b.ToTable("CustomerContractLines");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerContractWareHouse", b =>
@@ -11327,23 +11272,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
                         .WithMany()
                         .HasForeignKey("IdEstado");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerContractLines", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CustomerContract", "CustomerContract")
-                        .WithMany("customerContractLines")
-                        .HasForeignKey("CustomerContractId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.ElementoConfiguracion", "TipoCobro")
-                        .WithMany()
-                        .HasForeignKey("TipoCobroId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomersOfCustomer", b =>
