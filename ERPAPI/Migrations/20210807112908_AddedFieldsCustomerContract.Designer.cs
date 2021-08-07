@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210807112908_AddedFieldsCustomerContract")]
+    partial class AddedFieldsCustomerContract
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3045,21 +3047,21 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerName");
 
+                    b.Property<double>("DelegateSalary");
+
                     b.Property<string>("Estado");
 
                     b.Property<DateTime>("FechaContrato");
 
                     b.Property<DateTime>("FechaCreacion");
 
-                    b.Property<DateTime>("FechaInicioContrato");
-
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime>("FechaVencimiento");
 
                     b.Property<long?>("IdEstado");
 
                     b.Property<string>("Manager");
+
+                    b.Property<string>("Mercancias");
 
                     b.Property<string>("NameContract");
 
@@ -3083,6 +3085,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Reception");
 
+                    b.Property<string>("Resolution");
+
                     b.Property<long>("SalesOrderId");
 
                     b.Property<string>("StorageTime");
@@ -3102,6 +3106,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.Property<string>("WareHouses");
+
+                    b.Property<string>("WarehouseRequirements");
 
                     b.HasKey("CustomerContractId");
 

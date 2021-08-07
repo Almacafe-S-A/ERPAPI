@@ -83,9 +83,14 @@ namespace ERP.Contexts
 
         #endregion
 
-        public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
+        #region RRHH
         public DbSet<EmployeeDocument> EmployeeDocument { get; set; }
         public DbSet<EmployeeSalary> EmployeeSalary { get; set; }
+
+        #endregion
+
+        public DbSet<ConfigurationVendor> ConfigurationVendor { get; set; }
+        
 
  
 
@@ -160,10 +165,6 @@ namespace ERP.Contexts
 
 
         public DbSet<PayrollDeduction> PayrollDeduction { get; set; }
-        /// <summary>
-        /// ///Cierres
-        /// </summary>
-        /// 
 
 
 
@@ -268,6 +269,7 @@ namespace ERP.Contexts
         public DbSet<CustomerAreaProduct> CustomerAreaProduct { get; set; }
         public DbSet<CustomerAuthorizedSignature> CustomerAuthorizedSignature { get; set; }
         public DbSet<CustomerContract> CustomerContract { get; set; }
+        public DbSet<CustomerContractLines> CustomerContractLines { get; set; }
         public DbSet<CustomerContractWareHouse> CustomerContractWareHouse { get; set; }
         public DbSet<Alert> Alert { get; set; }
         public DbSet<ERPAPI.Models.Puesto> Puesto { get; set; }
