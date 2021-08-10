@@ -105,9 +105,12 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
         public string Impreso { get; set; }
-
         [Display(Name = "Boleta de peso")]
         public Int64? WeightBallot { get; set; }
+
+        [ForeignKey("WeightBallot")]
+        public Boleto_Ent BoletaPeso { get; set; }
+
 
         [Display(Name = "Id Autorización")]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
