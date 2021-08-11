@@ -13,6 +13,8 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Linea Id")]
         public Int64 ControlPalletsLineId { get; set; }
+
+        public int? Linea { get; set; }
         [Display(Name = "Id")]
         public Int64 ControlPalletsId { get; set; }
         public int Alto { get; set; }

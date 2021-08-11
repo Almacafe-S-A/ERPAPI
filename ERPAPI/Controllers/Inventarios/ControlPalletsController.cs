@@ -130,11 +130,11 @@ namespace ERPAPI.Controllers
             try
             {
                /////Selecciona todos los control de ingresos con boleta de peso asociada y completos
-                controlPalletsAvailable = await _context.ControlPallets.
-                    Where(q => q.EsIngreso == 1 && _context.GoodsReceived
-                        .Any(a => a.ControlId != q.ControlPalletsId) 
-                         && _context.Boleto_Ent.Include( b => b.Boleto_Sal)
-                            .Any(a => a.clave_e == q.WeightBallot && a.Boleto_Sal != null) ).ToListAsync();
+                controlPalletsAvailable = await _context.ControlPallets.Include(i => i.BoletaPeso)
+                    .Where(q => q.EsIngreso == 1 
+                         && !_context.GoodsReceived.Any(a => a.ControlId == q.ControlPalletsId) 
+                         && q.BoletaPeso.Boleto_Sal !=  null
+                    ).ToListAsync();
 
 
             }
@@ -194,6 +194,7 @@ namespace ERPAPI.Controllers
                         _ControlPalletsq.WarehouseId = _ControlPalletsq.WarehouseId == 0 ? null : _ControlPalletsq.WarehouseId;
                         _ControlPalletsq.UnitOfMeasureId = _ControlPalletsq.UnitOfMeasureId == 0 ? null : _ControlPalletsq.UnitOfMeasureId;
                         _ControlPalletsq.SubProductName = _ControlPalletsq.SubProductName == "" ? "Productos Varios" : _ControlPalletsq.SubProductName;
+                        //_ControlPalletsq.WeightBallot = _ControlPalletsq.WeightBallot == 0 ? null : _ControlPalletsq.WeightBallot;
 
                         
                         _context.ControlPallets.Add(_ControlPalletsq);

@@ -48,6 +48,8 @@ namespace ERPAPI.Models
         [Display(Name = "Producto Cliente")]
         public string SubProductName { get; set; }
 
+        public string Observacion { get; set; }
+
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
         [ForeignKey("CustomerId")]
@@ -85,6 +87,8 @@ namespace ERPAPI.Models
         public double QQPesoNeto { get; set; }
         public double QQPesoFinal { get; set; }
 
+        public bool? ProductoPesado { get; set; }
+
         [Display(Name = "Id")]
         public int? Alto { get; set; }
         public int? Ancho { get; set; }
@@ -105,9 +109,12 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
         public string Impreso { get; set; }
-
         [Display(Name = "Boleta de peso")]
-        public Int64? WeightBallot { get; set; }
+        public Int64 WeightBallot { get; set; }
+        [NotMapped]
+        [ForeignKey("WeightBallot")]
+        public Boleto_Ent BoletaPeso { get; set; }
+
 
         [Display(Name = "Id Autorización")]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
