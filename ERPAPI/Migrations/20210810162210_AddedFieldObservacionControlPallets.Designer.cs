@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210810162210_AddedFieldObservacionControlPallets")]
+    partial class AddedFieldObservacionControlPallets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2213,8 +2215,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ProductName");
 
-                    b.Property<bool?>("ProductoPesado");
-
                     b.Property<double>("QQPesoBruto");
 
                     b.Property<double>("QQPesoFinal");
@@ -2251,7 +2251,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("WarehouseName");
 
-                    b.Property<long>("WeightBallot");
+                    b.Property<long?>("WeightBallot");
 
                     b.Property<int?>("cantidadPoliEtileno");
 
@@ -2266,6 +2266,8 @@ namespace ERPAPI.Migrations
                     b.HasIndex("SubProductId");
 
                     b.HasIndex("UnitOfMeasureId");
+
+                    b.HasIndex("WeightBallot");
 
                     b.ToTable("ControlPallets");
                 });
@@ -2289,8 +2291,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<int?>("Linea");
 
                     b.Property<string>("Observacion");
 
@@ -11262,6 +11262,10 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "unitOfMeasure")
                         .WithMany()
                         .HasForeignKey("UnitOfMeasureId");
+
+                    b.HasOne("ERPAPI.Models.Boleto_Ent", "BoletaPeso")
+                        .WithMany()
+                        .HasForeignKey("WeightBallot");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.ControlPalletsLine", b =>
