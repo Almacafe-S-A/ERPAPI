@@ -418,17 +418,21 @@ namespace ERPAPI.Controllers
 
                         if (_GoodsReceived.ControlId > 0)
                         {
-                            //_context.Kardex.Add(_GoodsReceived.Kardex);
+                            ControlPallets controlPallets = await _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId)
+                           .FirstOrDefaultAsync();
+                            controlPallets.Estado = "Recibido";
+                             _context.ControlPallets.Update(controlPallets);
                         }
 
                         await _context.SaveChangesAsync();
 
+                        
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
-
                             if (item.ControlPalletsId== null) { item.ControlPalletsId = 0;  }
                             ControlPallets _ControlPalletsq = await _context.ControlPallets.Where(q => q.ControlPalletsId == item.ControlPalletsId)
                            .FirstOrDefaultAsync();
+                            
 
                             if (_ControlPalletsq != null)
                             {
@@ -442,6 +446,8 @@ namespace ERPAPI.Controllers
 
                           
                         }
+                        
+
 
                         await _context.SaveChangesAsync();
 
