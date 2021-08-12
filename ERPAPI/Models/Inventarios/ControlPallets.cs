@@ -48,7 +48,7 @@ namespace ERPAPI.Models
         [Display(Name = "Producto Cliente")]
         public string SubProductName { get; set; }
 
-        public string Observacion { get; set; }
+        public string Observaciones { get; set; }
 
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }

@@ -130,10 +130,10 @@ namespace ERPAPI.Controllers
             try
             {
                /////Selecciona todos los control de ingresos con boleta de peso asociada y completos
-                controlPalletsAvailable = await _context.ControlPallets.Include(i => i.BoletaPeso)
-                    .Where(q => q.EsIngreso == 1 
+                controlPalletsAvailable = await _context.ControlPallets
+                    .Where(q => q.EsIngreso == 1 && q.Estado!="Recibido"
                          && !_context.GoodsReceived.Any(a => a.ControlId == q.ControlPalletsId) 
-                         && q.BoletaPeso.Boleto_Sal !=  null
+                        // && q.BoletaPeso.Boleto_Sal !=  null
                     ).ToListAsync();
 
 
