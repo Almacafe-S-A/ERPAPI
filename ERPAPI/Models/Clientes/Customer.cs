@@ -143,6 +143,12 @@ namespace ERPAPI.Models
         [Display(Name = "Confirmación por correo")]
         public bool ConfirmacionCorreo { get; set; }
 
+
+        public int? UnitOfMeasurePreference { get; set; }
+        [ForeignKey("UnitOfMeasurePreference")]
+
+        public UnitOfMeasure UnitOfMeasure { get; set; }
+
         [Required]
         public string UsuarioCreacion { get; set; }
 
