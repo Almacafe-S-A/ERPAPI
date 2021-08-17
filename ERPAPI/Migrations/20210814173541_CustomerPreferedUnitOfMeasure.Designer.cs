@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210814173541_CustomerPreferedUnitOfMeasure")]
+    partial class CustomerPreferedUnitOfMeasure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2837,6 +2839,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("TaxId");
 
+                    b.Property<int?>("UnitOfMeasureId");
+
                     b.Property<int?>("UnitOfMeasurePreference");
 
                     b.Property<string>("UsuarioCreacion")
@@ -2868,7 +2872,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("StateId");
 
-                    b.HasIndex("UnitOfMeasurePreference");
+                    b.HasIndex("UnitOfMeasureId");
 
                     b.ToTable("Customer");
                 });
@@ -11325,7 +11329,7 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
-                        .HasForeignKey("UnitOfMeasurePreference");
+                        .HasForeignKey("UnitOfMeasureId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerAreaProduct", b =>

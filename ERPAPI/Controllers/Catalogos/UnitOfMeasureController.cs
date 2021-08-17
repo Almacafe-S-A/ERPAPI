@@ -97,7 +97,41 @@ namespace coderush.Controllers.Api
             return await Task.Run(() => Ok(Items));
         }
 
-        
+        /// <summary>
+        /// Obtiene la unidad preferida del cliente o la unidad del producto sele
+        /// </summary>
+        /// <param name="SubproductId"></param>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{SubproductId}/{CustomerId}")]
+        public async Task<IActionResult> GetProductoUnitOfMeasure(int SubproductId, int CustomerId)
+        {
+            UnitOfMeasure Items = new UnitOfMeasure();
+            try
+            {
+                var customer = _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefault();
+                var prodcut = _context.SubProduct.Where(q => q.SubproductId == SubproductId).FirstOrDefault();
+                if (customer != null && customer.UnitOfMeasurePreference!= null)
+                {
+                    Items = await _context.UnitOfMeasure.Where(q => q.UnitOfMeasureId==customer.UnitOfMeasurePreference).FirstOrDefaultAsync();
+
+                }
+                else
+                {
+                    Items = await _context.UnitOfMeasure.Where(q => q.UnitOfMeasureId == prodcut.UnitOfMeasureId).FirstOrDefaultAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         [HttpGet("[action]/{UnitOfMeasureName}")]
         public async Task<IActionResult> GetUnitOfMeasureByName(string UnitOfMeasureName)
         {

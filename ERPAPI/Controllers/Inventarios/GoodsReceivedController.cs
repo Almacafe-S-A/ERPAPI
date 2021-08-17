@@ -429,7 +429,7 @@ namespace ERPAPI.Controllers
                         
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
-                            if (item.ControlPalletsId== null) { item.ControlPalletsId = 0;  }
+                            
                             ControlPallets _ControlPalletsq = await _context.ControlPallets.Where(q => q.ControlPalletsId == item.ControlPalletsId)
                            .FirstOrDefaultAsync();
                             
