@@ -115,12 +115,15 @@ namespace ERPAPI.Controllers
                         .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
                             && p.CustomerId == clienteid
                             && p.ProductId == servicioid
-                            && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == p.GoodsReceivedId)) 
+                            //&& p.IdEstado != 6
+                            && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId )) 
+                            
                         .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
                 }
                 else
                 {
-                    Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                    return await Task.Run(() => Ok(Items));
+                   // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
                 }
             }
             catch (Exception ex)

@@ -27,7 +27,7 @@ namespace ERPAPI.Models
         public string ProductName { get; set; }
 
         public string Recibos { get; set; }
-
+        [Column(TypeName = "money")]
         public decimal TasaCambio { get; set; }
 
         public decimal DerechosImportacion { get; set; }
@@ -44,6 +44,15 @@ namespace ERPAPI.Models
         public decimal Otros { get; set; }
 
         public decimal Total { get; set; }
+
+        public string  NoFactura { get; set; }
+
+        public string  NoPoliza { get; set; }
+
+        [Column(TypeName = "money")]
+        public decimal? TotalOtrosImpuestos { get; set; }
+
+        
 
 
 

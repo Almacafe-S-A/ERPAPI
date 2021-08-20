@@ -459,6 +459,10 @@ namespace ERP.Contexts
           .HasIndex(u => u.CheckAccountNo)
           .IsUnique();
 
+            modelBuilder.Entity<Liquidacion>()
+               .Property(i => i.TasaCambio)
+               .HasColumnType("money");
+
 
 
             modelBuilder.Entity<Boleto_Ent>()

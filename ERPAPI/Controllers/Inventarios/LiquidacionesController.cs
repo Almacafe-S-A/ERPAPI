@@ -97,11 +97,14 @@ namespace ERPAPI.Controllers
                                          !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == lineasrecibo.GoodsReceiveLinedId)
                                          select new LiquidacionLine() {
                                              Id = 0
-                                             ,Cantidad = lineasrecibo.Quantity
+                                             ,UOM = lineasrecibo.UnitOfMeasureName
+                                             ,CantidadRecibida = lineasrecibo.Quantity
                                              ,SubProductId = lineasrecibo.SubProductId                                             
                                              ,SubProductName = lineasrecibo.SubProductName 
                                              ,GoodsReceivedLineId = lineasrecibo.GoodsReceiveLinedId
                                              ,GoodsReceivedLine = lineasrecibo
+                                             ,TotalDerechos = 0
+                                             ,ValorUnitarioDerechos = 0
 
                                          }).ToListAsync();
                        
@@ -154,6 +157,8 @@ namespace ERPAPI.Controllers
                
                 foreach (var item in liquidacion.detalleliquidacion)
                 {
+                    item.GoodsReceivedLineId = item.GoodsReceivedLineId == 0 ? null : item.GoodsReceivedLineId;
+                    item.SubProductId = item.SubProductId == 0 ? null : item.SubProductId;
                     item.GoodsReceivedLine = null;
                 }
                 _context.Liquidacion.Add(liquidacion);
@@ -193,6 +198,7 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> Update(Liquidacion liquidacion) {
             try
             {
+                liquidacion.EstadoId = liquidacion.EstadoId == 7 ? 5 : liquidacion.EstadoId;
                 _context.Liquidacion.Update(liquidacion);
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                 {
@@ -218,6 +224,71 @@ namespace ERPAPI.Controllers
             }
 
         }
+
+
+
+        /// <summary>
+        /// Actualiza el estado del Cheque a Impreso
+        /// </summary>
+        /// <param name="LiquidacionId"></param>
+        /// <param name="Aprobado"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{LiquidacionId}/{Aprobado}")]
+        public async Task<ActionResult<Liquidacion>> Aprobar(int LiquidacionId, bool Aprobado)
+        {
+            Liquidacion _Liquidacionq = new Liquidacion();
+            //JournalEntry journalEntry = new JournalEntry();
+            try
+            {
+                _Liquidacionq = await _context.Liquidacion.Where(q=>q.Id == LiquidacionId)
+                    .Include(i => i.Estados)
+                    .FirstOrDefaultAsync();
+                //journalEntry = await _context.JournalEntry.Include(j => j.JournalEntryLines).Where(j => j.JournalEntryId == _Liquidacionq.JournalEntrId).FirstOrDefaultAsync();
+
+                if (Aprobado)
+                {
+                    _Liquidacionq.EstadoId = 6;
+                    //journalEntry.EstadoId = 6;
+                    //journalEntry.EstadoName = "Aprobado";
+                    //journalEntry.ApprovedBy = User.Identity.Name;
+                    //journalEntry.ApprovedDate = DateTime.Now;
+                    //////Actualiza el saldo de las cuentas contables del catalogo 
+                    //Funciones.ActualizarSaldoCuentas(_context, journalEntry);
+                }
+                else
+                {
+                    _Liquidacionq.EstadoId = 7;
+
+                }
+
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = _Liquidacionq.Id,
+                    DocType = "CheckAccount",
+                    ClaseInicial =
+                          Newtonsoft.Json.JsonConvert.SerializeObject(_Liquidacionq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = _Liquidacionq.Estados.DescripcionEstado + " Cheque",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
+                    UsuarioEjecucion = User.Identity.Name,
+
+                });
+
+                //_context.Liquidacion.Update(_Liquidacionq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_Liquidacionq));
+        }
+
 
     }
 }

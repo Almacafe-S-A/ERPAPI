@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210820192601_AddedfieldsLiquidacion")]
+    partial class AddedfieldsLiquidacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7142,13 +7144,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal?>("CantidadRecibida");
 
-                    b.Property<long?>("GoodsReceivedLineId");
+                    b.Property<long>("GoodsReceivedLineId");
 
                     b.Property<int>("LiquidacionId");
 
                     b.Property<decimal>("OtrosImpuestos");
 
-                    b.Property<long?>("SubProductId");
+                    b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
 
@@ -12010,7 +12012,8 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.GoodsReceivedLine", "GoodsReceivedLine")
                         .WithMany()
-                        .HasForeignKey("GoodsReceivedLineId");
+                        .HasForeignKey("GoodsReceivedLineId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Liquidacion", "Liqudacion")
                         .WithMany("detalleliquidacion")
@@ -12019,7 +12022,8 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()
-                        .HasForeignKey("SubProductId");
+                        .HasForeignKey("SubProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.LlegadasTardeBiometrico", b =>
