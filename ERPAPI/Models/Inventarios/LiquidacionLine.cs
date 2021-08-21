@@ -54,6 +54,8 @@ namespace ERPAPI.Models
 
         public decimal? ValorUnitarioDerechos { get; set; }
 
+        public decimal? PrecioUnitarioCIF { get; set; }
+
         public decimal? TotalDerechos { get; set; }
 
         public decimal OtrosImpuestos{ get; set; }
@@ -62,7 +64,9 @@ namespace ERPAPI.Models
 
         public decimal TotalDerechosmasImpuestos { get; set; }
 
-        //public decimal PrecioUnitario { get; set; }
+       public decimal? ValorTotalCIF { get; set; }
+
+        public decimal? ValorTotalDerechos { get; set; }
 
         public decimal TotalFinal{ get; set; }
 

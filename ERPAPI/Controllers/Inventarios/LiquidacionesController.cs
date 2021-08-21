@@ -105,6 +105,9 @@ namespace ERPAPI.Controllers
                                              ,GoodsReceivedLine = lineasrecibo
                                              ,TotalDerechos = 0
                                              ,ValorUnitarioDerechos = 0
+                                             ,ValorTotalCIF = 0
+                                             ,PrecioUnitarioCIF = 0
+                                             ,ValorTotalDerechos = 0
 
                                          }).ToListAsync();
                        
