@@ -84,7 +84,34 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        
+
+
+
+        /// <summary>
+        /// Obtiene el detalle del contrato
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetCustomerContractLines(int id)
+        {
+            List<CustomerContractLines> Items = new List<CustomerContractLines>();
+            try
+            {
+                Items = await _context.CustomerContractLines.Where(q=>q.CustomerContractId==id).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         [HttpGet("[action]/{CustomerId}")]
         public async Task<IActionResult> GetCustomerContractByCustomerId(Int64 CustomerId)
         {
@@ -125,6 +152,89 @@ namespace ERPAPI.Controllers
 
 
             return await Task.Run(() => Ok(Items));
+        }
+
+
+
+
+        /// <summary>
+        /// Inserta un nuevo contrato de cliente a partir de una cotizacion 
+        /// </summary>
+        /// <param name="salesorderid"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{salesorderid}")]
+        public async Task<ActionResult<CustomerContract>> GenerarContrato(int salesorderid)
+        {
+            CustomerContract _CustomerContractq = new CustomerContract();
+            try
+            {
+                SalesOrder salesOrder = await _context.SalesOrder
+                    .Include(i => i.SalesOrderLines)
+                    .Where(q => q.SalesOrderId == salesorderid).FirstOrDefaultAsync();
+                if (salesOrder != null)
+                {
+                    _CustomerContractq.CustomerManager = salesOrder.Representante;
+                    _CustomerContractq.CustomerId = salesOrder.CustomerId;
+                    _CustomerContractq.CustomerName = salesOrder.CustomerName;
+                    _CustomerContractq.ComisionMax = salesOrder.ComisionMax;
+                    _CustomerContractq.ComisionMin = salesOrder.ComisionMin;
+                    _CustomerContractq.Estado = "Generado";
+                    _CustomerContractq.FechaContrato = DateTime.Now;
+                    _CustomerContractq.FechaCreacion = DateTime.Now;
+                    _CustomerContractq.Manager = salesOrder.FirmaAlmacafe;
+                    _CustomerContractq.PrecioBaseProducto = salesOrder.PrecioBaseProducto;
+                    _CustomerContractq.PrecioServicio = salesOrder.PrecioBaseProducto;
+                    _CustomerContractq.RTNCustomerManager = salesOrder.RTN;
+                    _CustomerContractq.SalesOrderId = salesorderid;
+                    _CustomerContractq.StorageTime = salesOrder.PlazoMeses.ToString();
+                    _CustomerContractq.TypeContractId = salesOrder.TypeContractId;
+                    _CustomerContractq.TypeInvoiceId = salesOrder.TypeInvoiceId;
+                    _CustomerContractq.TypeInvoiceName = salesOrder.TypeInvoiceName;
+                    _CustomerContractq.UsuarioCreacion = User.Identity.Name;
+                    _CustomerContractq.ProductId = salesOrder.ProductId;
+                    _CustomerContractq.ProductName = salesOrder.ProductName;
+                    _CustomerContractq.customerContractLines = new List<CustomerContractLines>();
+
+                    foreach (var item in salesOrder.SalesOrderLines)
+                    {
+                        _CustomerContractq.customerContractLines.Add(new CustomerContractLines()
+                        {
+                            Description = item.Description,
+                            PeriodoCobro = item.PeriodoCobro,
+                            Porcentaje = item.Porcentaje,
+                            Quantity = item.Quantity,
+                            Price  = item.Price,
+                            SubProductId = item.SubProductId,
+                            SubProductName =  item.SubProductName,
+                            TipoCobroId = item.TipoCobroId,
+                            TipoCobroName = item.TipoCobroName,
+                            UnitOfMeasureId = item.UnitOfMeasureId,
+                            UnitOfMeasureName = item.UnitOfMeasureName,
+                            Valor = item.Valor
+
+
+                        });
+                        
+                    }
+                    
+
+                }
+                else
+                {
+                    return BadRequest("No se encontro cotización");
+                }
+               
+                _context.CustomerContract.Add(_CustomerContractq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_CustomerContractq));
         }
 
 
