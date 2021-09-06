@@ -111,13 +111,17 @@ namespace coderush.Controllers.Api
             {
                 var customer = _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefault();
                 var prodcut = _context.SubProduct.Where(q => q.SubproductId == SubproductId).FirstOrDefault();
-                if (customer != null && customer.UnitOfMeasurePreference!= null)
+                if (customer != null &&  customer.UnitOfMeasurePreference!= null)
                 {
                     Items = await _context.UnitOfMeasure.Where(q => q.UnitOfMeasureId==customer.UnitOfMeasurePreference).FirstOrDefaultAsync();
 
                 }
                 else
                 {
+                    if (prodcut==null)
+                    {
+                        return Ok();
+                    }
                     Items = await _context.UnitOfMeasure.Where(q => q.UnitOfMeasureId == prodcut.UnitOfMeasureId).FirstOrDefaultAsync();
                 }
             }
