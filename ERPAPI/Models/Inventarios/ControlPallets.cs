@@ -77,7 +77,7 @@ namespace ERPAPI.Models
         public int EsIngreso { get; set; }
         public int EsSalida { get; set; }
         public int SubTotal { get; set; }
-        public int TotalSacos { get; set; }
+        public double TotalSacos { get; set; }
         public int TotalSacosPolietileno { get; set; }
 
         public int TotalSacosYute { get; set; }
