@@ -127,5 +127,7 @@ namespace ERPAPI.Models
 
         public List<CustomerContractLines> customerContractLines { get; set; }
 
+        public List<CustomerContractLinesTerms> customerContractLinesTerms  { get; set; }
+
     }
 }

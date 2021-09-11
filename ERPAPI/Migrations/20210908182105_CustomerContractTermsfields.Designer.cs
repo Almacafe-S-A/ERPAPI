@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210908182105_CustomerContractTermsfields")]
+    partial class CustomerContractTermsfields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3169,9 +3171,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ContractTermId");
+                    b.Property<int>("ContractTermId");
 
-                    b.Property<long>("CustomerContractId");
+                    b.Property<long?>("CustomerContractId");
 
                     b.Property<int>("Position");
 
@@ -11446,12 +11448,12 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.CustomerContractTerms", "CustomerContractTerm")
                         .WithMany()
-                        .HasForeignKey("ContractTermId");
-
-                    b.HasOne("ERPAPI.Models.CustomerContract", "CustomerContract")
-                        .WithMany("customerContractLinesTerms")
-                        .HasForeignKey("CustomerContractId")
+                        .HasForeignKey("ContractTermId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.CustomerContract")
+                        .WithMany("customerContractLinesTerms")
+                        .HasForeignKey("CustomerContractId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerContractTerms", b =>

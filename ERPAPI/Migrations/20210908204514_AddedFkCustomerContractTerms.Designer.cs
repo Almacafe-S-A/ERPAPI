@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210908204514_AddedFkCustomerContractTerms")]
+    partial class AddedFkCustomerContractTerms
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3169,7 +3171,7 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ContractTermId");
+                    b.Property<int>("ContractTermId");
 
                     b.Property<long>("CustomerContractId");
 
@@ -11446,7 +11448,8 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.CustomerContractTerms", "CustomerContractTerm")
                         .WithMany()
-                        .HasForeignKey("ContractTermId");
+                        .HasForeignKey("ContractTermId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.CustomerContract", "CustomerContract")
                         .WithMany("customerContractLinesTerms")

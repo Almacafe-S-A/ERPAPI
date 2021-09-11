@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210908171512_CustomerContractTermsx")]
+    partial class CustomerContractTermsx
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3169,9 +3171,7 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("ContractTermId");
-
-                    b.Property<long>("CustomerContractId");
+                    b.Property<int>("ContractTermId");
 
                     b.Property<int>("Position");
 
@@ -3183,8 +3183,6 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("ContractTermId");
 
-                    b.HasIndex("CustomerContractId");
-
                     b.ToTable("CustomerContractLinesTerms");
                 });
 
@@ -3194,15 +3192,9 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
                     b.Property<int>("Position");
 
                     b.Property<long>("ProductId");
-
-                    b.Property<string>("Servicio");
 
                     b.Property<string>("Term");
 
@@ -3211,10 +3203,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("TypeInvoiceId");
 
                     b.Property<string>("TypeInvoiceName");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("Id");
 
@@ -11446,11 +11434,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.CustomerContractTerms", "CustomerContractTerm")
                         .WithMany()
-                        .HasForeignKey("ContractTermId");
-
-                    b.HasOne("ERPAPI.Models.CustomerContract", "CustomerContract")
-                        .WithMany("customerContractLinesTerms")
-                        .HasForeignKey("CustomerContractId")
+                        .HasForeignKey("ContractTermId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
