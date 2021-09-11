@@ -32,6 +32,8 @@
     <Compile Remove="Migrations\20210820162038_TipoMonedaLiquidacion.Designer.cs" />
     <Compile Remove="Migrations\20210820174856_AddedFieldsLiquidacion.cs" />
     <Compile Remove="Migrations\20210820174856_AddedFieldsLiquidacion.Designer.cs" />
+    <Compile Remove="Migrations\20210908171340_CustomerContractTerms.cs" />
+    <Compile Remove="Migrations\20210908171340_CustomerContractTerms.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />

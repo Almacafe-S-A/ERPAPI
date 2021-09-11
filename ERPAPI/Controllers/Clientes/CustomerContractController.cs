@@ -112,6 +112,31 @@ namespace ERPAPI.Controllers
         }
 
 
+
+        /// <summary>
+        /// Obtiene el detalle del contrato
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetCustomerContractLinesTerms(int id)
+        {
+            List<CustomerContractLinesTerms> Items = new List<CustomerContractLinesTerms>();
+            try
+            {
+                Items = await _context.CustomerContractLinesTerms.Where(q => q.CustomerContractId == id).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         [HttpGet("[action]/{CustomerId}")]
         public async Task<IActionResult> GetCustomerContractByCustomerId(Int64 CustomerId)
         {
@@ -141,7 +166,10 @@ namespace ERPAPI.Controllers
             CustomerContract Items = new CustomerContract();
             try
             {
-                Items = await _context.CustomerContract.Where(q => q.CustomerContractId == CustomerContractId).FirstOrDefaultAsync();
+                Items = await _context.CustomerContract
+                    .Include(i => i.customerContractLines)
+                    .Include(i => i.customerContractLinesTerms)
+                    .Where(q => q.CustomerContractId == CustomerContractId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -215,6 +243,26 @@ namespace ERPAPI.Controllers
 
                         });
                         
+                    }
+
+                    List<CustomerContractTerms> terminos = await _context.CustomerContractTerms
+                        .Where(q => q.ProductId ==  _CustomerContractq.ProductId && q.TypeInvoiceId == _CustomerContractq.TypeInvoiceId)
+                        .OrderBy(o => o.Position)
+                        .ToListAsync();
+
+                    _CustomerContractq.customerContractLinesTerms = new List<CustomerContractLinesTerms>();
+
+
+                    foreach (var item in terminos)
+                    {
+                        _CustomerContractq.customerContractLinesTerms.Add(
+                            new CustomerContractLinesTerms {
+                                ContractTermId = item.Id,
+                                Position = item.Position,
+                                Term = item.Term,
+                                TermTitle = item.TermTitle                        
+                            }                          
+                        );
                     }
                     
 

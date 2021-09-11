@@ -11,6 +11,10 @@ namespace ERPAPI.Models
     {
         public int Id { get; set; }
 
+        public int Position { get; set; }
+
+        public string  TermTitle { get; set; }
+
         public string Term { get; set; }
 
         
@@ -19,7 +23,17 @@ namespace ERPAPI.Models
 
         public string TypeInvoiceName { get; set; }
 
-        public int Pro { get; set; }
+        public Int64 ProductId { get; set; }
+
+        [ForeignKey("ProductId")]
+        public Product Product{ get; set; }
+
+        public string Servicio { get; set; }
+
+        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaModificacion { get; set; }
+        public string UsuarioCreacion { get; set; }
+        public string UsuarioModificacion { get; set; }
 
     }
 }
