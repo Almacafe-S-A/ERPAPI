@@ -59,7 +59,7 @@ namespace ERPAPI.Models
         public string SubProductName { get; set; }
 
         [Display(Name = "Unidad de medida")]
-        public Int64 UnitOfMeasureId { get; set; }
+        public Int64? UnitOfMeasureId { get; set; }
 
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
@@ -70,7 +70,7 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Cantidad")]
-        public double Quantity { get; set; }
+        public decimal Quantity { get; set; }
 
         [Display(Name = "Fecha de Creación")]
         public DateTime? FechaCreacion { get; set; }

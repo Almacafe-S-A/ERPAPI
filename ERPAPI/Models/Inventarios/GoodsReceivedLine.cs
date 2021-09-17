@@ -16,7 +16,7 @@ namespace ERPAPI.Models
         [ForeignKey("GoodsReceivedId")]
         public GoodsReceived GoodsReceived { get; set; }
         [Display(Name = "Unidad de Medida")]
-        public Int64 UnitOfMeasureId { get; set; }
+        public Int64? UnitOfMeasureId { get; set; }
 
         [Display(Name = "Unidad de Medida")]
         public string UnitOfMeasureName { get; set; }
@@ -29,7 +29,7 @@ namespace ERPAPI.Models
         public string ProductName { get; set; }
 
         [Display(Name = "Producto Cliente")]
-        public Int64 SubProductId { get; set; }
+        public Int64? SubProductId { get; set; }
         [ForeignKey("SubProductId")]
         public SubProduct SubProduct { get; set; }
         [Display(Name = "Producto Cliente")]
@@ -42,7 +42,7 @@ namespace ERPAPI.Models
         [Display(Name = "Cantidad")]
         public decimal Quantity { get; set; }
         [Display(Name = "Sacos")]
-        public int QuantitySacos { get; set; }
+        public decimal? QuantitySacos { get; set; }
 
         [Display(Name = "Precio")]
         public decimal Price { get; set; }
@@ -93,9 +93,9 @@ namespace ERPAPI.Models
         [Display(Name = "Estiba")]
         public Int64 ControlPalletsId { get; set; }
         [Display(Name = "Cantidad")]
-        public int Quantity { get; set; }
+        public decimal Quantity { get; set; }
         [Display(Name = "Sacos")]
-        public int QuantitySacos { get; set; }
+        public decimal QuantitySacos { get; set; }
 
         [Display(Name = "Precio")]
         public decimal Price { get; set; }

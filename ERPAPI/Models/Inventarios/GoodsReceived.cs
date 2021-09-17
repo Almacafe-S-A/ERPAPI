@@ -38,7 +38,7 @@ namespace ERPAPI.Models
         public DateTime DocumentDate { get; set; }
 
         [Display(Name = "Fecha de vencimiento")]
-        public DateTime ExpirationDate { get; set; }
+        public DateTime? ExpirationDate { get; set; }
 
         [Display(Name = "Sucursal")]
         public Int64 BranchId { get; set; }
@@ -46,27 +46,19 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
 
-        public Int64 IdEstado { get; set; }
+        public Int64? IdEstado { get; set; }
+
         public string Estado { get; set; }
-
-        [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
-
-        [Display(Name = "Moneda tasa")]
-        public decimal Currency { get; set; }
 
 
         [Display(Name = "Bodega")]
-        public int WarehouseId { get; set; }
+        public int? WarehouseId { get; set; }
 
         [Display(Name = "Bodega")]
         public string WarehouseName { get; set; }
 
         [Display(Name = "Producto Cliente")]
-        public Int64 SubProductId { get; set; }
+        public Int64? SubProductId { get; set; }
 
         [Display(Name = "Producto Cliente")]
         public string SubProductName { get; set; }
@@ -97,25 +89,25 @@ namespace ERPAPI.Models
         public Int64 WeightBallot { get; set; }
 
         [Display(Name = "Peso bruto")]
-        public double PesoBruto { get; set; }
+        public double? PesoBruto { get; set; }
 
         [Display(Name = "Tara de transporte")]
-        public double TaraTransporte { get; set; }
+        public double? TaraTransporte { get; set; }
 
         [Display(Name = "Peso Neto")]
-        public double PesoNeto { get; set; }
+        public double? PesoNeto { get; set; }
 
         [Display(Name = "Tara unidad de medida")]
-        public double TaraUnidadMedida { get; set; }
+        public double? TaraUnidadMedida { get; set; }
 
         [Display(Name = "Peso Neto 2")]
-        public double PesoNeto2 { get; set; }
+        public double? PesoNeto2 { get; set; }
 
         [Display(Name = "Comentarios")]
         public string Comments { get; set; }
 
         [Display(Name = "Tara de camión")]
-        public double TaraCamion { get; set; }
+        public double? TaraCamion { get; set; }
 
         [Display(Name = "Fecha de creación")]
         public DateTime? FechaCreacion { get; set; }
