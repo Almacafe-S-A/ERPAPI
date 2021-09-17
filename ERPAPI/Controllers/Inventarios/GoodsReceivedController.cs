@@ -252,22 +252,101 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_Alertq));
         }
+
+
+
+
+        GoodsReceived ToGoodsReceived(dynamic dto)
+        {
+            try
+            {
+                GoodsReceived goodsReceived = new GoodsReceived
+                {
+                    GoodsReceivedId = dto.GoodsReceivedId,
+                    CustomerId = dto.CustomerId,
+                    CustomerName = dto.CustomerName,
+                    ControlId = dto.ControlId,
+                    CountryId = dto.CountryId,
+                    VigilanteId = dto.VigilanteId,
+                    VigilanteName = dto.VigilanteName,
+                    CountryName = dto.CountryName,
+                    BranchId = dto.BranchId,
+                    BranchName = dto.BranchName,
+                    WarehouseId = 0,
+                    WarehouseName = dto.WarehouseName,
+                    ProductId = dto.ProductId,
+                    ProductName = dto.ProductName,
+                    SubProductId = 0,
+                    SubProductName = dto.SubProductName,
+                    OrderDate = dto.OrderDate,
+                    DocumentDate = dto.DocumentDate,
+                    ExpirationDate = DateTime.Now,
+                    Name = dto.Name,
+                    Reference = dto.Reference,
+                    ExitTicket = dto.ExitTicket,
+                    Placa = dto.Placa,
+                    Marca = dto.Marca,
+                    IdEstado = 0,
+                    Estado = dto.Estado,
+                    
+                    WeightBallot = dto.WeightBallot,
+                    PesoBruto = dto.PesoBruto,
+                    TaraTransporte = dto.TaraTransporte,
+                    TaraCamion = dto.TaraCamion,
+                    PesoNeto = dto.PesoNeto,
+                    TaraUnidadMedida = dto.TaraUnidadMedida,
+                    PesoNeto2 = dto.PesoNeto2,
+                    Comments = dto.Comments,
+                    FechaCreacion = dto.FechaCreacion,
+                    FechaModificacion = dto.FechaModificacion,
+                    UsuarioCreacion = dto.UsuarioCreacion,
+                    UsuarioModificacion = dto.UsuarioModificacion,
+                    //_GoodsReceivedLine = dto._GoodsReceivedLine,
+
+
+
+
+                };
+
+                return goodsReceived;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+
+
+
+
+
+
+
+        }
+
+
         /// <summary>
         /// Inserta una nueva GoodsReceived
         /// </summary>
         /// <param name="_GoodsReceived"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsReceived>> Insert([FromBody]GoodsReceivedDTO _GoodsReceived)
+        public async Task<ActionResult<GoodsReceived>> Insert([FromBody] GoodsReceived _GoodsReceived)
         {
+
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
+            //GoodsReceived _GoodsReceived = new GoodsReceived();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
                     {
+
                         _GoodsReceivedq = _GoodsReceived;
+                        //_GoodsReceived = ToGoodsReceived(dto);
+
 
                         BoletaDeSalida _boletadesalida = new BoletaDeSalida
                         {
@@ -281,8 +360,8 @@ namespace ERPAPI.Controllers
                             Marca = _GoodsReceived.Marca,
                             Placa = _GoodsReceived.Placa,
                             Motorista = _GoodsReceived.Name,
-                            Quantity = _GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
-                            SubProductId = _GoodsReceivedq._GoodsReceivedLine[0].SubProductId,
+                            Quantity =(decimal) _GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
+                            SubProductId = (long)_GoodsReceivedq._GoodsReceivedLine[0].SubProductId,
                             SubProductName = _GoodsReceivedq._GoodsReceivedLine[0].SubProductName,
                             CargadoId = 14,
                             Cargadoname = "Vacío",
@@ -320,7 +399,7 @@ namespace ERPAPI.Controllers
                             {
                                 //Alert AlertP = new Alert();
                                 Alert Alerta = new Alert();
-                                Alerta.DocumentId = item.SubProductId;
+                                Alerta.DocumentId = (long)item.SubProductId;
                                 Alerta.DocumentName = "LISTA PROHIBIDA";
                                 Alerta.AlertName = "Productos";
                                 Alerta.Code = "PRODUCT01";
@@ -390,8 +469,6 @@ namespace ERPAPI.Controllers
                                 KardexDate = DateTime.Now,
                                 CustomerId = _GoodsReceivedq.CustomerId,
                                 CustomerName = _GoodsReceivedq.CustomerName,
-                                CurrencyId = _GoodsReceivedq.CurrencyId,
-                                CurrencyName = _GoodsReceivedq.CurrencyName,
                                 DocumentId = _GoodsReceivedq.GoodsReceivedId,
                                 UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion,
                                 UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion,
@@ -439,9 +516,9 @@ namespace ERPAPI.Controllers
 
                             if (_ControlPalletsq != null)
                             {
-                                _ControlPalletsq.QQPesoBruto = _GoodsReceivedq.PesoBruto;
-                                _ControlPalletsq.QQPesoNeto = _GoodsReceivedq.PesoNeto;
-                                _ControlPalletsq.QQPesoFinal = _GoodsReceivedq.PesoNeto2;
+                                _ControlPalletsq.QQPesoBruto = _GoodsReceivedq.PesoBruto==null?0 : (double)_GoodsReceivedq.PesoBruto;
+                                _ControlPalletsq.QQPesoNeto = _GoodsReceivedq.PesoNeto == null ? 0 : (double)_GoodsReceivedq.PesoNeto;
+                                _ControlPalletsq.QQPesoFinal = _GoodsReceivedq.PesoNeto2 == null ? 0 : (double)_GoodsReceivedq.PesoNeto2;
 
                                 _context.Entry(_ControlPalletsq).CurrentValues.SetValues((_ControlPalletsq));
                             }

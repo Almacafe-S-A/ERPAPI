@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210916161450_GoodsreceivedCurrency")]
+    partial class GoodsreceivedCurrency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -696,7 +698,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("SubProductName");
 
-                    b.Property<long?>("UnitOfMeasureId");
+                    b.Property<long>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
 
@@ -5504,6 +5506,12 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CountryName");
 
+                    b.Property<string>("Currency");
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
+
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -5514,13 +5522,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("ExitTicket");
 
-                    b.Property<DateTime?>("ExpirationDate");
+                    b.Property<DateTime>("ExpirationDate");
 
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<long?>("IdEstado");
+                    b.Property<long>("IdEstado");
 
                     b.Property<string>("Impreso");
 
@@ -5530,11 +5538,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("OrderDate");
 
-                    b.Property<double?>("PesoBruto");
+                    b.Property<double>("PesoBruto");
 
-                    b.Property<double?>("PesoNeto");
+                    b.Property<double>("PesoNeto");
 
-                    b.Property<double?>("PesoNeto2");
+                    b.Property<double>("PesoNeto2");
 
                     b.Property<string>("Placa");
 
@@ -5544,15 +5552,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Reference");
 
-                    b.Property<long?>("SubProductId");
+                    b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
 
-                    b.Property<double?>("TaraCamion");
+                    b.Property<double>("TaraCamion");
 
-                    b.Property<double?>("TaraTransporte");
+                    b.Property<double>("TaraTransporte");
 
-                    b.Property<double?>("TaraUnidadMedida");
+                    b.Property<double>("TaraUnidadMedida");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -5603,15 +5611,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Quantity");
 
-                    b.Property<decimal?>("QuantitySacos");
+                    b.Property<decimal>("QuantitySacos");
 
-                    b.Property<long?>("SubProductId");
+                    b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
 
                     b.Property<decimal>("Total");
 
-                    b.Property<long?>("UnitOfMeasureId");
+                    b.Property<long>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
 
@@ -11774,7 +11782,8 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()
-                        .HasForeignKey("SubProductId");
+                        .HasForeignKey("SubProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Horario", b =>

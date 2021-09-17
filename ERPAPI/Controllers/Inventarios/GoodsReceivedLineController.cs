@@ -184,13 +184,13 @@ namespace ERPAPI.Controllers
             try
             {
                 SubProduct Subproducto = new SubProduct();
-                var Subproducto01 = await GetSubProductById(_GoodsReceivedLine.SubProductId);
+                var Subproducto01 = await GetSubProductById((long)_GoodsReceivedLine.SubProductId);
                 Subproducto = ((SubProduct)Subproducto01.Value);
                 if (Subproducto.ProductTypeId == 3)
                 {
                     Alert AlertP = new Alert();
                     Alert Alerta = new Alert();
-                    Alerta.DocumentId = _GoodsReceivedLine.SubProductId;
+                    Alerta.DocumentId = (long)_GoodsReceivedLine.SubProductId;
                     Alerta.DocumentName = "LISTA PROHIBIDA";
                     Alerta.AlertName = "Productos";
                     Alerta.Code = "PRODUCT01";
@@ -259,13 +259,13 @@ namespace ERPAPI.Controllers
             {
                 SubProduct Subproducto = new SubProduct();
 
-                var Subproducto01 = await GetSubProductById(_GoodsReceivedLine.SubProductId);
+                var Subproducto01 = await GetSubProductById((long)_GoodsReceivedLine.SubProductId);
                 Subproducto = ((SubProduct)Subproducto01.Value);
                 if (Subproducto.ProductTypeId == 3)
                 {
                     Alert AlertP = new Alert();
                     Alert Alerta = new Alert();
-                    Alerta.DocumentId = _GoodsReceivedLine.SubProductId;
+                    Alerta.DocumentId = (long)_GoodsReceivedLine.SubProductId;
                     Alerta.DocumentName = "LISTA PROHIBIDA";
                     Alerta.AlertName = "Productos";
                     Alerta.Code = "PRODUCT01";
