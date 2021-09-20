@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class GoodsReceived
+    public class ReciboMercaderias
     {
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -115,7 +115,13 @@ namespace ERPAPI.Models
         //  public List<GoodsReceivedLine> _GoodsReceivedLine = new List<GoodsReceivedLine>();
         public List<GoodsReceivedLine> _GoodsReceivedLine { get; set; } = new List<GoodsReceivedLine>();
 
-        //   public Kardex Kardex { get; set; }
+     //   public Kardex Kardex { get; set; }
+    }
+
+
+    public class GoodsReceivedDTO: GoodsReceived
+    {
+        public Kardex Kardex { get; set; } = new Kardex();
     }
 
 
