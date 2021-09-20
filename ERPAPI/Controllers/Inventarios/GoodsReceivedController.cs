@@ -280,15 +280,10 @@ namespace ERPAPI.Controllers
                     SubProductName = dto.SubProductName,
                     OrderDate = dto.OrderDate,
                     DocumentDate = dto.DocumentDate,
-                    ExpirationDate = DateTime.Now,
-                    Name = dto.Name,
-                    Reference = dto.Reference,
-                    ExitTicket = dto.ExitTicket,
+                    Motorista = dto.Motorista,
+                    BoletaSalidaId = dto.BoletaSalidaId,
                     Placa = dto.Placa,
                     Marca = dto.Marca,
-                    IdEstado = 0,
-                    Estado = dto.Estado,
-                    
                     WeightBallot = dto.WeightBallot,
                     PesoBruto = dto.PesoBruto,
                     TaraTransporte = dto.TaraTransporte,
@@ -359,7 +354,7 @@ namespace ERPAPI.Controllers
                             FechaModificacion = DateTime.Now,
                             Marca = _GoodsReceived.Marca,
                             Placa = _GoodsReceived.Placa,
-                            Motorista = _GoodsReceived.Name,
+                            Motorista = _GoodsReceived.Motorista,
                             Quantity =(decimal) _GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
                             SubProductId = (long)_GoodsReceivedq._GoodsReceivedLine[0].SubProductId,
                             SubProductName = _GoodsReceivedq._GoodsReceivedLine[0].SubProductName,
@@ -375,11 +370,14 @@ namespace ERPAPI.Controllers
 
                         };
 
+
+                        
+
                         _context.BoletaDeSalida.Add(_boletadesalida);
                          await  _context.SaveChangesAsync();
 
 
-                        _GoodsReceivedq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
+                        _GoodsReceivedq.BoletaSalidaId = _boletadesalida.BoletaDeSalidaId;
 
                         _context.GoodsReceived.Add(_GoodsReceivedq);
                         // await _context.SaveChangesAsync();
@@ -502,6 +500,13 @@ namespace ERPAPI.Controllers
                            .FirstOrDefaultAsync();
                             controlPallets.Estado = "Recibido";
                              _context.ControlPallets.Update(controlPallets);
+                            _GoodsReceivedq.SubProductName = controlPallets.SubProductName;
+                            Boleto_Sal boleto = _context.Boleto_Sal.Where(q => q.clave_e > controlPallets.WeightBallot).FirstOrDefault();
+                            _GoodsReceivedq.TaraTransporte = boleto != null ? boleto.peso_s:0 ;
+                        }
+                        else
+                        {
+                            _GoodsReceivedq.SubProductName = "Productos Varios No Pesado";
                         }
 
                         await _context.SaveChangesAsync();
