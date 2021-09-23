@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210923135314_removeduomcontract")]
+    partial class removeduomcontract
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3057,19 +3059,17 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<DateTime?>("FechaContrato");
+                    b.Property<DateTime>("FechaContrato");
 
                     b.Property<DateTime>("FechaCreacion");
 
-                    b.Property<DateTime?>("FechaInicioContrato");
+                    b.Property<DateTime>("FechaInicioContrato");
 
                     b.Property<DateTime>("FechaModificacion");
 
-                    b.Property<DateTime?>("FechaVencimiento");
+                    b.Property<DateTime>("FechaVencimiento");
 
                     b.Property<long?>("IdEstado");
-
-                    b.Property<decimal?>("IncrementoAnual");
 
                     b.Property<string>("Manager");
 
@@ -3078,8 +3078,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Observcion");
 
                     b.Property<double>("Papeleria");
-
-                    b.Property<int?>("Plazo");
 
                     b.Property<bool?>("PolizaPropia");
 
@@ -3219,9 +3217,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("Position", "ProductId", "TypeInvoiceId")
-                        .IsUnique();
 
                     b.ToTable("CustomerContractTerms");
                 });

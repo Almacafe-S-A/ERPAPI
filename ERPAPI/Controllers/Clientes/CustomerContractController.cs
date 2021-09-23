@@ -110,6 +110,32 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+        
+
+
+        /// <summary>
+        /// Obtiene el detalle del contrato
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> CustomerContractLinesTermsById(int id)
+        {
+            CustomerContractLinesTerms Item = new CustomerContractLinesTerms();
+            try
+            {
+                Item = await _context.CustomerContractLinesTerms.Where(q => q.Id == id).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Item));
+        }
 
 
 
@@ -221,6 +247,15 @@ namespace ERPAPI.Controllers
                     _CustomerContractq.UsuarioCreacion = User.Identity.Name;
                     _CustomerContractq.ProductId = salesOrder.ProductId;
                     _CustomerContractq.ProductName = salesOrder.ProductName;
+                    _CustomerContractq.TypeInvoiceId = salesOrder.TypeInvoiceId;
+                    _CustomerContractq.TypeInvoiceName = salesOrder.TypeInvoiceName;
+                    _CustomerContractq.ComisionMax = salesOrder.ComisionMax;
+                    _CustomerContractq.ComisionMin = salesOrder.ComisionMin;
+                    _CustomerContractq.PrecioBaseProducto = salesOrder.PrecioBaseProducto;
+                    _CustomerContractq.Plazo = salesOrder.PlazoMeses;
+                    _CustomerContractq.FechaInicioContrato = null;
+                    _CustomerContractq.FechaVencimiento = null;
+                    _CustomerContractq.IncrementoAnual = salesOrder.IncrementoAnual;
                     _CustomerContractq.customerContractLines = new List<CustomerContractLines>();
 
                     foreach (var item in salesOrder.SalesOrderLines)
