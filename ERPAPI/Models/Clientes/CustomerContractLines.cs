@@ -18,7 +18,7 @@ namespace ERPAPI.Models
         [ForeignKey("SubProductId")]
         public SubProduct SubProduct { get; set; }
         public string SubProductName { get; set; }
-        public Int64 UnitOfMeasureId { get; set; }
+        public Int64? UnitOfMeasureId { get; set; }
         [ForeignKey("UnitOfMeasureId")]
         public string UnitOfMeasureName { get; set; }
 

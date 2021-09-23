@@ -64,23 +64,21 @@ namespace ERPAPI.Models
         public string StorageTime { get; set; }
 
 
-        [Display(Name = "Unidad de medida")]
-        public Int64 UnitOfMeasureId { get; set; }
-        [Display(Name = "Unidad de medida")]
-        public string UnitOfMeasureName { get; set; }
 
         [Display(Name = "Recepción de la mercadería")]
         public string Reception { get; set; }
 
-        public string WareHouses { get; set; }       
+        public string WareHouses { get; set; }
 
-      
+        public int? Plazo { get; set; }
+
+
         [Display(Name = "Fecha de contrato")]
-        public DateTime FechaContrato { get; set; }
+        public DateTime? FechaContrato { get; set; }
 
-        public DateTime FechaInicioContrato { get; set; }
+        public DateTime? FechaInicioContrato { get; set; }
 
-        public DateTime FechaVencimiento { get; set; }
+        public DateTime? FechaVencimiento { get; set; }
 
         [Display(Name = "Papelería")]
         public double Papeleria { get; set; }
@@ -93,6 +91,8 @@ namespace ERPAPI.Models
         public decimal? ComisionMax { get; set; }
 
         public decimal? PrecioServicio { get; set; }
+
+        public decimal? IncrementoAnual { get; set; }
 
         public bool? PolizaPropia { get; set; } 
 
