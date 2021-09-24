@@ -259,10 +259,15 @@ namespace ERPAPI.Controllers
                                  .Where(q => q.ControlPalletsId == _ControlPallets.ControlPalletsId)
                                     select c
                                 ).FirstOrDefaultAsync();
+                _ControlPallets.SubProductName = _ControlPallets.SubProductId == 0 ? "Productos Varios" : _ControlPallets.SubProductName;
+                _ControlPallets.SubProductId=_ControlPallets.SubProductId==0? null: _ControlPallets.SubProductId;
+                _ControlPallets.UnitOfMeasureId = _ControlPallets.UnitOfMeasureId == 0 ? null : _ControlPallets.UnitOfMeasureId;
+                
 
                 _context.Entry(_ControlPalletsq).CurrentValues.SetValues((_ControlPallets));
 
                 //_context.ControlPallets.Update(_ControlPalletsq);
+                
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
