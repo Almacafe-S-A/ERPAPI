@@ -174,6 +174,13 @@ namespace ERPAPI.Controllers
                                               select c
                                 ).FirstOrDefaultAsync();
 
+                SubProduct product = await _context.SubProduct.Where(q => q.SubproductId == _ControlPalletsLine.SubProductId)
+                    .FirstOrDefaultAsync();
+                if (product!=null)
+                {
+                    _ControlPalletsLine.SubProductName = product.ProductName;
+                }
+
                 _context.Entry(_ControlPalletsLineq).CurrentValues.SetValues((_ControlPalletsLine));
 
                 //_context.ControlPalletsLine.Update(_ControlPalletsLineq);
