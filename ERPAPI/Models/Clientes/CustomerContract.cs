@@ -124,6 +124,16 @@ namespace ERPAPI.Models
 
         [Display(Name = "Usuario de Modificación")]
         public string UsuarioModificacion { get; set; }
+        //LLave para el contrato de origen del adendum
+        public Int64? CustomerContractId_Source { get; set; }
+        [ForeignKey("CustomerContractId_Source")]
+        public CustomerContract CustomerContractAdendum { get; set; }
+
+        public int? CustomerContractType { get; set; }
+
+        public string CustomerContractTypeName { get; set; }
+
+        public int? AdendumNo { get; set; }
 
         public List<CustomerContractLines> customerContractLines { get; set; }
 
