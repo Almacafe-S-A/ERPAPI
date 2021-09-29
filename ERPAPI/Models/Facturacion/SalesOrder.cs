@@ -114,6 +114,10 @@ namespace ERPAPI.Models
 
         public string Impreso { get; set; }
 
+        public Int64? CustomerContractId_Source { get; set; }
+        [ForeignKey("CustomerContractId_Source")]
+        public CustomerContract CustomerContractSource { get; set; }
+
         public List<SalesOrderLine> SalesOrderLines { get; set; } = new List<SalesOrderLine>();
 
         public DateTime FechaCreacion { get; set; }

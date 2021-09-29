@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210929150534_fkCustoermContractAdendum")]
+    partial class fkCustoermContractAdendum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3039,8 +3041,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AdendumNo");
-
                     b.Property<decimal?>("ComisionMax");
 
                     b.Property<decimal?>("ComisionMin");
@@ -3049,11 +3049,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CustomerConstitution");
 
-                    b.Property<long?>("CustomerContractId_Source");
-
-                    b.Property<int?>("CustomerContractType");
-
-                    b.Property<string>("CustomerContractTypeName");
+                    b.Property<long?>("CustomerContractIdAdendum");
 
                     b.Property<long>("CustomerId");
 
@@ -3123,7 +3119,7 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("CustomerContractId");
 
-                    b.HasIndex("CustomerContractId_Source");
+                    b.HasIndex("CustomerContractIdAdendum");
 
                     b.HasIndex("IdEstado");
 
@@ -9046,8 +9042,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Customer");
 
-                    b.Property<long?>("CustomerContractId_Source");
-
                     b.Property<int>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -9119,8 +9113,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("SalesOrderId");
-
-                    b.HasIndex("CustomerContractId_Source");
 
                     b.ToTable("SalesOrder");
                 });
@@ -11429,7 +11421,7 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.CustomerContract", "CustomerContractAdendum")
                         .WithMany()
-                        .HasForeignKey("CustomerContractId_Source");
+                        .HasForeignKey("CustomerContractIdAdendum");
 
                     b.HasOne("ERPAPI.Models.Estados", "Estados")
                         .WithMany()
@@ -12364,13 +12356,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("UnitOfMeasureId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.SalesOrder", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CustomerContract", "CustomerContractSource")
-                        .WithMany()
-                        .HasForeignKey("CustomerContractId_Source");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrderLine", b =>

@@ -98,7 +98,7 @@ namespace ERPAPI.Controllers
             List<CustomerContractLines> Items = new List<CustomerContractLines>();
             try
             {
-                Items = await _context.CustomerContractLines.Where(q=>q.CustomerContractId==id).ToListAsync();
+                Items = await _context.CustomerContractLines.Where(q => q.CustomerContractId == id).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -110,7 +110,7 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
-        
+
 
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace ERPAPI.Controllers
             List<CustomerContract> Items = new List<CustomerContract>();
             try
             {
-                Items = await _context.CustomerContract.Where(q=>q.CustomerId== CustomerId).ToListAsync();
+                Items = await _context.CustomerContract.Where(q => q.CustomerId == CustomerId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -266,9 +266,9 @@ namespace ERPAPI.Controllers
                             PeriodoCobro = item.PeriodoCobro,
                             Porcentaje = item.Porcentaje,
                             Quantity = item.Quantity,
-                            Price  = item.Price,
+                            Price = item.Price,
                             SubProductId = item.SubProductId,
-                            SubProductName =  item.SubProductName,
+                            SubProductName = item.SubProductName,
                             TipoCobroId = item.TipoCobroId,
                             TipoCobroName = item.TipoCobroName,
                             UnitOfMeasureId = item.UnitOfMeasureId,
@@ -277,11 +277,11 @@ namespace ERPAPI.Controllers
 
 
                         });
-                        
+
                     }
 
                     List<CustomerContractTerms> terminos = await _context.CustomerContractTerms
-                        .Where(q => q.ProductId ==  _CustomerContractq.ProductId && q.TypeInvoiceId == _CustomerContractq.TypeInvoiceId)
+                        .Where(q => q.ProductId == _CustomerContractq.ProductId && q.TypeInvoiceId == _CustomerContractq.TypeInvoiceId)
                         .OrderBy(o => o.Position)
                         .ToListAsync();
 
@@ -295,18 +295,18 @@ namespace ERPAPI.Controllers
                                 ContractTermId = item.Id,
                                 Position = item.Position,
                                 Term = item.Term,
-                                TermTitle = item.TermTitle                        
-                            }                          
+                                TermTitle = item.TermTitle
+                            }
                         );
                     }
-                    
+
 
                 }
                 else
                 {
                     return BadRequest("No se encontro cotización");
                 }
-               
+
                 _context.CustomerContract.Add(_CustomerContractq);
                 await _context.SaveChangesAsync();
             }
@@ -319,8 +319,7 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(_CustomerContractq));
         }
-
-
+        
         /// <summary>
         /// Inserta una nueva CustomerContract
         /// </summary>
@@ -377,6 +376,42 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_CustomerContractq));
         }
 
+
+
+        /// <summary>
+        /// Actualiza la CustomerContract
+        /// </summary>
+        /// <param name="_CustomerContract"></param>
+        /// <returns></returns>
+        [HttpPut("[action]")]
+        public async Task<ActionResult<CustomerContract>> ActivarContrato([FromBody] CustomerContract _CustomerContract)
+        {
+            CustomerContract _CustomerContractq = _CustomerContract;
+            try
+            {
+                _CustomerContractq = await (from c in _context.CustomerContract
+                                 .Where(q => q.CustomerContractId == _CustomerContract.CustomerContractId)
+                                            select c
+                                ).FirstOrDefaultAsync();
+
+                //_context.Entry(_CustomerContractq).CurrentValues.SetValues((_CustomerContract));
+                _CustomerContractq.FechaInicioContrato = _CustomerContract.FechaInicioContrato;
+                _CustomerContractq.Estado = "Vigente";
+                _CustomerContractq.IdEstado = 7;
+
+
+                //_context.CustomerContract.Update(_CustomerContractq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_CustomerContractq));
+        }
         /// <summary>
         /// Elimina una CustomerContract       
         /// </summary>
