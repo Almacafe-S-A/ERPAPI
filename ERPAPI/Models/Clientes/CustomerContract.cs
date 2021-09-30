@@ -51,6 +51,8 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de contrato")]
         public Int64 TypeContractId { get; set; }
 
+        public string TypeContractName { get; set; }
+
         [Display(Name = "Nombre de contrato")]
         public string NameContract { get; set; }
 

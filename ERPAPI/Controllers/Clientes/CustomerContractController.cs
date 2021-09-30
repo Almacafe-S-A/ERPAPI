@@ -181,6 +181,31 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+
+
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetCustomerContractActiveByCustomerId(Int64 CustomerId)
+        {
+            List<CustomerContract> Items = new List<CustomerContract>();
+            try
+            {
+                Items = await _context.CustomerContract
+                    .Where(q => q.CustomerId == CustomerId && 
+                    q.Estado == "Vigente" && 
+                    q.TypeContractId == 1)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene los Datos de la CustomerContract por medio del Id enviado.
         /// </summary>
@@ -225,6 +250,15 @@ namespace ERPAPI.Controllers
                 SalesOrder salesOrder = await _context.SalesOrder
                     .Include(i => i.SalesOrderLines)
                     .Where(q => q.SalesOrderId == salesorderid).FirstOrDefaultAsync();
+                int? adendumno = null;
+                if (salesOrder.CustomerContractId_Source != null)
+                {
+                    var contract = await _context.CustomerContract
+                        .Where(q => q.CustomerContractId_Source == salesOrder.CustomerContractId_Source)
+                        .ToListAsync();
+                    adendumno = contract.Count()+1;
+                }
+
                 if (salesOrder != null)
                 {
                     _CustomerContractq.CustomerManager = salesOrder.Representante;
@@ -242,6 +276,7 @@ namespace ERPAPI.Controllers
                     _CustomerContractq.SalesOrderId = salesorderid;
                     _CustomerContractq.StorageTime = salesOrder.PlazoMeses.ToString();
                     _CustomerContractq.TypeContractId = salesOrder.TypeContractId;
+                    _CustomerContractq.TypeContractName = salesOrder.NameContract;
                     _CustomerContractq.TypeInvoiceId = salesOrder.TypeInvoiceId;
                     _CustomerContractq.TypeInvoiceName = salesOrder.TypeInvoiceName;
                     _CustomerContractq.UsuarioCreacion = User.Identity.Name;
@@ -256,6 +291,8 @@ namespace ERPAPI.Controllers
                     _CustomerContractq.FechaInicioContrato = null;
                     _CustomerContractq.FechaVencimiento = null;
                     _CustomerContractq.IncrementoAnual = salesOrder.IncrementoAnual;
+                    _CustomerContractq.AdendumNo = adendumno;
+                    _CustomerContractq.CustomerContractId_Source = salesOrder.CustomerContractId_Source;
                     _CustomerContractq.customerContractLines = new List<CustomerContractLines>();
 
                     foreach (var item in salesOrder.SalesOrderLines)
