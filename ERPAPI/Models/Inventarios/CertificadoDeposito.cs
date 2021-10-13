@@ -46,7 +46,7 @@ namespace ERPAPI.Models
         [Display(Name = "Empresa")]
         public string NombreEmpresa { get; set; }
 
-        public Int64 IdEstado { get; set; }
+        public Int64? IdEstado { get; set; }
         public string Estado { get; set; }
         public int? InsuranceId { get; set; }
         [ForeignKey("InsuranceId")]
@@ -64,7 +64,7 @@ namespace ERPAPI.Models
         [Display(Name = "No. Poliza")]
         public string NoPoliza { get; set; }
         [Display(Name = "Sujetos a pago")]
-        public double SujetasAPago { get; set; }
+        public double? SujetasAPago { get; set; }
         [Display(Name = "Fecha de vencimiento")]
         public DateTime FechaVencimientoDeposito { get; set; }
 
@@ -86,7 +86,6 @@ namespace ERPAPI.Models
         [Display(Name = "Otros Cargos")]
         public string OtrosCargos { get; set; }
 
-        [Display(Name = "Banco")]
         
         public Int64 CurrencyId { get; set; }
         [Display(Name = "Moneda")]

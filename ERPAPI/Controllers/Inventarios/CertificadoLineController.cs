@@ -72,6 +72,63 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtienne los productos de los recibos de mercaderias que han sido liquidados 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetRecibosPendientes([FromQuery(Name = "Recibos")] int[] recibos)
+        {
+
+            List<CertificadoLine> recibospendientes = new List<CertificadoLine>();
+
+            try
+            {
+                recibospendientes = await (from lineasrecibo in _context.LiquidacionLine
+                                                .Include(i => i.Liqudacion)
+                                                .Include(i => i.GoodsReceivedLine)
+                                           where
+                                           //lineasrecibo.GoodsReceived.CustomerId == customerid && 
+                                           //lineasrecibo.GoodsReceived.ProductId == servicio &&
+                                           recibos.Any(q => q == lineasrecibo.GoodsReceivedLine.GoodsReceivedId)
+                                           //  && !_context.CertificadoLine.Any(a => a.CertificadoLineId == lineasrecibo.GoodsReceiveLinedId)
+                                           select new CertificadoLine()
+                                           {
+                                               CertificadoLineId = 0
+                                               ,
+                                               UnitMeasurName = lineasrecibo.UOM
+                                               ,
+                                               UnitMeasureId = (long)lineasrecibo.GoodsReceivedLine.UnitOfMeasureId,
+                                               Quantity = (long)lineasrecibo.CantidadRecibida
+                                               ,
+                                               SubProductId = (long)lineasrecibo.SubProductId
+                                               ,
+                                               SubProductName = lineasrecibo.SubProductName
+                                               ,
+                                               //GoodsReceivedLineId = lineasrecibo.GoodsReceiveLinedId
+                                               //,
+                                               //GoodsReceivedLine = lineasrecibo
+                                               //,
+                                               Price = (long)lineasrecibo.PrecioUnitarioCIF
+                                               ,WarehouseId = (int)lineasrecibo.GoodsReceivedLine.WareHouseId
+                                               ,WarehouseName = lineasrecibo.GoodsReceivedLine.WareHouseName
+                                               ,Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF
+                                               ,CantidadDisponible = (double)lineasrecibo.CantidadRecibida
+                                               ,DerechosFiscales = lineasrecibo.ValorTotalDerechos
+
+
+                                           }).ToListAsync();
+
+                return Ok(recibospendientes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Obtiene los Datos de la CertificadoLine por medio del Id enviado.
         /// </summary>
