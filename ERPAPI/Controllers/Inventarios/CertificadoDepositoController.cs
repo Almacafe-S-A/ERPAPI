@@ -249,8 +249,9 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<CertificadoDeposito>> Insert([FromBody]CertificadoDepositoDTO _CertificadoDeposito)
         {
-            CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
+            
             SolicitudCertificadoDeposito _SolicitudCertificado = new SolicitudCertificadoDeposito();
+            CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -291,7 +292,7 @@ namespace ERPAPI.Controllers
                             ServicioName = _CertificadoDeposito.ServicioName,
                             Quantitysum = _CertificadoDeposito.Quantitysum,
                             Total= _CertificadoDeposito.Total,
-                            SujetasAPago= _CertificadoDeposito.SujetasAPago,
+                            SujetasAPago=_CertificadoDeposito.SujetasAPago==null?0: (double)_CertificadoDeposito.SujetasAPago,
                            // WarehouseId = _CertificadoDeposito.WarehouseId,
                            // WarehouseName = _CertificadoDeposito.WarehouseName,
                             Aduana = _CertificadoDeposito.Aduana,
@@ -327,16 +328,16 @@ namespace ERPAPI.Controllers
 
                         /////////////////////////////////////////////////////////////////////////
                         //////////////////Certificado////////////////////////////////////////////
-
+                        
                         _CertificadoDepositoq = _CertificadoDeposito;
                         _CertificadoDepositoq.NoCD = _SolicitudCertificado.IdSCD;
 
-                        _CertificadoDepositoq._CertificadoLine = new List<CertificadoLine>();
+                       // _CertificadoDepositoq._CertificadoLine = new List<CertificadoLine>();
 
                         foreach (var item in _CertificadoDeposito._CertificadoLine)
                         {
 
-                            _CertificadoDepositoq._CertificadoLine.Add(item);
+                           // _CertificadoDepositoq._CertificadoLine.Add(item);
                             _context.Kardex.Add( new Kardex { 
                                 DocumentDate = _CertificadoDeposito.FechaCertificado,
                                 ProducId = _CertificadoDeposito.ServicioId,
@@ -366,7 +367,29 @@ namespace ERPAPI.Controllers
                             });
 
                     }
-                        _context.CertificadoDeposito.Add(_CertificadoDepositoq);
+                        foreach (var item in _CertificadoDeposito.RecibosAsociados)
+                        {
+                            //  GoodsReceivedLine _gr = await _context.GoodsReceivedLine.Where(q => q.GoodsReceivedId == item).FirstOrDefaultAsync();
+                            RecibosCertificado _recibocertificado =
+                                new RecibosCertificado
+                                {
+                                    IdCD = _CertificadoDepositoq.IdCD,
+                                    IdRecibo = item,
+                                    productocantidadbultos = _CertificadoDeposito.Quantitysum,
+                                    productorecibolempiras = _CertificadoDeposito.Total,
+                                    //  WareHouseId = _gr.WareHouseId,
+                                    // WareHouseName = _gr.WareHouseName,
+
+                                    // UnitMeasureId =_CertificadoDeposito.
+                                };
+                            _CertificadoDeposito.Recibos += ", " + item.ToString();
+
+                            _context.RecibosCertificado.Add(_recibocertificado);
+                        }
+
+                        //_CertificadoDeposito._CertificadoLine = _CertificadoDepositoq._CertificadoLine;
+                        _context.CertificadoDeposito.Add(_CertificadoDeposito);
+                        //_CertificadoDeposito = _CertificadoDepositoq;
 
                         await _context.SaveChangesAsync();
 
@@ -389,25 +412,7 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
                          
-                        foreach (var item in _CertificadoDeposito.RecibosAsociados)
-                        {
-                          //  GoodsReceivedLine _gr = await _context.GoodsReceivedLine.Where(q => q.GoodsReceivedId == item).FirstOrDefaultAsync();
-                            RecibosCertificado _recibocertificado =
-                                new RecibosCertificado
-                                {
-                                    IdCD = _CertificadoDepositoq.IdCD,
-                                    IdRecibo = item,
-                                    productocantidadbultos = _CertificadoDeposito.Quantitysum,
-                                    productorecibolempiras = _CertificadoDeposito.Total,
-                                  //  WareHouseId = _gr.WareHouseId,
-                                   // WareHouseName = _gr.WareHouseName,
-                                    
-                                    // UnitMeasureId =_CertificadoDeposito.
-                                };
-
-                            _context.RecibosCertificado.Add(_recibocertificado);
-                        }
-
+                        
 
                         _context.Kardex.Add(_CertificadoDeposito.Kardex);
 
