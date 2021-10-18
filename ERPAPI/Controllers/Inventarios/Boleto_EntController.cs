@@ -149,7 +149,7 @@ namespace ERPAPI.Controllers
                 {
                     Items = await query
                     .OrderByDescending(q => q.clave_e)
-                         .Include(q => q.Boleto_Sal)
+                    //     .Include(q => q.Boleto_Sal)
                     //     .Where(q => q.peso_e < q.Boleto_Sal.peso_s)
                                      .ToListAsync();
                     Items = Items.Where(q => q.Boleto_Sal != null).ToList();  //////Elimina los posibles errores por boletas de entrada que no tengan salidas
