@@ -108,14 +108,15 @@ namespace ERPAPI.Controllers
                                                ,
                                                //GoodsReceivedLineId = lineasrecibo.GoodsReceiveLinedId
                                                //,
-                                               //GoodsReceivedLine = lineasrecibo
-                                               //,
+                                               ReciboId = (int)lineasrecibo.GoodsReceivedLine.GoodsReceivedId
+                                               ,
                                                Price = (long)lineasrecibo.PrecioUnitarioCIF
                                                ,WarehouseId = (int)lineasrecibo.GoodsReceivedLine.WareHouseId
                                                ,WarehouseName = lineasrecibo.GoodsReceivedLine.WareHouseName
                                                ,Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF
                                                ,CantidadDisponible = (double)lineasrecibo.CantidadRecibida
-                                               ,DerechosFiscales = lineasrecibo.ValorTotalDerechos
+                                               ,ValorUnitarioDerechos = (decimal)lineasrecibo.ValorUnitarioDerechos                                               
+                                               ,DerechosFiscales = lineasrecibo.ValorUnitarioDerechos * lineasrecibo.CantidadRecibida
 
 
                                            }).ToListAsync();

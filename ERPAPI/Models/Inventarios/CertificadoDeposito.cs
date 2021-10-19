@@ -86,10 +86,6 @@ namespace ERPAPI.Models
         [Display(Name = "Otros Cargos")]
         public string OtrosCargos { get; set; }
 
-        
-        public Int64 CurrencyId { get; set; }
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
 
         [Display(Name = "Fecha de Vencimiento")]
         public DateTime? FechaVencimientoCertificado { get; set; }
@@ -99,11 +95,14 @@ namespace ERPAPI.Models
 
         public decimal PorcentajeDeudas { get; set; }
 
+
         public decimal?  TotalDerechos { get; set; }
 
        
 
         public string Comentario { get; set; }
+
+        public string Mensaje { get; set; }
         [NotMapped]
         public string NoRecibo { get; set; }
 
