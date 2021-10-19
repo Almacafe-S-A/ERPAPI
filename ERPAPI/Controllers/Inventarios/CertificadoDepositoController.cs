@@ -262,8 +262,6 @@ namespace ERPAPI.Controllers
                         //  _SolicitudCertificado = mapper.Map<SolicitudCertificadoDeposito>(_CertificadoDeposito);
                         _SolicitudCertificado = new SolicitudCertificadoDeposito
                         {
-                            CurrencyId = _CertificadoDeposito.CurrencyId,
-                            CurrencyName = _CertificadoDeposito.CurrencyName,
                             //BankName = _CertificadoDeposito.BankName,
                             //BankId = _CertificadoDeposito.BankId,
                             Almacenaje = _CertificadoDeposito.Almacenaje,

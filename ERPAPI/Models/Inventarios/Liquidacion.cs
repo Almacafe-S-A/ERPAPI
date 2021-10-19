@@ -26,6 +26,8 @@ namespace ERPAPI.Models
 
         public string ProductName { get; set; }
 
+        public bool? Importacion { get; set; }
+
         public string Recibos { get; set; }
         [Column(TypeName = "money")]
         public decimal TasaCambio { get; set; }
