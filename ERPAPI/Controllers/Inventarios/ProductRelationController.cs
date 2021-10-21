@@ -67,19 +67,27 @@ namespace ERPAPI.Controllers
             List<ProductRelation> Items = new List<ProductRelation>();
             try
             {
-                Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
-                //Items = await (from c in _context.ProductRelation
-                //               join d in _context.SubProduct on c.SubProductId equals d.SubproductId
-                //               join e in _context.Product on c.ProductId equals e.ProductId
-                //               select new ProductRelation {
-                //                    RelationProductId =c.RelationProductId,
-                //                    SubProductId = c.SubProductId,
-                //                    ProductId = c.ProductId,
-                //                    SubProduct = d,
-                //                    Product = e
+                //Items = await _context.ProductRelation.Include(q=>q.Product).Include(q=>q.SubProduct).ToListAsync();
+                Items = await (from c in _context.ProductRelation
+                               join d in _context.SubProduct on c.SubProductId equals d.SubproductId
+                               join e in _context.Product on c.ProductId equals e.ProductId
+                               select new ProductRelation
+                               {
+                                   RelationProductId = c.RelationProductId,
+                                   SubProductId = c.SubProductId,
+                                   
+                                   ProductId = c.ProductId,
+                                   SubProduct = new SubProduct { 
+                                        ProductName = d.ProductName
+                                   },
+                                   Product = new Product {
+                                        ProductName  = e.ProductName
+                                   },
+                                   Estado = c.Estado
 
-                //               }
-                //               ).ToListAsync();
+
+                               }
+                               ).ToListAsync();
                 // Items = await _context.ProductRelation.ToListAsync();
             }
             catch (Exception ex)
