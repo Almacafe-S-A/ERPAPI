@@ -95,6 +95,68 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtienne los productos de los recibos de mercaderias que han sido liquidados 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetDetalleCertificadosPendientes([FromQuery(Name = "Recibos")] int[] certificados)
+        {
+
+            List<GoodsDeliveryAuthorizationLine> pendientes = new List<GoodsDeliveryAuthorizationLine>();
+
+            try
+            {
+                pendientes = await (from cd in _context.CertificadoLine
+                                           where
+                                           //lineasrecibo.GoodsReceived.CustomerId == customerid && 
+                                           //lineasrecibo.GoodsReceived.ProductId == servicio &&
+                                           certificados.Any(q => q == cd.IdCD)
+                                           //  && !_context.CertificadoLine.Any(a => a.CertificadoLineId == lineasrecibo.GoodsReceiveLinedId)
+                                           select new GoodsDeliveryAuthorizationLine()
+                                           {
+                                               GoodsDeliveryAuthorizationId = 0
+                                               ,
+                                               UnitOfMeasureName = cd.UnitMeasurName
+                                               ,
+                                               UnitOfMeasureId = (long)cd.UnitMeasureId,
+                                               Quantity = (long)cd.Quantity
+                                               ,
+                                               SubProductId = (long)cd.SubProductId
+                                               ,
+                                               SubProductName = cd.SubProductName
+                                               ,
+                                               //GoodsReceivedLineId = lineasrecibo.GoodsReceiveLinedId
+                                               //,
+                                               NoCertificadoDeposito = (int)cd.IdCD
+                                               ,
+                                               Price = (long)cd.Price
+                                               ,
+                                               WarehouseId = (int)cd.WarehouseId
+                                               ,
+                                               WarehouseName = cd.WarehouseName
+                                               ,
+                                               valorcertificado = cd.Amount
+                                               ,
+                                               SaldoProducto = cd.Quantity
+                                               ,
+                                               valorfinanciado = 0
+                                               ,
+                                               ValorImpuestos = 0
+                                               ,
+
+
+                                           }).ToListAsync();
+
+                return Ok(pendientes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
         /// <summary>
         /// Obtiene los Datos de la GoodsDeliveryAuthorization por medio del Id enviado.
         /// </summary>
@@ -166,9 +228,6 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
-
-
-
 
 
         /// <summary>

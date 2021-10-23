@@ -100,6 +100,71 @@ namespace ERPAPI.Controllers
             return await Task.Run(()=> Ok(Items));
         }
 
+
+
+        /// <summary>
+        /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{clienteid}/{servicioid}/{pendienteliquidacion}")]
+        public async Task<IActionResult> CertificadosPendientesCustomerService(int clienteid, int servicioid, int pendienteliquidacion)
+        {
+            List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
+            try
+            {
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (true)
+                {
+
+                    if (pendienteliquidacion == 1)
+                    {
+                        Items = await _context.CertificadoDeposito
+                        .Where(p =>
+                            //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                            p.CustomerId == clienteid &&
+                            p.ServicioId == servicioid
+                           //&& p.IdEstado != 6
+                           //&& !_context.CertificadoDeposito.Any(a => a. == p.GoodsReceivedId)
+                           )
+
+                        .OrderByDescending(b => b.IdCD).ToListAsync();
+                    }
+                    else
+                    {
+                        Items = await _context.CertificadoDeposito
+                       .Where(p =>
+                            //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                            p.CustomerId == clienteid &&
+                            p.ServicioId == servicioid
+                           //&& p.IdEstado != 6
+                           //&& _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId)
+                           )
+
+                       .OrderByDescending(b => b.IdCD).ToListAsync();
+                    }
+                }
+                else
+                {
+                    return await Task.Run(() => Ok(Items));
+                    // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
         /// <summary>
         /// Obtiene los certificados liberados
         /// </summary>

@@ -26,16 +26,14 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de documento")]
         public string Name { get; set; }
 
+        public string Certificados { get; set; }
+
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
-        [Display(Name = "Moneda")]
-        public Int64 CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
+      
 
         [Display(Name = "Banco")]
         public Int64 BankId { get; set; }
@@ -52,9 +50,6 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
         [Display(Name = "Bodega")]
-        public Int64 WareHouseId { get; set; }
-        [Display(Name = "Bodega")]
-        public string WareHouseName { get; set; }
 
         public double TotalCertificado { get; set; }
         public double TotalFinanciado { get; set; }
