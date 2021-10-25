@@ -82,25 +82,24 @@ namespace ERPAPI.Controllers
         {
 
             List<CertificadoLine> recibospendientes = new List<CertificadoLine>();
-
-            try
-            {
-                recibospendientes = await (from lineasrecibo in _context.LiquidacionLine
+            List<LiquidacionLine> liquidacionLines = _context.LiquidacionLine.Where(q => q.GoodsReceivedLine != null && recibos.Any(a => a ==q.GoodsReceivedLine.GoodsReceivedId))
+                                                 
                                                 .Include(i => i.Liqudacion)
                                                 .Include(i => i.GoodsReceivedLine)
-                                           where
-                                           //lineasrecibo.GoodsReceived.CustomerId == customerid && 
-                                           //lineasrecibo.GoodsReceived.ProductId == servicio &&
-                                           recibos.Any(q => q == lineasrecibo.GoodsReceivedLine.GoodsReceivedId)
-                                           //  && !_context.CertificadoLine.Any(a => a.CertificadoLineId == lineasrecibo.GoodsReceiveLinedId)
+                                                .ToList();
+            try
+            {
+                recibospendientes =  (from lineasrecibo in liquidacionLines
+                                          // !_context.CertificadoLine.Any(a => a.CertificadoLineId == lineasrecibo.GoodsReceiveLinedId)
                                            select new CertificadoLine()
                                            {
+                                               
                                                CertificadoLineId = 0
                                                ,
                                                UnitMeasurName = lineasrecibo.UOM
                                                ,
                                                UnitMeasureId = (long)lineasrecibo.GoodsReceivedLine.UnitOfMeasureId,
-                                               Quantity = (long)lineasrecibo.CantidadRecibida
+                                               Quantity = (decimal)lineasrecibo.CantidadRecibida
                                                ,
                                                SubProductId = (long)lineasrecibo.SubProductId
                                                ,
@@ -108,18 +107,24 @@ namespace ERPAPI.Controllers
                                                ,
                                                //GoodsReceivedLineId = lineasrecibo.GoodsReceiveLinedId
                                                //,
-                                               ReciboId = (int)lineasrecibo.GoodsReceivedLine.GoodsReceivedId
+                                               ReciboId =  (int)lineasrecibo.GoodsReceivedLine.GoodsReceivedId
                                                ,
-                                               Price = (long)lineasrecibo.PrecioUnitarioCIF
+                                               Price = (decimal)lineasrecibo.PrecioUnitarioCIF
                                                ,WarehouseId = (int)lineasrecibo.GoodsReceivedLine.WareHouseId
                                                ,WarehouseName = lineasrecibo.GoodsReceivedLine.WareHouseName
                                                ,Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF
-                                               ,CantidadDisponible = (double)lineasrecibo.CantidadRecibida
+                                               ,CantidadDisponible = (decimal)lineasrecibo.CantidadRecibida
                                                ,ValorUnitarioDerechos = (decimal)lineasrecibo.ValorUnitarioDerechos                                               
                                                ,DerechosFiscales = lineasrecibo.ValorUnitarioDerechos * lineasrecibo.CantidadRecibida
 
 
-                                           }).ToListAsync();
+                                           }).ToList();
+                int pdano = 1;
+                foreach (var item in recibospendientes)
+                {
+                    item.PdaNo = pdano;
+                    pdano++;
+                }
 
                 return Ok(recibospendientes);
             }

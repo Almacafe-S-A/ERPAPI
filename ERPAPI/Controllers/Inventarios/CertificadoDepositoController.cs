@@ -327,8 +327,6 @@ namespace ERPAPI.Controllers
                         //  _SolicitudCertificado = mapper.Map<SolicitudCertificadoDeposito>(_CertificadoDeposito);
                         _SolicitudCertificado = new SolicitudCertificadoDeposito
                         {
-                            //BankName = _CertificadoDeposito.BankName,
-                            //BankId = _CertificadoDeposito.BankId,
                             Almacenaje = _CertificadoDeposito.Almacenaje,
                             CustomerId = _CertificadoDeposito.CustomerId,
                             CustomerName = _CertificadoDeposito.CustomerName,
@@ -336,6 +334,7 @@ namespace ERPAPI.Controllers
                             EmpresaSeguro = _CertificadoDeposito.EmpresaSeguro,
                             Estado = _CertificadoDeposito.Estado,
                             FechaCertificado = _CertificadoDeposito.FechaCertificado,
+                            
                             //FechaFirma = _CertificadoDeposito.FechaFirma,
                             //FechaInicioComputo = _CertificadoDeposito.FechaInicioComputo,
                             FechaVencimientoDeposito = _CertificadoDeposito.FechaVencimientoDeposito,
@@ -379,6 +378,8 @@ namespace ERPAPI.Controllers
                                  TotalCantidad = item.TotalCantidad,
                                  UnitMeasureId = item.UnitMeasureId,
                                  UnitMeasurName = item.UnitMeasurName,
+                                 ReciboId = item.ReciboId == null ? 0 : (int)item.ReciboId
+
                             };
 
                           //  _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);

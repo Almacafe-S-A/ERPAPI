@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211025010425_detalleRecibo")]
+    partial class detalleRecibo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1176,8 +1178,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
 
-                    b.Property<decimal?>("CantidadDisponible");
-
                     b.Property<long>("CenterCostId");
 
                     b.Property<string>("CenterCostName");
@@ -1198,8 +1198,6 @@ namespace ERPAPI.Migrations
                         .HasColumnType("Money");
 
                     b.Property<decimal>("Quantity");
-
-                    b.Property<int?>("ReciboId");
 
                     b.Property<decimal>("SaldoEndoso");
 
@@ -9447,8 +9445,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("Price");
 
                     b.Property<decimal>("Quantity");
-
-                    b.Property<int>("ReciboId");
 
                     b.Property<long>("SubProductId");
 

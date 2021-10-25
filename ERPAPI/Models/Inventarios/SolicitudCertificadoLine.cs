@@ -15,6 +15,8 @@ namespace ERPAPI.Models
         public Int64 IdSCD { get; set; }
         [Display(Name = "Producto")]
 
+        public int ReciboId { get; set; }
+
         public Int64 SubProductId { get; set; }
         [ForeignKey("SubProductId")]
         public SubProduct Product { get; set; }
