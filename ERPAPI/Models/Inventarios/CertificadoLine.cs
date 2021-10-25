@@ -68,10 +68,10 @@ namespace ERPAPI.Models
 
         public decimal? ValorUnitarioDerechos { get; set; }
 
-        [NotMapped]
+        
         public int? ReciboId { get; set; }
-        [NotMapped]
-        public double? CantidadDisponible { get; set; }
+        
+        public decimal? CantidadDisponible { get; set; }
     }
 
 }
