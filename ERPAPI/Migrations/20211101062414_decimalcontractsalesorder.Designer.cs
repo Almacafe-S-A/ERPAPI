@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211101062414_decimalcontractsalesorder")]
+    partial class decimalcontractsalesorder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3148,7 +3150,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<decimal>("PeriodoCobro");
+                    b.Property<int>("PeriodoCobro");
 
                     b.Property<decimal?>("Porcentaje");
 
@@ -9135,7 +9137,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("DiscountPercentage");
 
-                    b.Property<decimal>("PeriodoCobro");
+                    b.Property<int>("PeriodoCobro");
 
                     b.Property<decimal?>("Porcentaje");
 

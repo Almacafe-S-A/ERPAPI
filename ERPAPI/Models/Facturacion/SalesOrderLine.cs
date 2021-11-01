@@ -55,7 +55,7 @@ namespace ERPAPI.Models
 
         public string TipoCobroName { get; set; }
 
-        public int PeriodoCobro { get; set; }
+        public decimal PeriodoCobro { get; set; }
 
 
         public decimal SubTotal { get; set; }
