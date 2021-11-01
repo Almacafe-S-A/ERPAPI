@@ -193,7 +193,12 @@ namespace ERPAPI.Controllers
                         _ControlPalletsq.SubProductId = _ControlPalletsq.SubProductId == 0 ? null : _ControlPalletsq.SubProductId;
                         _ControlPalletsq.WarehouseId = _ControlPalletsq.WarehouseId == 0 ? null : _ControlPalletsq.WarehouseId;
                         _ControlPalletsq.UnitOfMeasureId = _ControlPalletsq.UnitOfMeasureId == 0 ? null : _ControlPalletsq.UnitOfMeasureId;
-                        _ControlPalletsq.SubProductName = _ControlPalletsq.SubProductName == "" ? "Productos Varios" : _ControlPalletsq.SubProductName;
+                        string producto = _ControlPalletsq._ControlPalletsLine.First().SubProductName;
+                        if (_ControlPalletsq._ControlPalletsLine.Count >1&& !(bool)_ControlPalletsq.ProductoPesado)
+                        {
+                            producto = "Productos Varios";
+                        }
+                        _ControlPalletsq.SubProductName = producto;
                         //_ControlPalletsq.WeightBallot = _ControlPalletsq.WeightBallot == 0 ? null : _ControlPalletsq.WeightBallot;
 
                         

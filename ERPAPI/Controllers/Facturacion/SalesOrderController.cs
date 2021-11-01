@@ -310,8 +310,8 @@ namespace ERPAPI.Controllers
         /// <returns></returns>
 
          IActionResult ValidSalesOrder(SalesOrder salesOrder) {
-            int? plazoPrecioFijo = salesOrder.PlazoMeses;
-            int? plazoPrecioVariable = salesOrder.PlazoMeses;
+            decimal? plazoPrecioFijo = salesOrder.PlazoMeses;
+            decimal? plazoPrecioVariable = salesOrder.PlazoMeses;
             bool validaralmacenaje = true;
 
             if (salesOrder.PlazoMeses<=0)
@@ -351,7 +351,7 @@ namespace ERPAPI.Controllers
 
             foreach (var item in salesOrder.SalesOrderLines)
             {
-                int i = 0;
+                decimal i = 0;
 
                 if (item.SubProductName.ToLower().Contains("almacenaje"))
                 {

@@ -72,7 +72,7 @@ namespace ERPAPI.Models
 
         public string WareHouses { get; set; }
 
-        public int? Plazo { get; set; }
+        public decimal? Plazo { get; set; }
 
 
         [Display(Name = "Fecha de contrato")]
