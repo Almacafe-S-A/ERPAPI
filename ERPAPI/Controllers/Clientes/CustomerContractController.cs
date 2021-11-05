@@ -71,7 +71,9 @@ namespace ERPAPI.Controllers
             List<CustomerContract> Items = new List<CustomerContract>();
             try
             {
-                Items = await _context.CustomerContract.ToListAsync();
+                Items = await _context.CustomerContract
+                    .Where(q => q.CustomerContractId_Source == null)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -181,6 +183,27 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+        
+
+
+            [HttpGet("[action]/{ContractId}")]
+        public async Task<IActionResult> CustomerAdendumByContract(Int64 ContractId)
+        {
+            List<CustomerContract> Items = new List<CustomerContract>();
+            try
+            {
+                Items = await _context.CustomerContract.Where(q => q.CustomerContractId_Source == ContractId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
 
 
 
@@ -192,7 +215,7 @@ namespace ERPAPI.Controllers
             {
                 Items = await _context.CustomerContract
                     .Where(q => q.CustomerId == CustomerId && 
-                    q.Estado == "Vigente" && 
+                    //q.Estado == "Vigente" && 
                     q.TypeContractId == 1)
                     .ToListAsync();
             }
