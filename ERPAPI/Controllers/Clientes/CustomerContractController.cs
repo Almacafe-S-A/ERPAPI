@@ -241,7 +241,9 @@ namespace ERPAPI.Controllers
                 Items = await _context.CustomerContract
                     .Where(q => q.CustomerId == CustomerId && 
                     //q.Estado == "Vigente" && 
-                    q.TypeContractId == 1)
+                    //q.TypeContractId == 1
+                    q.CustomerContractId_Source == null
+                    )
                     .ToListAsync();
             }
             catch (Exception ex)
