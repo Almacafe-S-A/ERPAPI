@@ -23,6 +23,11 @@ namespace ERPAPI.Models
 
         public string TypeInvoiceName { get; set; }
 
+
+        public int? CustomerContractType { get; set; }
+
+        public string CustomerContractTypeName { get; set; }
+
         public Int64 ProductId { get; set; }
 
         [ForeignKey("ProductId")]

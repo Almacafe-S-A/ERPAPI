@@ -368,7 +368,7 @@ namespace ERPAPI.Controllers
                     }
 
                     List<CustomerContractTerms> terminos = await _context.CustomerContractTerms
-                        .Where(q => q.ProductId == _CustomerContractq.ProductId && q.TypeInvoiceId == _CustomerContractq.TypeInvoiceId)
+                        .Where(q => q.ProductId == _CustomerContractq.ProductId && q.TypeInvoiceId == _CustomerContractq.TypeInvoiceId && _CustomerContractq.TypeContractId == (long)q.CustomerContractType)
                         .OrderBy(o => o.Position)
                         .ToListAsync();
 

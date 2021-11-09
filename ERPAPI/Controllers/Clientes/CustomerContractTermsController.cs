@@ -142,8 +142,15 @@ namespace ERPAPI.Controllers
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
-                    {
-
+                    { 
+                        if (_CustomerContractTerms.Position == 0)
+                        {
+                            List<CustomerContractTerms> terminos = _context.CustomerContractTerms
+                                .Where(q => q.CustomerContractType == _CustomerContractTerms.CustomerContractType
+                                && q.ProductId == _CustomerContractTerms.ProductId
+                                && q.TypeInvoiceId == _CustomerContractTerms.TypeInvoiceId).ToList();
+                            _CustomerContractTerms.Position = terminos.Count > 0 ? (int)terminos.Max(q => q.Position) + 1 : 1;
+                        }
                         _CustomerContractTermsq = _CustomerContractTerms;
                          _context.CustomerContractTerms.Add(_CustomerContractTermsq);
                             await _context.SaveChangesAsync();
