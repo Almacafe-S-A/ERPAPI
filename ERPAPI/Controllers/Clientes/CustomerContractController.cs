@@ -309,6 +309,8 @@ namespace ERPAPI.Controllers
                     adendumno = contract.Count()+1;
                 }
 
+                CompanyInfo companyInfo = await _context.CompanyInfo.FirstOrDefaultAsync();
+
                 if (salesOrder != null)
                 {
                     _CustomerContractq.CustomerManager = salesOrder.Representante;
@@ -319,10 +321,11 @@ namespace ERPAPI.Controllers
                     _CustomerContractq.Estado = "Generado";
                     _CustomerContractq.FechaContrato = DateTime.Now;
                     _CustomerContractq.FechaCreacion = DateTime.Now;
-                    _CustomerContractq.Manager = salesOrder.FirmaAlmacafe;
+                    _CustomerContractq.Manager = companyInfo.Manager;
                     _CustomerContractq.PrecioBaseProducto = salesOrder.PrecioBaseProducto;
                     _CustomerContractq.PrecioServicio = salesOrder.PrecioBaseProducto;
                     _CustomerContractq.RTNCustomerManager = salesOrder.RTN;
+                    _CustomerContractq.RTNMANAGER = companyInfo.RTNMANAGER;
                     _CustomerContractq.SalesOrderId = salesorderid;
                     _CustomerContractq.StorageTime = salesOrder.PlazoMeses.ToString();
                     _CustomerContractq.TypeContractId = salesOrder.TypeContractId;

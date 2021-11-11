@@ -333,6 +333,11 @@ namespace ERPAPI.Controllers
 
 
                 }
+                if ((plazoPrecioFijo == salesOrder.PlazoMeses && salesOrder.TypeContractId == 2) 
+                    ||(plazoPrecioVariable== salesOrder.PlazoMeses && salesOrder.TypeContractId==2) )
+                {
+                    return Ok();
+                }
                 if (plazoPrecioFijo != 0)
                 {
                     return BadRequest("El plazo de los cobros fijos del almacenaje no coincidecon el plazo del contrato, Favor haga coincidir el encabezado con el detalle");
