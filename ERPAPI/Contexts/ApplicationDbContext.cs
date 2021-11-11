@@ -430,7 +430,7 @@ namespace ERP.Contexts
             .IsUnique(true);
 
             modelBuilder.Entity<CustomerContractTerms>()
-                .HasIndex(k => new { k.Position, k.ProductId, k.TypeInvoiceId })
+                .HasIndex(k => new { k.Position, k.ProductId, k.TypeInvoiceId ,k.CustomerContractType})
                 .IsUnique(true);
 
 
