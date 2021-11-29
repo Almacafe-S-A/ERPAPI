@@ -117,7 +117,7 @@ namespace ERPAPI.Controllers
         /// Obtiene el Listado de sucursales.
         /// </summary>
         /// <returns></returns>
-        [Authorize(Policy = "Seguridad.Sucursales por Usuario")]
+        //[Authorize(Policy = "Seguridad.Sucursales por Usuario")]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetBranchUserAssignement()
         {
