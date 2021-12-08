@@ -38,7 +38,7 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Entrada/Salida")]
-        public Int32? TypeOperationId { get; set; }
+        public TipoOperacion? TypeOperationId { get; set; }
 
         [Display(Name = "Entrada/Salida")]
         public string TypeOperationName { get; set; }
@@ -72,8 +72,6 @@ namespace ERPAPI.Models
         [Display(Name = "Bodega")]
         public string WareHouseName { get; set; }
 
-        //[Display(Name = "Recibo")]
-        //public Int64? GoodsReceivedId { get; set; }
 
         [Display(Name = "Estiba")]
         public Int64? ControlEstibaId { get; set; }
@@ -139,12 +137,6 @@ namespace ERPAPI.Models
 
         public KardexTypes KardexTypeId { get; set; }
 
-      
-
-        //[Display(Name = "Cantidad minima en existencia por producto")]
-        //public decimal? MinimumExistance { get; set; }
-
-
 
         public List<KardexLine> _KardexLine { get; set; }
 
@@ -168,10 +160,17 @@ namespace ERPAPI.Models
 
     public enum KardexTypes {
         InventarioFisico = 1,
-        MercaderriaCertificada = 2,
-        MercaderiaAutorizadaSaida = 3,
-        MercaderiaEndosada = 4
+        PendienteCertificar = 2,
+        MercaderriaCertificada = 3,
+        MercaderiaAutorizadaSalida = 4,
+        MercaderiaEndosada = 5
     
+    }
+
+    public enum TipoOperacion { 
+        Entrada = 1,
+        Salida = 2,
+        Ajuste = 3
     }
 
 }

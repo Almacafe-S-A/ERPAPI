@@ -117,6 +117,8 @@ namespace ERPAPI.Models
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
 
+        public bool? Porcertificar { get; set; }
+
 
         //  public List<GoodsReceivedLine> _GoodsReceivedLine = new List<GoodsReceivedLine>();
         public List<GoodsReceivedLine> _GoodsReceivedLine { get; set; } = new List<GoodsReceivedLine>();

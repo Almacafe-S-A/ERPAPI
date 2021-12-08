@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211204064404_AddedProductIdentification2")]
+    partial class AddedProductIdentification2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8095,13 +8097,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal?>("BrutoLPSIngreso");
 
-                    b.Property<string>("Cosecha");
-
-                    b.Property<long?>("CustomerId");
+                    b.Property<decimal>("DiferencialesUSD");
 
                     b.Property<long>("ExchangeRateId");
-
-                    b.Property<decimal?>("ExchangeRateValue");
 
                     b.Property<DateTime>("Fecha");
 
@@ -8115,8 +8113,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal?>("NetoLPSIngreso");
 
-                    b.Property<decimal?>("Otros");
-
                     b.Property<decimal?>("PercioQQPergamino");
 
                     b.Property<decimal>("PermisoExportacionUSD");
@@ -8127,13 +8123,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("PrecioBolsaUSD");
 
-                    b.Property<decimal?>("PrecioQQCalidadesInferiores");
-
                     b.Property<decimal?>("PrecioQQOro");
 
                     b.Property<decimal?>("TotalLPSEgreso");
 
                     b.Property<decimal?>("TotalLPSIngreso");
+
+                    b.Property<decimal>("TotalUSD");
 
                     b.Property<decimal>("TotalUSDEgreso");
 
@@ -8144,8 +8140,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("UtilidadUSD");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
 
                     b.HasIndex("ExchangeRateId");
 
@@ -12252,10 +12246,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.PrecioCafe", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
                     b.HasOne("ERPAPI.Models.ExchangeRate", "ExchangeRate")
                         .WithMany()
                         .HasForeignKey("ExchangeRateId")

@@ -317,7 +317,10 @@ namespace ERPAPI.Controllers
 
             try
             {
-                Items = await _context.UserBranch.Where(q => q.BranchId == DatosBrach.BranchId && q.UserId == DatosBrach.UserId).FirstOrDefaultAsync();
+                Items = await _context.UserBranch.Where(q =>                
+                 q.BranchId == DatosBrach.BranchId &&
+                 q.UserId == DatosBrach.UserId)
+                    .FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
