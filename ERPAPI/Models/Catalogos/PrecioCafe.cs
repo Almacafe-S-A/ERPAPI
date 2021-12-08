@@ -16,13 +16,21 @@ namespace ERPAPI.Models
 
         public decimal PrecioBolsaUSD { get; set; }
 
-        public decimal DiferencialesUSD { get; set; }
+        public string Cosecha { get; set; }
 
-        public decimal TotalUSD { get; set; }
+        public Int64? CustomerId { get; set; }
+
+        public Customer Customer { get; set; }
+
+        //public decimal DiferencialesUSD { get; set; }
+
+        //public decimal TotalUSD { get; set; }
 
         public Int64 ExchangeRateId { get; set; }
         [ForeignKey("ExchangeRateId")]
         public ExchangeRate ExchangeRate { get; set; }
+
+        public decimal? ExchangeRateValue { get; set; }
 
         public decimal? BrutoLPSIngreso { get; set; }
 
@@ -54,6 +62,11 @@ namespace ERPAPI.Models
         public decimal? PrecioQQOro { get; set; }
 
         public decimal? PercioQQPergamino { get; set; }
+
+        public decimal? PrecioQQCalidadesInferiores { get; set; }
+
+        public decimal? Otros { get; set; }
+
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

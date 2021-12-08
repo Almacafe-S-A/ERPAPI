@@ -42,6 +42,10 @@ namespace ERPAPI.Models
         public decimal Price { get; set; }
         [Display(Name = "Total")]
         public decimal Total { get; set; }
+
+        public decimal? SaldoporCertificar { get; set; }
+
+
         [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
 
@@ -50,6 +54,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Centro de costos")]
         public Int64 CostCenterId { get; set; }
+
+        
 
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }

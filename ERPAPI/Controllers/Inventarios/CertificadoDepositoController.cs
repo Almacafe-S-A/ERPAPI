@@ -417,7 +417,7 @@ namespace ERPAPI.Controllers
                                 WareHouseName = item.WarehouseName,
                                 UnitOfMeasureId = item.UnitMeasureId,
                                 UnitOfMeasureName = item.UnitMeasurName,
-                                TypeOperationId = 1,
+                                TypeOperationId = TipoOperacion.Entrada,
                                 TypeOperationName = "Entrada",
                                 Total = item.Amount,
                                 //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,

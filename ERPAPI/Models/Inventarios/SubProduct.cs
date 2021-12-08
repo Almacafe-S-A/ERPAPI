@@ -46,6 +46,8 @@ namespace ERPAPI.Models
         public int? UnitOfMeasureId { get; set; }
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
+
+        public TipoCaFe TipoCafe { get; set; }
         public decimal Merma { get; set; }
 
         [Display(Name = "Fecha de creación")]
@@ -61,6 +63,15 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
         public List<ProductRelation> ProductRelation { get; set; }
+
+    }
+
+    public enum TipoCaFe
+    {
+        NoesCafe = 0,
+        Oro = 1,
+        Pergamino = 2,
+        
 
     }
 

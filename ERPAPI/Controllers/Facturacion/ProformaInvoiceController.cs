@@ -317,7 +317,7 @@ namespace ERPAPI.Controllers
                         _ProformaInvoice.Kardex.DocumentDate = _ProformaInvoice.OrderDate;
                         _ProformaInvoice.Kardex.FechaCreacion = DateTime.Now;
                         _ProformaInvoice.Kardex.FechaModificacion = DateTime.Now;
-                        _ProformaInvoice.Kardex.TypeOperationId = 1;
+                        _ProformaInvoice.Kardex.TypeOperationId = TipoOperacion.Entrada;
                         _ProformaInvoice.Kardex.TypeOperationName = "Salida";
                         _ProformaInvoice.Kardex.KardexDate = DateTime.Now;
 

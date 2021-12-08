@@ -60,6 +60,10 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+
+
+
         /// <summary>
         /// Obtiene el Listado de BoletaDeSalidaes 
         /// El estado define cuales son los cai activos

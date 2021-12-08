@@ -221,7 +221,7 @@ namespace ERPAPI.Controllers
                         _PurchaseOrders.Kardex.DocumentDate = _PurchaseOrders.DatePlaced;
                         _PurchaseOrders.Kardex.FechaCreacion = DateTime.Now;
                         _PurchaseOrders.Kardex.FechaModificacion = DateTime.Now;
-                        _PurchaseOrders.Kardex.TypeOperationId = 1;
+                        _PurchaseOrders.Kardex.TypeOperationId = TipoOperacion.Salida;
                         _PurchaseOrders.Kardex.TypeOperationName = "Salida";
                         _PurchaseOrders.Kardex.KardexDate = DateTime.Now;
 

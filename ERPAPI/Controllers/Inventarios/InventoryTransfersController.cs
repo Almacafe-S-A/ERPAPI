@@ -245,7 +245,7 @@ namespace ERPAPI.Controllers
                         _InventoryTransfers.Kardex.DocumentDate = _InventoryTransfers.DateGenerated;
                         _InventoryTransfers.Kardex.FechaCreacion = DateTime.Now;
                         _InventoryTransfers.Kardex.FechaModificacion = DateTime.Now;
-                        _InventoryTransfers.Kardex.TypeOperationId = 1;
+                        _InventoryTransfers.Kardex.TypeOperationId = TipoOperacion.Entrada;
                         _InventoryTransfers.Kardex.TypeOperationName = "Salida";
                         _InventoryTransfers.Kardex.KardexDate = DateTime.Now;
 

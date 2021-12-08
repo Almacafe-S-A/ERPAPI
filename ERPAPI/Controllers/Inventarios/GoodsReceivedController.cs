@@ -100,8 +100,8 @@ namespace ERPAPI.Controllers
         /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
         /// </summary>
         /// <returns></returns>
-        [HttpGet("[action]/{clienteid}/{servicioid}/{pendienteliquidacion}")]
-        public async Task<IActionResult> GoodsReceivedCustomerService(int clienteid, int servicioid, int pendienteliquidacion)
+        [HttpGet("[action]/{clienteid}/{servicioid}/{pendienteliquidacion}/{sucursal}")]
+        public async Task<IActionResult> RecibosPendientesCertificar(int clienteid, int servicioid, int pendienteliquidacion, int sucursal)
         {
             List<GoodsReceived> Items = new List<GoodsReceived>();
             try
@@ -109,16 +109,16 @@ namespace ERPAPI.Controllers
                 var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
                 int count = user.Count();
 
-                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
-                if (branchlist.Count > 0)
+                UserBranch branch = _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id && w.BranchId == sucursal).FirstOrDefault();
+                if (branch != null)
                 {
-                    
-                    if (pendienteliquidacion==1)
+                    if (pendienteliquidacion == 1)
                     {
                         Items = await _context.GoodsReceived
-                        .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
+                        .Where(p =>p.BranchId == branch.BranchId
                             && p.CustomerId == clienteid
                             && p.ProductId == servicioid
+                            && (p.Porcertificar==null ||(bool)p.Porcertificar)
                             //&& p.IdEstado != 6
                             && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId))
 
@@ -127,8 +127,8 @@ namespace ERPAPI.Controllers
                     else
                     {
                         Items = await _context.GoodsReceived
-                       .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
-                           && p.CustomerId == clienteid
+                       .Where(p => 
+                            p.CustomerId == clienteid
                            && p.ProductId == servicioid
                            //&& p.IdEstado != 6
                            && _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId))
@@ -139,7 +139,7 @@ namespace ERPAPI.Controllers
                 else
                 {
                     return await Task.Run(() => Ok(Items));
-                   // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                    // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
                 }
             }
             catch (Exception ex)
@@ -219,45 +219,45 @@ namespace ERPAPI.Controllers
         /// <param name="_Alert"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<Alert>> InsertAlert([FromBody]Alert _Alert)
+        public async Task<ActionResult<Alert>> InsertAlert([FromBody] Alert _Alert)
         {
             Alert _Alertq = new Alert();
             try
             {
-               // using (var transaction = _context.Database.BeginTransaction())
+                // using (var transaction = _context.Database.BeginTransaction())
                 //{
-                   // try
-                   // {
-                        _Alertq = _Alert;
-                        _context.Alert.Add(_Alertq);
-                        await _context.SaveChangesAsync();
+                // try
+                // {
+                _Alertq = _Alert;
+                _context.Alert.Add(_Alertq);
+                await _context.SaveChangesAsync();
 
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _Alert.AlertId,
-                            DocType = "Alert",
-                            ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Alert.UsuarioCreacion,
-                            UsuarioModificacion = _Alert.UsuarioModificacion,
-                            UsuarioEjecucion = _Alert.UsuarioModificacion,
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = _Alert.AlertId,
+                    DocType = "Alert",
+                    ClaseInicial =
+                    Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = _Alert.UsuarioCreacion,
+                    UsuarioModificacion = _Alert.UsuarioModificacion,
+                    UsuarioEjecucion = _Alert.UsuarioModificacion,
 
-                        });
+                });
 
-                        await _context.SaveChangesAsync();
-                   //     transaction.Commit();
-                    //}
-                    //catch (Exception ex)
-                  //  {
-                       // transaction.Rollback();
-                        //_logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                      //  throw ex;
-                        // return BadRequest($"Ocurrio un error:{ex.Message}");
-                    //}
-               // }
+                await _context.SaveChangesAsync();
+                //     transaction.Commit();
+                //}
+                //catch (Exception ex)
+                //  {
+                // transaction.Rollback();
+                //_logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                //  throw ex;
+                // return BadRequest($"Ocurrio un error:{ex.Message}");
+                //}
+                // }
             }
             catch (Exception ex)
             {
@@ -326,15 +326,110 @@ namespace ERPAPI.Controllers
 
                 throw;
             }
+        }
 
 
+        private async Task<ActionResult<BoletaDeSalida>> InsertBoletaSalida(GoodsReceived _GoodsReceived) {
+            try
+            {
+                BoletaDeSalida _boletadesalida = new BoletaDeSalida
+                {
+                    BranchId = _GoodsReceived.BranchId,
+                    BranchName = _GoodsReceived.BranchName,
+                    CustomerId = _GoodsReceived.CustomerId,
+                    CustomerName = _GoodsReceived.CustomerName,
+                    DocumentDate = _GoodsReceived.DocumentDate,
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    Marca = _GoodsReceived.Marca,
+                    Placa = _GoodsReceived.Placa,
+                    Motorista = _GoodsReceived.Motorista,
+                    Quantity = (decimal)_GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
+                    SubProductId = (long)_GoodsReceived._GoodsReceivedLine[0].SubProductId,
+                    SubProductName = _GoodsReceived._GoodsReceivedLine[0].SubProductName,
+                    CargadoId = 14,
+                    Cargadoname = "Vacío",
+                    UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
+                    UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
+                    UnitOfMeasureId = _GoodsReceived._GoodsReceivedLine[0].UnitOfMeasureId,
+                    UnitOfMeasureName = _GoodsReceived._GoodsReceivedLine[0].UnitOfMeasureName,
+                    WeightBallot = _GoodsReceived.WeightBallot,
+                    VigilanteId = _GoodsReceived.VigilanteId,
+                    Vigilante = _GoodsReceived.VigilanteName,
+
+                };
+
+                _context.BoletaDeSalida.Add(_boletadesalida);
+                await _context.SaveChangesAsync();
+                return _boletadesalida;
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Error al registrar la boleta de salida: " + ex);
+            }
 
 
+        }
+
+
+        private async Task<ActionResult<SubProduct>> ValidarProductosProhibidos(GoodsReceivedLine producto,GoodsReceived goodsReceived){
+           
+            SubProduct _subproduct = _context.SubProduct
+                .Where(q => q.SubproductId == producto.SubProductId).FirstOrDefault();
+            if (_subproduct.ProductTypeId == 3)
+            {
+                //Alert AlertP = new Alert();
+                Alert Alerta = new Alert();
+                Alerta.DocumentId = (long)producto.SubProductId;
+                Alerta.DocumentName = "LISTA PROHIBIDA";
+                Alerta.AlertName = "Productos";
+                Alerta.Code = "PRODUCT01";
+                Alerta.DescriptionAlert = "Lista de producto Prohibida";
+                Alerta.FechaCreacion = Convert.ToDateTime(producto.FechaCreacion);
+                Alerta.FechaModificacion = Convert.ToDateTime(producto.FechaModificacion);
+                Alerta.UsuarioCreacion = producto.UsuarioCreacion;
+                Alerta.UsuarioModificacion = producto.UsuarioModificacion;
+                Alerta.PersonName = goodsReceived.CustomerName;
+                Alerta.Description = $"Producto Prohibido {producto.SubProductName} en recibo de mercaderia";
+                Alerta.DescriptionAlert = $"Producto Prohibido {producto.SubProductName} en recibo de mercaderia";
+                Alerta.Type = "168";
+                Alerta.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 168).FirstOrDefault().Nombre;
+                // var AlertaP = await InsertAlert(Alerta);
+                _context.Alert.Add(Alerta);
+                //await _context.SaveChangesAsync();
+
+                BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = Alerta.AlertId,
+                    DocType = "Alert",
+                    ClaseInicial =
+                    Newtonsoft.Json.JsonConvert.SerializeObject(Alerta, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = Alerta.UsuarioCreacion,
+                    UsuarioModificacion = Alerta.UsuarioModificacion,
+                    UsuarioEjecucion = Alerta.UsuarioModificacion,
+
+                });
+
+                 await _context.SaveChangesAsync();
+                return BadRequest(_subproduct);
+
+            }
+            else
+            {
+                
+                return _subproduct;
+            }
 
 
 
 
         }
+
+
 
 
         /// <summary>
@@ -347,7 +442,6 @@ namespace ERPAPI.Controllers
         {
 
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
-            //GoodsReceived _GoodsReceived = new GoodsReceived();
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -356,161 +450,38 @@ namespace ERPAPI.Controllers
                     {
 
                         _GoodsReceivedq = _GoodsReceived;
-                        //_GoodsReceived = ToGoodsReceived(dto);
-
-
-                        BoletaDeSalida _boletadesalida = new BoletaDeSalida
+                         var boletasalida = await InsertBoletaSalida(_GoodsReceivedq);
+                        if (boletasalida.Result is BadRequestObjectResult)
                         {
-                            BranchId = _GoodsReceived.BranchId,
-                            BranchName = _GoodsReceived.BranchName,
-                            CustomerId = _GoodsReceived.CustomerId,
-                            CustomerName = _GoodsReceived.CustomerName,
-                            DocumentDate = _GoodsReceived.DocumentDate,
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            Marca = _GoodsReceived.Marca,
-                            Placa = _GoodsReceived.Placa,
-                            Motorista = _GoodsReceived.Motorista,
-                            Quantity =(decimal) _GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
-                            SubProductId = (long)_GoodsReceivedq._GoodsReceivedLine[0].SubProductId,
-                            SubProductName = _GoodsReceivedq._GoodsReceivedLine[0].SubProductName,
-                            CargadoId = 14,
-                            Cargadoname = "Vacío",
-                            UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
-                            UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
-                            UnitOfMeasureId = _GoodsReceivedq._GoodsReceivedLine[0].UnitOfMeasureId,
-                            UnitOfMeasureName = _GoodsReceivedq._GoodsReceivedLine[0].UnitOfMeasureName,
-                            WeightBallot = _GoodsReceivedq.WeightBallot,  
-                            VigilanteId = _GoodsReceivedq.VigilanteId,
-                            Vigilante = _GoodsReceivedq.VigilanteName,
-
-                        };
-
-
-                        
-
-                        _context.BoletaDeSalida.Add(_boletadesalida);
-                         await  _context.SaveChangesAsync();
-
-
-                        _GoodsReceivedq.BoletaSalidaId = _boletadesalida.BoletaDeSalidaId;
-
+                            transaction.Rollback();
+                            return BadRequest(boletasalida);
+                        }                      
+                        _GoodsReceivedq.BoletaSalidaId = boletasalida.Value.BoletaDeSalidaId;
                         _context.GoodsReceived.Add(_GoodsReceivedq);
                         // await _context.SaveChangesAsync();
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
                             item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
-
-
-                            
-
-                            SubProduct _subproduct = _context.SubProduct
-                                .Where(q => q.SubproductId == item.SubProductId).FirstOrDefault();
-                                
-                                
-                            if (_subproduct.ProductTypeId == 3)
+                            var validarproductos = await ValidarProductosProhibidos(item,_GoodsReceivedq);
+                            if (validarproductos.Result is BadRequestObjectResult)// Valida si es o no producto prohibido
                             {
-                                //Alert AlertP = new Alert();
-                                Alert Alerta = new Alert();
-                                Alerta.DocumentId = (long)item.SubProductId;
-                                Alerta.DocumentName = "LISTA PROHIBIDA";
-                                Alerta.AlertName = "Productos";
-                                Alerta.Code = "PRODUCT01";
-                                Alerta.DescriptionAlert = "Lista de producto Prohibida";
-                                Alerta.FechaCreacion = Convert.ToDateTime(item.FechaCreacion);
-                                Alerta.FechaModificacion = Convert.ToDateTime(item.FechaModificacion);
-                                Alerta.UsuarioCreacion = item.UsuarioCreacion;
-                                Alerta.UsuarioModificacion = item.UsuarioModificacion;
-                                Alerta.PersonName = _GoodsReceived.CustomerName;
-                                Alerta.Description = $"Producto Prohibido {item.SubProductName} en recibo de mercaderia";
-                                Alerta.DescriptionAlert = $"Producto Prohibido {item.SubProductName} en recibo de mercaderia";
-                                Alerta.Type = "168";
-                                Alerta.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 168).FirstOrDefault().Nombre;
-                                // var AlertaP = await InsertAlert(Alerta);
-                                _context.Alert.Add(Alerta);
-                                //await _context.SaveChangesAsync();
-
-                                BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
-                                {
-                                    IdOperacion = Alerta.AlertId,
-                                    DocType = "Alert",
-                                    ClaseInicial =
-                                    Newtonsoft.Json.JsonConvert.SerializeObject(Alerta, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                    Accion = "Insertar",
-                                    FechaCreacion = DateTime.Now,
-                                    FechaModificacion = DateTime.Now,
-                                    UsuarioCreacion = Alerta.UsuarioCreacion,
-                                    UsuarioModificacion = Alerta.UsuarioModificacion,
-                                    UsuarioEjecucion = Alerta.UsuarioModificacion,
-
-                                });
-
-                               // await _context.SaveChangesAsync();
 
                             }
+                            _context.GoodsReceivedLine.Add(item); // Siempre Agrega el prodcuto
+                            var generarKardex = await GenerarKardexRecibo(item,_GoodsReceivedq,validarproductos.Value); // Genera el Kardex Fisico
 
-                            _context.GoodsReceivedLine.Add(item);
+                            item.SaldoporCertificar = item.Quantity;////Asigna el valor al saldo por certificar al detalle
 
-                            //item.Total =((decimal)item.Quantity + _KardexLine.Total);
-
-
-                            _context.Kardex.Add(new Kardex
-                            {
-                                DocumentDate = _GoodsReceivedq.DocumentDate,
-                                DocumentName = "ReciboMercaderia/GoodsReceived",
-                                DocType = 1, 
-                                ProducId = _GoodsReceivedq.ProductId,
-                                ProductName = _GoodsReceivedq.ProductName,
-                                SubProducId = item.SubProductId,
-                                SubProductName = item.SubProductName,
-                                QuantityEntry = item.Quantity,
-                                QuantityOut = 0,
-                                QuantityEntryBags = item.QuantitySacos,
-                                BranchId = _GoodsReceivedq.BranchId,
-                                BranchName = _GoodsReceivedq.BranchName,
-                                WareHouseId = item.WareHouseId,
-                                WareHouseName = item.WareHouseName,
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 1,
-                                TypeOperationName = "Entrada",
-                                Total = item.Total,
-                                TotalBags = item.QuantitySacos ,
-                                QuantityEntryCD = item.Quantity - (item.Quantity * _subproduct.Merma),                                
-                                FechaCreacion = DateTime.Now,
-                                FechaModificacion = DateTime.Now,
-                                KardexDate = DateTime.Now,
-                                CustomerId = _GoodsReceivedq.CustomerId,
-                                CustomerName = _GoodsReceivedq.CustomerName,
-                                DocumentId = _GoodsReceivedq.GoodsReceivedId,
-                                UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion,
-                                UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion,
-                            });
+                            
                         }//Fin Foreach
 
+                        _GoodsReceivedq.Porcertificar = true;
+
                         await _context.SaveChangesAsync();
-                        //_GoodsReceived.Kardex.DocType = 0;                      
-                        //_GoodsReceived.Kardex.DocumentName = "ReciboMercaderia/GoodsReceived";
-                        //_GoodsReceived.Kardex.DocumentDate = _GoodsReceivedq.DocumentDate;
-                        //_GoodsReceived.Kardex.FechaCreacion = DateTime.Now;
-                        //_GoodsReceived.Kardex.FechaModificacion = DateTime.Now;
-                        //_GoodsReceived.Kardex.TypeOperationId = 1;
-                        //_GoodsReceived.Kardex.TypeOperationName = "Entrada";
-                        //_GoodsReceived.Kardex.KardexDate = DateTime.Now;
-                        ////_GoodsReceived.Kardex.DocumentName = "RM";
-
-                        //_GoodsReceived.Kardex.CustomerId = _GoodsReceivedq.CustomerId;
-                        //_GoodsReceived.Kardex.CustomerName = _GoodsReceivedq.CustomerName;
-                        //_GoodsReceived.Kardex.CurrencyId = _GoodsReceivedq.CurrencyId;
-                        //_GoodsReceived.Kardex.CurrencyName = _GoodsReceivedq.CurrencyName;
-                        //_GoodsReceived.Kardex.DocumentId = _GoodsReceivedq.GoodsReceivedId;
-                        //_GoodsReceived.Kardex.UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion;
-                        //_GoodsReceived.Kardex.UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion;
-
                         
 
-                        if (_GoodsReceived.ControlId > 0)
+                        if (_GoodsReceived.ControlId > 0)/// valida si proviene de una boleta de peso y marca Control de Ingresos  como recibida
                         {
                             ControlPallets controlPallets = await _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId)
                            .FirstOrDefaultAsync();
@@ -520,7 +491,7 @@ namespace ERPAPI.Controllers
                             Boleto_Sal boleto = _context.Boleto_Sal.Where(q => q.clave_e > controlPallets.WeightBallot).FirstOrDefault();
                             _GoodsReceivedq.TaraTransporte = boleto != null ? boleto.peso_s:0 ;
                         }
-                        else
+                        else //Marca el producto del encabezado como productos Varios
                         {
                             _GoodsReceivedq.SubProductName = "Productos Varios No Pesado";
                         }
@@ -547,158 +518,14 @@ namespace ERPAPI.Controllers
 
                           
                         }
-                        
-
-
-                        await _context.SaveChangesAsync();
-
+                        await _context.SaveChangesAsync();///Asigna el numero del recibo a la boleta de salida 
+                        //TODO : Validar si es necesario
                         BoletaDeSalida _bol = await _context.BoletaDeSalida
-                                              .Where(q => q.BoletaDeSalidaId == _boletadesalida.BoletaDeSalidaId).FirstOrDefaultAsync();
+                                              .Where(q => q.BoletaDeSalidaId == boletasalida.Value.BoletaDeSalidaId).FirstOrDefaultAsync();
 
                         _bol.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
                         _context.Entry(_bol).CurrentValues.SetValues((_bol));
-
-                        await _context.SaveChangesAsync();
-                        JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
-                                                                       .Where(q => q.TransactionId == 1)
-                                                                       .Where(q => q.BranchId == _GoodsReceivedq.BranchId)
-                                                                       .Where(q => q.EstadoName == "Activo")
-                                                                       .Include(q => q.JournalEntryConfigurationLine)
-                                                                       ).FirstOrDefaultAsync();
-                       
-                        
-                        string mensaje = "El recibo se ha generado con exito, pero no se escontro ninguna configuracion de asiento automatico"; 
-                        if (_journalentryconfiguration != null)
-                        {   // await _context.SaveChangesAsync();
-
-                            decimal sumacreditos = 0, sumadebitos = 0;
-                            //if (_journalentryconfiguration != null)
-                            if (_journalentryconfiguration == null)
-                            {
-                                //Crear el asiento contable configurado
-                                //.............................///////
-                                BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
-                                {
-                                    IdOperacion = _GoodsReceived.CustomerId,
-                                    DocType = "JournalEntryConfiguration",
-                                    ClaseInicial =
-                                 Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                    ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                    Accion = "InsertGoodsReceived",
-                                    FechaCreacion = DateTime.Now,
-                                    FechaModificacion = DateTime.Now,
-                                    UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
-                                    UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
-                                    UsuarioEjecucion = _GoodsReceived.UsuarioModificacion,
-
-                                });
-                                JournalEntry _je = new JournalEntry
-                                {
-                                    Date = _GoodsReceivedq.OrderDate,
-                                    Memo = "Bienes Recibidos",
-                                    DatePosted = _GoodsReceivedq.OrderDate,
-                                    ModifiedDate = DateTime.Now,
-                                    CreatedDate = DateTime.Now,
-                                    ModifiedUser = _GoodsReceivedq.UsuarioModificacion,
-                                    CreatedUser = _GoodsReceivedq.UsuarioCreacion,
-                                    DocumentId = _GoodsReceivedq.GoodsReceivedId,
-                                };
-
-
-
-                                foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
-                                {
-
-                                    GoodsReceivedLine _iline = new GoodsReceivedLine();
-                                    _iline = _GoodsReceivedq._GoodsReceivedLine.Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
-                                    if (_iline != null || item.SubProductName.ToUpper().Contains(("Impuesto").ToUpper()))
-                                    {
-                                        if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
-                                               && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
-                                        {
-                                            _je.JournalEntryLines.Add(new JournalEntryLine
-                                            {
-                                                AccountId = Convert.ToInt32(item.AccountId),
-                                                Description = item.AccountName,
-                                                Credit = item.DebitCredit == "Credito" ? _iline.Total : 0,
-                                                Debit = item.DebitCredit == "Debito" ? _iline.Total : 0,
-                                                CreatedDate = DateTime.Now,
-                                                ModifiedDate = DateTime.Now,
-                                                CreatedUser = _GoodsReceivedq.UsuarioCreacion,
-                                                ModifiedUser = _GoodsReceivedq.UsuarioModificacion,
-                                                Memo = "",
-                                            });
-
-                                            sumacreditos += item.DebitCredit == "Credito" ? _iline.Total : 0;
-                                            sumadebitos += item.DebitCredit == "Debito" ? _iline.Total : 0;
-                                        }
-                                        else
-                                        {
-                                            _je.JournalEntryLines.Add(new JournalEntryLine
-                                            {
-                                                AccountId = Convert.ToInt32(item.AccountId),
-                                                Description = item.AccountName,
-                                                CreatedDate = DateTime.Now,
-                                                ModifiedDate = DateTime.Now,
-                                                CreatedUser = _GoodsReceivedq.UsuarioCreacion,
-                                                ModifiedUser = _GoodsReceivedq.UsuarioModificacion,
-                                                Memo = "",
-                                            });
-
-                                            //sumacreditos += item.DebitCredit == "Credito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
-                                            //sumadebitos += item.DebitCredit == "Debito" ? _Invoiceq.Tax + _Invoiceq.Tax18 : 0;
-                                        }
-                                    }
-
-                                    // _context.JournalEntryLine.Add(_je);
-
-                                }
-
-
-                                if (sumacreditos != sumadebitos)
-                                {
-                                    transaction.Rollback();
-                                    _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                    return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
-                                }
-
-                                _je.TotalCredit = sumacreditos;
-                                _je.TotalDebit = sumadebitos;
-                                _context.JournalEntry.Add(_je);
-
-                                await _context.SaveChangesAsync();
-
-                                mensaje = $"Recibo Generado y se ha generado el asiento No. {_je.JournalEntryId}";
-                            }
-                            //else
-                            //{
-                            //    transaction.Rollback();
-                            //    return BadRequest("no existe configuracion para el asiento automatico del recibo de mercaderia");
-                            //}
-
-                            BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                            {
-                                IdOperacion = _GoodsReceivedq.GoodsReceivedId,
-                                DocType = "GoodsReceived",
-                                ClaseInicial =
-                                Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsReceivedq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsReceivedq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                                Accion = "Insert",
-                                FechaCreacion = DateTime.Now,
-                                FechaModificacion = DateTime.Now,
-                                UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion,
-                                UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion,
-                                UsuarioEjecucion = _GoodsReceivedq.UsuarioModificacion,
-
-                            });
-
-                        }
-
-                     
-
-                        await _context.SaveChangesAsync();
-
-
+                        var generarasiento = await GeneraAsientoReciboMercaderias(_GoodsReceivedq);
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -716,6 +543,186 @@ namespace ERPAPI.Controllers
             }
 
             return await Task.Run(() => Ok(_GoodsReceivedq));
+        }
+
+
+        private async Task<ActionResult<Kardex>> GenerarKardexRecibo(GoodsReceivedLine item, GoodsReceived _GoodsReceivedq, SubProduct producto)
+        {
+            
+            try
+            {
+
+                _context.Kardex.Add(new Kardex
+                {
+                    DocumentDate = _GoodsReceivedq.DocumentDate,
+                    DocumentName = "ReciboMercaderia/GoodsReceived",
+                    DocType = 1,
+                    ProducId = _GoodsReceivedq.ProductId,
+                    ProductName = _GoodsReceivedq.ProductName,
+                    SubProducId = item.SubProductId,
+                    SubProductName = item.SubProductName,
+                    QuantityEntry = item.Quantity,
+                    QuantityOut = 0,
+                    QuantityEntryBags = item.QuantitySacos,
+                    BranchId = _GoodsReceivedq.BranchId,
+                    BranchName = _GoodsReceivedq.BranchName,
+                    WareHouseId = item.WareHouseId,
+                    WareHouseName = item.WareHouseName,
+                    UnitOfMeasureId = item.UnitOfMeasureId,
+                    UnitOfMeasureName = item.UnitOfMeasureName,
+                    TypeOperationId = TipoOperacion.Entrada,
+                    TypeOperationName = "Entrada",
+                    Total = item.Total,
+                    TotalBags = item.QuantitySacos,
+                    QuantityEntryCD = item.Quantity - (item.Quantity * producto.Merma),
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    KardexDate = DateTime.Now,
+                    KardexTypeId = KardexTypes.InventarioFisico,
+                    CustomerId = _GoodsReceivedq.CustomerId,
+                    CustomerName = _GoodsReceivedq.CustomerName,
+                    DocumentId = _GoodsReceivedq.GoodsReceivedId,
+                    UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion,
+                    UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion,
+                });
+
+
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+
+                return BadRequest("Error al generar el kardex del producto");
+            }
+
+
+        }
+
+        private async Task<ActionResult<JournalEntry>> GeneraAsientoReciboMercaderias(GoodsReceived goodsReceived) {
+            try
+            {
+                JournalEntryConfiguration _journalentryconfiguration = await (_context.JournalEntryConfiguration
+                                                                   .Where(q => q.TransactionId == 1)
+                                                                   .Where(q => q.BranchId == goodsReceived.BranchId)
+                                                                   .Where(q => q.EstadoName == "Activo")
+                                                                   .Include(q => q.JournalEntryConfigurationLine)
+                                                                   ).FirstOrDefaultAsync();
+                if (_journalentryconfiguration == null)
+                {
+                    return BadRequest("No se encontro configuracion de asiento contable");
+                }
+
+                decimal sumacreditos = 0, sumadebitos = 0;
+                //if (_journalentryconfiguration != null)
+                if (_journalentryconfiguration == null)
+                {
+                    //Crear el asiento contable configurado
+                    //.............................///////
+                    BitacoraWrite _writejec = new BitacoraWrite(_context, new Bitacora
+                    {
+                        IdOperacion = goodsReceived.CustomerId,
+                        DocType = "JournalEntryConfiguration",
+                        ClaseInicial =
+                     Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_journalentryconfiguration, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "InsertGoodsReceived",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = goodsReceived.UsuarioCreacion,
+                        UsuarioModificacion = goodsReceived.UsuarioModificacion,
+                        UsuarioEjecucion = goodsReceived.UsuarioModificacion,
+
+                    });
+                    JournalEntry _je = new JournalEntry
+                    {
+                        Date = goodsReceived.OrderDate,
+                        Memo = "Bienes Recibidos",
+                        DatePosted = goodsReceived.OrderDate,
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = goodsReceived.UsuarioModificacion,
+                        CreatedUser = goodsReceived.UsuarioCreacion,
+                        DocumentId = goodsReceived.GoodsReceivedId,
+                    };
+
+
+
+                    foreach (var item in _journalentryconfiguration.JournalEntryConfigurationLine)
+                    {
+
+                        GoodsReceivedLine _iline = new GoodsReceivedLine();
+                        _iline = goodsReceived._GoodsReceivedLine.Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
+                        if (_iline != null || item.SubProductName.ToUpper().Contains(("Impuesto").ToUpper()))
+                        {
+                            if (!item.AccountName.ToUpper().Contains(("Impuestos sobre ventas").ToUpper())
+                                   && !item.AccountName.ToUpper().Contains(("Sobre Servicios Diversos").ToUpper()))
+                            {
+                                _je.JournalEntryLines.Add(new JournalEntryLine
+                                {
+                                    AccountId = Convert.ToInt32(item.AccountId),
+                                    Description = item.AccountName,
+                                    Credit = item.DebitCredit == "Credito" ? _iline.Total : 0,
+                                    Debit = item.DebitCredit == "Debito" ? _iline.Total : 0,
+                                    CreatedDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now,
+                                    CreatedUser = goodsReceived.UsuarioCreacion,
+                                    ModifiedUser = goodsReceived.UsuarioModificacion,
+                                    Memo = "",
+                                });
+
+                                sumacreditos += item.DebitCredit == "Credito" ? _iline.Total : 0;
+                                sumadebitos += item.DebitCredit == "Debito" ? _iline.Total : 0;
+                            }
+                            else
+                            {
+                                _je.JournalEntryLines.Add(new JournalEntryLine
+                                {
+                                    AccountId = Convert.ToInt32(item.AccountId),
+                                    Description = item.AccountName,
+                                    CreatedDate = DateTime.Now,
+                                    ModifiedDate = DateTime.Now,
+                                    CreatedUser = goodsReceived.UsuarioCreacion,
+                                    ModifiedUser = goodsReceived.UsuarioModificacion,
+                                    Memo = "",
+                                });
+
+                            }
+                        }
+                    }
+                    if (sumacreditos != sumadebitos)
+                    {
+                        _logger.LogError($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                        return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos{sumacreditos}");
+                    }
+                    _je.TotalCredit = sumacreditos;
+                    _je.TotalDebit = sumadebitos;
+                    _context.JournalEntry.Add(_je);
+                    await _context.SaveChangesAsync();
+                }
+                BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = goodsReceived.GoodsReceivedId,
+                    DocType = "GoodsReceived",
+                    ClaseInicial =
+                    Newtonsoft.Json.JsonConvert.SerializeObject(goodsReceived, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(goodsReceived, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insert",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = goodsReceived.UsuarioCreacion,
+                    UsuarioModificacion = goodsReceived.UsuarioModificacion,
+                    UsuarioEjecucion = goodsReceived.UsuarioModificacion,
+
+                });
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+
+
         }
 
         /// <summary>

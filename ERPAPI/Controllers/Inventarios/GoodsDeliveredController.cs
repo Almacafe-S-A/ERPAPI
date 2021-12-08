@@ -295,7 +295,7 @@ namespace ERPAPI.Controllers
                         _GoodsDelivered.Kardex.DocumentDate = _GoodsDeliveredq.DocumentDate;
                         _GoodsDelivered.Kardex.FechaCreacion = DateTime.Now;
                         _GoodsDelivered.Kardex.FechaModificacion = DateTime.Now;
-                        _GoodsDelivered.Kardex.TypeOperationId = 1;
+                        _GoodsDelivered.Kardex.TypeOperationId = TipoOperacion.Entrada;
                         _GoodsDelivered.Kardex.TypeOperationName = "Salida";
                         _GoodsDelivered.Kardex.KardexDate = DateTime.Now;
 
