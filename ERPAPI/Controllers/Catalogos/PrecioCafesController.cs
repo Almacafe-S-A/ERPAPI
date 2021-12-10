@@ -123,15 +123,13 @@ namespace ERPAPI.Controllers
                     {
                         _PrecioCafeq = _PrecioCafe;
 
-                        ExchangeRate tasacambio = await (from c in _context.ExchangeRate
-                                        .Where(q => q.DayofRate.Date ==DateTime.Now.Date
-                                        )
-                                                         select c
-                                       ).FirstOrDefaultAsync();
+                        ExchangeRate tasacambio = await _context.ExchangeRate
+                            .Where(q=>q.ExchangeRateId == _PrecioCafeq.ExchangeRateId)
+                        .FirstOrDefaultAsync();
 
 
 
-                        _PrecioCafe.ExchangeRateId = tasacambio.ExchangeRateId;
+                        _PrecioCafe.ExchangeRateValue = tasacambio.ExchangeRateValueCompra;
                         _PrecioCafe.BrutoLPSIngreso = (_PrecioCafe.PrecioBolsaUSD * tasacambio.ExchangeRateValueCompra);
                         _PrecioCafe.BrutoLPSConsumoInterno = ((decimal)_PrecioCafe.BrutoLPSIngreso * (decimal)0.6);
                         _PrecioCafe.NetoLPSIngreso = (_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
