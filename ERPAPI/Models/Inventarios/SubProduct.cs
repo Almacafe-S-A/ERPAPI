@@ -71,6 +71,7 @@ namespace ERPAPI.Models
         NoesCafe = 0,
         Oro = 1,
         Pergamino = 2,
+        OtrasCalidades= 3,
         
 
     }
