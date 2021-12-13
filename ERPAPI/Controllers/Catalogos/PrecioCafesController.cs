@@ -115,6 +115,14 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<PrecioCafe>> Insert([FromBody]PrecioCafe _PrecioCafe)
         {
             PrecioCafe _PrecioCafeq = new PrecioCafe();
+            List<PrecioCafe> precios = _context.PrecioCafe.Where(q => q.CustomerId == _PrecioCafe.CustomerId &&
+                                                q.Fecha.Date == _PrecioCafe.Fecha.Date).ToList();
+
+
+            if (precios.Count > 0)
+            {
+                return BadRequest();
+            }
             try
             {
                 using (var transaction = _context.Database.BeginTransaction())
@@ -192,6 +200,15 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<PrecioCafe>> Update(PrecioCafe _PrecioCafe)
         {
             PrecioCafe _PrecioCafeq = _PrecioCafe;
+            List<PrecioCafe> precios = _context.PrecioCafe.Where(q => q.CustomerId == _PrecioCafe.CustomerId &&
+                                                q.Fecha.Date == _PrecioCafe.Fecha.Date &&
+                                                q.Id != _PrecioCafe.Id).ToList();
+
+
+            if (precios.Count > 0)
+            {
+                return BadRequest();
+            }
             try
             {
                 _PrecioCafeq = _PrecioCafe;
