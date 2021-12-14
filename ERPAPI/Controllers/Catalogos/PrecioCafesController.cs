@@ -106,6 +106,29 @@ namespace ERPAPI.Controllers
         }
 
 
+        private PrecioCafe CalculoPrecioCafe(PrecioCafe _PrecioCafe) {
+            ExchangeRate tasacambio =  _context.ExchangeRate
+                            .Where(q => q.ExchangeRateId == _PrecioCafe.ExchangeRateId)
+                        .FirstOrDefault();
+            //PrecioCafe _PrecioCafe = new PrecioCafe();
+
+            _PrecioCafe.ExchangeRateValue = tasacambio.ExchangeRateValueCompra;
+            _PrecioCafe.BrutoLPSIngreso = ((decimal)_PrecioCafe.PrecioBolsaUSD * (decimal)tasacambio.ExchangeRateValueCompra);
+            _PrecioCafe.BrutoLPSConsumoInterno = ((decimal)_PrecioCafe.BrutoLPSIngreso * (decimal)0.6);
+            _PrecioCafe.NetoLPSIngreso = ((decimal)_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
+            _PrecioCafe.NetoLPSConsumoInterno =((decimal)_PrecioCafe.BrutoLPSConsumoInterno * (_PrecioCafe.PorcentajeConsumoInterno / 100));
+            _PrecioCafe.TotalLPSIngreso = ((decimal)_PrecioCafe.NetoLPSIngreso + _PrecioCafe.NetoLPSConsumoInterno);
+            _PrecioCafe.TotalUSDEgreso = (_PrecioCafe.BeneficiadoUSD + _PrecioCafe.FideicomisoUSD + (decimal)_PrecioCafe.Otros
+                + _PrecioCafe.UtilidadUSD + _PrecioCafe.PermisoExportacionUSD);
+            _PrecioCafe.TotalLPSEgreso = ((decimal)tasacambio.ExchangeRateValueCompra * _PrecioCafe.TotalUSDEgreso);
+            _PrecioCafe.PrecioQQOro = Decimal.Round((decimal)_PrecioCafe.TotalLPSIngreso - (decimal)_PrecioCafe.TotalLPSEgreso,5);
+            _PrecioCafe.PercioQQPergamino = Decimal.Round((decimal)_PrecioCafe.PrecioQQOro / (Convert.ToDecimal(1.25)),5);
+            _PrecioCafe.PrecioQQCalidadesInferiores = Decimal.Round((decimal) _PrecioCafe.PercioQQPergamino * (decimal)0.6,5);
+
+            return _PrecioCafe;
+        }
+
+
         /// <summary>
         /// Inserta una nueva PrecioCafe
         /// </summary>
@@ -114,11 +137,8 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<PrecioCafe>> Insert([FromBody]PrecioCafe _PrecioCafe)
         {
-            PrecioCafe _PrecioCafeq = new PrecioCafe();
             List<PrecioCafe> precios = _context.PrecioCafe.Where(q => q.CustomerId == _PrecioCafe.CustomerId &&
                                                 q.Fecha.Date == _PrecioCafe.Fecha.Date).ToList();
-
-
             if (precios.Count > 0)
             {
                 return BadRequest();
@@ -129,28 +149,8 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _PrecioCafeq = _PrecioCafe;
-
-                        ExchangeRate tasacambio = await _context.ExchangeRate
-                            .Where(q=>q.ExchangeRateId == _PrecioCafeq.ExchangeRateId)
-                        .FirstOrDefaultAsync();
-
-
-
-                        _PrecioCafe.ExchangeRateValue = tasacambio.ExchangeRateValueCompra;
-                        _PrecioCafe.BrutoLPSIngreso = (_PrecioCafe.PrecioBolsaUSD * tasacambio.ExchangeRateValueCompra);
-                        _PrecioCafe.BrutoLPSConsumoInterno = ((decimal)_PrecioCafe.BrutoLPSIngreso * (decimal)0.6);
-                        _PrecioCafe.NetoLPSIngreso = (_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
-                        _PrecioCafe.NetoLPSConsumoInterno =  (_PrecioCafe.BrutoLPSConsumoInterno*(_PrecioCafe.PorcentajeConsumoInterno/100));
-                        _PrecioCafe.TotalLPSIngreso = (_PrecioCafe.NetoLPSIngreso + _PrecioCafe.NetoLPSConsumoInterno);
-                        _PrecioCafe.TotalUSDEgreso = (_PrecioCafe.BeneficiadoUSD + _PrecioCafe.FideicomisoUSD + (decimal)_PrecioCafe.Otros
-                            + _PrecioCafe.UtilidadUSD + _PrecioCafe.PermisoExportacionUSD);
-                        _PrecioCafe.TotalLPSEgreso = (tasacambio.ExchangeRateValueCompra * _PrecioCafe.TotalUSDEgreso);
-                        _PrecioCafe.PrecioQQOro = (_PrecioCafe.TotalLPSIngreso - _PrecioCafe.TotalLPSEgreso);
-                        _PrecioCafe.PercioQQPergamino = (_PrecioCafe.PrecioQQOro / (Convert.ToDecimal(1.25)));
-                        _PrecioCafe.PrecioQQCalidadesInferiores = _PrecioCafe.PercioQQPergamino * (decimal)0.6;
-
-                        _context.PrecioCafe.Add(_PrecioCafeq);
+                        _PrecioCafe = CalculoPrecioCafe(_PrecioCafe);
+                        _context.PrecioCafe.Add(_PrecioCafe);
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -188,7 +188,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_PrecioCafeq));
+            return await Task.Run(() => Ok(_PrecioCafe));
         }
 
         /// <summary>
@@ -204,35 +204,14 @@ namespace ERPAPI.Controllers
                                                 q.Fecha.Date == _PrecioCafe.Fecha.Date &&
                                                 q.Id != _PrecioCafe.Id).ToList();
 
-
+            
             if (precios.Count > 0)
             {
                 return BadRequest();
             }
             try
             {
-                _PrecioCafeq = _PrecioCafe;
-
-                ExchangeRate tasacambio = await (from c in _context.ExchangeRate
-                                .Where(q => q.ExchangeRateId == _PrecioCafe.ExchangeRateId
-                                )
-                                                 select c
-                               ).FirstOrDefaultAsync();
-
-
-
-                _PrecioCafe.ExchangeRateId = tasacambio.ExchangeRateId;
-                _PrecioCafe.BrutoLPSIngreso = (_PrecioCafe.PrecioBolsaUSD * tasacambio.ExchangeRateValueCompra);
-                _PrecioCafe.BrutoLPSConsumoInterno = ((decimal)_PrecioCafe.BrutoLPSIngreso * (decimal)0.6);
-                _PrecioCafe.NetoLPSIngreso = (_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
-                _PrecioCafe.NetoLPSConsumoInterno = (_PrecioCafe.BrutoLPSConsumoInterno * (_PrecioCafe.PorcentajeConsumoInterno / 100));
-                _PrecioCafe.TotalLPSIngreso = (_PrecioCafe.NetoLPSIngreso + _PrecioCafe.NetoLPSConsumoInterno);
-                _PrecioCafe.TotalUSDEgreso = (_PrecioCafe.BeneficiadoUSD + _PrecioCafe.FideicomisoUSD
-                    + _PrecioCafe.UtilidadUSD + _PrecioCafe.PermisoExportacionUSD);
-                _PrecioCafe.TotalLPSEgreso = (tasacambio.ExchangeRateValueCompra * _PrecioCafe.TotalUSDEgreso);
-                _PrecioCafe.PrecioQQOro = (_PrecioCafe.TotalLPSIngreso - _PrecioCafe.TotalLPSEgreso);
-                _PrecioCafe.PercioQQPergamino = (_PrecioCafe.PrecioQQOro / (Convert.ToDecimal(1.25)));
-                _PrecioCafe.PrecioQQCalidadesInferiores = _PrecioCafe.PercioQQPergamino * (decimal)0.6;
+                _PrecioCafeq = CalculoPrecioCafe(_PrecioCafe);               
 
                 using (var transaction = _context.Database.BeginTransaction())
                 {
