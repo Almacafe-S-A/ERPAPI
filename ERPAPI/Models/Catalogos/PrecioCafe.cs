@@ -31,20 +31,20 @@ namespace ERPAPI.Models
         public ExchangeRate ExchangeRate { get; set; }
 
         public decimal? ExchangeRateValue { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? BrutoLPSIngreso { get; set; }
 
         public decimal PorcentajeIngreso { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? NetoLPSIngreso { get; set; }
 
-
+        [Column(TypeName = "Money")]
         public decimal BrutoLPSConsumoInterno { get; set; }
 
         public decimal PorcentajeConsumoInterno { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal NetoLPSConsumoInterno { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? TotalLPSIngreso { get; set; }
 
         public decimal BeneficiadoUSD { get; set; }
@@ -54,15 +54,15 @@ namespace ERPAPI.Models
         public decimal UtilidadUSD { get; set; }
 
         public decimal PermisoExportacionUSD { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal TotalUSDEgreso { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? TotalLPSEgreso { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? PrecioQQOro { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? PercioQQPergamino { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? PrecioQQCalidadesInferiores { get; set; }
 
         public decimal? Otros { get; set; }
