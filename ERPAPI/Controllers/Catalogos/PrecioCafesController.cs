@@ -81,6 +81,33 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de PrecioCafees por Cliente
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<ActionResult<List<PrecioCafe>>> GetPrecioCafeByCustomer(int CustomerId)
+        {
+            List<PrecioCafe> Items = new List<PrecioCafe>();
+
+            try
+            {
+                Items = await _context.PrecioCafe
+                    .Where(q =>q.CustomerId== CustomerId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la PrecioCafe por medio del Id enviado.
         /// </summary>
@@ -107,7 +134,7 @@ namespace ERPAPI.Controllers
 
 
         private PrecioCafe CalculoPrecioCafe(PrecioCafe _PrecioCafe) {
-            ExchangeRate tasacambio =  _context.ExchangeRate
+            ExchangeRate tasacambio = _context.ExchangeRate
                             .Where(q => q.ExchangeRateId == _PrecioCafe.ExchangeRateId)
                         .FirstOrDefault();
             //PrecioCafe _PrecioCafe = new PrecioCafe();
@@ -116,14 +143,14 @@ namespace ERPAPI.Controllers
             _PrecioCafe.BrutoLPSIngreso = ((decimal)_PrecioCafe.PrecioBolsaUSD * (decimal)tasacambio.ExchangeRateValueCompra);
             _PrecioCafe.BrutoLPSConsumoInterno = ((decimal)_PrecioCafe.BrutoLPSIngreso * (decimal)0.6);
             _PrecioCafe.NetoLPSIngreso = ((decimal)_PrecioCafe.BrutoLPSIngreso * _PrecioCafe.PorcentajeIngreso / 100);
-            _PrecioCafe.NetoLPSConsumoInterno =((decimal)_PrecioCafe.BrutoLPSConsumoInterno * (_PrecioCafe.PorcentajeConsumoInterno / 100));
+            _PrecioCafe.NetoLPSConsumoInterno = ((decimal)_PrecioCafe.BrutoLPSConsumoInterno * (_PrecioCafe.PorcentajeConsumoInterno / 100));
             _PrecioCafe.TotalLPSIngreso = ((decimal)_PrecioCafe.NetoLPSIngreso + _PrecioCafe.NetoLPSConsumoInterno);
             _PrecioCafe.TotalUSDEgreso = (_PrecioCafe.BeneficiadoUSD + _PrecioCafe.FideicomisoUSD + (decimal)_PrecioCafe.Otros
                 + _PrecioCafe.UtilidadUSD + _PrecioCafe.PermisoExportacionUSD);
             _PrecioCafe.TotalLPSEgreso = ((decimal)tasacambio.ExchangeRateValueCompra * _PrecioCafe.TotalUSDEgreso);
-            _PrecioCafe.PrecioQQOro = Decimal.Round((decimal)_PrecioCafe.TotalLPSIngreso - (decimal)_PrecioCafe.TotalLPSEgreso,5);
-            _PrecioCafe.PercioQQPergamino = Decimal.Round((decimal)_PrecioCafe.PrecioQQOro / (Convert.ToDecimal(1.25)),5);
-            _PrecioCafe.PrecioQQCalidadesInferiores = Decimal.Round((decimal) _PrecioCafe.PercioQQPergamino * (decimal)0.6,5);
+            _PrecioCafe.PrecioQQOro = Decimal.Round(((decimal)_PrecioCafe.TotalLPSIngreso - (decimal)_PrecioCafe.TotalLPSEgreso) / 5, MidpointRounding.ToEven)*5;
+            _PrecioCafe.PercioQQPergamino = Decimal.Round((decimal)_PrecioCafe.PrecioQQOro / (Convert.ToDecimal(1.25)) / 5, MidpointRounding.ToEven)*5;
+            _PrecioCafe.PrecioQQCalidadesInferiores = Decimal.Round(((decimal) _PrecioCafe.PercioQQPergamino * (decimal)0.6)/5,MidpointRounding.ToEven)*5;
 
             return _PrecioCafe;
         }

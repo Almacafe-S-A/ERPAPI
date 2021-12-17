@@ -22,6 +22,11 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
+
+        public int? PrecioCafeId { get; set; }
+        [ForeignKey("PrecioCafeId")]
+        public PrecioCafe PrecioCafe { get; set; }
+
         [Display(Name = "Sucursal")]
         public int BranchId { get; set; }
         [ForeignKey("BranchId")]
