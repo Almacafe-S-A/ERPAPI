@@ -78,13 +78,19 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetRecibosPendientes([FromQuery(Name = "Recibos")] int[] recibos)
+        public async Task<IActionResult> GetRecibosPendientes([FromQuery(Name = "Recibos")] int[] recibos, [FromQuery(Name = "preciocafe")] int preciocafe)
         {
             
             List<CertificadoLine> recibospendientes = new List<CertificadoLine>();
             List<GoodsReceivedLine> detallerecibos = _context.GoodsReceivedLine.Where(q => recibos.Any(a => a == q.GoodsReceivedId))
                 .Include(i => i.SubProduct)
                 .ToList();
+            PrecioCafe preciodelcafe = _context.PrecioCafe.Where(q => q.Id == preciocafe).FirstOrDefault();
+            if (preciodelcafe == null)
+            {
+                return BadRequest("Selecccione el valor del precio del cafe para este cliente ");
+            }
+
 
             //Obtiene los productos desde la liquidacion
             List<LiquidacionLine> liquidacionLines = _context.LiquidacionLine.Where(q => q.GoodsReceivedLine != null && detallerecibos.Any(a => a.GoodsReceivedId ==q.GoodsReceivedLine.GoodsReceivedId))                                                 
@@ -107,13 +113,18 @@ namespace ERPAPI.Controllers
                                                ,WarehouseId = (int)lineasrecibo.GoodsReceivedLine.WareHouseId
                                                ,WarehouseName = lineasrecibo.GoodsReceivedLine.WareHouseName
                                                ,Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF
-                                               ,CantidadDisponible = (decimal)lineasrecibo.GoodsReceivedLine.SaldoporCertificar
+                                               ,CantidadDisponible = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null ? 
+                                                        lineasrecibo.GoodsReceivedLine.Quantity : lineasrecibo.GoodsReceivedLine.SaldoporCertificar                                               
                                                ,ValorUnitarioDerechos = (decimal)lineasrecibo.ValorUnitarioDerechos                                               
                                                ,DerechosFiscales = lineasrecibo.ValorUnitarioDerechos * lineasrecibo.CantidadRecibida
                                            }).ToList();
 
+                ////Busca los productos tipo cafe
+                List<GoodsReceivedLine> detallereciboscafe = detallerecibos
+                    .Where(q => q.SubProduct.TipoCafe != TipoCaFe.NoesCafe).ToList();
+
                 recibospendientes.AddRange(
-                    (from detalle in detallerecibos.Where(q => q.SubProduct.TipoCafe != TipoCaFe.NoesCafe )
+                    (from detalle in detallereciboscafe
                      select new CertificadoLine()
                      {
                          CertificadoLineId = 0,
@@ -123,11 +134,11 @@ namespace ERPAPI.Controllers
                          SubProductId = (long)detalle.SubProductId,
                          SubProductName = detalle.SubProductName,
                          ReciboId = (int)detalle.GoodsReceivedId,
-                         Price = ObtenerPrecioCafe(detalle.SubProduct),
+                         Price = ObtenerPrecioCafe(detalle.SubProduct, preciodelcafe),
                          WarehouseId = (int)detalle.WareHouseId,
                          WarehouseName = detalle.WareHouseName,
-                         Amount = (decimal)detalle.Quantity * ObtenerPrecioCafe(detalle.SubProduct) ,
-                         CantidadDisponible = (decimal)detalle.SaldoporCertificar,
+                         Amount = (decimal)detalle.Quantity * ObtenerPrecioCafe(detalle.SubProduct,preciodelcafe) ,
+                         CantidadDisponible = detalle.SaldoporCertificar==null?(decimal)detalle.Quantity: detalle.SaldoporCertificar,
                          ValorUnitarioDerechos = 0,
                          DerechosFiscales = 0
                      }
@@ -152,20 +163,23 @@ namespace ERPAPI.Controllers
         }
 
 
-        private decimal ObtenerPrecioCafe(SubProduct product)
+        private decimal ObtenerPrecioCafe(SubProduct product, PrecioCafe precioCafe)
         {
-            PrecioCafe precio = _context.PrecioCafe.Where(q => q.Fecha.Date == DateTime.Now.Date).FirstOrDefault();
-            if (precio == null)
+            if (precioCafe == null)
             {
                 return 0;
             }
             if (product.TipoCafe == TipoCaFe.Oro)
             {
-                return (decimal)precio.PrecioQQOro;
+                return (decimal)precioCafe.PrecioQQOro;
             }
             if (product.TipoCafe == TipoCaFe.Pergamino)
             {
-                return (decimal)precio.PercioQQPergamino;
+                return (decimal)precioCafe.PercioQQPergamino;
+            }
+            if (product.TipoCafe == TipoCaFe.OtrasCalidades)
+            {
+                return (decimal)precioCafe.PrecioQQCalidadesInferiores;
             }
             return 0;
         }

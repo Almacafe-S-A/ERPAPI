@@ -67,6 +67,8 @@ namespace ERPAPI.Models
 
         public decimal? Otros { get; set; }
 
+        public bool? UtilizadaCertificado { get; set; }
+
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }

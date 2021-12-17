@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211217035339_AddedfieldUitlizadaCertificado")]
+    partial class AddedfieldUitlizadaCertificado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1134,8 +1136,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("PorcentajeDeudas");
 
-                    b.Property<int?>("PrecioCafeId");
-
                     b.Property<double>("Quantitysum");
 
                     b.Property<string>("Recibos");
@@ -1163,8 +1163,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("InsuranceId");
 
                     b.HasIndex("InsurancePolicyId");
-
-                    b.HasIndex("PrecioCafeId");
 
                     b.HasIndex("ServicioId");
 
@@ -11185,10 +11183,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.InsurancePolicy", "InsurancePolicy")
                         .WithMany("CertificadoDepositos")
                         .HasForeignKey("InsurancePolicyId");
-
-                    b.HasOne("ERPAPI.Models.PrecioCafe", "PrecioCafe")
-                        .WithMany()
-                        .HasForeignKey("PrecioCafeId");
 
                     b.HasOne("ERPAPI.Models.Product", "Servicio")
                         .WithMany()

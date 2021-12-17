@@ -81,6 +81,33 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de PrecioCafees por Cliente
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<ActionResult<List<PrecioCafe>>> GetPrecioCafeByCustomer(int CustomerId)
+        {
+            List<PrecioCafe> Items = new List<PrecioCafe>();
+
+            try
+            {
+                Items = await _context.PrecioCafe
+                    .Where(q =>q.CustomerId== CustomerId)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la PrecioCafe por medio del Id enviado.
         /// </summary>
