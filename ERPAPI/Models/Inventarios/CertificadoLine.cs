@@ -70,7 +70,13 @@ namespace ERPAPI.Models
 
         
         public int? ReciboId { get; set; }
-        
+        public Int64? GoodsReceivedLineId { get; set; }
+
+        [ForeignKey("GoodsReceivedLineId")]
+
+        public GoodsReceivedLine GoodsReceivedLine { get; set; }
+
+
         public decimal? CantidadDisponible { get; set; }
     }
 

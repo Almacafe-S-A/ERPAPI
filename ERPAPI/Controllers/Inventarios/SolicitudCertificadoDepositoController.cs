@@ -116,7 +116,7 @@ namespace ERPAPI.Controllers
         /// <param name="_SolicitudCertificadoDeposito"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<SolicitudCertificadoDeposito>> Insert([FromBody]SolicitudCertificadoDepositoDTO _SolicitudCertificadoDeposito)
+        public async Task<ActionResult<SolicitudCertificadoDeposito>> Insert([FromBody]SolicitudCertificadoDeposito _SolicitudCertificadoDeposito)
         {
             SolicitudCertificadoDeposito _SolicitudCertificadoDepositoq = new SolicitudCertificadoDeposito();
             try
@@ -136,20 +136,20 @@ namespace ERPAPI.Controllers
                         }
 
                         await _context.SaveChangesAsync();
-                        foreach (var item in _SolicitudCertificadoDeposito.RecibosAsociados)
-                        {
-                            RecibosCertificado _recibocertificado =
-                                new RecibosCertificado
-                                {
-                                    IdCD = _SolicitudCertificadoDepositoq.IdSCD,
-                                    IdRecibo = item,
-                                    productocantidadbultos = _SolicitudCertificadoDeposito.Quantitysum,
-                                    productorecibolempiras = _SolicitudCertificadoDeposito.Total,
-                                    // UnitMeasureId =_CertificadoDeposito.
-                                };
+                        //foreach (var item in _SolicitudCertificadoDeposito.RecibosAsociados)
+                        //{
+                        //    RecibosCertificado _recibocertificado =
+                        //        new RecibosCertificado
+                        //        {
+                        //            IdCD = _SolicitudCertificadoDepositoq.IdSCD,
+                        //            IdRecibo = item,
+                        //            productocantidadbultos = _SolicitudCertificadoDeposito.Quantitysum,
+                        //            productorecibolempiras = _SolicitudCertificadoDeposito.Total,
+                        //            // UnitMeasureId =_CertificadoDeposito.
+                        //        };
 
-                            _context.RecibosCertificado.Add(_recibocertificado);
-                        }         
+                        //    _context.RecibosCertificado.Add(_recibocertificado);
+                        //}         
 
 
                         await _context.SaveChangesAsync();

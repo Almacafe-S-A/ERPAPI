@@ -119,6 +119,8 @@ namespace ERPAPI.Models
 
         public bool? Porcertificar { get; set; }
 
+        public bool? esCafe { get; set; }
+
 
         //  public List<GoodsReceivedLine> _GoodsReceivedLine = new List<GoodsReceivedLine>();
         public List<GoodsReceivedLine> _GoodsReceivedLine { get; set; } = new List<GoodsReceivedLine>();

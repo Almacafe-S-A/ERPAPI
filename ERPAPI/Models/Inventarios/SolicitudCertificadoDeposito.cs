@@ -123,16 +123,87 @@ namespace ERPAPI.Models
         public string Impreso { get; set; }
 
         public List<SolicitudCertificadoLine> _SolicitudCertificadoLine { get; set; } = new List<SolicitudCertificadoLine>();
+
+
+        public SolicitudCertificadoDeposito()
+        {
+
+        }
+
+        /// <summary>
+        /// Para convertir de Certificado a Solicitud
+        /// </summary>
+        /// <param name="_CertificadoDeposito"></param>
+        public SolicitudCertificadoDeposito (CertificadoDeposito _CertificadoDeposito)
+        {
+                
+                Almacenaje = _CertificadoDeposito.Almacenaje;
+                CustomerId = _CertificadoDeposito.CustomerId;
+                CustomerName = _CertificadoDeposito.CustomerName;
+                Direccion = _CertificadoDeposito.Direccion;
+                EmpresaSeguro = _CertificadoDeposito.EmpresaSeguro;
+                Estado = _CertificadoDeposito.Estado;
+                FechaCertificado = _CertificadoDeposito.FechaCertificado;
+                //FechaFirma = _CertificadoDeposito.FechaFirma;
+                //FechaInicioComputo = _CertificadoDeposito.FechaInicioComputo;
+                FechaVencimientoDeposito = _CertificadoDeposito.FechaVencimientoDeposito;
+                //FechaVencimiento = _CertificadoDeposito.FechaVencimiento;
+                NoCD = _CertificadoDeposito.IdCD;
+                //FechaPagoBanco = _CertificadoDeposito.FechaPagoBanco;
+                NombreEmpresa = _CertificadoDeposito.NombreEmpresa;
+                //LugarFirma = _CertificadoDeposito.LugarFirma;
+                //MontoGarantia = _CertificadoDeposito.MontoGarantia;
+                NoPoliza = _CertificadoDeposito.NoPoliza;
+                //NombrePrestatario = _CertificadoDeposito.NombrePrestatario;
+                NoTraslado = _CertificadoDeposito.NoTraslado;
+                OtrosCargos = _CertificadoDeposito.OtrosCargos;
+                //PorcentajeInteresesInsolutos = _CertificadoDeposito.PorcentajeInteresesInsolutos;
+                Seguro = _CertificadoDeposito.Seguro;
+                ServicioId = _CertificadoDeposito.ServicioId;
+                ServicioName = _CertificadoDeposito.ServicioName;
+                Quantitysum = _CertificadoDeposito.Quantitysum;
+                Total = _CertificadoDeposito.Total;
+                SujetasAPago = _CertificadoDeposito.SujetasAPago == null ? 0 : (double)_CertificadoDeposito.SujetasAPago;
+                // WarehouseId = _CertificadoDeposito.WarehouseId;
+                // WarehouseName = _CertificadoDeposito.WarehouseName;
+                Aduana = _CertificadoDeposito.Aduana;
+                ManifiestoNo = _CertificadoDeposito.ManifiestoNo;
+
+              _SolicitudCertificadoLine = ToSolicitudLine(_CertificadoDeposito._CertificadoLine);
+
+        }
+
+
+        public List<SolicitudCertificadoLine> ToSolicitudLine(List<CertificadoLine> certificadoLines)
+        {
+            List<SolicitudCertificadoLine> _SolicitudCertificadoLines =
+                (from linea in certificadoLines
+                 select
+                     new SolicitudCertificadoLine
+                     {
+                         IdSCD = this.IdSCD,
+                         Amount = linea.Amount,
+                         Description = linea.Description,
+                         Price = linea.Price,
+                         Quantity = linea.Quantity,
+                         SubProductId = linea.SubProductId,
+                         SubProductName = linea.SubProductName,
+                         TotalCantidad = linea.TotalCantidad,
+                         UnitMeasureId = linea.UnitMeasureId,
+                         UnitMeasurName = linea.UnitMeasurName,
+                         ReciboId = linea.ReciboId == null ? 0 : (int)linea.ReciboId,
+                         GoodsReceivedLineId = linea.GoodsReceivedLineId
+
+                     }).ToList();
+
+            return _SolicitudCertificadoLines;
+
+
+
+        }
     }
 
 
-
-    public class SolicitudCertificadoDepositoDTO :SolicitudCertificadoDeposito 
-    {
-        public List<Int64> RecibosAsociados { get; set; }
-        public int editar { get; set; } = 1;
-
-    }
 
 
 

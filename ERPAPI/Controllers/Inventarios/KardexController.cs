@@ -381,7 +381,7 @@ namespace ERPAPI.Controllers
                                             CustomerId = item.CustomerId,
                                             CustomerName = item.CustomerName,
                                             DocumentDate = item.DocumentDate,
-                                            NoCD = _cd.NoCD,
+                                            NoCD = _cd.IdCD,
                                             Dias = dias,
                                             ProductId = linea.SubProducId,
                                             ProductName = linea.SubProductName,
