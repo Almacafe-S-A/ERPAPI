@@ -253,7 +253,7 @@ namespace ERPAPI.Controllers
                             item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
                             _context.GoodsDeliveryAuthorizationLine.Add(item);
 
-                            Int64 IdCD = await _context.CertificadoDeposito.Where(q => q.NoCD == item.NoCertificadoDeposito).Select(q => q.IdCD).FirstOrDefaultAsync();
+                            Int64 IdCD = await _context.CertificadoDeposito.Where(q => q.IdCD == item.NoCertificadoDeposito).Select(q => q.IdCD).FirstOrDefaultAsync();
                             
 
                             Kardex _kardexmax = await  _context.Kardex.Where(

@@ -15,7 +15,10 @@ namespace ERPAPI.Models
         [Display(Name = "Id")]
         public Int64 IdCD { get; set; }
         [Display(Name = "No de certificado")]
-        public Int64 NoCD { get; set; }
+        public string NoCD { get; set; }
+
+        public int SolicitudCertificadoId { get; set; }
+
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
 

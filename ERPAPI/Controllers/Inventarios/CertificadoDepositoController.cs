@@ -306,6 +306,41 @@ namespace ERPAPI.Controllers
         }
 
 
+        private Kardex GeneraKardexCertificado(CertificadoLine ccertificadoLine, CertificadoDeposito _CertificadoDeposito) {
+            Kardex kardex = new Kardex
+            {
+                DocumentDate = _CertificadoDeposito.FechaCertificado,
+                KardexDate = DateTime.Now,
+                ProducId = _CertificadoDeposito.ServicioId,
+                ProductName = _CertificadoDeposito.ServicioName,
+                SubProducId = Convert.ToInt32(ccertificadoLine.SubProductId),
+                SubProductName = ccertificadoLine.SubProductName,
+                QuantityEntry = ccertificadoLine.Quantity,
+                QuantityOut = 0,
+                QuantityEntryBags = ccertificadoLine.Quantity,
+                BranchId = _CertificadoDeposito.BranchId,
+                BranchName = _CertificadoDeposito.BranchName,
+                WareHouseId = Convert.ToInt32(ccertificadoLine.WarehouseId),
+                WareHouseName = ccertificadoLine.WarehouseName,
+                UnitOfMeasureId = ccertificadoLine.UnitMeasureId,
+                UnitOfMeasureName = ccertificadoLine.UnitMeasurName,
+                TypeOperationId = TipoOperacion.Entrada,
+                TypeOperationName = "Entrada",
+                Total = ccertificadoLine.Quantity,
+                QuantityEntryCD = ccertificadoLine.Quantity,
+                TotalCD = ccertificadoLine.Quantity,
+                DocumentName = "Certficado de Depósito",
+                DocumentId = ccertificadoLine.IdCD,
+                DocType = 2
+
+            };
+
+            return kardex;
+
+
+        }
+
+
         /// <summary>
         /// Inserta una nueva CertificadoDeposito
         /// </summary>
@@ -315,197 +350,81 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<CertificadoDeposito>> Insert([FromBody]CertificadoDepositoDTO _CertificadoDeposito)
         {
             
-            SolicitudCertificadoDeposito _SolicitudCertificado = new SolicitudCertificadoDeposito();
+            SolicitudCertificadoDeposito _SolicitudCertificado ;
             CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                using (var transaction = _context.Database.BeginTransaction())
+                try
                 {
-                    try
+                    //Solicitud de certificado
+                    _context.CertificadoDeposito.Add(_CertificadoDeposito);
+                    _SolicitudCertificado = new SolicitudCertificadoDeposito(_CertificadoDeposito);
+
+                    await _context.SaveChangesAsync();
+
+                    _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
+                    _context.SolicitudCertificadoLine.AddRange(_SolicitudCertificado._SolicitudCertificadoLine);
+                    
+
+                    await _context.SaveChangesAsync();
+
+                    _CertificadoDeposito.SolicitudCertificadoId = (int)_SolicitudCertificado.IdSCD;
+
+
+                    foreach (var item in _CertificadoDeposito._CertificadoLine)
                     {
-                        //Solicitud de certificado
-                        //  _SolicitudCertificado = mapper.Map<SolicitudCertificadoDeposito>(_CertificadoDeposito);
-                        _SolicitudCertificado = new SolicitudCertificadoDeposito
+                        ///Actualiza el saldo del detalle del recibo
+                        GoodsReceivedLine linearecibo = _context.GoodsReceivedLine
+                            .Where(q => q.GoodsReceiveLinedId == item.GoodsReceivedLineId)
+                            .FirstOrDefault();
+                        linearecibo.SaldoporCertificar = item.CantidadDisponible - item.Quantity;
+
+                        ///Actualiza el estado del recibo de Mercaderias
+                        GoodsReceived recibo = _context.GoodsReceived
+                               .Where(q => q.GoodsReceivedId == item.ReciboId)
+                               .Include(a => a._GoodsReceivedLine)
+                               .FirstOrDefault();
+
+                        if (recibo._GoodsReceivedLine.Count() == recibo._GoodsReceivedLine.Where(q => q.SaldoporCertificar == 0).Count())
                         {
-                            Almacenaje = _CertificadoDeposito.Almacenaje,
-                            CustomerId = _CertificadoDeposito.CustomerId,
-                            CustomerName = _CertificadoDeposito.CustomerName,
-                            Direccion =  _CertificadoDeposito.Direccion,
-                            EmpresaSeguro = _CertificadoDeposito.EmpresaSeguro,
-                            Estado = _CertificadoDeposito.Estado,
-                            FechaCertificado = _CertificadoDeposito.FechaCertificado,
-                            
-                            //FechaFirma = _CertificadoDeposito.FechaFirma,
-                            //FechaInicioComputo = _CertificadoDeposito.FechaInicioComputo,
-                            FechaVencimientoDeposito = _CertificadoDeposito.FechaVencimientoDeposito,
-                            //FechaVencimiento = _CertificadoDeposito.FechaVencimiento,
-                            NoCD = _CertificadoDeposito.NoCD,
-                            //FechaPagoBanco = _CertificadoDeposito.FechaPagoBanco,
-                            NombreEmpresa= _CertificadoDeposito.NombreEmpresa,
-                            //LugarFirma = _CertificadoDeposito.LugarFirma,
-                            //MontoGarantia = _CertificadoDeposito.MontoGarantia,
-                            NoPoliza = _CertificadoDeposito.NoPoliza,
-                            //NombrePrestatario = _CertificadoDeposito.NombrePrestatario,
-                            NoTraslado = _CertificadoDeposito.NoTraslado,
-                            OtrosCargos = _CertificadoDeposito.OtrosCargos,
-                            //PorcentajeInteresesInsolutos = _CertificadoDeposito.PorcentajeInteresesInsolutos,
-                            Seguro = _CertificadoDeposito.Seguro,
-                            ServicioId = _CertificadoDeposito.ServicioId,
-                            ServicioName = _CertificadoDeposito.ServicioName,
-                            Quantitysum = _CertificadoDeposito.Quantitysum,
-                            Total= _CertificadoDeposito.Total,
-                            SujetasAPago=_CertificadoDeposito.SujetasAPago==null?0: (double)_CertificadoDeposito.SujetasAPago,
-                           // WarehouseId = _CertificadoDeposito.WarehouseId,
-                           // WarehouseName = _CertificadoDeposito.WarehouseName,
-                            Aduana = _CertificadoDeposito.Aduana,
-                            ManifiestoNo = _CertificadoDeposito.ManifiestoNo,
-                            
-                             
-                        };
-
-                        _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
-                        foreach (var item in _CertificadoDeposito._CertificadoLine)
-                        {
-                            SolicitudCertificadoLine _SolicitudCertificadoLine = new SolicitudCertificadoLine {
-
-                                 Amount = item.Amount,
-                                 Description = item.Description,
-                               //  IdCD = item.IdCD,
-                                 Price = item.Price,
-                                 Quantity = item.Quantity,
-                                 SubProductId = item.SubProductId,
-                                 SubProductName = item.SubProductName,
-                                 TotalCantidad = item.TotalCantidad,
-                                 UnitMeasureId = item.UnitMeasureId,
-                                 UnitMeasurName = item.UnitMeasurName,
-                                 ReciboId = item.ReciboId == null ? 0 : (int)item.ReciboId
-
-                            };
-
-                          //  _SolicitudCertificadoLine = mapper.Map<SolicitudCertificadoLine>(item);
-                            _SolicitudCertificadoLine.IdSCD = _SolicitudCertificado.IdSCD;
-                            _context.SolicitudCertificadoLine.Add(_SolicitudCertificadoLine);
-
+                            recibo.Porcertificar = false;
                         }
-
-                        await _context.SaveChangesAsync();
-
-                        /////////////////////////////////////////////////////////////////////////
-                        //////////////////Certificado////////////////////////////////////////////
-                        
-                        _CertificadoDepositoq = _CertificadoDeposito;
-                        _CertificadoDepositoq.NoCD = _SolicitudCertificado.IdSCD;
-
-                       // _CertificadoDepositoq._CertificadoLine = new List<CertificadoLine>();
-
-                        foreach (var item in _CertificadoDeposito._CertificadoLine)
-                        {
-
-                           // _CertificadoDepositoq._CertificadoLine.Add(item);
-                            _context.Kardex.Add( new Kardex { 
-                                DocumentDate = _CertificadoDeposito.FechaCertificado,
-                                ProducId = _CertificadoDeposito.ServicioId,
-                                ProductName = _CertificadoDeposito.ServicioName,
-                                SubProducId = Convert.ToInt32(item.SubProductId),
-                                SubProductName = item.SubProductName,
-                                QuantityEntry = item.Quantity,
-                                QuantityOut = 0,
-                                QuantityEntryBags = item.Quantity,
-                                BranchId = _CertificadoDeposito.BranchId,
-                                BranchName = _CertificadoDeposito.BranchName,
-                                WareHouseId = Convert.ToInt32(item.WarehouseId),
-                                WareHouseName = item.WarehouseName,
-                                UnitOfMeasureId = item.UnitMeasureId,
-                                UnitOfMeasureName = item.UnitMeasurName,
-                                TypeOperationId = TipoOperacion.Entrada,
-                                TypeOperationName = "Entrada",
-                                Total = item.Amount,
-                                //TotalBags = item.QuantitySacos + _KardexLine.TotalBags,
-                                //QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
-                                QuantityEntryCD = item.Quantity,
-                                TotalCD = item.Quantity,
-                                DocumentName = "Certficado de Depósito",
-                                DocumentId = item.IdCD,
-                                DocType = 2
-
-                            });
-
+                        _context.Kardex.Add(GeneraKardexCertificado(item, _CertificadoDeposito));
+                        //_context.CertificadoLine.Add(item);
                     }
-                        foreach (var item in _CertificadoDeposito.RecibosAsociados)
-                        {
-                            //  GoodsReceivedLine _gr = await _context.GoodsReceivedLine.Where(q => q.GoodsReceivedId == item).FirstOrDefaultAsync();
-                            RecibosCertificado _recibocertificado =
-                                new RecibosCertificado
-                                {
-                                    IdCD = _CertificadoDepositoq.IdCD,
-                                    IdRecibo = item,
-                                    productocantidadbultos = _CertificadoDeposito.Quantitysum,
-                                    productorecibolempiras = _CertificadoDeposito.Total,
-                                    //  WareHouseId = _gr.WareHouseId,
-                                    // WareHouseName = _gr.WareHouseName,
 
-                                    // UnitMeasureId =_CertificadoDeposito.
-                                };
-                            _CertificadoDeposito.Recibos += ", " + item.ToString();
-
-                            _context.RecibosCertificado.Add(_recibocertificado);
-                        }
-
-                        //_CertificadoDeposito._CertificadoLine = _CertificadoDepositoq._CertificadoLine;
-                        _context.CertificadoDeposito.Add(_CertificadoDeposito);
-                        //_CertificadoDeposito = _CertificadoDepositoq;
-
-                        await _context.SaveChangesAsync();
-
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _CertificadoDeposito.IdCD,
-                            DocType = "CertificadoDeposito",
-                            ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion,
-                            UsuarioModificacion = _CertificadoDeposito.UsuarioModificacion,
-                            UsuarioEjecucion = _CertificadoDeposito.UsuarioModificacion,
-
-                        });
-
-                        await _context.SaveChangesAsync();
-
-                         
-                        
-
-                        _context.Kardex.Add(_CertificadoDeposito.Kardex);
+                    await _context.SaveChangesAsync();
 
 
 
-                        await _context.SaveChangesAsync();
-
-                       
-
-                        transaction.Commit();
-                    }
-                    catch (Exception ex)
+                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                     {
-                        transaction.Rollback();
-                        throw ex;
-                    }
+                        IdOperacion = _CertificadoDeposito.IdCD,
+                        DocType = "CertificadoDeposito",
+                        ClaseInicial =
+                        Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CertificadoDeposito, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                        Accion = "Insertar",
+                        FechaCreacion = DateTime.Now,
+                        FechaModificacion = DateTime.Now,
+                        UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion,
+                        UsuarioModificacion = _CertificadoDeposito.UsuarioModificacion,
+                        UsuarioEjecucion = _CertificadoDeposito.UsuarioModificacion,
+
+                    });
+
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
                 }
-                //_CertificadoDepositoq = _CertificadoDeposito;
-                //_context.CertificadoDeposito.Add(_CertificadoDepositoq);
-                //await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    throw ex;
+                }
             }
 
-            return await Task.Run(()=> Ok(_CertificadoDepositoq));
+            return await Task.Run(()=> Ok(_CertificadoDeposito));
         }
 
 
@@ -526,10 +445,10 @@ namespace ERPAPI.Controllers
                         _CertificadoDepositoq.IdEstado = _CertificadoDeposito.IdEstado;
                         _CertificadoDepositoq.Estado = _CertificadoDeposito.Estado;
 
-                        SolicitudCertificadoDeposito _solicitudq = await (from c in _context.SolicitudCertificadoDeposito
-                                      .Where(q => q.NoCD == _CertificadoDepositoq.NoCD)
-                                                                          select c
-                                      ).FirstOrDefaultAsync();
+                        //SolicitudCertificadoDeposito _solicitudq = await (from c in _context.SolicitudCertificadoDeposito
+                        //              .Where(q => q.NoCD == _CertificadoDepositoq.NoCD)
+                        //                                                  select c
+                        //              ).FirstOrDefaultAsync();
 
                         _context.Entry(_CertificadoDepositoq).CurrentValues.SetValues((_CertificadoDepositoq));
 
@@ -552,10 +471,10 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
 
-                        SolicitudCertificadoDeposito _solicitud = _solicitudq;
-                        _solicitud.IdEstado = 3;
-                        _solicitud.Estado = "Anulado";
-                        _context.Entry(_solicitudq).CurrentValues.SetValues((_solicitud));
+                        //SolicitudCertificadoDeposito _solicitud = _solicitudq;
+                        //_solicitud.IdEstado = 3;
+                        //_solicitud.Estado = "Anulado";
+                        //_context.Entry(_solicitudq).CurrentValues.SetValues((_solicitud));
 
                         Kardex _kardexentrada = await (from c in _context.Kardex
                                                        .Include(q => q._KardexLine)
@@ -656,7 +575,7 @@ namespace ERPAPI.Controllers
             CertificadoDeposito Items = new CertificadoDeposito();
             try
             {
-                Items = await _context.CertificadoDeposito.Include(q => q._CertificadoLine).Where(q => q.NoCD == NoCD).FirstOrDefaultAsync();
+                Items = await _context.CertificadoDeposito.Include(q => q._CertificadoLine).Where(q => q.IdCD == NoCD).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

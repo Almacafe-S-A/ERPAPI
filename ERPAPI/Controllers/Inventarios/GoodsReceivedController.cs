@@ -100,9 +100,9 @@ namespace ERPAPI.Controllers
         /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
         /// </summary>
         /// <returns></returns>
-        [HttpGet("[action]/{clienteid}/{servicioid}/{pendienteliquidacion}/{sucursal}")]
-        public async Task<IActionResult> RecibosPendientesCertificar(int clienteid, int servicioid, int pendienteliquidacion, int sucursal)
-        {
+        [HttpGet("[action]/{clienteid}/{servicioid}/{escafe}/{sucursal}")]
+        public async Task<IActionResult> RecibosPendientesCertificar(int clienteid, int servicioid, int escafe, int sucursal)
+        {            
             List<GoodsReceived> Items = new List<GoodsReceived>();
             try
             {
@@ -112,34 +112,66 @@ namespace ERPAPI.Controllers
                 UserBranch branch = _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id && w.BranchId == sucursal).FirstOrDefault();
                 if (branch != null)
                 {
-                    if (pendienteliquidacion == 1)
+                    Items = await _context.GoodsReceived
+                      .Where(p =>
+                           p.CustomerId == clienteid
+                          && p.ProductId == servicioid
+                          && (p.Porcertificar == null || (bool)p.Porcertificar)
+                          )
+                      .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                    if (escafe == 0)
                     {
-                        Items = await _context.GoodsReceived
-                        .Where(p =>p.BranchId == branch.BranchId
-                            && p.CustomerId == clienteid
-                            && p.ProductId == servicioid
-                            && (p.Porcertificar==null ||(bool)p.Porcertificar)
-                            //&& p.IdEstado != 6
-                            && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId))
-
-                        .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                        
+                        Items = Items.Where(q => _context.LiquidacionLine.Include(i => i.GoodsReceivedLine)
+                                            .Any(a => a.GoodsReceivedLine.GoodsReceivedId == q.GoodsReceivedId)).ToList();
+                        return await Task.Run(() => Ok(Items));
                     }
                     else
                     {
-                        Items = await _context.GoodsReceived
-                       .Where(p => 
-                            p.CustomerId == clienteid
-                           && p.ProductId == servicioid
-                           //&& p.IdEstado != 6
-                           && _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId))
-
-                       .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                        return await Task.Run(() => Ok(Items));
                     }
                 }
                 else
                 {
                     return await Task.Run(() => Ok(Items));
                     // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+               
+
+        /// <summary>
+        /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{clienteid}/{servicioid}")]
+        public async Task<IActionResult> RecibosPendientesLiquidar(int clienteid, int servicioid)
+        {
+            List<GoodsReceived> Items = new List<GoodsReceived>();
+            try
+            {
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.GoodsReceived
+                        .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
+                            && p.CustomerId == clienteid
+                            && p.ProductId == servicioid
+                            && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == p.GoodsReceivedId))
+                        .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
                 }
             }
             catch (Exception ex)
@@ -430,6 +462,29 @@ namespace ERPAPI.Controllers
         }
 
 
+        private async Task<ActionResult<GoodsReceived>> ValidarEsCafe(GoodsReceived goodsReceived) {
+            
+            foreach (var item in goodsReceived._GoodsReceivedLine)
+            {
+                SubProduct subProduct =await _context.SubProduct.Where(q => q.SubproductId == item.SubProductId).FirstOrDefaultAsync();
+                if (goodsReceived.esCafe!= null&&(bool)goodsReceived.esCafe&& subProduct.TipoCafe == 0)
+                {
+                    return BadRequest("Los recibos de mercaderias que contienen cafe solo pueden contener ese tipo de producto");
+
+                }
+                goodsReceived.esCafe = subProduct.TipoCafe != 0;
+                
+            }
+
+
+
+            return goodsReceived;
+        
+        
+        
+        
+        }
+
 
 
         /// <summary>
@@ -450,6 +505,15 @@ namespace ERPAPI.Controllers
                     {
 
                         _GoodsReceivedq = _GoodsReceived;
+
+                        var valido =  await ValidarEsCafe(_GoodsReceivedq);
+
+                        if (valido.Result is BadRequestObjectResult)
+                        {
+                            return BadRequest(valido.Result.ToString());
+                        }
+                        _GoodsReceived = (GoodsReceived)valido.Value;
+
                          var boletasalida = await InsertBoletaSalida(_GoodsReceivedq);
                         if (boletasalida.Result is BadRequestObjectResult)
                         {

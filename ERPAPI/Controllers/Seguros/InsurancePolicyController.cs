@@ -145,11 +145,18 @@ namespace ERPAPI.Controllers
             {
                 if (polizaPropia)
                 {
-                    Items = await _context.InsurancePolicy.Where(q => q.Propias).ToListAsync();
+                    Items = await _context.InsurancePolicy
+                        .Where(q => q.Propias 
+                        && q.PolicyDueDate.Date>=DateTime.Now.Date
+                        && q.EstadoId == 1)
+                        .ToListAsync();
                 }
                 else
                 {
-                    Items = await _context.InsurancePolicy.Where(q => q.CustomerId == CustomerId).ToListAsync();
+                    Items = await _context.InsurancePolicy.Where(q => q.CustomerId == CustomerId
+                    && q.PolicyDueDate.Date >= DateTime.Now.Date
+                    && q.EstadoId == 1)
+                    .ToListAsync();
                 }
                 
             }

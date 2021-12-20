@@ -40,5 +40,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Total Cantidad")]
         public decimal TotalCantidad { get; set; }
+
+        public Int64? GoodsReceivedLineId { get; set; }
+        [ForeignKey("GoodsReceivedLineId")]
+        public GoodsReceivedLine GoodsReceivedLine { get; set; }
     }
 }

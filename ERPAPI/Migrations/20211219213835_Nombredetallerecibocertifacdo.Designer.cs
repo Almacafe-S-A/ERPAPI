@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211219213835_Nombredetallerecibocertifacdo")]
+    partial class Nombredetallerecibocertifacdo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1120,7 +1122,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Mensaje");
 
-                    b.Property<string>("NoCD");
+                    b.Property<long>("NoCD");
 
                     b.Property<string>("NoPoliza");
 
@@ -1145,8 +1147,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("ServicioId");
 
                     b.Property<string>("ServicioName");
-
-                    b.Property<int>("SolicitudCertificadoId");
 
                     b.Property<double?>("SujetasAPago");
 
@@ -9483,8 +9483,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<long?>("GoodsReceivedLineId");
-
                     b.Property<long>("IdSCD");
 
                     b.Property<decimal>("Price");
@@ -9504,8 +9502,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("UnitMeasureId");
 
                     b.HasKey("CertificadoLineId");
-
-                    b.HasIndex("GoodsReceivedLineId");
 
                     b.HasIndex("IdSCD");
 
@@ -12445,10 +12441,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.SolicitudCertificadoLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.GoodsReceivedLine", "GoodsReceivedLine")
-                        .WithMany()
-                        .HasForeignKey("GoodsReceivedLineId");
-
                     b.HasOne("ERPAPI.Models.SolicitudCertificadoDeposito")
                         .WithMany("_SolicitudCertificadoLine")
                         .HasForeignKey("IdSCD")
