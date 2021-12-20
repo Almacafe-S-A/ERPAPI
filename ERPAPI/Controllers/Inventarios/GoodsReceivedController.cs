@@ -100,7 +100,7 @@ namespace ERPAPI.Controllers
         /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
         /// </summary>
         /// <returns></returns>
-        [HttpGet("[action]/{clienteid}/{servicioid}/{pendienteliquidacion}/{sucursal}")]
+        [HttpGet("[action]/{clienteid}/{servicioid}/{escafe}/{sucursal}")]
         public async Task<IActionResult> RecibosPendientesCertificar(int clienteid, int servicioid, int escafe, int sucursal)
         {            
             List<GoodsReceived> Items = new List<GoodsReceived>();
