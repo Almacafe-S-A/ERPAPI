@@ -37,6 +37,8 @@ namespace ERPAPI.Models
         [Display(Name = "Porcentaje de Merma")]
         public decimal? Merma { get; set; }
 
+       
+
         [Display(Name = "Total")]
         [Column(TypeName = "Money")]
         public decimal Amount { get; set; }
@@ -52,6 +54,10 @@ namespace ERPAPI.Models
 
         [Display(Name = "Total Cantidad")]
         public decimal TotalCantidad { get; set; }
+
+        public decimal? CantidadDisponibleAutorizar { get; set; }
+
+        public decimal? Saldo { get; set; }
 
         [Display(Name = "Saldo endoso")]
         public decimal SaldoEndoso { get; set; }

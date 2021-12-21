@@ -14,6 +14,8 @@ namespace ERPAPI.Models
         public Int64 GoodsDeliveryAuthorizationLineId { get; set; }
         [Display(Name = "Autorizacion Id")]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
+
+        public Int64 CertificadoLineId { get; set; }
         [Display(Name = "Número de certificado")]
         public Int64 NoCertificadoDeposito { get; set; }
 
@@ -37,6 +39,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Cantidad")]
         public decimal Quantity { get; set; }
+
+        public decimal Saldo { get; set; }
 
         [Display(Name = "Precio")]
         public decimal Price { get; set; }
