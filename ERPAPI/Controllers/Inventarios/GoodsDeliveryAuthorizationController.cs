@@ -253,18 +253,25 @@ namespace ERPAPI.Controllers
                             item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
                             _context.GoodsDeliveryAuthorizationLine.Add(item);
 
-                            Int64 IdCD = await _context.CertificadoDeposito.Where(q => q.IdCD == item.NoCertificadoDeposito).Select(q => q.IdCD).FirstOrDefaultAsync();
+                            CertificadoLine certificadoLine = _context.CertificadoLine
+                             .Where(q => q.CertificadoLineId == item.CertificadoLineId).FirstOrDefault();
+
+                            CertificadoDeposito certificadoDeposito = await _context.CertificadoDeposito
+                                .Where(q => q.IdCD == item.NoCertificadoDeposito).FirstOrDefaultAsync();
+
+                            List<Kardex> kardexCertificadodeposito = await _context.Kardex.Where(q =>
+                                    q.DocType == 2
+                                    && q.DocumentId == certificadoDeposito.IdCD 
+                                    && q.SubProducId == item.SubProductId
+                                    ).ToListAsync();
+                            Kardex kardexMaxCertificadodeposito =
+                                kardexCertificadodeposito
+                                .Where(q => q.KardexId == kardexCertificadodeposito
+                                .Select(s => s.KardexId).Max()).FirstOrDefault();
+
                             
 
-                            Kardex _kardexmax = await  _context.Kardex.Where(
-                                    q =>q.CustomerId == _GoodsDeliveryAuthorizationq.CustomerId &&
-                                    q.SubProducId == item.SubProductId &&
-                                    q.DocumentId == _GoodsDeliveryAuthorizationq.NoCD &&
-                                    q.DocumentName == "Certficado de Depósito" ).OrderByDescending(o => o.KardexId).FirstOrDefaultAsync();
-
-                            
-
-                            if (_kardexmax == null) { 
+                            if (kardexMaxCertificadodeposito == null) { 
                                 BadRequest($"No se Encontro Kardex Para este Producto en el Certificado"); 
                             }
 
@@ -277,13 +284,14 @@ namespace ERPAPI.Controllers
                                                             select c
                                                      ).FirstOrDefaultAsync();
 
-                            if(_kardexmax.TotalCD< item.Quantity)
+                            if(kardexMaxCertificadodeposito.TotalCD< item.Quantity)
                             {
                                 return await Task.Run(() => BadRequest($"La cantidad a retirar no puede ser superior al total del ciertificado"));
                             }
-                            ////////Entra a la Autorizacion/////////////
+                            ////////Kardex Autorizacion/////////////
                             _context.Kardex.Add(new Kardex
                             {
+                                KardexDate = DateTime.Now,
                                 DocumentDate = _GoodsDeliveryAuthorization.DocumentDate,
                                 ProducId = _GoodsDeliveryAuthorizationq.ProductId,
                                 ProductName = _GoodsDeliveryAuthorizationq.ProductName,
@@ -300,8 +308,9 @@ namespace ERPAPI.Controllers
                                 UnitOfMeasureName = item.UnitOfMeasureName,
                                 TypeOperationId = TipoOperacion.Entrada,
                                 TypeOperationName = "Entrada",
-                                DocumentName = "SolicitudAutorizacion/GoodsDeliveryAuthorization",
-                                Total = item.valorcertificado,
+                                DocumentName = "Autorizacion de Retiro",
+                                DocType = 3,
+                                Total = item.Quantity,
                                 //TotalBags = item. + _KardexLine.TotalBags,
                                // QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
                                 //QuantityOutCD = item.Quantity,
@@ -311,32 +320,37 @@ namespace ERPAPI.Controllers
                             ///////////////////////Sale del Certificado////////////////
                             _context.Kardex.Add(new Kardex
                             {
-                                DocumentDate = _kardexmax.DocumentDate,
-                                ProducId = _kardexmax.ProducId,
-                                ProductName = _kardexmax.ProductName,
-                                SubProducId = Convert.ToInt32(_kardexmax.SubProducId),
-                                SubProductName = _kardexmax.SubProductName,
+                                KardexDate = DateTime.Now,
+                                DocumentDate = kardexMaxCertificadodeposito.DocumentDate,
+                                ProducId = kardexMaxCertificadodeposito.ProducId,
+                                ProductName = kardexMaxCertificadodeposito.ProductName,
+                                SubProducId = Convert.ToInt32(kardexMaxCertificadodeposito.SubProducId),
+                                SubProductName = item.SubProductName,
                                 QuantityEntry = 0,
                                 QuantityOut = item.Quantity,
                                 QuantityEntryBags = 0,
-                                BranchId = _kardexmax.BranchId,
-                                BranchName = _kardexmax.BranchName,
-                                WareHouseId = Convert.ToInt32(_kardexmax.WareHouseId),
-                                WareHouseName = _kardexmax.WareHouseName,
-                                UnitOfMeasureId = _kardexmax.UnitOfMeasureId,
-                                UnitOfMeasureName = _kardexmax.UnitOfMeasureName,
+                                BranchId = kardexMaxCertificadodeposito.BranchId,
+                                BranchName = kardexMaxCertificadodeposito.BranchName,
+                                WareHouseId = Convert.ToInt32(kardexMaxCertificadodeposito.WareHouseId),
+                                WareHouseName = kardexMaxCertificadodeposito.WareHouseName,
+                                UnitOfMeasureId = kardexMaxCertificadodeposito.UnitOfMeasureId,
+                                UnitOfMeasureName = kardexMaxCertificadodeposito.UnitOfMeasureName,
                                 TypeOperationId = TipoOperacion.Salida,
                                 TypeOperationName = "Salida",
-                                DocumentName = "SolicitudAutorizacion/GoodsDeliveryAuthorization",
-                                Total = _kardexmax.Total -  item.valorcertificado,
+                                DocumentName = "Certificado Deposito/Autorizacion Retiro",
+                                DocType = 2,
+                                Total = kardexMaxCertificadodeposito.Total - item.valorcertificado,
                                 //TotalBags = item. + _KardexLine.TotalBags,
                                 QuantityEntryCD = 0,
                                 QuantityOutCD = item.Quantity / (1 + Convert.ToDecimal(_subproduct.Merma)),
-                                TotalCD = item.valorcertificado,
-                            });
+                                TotalCD = kardexMaxCertificadodeposito.Total - item.Quantity,
+                            }) ;
 
-
+                            certificadoLine.Saldo = certificadoLine.Saldo == null ? certificadoLine.Quantity - item.Quantity
+                                :certificadoLine.Saldo -  item.Quantity;
                         }
+                          
+
                                                                      
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
