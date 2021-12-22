@@ -136,7 +136,7 @@ namespace ERPAPI.Controllers
                 Customer Items = await _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefaultAsync();
                 List<SeveridadRiesgo> riesgos = await _context.SeveridadRiesgo.ToListAsync();
                 SeveridadRiesgo severidad = new SeveridadRiesgo();
-                if (Items.ValorSeveridadRiesgo > 0)
+                if (Items!=null&& Items.ValorSeveridadRiesgo !=null&& Items.ValorSeveridadRiesgo > 0)
                 {
                     severidad = riesgos.Where(w => w.RangoInferiorSeveridad <= Items.ValorSeveridadRiesgo && w.RangoSuperiorSeveridad >= Items.ValorSeveridadRiesgo).FirstOrDefault();
                     if (severidad == null)

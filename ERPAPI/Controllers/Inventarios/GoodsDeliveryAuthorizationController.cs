@@ -116,35 +116,21 @@ namespace ERPAPI.Controllers
                                            //  && !_context.CertificadoLine.Any(a => a.CertificadoLineId == lineasrecibo.GoodsReceiveLinedId)
                                            select new GoodsDeliveryAuthorizationLine()
                                            {
-                                               GoodsDeliveryAuthorizationId = 0
-                                               ,
-                                               UnitOfMeasureName = cd.UnitMeasurName
-                                               ,
+                                               GoodsDeliveryAuthorizationId = 0,
+                                               UnitOfMeasureName = cd.UnitMeasurName,
                                                UnitOfMeasureId = (long)cd.UnitMeasureId,
-                                               Quantity = (long)cd.Quantity
-                                               ,
-                                               SubProductId = (long)cd.SubProductId
-                                               ,
-                                               SubProductName = cd.SubProductName
-                                               ,
-                                               //GoodsReceivedLineId = lineasrecibo.GoodsReceiveLinedId
-                                               //,
-                                               NoCertificadoDeposito = (int)cd.IdCD
-                                               ,
-                                               Price = (long)cd.Price
-                                               ,
-                                               WarehouseId = (int)cd.WarehouseId
-                                               ,
-                                               WarehouseName = cd.WarehouseName
-                                               ,
-                                               valorcertificado = cd.Amount
-                                               ,
-                                               SaldoProducto = cd.Quantity
-                                               ,
-                                               valorfinanciado = 0
-                                               ,
-                                               ValorImpuestos = 0
-                                               ,
+                                               Quantity = (long)cd.Quantity,
+                                               SubProductId = (long)cd.SubProductId,
+                                               SubProductName = cd.SubProductName,
+                                               CertificadoLineId = cd.CertificadoLineId,
+                                               NoCertificadoDeposito = (int)cd.IdCD,
+                                               Price = (long)cd.Price,
+                                               WarehouseId = (int)cd.WarehouseId,
+                                               WarehouseName = cd.WarehouseName,
+                                               valorcertificado = cd.Amount,
+                                               SaldoProducto = cd.Quantity,
+                                               valorfinanciado = 0,
+                                               ValorImpuestos = 0,
 
 
                                            }).ToListAsync();
