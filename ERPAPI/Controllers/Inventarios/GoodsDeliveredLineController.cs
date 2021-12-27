@@ -77,7 +77,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]/{GoodsDeliveredId}")]
-        public async Task<IActionResult> GetGoodsReceivedLineByGoodsDeliveredId(Int64 GoodsDeliveredId)
+        public async Task<IActionResult> GetGoodsDeliveredLineByGoodsDeliveredId(Int64 GoodsDeliveredId)
         {
             List<GoodsDeliveredLine> Items = new List<GoodsDeliveredLine>();
             try
@@ -95,6 +95,75 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+
+        /// <summary>
+        /// Obtienne los de los controles de salidas pendientes y le resta el saldo autorizado 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetGoodsDeliveredLinePendientes([FromQuery(Name = "ARs")] int[] ARs, [FromQuery(Name = "controlid")] int controlid)
+        {
+            List<ControlPalletsLine> controlPalletsLines = new List<ControlPalletsLine>();
+            List<GoodsDeliveryAuthorizationLine> goodsDeliveryAuthorizationsLines = new List<GoodsDeliveryAuthorizationLine>();
+            List<GoodsDeliveredLine> goodsDeliveredLines = new List<GoodsDeliveredLine>();
+
+
+
+
+            controlPalletsLines = await _context.ControlPalletsLine.Where(q => q.ControlPalletsId == controlid).ToListAsync();
+            goodsDeliveryAuthorizationsLines = await _context.GoodsDeliveryAuthorizationLine.Where(q => ARs.Any(a => a == q.GoodsDeliveryAuthorizationId)).ToListAsync();
+
+            try
+            {
+                //Obtiene el detalle de los recibos liquidados
+                goodsDeliveredLines = (from line in controlPalletsLines
+                                      select
+                                    new GoodsDeliveredLine
+                                    {
+                                        SubProductId = (long)line.SubProductId,
+                                        Quantity = 0,
+                                        Total = line.Qty==null?0: (decimal)line.Qty,
+                                        Description = line.SubProductName,
+                                        SubProductName = line.SubProductName,
+                                        UnitOfMeasureId = (long)line.UnitofMeasureId,
+                                        UnitOfMeasureName = line.UnitofMeasureName,
+                                        WareHouseId =(long)line.WarehouseId,
+                                        WareHouseName = line.WarehouseName,
+                                        QuantitySacos = line.cantidadPoliEtileno + line.cantidadYute,
+                                    }).ToList();
+                foreach (var item in goodsDeliveredLines)
+                {
+                    List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines.Where(q => q.SubProductId == item.SubProductId).ToList();
+                    if (authorizationLines.Count() == 0)
+                    {
+                        continue;
+                    }
+                    decimal saldo = authorizationLines.Sum(s => s.Quantity);
+                    item.Quantity = 0;
+                    foreach (var autorizacion in authorizationLines)
+                    {
+                        if (item.Quantity<item.Total )
+                        {
+                            item.Quantity += autorizacion.Quantity;
+                        }
+                    }
+                    item.Quantity = authorizationLines.Sum(s => s.Quantity);
+                    item.Price = (double)authorizationLines.FirstOrDefault().Price;
+                    
+
+                }
+
+
+                return Ok(goodsDeliveredLines);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
+
 
 
         /// <summary>

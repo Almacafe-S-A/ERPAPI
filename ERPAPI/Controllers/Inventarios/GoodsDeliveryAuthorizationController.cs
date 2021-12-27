@@ -376,6 +376,49 @@ namespace ERPAPI.Controllers
             return Ok(_GoodsDeliveryAuthorizationq);
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{clienteid}/{servicioid}/{sucursal}")]
+        public async Task<IActionResult> AutorizacionesPendientes(int clienteid, int servicioid, int sucursal)
+        {
+            List<GoodsDeliveryAuthorization> Items = new List<GoodsDeliveryAuthorization>();
+            try
+            {
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+
+                UserBranch branch = _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id && w.BranchId == sucursal).FirstOrDefault();
+                if (branch != null)
+                {
+                    Items = await _context.GoodsDeliveryAuthorization
+                      .Where(p =>
+                           p.CustomerId == clienteid
+                          && p.ProductId == servicioid
+                          //&& (p.Porcertificar == null || (bool)p.Porcertificar)
+                          )
+                      .OrderByDescending(b => b.GoodsDeliveryAuthorizationId).ToListAsync();
+
+                    return await Task.Run(() => Ok(Items));
+                   
+                }
+                else
+                {
+                    return await Task.Run(() => Ok(Items));
+                    // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
         /// <summary>
         /// Actualiza la GoodsDeliveryAuthorization
         /// </summary>
