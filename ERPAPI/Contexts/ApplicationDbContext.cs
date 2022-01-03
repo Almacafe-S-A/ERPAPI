@@ -213,6 +213,7 @@ namespace ERP.Contexts
         public DbSet<GoodsReceivedLine> GoodsReceivedLine { get; set; }
         public DbSet<GoodsDelivered> GoodsDelivered { get; set; }
         public DbSet<GoodsDeliveredLine> GoodsDeliveredLine { get; set; }
+        public DbSet<GoodsDeliveryAuthLine> GoodsDeliveryAuthLines { get; set; }
         public DbSet<CustomerProduct> CustomerProduct { get; set; }
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
         public DbSet<PEPS> PEPS { get; set; }
@@ -265,6 +266,8 @@ namespace ERP.Contexts
         public DbSet<Boleto_Ent> Boleto_Ent { get; set; }
         public DbSet<Boleto_Sal> Boleto_Sal { get; set; }
         public DbSet<BoletaDeSalida> BoletaDeSalida { get; set; }
+
+        public DbSet<BoletaDeSalidaLine> BoletaDeSalidaLines { get; set; }
         public DbSet<CompanyInfo> CompanyInfo { get; set; }
         public DbSet<CustomerAreaProduct> CustomerAreaProduct { get; set; }
         public DbSet<CustomerAuthorizedSignature> CustomerAuthorizedSignature { get; set; }

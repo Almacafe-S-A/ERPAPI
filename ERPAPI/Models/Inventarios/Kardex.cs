@@ -24,11 +24,10 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de documento")]
         public Int64 DocType { get; set; }
 
-        //[Display(Name = "Tipo de documento")]
-        //public string DocName { get; set; }
-
         [Display(Name = "Documento")]
         public Int64? DocumentId { get; set; }
+
+        public int? DocumentLine { get; set; }
 
         [Display(Name = "Documento")]
         public string DocumentName { get; set; }

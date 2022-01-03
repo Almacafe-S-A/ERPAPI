@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220103120701_BOltaSaiaLines")]
+    partial class BOltaSaiaLines
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -721,7 +723,7 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("BoletaSalidaId");
+                    b.Property<long?>("BoletaDeSalidaId");
 
                     b.Property<decimal>("Quantity");
 
@@ -735,7 +737,7 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("BoletaSalidaLineId");
 
-                    b.HasIndex("BoletaSalidaId");
+                    b.HasIndex("BoletaDeSalidaId");
 
                     b.ToTable("BoletaDeSalidaLines");
                 });
@@ -11187,10 +11189,9 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.BoletaDeSalidaLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.BoletaDeSalida", "BoletaDeSalida")
+                    b.HasOne("ERPAPI.Models.BoletaDeSalida")
                         .WithMany("BoletaDeSalidaLines")
-                        .HasForeignKey("BoletaSalidaId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("BoletaDeSalidaId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Boleto_Sal", b =>

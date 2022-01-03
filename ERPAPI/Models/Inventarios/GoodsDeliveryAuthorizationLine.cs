@@ -16,6 +16,7 @@ namespace ERPAPI.Models
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
 
         public Int64 CertificadoLineId { get; set; }
+
         [Display(Name = "Número de certificado")]
         public Int64 NoCertificadoDeposito { get; set; }
 
