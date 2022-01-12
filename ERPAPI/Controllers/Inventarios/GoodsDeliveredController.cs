@@ -186,7 +186,22 @@ namespace ERPAPI.Controllers
                             UnitOfMeasureId = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureId,
                             UnitOfMeasureName = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureName,
                             WeightBallot = _GoodsDelivered.WeightBallot,
+                            BoletaDeSalidaLines = new List<BoletaDeSalidaLine>(),
                         };
+
+                        foreach (var item in _GoodsDelivered._GoodsDeliveredLine)
+                        {
+                            _boletadesalida.BoletaDeSalidaLines.Add(new BoletaDeSalidaLine() {
+                                SubProductId = item.SubProductId,
+                                SubProductName = item.SubProductName,
+                                Quantity = item.Quantity,
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                Warehouseid = (int)item.WareHouseId,
+                                WarehouseName = item.WareHouseName,
+                            });
+                        }
+                        
 
                         _context.BoletaDeSalida.Add(_boletadesalida);
 

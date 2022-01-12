@@ -30,5 +30,11 @@ namespace ERPAPI.Models
         [Display(Name = "Cantidad")]
         public decimal Quantity { get; set; }
 
+
+        public int? Warehouseid { get; set; }
+        public string WarehouseName { get; set; }
+        [ForeignKey("Warehouseid ")]
+        public Warehouse Warehouse { get; set; }
+
     }
 }
