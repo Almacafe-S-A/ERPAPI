@@ -99,6 +99,8 @@ namespace ERPAPI.Controllers
         }
 
 
+
+
         /// <summary>
         /// Obtiene el detalle de BoletaDeSalidaes 
         /// El estado define cuales son los cai activos
@@ -149,6 +151,83 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+
+        /// <summary>
+        /// Obtiene los Datos de la BoletaDeSalida por medio del Id enviado.
+        /// </summary>
+        /// <param name="BoletaDeSalidaId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{BoletaDeSalidaId}")]
+        public async Task<IActionResult> GenerarGuiaRemision(Int64 BoletaDeSalidaId)
+        {
+            BoletaDeSalida boleta = new BoletaDeSalida();
+            GuiaRemision guiaRemision = new GuiaRemision();
+            try
+            {
+                boleta = await _context.BoletaDeSalida
+                    .Include(i=>i.BoletaDeSalidaLines)
+                    .Where(q => q.BoletaDeSalidaId == BoletaDeSalidaId).FirstOrDefaultAsync();
+
+
+                NumeracionSAR numeracionSAR = _context.NumeracionSAR
+                    .Where(q => q.IdEstado == 1
+                    && q.DocTypeId == 13
+                    && q.FechaLimite < DateTime.Now
+                    ).FirstOrDefault();
+
+                if (numeracionSAR == null)
+                {
+                    return BadRequest("No existe una numeracion SAR Activa o Vigente para la Generacion de las Guias de Remisión");
+                }
+                guiaRemision = new GuiaRemision {
+                    NumeroDocumento =  numeracionSAR.GetNumeroSiguiente(),
+                    CAI = numeracionSAR._cai,
+                    FechaLimiteEmision = numeracionSAR.FechaLimite,
+                    Rango = numeracionSAR.NoInicio + " - " + numeracionSAR.NoFin,
+                    CustomerName = boleta.CustomerName,
+                    CustomerId = (int)boleta.CustomerId,
+                    Transportista = boleta.Motorista,
+                    Placa = boleta.Placa,
+                    UsuarioCreacion = User.Identity.Name,
+                    FechaCreacion = DateTime.Now,
+                    Marca = boleta.Marca,
+                    Fecha = DateTime.Now,
+                    GuiaRemisionLines = new List<GuiaRemisionLine>(),
+                    Vigilante = boleta.Vigilante,
+                    //Observaciones = boleta.=
+                    
+
+                };
+
+                foreach (var item in boleta.BoletaDeSalidaLines)
+                {
+                    guiaRemision.GuiaRemisionLines.Add(new GuiaRemisionLine {
+                        SubProductId = item.SubProductId,
+                        SubProductName = item.SubProductName,
+                        Quantity = item.Quantity,
+                        UnitOfMeasureId = item.UnitOfMeasureId,
+                        UnitOfMeasureName = item.UnitOfMeasureName
+                    });
+                }
+                _context.Add(guiaRemision);
+
+                await _context.SaveChangesAsync();
+
+                boleta.GuiaRemisionId = guiaRemision.Id;
+                await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return Ok(guiaRemision);
+        }
 
         /// <summary>
         /// Inserta una nueva BoletaDeSalida

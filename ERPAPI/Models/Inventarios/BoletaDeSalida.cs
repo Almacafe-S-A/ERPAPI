@@ -22,6 +22,8 @@ namespace ERPAPI.Models
         [Display(Name = "R/M No.")]
         public Int64 GoodsReceivedId { get; set; }
 
+        public int? GuiaRemisionId { get; set; }
+
         [Display(Name = "Sr. Vigilante")]
         public Int64 VigilanteId { get; set; }
 
