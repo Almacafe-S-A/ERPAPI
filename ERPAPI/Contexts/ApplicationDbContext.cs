@@ -268,6 +268,8 @@ namespace ERP.Contexts
         public DbSet<BoletaDeSalida> BoletaDeSalida { get; set; }
 
         public DbSet<BoletaDeSalidaLine> BoletaDeSalidaLines { get; set; }
+        public DbSet<GuiaRemision> GuiaRemision { get; set; }
+        public DbSet<GuiaRemisionLine> GuiaRemisionLines { get; set; }
         public DbSet<CompanyInfo> CompanyInfo { get; set; }
         public DbSet<CustomerAreaProduct> CustomerAreaProduct { get; set; }
         public DbSet<CustomerAuthorizedSignature> CustomerAuthorizedSignature { get; set; }

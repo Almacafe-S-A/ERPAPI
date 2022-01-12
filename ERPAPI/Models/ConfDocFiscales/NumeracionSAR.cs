@@ -21,6 +21,8 @@ namespace ERPAPI.Models
         public string NoFin { get; set; }
         public DateTime FechaLimite { get; set; }
         public int CantidadOtorgada { get; set; }
+
+        public Int64? Correlativo { get; set; }
         public string SiguienteNumero { get; set; }
 
         public Int64 BranchId { get; set; }
@@ -40,6 +42,19 @@ namespace ERPAPI.Models
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
+
+        public string GetNumeroSiguiente() {
+            if (this.Correlativo == null)
+            {
+                this.Correlativo = Convert.ToInt64(this.NoInicio);
+            }
+
+            this.SiguienteNumero = $"000-{this.DocSubType}-{this.PuntoEmision}-{this.Correlativo + 1}";
+
+
+            return $"000-{this.DocSubType}-{this.PuntoEmision}-{this.Correlativo}"; 
+
+        }
 
 
     }

@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220112174624_GuiaRemision")]
+    partial class GuiaRemision
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -683,8 +685,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("GoodsDeliveryAuthorizationId");
 
                     b.Property<long>("GoodsReceivedId");
-
-                    b.Property<int?>("GuiaRemisionId");
 
                     b.Property<string>("Marca");
 
@@ -7618,8 +7618,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("BranchName");
 
                     b.Property<int>("CantidadOtorgada");
-
-                    b.Property<long?>("Correlativo");
 
                     b.Property<string>("DocSubType");
 
