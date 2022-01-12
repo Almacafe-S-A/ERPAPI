@@ -82,6 +82,8 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Creación")]
         public string UsuarioModificacion { get; set; }
 
+        public List<BoletaDeSalidaLine> BoletaDeSalidaLines { get; set; }
+
 
     }
 }

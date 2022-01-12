@@ -98,6 +98,33 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+        /// <summary>
+        /// Obtiene el detalle de BoletaDeSalidaes 
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{BoletaId}")]
+        public async Task<IActionResult> GetBoletaDeSalidaLines(int BoletaId)
+        {
+            List<BoletaDeSalidaLine> Items = new List<BoletaDeSalidaLine>();
+            try
+            {
+                    Items = await _context.BoletaDeSalidaLines
+                        .Where(q =>q.BoletaSalidaId == BoletaId).ToListAsync();
+                
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
+        }
+
         /// <summary>
         /// Obtiene los Datos de la BoletaDeSalida por medio del Id enviado.
         /// </summary>

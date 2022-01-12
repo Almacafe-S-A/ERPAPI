@@ -186,132 +186,68 @@ namespace ERPAPI.Controllers
                             UnitOfMeasureId = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureId,
                             UnitOfMeasureName = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureName,
                             WeightBallot = _GoodsDelivered.WeightBallot,
+                            BoletaDeSalidaLines = new List<BoletaDeSalidaLine>(),
                         };
 
+                        foreach (var item in _GoodsDelivered._GoodsDeliveredLine)
+                        {
+                            _boletadesalida.BoletaDeSalidaLines.Add(new BoletaDeSalidaLine() {
+                                SubProductId = item.SubProductId,
+                                SubProductName = item.SubProductName,
+                                Quantity = item.Quantity,
+                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                Warehouseid = (int)item.WareHouseId,
+                                WarehouseName = item.WareHouseName,
+                            });
+                        }
+                        
+
                         _context.BoletaDeSalida.Add(_boletadesalida);
+
                         await _context.SaveChangesAsync();
+
 
                         _GoodsDeliveredq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
 
                         _context.GoodsDelivered.Add(_GoodsDeliveredq);
+                        await _context.SaveChangesAsync();
 
                         foreach (var item in _GoodsDeliveredq._GoodsDeliveredLine)
                         {
-                            item.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
-                            _context.GoodsDeliveredLine.Add(item);
-
-
-                            //var _BuscarKardex = await _context.Kardex.Where(x =>   x.CustomerId == _GoodsDeliveredq.CustomerId 
-                            //                                                    && x.DocumentName != "CD"
-                            //                                                    && x.WareHouseId == item.WareHouseId
-                            //                                                    && x.SubProducId == item.SubProductId
-                            //                                                    && x.BranchId == _GoodsDeliveredq.BranchId).ToListAsync();
-
-
-                            //var cc = _context.Kardex.ToListAsync();
-
-                            //Kardex _BuscarKardexs = await (from x in _context.Kardex
-                            //                             where x.CustomerId == _GoodsDeliveredq.CustomerId
-                            //                                && x.DocumentName != "CD"
-                            //                                && x.WareHouseId == item.WareHouseId
-                            //                                && x.SubProducId == item.SubProductId
-                            //                                && x.BranchId == _GoodsDeliveredq.BranchId
-                            //                             select x
-                            //                          )
-                            //                          .FirstOrDefaultAsync();
-
-
-
-                            Kardex _BuscarKardex =  _context.Kardex.Where(x => x.CustomerId == _GoodsDeliveredq.CustomerId
-                                                            && x.DocumentName != "CD"
-                                                            && x.WareHouseId == item.WareHouseId
-                                                            && x.SubProducId == item.SubProductId
-                                                            && x.BranchId == _GoodsDeliveredq.BranchId).FirstOrDefault();
-                                    
-                                   
-
-
-                            //Kardex _kardexmax = await ( from c in _context.Kardex
-                            //                            .OrderByDescending(q => q.DocumentDate)
-                            //                            // .Take(1)
-                            //                            join d in _context.KardexLine on c.KardexId equals d.KardexId
-                            //                            where c.CustomerId == _GoodsDeliveredq.CustomerId && d.SubProducId == item.SubProductId
-                            //                            && c.DocumentName !="CD"  && d.WareHouseId == item.WareHouseId
-                            //                            select c
-                            //                          )
-                            //                          .FirstOrDefaultAsync();
-
-                            //if (_kardexmax == null) { _kardexmax = new Kardex(); }
-                            //KardexLine _KardexLine = await _context.KardexLine
-                            //                                             .Where(q => q.KardexId == _kardexmax.KardexId)
-                            //                                             .Where(q => q.SubProducId == item.SubProductId)
-                            //                                              .Where(q => q.WareHouseId == item.WareHouseId)
-                            //                                             .Where(q => q.BranchId == _GoodsDeliveredq.BranchId)
-                            //                                             .OrderByDescending(q => q.KardexLineId)
-                            //                                             .Take(1)
-                            //                                            .FirstOrDefaultAsync();
-
-                            SubProduct _subproduct = await (from c in _context.SubProduct
-                                                      .Where(q=>q.SubproductId==item.SubProductId)
-                                                      select c
-                                                      ).FirstOrDefaultAsync();
-
-                            if (_BuscarKardex.Total > Convert.ToDecimal(item.Quantity))
+                            List<Kardex> kardexAutorizaciones = _context.Kardex
+                                .Where(q =>q.DocType==3 && q.DocumentId == item.NoAR).ToList();
+                            //Genera Kardex de cada Autorizacion y Recibo de Mercadrias
+                            foreach (var autorizacion in kardexAutorizaciones)
                             {
-                                item.Total = Convert.ToDecimal(_BuscarKardex.TotalCD) - item.Quantity;
+                                _context.Kardex.Add(new Kardex
+                                {
+                                    DocumentDate = _GoodsDeliveredq.DocumentDate,
+                                    ProducId = _GoodsDeliveredq.ProductId,
+                                    ProductName = _GoodsDeliveredq.ProductName,
+                                    SubProducId = item.SubProductId,
+                                    SubProductName = item.SubProductName,
+                                    QuantityEntry = 0,
+                                    QuantityOut = item.Quantity,
+                                    BranchId = _GoodsDeliveredq.BranchId,
+                                    BranchName = _GoodsDeliveredq.BranchName,
+                                    WareHouseId = item.WareHouseId,
+                                    WareHouseName = item.WareHouseName,
+                                    UnitOfMeasureId = item.UnitOfMeasureId,
+                                    UnitOfMeasureName = item.UnitOfMeasureName,
+                                    TypeOperationId = TipoOperacion.Salida,
+                                    TypeOperationName = "Salida",
+                                    Total = item.Total,
+                                    //TotalBags = Convert.ToDecimal(kardexAutorizaciones.TotalBags) - item.QuantitySacos,
+                                   //9 QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                                    //TotalCD = Convert.ToDecimal(kardexAutorizaciones.) - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                                });
                             }
-                            else
-                            {
-                                return await Task.Run(() => BadRequest("Inventario insuficiente!"));
-                            }
-
-                            _GoodsDelivered.Kardex._KardexLine.Add(new KardexLine
-                            {
-                                DocumentDate = _GoodsDeliveredq.DocumentDate,
-                                ProducId = _GoodsDeliveredq.ProductId,
-                                ProductName = _GoodsDeliveredq.ProductName,
-                                SubProducId = item.SubProductId,
-                                SubProductName = item.SubProductName,
-                                QuantityEntry = 0,
-                                QuantityOut = item.Quantity,
-                                BranchId = _GoodsDeliveredq.BranchId,
-                                BranchName = _GoodsDeliveredq.BranchName,
-                                WareHouseId = item.WareHouseId,
-                                WareHouseName = item.WareHouseName,
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 1,
-                                TypeOperationName = "Salida",
-                                Total = item.Total,
-                                TotalBags =Convert.ToDecimal(_BuscarKardex.TotalBags)-item.QuantitySacos  ,
-                                QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                TotalCD = Convert.ToDecimal(_BuscarKardex.TotalCD) - (item.Quantity - (item.Quantity * _subproduct.Merma)),
-                            });
+                           
+                            
                         }
 
                         await _context.SaveChangesAsync();
-                        _GoodsDelivered.Kardex.DocType = 0;
-                        _GoodsDelivered.Kardex.DocumentName = "EntregaMercaderia/GoodsDelivered";
-                        _GoodsDelivered.Kardex.DocumentDate = _GoodsDeliveredq.DocumentDate;
-                        _GoodsDelivered.Kardex.FechaCreacion = DateTime.Now;
-                        _GoodsDelivered.Kardex.FechaModificacion = DateTime.Now;
-                        _GoodsDelivered.Kardex.TypeOperationId = TipoOperacion.Entrada;
-                        _GoodsDelivered.Kardex.TypeOperationName = "Salida";
-                        _GoodsDelivered.Kardex.KardexDate = DateTime.Now;
-
-                        _GoodsDelivered.Kardex.DocumentName = "CE";
-
-                        _GoodsDelivered.Kardex.CustomerId = _GoodsDeliveredq.CustomerId;
-                        _GoodsDelivered.Kardex.CustomerName = _GoodsDeliveredq.CustomerName;
-                        _GoodsDelivered.Kardex.CurrencyId = _GoodsDeliveredq.CurrencyId;
-                        _GoodsDelivered.Kardex.CurrencyName = _GoodsDeliveredq.CurrencyName;
-                        _GoodsDelivered.Kardex.DocumentId = _GoodsDeliveredq.GoodsDeliveredId;
-                        _GoodsDelivered.Kardex.UsuarioCreacion = _GoodsDeliveredq.UsuarioCreacion;
-                        _GoodsDelivered.Kardex.UsuarioModificacion = _GoodsDeliveredq.UsuarioModificacion;
-                        _context.Kardex.Add(_GoodsDelivered.Kardex);
-
-                        await _context.SaveChangesAsync();
-
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _GoodsDelivered.GoodsDeliveredId,
@@ -333,7 +269,11 @@ namespace ERPAPI.Controllers
                       
 
                         _boletadesalida.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
-                        _context.Entry(_boletadesalida).CurrentValues.SetValues((_boletadesalida));
+
+                        await _context.SaveChangesAsync();
+
+
+
 
                         transaction.Commit();
                     }

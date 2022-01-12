@@ -378,18 +378,36 @@ namespace ERPAPI.Controllers
                     Motorista = _GoodsReceived.Motorista,
                     Quantity = (decimal)_GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
                     SubProductId = (long)_GoodsReceived._GoodsReceivedLine[0].SubProductId,
-                    SubProductName = _GoodsReceived._GoodsReceivedLine[0].SubProductName,
+                    SubProductName = _GoodsReceived._GoodsReceivedLine.Count()>1?"Productos Varios":
+                                _GoodsReceived._GoodsReceivedLine[0].SubProductName,
                     CargadoId = 14,
                     Cargadoname = "Vacío",
                     UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
                     UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
                     UnitOfMeasureId = _GoodsReceived._GoodsReceivedLine[0].UnitOfMeasureId,
-                    UnitOfMeasureName = _GoodsReceived._GoodsReceivedLine[0].UnitOfMeasureName,
+                    UnitOfMeasureName = _GoodsReceived._GoodsReceivedLine.Count() > 1 ? "Productos Varios":
+                            _GoodsReceived._GoodsReceivedLine[0].UnitOfMeasureName,
                     WeightBallot = _GoodsReceived.WeightBallot,
                     VigilanteId = _GoodsReceived.VigilanteId,
                     Vigilante = _GoodsReceived.VigilanteName,
+                    BoletaDeSalidaLines =  new List<BoletaDeSalidaLine>(),
 
                 };
+
+                foreach (var item in _GoodsReceived._GoodsReceivedLine)
+                {
+                    _boletadesalida.BoletaDeSalidaLines.Add(new BoletaDeSalidaLine()
+                    {
+                        SubProductId =(long) item.SubProductId,
+                        SubProductName = item.SubProductName,
+                        Quantity = item.Quantity,
+                        UnitOfMeasureId = item.UnitOfMeasureId,
+                        UnitOfMeasureName =  item.UnitOfMeasureName,
+                        WarehouseName = item.WareHouseName,
+                        Warehouseid = (int)item.WareHouseId,
+                        
+                    });
+                }
 
                 _context.BoletaDeSalida.Add(_boletadesalida);
                 await _context.SaveChangesAsync();

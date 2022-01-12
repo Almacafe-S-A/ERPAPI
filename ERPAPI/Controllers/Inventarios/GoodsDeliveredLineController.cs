@@ -131,6 +131,7 @@ namespace ERPAPI.Controllers
                                         WareHouseId =(long)line.WarehouseId,
                                         WareHouseName = line.WarehouseName,
                                         QuantitySacos = line.cantidadPoliEtileno + line.cantidadYute,
+                                        ControlPalletsId = line.ControlPalletsLineId,
                                     }).ToList();
                 foreach (var item in goodsDeliveredLines)
                 {

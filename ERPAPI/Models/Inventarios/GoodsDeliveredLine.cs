@@ -66,6 +66,22 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
+        public List<GoodsDeliveryAuthLine> GoodsDeliveryAuthLine { get; set; }
+
+    }
+
+    public class GoodsDeliveryAuthLine
+    {
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        public int GoodsDeliveredLinedId { get; set; }
+
+        public int GoodsAuhorizationLineId { get; set; }
+
+        public decimal Cantidad { get; set; }
+
+
+
     }
 
 
