@@ -97,19 +97,26 @@ namespace ERPAPI.Controllers
             List<Boleto_Ent> Items = new List<Boleto_Ent>();
             Customer customer = _context.Customer.Where(q => q.CustomerId == customerId).FirstOrDefault();
             List<Boleto_Ent> boletas = new List<Boleto_Ent>();
+            esIngreso = true;
             if (customer == null || customer.CustomerRefNumber == null)
             {
-                return BadRequest("No se Cliente");
+                return BadRequest("No se encontro Cliente");
             }
             try
             {
-                   // List<Boleto_Ent> boletas = await _context.Boleto_Ent.Where(q => q.clave_C == customer.CustomerRefNumber && q.completo == completo).ToListAsync();
-                    var query = (from c in _context.Boleto_Ent.Where(q => q.clave_C == customer.CustomerRefNumber && q.completo == completo)
-                                 join d in _context.Boleto_Sal on c.clave_e equals d.clave_e
-                                 //where c.peso_e > d.peso_s
+                    boletas = await _context.Boleto_Ent
+                    .Where(q => q.clave_C == customer.CustomerRefNumber 
+                    && _context.ControlPallets.Any(a => a.WeightBallot!= q.clave_e)
+                    && q.completo == completo
+                    ).ToListAsync();
+                   
+                    var query =  (from c in boletas
                                  //
+                                 //&& q.completo == completo
+                                 //)
+                                 join d in _context.Boleto_Sal on c.clave_e equals d.clave_e                                 
                                  into ba
-                                 from e in ba.DefaultIfEmpty()
+                                 from e in ba
                                  join p in _context.SubProduct on c.clave_p equals p.ProductCode
                                  select new Boleto_Ent
                                  {
@@ -132,31 +139,37 @@ namespace ERPAPI.Controllers
                                      unidad_e = c.unidad_e,
                                      Boleto_Sal = e,
                                      NombreProducto = p.ProductName
-
                                  }).AsQueryable();
-       
-                if (esIngreso)
-                {
-                    Items = await query
-                    .OrderByDescending(q => q.clave_e)
-                         .Include(q => q.Boleto_Sal)
-                         //.Where(q => q.peso_e > q.Boleto_Sal.peso_s)
-                                     .ToListAsync();
-                    Items = Items.Where(q => q.Boleto_Sal != null).ToList();
-                    Items = Items.Where(q => q.peso_e > q.Boleto_Sal.peso_s).ToList();
-                }
-                else
-                {
-                    Items = await query
-                    .OrderByDescending(q => q.clave_e)
-                    //     .Include(q => q.Boleto_Sal)
-                    //     .Where(q => q.peso_e < q.Boleto_Sal.peso_s)
-                                     .ToListAsync();
-                    Items = Items.Where(q => q.Boleto_Sal != null).ToList();  //////Elimina los posibles errores por boletas de entrada que no tengan salidas
-                    Items = Items.Where(q => q.peso_e < q.Boleto_Sal.peso_s).ToList(); 
-                }
 
-                Items = Items.Where(q => !_context.ControlPallets.Select(c => c.WeightBallot).Contains(q.clave_e)).ToList(); ///Filtra las Boletas de peso que no han sido utilizadas en ningun Control de salidas o ingresos
+                //if (esIngreso)
+                //{
+                //    Items = await query
+                //    .OrderByDescending(q => q.clave_e)
+                //         .Include(q => q.Boleto_Sal)
+                //         //.Where(q => q.peso_e > q.Boleto_Sal.peso_s)
+                //                     .ToListAsync();
+                //    Items = Items.Where(q => q.Boleto_Sal != null).ToList();
+                //    Items = Items.Where(q => q.peso_e > q.Boleto_Sal.peso_s).ToList();
+                //}
+                //else
+                //{
+                //    Items = await query
+                //    .OrderByDescending(q => q.clave_e)
+                //    //     .Include(q => q.Boleto_Sal)
+                //    //     .Where(q => q.peso_e < q.Boleto_Sal.peso_s)
+                //                     .ToListAsync();
+                //    Items = Items.Where(q => q.Boleto_Sal != null).ToList();  //////Elimina los posibles errores por boletas de entrada que no tengan salidas
+                //    Items = Items.Where(q => q.peso_e < q.Boleto_Sal.peso_s).ToList(); 
+                //}
+                Items =  query.ToList();
+                         //.OrderByDescending(q => q.clave_e)
+                         //.Include(q => q.Boleto_Sal)
+                                     //.ToListAsync();
+
+                Items = Items
+                    .Where(q => !_context.ControlPallets.Select(c => c.WeightBallot).Contains(q.clave_e))
+                    .OrderByDescending(q => q.clave_e)
+                    .ToList(); ///Filtra las Boletas de peso que no han sido utilizadas en ningun Control de salidas o ingresos
                 
             }
             catch (Exception ex)
