@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
 
 
         [HttpGet("[action]/{GoodsDeliveryAuthorizationId}")]
-        public async Task<IActionResult> GetGoodsReceivedLineByGoodsReceivedId(Int64 GoodsDeliveryAuthorizationId)
+        public async Task<IActionResult> GetGoodsDeliveryAuthorizationLineByARId(Int64 GoodsDeliveryAuthorizationId)
         {
             List<GoodsDeliveryAuthorizationLine> Items = new List<GoodsDeliveryAuthorizationLine>();
             try

@@ -186,13 +186,25 @@ namespace ERPAPI.Controllers
                 {
                     recibospendientes.AddRange(ObtenerDetalleCertificarLiquidado(detallerecibos));
                 }
+                recibospendientes = recibospendientes.OrderBy(q => q.SubProductId).OrderBy(q => q.UnitMeasureId).ToList();
 
                 ///numerar partidas
                 int pdano = 1;
+                Int64 codproducto = 0;
+                Int64 coduom = 0;
+                int vuelta = 1;
                 foreach (var item in recibospendientes)
                 {
+                    
+                    if (vuelta != 1 && (codproducto != item.SubProductId||coduom != item.UnitMeasureId) )
+                    {
+                        pdano++;
+                        
+                    }
+                    vuelta++;
                     item.PdaNo = pdano;
-                    pdano++;
+                    codproducto = item.SubProductId;
+                    coduom = item.UnitMeasureId;
                 }
 
                 return Ok(recibospendientes);

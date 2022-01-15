@@ -270,7 +270,11 @@ namespace ERPAPI.Controllers
                                                             select c
                                                      ).FirstOrDefaultAsync();
 
-                            if(kardexMaxCertificadodeposito.TotalCD< item.Quantity)
+                            //if(kardexMaxCertificadodeposito.TotalCD< item.Quantity)
+                            //{
+                            //    return await Task.Run(() => BadRequest($"La cantidad a retirar no puede ser superior al total del ciertificado"));
+                            //}
+                            if (item.SaldoProducto < item.Quantity)
                             {
                                 return await Task.Run(() => BadRequest($"La cantidad a retirar no puede ser superior al total del ciertificado"));
                             }
