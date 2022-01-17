@@ -22,6 +22,10 @@ namespace ERPAPI.Models
 
         public Customer Customer { get; set; }
 
+        public string ImgPrecioCafe { get; set; }
+
+        public string ImgName { get; set; }
+
         //public decimal DiferencialesUSD { get; set; }
 
         //public decimal TotalUSD { get; set; }
