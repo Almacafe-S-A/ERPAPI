@@ -173,7 +173,7 @@ namespace ERPAPI.Controllers
                 NumeracionSAR numeracionSAR = _context.NumeracionSAR
                     .Where(q => q.IdEstado == 1
                     && q.DocTypeId == 13
-                    && q.FechaLimite < DateTime.Now
+                    && q.FechaLimite > DateTime.Now
                     ).FirstOrDefault();
 
                 if (numeracionSAR == null)
