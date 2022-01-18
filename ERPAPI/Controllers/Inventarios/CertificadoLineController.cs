@@ -192,11 +192,12 @@ namespace ERPAPI.Controllers
                 int pdano = 1;
                 Int64 codproducto = 0;
                 Int64 coduom = 0;
+                decimal precio = 0;
                 int vuelta = 1;
                 foreach (var item in recibospendientes)
                 {
                     
-                    if (vuelta != 1 && (codproducto != item.SubProductId||coduom != item.UnitMeasureId) )
+                    if (vuelta != 1 && (codproducto != item.SubProductId||coduom != item.UnitMeasureId || precio != item.Price) )
                     {
                         pdano++;
                         
@@ -205,6 +206,7 @@ namespace ERPAPI.Controllers
                     item.PdaNo = pdano;
                     codproducto = item.SubProductId;
                     coduom = item.UnitMeasureId;
+                    precio = item.Price;
                 }
 
                 return Ok(recibospendientes);
