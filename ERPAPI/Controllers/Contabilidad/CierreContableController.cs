@@ -59,6 +59,22 @@ namespace ERPAPI.Controllers
 
         }
 
+
+        /// <summary>
+        /// Realiza el Cierre Contable
+        /// </summary>
+        /// <param name="periodo"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> EjecutarCierrePartidasCierre(int periodo) {
+
+            await _context.Database.ExecuteSqlCommandAsync("Cierres @p0", periodo); ////Ejecuta SP Cierres
+
+            return Ok();
+
+
+        }
+
+
         /// <summary>
         /// Realiza un Cierre Contable
         /// </summary>
@@ -207,8 +223,8 @@ namespace ERPAPI.Controllers
                     Estatus = "PENDIENTE",
                     Proceso = "Ejecucion Presupuestaria Mensual",
                     PasoCierre = 6,
-                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
                     FechaModificacion = DateTime.Now,
                     FechaCierre = cierre.FechaCierre,
                     FechaCreacion = DateTime.Now,
@@ -221,8 +237,8 @@ namespace ERPAPI.Controllers
                     Estatus = "PENDIENTE",
                     Proceso = "Diferenciales Cambiarios",
                     PasoCierre = 7,
-                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                    UsuarioCreacion = User.Identity.Name,
+                    UsuarioModificacion = User.Identity.Name,
                     FechaModificacion = DateTime.Now,
                     FechaCierre = cierre.FechaCierre,
                     FechaCreacion = DateTime.Now,
@@ -278,7 +294,19 @@ namespace ERPAPI.Controllers
 
 
         }
-        private async Task DiferencialesCambiarios(BitacoraCierreProcesos proceso,int procesoId) {
+
+
+
+
+
+        
+
+        #region Acciones
+
+
+
+        private async Task DiferencialesCambiarios(BitacoraCierreProcesos proceso, int procesoId)
+        {
 
             /////////////Pendiente por definir ///////////////
 
@@ -1137,6 +1165,8 @@ namespace ERPAPI.Controllers
 
 
         }
+
+        #endregion
 
     }
 

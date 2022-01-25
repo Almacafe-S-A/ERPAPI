@@ -83,6 +83,8 @@ namespace ERPAPI.Models
 
         public DateTime? ApprovedDate { get; set; }
 
+        public bool? ClosingEntry { get; set; }
+
         public List<JournalEntryLine> JournalEntryLines { get; set; } = new List<JournalEntryLine>();
         [Required]
         [Display(Name = "Usuario de creacion")]
