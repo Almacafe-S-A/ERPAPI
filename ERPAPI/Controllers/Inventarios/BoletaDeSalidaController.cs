@@ -168,6 +168,10 @@ namespace ERPAPI.Controllers
                 boleta = await _context.BoletaDeSalida
                     .Include(i=>i.BoletaDeSalidaLines)
                     .Where(q => q.BoletaDeSalidaId == BoletaDeSalidaId).FirstOrDefaultAsync();
+                if (boleta.CargadoId != 13)
+                {
+                    return BadRequest("Las guias de remision solo pueden ser genradas a partir de una boleta de Salida cuyo origen sea un Retiro de Mercaderia");
+                }
 
 
                 NumeracionSAR numeracionSAR = _context.NumeracionSAR
@@ -184,7 +188,7 @@ namespace ERPAPI.Controllers
                     NumeroDocumento =  numeracionSAR.GetNumeroSiguiente(),
                     CAI = numeracionSAR._cai,
                     FechaLimiteEmision = numeracionSAR.FechaLimite,
-                    Rango = numeracionSAR.NoInicio + " - " + numeracionSAR.NoFin,
+                    Rango = numeracionSAR.getRango(),
                     CustomerName = boleta.CustomerName,
                     CustomerId = (int)boleta.CustomerId,
                     Transportista = boleta.Motorista,
@@ -215,6 +219,7 @@ namespace ERPAPI.Controllers
                 await _context.SaveChangesAsync();
 
                 boleta.GuiaRemisionId = guiaRemision.Id;
+                numeracionSAR.Correlativo++;
                 await _context.SaveChangesAsync();
 
             }

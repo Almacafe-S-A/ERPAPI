@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220124204450_JournalClosing")]
+    partial class JournalClosing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6870,23 +6872,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("InvoiceTransReport");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.JournalClosing", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("JournalEntryId");
-
-                    b.Property<int>("YearClosed");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JournalEntryId");
-
-                    b.ToTable("JournalClosings");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.JournalEntry", b =>
                 {
                     b.Property<long>("JournalEntryId")
@@ -12292,14 +12277,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()
                         .HasForeignKey("SubProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.JournalClosing", b =>
-                {
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

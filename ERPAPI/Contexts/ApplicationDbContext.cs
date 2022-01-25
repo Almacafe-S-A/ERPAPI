@@ -56,7 +56,9 @@ namespace ERP.Contexts
             public DbSet<JournalEntry> JournalEntry { get; set; }
             public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
             public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
-            public DbSet<Presupuesto> Presupuesto { get; set; }
+
+        public DbSet<JournalClosing> JournalClosings { get; set; }
+        public DbSet<Presupuesto> Presupuesto { get; set; }
 
 
 

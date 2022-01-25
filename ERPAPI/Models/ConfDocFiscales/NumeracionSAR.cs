@@ -49,11 +49,20 @@ namespace ERPAPI.Models
                 this.Correlativo = Convert.ToInt64(this.NoInicio);
             }
 
-            this.SiguienteNumero = $"000-{this.DocSubType}-{this.PuntoEmision}-{this.Correlativo + 1}";
+            this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo + 1}";
 
 
-            return $"000-{this.DocSubType}-{this.PuntoEmision}-{this.Correlativo}"; 
+            return $"{this.GetPrefijo()}-{this.Correlativo + 1}";
 
+        }
+        public string GetPrefijo()
+        {
+            return $"000-{this.DocType.Substring(0, 2)}-{this.PuntoEmision}";
+
+        }
+
+        public string getRango() {
+            return $"{this.GetPrefijo()}-{this.NoInicio} - {this.GetPrefijo()}-{this.NoFin}";
         }
 
 
