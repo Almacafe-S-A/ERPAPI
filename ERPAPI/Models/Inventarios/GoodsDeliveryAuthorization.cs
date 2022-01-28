@@ -33,7 +33,9 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
-      
+        public string Autorizados { get; set; }
+
+
 
         [Display(Name = "Banco")]
         public Int64? BankId { get; set; }

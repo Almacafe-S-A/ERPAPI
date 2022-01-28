@@ -129,10 +129,10 @@ namespace ERPAPI.Controllers
                                                WarehouseName = cd.WarehouseName,
                                                valorcertificado = cd.Amount,
                                                SaldoProducto = cd.Quantity,
-                                               valorfinanciado = 0,
+                                               ValorUnitarioDerechos = cd.ValorUnitarioDerechos,
                                                ValorImpuestos = 0,
-
-
+                                               DerechosFiscales = cd.DerechosFiscales,
+                                               Pda = cd.PdaNo,
                                            }).ToListAsync();
 
                 return Ok(pendientes);
