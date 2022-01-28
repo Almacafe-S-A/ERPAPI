@@ -20,6 +20,8 @@ namespace ERPAPI.Models
         [Display(Name = "Número de certificado")]
         public Int64 NoCertificadoDeposito { get; set; }
 
+        public int? Pda { get; set; }        
+
         [Display(Name = "Producto cliente")]
         public Int64 SubProductId { get; set; }
 
@@ -46,12 +48,12 @@ namespace ERPAPI.Models
         [Display(Name = "Precio")]
         public decimal Price { get; set; }
 
-        [Display(Name = "Descripción")]
-        public string Description { get; set; }
         [Display(Name = "Valor del certificado")]
         public decimal valorcertificado { get; set; }
-        [Display(Name = "Valor financiado")]
-        public decimal valorfinanciado { get; set; }
+
+        public decimal? DerechosFiscales { get; set; }
+
+        public decimal? ValorUnitarioDerechos { get; set; }
 
         [Display(Name = "Valor a pagar impuestos")]
         public decimal ValorImpuestos { get; set; }

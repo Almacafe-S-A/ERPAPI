@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220128103007_Autorizacionretiro")]
+    partial class Autorizacionretiro
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5480,8 +5482,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("AuthorizationName");
 
-                    b.Property<string>("Autorizados");
-
                     b.Property<long?>("BankId");
 
                     b.Property<string>("BankName");
@@ -5539,9 +5539,11 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Autorizados");
+
                     b.Property<long>("CertificadoLineId");
 
-                    b.Property<decimal?>("DerechosFiscales");
+                    b.Property<string>("Description");
 
                     b.Property<long>("GoodsDeliveryAuthorizationId");
 
@@ -5567,13 +5569,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("ValorImpuestos");
 
-                    b.Property<decimal?>("ValorUnitarioDerechos");
-
                     b.Property<long>("WarehouseId");
 
                     b.Property<string>("WarehouseName");
 
                     b.Property<decimal>("valorcertificado");
+
+                    b.Property<decimal>("valorfinanciado");
 
                     b.HasKey("GoodsDeliveryAuthorizationLineId");
 
