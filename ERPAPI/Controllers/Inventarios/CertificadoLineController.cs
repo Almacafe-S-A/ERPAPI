@@ -90,7 +90,7 @@ namespace ERPAPI.Controllers
                  CertificadoLineId = 0,
                  UnitMeasurName = lineasrecibo.UOM,
                  UnitMeasureId = (long)lineasrecibo.GoodsReceivedLine.UnitOfMeasureId,
-                 Quantity = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null ?
+                 Quantity = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null|| lineasrecibo.GoodsReceivedLine.SaldoporCertificar == lineasrecibo.GoodsReceivedLine.Quantity ?
                       (decimal)lineasrecibo.CantidadRecibida - ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100)) :
                       (decimal)lineasrecibo.GoodsReceivedLine.SaldoporCertificar,
                  SubProductId = (long)lineasrecibo.SubProductId,
@@ -104,7 +104,7 @@ namespace ERPAPI.Controllers
                  ,
                  Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF
                  ,
-                 CantidadDisponible = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null ?
+                 CantidadDisponible = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null || lineasrecibo.GoodsReceivedLine.Quantity== lineasrecibo.GoodsReceivedLine.SaldoporCertificar ?
                           (decimal)lineasrecibo.CantidadRecibida -
                               ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100))
                           : lineasrecibo.GoodsReceivedLine.SaldoporCertificar
@@ -128,7 +128,7 @@ namespace ERPAPI.Controllers
                                                   CertificadoLineId = 0,
                                                   UnitMeasurName = detalle.UnitOfMeasureName,
                                                   UnitMeasureId = (long)detalle.UnitOfMeasureId,
-                                                  Quantity = detalle.SaldoporCertificar == null ?
+                                                  Quantity = detalle.SaldoporCertificar == null || detalle.SaldoporCertificar==detalle.Quantity ?
                                                      (decimal)detalle.Quantity - ((decimal)detalle.Quantity * (detalle.SubProduct.Merma / 100)) :
                                                      (decimal)detalle.SaldoporCertificar,
                                                   SubProductId = (long)detalle.SubProductId,
@@ -138,7 +138,7 @@ namespace ERPAPI.Controllers
                                                   WarehouseId = (int)detalle.WareHouseId,
                                                   WarehouseName = detalle.WareHouseName,
                                                   Amount = (decimal)detalle.Quantity * ObtenerPrecioCafe(detalle.SubProduct, preciodelcafe),
-                                                  CantidadDisponible = detalle.SaldoporCertificar == null ?
+                                                  CantidadDisponible = detalle.SaldoporCertificar == null || detalle.SaldoporCertificar == detalle.Quantity ?
                                                      (decimal)(decimal)detalle.Quantity - ((decimal)detalle.Quantity * (detalle.SubProduct.Merma / 100)) :
                                                      detalle.SaldoporCertificar,
                                                   ValorUnitarioDerechos = 0,
