@@ -123,10 +123,10 @@ namespace ERPAPI.Controllers
                            _context.EndososCertificadosLine
                            .Where(q => q.EndososCertificadosLineId == _EndososCertificadosLine.EndososCertificadosLineId).FirstOrDefaultAsync();
 
-                if (Items == null)
-                {
-                    Items = new EndososLiberacion { EndososId=0, EndososLineId=0, Saldo = _endosoline.Quantity };
-                }
+                //if (Items == null)
+                //{
+                //    Items = new EndososLiberacion { EndososId=0, EndososLineId=0, Saldo = _endosoline.Quantity };
+                //}
             }
             catch (Exception ex)
             {
@@ -202,6 +202,8 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _EndososCertificadosq = _EndososCertificados;
+                        _EndososCertificadosq.FechaCancelacion = null;
+                        _EndososCertificadosq.FechaLiberacion = null;
 
                         _context.EndososCertificados.Add(_EndososCertificadosq);
 

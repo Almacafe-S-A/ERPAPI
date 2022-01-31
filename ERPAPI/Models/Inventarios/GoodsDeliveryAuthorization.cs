@@ -51,22 +51,17 @@ namespace ERPAPI.Models
 
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
-        [Display(Name = "Bodega")]
-
-        public double TotalCertificado { get; set; }
-        public double TotalFinanciado { get; set; }
 
         [Display(Name = "Comentarios")]
-        public string Comments { get; set; }
+        public string Comments { get; set; }              
 
-        [Display(Name = "Derechos Lps.")]
-        public double DerechoLps { get; set; }
+        public string URLCartaRetiro { get; set; }
 
-        [Display(Name = "Póliza No.")]
-        public Int64 NoPoliza { get; set; }
+        public string CartaRetiroDocName { get; set; }
 
-        [Display(Name = "Delegado Fiscal")]
-        public string DelegadoFiscal { get; set; }
+        public string URLLiberacionEndoso { get; set; }
+
+        public string LiberacionEndosoDocName { get; set; }
 
         [Display(Name = "Fecha de Creacion")]
         public DateTime? FechaCreacion { get; set; }
@@ -79,6 +74,26 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
         public string Impreso { get; set; }
+
+        [Display(Name = "Póliza No.")]
+        public Int64 NoPoliza { get; set; }
+
+        [Display(Name = "Delegado Fiscal")]
+        public string DelegadoFiscal { get; set; }
+
+        [Display(Name = "Seguro")]
+        public string EmpresaSeguro { get; set; }
+
+
+        [Display(Name = "Número de traslado")]
+        public string NoTraslado { get; set; }
+
+
+        [Display(Name = "Aduana")]
+        public string Aduana { get; set; }
+
+        [Display(Name = "Carta de porte o manifiesto No.")]
+        public string ManifiestoNo { get; set; }
 
         public List<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; } = new List<GoodsDeliveryAuthorizationLine>();
 

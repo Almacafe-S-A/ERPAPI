@@ -238,7 +238,18 @@ namespace ERPAPI.Controllers
             List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
             try
             {
-                Items = await _context.CertificadoDeposito.Where(q=>q.CustomerId==CustomerId).ToListAsync();
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.CertificadoDeposito
+                        .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
+                        && p.CustomerId == CustomerId
+                        //&& p.FechaVencimientoCertificado >= DateTime.Now
+                        )
+                        .OrderByDescending(b => b.IdCD).ToListAsync();
+                }
+
             }
             catch (Exception ex)
             {
@@ -247,7 +258,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(()=> Ok(Items));
+            return await Task.Run(() => Ok(Items));
         }
         /// <summary>
         /// Obtiene los certificados de deposito por cliente.
