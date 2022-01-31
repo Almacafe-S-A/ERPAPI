@@ -82,9 +82,9 @@ namespace ERPAPI.Models
         [Display(Name = "Total endoso")]
         public decimal TotalEndoso { get; set; }
 
-        public DateTime FechaLiberacion { get; set; }/// automatica al cancelar un endoso
+        public DateTime? FechaLiberacion { get; set; }/// automatica al cancelar un endoso
 
-        public DateTime FechaCancelacion { get; set; }/// solo sera editable en las liberaciones
+        public DateTime? FechaCancelacion { get; set; }/// solo sera editable en las liberaciones
 
         public decimal CantidadEndosada { get; set; } ///Se ingresara manual al registrar un Endoso
 

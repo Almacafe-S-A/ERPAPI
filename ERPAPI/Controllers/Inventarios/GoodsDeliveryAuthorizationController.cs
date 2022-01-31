@@ -106,6 +106,11 @@ namespace ERPAPI.Controllers
 
             List<GoodsDeliveryAuthorizationLine> pendientes = new List<GoodsDeliveryAuthorizationLine>();
 
+            if (_context.EndososCertificados.Where(q => certificados.Any(a =>a == q.IdCD) && q.FechaCancelacion!=null).Count()>0)
+            {
+                return BadRequest("El Certificado se encuentra endosado, no se puede emitir autorización");
+            }
+
             try
             {
                 pendientes = await (from cd in _context.CertificadoLine

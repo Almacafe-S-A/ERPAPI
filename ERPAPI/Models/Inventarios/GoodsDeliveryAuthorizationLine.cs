@@ -55,6 +55,7 @@ namespace ERPAPI.Models
 
         public decimal? ValorUnitarioDerechos { get; set; }
 
+
         [Display(Name = "Valor a pagar impuestos")]
         public decimal ValorImpuestos { get; set; }
 
