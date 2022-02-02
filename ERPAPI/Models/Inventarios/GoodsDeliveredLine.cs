@@ -45,6 +45,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Cantidad")]
         public decimal Quantity { get; set; }
+
+        public decimal? QuantityAuthorized { get; set; }
         [Display(Name = "Sacos")]
         public int QuantitySacos { get; set; }
 
