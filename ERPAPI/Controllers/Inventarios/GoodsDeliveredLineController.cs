@@ -122,7 +122,8 @@ namespace ERPAPI.Controllers
                                     new GoodsDeliveredLine
                                     {
                                         SubProductId = (long)line.SubProductId,
-                                        Quantity = 0,
+                                        Quantity = line.Qty == null ? 0 : (decimal)line.Qty,
+                                        QuantityAuthorized = 0,
                                         Total = line.Qty==null?0: (decimal)line.Qty,
                                         Description = line.SubProductName,
                                         SubProductName = line.SubProductName,
@@ -141,15 +142,15 @@ namespace ERPAPI.Controllers
                         continue;
                     }
                     decimal saldo = authorizationLines.Sum(s => s.Quantity);
-                    item.Quantity = 0;
+                    item.QuantityAuthorized = 0;
                     foreach (var autorizacion in authorizationLines)
                     {
-                        if (item.Quantity<item.Total )
+                        if (item.QuantityAuthorized<item.Quantity )
                         {
-                            item.Quantity += autorizacion.Quantity;
+                            item.QuantityAuthorized += autorizacion.Quantity;
                         }
                     }
-                    item.Quantity = authorizationLines.Sum(s => s.Quantity);
+                    item.QuantityAuthorized = authorizationLines.Sum(s => s.Quantity);
                     item.Price = (double)authorizationLines.FirstOrDefault().Price;
                     
 

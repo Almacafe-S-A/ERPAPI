@@ -106,7 +106,9 @@ namespace ERPAPI.Models
 
         public decimal?  TotalDerechos { get; set; }
 
-       
+        public bool? PendienteAutorizar { get; set; }
+
+
 
         public string Comentario { get; set; }
 

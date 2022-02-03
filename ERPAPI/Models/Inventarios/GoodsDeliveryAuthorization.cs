@@ -53,7 +53,7 @@ namespace ERPAPI.Models
         public string BranchName { get; set; }
 
         [Display(Name = "Comentarios")]
-        public string Comments { get; set; }              
+        public string Comments { get; set; }
 
         public string URLCartaRetiro { get; set; }
 
@@ -94,8 +94,12 @@ namespace ERPAPI.Models
 
         [Display(Name = "Carta de porte o manifiesto No.")]
         public string ManifiestoNo { get; set; }
+        [NotMapped]
+        public Int64[] Firmas { get; set; }
 
         public List<GoodsDeliveryAuthorizationLine> GoodsDeliveryAuthorizationLine { get; set; } = new List<GoodsDeliveryAuthorizationLine>();
+
+        public List<GoodsDeliveryAuthorizedSignatures> goodsDeliveryAuthorizedSignatures { get; set; } = new List<GoodsDeliveryAuthorizedSignatures>();
 
     }
 

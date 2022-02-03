@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220202120256_Entrega")]
+    partial class Entrega
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1162,8 +1164,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("NombreEmpresa");
 
                     b.Property<string>("OtrosCargos");
-
-                    b.Property<bool?>("PendienteAutorizar");
 
                     b.Property<bool?>("PolizaPropia");
 
@@ -5594,27 +5594,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("GoodsDeliveryAuthorizationId");
 
                     b.ToTable("GoodsDeliveryAuthorizationLine");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorizedSignatures", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long>("CustomerAuthorizedSignatureId");
-
-                    b.Property<long>("GoodsDeliveryAuthorizationId");
-
-                    b.Property<string>("NombreAutorizado");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerAuthorizedSignatureId");
-
-                    b.HasIndex("GoodsDeliveryAuthorizationId");
-
-                    b.ToTable("goodsDeliveryAuthorizedSignatures");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsReceived", b =>
@@ -12044,19 +12023,6 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorization")
                         .WithMany("GoodsDeliveryAuthorizationLine")
-                        .HasForeignKey("GoodsDeliveryAuthorizationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorizedSignatures", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CustomerAuthorizedSignature", "CustomerAuthorizedSignature")
-                        .WithMany()
-                        .HasForeignKey("CustomerAuthorizedSignatureId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorization", "GoodsDeliveryAuthorization")
-                        .WithMany("goodsDeliveryAuthorizedSignatures")
                         .HasForeignKey("GoodsDeliveryAuthorizationId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
