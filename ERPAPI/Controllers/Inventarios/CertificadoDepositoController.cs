@@ -101,6 +101,46 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{clienteid}/{servicioid}/{pendienteliquidacion}")]
+        public async Task<IActionResult> GetCertificadosPendientesAutorizar(int clienteid, int servicioid, int pendienteliquidacion)
+        {
+            List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
+            try
+            {
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                int count = user.Count();
+
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                Items = await _context.CertificadoDeposito
+                    .Include(i => i._CertificadoLine)
+                     .Where(p =>
+                          //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                          p.CustomerId == clienteid &&
+                          p.ServicioId == servicioid &&
+                          p.PendienteAutorizar == null || p.PendienteAutorizar == true
+                          // p._CertificadoLine.Sum(s=>s.CantidadDisponibleAutorizar).
+                         //&& p.IdEstado != 6
+                         //&& _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId)
+                         )
+
+                     .OrderByDescending(b => b.IdCD).ToListAsync();
+               
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Obtiene el Listado de recibnos de mercaderias segun el cliente y el servicio

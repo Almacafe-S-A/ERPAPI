@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220203075608_AddedAuthSignatureGoodDelivery")]
+    partial class AddedAuthSignatureGoodDelivery
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1162,8 +1164,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("NombreEmpresa");
 
                     b.Property<string>("OtrosCargos");
-
-                    b.Property<bool?>("PendienteAutorizar");
 
                     b.Property<bool?>("PolizaPropia");
 
@@ -12056,7 +12056,7 @@ namespace ERPAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorization", "GoodsDeliveryAuthorization")
-                        .WithMany("goodsDeliveryAuthorizedSignatures")
+                        .WithMany()
                         .HasForeignKey("GoodsDeliveryAuthorizationId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
