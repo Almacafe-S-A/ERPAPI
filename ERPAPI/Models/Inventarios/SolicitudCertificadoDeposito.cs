@@ -105,10 +105,10 @@ namespace ERPAPI.Models
         /// Totales de Detalle de Linea
         /// </summary>
         [Display(Name = "Suma Cantidad")]
-        public double Quantitysum { get; set; }
+        public decimal Quantitysum { get; set; }
 
         [Display(Name = "Total")]
-        public double Total { get; set; }
+        public decimal Total { get; set; }
 
         /// <summary>
         /// Totales de Detalle de Linea

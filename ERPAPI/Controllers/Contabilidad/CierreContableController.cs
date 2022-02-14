@@ -559,9 +559,9 @@ namespace ERPAPI.Controllers
 
             }
             //////////Actualiza el techo de los certificados mensuales
-            double suma = await _context.CertificadoDeposito.SumAsync(c => c.Total);
+            decimal suma = await _context.CertificadoDeposito.SumAsync(c => c.Total);
 
-            elemento.Valordecimal = suma;
+            elemento.Valordecimal = (double)suma;
             _context.ElementoConfiguracion.Update(elemento);
 
 

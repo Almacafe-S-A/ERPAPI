@@ -391,6 +391,48 @@ namespace ERPAPI.Controllers
 
         }
 
+        public async Task<ActionResult<CertificadoDeposito>> AprobarCertificado(int IdCD) {
+
+            CertificadoDeposito certificado = await _context.CertificadoDeposito
+                .Where(q => q.IdCD == IdCD)
+                .Include(i => i._CertificadoLine)
+                .FirstOrDefaultAsync();
+
+            if (certificado == null)
+            {
+                return BadRequest();
+            }
+            foreach (var item in certificado._CertificadoLine)
+            {
+                ///Actualiza el saldo del detalle del recibo
+                GoodsReceivedLine linearecibo = _context.GoodsReceivedLine
+                    .Where(q => q.GoodsReceiveLinedId == item.GoodsReceivedLineId)
+                    .FirstOrDefault();
+                linearecibo.SaldoporCertificar = item.CantidadDisponible - item.Quantity;
+
+                ///Actualiza el estado del recibo de Mercaderias
+                GoodsReceived recibo = _context.GoodsReceived
+                       .Where(q => q.GoodsReceivedId == item.ReciboId)
+                       .Include(a => a._GoodsReceivedLine)
+                       .FirstOrDefault();
+
+                if (recibo._GoodsReceivedLine.Count() == recibo._GoodsReceivedLine.Where(q => q.SaldoporCertificar == 0).Count())
+                {
+                    recibo.Porcertificar = false;
+                }
+                _context.Kardex.Add(GeneraKardexCertificado(item, certificado));
+                //_context.CertificadoLine.Add(item);
+            }
+
+            certificado.IdEstado = 6;
+            certificado.Estado = "Vigente";
+
+            await _context.SaveChangesAsync();
+
+            return certificado;
+
+        }
+
 
         /// <summary>
         /// Inserta una nueva CertificadoDeposito
@@ -409,6 +451,15 @@ namespace ERPAPI.Controllers
                 {
                     //Solicitud de certificado
                     _context.CertificadoDeposito.Add(_CertificadoDeposito);
+                    
+
+                    _CertificadoDeposito.IdEstado = 5;
+                    _CertificadoDeposito.Estado = "Enviado a Aprobación";
+                    _CertificadoDeposito.Total = _CertificadoDeposito._CertificadoLine.Sum(s => s.Amount);
+                    _CertificadoDeposito.Quantitysum = _CertificadoDeposito._CertificadoLine.Sum(s => s.Quantity);
+                    _CertificadoDeposito.TotalDerechos = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
+
+
                     _SolicitudCertificado = new SolicitudCertificadoDeposito(_CertificadoDeposito);
 
                     await _context.SaveChangesAsync();
@@ -419,34 +470,9 @@ namespace ERPAPI.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    _CertificadoDeposito.SolicitudCertificadoId = (int)_SolicitudCertificado.IdSCD;
-
-
-                    foreach (var item in _CertificadoDeposito._CertificadoLine)
-                    {
-                        ///Actualiza el saldo del detalle del recibo
-                        GoodsReceivedLine linearecibo = _context.GoodsReceivedLine
-                            .Where(q => q.GoodsReceiveLinedId == item.GoodsReceivedLineId)
-                            .FirstOrDefault();
-                        linearecibo.SaldoporCertificar = item.CantidadDisponible - item.Quantity;
-
-                        ///Actualiza el estado del recibo de Mercaderias
-                        GoodsReceived recibo = _context.GoodsReceived
-                               .Where(q => q.GoodsReceivedId == item.ReciboId)
-                               .Include(a => a._GoodsReceivedLine)
-                               .FirstOrDefault();
-
-                        if (recibo._GoodsReceivedLine.Count() == recibo._GoodsReceivedLine.Where(q => q.SaldoporCertificar == 0).Count())
-                        {
-                            recibo.Porcertificar = false;
-                        }
-                        _context.Kardex.Add(GeneraKardexCertificado(item, _CertificadoDeposito));
-                        //_context.CertificadoLine.Add(item);
-                    }
+                    _CertificadoDeposito.SolicitudCertificadoId = (int)_SolicitudCertificado.IdSCD;                                      
 
                     await _context.SaveChangesAsync();
-
-
 
                     BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                     {
