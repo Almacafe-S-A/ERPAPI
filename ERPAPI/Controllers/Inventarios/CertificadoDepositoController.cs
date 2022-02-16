@@ -391,6 +391,13 @@ namespace ERPAPI.Controllers
 
         }
 
+
+        /// <summary>
+        /// Obtiene los certificados de deposito por cliente.
+        /// </summary>
+        /// <param name="IdCD"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdCD}")]
         public async Task<ActionResult<CertificadoDeposito>> AprobarCertificado(int IdCD) {
 
             CertificadoDeposito certificado = await _context.CertificadoDeposito
@@ -458,6 +465,14 @@ namespace ERPAPI.Controllers
                     _CertificadoDeposito.Total = _CertificadoDeposito._CertificadoLine.Sum(s => s.Amount);
                     _CertificadoDeposito.Quantitysum = _CertificadoDeposito._CertificadoLine.Sum(s => s.Quantity);
                     _CertificadoDeposito.TotalDerechos = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
+
+
+                    _CertificadoDeposito.Producto = "Productos Varios";
+                    if (_CertificadoDeposito._CertificadoLine.Where(q => q.PdaNo ==2).FirstOrDefault()==null)
+                    {
+                        _CertificadoDeposito.Producto = _CertificadoDeposito._CertificadoLine.FirstOrDefault().SubProductName;
+                    }
+
 
 
                     _SolicitudCertificado = new SolicitudCertificadoDeposito(_CertificadoDeposito);
