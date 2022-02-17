@@ -82,7 +82,7 @@ namespace ERPAPI.Controllers
                                && detallerecibos.Any(a => a.GoodsReceiveLinedId == q.GoodsReceivedLineId))
                                                 .Include(i => i.Liqudacion)
                                                 .Include(i => i.GoodsReceivedLine)
-                                                .ToList();
+                                                .ToList();            
             List<CertificadoLine> detalleaCertificar = new List<CertificadoLine>();
              detalleaCertificar =  (from lineasrecibo in liquidacionLines
              select new CertificadoLine()

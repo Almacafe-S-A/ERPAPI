@@ -35,6 +35,8 @@ namespace ERPAPI.Models
 
         public string Autorizados { get; set; }
 
+        public string RetiroAutorizadoA { get; set; }
+
 
 
         [Display(Name = "Banco")]
