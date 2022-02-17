@@ -122,8 +122,13 @@ namespace ERPAPI.Controllers
                     if (escafe == 0)
                     {
                         
-                        Items = Items.Where(q => _context.LiquidacionLine.Include(i => i.GoodsReceivedLine)
+                        Items = Items.Where(q => _context.LiquidacionLine
+                                            .Include(i => i.GoodsReceivedLine)
+                                            .Include(i => i.Liqudacion )
+                                            .Where(s => s.Liqudacion.EstadoId==6)
                                             .Any(a => a.GoodsReceivedLine.GoodsReceivedId == q.GoodsReceivedId)).ToList();
+                        
+                        
                         return await Task.Run(() => Ok(Items));
                     }
                     else
