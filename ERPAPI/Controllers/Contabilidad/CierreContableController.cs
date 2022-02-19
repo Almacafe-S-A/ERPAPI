@@ -37,7 +37,6 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene El ultimo Cierre Ejecutado
         /// </summary>
-        /// GET: api/CierreContable
         [HttpGet("[action]")]
         public async Task<IActionResult> UltimoCierre()
         {
@@ -59,12 +58,12 @@ namespace ERPAPI.Controllers
 
         }
 
-
         /// <summary>
-        /// Realiza el Cierre Contable
+        /// 
         /// </summary>
         /// <param name="periodo"></param>
         /// <returns></returns>
+        [HttpGet("[action]")]
         public async Task<IActionResult> EjecutarCierrePartidasCierre(int periodo) {
 
             await _context.Database.ExecuteSqlCommandAsync("Cierres @p0", periodo); ////Ejecuta SP Cierres
