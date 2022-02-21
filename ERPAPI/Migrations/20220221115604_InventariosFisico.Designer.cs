@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220221115604_InventariosFisico")]
+    partial class InventariosFisico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6556,7 +6558,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("InventarioFisico");
 
-                    b.Property<int>("InventarioFisicoId");
+                    b.Property<int?>("InventarioFisicoId");
 
                     b.Property<string>("Observacion");
 
@@ -12362,10 +12364,9 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.InventarioFisicoLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.InventarioFisico", "inventarioFisico")
+                    b.HasOne("ERPAPI.Models.InventarioFisico")
                         .WithMany("InventarioFisicoLines")
-                        .HasForeignKey("InventarioFisicoId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("InventarioFisicoId");
 
                     b.HasOne("ERPAPI.Models.SubProduct", "Product")
                         .WithMany()
