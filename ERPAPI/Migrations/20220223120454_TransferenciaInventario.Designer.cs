@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220223120454_TransferenciaInventario")]
+    partial class TransferenciaInventario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6525,6 +6527,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificion");
 
+                    b.Property<int>("InventarioFisicoId");
+
                     b.Property<string>("Sucursal");
 
                     b.Property<string>("UsuarioCreacion");
@@ -6536,6 +6540,8 @@ namespace ERPAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("InventarioFisicoId");
 
                     b.HasIndex("WarehouseId");
 
@@ -6550,7 +6556,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Diferencia");
 
-                    b.Property<decimal>("InventarioFisicoCantidad");
+                    b.Property<decimal>("InventarioFisico");
 
                     b.Property<int>("InventarioFisicoId");
 
@@ -12345,6 +12351,11 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.InventarioFisico", "Inventario")
+                        .WithMany()
+                        .HasForeignKey("InventarioFisicoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")

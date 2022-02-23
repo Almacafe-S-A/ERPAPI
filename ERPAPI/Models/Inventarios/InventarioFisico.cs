@@ -11,10 +11,6 @@ namespace ERPAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int InventarioFisicoId { get; set; }
-
-        [ForeignKey("InventarioFisicoId")]
-        public InventarioFisico Inventario { get; set; }
 
         public DateTime Fecha { get; set; }
 
@@ -40,7 +36,7 @@ namespace ERPAPI.Models
 
         public string UsuarioCreacion { get; set; }
 
-        public string UsuarioModificion { get; set; }
+        public string UsuarioModificacion { get; set; }
 
         public List<InventarioFisicoLine> InventarioFisicoLines { get; set; }
 
