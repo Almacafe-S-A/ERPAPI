@@ -58,13 +58,10 @@ namespace ERPAPI.Controllers
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="periodo"></param>
-        /// <returns></returns>
+
         [HttpGet("[action]")]
-        public async Task<IActionResult> EjecutarCierrePartidasCierre(int periodo) {
+        public async Task<IActionResult> EjecutarCierrePartidasCierre(int periodo)
+        {
 
             await _context.Database.ExecuteSqlCommandAsync("Cierres @p0", periodo); ////Ejecuta SP Cierres
 
@@ -294,11 +291,30 @@ namespace ERPAPI.Controllers
 
         }
 
+        private int apariciones()
+        {
+            int apariciones = 0;
+            string numeros = "";
+            for (int i = 0; i < 1537; i++)
+            {
+                numeros += i;
+            }
+
+            foreach (var item in numeros)
+            {
+                if (item == '6')
+                {
+                    apariciones++;
+                }
+            }
+
+            return apariciones;
+
+        }
 
 
 
 
-        
 
         #region Acciones
 
@@ -983,28 +999,7 @@ namespace ERPAPI.Controllers
 
 
         }
-        [HttpGet("[action]")]
-        public int apariciones()
-        {
-            int apariciones = 0;
-            string numeros = "";
-            for (int i = 0; i < 1537; i++)
-            {
-                numeros += i;
-            }
-
-            foreach (var item in numeros)
-            {
-                if (item == '6')
-                {
-                    apariciones++;
-                }
-            }
-
-            return apariciones;
-
-        }
-
+        
         private async Task EjecucionPresupuestaria(int procesoId)
         {
             BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == procesoId).FirstOrDefaultAsync();
