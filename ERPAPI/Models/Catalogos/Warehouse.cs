@@ -26,7 +26,9 @@ namespace ERPAPI.Models
         [Display(Name = "Estado")]
         public string Estado { get; set; }
         [Display(Name = "Sucursal")]
-        public int BranchId { get; set; }
+        public int? BranchId { get; set; }
+        [ForeignKey("BranchId")]
+        public Branch Branch { get; set; }
 
         [Display(Name = "Bodega")]
         public double CapacidadBodega { get; set; }

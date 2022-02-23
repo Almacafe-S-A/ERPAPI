@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220223115557_TransferenciaInventarrioMod")]
+    partial class TransferenciaInventarrioMod
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6525,17 +6527,21 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaModificion");
 
+                    b.Property<int>("InventarioFisicoId");
+
                     b.Property<string>("Sucursal");
 
                     b.Property<string>("UsuarioCreacion");
 
-                    b.Property<string>("UsuarioModificacion");
+                    b.Property<string>("UsuarioModifiacion");
 
                     b.Property<int>("WarehouseId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("InventarioFisicoId");
 
                     b.HasIndex("WarehouseId");
 
@@ -6550,7 +6556,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Diferencia");
 
-                    b.Property<decimal>("InventarioFisicoCantidad");
+                    b.Property<decimal>("InventarioFisico");
 
                     b.Property<int>("InventarioFisicoId");
 
@@ -10591,7 +10597,7 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BranchId");
+                    b.Property<int>("BranchId");
 
                     b.Property<double>("CapacidadBodega");
 
@@ -10631,8 +10637,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("WarehouseId");
-
-                    b.HasIndex("BranchId");
 
                     b.ToTable("Warehouse");
                 });
@@ -12347,6 +12351,11 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("ERPAPI.Models.InventarioFisico", "Inventario")
+                        .WithMany()
+                        .HasForeignKey("InventarioFisicoId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("WarehouseId")
@@ -12937,13 +12946,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Vendor")
                         .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Warehouse", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId");
                 });
 
             modelBuilder.Entity("OFAC.sdnListM", b =>
