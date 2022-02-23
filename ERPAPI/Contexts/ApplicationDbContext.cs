@@ -217,6 +217,9 @@ namespace ERP.Contexts
         public DbSet<GoodsDeliveredLine> GoodsDeliveredLine { get; set; }
         public DbSet<GoodsDeliveryAuthLine> GoodsDeliveryAuthLines { get; set; }
         public DbSet<GoodsDeliveryAuthorizedSignatures> goodsDeliveryAuthorizedSignatures { get; set; }
+
+        public DbSet<InventarioFisico> InventarioFisico { get; set; }
+        public DbSet<InventarioFisicoLine> InventarioFisicoLines { get; set; }
         public DbSet<CustomerProduct> CustomerProduct { get; set; }
         public DbSet<RecibosCertificado> RecibosCertificado { get; set; }
         public DbSet<PEPS> PEPS { get; set; }
