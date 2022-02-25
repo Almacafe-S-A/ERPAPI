@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/City")]
     [ApiController]
     public class CityController : Controller
@@ -38,7 +39,14 @@ namespace ERPAPI.Controllers
             List<City> Items = new List<City>();
             try
             {
-                var query = _context.City.AsQueryable();
+                
+                var obj = new appCore<City>(_context, _logger);
+                var city = obj.List(x => x.Id == 2, null).FirstOrDefault();
+                obj.Delete(city);
+
+
+                obj.List(null, null);
+                var query = obj.List(null, null).AsQueryable(); // _context.City.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
