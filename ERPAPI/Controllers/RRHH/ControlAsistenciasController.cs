@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -206,7 +207,11 @@ namespace ERPAPI.Controllers
 
                         ControlAsistencias = payload;
                 _context.ControlAsistencias.Add(ControlAsistencias);
-                await _context.SaveChangesAsync();
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = ControlAsistencias.Id,
@@ -271,8 +276,12 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
                 payload.UsuarioCreacion = ControlAsistencias.UsuarioCreacion;
 
                 _context.Entry(ControlAsistencias).CurrentValues.SetValues(payload);
-                // _context.ControlAsistencias.Update(payload);
-                await _context.SaveChangesAsync();
+                        // _context.ControlAsistencias.Update(payload);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = ControlAsistencias.Id,
@@ -333,7 +342,11 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
                .Where(x => x.Id == (int)payload.Id)
                .FirstOrDefault();
                 _context.ControlAsistencias.Remove(ControlAsistencias);
-                await _context.SaveChangesAsync();
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = ControlAsistencias.Id,

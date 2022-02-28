@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -153,7 +154,12 @@ namespace ERPAPI.Controllers
                         }
                         _CustomerContractTermsq = _CustomerContractTerms;
                          _context.CustomerContractTerms.Add(_CustomerContractTermsq);
-                            await _context.SaveChangesAsync();
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _CustomerContractTermsq.Id,
@@ -215,8 +221,13 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_CustomerContractTermsq).CurrentValues.SetValues((_CustomerContractTerms));
 
-                //_context.CustomerContractTerms.Update(_CustomerContractTermsq);
-                await _context.SaveChangesAsync();
+                        //_context.CustomerContractTerms.Update(_CustomerContractTermsq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _CustomerContractTermsq.Id,
@@ -276,7 +287,12 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.CustomerContractTerms.Remove(_CustomerContractTermsq);
-                await _context.SaveChangesAsync();
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                       new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _CustomerContractTermsq.Id,

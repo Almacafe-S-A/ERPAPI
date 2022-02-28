@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,6 +68,10 @@ namespace ERPAPI.Controllers
                 if (registro.IdEstado != 70)
                     throw new Exception("Solo se puede aprobar registros en estado de Cargado.");
                 registro.IdEstado = 71;
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                 await context.SaveChangesAsync();
                 return Ok();
             }
@@ -88,6 +93,10 @@ namespace ERPAPI.Controllers
                 if (registro.IdEstado != 70)
                     throw new Exception("Solo se puede rechazar registros en estado de Cargado.");
                 registro.IdEstado = 72;
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                 await context.SaveChangesAsync();
                 return Ok();
             }

@@ -41,11 +41,10 @@ namespace ERPAPI.Contexts
             return l;
         }
 
-        public virtual IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderExpression = null) //, Func<IAsyncEnumerable<TEntity>, IOrderedQueryable<TEntity>> orderExpression = null)
+        public virtual IQueryable<TEntity> GetQuery(Expression<Func<TEntity, bool>> predicate = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderExpression = null)
         {
             try
             {
-                //throw new Exception("Exception controlada");
                 IQueryable<TEntity> qry = this.DBSet;
 
                 if (predicate != null)
@@ -76,11 +75,11 @@ namespace ERPAPI.Contexts
             {
                 DbSet<T> dbSet = this._context.Set<T>();
                 dbSet.Add(entity);
-                foreach (EntityEntry pEntry in _context.ChangeTracker.Entries())
-                {
-                    pEntry.State = EntityState.Added;
-                    appAuditor.SetAuditoria(pEntry, "");
-                }
+                //foreach (EntityEntry pEntry in _context.ChangeTracker.Entries())
+                //{
+                //    pEntry.State = EntityState.Added;
+                //    appAuditor.SetAuditoria(pEntry, "");
+                //}
                 SaveChanges();
             }
             catch (Exception ex)
@@ -99,11 +98,11 @@ namespace ERPAPI.Contexts
                 dbSet.Attach(entity);
                 this._context.Entry(entity).State = EntityState.Modified;
 
-                foreach (EntityEntry pEntry in _context.ChangeTracker.Entries())
-                {
-                    pEntry.State = EntityState.Modified;
-                    appAuditor.SetAuditoria(pEntry, "");
-                }
+                //foreach (EntityEntry pEntry in _context.ChangeTracker.Entries())
+                //{
+                //    pEntry.State = EntityState.Modified;
+                //    appAuditor.SetAuditoria(pEntry, "");
+                //}
                 SaveChanges();
             }
             catch (Exception ex)
@@ -123,12 +122,12 @@ namespace ERPAPI.Contexts
                 if (this._context.Entry(entity).State == EntityState.Detached)
                     dbSet.Attach(entity);
 
-                this._context.Entry(entity).State = EntityState.Modified;
-                foreach (EntityEntry pEntry in _context.ChangeTracker.Entries())
-                {
-                    pEntry.State = EntityState.Deleted;
-                    appAuditor.SetAuditoria(pEntry, "");
-                }
+                //this._context.Entry(entity).State = EntityState.Modified;
+                //foreach (EntityEntry pEntry in _context.ChangeTracker.Entries())
+                //{
+                //    pEntry.State = EntityState.Deleted;
+                //    appAuditor.SetAuditoria(pEntry, "");
+                //}
                 dbSet.Remove(entity);
                 SaveChanges();
             }

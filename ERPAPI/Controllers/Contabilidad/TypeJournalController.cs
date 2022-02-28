@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -153,7 +154,11 @@ namespace ERPAPI.Controllers
 
                         _TypeJournalq = _TypeJournal;
                 _context.TypeJournal.Add(_TypeJournalq);
-                await _context.SaveChangesAsync();
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _TypeJournalq.TypeJournalId,
@@ -215,8 +220,11 @@ Newtonsoft.Json.JsonConvert.SerializeObject(_TypeJournalq, new JsonSerializerSet
 
                 _context.Entry(_TypeJournalq).CurrentValues.SetValues((_TypeJournal));
 
-                //_context.Bank.Update(_Bankq);
-                await _context.SaveChangesAsync();
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        //_context.Bank.Update(_Bankq);
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _TypeJournalq.TypeJournalId,
@@ -272,6 +280,10 @@ Newtonsoft.Json.JsonConvert.SerializeObject(_TypeJournalq, new JsonSerializerSet
                 .FirstOrDefault();
 
                 _context.TypeJournal.Remove(_TypeJournalq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

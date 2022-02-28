@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Helpers;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +76,10 @@ namespace ERPAPI.Controllers
                 if (biometrico.Id == 0)
                 {
                     context.Biometricos.Add(biometrico);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                     await context.SaveChangesAsync();
                     return Ok(biometrico);
                 }
@@ -288,6 +293,10 @@ namespace ERPAPI.Controllers
                     throw new Exception("Solo se puede rechazar un archivo biometrico en estado de CARGADO.");
 
                 biometrico.IdEstado = 61;
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                 await context.SaveChangesAsync();
                 return Ok();
             }

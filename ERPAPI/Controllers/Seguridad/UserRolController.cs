@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -80,6 +81,10 @@ namespace ERPAPI.Controllers
                 {
                    // IdentityUserRole<string> _userrole = mapper.Map<IdentityUserRole<string>>(_ApplicationUserRole);
                     _context.UserRoles.Add(_ApplicationUserRole);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
                     return await Task.Run(() => Ok(_ApplicationUserRole));
                 }
@@ -134,6 +139,10 @@ namespace ERPAPI.Controllers
                 if (customer != null)
                 {
                     _context.UserRoles.Remove(customer);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
                     return await Task.Run(() => Ok(_ApplicationUserRole));
                 }

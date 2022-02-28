@@ -25,6 +25,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -182,6 +183,11 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.FundingInterestRate.Add(FundingInterestRate);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -210,6 +216,11 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(FundingInterestRateq).CurrentValues.SetValues((_FundingInterestRate));
                 // _context.FundingInterestRate.Update(_FundingInterestRate);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -232,6 +243,11 @@ namespace ERPAPI.Controllers
                 .Where(x => x.Id == (int)payload.Id)
                 .FirstOrDefault();
                 _context.FundingInterestRate.Remove(FundingInterestRate);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

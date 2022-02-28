@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace coderush.Controllers.Api
 {
@@ -164,7 +165,12 @@ namespace coderush.Controllers.Api
             try
             {
                 _context.UnitOfMeasure.Add(unitOfMeasure);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -192,6 +198,11 @@ namespace coderush.Controllers.Api
 
                 _context.Entry(unitOfMeasureq).CurrentValues.SetValues((_UnitOfMeasure));
                 // _context.UnitOfMeasure.Update(_UnitOfMeasure);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -214,7 +225,12 @@ namespace coderush.Controllers.Api
                 .Where(x => x.UnitOfMeasureId == (int)payload.UnitOfMeasureId)
                 .FirstOrDefault();
                 _context.UnitOfMeasure.Remove(unitOfMeasure);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

@@ -29,6 +29,7 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -260,6 +261,11 @@ namespace ERPAPI.Controllers
             {
                 puesto = _Puesto;
                 _context.Puesto.Add(puesto);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
 
             }
@@ -286,6 +292,11 @@ namespace ERPAPI.Controllers
                    .Where(x => x.IdPuesto == (int)_Puesto.IdPuesto)
                    .FirstOrDefault();
                 _context.Puesto.Remove(puesto);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -315,6 +326,9 @@ namespace ERPAPI.Controllers
                                 ).FirstOrDefaultAsync();
 
                 _context.Entry(_Puestop).CurrentValues.SetValues((_Puesto));
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                 //_context.Escala.Update(_Escalaq);
                 await _context.SaveChangesAsync();

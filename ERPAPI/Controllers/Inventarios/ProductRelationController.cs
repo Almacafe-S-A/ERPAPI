@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -170,6 +171,10 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.ProductRelation.Add(_productrelation);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex) {
@@ -193,6 +198,10 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.ProductRelation.Update(_productrelation);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException ex)
@@ -223,6 +232,11 @@ namespace ERPAPI.Controllers
                .Where(x => x.RelationProductId == id)
                .FirstOrDefault();
                 _context.ProductRelation.Remove(_ProductRelation);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

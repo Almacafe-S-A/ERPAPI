@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -123,6 +124,10 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.FormulasAplicadas.Add(FormulasAplicadas);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -150,6 +155,10 @@ namespace ERPAPI.Controllers
                 _FormulasAplicadas.UsuarioCreacion = FormulasAplicadasq.UsuarioCreacion;
 
                 _context.Entry(FormulasAplicadasq).CurrentValues.SetValues((_FormulasAplicadas));
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 // _context.FormulasAplicadas.Update(_FormulasAplicadas);
                 await _context.SaveChangesAsync();
             }
@@ -173,6 +182,10 @@ namespace ERPAPI.Controllers
                 .Where(x => x.IdFormulaAplicada == (int)payload.IdFormulaAplicada)
                 .FirstOrDefault();
                 _context.FormulasAplicadas.Remove(FormulasAplicadas);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

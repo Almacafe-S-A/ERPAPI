@@ -11,6 +11,7 @@ using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace coderush.Controllers.Api
 {
@@ -209,6 +210,10 @@ namespace coderush.Controllers.Api
                     {
                         _Vendorq = payload;
                         _context.Vendor.Add(_Vendorq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -289,6 +294,9 @@ namespace coderush.Controllers.Api
 
                         _context.Entry(_Vendorq).CurrentValues.SetValues((_Vendor));
 
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         //_context.Alert.Update(_Alertq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -339,6 +347,10 @@ namespace coderush.Controllers.Api
                 .Where(x => x.VendorId == (int)payload.VendorId)
                 .FirstOrDefault();
                 _context.Vendor.Remove(Vendor);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -362,6 +374,10 @@ namespace coderush.Controllers.Api
                 .Where(x => x.VendorId == (int)payload.VendorId)
                 .FirstOrDefault();
                 _context.Vendor.Remove(Vendor);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

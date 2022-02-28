@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -192,7 +193,12 @@ namespace ERPAPI.Controllers
             {
                 _PuntoEmision = payload;
                 _context.PuntoEmision.Add(_PuntoEmision);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -221,8 +227,13 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_PuntoEmision).CurrentValues.SetValues(payload);
 
-               // _context.PuntoEmision.Update(_PuntoEmision);
-               await _context.SaveChangesAsync();
+                // _context.PuntoEmision.Update(_PuntoEmision);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -250,6 +261,10 @@ namespace ERPAPI.Controllers
                .FirstOrDefault();
 
                 _context.PuntoEmision.Remove(_puntoemisionq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

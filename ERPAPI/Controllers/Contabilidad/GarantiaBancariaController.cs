@@ -8,6 +8,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -307,6 +308,10 @@ namespace ERPAPI.Controllers
                 _context.Entry(_GarantiaBancariaq).CurrentValues.SetValues((_GarantiaBancaria));
 
                 //_context.GarantiaBancaria.Update(_GarantiaBancariaq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -335,6 +340,11 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.GarantiaBancaria.Remove(_GarantiaBancariaq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -101,6 +102,10 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.PaymentTerms.Add(PaymentTerms);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -129,6 +134,11 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(PaymentTermsq).CurrentValues.SetValues((_PaymentTerms));
                 // _context.PaymentTerms.Update(_PaymentTerms);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -151,6 +161,10 @@ namespace ERPAPI.Controllers
                 .Where(x => x.Id == (int)payload.Id)
                 .FirstOrDefault();
                 _context.PaymentTerms.Remove(PaymentTerms);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

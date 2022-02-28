@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -42,6 +43,10 @@ namespace ERPAPI.Controllers
                         return BadRequest("Ya existe un Feriado con esta configuracion");
                     }
                     context.Feriados.Add(feriado);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                     await context.SaveChangesAsync();
                     return Ok(feriado);
                 }
@@ -54,6 +59,10 @@ namespace ERPAPI.Controllers
                     }
 
                     context.Entry(feriadoExistente).CurrentValues.SetValues(feriado);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                     await context.SaveChangesAsync();
                     return Ok(feriadoExistente);
                 }
@@ -74,6 +83,10 @@ namespace ERPAPI.Controllers
                 if (vferiado!=null)
                 {
                     context.Feriados.Remove(vferiado);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                     await context.SaveChangesAsync();
                     return Ok(feriado);
                 }

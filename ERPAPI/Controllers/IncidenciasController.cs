@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -126,6 +127,8 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_incidenciasq).CurrentValues.SetValues((_incidencias));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -150,6 +153,9 @@ namespace ERPAPI.Controllers
             {
                 _incidenciasq = _incidencias;
                 _context.Incidencias.Add(_incidenciasq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -177,6 +183,9 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.Incidencias.Remove(_incidenciasq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

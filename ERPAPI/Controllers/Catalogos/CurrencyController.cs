@@ -4,6 +4,7 @@
 REVISIONS:
 version              Date                Author                        Description
 ----------           -------------       ---------------               -------------------------------
+13.0                 26/02/2022          Yoel Castillo                      Add auditor for EF
 12.0                 22/12/2019          Marvin.Guillen                     Validation to eliminate
 11.0                 18/12/2019          Marvin.Guillen                     Validation to eliminate
 10.0                 23/11/2019          Marvin.Guillen                     Changes of Currency
@@ -29,6 +30,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -186,6 +188,11 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.Currency.Add(currency);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -217,7 +224,12 @@ namespace ERPAPI.Controllers
                 _Currency.UsuarioCreacion = currencyq.UsuarioCreacion;
 
                 _context.Entry(currencyq).CurrentValues.SetValues((_Currency));
-                //  _context.Currency.Update(_Currency);
+
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -315,7 +327,11 @@ namespace ERPAPI.Controllers
                         .Where(x => x.CurrencyId == (int)_Currency.CurrencyId)
                         .FirstOrDefault();
                          _context.Currency.Remove(currency);
-                        await  _context.SaveChangesAsync();
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                   new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await  _context.SaveChangesAsync();
                 }
             }
             catch (Exception ex)

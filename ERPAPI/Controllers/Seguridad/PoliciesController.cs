@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -211,6 +212,10 @@ namespace ERPAPI.Controllers
                 if (_listrole.Count == 0)
                 {                    
                     _context.Policy.Add(_Policy);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
                     return await Task.Run(() => Ok(_Policy));
                     // return Ok(_Policy);
@@ -250,6 +255,10 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_Policyq).CurrentValues.SetValues((_Policy));
                 // _context.Policy.Update(_Policy);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(_Policy));
                 // return (_Policy);
@@ -286,6 +295,10 @@ namespace ERPAPI.Controllers
                 if (_listrole.Count > 0)
                 {
                     _context.Policy.Remove(_Policy);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
                     return await Task.Run(() => Ok(_Policy));
                     // return Ok(_Policy);

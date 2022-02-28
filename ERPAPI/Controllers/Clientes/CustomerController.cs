@@ -11,6 +11,7 @@ using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -211,6 +212,11 @@ namespace ERPAPI.Controllers
                         payload.FechaCreacion = DateTime.Now;
                         payload.FechaModificacion = DateTime.Now;
                         _context.Customer.Add(customer);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -287,6 +293,11 @@ namespace ERPAPI.Controllers
                         //_context.Customer.Update(_customer);
 
                         _context.Entry(customerq).CurrentValues.SetValues((_customer));
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -343,6 +354,12 @@ namespace ERPAPI.Controllers
                .Where(x => x.CustomerId == (Int64)payload.CustomerId)
                .FirstOrDefault();
                 _context.Customer.Remove(customer);
+
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
                 // return (customer);
                 return await Task.Run(() => Ok(customer));

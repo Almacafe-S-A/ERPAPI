@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -139,7 +140,12 @@ namespace ERPAPI.Controllers
             {
                 _CAIq = _CAI;
                 _context.CAI.Add(_CAIq);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -172,7 +178,12 @@ namespace ERPAPI.Controllers
                 _cai.UsuarioCreacion = _Caiq.UsuarioCreacion;
 
                 _context.Entry(_Caiq).CurrentValues.SetValues((_cai));
-               // _context.CAI.Update(_Caiq);
+                // _context.CAI.Update(_Caiq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -201,6 +212,10 @@ namespace ERPAPI.Controllers
                 .Where(x => x.IdCAI == (int)_cai.IdCAI)
                 .FirstOrDefault();
                 _context.CAI.Remove(_caiq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

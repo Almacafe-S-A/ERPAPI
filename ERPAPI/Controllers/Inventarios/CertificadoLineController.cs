@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -278,6 +279,10 @@ namespace ERPAPI.Controllers
             {
                 _CertificadoLineq = _CertificadoLine;
                 _context.CertificadoLine.Add(_CertificadoLineq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -308,6 +313,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_CertificadoLineq).CurrentValues.SetValues((_CertificadoLine));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.CertificadoLine.Update(_CertificadoLineq);
                 await _context.SaveChangesAsync();
             }
@@ -337,6 +345,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.CertificadoLine.Remove(_CertificadoLineq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

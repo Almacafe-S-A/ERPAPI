@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Helpers;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -133,6 +134,11 @@ namespace ERPAPI.Controllers
             {
                 _FixedAssetq = _FixedAsset;
                 _context.FixedAsset.Add(_FixedAssetq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -164,6 +170,11 @@ namespace ERPAPI.Controllers
                 _context.Entry(_FixedAssetq).CurrentValues.SetValues((_FixedAsset));
 
                 //_context.FixedAsset.Update(_FixedAssetq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

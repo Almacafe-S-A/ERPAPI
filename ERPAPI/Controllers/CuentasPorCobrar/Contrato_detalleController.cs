@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -115,6 +116,10 @@ namespace ERPAPI.Controllers
                     {
                         _Contrato_detalleq = _Contrato_detalle;
                         _context.Contrato_detalle.Add(_Contrato_detalleq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -177,6 +182,9 @@ namespace ERPAPI.Controllers
 
                         _context.Entry(_Contrato_detalleq).CurrentValues.SetValues((_Contrato_detalle));
 
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         //_context.Contrato_detalle.Update(_Contrato_detalleq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -232,6 +240,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.Contrato_detalle.Remove(_Contrato_detalleq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

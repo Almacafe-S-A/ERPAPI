@@ -11,6 +11,7 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -263,6 +264,10 @@ namespace ERPAPI.Controllers
                             //_context.SalesOrderLine.Add(item);
                         }
                         _context.SalesOrder.Add(salesOrder);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -421,6 +426,11 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(salesOrderq).CurrentValues.SetValues((_salesorder));
                 //_context.SalesOrder.Update(_salesorder);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
 
 
@@ -463,6 +473,10 @@ namespace ERPAPI.Controllers
               .Where(x => x.SalesOrderId == (int)payload.SalesOrderId)
               .FirstOrDefault();
                 _context.SalesOrder.Remove(salesOrder);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
 
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -480,6 +494,8 @@ namespace ERPAPI.Controllers
                     UsuarioEjecucion = payload.UsuarioModificacion,
 
                 });
+
+
                 await _context.SaveChangesAsync();
 
                 return Ok(salesOrder);

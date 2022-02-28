@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Filters;
 using ERPAPI.Helpers;
 using ERPAPI.Helpers;
@@ -184,6 +185,9 @@ namespace ERPAPI.Controllers
                             return BadRequest($"Ocurrio un error: No coinciden debitos :{sumadebitos} y creditos:{sumacreditos}");
                         }
 
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
 
@@ -257,9 +261,12 @@ namespace ERPAPI.Controllers
                             isapproved = true;
                         }
                 _context.Entry(_JournalEntryq).CurrentValues.SetValues((_JournalEntry));
-                        
 
-                await _context.SaveChangesAsync();
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _JournalEntry.JournalEntryId,
@@ -359,6 +366,11 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _JournalEntry.ModifiedUser,
 
                         });
+
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();

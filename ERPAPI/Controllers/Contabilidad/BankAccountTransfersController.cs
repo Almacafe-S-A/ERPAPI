@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Helpers;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -230,6 +231,11 @@ namespace ERPAPI.Controllers
 
                 _BankAccountTransfersq.JournalEntry = je;
                 _context.BankAccountTransfers.Add(_BankAccountTransfersq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
 
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -410,6 +416,10 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
                 _BankAccountTransfers.JournalEntry.TotalDebit = cantidad;
 
                 //_context.BankAccountTransfers.Update(_BankAccountTransfersq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
 
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -453,6 +463,10 @@ Newtonsoft.Json.JsonConvert.SerializeObject(BankAccountTransfersq, new JsonSeria
                 .FirstOrDefault();
 
                 _context.BankAccountTransfers.Remove(_BankAccountTransfersq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

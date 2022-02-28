@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -295,6 +296,10 @@ namespace ERPAPI.Controllers
                     Items = SubProducts.Where(q => noexistenItems.Contains(q.ProductCode)).ToList();
 
                     _context.BulkInsert(Items);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
 
 
@@ -334,6 +339,10 @@ namespace ERPAPI.Controllers
                                             .FirstOrDefaultAsync();
 
                 _context.SubProduct.Add(subProduct);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await  _context.SaveChangesAsync();
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora { IdOperacion = subProduct.SubproductId,DocType="SubProducto" ,
                     ClaseInicial = Newtonsoft.Json.JsonConvert.SerializeObject(_subproduct, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore })
@@ -405,6 +414,11 @@ namespace ERPAPI.Controllers
 
 
                 _context.Entry(subproductq).CurrentValues.SetValues((_Subproduct));
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 //                _context.SubProduct.Update(_subproduct);
                 await _context.SaveChangesAsync();
                 //await _context.SaveChangesAsync();
@@ -428,6 +442,10 @@ namespace ERPAPI.Controllers
                .Where(x => x.SubproductId == _SubProduct.SubproductId)
                .FirstOrDefault();
                 _context.SubProduct.Remove(subproduct);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch(DbUpdateException ex) {

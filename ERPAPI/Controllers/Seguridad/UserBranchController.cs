@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -146,6 +147,10 @@ namespace ERPAPI.Controllers
 
                         _UserBranchq = _UserBranch;
                         _context.UserBranch.Add(_UserBranchq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -206,6 +211,10 @@ namespace ERPAPI.Controllers
                                 ).FirstOrDefaultAsync();
 
                         _context.Entry(_UserBranchq).CurrentValues.SetValues((_UserBranch));
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
                         //await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -265,6 +274,10 @@ namespace ERPAPI.Controllers
                         _UserBranchq = _context.UserBranch.Where(x => x.BranchId == _UserBranch.BranchId && x.UserId == _UserBranch.UserId).FirstOrDefault();
 
                         _context.UserBranch.Remove(_UserBranchq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {

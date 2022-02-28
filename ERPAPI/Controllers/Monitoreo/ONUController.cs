@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -94,6 +95,10 @@ namespace ERPAPI.Controllers
                CONSOLIDATED_LISTM customerType = payload;
               //  _context.BulkInsert(payload);
                  _context.CONSOLIDATED_LISTM.Add(customerType);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(customerType));
                 // return Ok(customerType);
