@@ -12,8 +12,8 @@ namespace ERPAPI.Contexts
 {
     public class appAuditor
     {
-        private static ApplicationDbContext _context = null;
-        private static ILogger _logger;
+        public static ApplicationDbContext _context = null;
+        public static ILogger _logger;
         private static string Usuario = string.Empty;
 
         /// <summary>
