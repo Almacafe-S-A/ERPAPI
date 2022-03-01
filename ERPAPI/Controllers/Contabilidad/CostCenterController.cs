@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -172,6 +173,9 @@ namespace ERPAPI.Controllers
 
                         });
 
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
                         transaction.Commit();
                     }
@@ -218,8 +222,13 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_CostCenterq).CurrentValues.SetValues((_CostCenter));
 
-                //_context.CostCenter.Update(_CostCenterq);
-                await _context.SaveChangesAsync();
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                        //_context.CostCenter.Update(_CostCenterq);
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _CostCenterq.CostCenterId,
@@ -279,7 +288,11 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.CostCenter.Remove(_CostCenterq);
-                await _context.SaveChangesAsync();
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
                             IdOperacion = _CostCenterq.CostCenterId,

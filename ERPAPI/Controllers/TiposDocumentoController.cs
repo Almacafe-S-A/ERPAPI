@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -134,7 +135,12 @@ namespace ERPAPI.Controllers
             {
                 _TiposDocumento = payload;
                 _context.TiposDocumento.Add(_TiposDocumento);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -162,8 +168,12 @@ namespace ERPAPI.Controllers
                 _TipoDocumento.UsuarioCreacion = _tiposdocumentoq.UsuarioCreacion;
 
                 _context.Entry(_tiposdocumentoq).CurrentValues.SetValues(_TipoDocumento);
-              //  _context.TiposDocumento.Update(_TipoDocumento);
-              await  _context.SaveChangesAsync();
+                //  _context.TiposDocumento.Update(_TipoDocumento);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                await  _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -186,6 +196,10 @@ namespace ERPAPI.Controllers
                .FirstOrDefaultAsync();
 
                 _context.TiposDocumento.Remove(_tiposdocumentoq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

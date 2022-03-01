@@ -6,14 +6,16 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
-namespace ERPAPI.Models.Seguridad
+namespace ERPAPI.Models
 {
     public class Auditoria
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
         public long Id { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime Fecha { get; set; }        
+        public DateTime Fecha { get; set; }
+        [MaxLength(100)]
+        public string Usuario { get; set; }
         [MaxLength(200)]
         public string Entidad { get; set; }
         [MaxLength(200)]
@@ -24,7 +26,6 @@ namespace ERPAPI.Models.Seguridad
         public string ValoresNuevos { get; set; }
         [MaxLength(int.MaxValue)]
         public string ValoresAntiguos { get; set; }
-        [MaxLength(100)]
-        public string Usuario { get; set; }
+        
     }
 }

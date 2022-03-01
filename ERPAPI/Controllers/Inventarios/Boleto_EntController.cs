@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -440,6 +441,10 @@ namespace ERPAPI.Controllers
 
                         _Boleto_Entq = _Boleto_Ent;
                         _context.Boleto_Ent.Add(_Boleto_Entq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
 
@@ -503,6 +508,9 @@ namespace ERPAPI.Controllers
 
                         _context.Entry(_Boleto_Entq).CurrentValues.SetValues((_Boleto_Ent));
 
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         //_context.Boleto_Ent.Update(_Boleto_Entq);
                         await _context.SaveChangesAsync();
 
@@ -562,6 +570,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.Boleto_Ent.Remove(_Boleto_Entq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

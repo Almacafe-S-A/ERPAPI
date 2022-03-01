@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -186,6 +187,10 @@ namespace ERPAPI.Controllers
                         _RetentionReceiptq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
 
                         _context.RetentionReceipt.Add(_RetentionReceiptq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -245,6 +250,10 @@ namespace ERPAPI.Controllers
                         ).FirstOrDefaultAsync();
 
                         _context.Entry(_RetentionReceiptq).CurrentValues.SetValues((_RetentionReceipt));
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -303,6 +312,10 @@ namespace ERPAPI.Controllers
                         .FirstOrDefault();
 
                         _context.RetentionReceipt.Remove(_RetentionReceiptq);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora

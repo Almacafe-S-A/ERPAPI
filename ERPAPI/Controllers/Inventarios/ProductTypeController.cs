@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -120,7 +121,11 @@ namespace ERPAPI.Controllers
             {
                 productType = _ProductType;
                 _context.ProductType.Add(productType);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -152,6 +157,11 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(subproductq).CurrentValues.SetValues((_ProductType));
                 //                _context.SubProduct.Update(_subproduct);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
                 //await _context.SaveChangesAsync();
             }
@@ -179,6 +189,10 @@ namespace ERPAPI.Controllers
                   .Where(x => x.ProductTypeId == _ProductType.ProductTypeId)
                   .FirstOrDefault();
                   _context.ProductType.Remove(productType);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -192,6 +193,10 @@ namespace ERPAPI.Controllers
                 try
                 {                 
                     _context.BulkInsert(clave_e_list);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
 
                 }
@@ -227,6 +232,10 @@ namespace ERPAPI.Controllers
             {
                 _Boleto_Salq = _Boleto_Sal;
                 _context.Boleto_Sal.Add(_Boleto_Salq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -257,6 +266,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_Boleto_Salq).CurrentValues.SetValues((_Boleto_Sal));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.Boleto_Sal.Update(_Boleto_Salq);
                 await _context.SaveChangesAsync();
             }
@@ -286,6 +298,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.Boleto_Sal.Remove(_Boleto_Salq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

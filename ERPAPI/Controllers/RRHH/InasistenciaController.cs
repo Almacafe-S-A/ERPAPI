@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -85,6 +86,10 @@ namespace ERPAPI.Controllers
                 if (inasistencia.Id == 0)
                 {
                     context.Inasistencias.Add(inasistencia);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                     await context.SaveChangesAsync();
                     return Ok(inasistencia);
                 }
@@ -112,6 +117,10 @@ namespace ERPAPI.Controllers
                 if (registroExistente == null)
                     throw new Exception("Inasistencia a actualizar no existe.");
                 registroExistente.IdEstado = 82;
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                 await context.SaveChangesAsync();
                 return Ok(registroExistente);
             }
@@ -131,6 +140,10 @@ namespace ERPAPI.Controllers
                 if (registroExistente == null)
                     throw new Exception("Inasistencia a actualizar no existe.");
                 registroExistente.IdEstado = 83;
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                 await context.SaveChangesAsync();
                 return Ok(registroExistente);
             }

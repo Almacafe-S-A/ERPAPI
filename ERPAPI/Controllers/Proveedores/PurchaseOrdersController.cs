@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -303,6 +304,10 @@ namespace ERPAPI.Controllers
                             item.PurchaseOrderId = _PurchaseOrder.Id;
                             _context.PurchaseOrderLine.Add(item);
                         }
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -364,6 +369,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_PurchaseOrderq).CurrentValues.SetValues((_PurchaseOrder));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.PurchaseOrder.Update(_PurchaseOrderq);
                 await _context.SaveChangesAsync();
             }
@@ -393,6 +401,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.PurchaseOrder.Remove(_PurchaseOrderq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

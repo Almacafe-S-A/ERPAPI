@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -161,6 +162,10 @@ namespace ERPAPI.Controllers
             {
                 tipocontrato = _TipoContrato;
                 _context.TipoContrato.Add(tipocontrato);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
 
             }
@@ -177,6 +182,10 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<TipoContrato>> PostTipoContrato(TipoContrato tipoContrato)
         {
             _context.TipoContrato.Add(tipoContrato);
+
+            //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTipoContrato", new { id = tipoContrato.IdTipoContrato }, tipoContrato);
@@ -193,6 +202,10 @@ namespace ERPAPI.Controllers
                    .Where(x => x.IdTipoContrato == (int)_TipoContrato.IdTipoContrato)
                    .FirstOrDefault();
                 _context.TipoContrato.Remove(tipocontrato);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -221,6 +234,9 @@ namespace ERPAPI.Controllers
                                 ).FirstOrDefaultAsync();
 
                 _context.Entry(_Tipocontratoq).CurrentValues.SetValues((_TipoContrato));
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                 //_context.Escala.Update(_Escalaq);
                 await _context.SaveChangesAsync();

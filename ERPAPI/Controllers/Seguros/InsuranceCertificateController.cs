@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using ERPAPI.Migrations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -286,7 +287,8 @@ namespace ERPAPI.Controllers
                         //DocumentId = _InsuranceCertificateq.InsuranceCertificateId,
                     };
 
-
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
 
@@ -301,6 +303,9 @@ namespace ERPAPI.Controllers
                     _je.TotalCredit = sumacreditos;
                     _je.TotalDebit = sumadebitos;
                     _context.JournalEntry.Add(_je);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
 
@@ -356,6 +361,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_InsuranceCertificateq).CurrentValues.SetValues((_InsuranceCertificate));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.InsuranceCertificate.Update(_InsuranceCertificateq);
                 await _context.SaveChangesAsync();
             }
@@ -385,6 +393,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.InsuranceCertificate.Remove(_InsuranceCertificateq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -176,7 +177,12 @@ namespace ERPAPI.Controllers
             {
                 _NumeracionSARq = _NumeracionSAR;
                 _context.NumeracionSAR.Add(_NumeracionSARq);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -209,6 +215,11 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_NumeracionSARq).CurrentValues.SetValues(_NumeracionSAR);
                 // _context.NumeracionSAR.Update(_NumeracionSARq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -236,6 +247,11 @@ namespace ERPAPI.Controllers
                 .Where(x => x.IdNumeracion== (Int64)__NumeracionSAR.IdNumeracion)
                 .FirstOrDefault();
                 _context.NumeracionSAR.Remove(__NumeracionSARq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

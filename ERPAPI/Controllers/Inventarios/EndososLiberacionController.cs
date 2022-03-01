@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -125,6 +126,10 @@ namespace ERPAPI.Controllers
                 endoso.Saldo -= _EndososLiberacionq.Quantity;
                 EndososCertificadosLine endososoline = _context.EndososCertificadosLine.Where(w => w.EndososCertificadosId == _EndososLiberacionq.EndososLineId).FirstOrDefault();
                 endososoline.Saldo -= _EndososLiberacionq.Quantity;
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -155,6 +160,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_EndososLiberacionq).CurrentValues.SetValues((_EndososLiberacion));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.EndososLiberacion.Update(_EndososLiberacionq);
                 await _context.SaveChangesAsync();
             }
@@ -184,6 +192,11 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.EndososLiberacion.Remove(_EndososLiberacionq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -134,7 +135,7 @@ namespace ERPAPI.Controllers
                     {
                         _EmployeeSalaryq = _EmployeeSalary;
                         _context.EmployeeSalary.Add(_EmployeeSalaryq);
-                       
+
 
                         //////////////Alerta al guardar un nuevo Salario/////////////
 
@@ -151,6 +152,9 @@ namespace ERPAPI.Controllers
                         //_context.Alert.Add(_Alertq);
 
                         //Alerta comendata para que ya no la genere
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                         await _context.SaveChangesAsync();
 
@@ -261,6 +265,9 @@ namespace ERPAPI.Controllers
 
                         _context.Entry(_EmployeeSalaryq).CurrentValues.SetValues((_EmployeeSalary));
 
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         //_context.Alert.Update(_Alertq);
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -308,6 +315,7 @@ namespace ERPAPI.Controllers
 
                             });
                         }
+
                         await _context.SaveChangesAsync();
                         transaction.Commit();
                     }
@@ -345,6 +353,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.EmployeeSalary.Remove(_EmployeeSalaryq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

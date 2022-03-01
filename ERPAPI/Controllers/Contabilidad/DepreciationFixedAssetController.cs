@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -149,6 +150,11 @@ namespace ERPAPI.Controllers
             {
                 _DepreciationFixedAssetq = _DepreciationFixedAsset;
                 _context.DepreciationFixedAsset.Add(_DepreciationFixedAssetq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -180,6 +186,10 @@ namespace ERPAPI.Controllers
                 _context.Entry(_DepreciationFixedAssetq).CurrentValues.SetValues((_DepreciationFixedAsset));
 
                 //_context.DepreciationFixedAsset.Update(_DepreciationFixedAssetq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -208,6 +218,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.DepreciationFixedAsset.Remove(_DepreciationFixedAssetq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

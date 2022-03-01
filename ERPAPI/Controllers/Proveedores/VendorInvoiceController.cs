@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -288,6 +289,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_VendorInvoiceq).CurrentValues.SetValues((_VendorInvoice));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.VendorInvoice.Update(_VendorInvoiceq);
                 await _context.SaveChangesAsync();
             }
@@ -317,6 +321,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.VendorInvoice.Remove(_VendorInvoiceq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

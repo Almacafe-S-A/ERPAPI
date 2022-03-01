@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -91,6 +92,10 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.MantenimientoImpacto.Add(mantenimientoImpacto);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -122,6 +127,10 @@ namespace ERPAPI.Controllers
                 _MantenimientoImpacto.UsuarioCreacion = mantenimiento.UsuarioCreacion;
 
                 _context.Entry(mantenimiento).CurrentValues.SetValues((_MantenimientoImpacto));
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -149,6 +158,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.MantenimientoImpacto.Remove(mantenimiento);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

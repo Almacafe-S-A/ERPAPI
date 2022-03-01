@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -126,6 +127,11 @@ namespace ERPAPI.Controllers
             {
                 CustomerType customerType = payload;
                 _context.CustomerType.Add(customerType);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(customerType));
                 // return Ok(customerType);
@@ -152,7 +158,12 @@ namespace ERPAPI.Controllers
                 _customertype.UsuarioCreacion = customerTypeq.UsuarioCreacion;
 
                 _context.Entry(customerTypeq).CurrentValues.SetValues((_customertype));
-              //  _context.CustomerType.Update(_customertype);
+                //  _context.CustomerType.Update(_customertype);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(_customertype));
                 //return Ok(customerType);
@@ -173,6 +184,11 @@ namespace ERPAPI.Controllers
                .Where(x => x.CustomerTypeId == (Int64)payload.CustomerTypeId)
                .FirstOrDefault();
                 _context.CustomerType.Remove(customerType);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(customerType));
                 //return Ok(customerType);
@@ -219,6 +235,11 @@ namespace ERPAPI.Controllers
                    .Where(x => x.CustomerTypeId == (int)_CustomerType.CustomerTypeId)
                    .FirstOrDefault();
                     _context.CustomerType.Remove(customertype);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                   new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                     await _context.SaveChangesAsync();
                 }
             }

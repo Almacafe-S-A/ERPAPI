@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using AutoMapper;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -228,6 +229,10 @@ namespace ERPAPI.Controllers
 
 
                 _context.Entry(ApplicationRoleq).CurrentValues.SetValues(_rol);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
 
             }
@@ -255,6 +260,10 @@ namespace ERPAPI.Controllers
                 if (_rolasignado.Count == 0)
                 {
                     _context.Roles.Remove(_ApplicationRole);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
                     return await Task.Run(() => (_ApplicationRole));
                 }

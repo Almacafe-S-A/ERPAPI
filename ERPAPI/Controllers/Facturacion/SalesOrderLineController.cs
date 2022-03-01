@@ -11,6 +11,7 @@ using ERP.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using ERPAPI.Helpers;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -243,7 +244,11 @@ namespace ERPAPI.Controllers
 
                
                     _context.SalesOrderLine.Add(payload);
-                    await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                await _context.SaveChangesAsync();
                     //Falta comparar los totales , haciendo suma de las lineas
                     //this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
                     //return Ok(salesOrderLine);
@@ -269,6 +274,10 @@ namespace ERPAPI.Controllers
                 _context.SalesOrderLine.Update(salesOrderLine);
                 //
                 this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
                 //return Ok(salesOrderLine);
                 return await Task.Run(() => Ok(salesOrderLine));
@@ -290,6 +299,10 @@ namespace ERPAPI.Controllers
                 .Where(x => x.SalesOrderLineId == (Int64)payload.SalesOrderLineId)
                 .FirstOrDefault();
                 _context.SalesOrderLine.Remove(salesOrderLine);
+                
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
                 this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
                 //return Ok(salesOrderLine);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -929,6 +930,10 @@ namespace ERPAPI.Controllers
             {
                 _Kardexq = _Kardex;
                 _context.Kardex.Add(_Kardexq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -959,6 +964,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_Kardexq).CurrentValues.SetValues((_Kardex));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.Kardex.Update(_Kardexq);
                 await _context.SaveChangesAsync();
             }
@@ -988,6 +996,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.Kardex.Remove(_Kardexq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

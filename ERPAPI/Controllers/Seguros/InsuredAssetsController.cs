@@ -9,6 +9,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -205,6 +206,9 @@ namespace ERPAPI.Controllers
                     //    });
                     //}
 
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
 
                     decimal sumacreditos = 0, sumadebitos = 0;
@@ -273,6 +277,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_InsuredAssetsq).CurrentValues.SetValues((_InsuredAssets));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.InsuredAssets.Update(_InsuredAssetsq);
                 await _context.SaveChangesAsync();
             }
@@ -302,6 +309,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.InsuredAssets.Remove(_InsuredAssetsq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

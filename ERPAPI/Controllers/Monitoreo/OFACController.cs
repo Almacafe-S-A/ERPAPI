@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -108,10 +109,18 @@ namespace ERPAPI.Controllers
 
                         List<sdnListM> rangelist = _context.sdnList.ToList();
                         _context.sdnList.RemoveRange(rangelist);
-                       // _context.Database.ExecuteSqlCommand("TRUNCATE TABLE [TableName]");
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        // _context.Database.ExecuteSqlCommand("TRUNCATE TABLE [TableName]");
                         await _context.SaveChangesAsync();
 
                         _context.sdnList.Add(customerType);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();                      
 
                         transaction.Commit();
@@ -142,7 +151,11 @@ namespace ERPAPI.Controllers
             {
                 List<sdnListM> rangelist = _context.sdnList.ToList();
                 _context.sdnList.RemoveRange(rangelist);
-               // _context.Database.ExecuteSqlCommand("TRUNCATE TABLE [TableName]");
+                // _context.Database.ExecuteSqlCommand("TRUNCATE TABLE [TableName]");
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => Ok(rangelist.Count));
                 // return Ok(customerType);

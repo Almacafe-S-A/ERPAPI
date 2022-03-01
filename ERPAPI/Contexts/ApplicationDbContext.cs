@@ -423,7 +423,8 @@ namespace ERP.Contexts
         public DbSet<ImpuestoVecinalConfiguracion> ImpuestoVecinalConfiguraciones { get; set; }
 
         public DbSet<CategoriaPlanilla> CategoriasPlanillas { get; set; }
-        
+
+        public DbSet<Auditoria> Auditoria { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //var Customers = new List<Customer>()

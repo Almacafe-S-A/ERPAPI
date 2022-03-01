@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -145,6 +146,10 @@ namespace ERPAPI.Controllers
                 _JournalEntryConfigurationLineq.FechaCreacion = DateTime.Now;
                 _JournalEntryConfigurationLineq.FechaModificacion = DateTime.Now;
                 _context.JournalEntryConfigurationLine.Add(_JournalEntryConfigurationLineq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -176,6 +181,10 @@ namespace ERPAPI.Controllers
                 _context.Entry(_JournalEntryConfigurationLineq).CurrentValues.SetValues((_JournalEntryConfigurationLine));
 
                 //_context.JournalEntryConfigurationLine.Update(_JournalEntryConfigurationLineq);
+                
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -204,6 +213,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.JournalEntryConfigurationLine.Remove(_JournalEntryConfigurationLineq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

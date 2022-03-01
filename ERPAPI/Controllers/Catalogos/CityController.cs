@@ -39,27 +39,20 @@ namespace ERPAPI.Controllers
             List<City> Items = new List<City>();
             try
             {
-                
-                var obj = new appCore<City>(_context, _logger);
-                var city = obj.List(x => x.Id == 2, null).FirstOrDefault();
-                obj.Delete(city);
 
-
-                obj.List(null, null);
-                var query = obj.List(null, null).AsQueryable(); // _context.City.AsQueryable();
+                var query =  _context.City.AsQueryable();
                 var totalRegistro = query.Count();
 
                 Items = await query
                    .Skip(cantidadDeRegistros * (numeroDePagina - 1))
                    .Take(cantidadDeRegistros)
-                    .ToListAsync();
+                   .ToListAsync();
 
                 Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
                 Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
@@ -148,6 +141,10 @@ namespace ERPAPI.Controllers
             {
                 _Cityq = _City;
                 _context.City.Add(_Cityq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -175,10 +172,12 @@ namespace ERPAPI.Controllers
                                  .Where(q => q.Id == _City.Id)
                                 select c
                                 ).FirstOrDefaultAsync();
-
+                
                 _context.Entry(_Cityq).CurrentValues.SetValues((_City));
 
-                //_context.City.Update(_Cityq);
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -207,6 +206,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.City.Remove(_Cityq);
+                
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -222,12 +225,6 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_Cityq));
 
         }
-
-
-
-
-
-
 
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -105,6 +106,8 @@ namespace ERPAPI.Controllers
 
             try
             {
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -127,6 +130,9 @@ namespace ERPAPI.Controllers
         public async Task<ActionResult<TipoDocumento>> PostTipoDocumento(TipoDocumento tipoDocumento)
         {
             _context.TipoDocumento.Add(tipoDocumento);
+
+            //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTipoDocumento", new { id = tipoDocumento.IdTipoDocumento }, tipoDocumento);
@@ -143,6 +149,9 @@ namespace ERPAPI.Controllers
             }
 
             _context.TipoDocumento.Remove(tipoDocumento);
+
+            //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
             await _context.SaveChangesAsync();
 
             return await Task.Run(() => tipoDocumento);

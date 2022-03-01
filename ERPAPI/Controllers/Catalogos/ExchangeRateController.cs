@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -171,6 +172,11 @@ namespace ERPAPI.Controllers
             {
                 _ExchangeRateq = _ExchangeRate;
                 _context.ExchangeRate.Add(_ExchangeRateq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -201,6 +207,10 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_ExchangeRateq).CurrentValues.SetValues((_ExchangeRate));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -229,6 +239,11 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.ExchangeRate.Remove(_ExchangeRateq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

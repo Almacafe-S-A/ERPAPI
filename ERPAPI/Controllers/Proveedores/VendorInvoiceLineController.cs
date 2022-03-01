@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -140,6 +141,10 @@ namespace ERPAPI.Controllers
             {
                 _VendorInvoiceLineq = _VendorInvoiceLine;
                 _context.VendorInvoiceLine.Add(_VendorInvoiceLineq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -170,6 +175,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_VendorInvoiceLineq).CurrentValues.SetValues((_VendorInvoiceLine));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 //_context.VendorInvoiceLine.Update(_VendorInvoiceLineq);
                 await _context.SaveChangesAsync();
             }
@@ -199,6 +207,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.VendorInvoiceLine.Remove(_VendorInvoiceLineq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

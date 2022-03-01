@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -190,6 +191,11 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.Measure.Add(MeasureM);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -222,6 +228,11 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(Measureq).CurrentValues.SetValues((_Measure));
                 //  _context.Currency.Update(_Currency);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -249,7 +260,12 @@ namespace ERPAPI.Controllers
                     .Where(x => x.MeasurelId == _Measure.MeasurelId)
                    .FirstOrDefault();
                     _context.Measure.Remove(Measurey);
-                    await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                await _context.SaveChangesAsync();
                 
             }
             catch (Exception ex)

@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -245,6 +246,9 @@ namespace ERPAPI.Controllers
 
                         });
 
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                         await _context.SaveChangesAsync();
                         transaction.Commit();
                     }
@@ -324,6 +328,10 @@ namespace ERPAPI.Controllers
                 _usuario.PasswordHash = ApplicationUserq.PasswordHash;
 
                 _context.Entry(ApplicationUserq).CurrentValues.SetValues((_usuario));
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
                 return await Task.Run(() => _usuario);
             }
@@ -445,6 +453,10 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.Users.Remove(_user);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
 
             }

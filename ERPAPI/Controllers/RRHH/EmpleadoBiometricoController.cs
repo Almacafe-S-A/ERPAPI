@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,10 @@ namespace ERPAPI.Controllers
                                    };
 
                     context.EmpleadosBiometrico.Add(registro);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
                     await context.SaveChangesAsync();
 
                     return Ok(registro);

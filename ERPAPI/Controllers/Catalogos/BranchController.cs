@@ -11,6 +11,7 @@ using ERP.Contexts;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -192,7 +193,8 @@ namespace ERPAPI.Controllers
                 branch = payload;
                 _context.Branch.Add(branch);
 
-               
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                 await  _context.SaveChangesAsync();
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -225,6 +227,10 @@ Newtonsoft.Json.JsonConvert.SerializeObject(branch, new JsonSerializerSettings {
 
                     };
                     _context.CostCenter.Add(costCenter);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
 
                     BitacoraWrite _write2 = new BitacoraWrite(_context, new Bitacora
@@ -256,6 +262,11 @@ Newtonsoft.Json.JsonConvert.SerializeObject(branch, new JsonSerializerSettings {
                     };
 
                     _context.UserBranch.Add(userbranch);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                     await _context.SaveChangesAsync();
 
                 }
@@ -290,7 +301,10 @@ Newtonsoft.Json.JsonConvert.SerializeObject(branch, new JsonSerializerSettings {
                 payload.UsuarioCreacion = branch.UsuarioCreacion;
 
                 _context.Entry(branch).CurrentValues.SetValues(payload);
-                // _context.Branch.Update(payload);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -319,6 +333,11 @@ Newtonsoft.Json.JsonConvert.SerializeObject(branch, new JsonSerializerSettings {
                .Where(x => x.BranchId == (int)payload.BranchId)
                .FirstOrDefault();
                 _context.Branch.Remove(branch);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

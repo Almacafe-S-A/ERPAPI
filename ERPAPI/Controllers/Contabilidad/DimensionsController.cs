@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -111,6 +112,10 @@ namespace ERPAPI.Controllers
             {
                 dimensions = payload;
                 _context.Dimensions.Add(dimensions);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -141,6 +146,10 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(dimensions).CurrentValues.SetValues(payload);
                 // _context.Branch.Update(payload);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -163,6 +172,10 @@ namespace ERPAPI.Controllers
                .Where(x => x.Num == (string)payload.Num)
                .FirstOrDefault();
                 _context.Dimensions.Remove(dimensions);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

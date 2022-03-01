@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using EFCore.BulkExtensions;
 //using ERPAPI.Migrations;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
+
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -165,6 +167,10 @@ namespace ERPAPI.Controllers
                     item.GoodsReceivedLine = null;
                 }
                 _context.Liquidacion.Add(liquidacion);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                 {
                     IdOperacion = liquidacion.Id,
@@ -203,6 +209,10 @@ namespace ERPAPI.Controllers
             {
                 liquidacion.EstadoId = liquidacion.EstadoId == 7 ? 5 : liquidacion.EstadoId;
                 _context.Liquidacion.Update(liquidacion);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                 {
                     IdOperacion = liquidacion.Id,
@@ -278,6 +288,8 @@ namespace ERPAPI.Controllers
                     UsuarioEjecucion = User.Identity.Name,
 
                 });
+
+
 
                 //_context.Liquidacion.Update(_Liquidacionq);
                 await _context.SaveChangesAsync();

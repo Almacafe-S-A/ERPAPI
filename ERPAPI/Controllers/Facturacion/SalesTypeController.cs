@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace coderush.Controllers.Api
 {
@@ -56,7 +57,11 @@ namespace coderush.Controllers.Api
             try
             {
                 _context.SalesType.Add(salesType);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -75,7 +80,11 @@ namespace coderush.Controllers.Api
             try
             {
                 _context.SalesType.Update(salesType);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -96,7 +105,11 @@ namespace coderush.Controllers.Api
                               .Where(x => x.SalesTypeId == (int)payload.SalesTypeId)
                               .FirstOrDefault();
                 _context.SalesType.Remove(salesType);
-               await _context.SaveChangesAsync();
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

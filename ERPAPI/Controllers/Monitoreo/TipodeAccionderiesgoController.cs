@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -112,6 +113,10 @@ namespace ERPAPI.Controllers
             try
             {
                 _context.TipodeAccionderiesgo.Add(_TipodeAccionderiesgo);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -143,6 +148,10 @@ namespace ERPAPI.Controllers
                 _TipodeAccionderiesgo.UsuarioCreacion = tipodeAccionderiesgo.UsuarioCreacion;
 
                 _context.Entry(tipodeAccionderiesgo).CurrentValues.SetValues((_TipodeAccionderiesgo));
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -170,6 +179,10 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault();
 
                 _context.TipodeAccionderiesgo.Remove(tipodeAccionderiesgo);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

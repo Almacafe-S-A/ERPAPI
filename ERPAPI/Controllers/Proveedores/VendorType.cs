@@ -10,6 +10,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ERPAPI.Contexts;
 
 namespace coderush.Controllers.Api
 {
@@ -94,6 +95,10 @@ namespace coderush.Controllers.Api
             try
             {
                 _context.VendorType.Add(VendorType);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -122,6 +127,10 @@ namespace coderush.Controllers.Api
 
                 _context.Entry(VendorTypeq).CurrentValues.SetValues((_VendorType));
                 // _context.VendorType.Update(_VendorType);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -155,6 +164,10 @@ namespace coderush.Controllers.Api
                    .Where(x => x.VendorTypeId == (int)payload.VendorTypeId)
                    .FirstOrDefault();
                     _context.VendorType.Remove(VendorType);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     await _context.SaveChangesAsync();
                 }
             }
@@ -177,6 +190,10 @@ namespace coderush.Controllers.Api
                 .Where(x => x.VendorTypeId == (int)payload.VendorTypeId)
                 .FirstOrDefault();
                 _context.VendorType.Remove(VendorType);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

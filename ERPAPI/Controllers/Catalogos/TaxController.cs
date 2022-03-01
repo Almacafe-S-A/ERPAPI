@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ERP.Contexts;
+using ERPAPI.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -187,6 +188,11 @@ namespace ERPAPI.Controllers
             {
                 _Taxq = _Tax;
                 _context.Tax.Add(_Taxq);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -217,6 +223,9 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_Taxq).CurrentValues.SetValues((_Tax));
 
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
 
                 await _context.SaveChangesAsync();
             }
@@ -240,6 +249,11 @@ namespace ERPAPI.Controllers
                .Where(x => x.TaxId == (int)payload.TaxId)
                .FirstOrDefault();
                 _context.Tax.Remove(tax);
+
+                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+               new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)

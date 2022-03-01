@@ -11,6 +11,7 @@ using ERP.Contexts;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace coderush.Controllers.Api
 {
@@ -156,6 +157,11 @@ namespace coderush.Controllers.Api
                     try
                     {
                         _context.Warehouse.Add(warehouse);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -218,6 +224,11 @@ namespace coderush.Controllers.Api
                         _Warehouse.UsuarioCreacion = warehouseq.UsuarioCreacion;
                         _context.Entry(warehouseq).CurrentValues.SetValues((_Warehouse));
                         //    _context.Warehouse.Update(_Warehouse);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -274,6 +285,11 @@ namespace coderush.Controllers.Api
                           .FirstOrDefault();
 
                         _context.Warehouse.Remove(warehouse);
+
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                       new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
