@@ -78,6 +78,28 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetCustomerByBranch(Int64 BranchId)
+        {
+            Branch branch = new Branch();   
+            Customer customer = new Customer();
+
+
+            branch = _context.Branch.Where(q => q.BranchId == BranchId).FirstOrDefault();
+            try
+            {
+                customer = await _context.Customer.Where(q => q.CustomerId == branch.CustomerId).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(customer));
+        }
+
 
         /// <summary>
         /// Obtiene el Listado de sucursales.
