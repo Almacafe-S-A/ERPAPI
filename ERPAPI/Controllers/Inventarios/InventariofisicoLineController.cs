@@ -50,6 +50,39 @@ namespace ERPAPI.Controllers
 
             //  int Count = Items.Count();
             return Ok(Items);
+
+
+
+
+
+
+
+
+        }
+
+
+        /// <summary>
+        /// Obtiene el Listado de InventarioFisicoLinees 
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetInventarioLinesByInventarioId(int id)
+        {
+            List<InventarioFisicoLine> Items = new List<InventarioFisicoLine>();
+            try
+            {
+                Items = await _context.InventarioFisicoLines.Where(q =>q.InventarioFisicoId == id ).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return Ok(Items);
         }
 
         /// <summary>

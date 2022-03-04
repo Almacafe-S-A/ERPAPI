@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220304115653_SAldosFisicos")]
+    partial class SAldosFisicos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6553,7 +6555,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Comentarios");
 
-                    b.Property<long?>("CustomerId");
+                    b.Property<long>("CustomerId");
 
                     b.Property<DateTime>("Fecha");
 
@@ -12382,7 +12384,8 @@ namespace ERPAPI.Migrations
                 {
                     b.HasOne("ERPAPI.Models.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")
                         .WithMany()

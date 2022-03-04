@@ -22,7 +22,7 @@ namespace ERPAPI.Models
 
         public string Bodega { get; set; }
 
-        public Int64 CustomerId { get; set; }
+        public Int64? CustomerId { get; set; }
         [ForeignKey("CustomerId")]
         public Customer Customer { get; set; }
 
