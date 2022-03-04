@@ -71,6 +71,8 @@ namespace ERPAPI.Models
         [Display(Name = "Bodega")]
         public string WareHouseName { get; set; }
 
+        public bool? Max { get; set; }
+
 
         [Display(Name = "Estiba")]
         public Int64? ControlEstibaId { get; set; }

@@ -239,7 +239,59 @@ namespace ERPAPI.Controllers
 
 
 
+        /// <summary>
+        /// Obtiene el saldo en libros
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{BranchId}/{WarehouseId}")]
+        public async Task<IActionResult> GetSaldoLibros(int BranchId, long WarehouseId)
+        {
+            List<InventarioFisicoLine> inventarioFisicoLines = new List<InventarioFisicoLine>();
+            try
+            {
+                
+                List<Kardex> kardex = await _context.Kardex.Where(q =>q.WareHouseId == WarehouseId 
+                && q.BranchId == BranchId
+                && q.Max == true
+                ).ToListAsync();
 
+                /* inventarioFisicoLines = (from k in kardex.GroupBy(g => g.ProducId)
+                                          select new InventarioFisicoLine
+                                          {
+                                              ProductoId = (long) k.Key,
+                                              ProductoNombre =  k.First().ProductName,
+                                              Diferencia = 0,
+                                              SaldoLibros =k.Sum(s => (decimal)s.TotalBags),
+                                              InventarioFisicoCantidad = 0,
+
+                                          }).ToList();*/
+
+                inventarioFisicoLines = (from k in _context.GoodsReceivedLine.Include(g => g.GoodsReceived)
+                    .Where(q => q.WareHouseId == WarehouseId)
+                                         select new InventarioFisicoLine {
+                                            ProductoId = (long)k.SubProductId,
+                                            ProductoNombre = k.SubProductName,
+                                            Diferencia = 0,
+                                            SaldoLibros = k.QuantitySacos != null && k.QuantitySacos>0 ?  (decimal)k.QuantitySacos: k.Quantity,
+                                            InventarioFisicoCantidad = k.QuantitySacos != null && k.QuantitySacos > 0 ? (decimal)k.QuantitySacos : k.Quantity,
+                                         
+                                         
+                                         
+                                         }).ToList();
+
+                
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(inventarioFisicoLines);
+        }
 
 
 

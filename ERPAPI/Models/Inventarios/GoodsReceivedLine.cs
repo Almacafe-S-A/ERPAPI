@@ -38,6 +38,10 @@ namespace ERPAPI.Models
         [Display(Name = "Sacos")]
         public decimal? QuantitySacos { get; set; }
 
+        public decimal? SaldoFisico { get; set; }
+
+        public decimal? SaldoFisicoSacos { get; set; }
+
         [Display(Name = "Precio")]
         public decimal Price { get; set; }
         [Display(Name = "Total")]
