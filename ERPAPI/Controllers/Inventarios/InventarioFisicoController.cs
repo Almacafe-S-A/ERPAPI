@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using ERPAPI.Contexts;
 
 namespace ERPAPI.Controllers
 {
@@ -135,6 +136,9 @@ namespace ERPAPI.Controllers
                         //    item.InventarioFisicoId = _InventarioFisico.Id;
                         //    _context.InventarioFisicoLines.Add(item);
                         //}
+
+
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
@@ -272,9 +276,9 @@ namespace ERPAPI.Controllers
                                          select new InventarioFisicoLine {
                                             ProductoId = (long)k.SubProductId,
                                             ProductoNombre = k.SubProductName,
-                                            Diferencia = 0,
+                                            Diferencia = - ( k.QuantitySacos != null && k.QuantitySacos > 0 ? (decimal)k.QuantitySacos : k.Quantity),
                                             SaldoLibros = k.QuantitySacos != null && k.QuantitySacos>0 ?  (decimal)k.QuantitySacos: k.Quantity,
-                                            InventarioFisicoCantidad = k.QuantitySacos != null && k.QuantitySacos > 0 ? (decimal)k.QuantitySacos : k.Quantity,
+                                            InventarioFisicoCantidad = 0,
                                          
                                          
                                          

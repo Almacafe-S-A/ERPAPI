@@ -20,7 +20,16 @@ namespace ERPAPI.Models
         [ForeignKey("WarehouseId")]
         public Warehouse Warehouse { get; set; }
 
+        public int? BranchId { get; set; }
+
         public string Bodega { get; set; }
+
+        public Int64? ProductId { get; set; }
+        [ForeignKey("ProductId")]
+        public Product Product { get; set; }
+
+        public string Servicio { get; set; }
+
 
         public Int64? CustomerId { get; set; }
         [ForeignKey("CustomerId")]
