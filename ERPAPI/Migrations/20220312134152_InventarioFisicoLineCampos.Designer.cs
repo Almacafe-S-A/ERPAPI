@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220312134152_InventarioFisicoLineCampos")]
+    partial class InventarioFisicoLineCampos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6541,45 +6543,6 @@ namespace ERPAPI.Migrations
                     b.ToTable("InsuredAssets");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InventarioBodegaHabilitada", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("Cantidad");
-
-                    b.Property<string>("Descripcion");
-
-                    b.Property<decimal>("Factor");
-
-                    b.Property<int>("InventarioFisicoId");
-
-                    b.Property<int?>("No");
-
-                    b.Property<string>("Observacion");
-
-                    b.Property<long>("ProductoId");
-
-                    b.Property<string>("ProductoNombre");
-
-                    b.Property<decimal>("SaldoLibros");
-
-                    b.Property<int?>("UnitOfMeasureId");
-
-                    b.Property<decimal>("Valor");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InventarioFisicoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.HasIndex("UnitOfMeasureId");
-
-                    b.ToTable("InventarioBodegaHabilitada");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.InventarioFisico", b =>
                 {
                     b.Property<int>("Id")
@@ -6633,13 +6596,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Diferencia");
 
-                    b.Property<string>("Estiba");
-
                     b.Property<decimal>("InventarioFisicoCantidad");
 
                     b.Property<int>("InventarioFisicoId");
-
-                    b.Property<int?>("NSacos");
 
                     b.Property<int?>("No");
 
@@ -6651,7 +6610,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("SaldoLibros");
 
-                    b.Property<int?>("UnitOfMeasureId");
+                    b.Property<long?>("UnitOfMeasureId");
+
+                    b.Property<int?>("UnitOfMeasureId1");
 
                     b.HasKey("Id");
 
@@ -6659,7 +6620,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("ProductoId");
 
-                    b.HasIndex("UnitOfMeasureId");
+                    b.HasIndex("UnitOfMeasureId1");
 
                     b.ToTable("InventarioFisicoLines");
                 });
@@ -12435,23 +12396,6 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("WarehouseId");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InventarioBodegaHabilitada", b =>
-                {
-                    b.HasOne("ERPAPI.Models.InventarioFisico", "inventarioFisico")
-                        .WithMany()
-                        .HasForeignKey("InventarioFisicoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.InventarioFisico", b =>
                 {
                     b.HasOne("ERPAPI.Models.Customer", "Customer")
@@ -12482,7 +12426,7 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
+                        .HasForeignKey("UnitOfMeasureId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InventoryTransfer", b =>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class InventarioFisicoLine
+    public class InventarioBodegaHabilitada
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -21,22 +21,25 @@ namespace ERPAPI.Models
         [ForeignKey("ProductoId")]
         public SubProduct Product { get; set; }
 
-        public int? UnitOfMeasureId { get; set; }
-        [ForeignKey("UnitOfMeasureId")]
+        public string Descripcion  { get; set; }
 
-        public UnitOfMeasure UnitOfMeasure { get; set; }
 
         public string ProductoNombre { get; set; }
 
-        public int? NSacos { get; set; }
-
         public decimal SaldoLibros { get; set; }
 
-        public decimal InventarioFisicoCantidad{ get; set; }
-
-        public decimal Diferencia { get; set; }
+        public decimal Cantidad{ get; set; }
 
         public string Estiba { get; set; }
+
+
+        public int? UnitOfMeasureId { get; set; }
+        [ForeignKey("UnitOfMeasureId")]
+        public UnitOfMeasure UnitOfMeasure { get; set; }
+
+        public decimal Factor { get; set; }
+
+        public decimal Valor { get; set; }
 
         public string Observacion { get; set; }
     }

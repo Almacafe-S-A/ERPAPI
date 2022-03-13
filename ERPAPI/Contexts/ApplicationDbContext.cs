@@ -82,6 +82,8 @@ namespace ERP.Contexts
 
         public DbSet<LiquidacionLine> LiquidacionLine { get; set; }
 
+        public DbSet<InventarioBodegaHabilitada> InventarioBodegaHabilitada { get; set; }
+
 
         #endregion
 
