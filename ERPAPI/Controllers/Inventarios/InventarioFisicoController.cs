@@ -131,14 +131,16 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        foreach (var producto in _InventarioFisico.InventarioFisicoLines)
+                        {
+                            producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : "";
+                            producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
+                            producto.Product = null;
+                            producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
+                            producto.UnitOfMeasure = null;
+    }
                         _context.InventarioFisico.Add(_InventarioFisico);
-                        //await _context.SaveChangesAsync();
-
-                        //foreach (var item in _InventarioFisico.InventarioFisicoLines)
-                        //{
-                        //    item.InventarioFisicoId = _InventarioFisico.Id;
-                        //    _context.InventarioFisicoLines.Add(item);
-                        //}
+                        
 
 
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
@@ -275,6 +277,7 @@ namespace ERPAPI.Controllers
                                           }).ToList();*/
 
                 inventarioFisicoLines = (from k in _context.GoodsReceivedLine.Include(g => g.GoodsReceived)
+                                         .Include(p => p.SubProduct)
                     .Where(q => q.WareHouseId == WarehouseId)
                                          select new InventarioFisicoLine {
                                             ProductoId = (long)k.SubProductId,
@@ -282,6 +285,11 @@ namespace ERPAPI.Controllers
                                             Diferencia = - ( k.QuantitySacos != null && k.QuantitySacos > 0 ? (decimal)k.QuantitySacos : k.Quantity),
                                             SaldoLibros = k.QuantitySacos != null && k.QuantitySacos>0 ?  (decimal)k.QuantitySacos: k.Quantity,
                                             InventarioFisicoCantidad = 0,
+                                            Product = k.SubProduct,
+                                            UnitOfMeasure = _context.UnitOfMeasure.Where(e => e.UnitOfMeasureId == k.UnitOfMeasureId).FirstOrDefault(),
+                                            UnitOfMeasureId = (int)k.UnitOfMeasureId,
+                                            Estiba = k.ControlPalletsId.ToString()
+
                                          
                                          
                                          

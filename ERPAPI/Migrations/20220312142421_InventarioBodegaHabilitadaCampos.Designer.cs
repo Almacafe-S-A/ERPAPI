@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220312142421_InventarioBodegaHabilitadaCampos")]
+    partial class InventarioBodegaHabilitadaCampos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6565,7 +6567,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("SaldoLibros");
 
-                    b.Property<int?>("UnitOfMeasureId");
+                    b.Property<long?>("UnitOfMeasureId");
+
+                    b.Property<int?>("UnitOfMeasureId1");
 
                     b.Property<decimal>("Valor");
 
@@ -6575,7 +6579,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("ProductoId");
 
-                    b.HasIndex("UnitOfMeasureId");
+                    b.HasIndex("UnitOfMeasureId1");
 
                     b.ToTable("InventarioBodegaHabilitada");
                 });
@@ -6633,8 +6637,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Diferencia");
 
-                    b.Property<string>("Estiba");
-
                     b.Property<decimal>("InventarioFisicoCantidad");
 
                     b.Property<int>("InventarioFisicoId");
@@ -6651,7 +6653,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("SaldoLibros");
 
-                    b.Property<int?>("UnitOfMeasureId");
+                    b.Property<long?>("UnitOfMeasureId");
+
+                    b.Property<int?>("UnitOfMeasureId1");
 
                     b.HasKey("Id");
 
@@ -6659,7 +6663,7 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("ProductoId");
 
-                    b.HasIndex("UnitOfMeasureId");
+                    b.HasIndex("UnitOfMeasureId1");
 
                     b.ToTable("InventarioFisicoLines");
                 });
@@ -12449,7 +12453,7 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
+                        .HasForeignKey("UnitOfMeasureId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InventarioFisico", b =>
@@ -12482,7 +12486,7 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
                         .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
+                        .HasForeignKey("UnitOfMeasureId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InventoryTransfer", b =>

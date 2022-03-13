@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-        [HttpGet("[action]/{CustomerId}")]
+        [HttpGet("[action]/{BranchId}")]
         public async Task<IActionResult> GetCustomerByBranch(Int64 BranchId)
         {
             Branch branch = new Branch();   
