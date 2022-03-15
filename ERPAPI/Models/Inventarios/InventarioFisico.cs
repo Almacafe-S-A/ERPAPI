@@ -49,6 +49,8 @@ namespace ERPAPI.Models
 
         public List<InventarioFisicoLine> InventarioFisicoLines { get; set; }
 
+        public List<InventarioBodegaHabilitada> InventarioBodegaHabilitadaLines { get; set; }
+
 
 
     }

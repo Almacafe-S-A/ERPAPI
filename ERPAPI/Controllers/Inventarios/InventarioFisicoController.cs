@@ -138,7 +138,15 @@ namespace ERPAPI.Controllers
                             producto.Product = null;
                             producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
                             producto.UnitOfMeasure = null;
-    }
+                        }
+                        foreach (var producto in _InventarioFisico.InventarioBodegaHabilitadaLines)
+                        {
+                            producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : "";
+                            producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
+                            producto.Product = null;
+                            producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
+                            producto.UnitOfMeasure = null;
+                        }
                         _context.InventarioFisico.Add(_InventarioFisico);
                         
 
