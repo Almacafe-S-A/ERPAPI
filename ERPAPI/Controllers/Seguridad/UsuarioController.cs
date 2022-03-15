@@ -211,9 +211,12 @@ namespace ERPAPI.Controllers
                     string errores = "";
                     foreach (var item in result.Errors)
                     {
-                        errores += item.Description;
+                        if(!string.IsNullOrEmpty(item.Code) && item.Code.Equals("DuplicateUserName"))
+                            errores += $"El nombre de usuario: '{_usuario.Email}' ya se encuentra en uso.";
+                        else
+                            errores += item.Description;
                     }
-                    return await Task.Run(() => BadRequest($"Ocurrio un error: {errores}"));
+                    return await Task.Run(() => BadRequest($"{errores}"));
                 }
 
                 using (var transaction = _context.Database.BeginTransaction())
@@ -283,8 +286,19 @@ namespace ERPAPI.Controllers
             try{
                 ApplicationUser ApplicationUserq = await _userManager.FindByIdAsync(_usuario.Id.ToString() );
 
-                _usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
-                _usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
+                if (!string.IsNullOrEmpty(ApplicationUserq.UserName) && !string.IsNullOrEmpty(_usuario.UserName)) {
+
+                    if (!(ApplicationUserq.UserName.ToLower().Equals(_usuario.UserName))) {
+                        var existe = _context.Users.Where(w => !string.IsNullOrEmpty(w.UserName) && w.UserName.Equals(_usuario.UserName)).ToList();
+                        if (existe.Count > 0)
+                        {
+                            return await Task.Run(() => BadRequest($"Ya existe un usuario con el ID: '{_usuario.Email}'"));
+                        }
+                    }
+                }
+
+                //_usuario.FechaCreacion = ApplicationUserq.FechaCreacion;
+                //_usuario.UsuarioCreacion = ApplicationUserq.UsuarioCreacion;                
                 _usuario.FechaModificacion = DateTime.Now;
                 if (_usuario.LockoutEnd == null){
                     _usuario.LockoutEnd = ApplicationUserq.LockoutEnd;
@@ -318,6 +332,9 @@ namespace ERPAPI.Controllers
                                     break;
                                 case ("PasswordRequiresUpper"):
                                     errores += "requiere mayúsculas, ";
+                                    break;
+                                case "DuplicateUserName":
+                                    errores = $"El nombre de usuario:'{_usuario.Email}' ya se encuentra en uso";
                                     break;
                             }
                         }
