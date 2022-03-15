@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ERPAPI.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/City")]
     [ApiController]
     public class CityController : Controller
@@ -140,7 +140,7 @@ namespace ERPAPI.Controllers
             try
             {
                 _Cityq = _City;
-                _context.City.Add(_Cityq);
+                var x = _context.City.Add(_Cityq);
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();

@@ -236,7 +236,7 @@ namespace ERPAPI.Controllers
                     ApplicationUser usuario = await _userManager.FindByEmailAsync(userInfo.Email);
                     //////////Roles de Usuario//////////////
                     var _approle = await _userManager.GetRolesAsync(usuario);
-                    if (_approle == null)
+                    if (_approle == null || _approle.Count == 0)
                     {
                         return BadRequest($"El Usuario no tiene ningun rol asignado");
                     }

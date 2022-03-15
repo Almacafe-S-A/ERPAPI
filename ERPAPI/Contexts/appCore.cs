@@ -12,7 +12,7 @@ namespace ERPAPI.Contexts
     public class appCore<TEntity> where TEntity : class
     {
         public ApplicationDbContext _context = null;
-        private readonly ILogger _logger;
+        public  ILogger _logger;
         public DbSet<TEntity> DBSet { get; set; }
 
 
@@ -21,8 +21,6 @@ namespace ERPAPI.Contexts
             _context = context;
             _logger = logger;
             DBSet = this._context.Set<TEntity>();
-            appAuditor._context = context;
-            appAuditor._logger = logger;
         }
 
         public virtual void SaveChanges() => this._context.SaveChangesAsync();

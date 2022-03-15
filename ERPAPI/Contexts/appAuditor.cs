@@ -64,9 +64,10 @@ namespace ERPAPI.Contexts
                 string Reference = pEntry.Entity.GetType().Name;
                 bool Insert = false;
 
-
+               
                 switch (pEntry.State)
                 {
+                   
                     case EntityState.Deleted:
                         Action = "D";
                         GetPrimaryKey(pEntry, primaryKeys);
@@ -138,7 +139,9 @@ namespace ERPAPI.Contexts
                 {
                     var vValues = pEntry.CurrentValues[item.Name];
                     if (vValues != null) {
-                        if(!( item.Name.ToUpper().Equals("ID")  && vValues.ToString().StartsWith('-')))
+                        if((item.Name.ToUpper().Contains("ID")  && vValues.ToString().StartsWith('-')))
+                            newValues.AppendFormat("{0} = {1} , ", item.Name, "");
+                        else
                             newValues.AppendFormat("{0} = {1} , ", item.Name, vValues);
                     }
                         
