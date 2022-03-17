@@ -11,6 +11,12 @@ namespace ERPAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+
+        public int? WarehouseId { get; set; }
+        [ForeignKey("WarehouseId")]
+        public Warehouse Warehouse { get; set; }
+        public string WarehouseName { get; set; }
+
         public int? No { get; set; }
 
         public int InventarioFisicoId { get; set; }
@@ -27,6 +33,8 @@ namespace ERPAPI.Models
         public UnitOfMeasure UnitOfMeasure { get; set; }
 
         public string ProductoNombre { get; set; }
+
+        public decimal? FactorSacos { get; set; }
 
         public int? NSacos { get; set; }
 

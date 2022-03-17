@@ -49,7 +49,7 @@ namespace ERPAPI.Controllers
                 {
                     Items = await _context.InventarioFisico
                         //.Include(i => i.Warehouse.)
-                        .Where(p => branchlist.Any(b => p.Warehouse.BranchId == b.BranchId))
+                        //.Where(p => branchlist.Any(b => p.Warehouse.BranchId == b.BranchId))
                         .OrderByDescending(b => b.Id).ToListAsync();
                 }
                 else
@@ -261,15 +261,16 @@ namespace ERPAPI.Controllers
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
-        [HttpGet("[action]/{BranchId}/{WarehouseId}")]
-        public async Task<IActionResult> GetSaldoLibros(int BranchId, long WarehouseId)
+        [HttpGet("[action]/{BranchId}/{CustomerId}")]
+        public async Task<IActionResult> GetSaldoLibros(int BranchId, long CustomerId)
         {
             List<InventarioFisicoLine> inventarioFisicoLines = new List<InventarioFisicoLine>();
             try
             {
                 
-                List<Kardex> kardex = await _context.Kardex.Where(q =>q.WareHouseId == WarehouseId 
-                && q.BranchId == BranchId
+                List<Kardex> kardex = await _context.Kardex.Where(q =>
+                //q.WareHouseId == WarehouseId 
+                q.BranchId == BranchId
                 && q.Max == true
                 ).ToListAsync();
 
@@ -286,7 +287,11 @@ namespace ERPAPI.Controllers
 
                 inventarioFisicoLines = (from k in _context.GoodsReceivedLine.Include(g => g.GoodsReceived)
                                          .Include(p => p.SubProduct)
-                    .Where(q => q.WareHouseId == WarehouseId)
+                    .Where(q =>
+                   // q.WareHouseId == WarehouseId
+                    q.GoodsReceived.BranchId == BranchId
+                    && (CustomerId == 0 || q.GoodsReceived.CustomerId == CustomerId)
+                    )
                                          select new InventarioFisicoLine {
                                             ProductoId = (long)k.SubProductId,
                                             ProductoNombre = k.SubProductName,
@@ -296,7 +301,13 @@ namespace ERPAPI.Controllers
                                             Product = k.SubProduct,
                                             UnitOfMeasure = _context.UnitOfMeasure.Where(e => e.UnitOfMeasureId == k.UnitOfMeasureId).FirstOrDefault(),
                                             UnitOfMeasureId = (int)k.UnitOfMeasureId,
-                                            Estiba = k.ControlPalletsId.ToString()
+                                            Estiba = k.ControlPalletsId.ToString(),
+                                            WarehouseId = (int)k.WareHouseId,
+                                            WarehouseName = k.WareHouseName,
+                                            NSacos = (int)k.QuantitySacos,
+
+
+
 
                                          
                                          

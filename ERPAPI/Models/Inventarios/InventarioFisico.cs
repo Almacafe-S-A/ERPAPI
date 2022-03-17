@@ -14,15 +14,10 @@ namespace ERPAPI.Models
 
         public DateTime Fecha { get; set; }
 
-        public string  Sucursal { get; set; }
-
-        public int WarehouseId { get; set; }
-        [ForeignKey("WarehouseId")]
-        public Warehouse Warehouse { get; set; }
-
         public int? BranchId { get; set; }
-
-        public string Bodega { get; set; }
+        [ForeignKey("BranchId")]
+        public Branch Branch { get; set; }
+        public string  Sucursal { get; set; }
 
         public Int64? ProductId { get; set; }
         [ForeignKey("ProductId")]
