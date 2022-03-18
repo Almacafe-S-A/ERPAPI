@@ -14,6 +14,8 @@ namespace ERPAPI.Models
 
         public DateTime Fecha { get; set; }
 
+        public DateTime? FechaCompletado { get; set; }
+
         public int? BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
