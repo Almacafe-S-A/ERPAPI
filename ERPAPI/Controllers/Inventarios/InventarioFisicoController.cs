@@ -136,16 +136,24 @@ namespace ERPAPI.Controllers
                             producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : "";
                             producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
                             producto.Product = null;
+                            producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : "";
                             producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
                             producto.UnitOfMeasure = null;
+                            //producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
+                            //producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : "";
+                            //producto.Warehouse = null;
                         }
                         foreach (var producto in _InventarioFisico.InventarioBodegaHabilitadaLines)
                         {
                             producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : "";
                             producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
                             producto.Product = null;
+                            producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : "";
                             producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
                             producto.UnitOfMeasure = null;
+                            //producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
+                            //producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : "";
+                            //producto.Warehouse = null;
                         }
                         _context.InventarioFisico.Add(_InventarioFisico);
                         
@@ -200,7 +208,7 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="_InventarioFisico"></param>
         /// <returns></returns>
-        [HttpPut("[action]")]
+        [HttpPost("[action]")]
         public async Task<ActionResult<InventarioFisico>> Update([FromBody] InventarioFisico _InventarioFisico)
         {
             InventarioFisico _InventarioFisicoq = _InventarioFisico;
