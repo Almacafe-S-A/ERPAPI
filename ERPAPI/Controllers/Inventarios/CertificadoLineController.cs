@@ -157,6 +157,119 @@ namespace ERPAPI.Controllers
         }
 
 
+        private List<CertificadoLine> detalleInventarioCafe(List<InventarioBodegaHabilitada> detalleRecibo, PrecioCafe preciodelcafe)
+        {
+            List<CertificadoLine> detallependienteCertificarcafe = new List<CertificadoLine>();
+
+            detallependienteCertificarcafe = (from detalle in detalleRecibo
+                                              select new CertificadoLine()
+                                              {
+                                                  CertificadoLineId = 0,
+                                                  UnitMeasurName = detalle.UnitOfMeasureName,
+                                                  UnitMeasureId = (long)detalle.UnitOfMeasureId,
+                                                  Quantity = (decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),
+                                                  SubProductId = (long)detalle.ProductoId,
+                                                  SubProductName = detalle.ProductoNombre,
+                                                  ReciboId = (int)detalle.InventarioFisicoId,
+                                                  Price = ObtenerPrecioCafe(detalle.Product, preciodelcafe),
+                                                  WarehouseId = (int)detalle.WarehouseId,
+                                                  WarehouseName = detalle.WarehouseName,
+                                                  Amount = (decimal)detalle.Cantidad * ObtenerPrecioCafe(detalle.Product, preciodelcafe),
+                                                  CantidadDisponible = (decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),
+                                                  ValorUnitarioDerechos = 0,
+                                                  DerechosFiscales = 0,
+                                                  //GoodsReceivedLineId = detalle.GoodsReceiveLinedId
+                                              }
+                         ).ToList();
+
+            List<CertificadoLine> detalleAgrupado = new List<CertificadoLine>();
+            detalleAgrupado.Add(detallependienteCertificarcafe.FirstOrDefault());
+            detalleAgrupado.FirstOrDefault().Quantity = detallependienteCertificarcafe.Sum(s => s.Quantity);
+            detalleAgrupado.FirstOrDefault().CantidadDisponible = detallependienteCertificarcafe.Sum(s => s.CantidadDisponible);
+            detalleAgrupado.FirstOrDefault().Amount = detalleAgrupado.FirstOrDefault().Quantity * detalleAgrupado.FirstOrDefault().Price;
+            
+
+            return detalleAgrupado;
+
+
+
+
+        }
+
+
+
+
+        /// <summary>
+        /// Obtienne los productos de los recibos de mercaderias que han sido liquidados 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{inventario}/{preciocafe}")]
+        public async Task<IActionResult> GetInventarioPendiente(int inventario, int preciocafe)
+        {            
+            
+            List<InventarioBodegaHabilitada> inventarioBodegas = new List<InventarioBodegaHabilitada>();
+            inventarioBodegas = _context.InventarioBodegaHabilitada
+                .Include(p => p.Product)
+                .Where(q => q.InventarioFisicoId == inventario).ToList();
+
+            List<CertificadoLine> recibospendientes = new List<CertificadoLine>();
+
+
+
+
+
+            PrecioCafe preciodelcafe = _context.PrecioCafe.Where(q => q.Id == preciocafe).FirstOrDefault();
+            try
+            {
+                //Obtiene el detalle de los recibos liquidados
+                if (preciodelcafe != null)
+                {
+                    List<InventarioBodegaHabilitada> detallereciboscafe = inventarioBodegas
+                    .Where(q => q.Product.TipoCafe != TipoCaFe.NoesCafe).ToList();
+
+                    recibospendientes.AddRange(detalleInventarioCafe(detallereciboscafe, preciodelcafe));
+
+                }
+                else
+                {
+                    //recibospendientes.AddRange(ObtenerDetalleCertificarLiquidado(detallerecibos));
+                }
+                recibospendientes = recibospendientes.OrderBy(q => q.SubProductId).OrderBy(q => q.UnitMeasureId).ToList();
+
+                ///numerar partidas
+                int pdano = 1;
+                Int64 codproducto = 0;
+                Int64 coduom = 0;
+                decimal precio = 0;
+                int vuelta = 1;
+                foreach (var item in recibospendientes)
+                {
+
+                    if (vuelta != 1 && (codproducto != item.SubProductId || coduom != item.UnitMeasureId || precio != item.Price))
+                    {
+                        pdano++;
+
+                    }
+                    vuelta++;
+                    item.PdaNo = pdano;
+                    codproducto = item.SubProductId;
+                    coduom = item.UnitMeasureId;
+                    precio = item.Price;
+                }
+
+                return Ok(recibospendientes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
+
+
+
+
+
         /// <summary>
         /// Obtienne los productos de los recibos de mercaderias que han sido liquidados 
         /// </summary>
