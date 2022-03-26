@@ -89,6 +89,28 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetInventarioFisicoByCustomerPendientecertificar(Int64 CustomerId)
+        {
+            List<InventarioFisico> Items = new List<InventarioFisico>();
+            try
+            {
+                Items = await _context.InventarioFisico.Where(q => q.CustomerId == CustomerId)
+                    .OrderByDescending(d => d.Id)
+                    .Take(3)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
 
         /// <summary>
         /// Obtiene los Datos de la InventarioFisico por medio del Id enviado.
