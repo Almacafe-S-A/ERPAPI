@@ -412,7 +412,7 @@ namespace ERPAPI.Controllers
             {
                 Accounting _ac = _context.Accounting.Where(q => q.AccountId == padre).FirstOrDefault();
 
-                if (_ac.ParentAccountId != null)
+                if ( _ac!= null && _ac.ParentAccountId != null)
                 {
                     _padre.Add(_ac.ParentAccountId.Value);
                 }
