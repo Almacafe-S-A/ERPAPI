@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220318055316_StateIdEstadoDefault")]
+    partial class StateIdEstadoDefault
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -436,8 +438,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("IdEstado");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -5768,10 +5768,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal?>("QuantitySacos");
 
-                    b.Property<decimal?>("SaldoFisico");
-
-                    b.Property<decimal?>("SaldoFisicoSacos");
-
                     b.Property<decimal?>("SaldoporCertificar");
 
                     b.Property<long?>("SubProductId");
@@ -6543,96 +6539,43 @@ namespace ERPAPI.Migrations
                     b.ToTable("InsuredAssets");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InventarioBodegaHabilitada", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("Cantidad");
-
-                    b.Property<string>("Descripcion");
-
-                    b.Property<string>("Estiba");
-
-                    b.Property<decimal>("Factor");
-
-                    b.Property<decimal?>("FactorPergamino");
-
-                    b.Property<int>("InventarioFisicoId");
-
-                    b.Property<int?>("No");
-
-                    b.Property<string>("Observacion");
-
-                    b.Property<long>("ProductoId");
-
-                    b.Property<string>("ProductoNombre");
-
-                    b.Property<int?>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<decimal>("Valor");
-
-                    b.Property<decimal?>("ValorPergamino");
-
-                    b.Property<int?>("WarehouseId");
-
-                    b.Property<string>("WarehouseName");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InventarioFisicoId");
-
-                    b.HasIndex("ProductoId");
-
-                    b.HasIndex("UnitOfMeasureId");
-
-                    b.HasIndex("WarehouseId");
-
-                    b.ToTable("InventarioBodegaHabilitada");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.InventarioFisico", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BranchId");
+                    b.Property<string>("Bodega");
 
                     b.Property<string>("Cliente");
 
                     b.Property<string>("Comentarios");
 
-                    b.Property<long?>("CustomerId");
+                    b.Property<long>("CustomerId");
 
                     b.Property<DateTime>("Fecha");
-
-                    b.Property<DateTime?>("FechaCompletado");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificion");
 
-                    b.Property<long?>("ProductId");
-
-                    b.Property<string>("Servicio");
+                    b.Property<int>("InventarioFisicoId");
 
                     b.Property<string>("Sucursal");
 
                     b.Property<string>("UsuarioCreacion");
 
-                    b.Property<string>("UsuarioModificacion");
+                    b.Property<string>("UsuarioModificion");
+
+                    b.Property<int>("WarehouseId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BranchId");
-
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("InventarioFisicoId");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("InventarioFisico");
                 });
@@ -6645,17 +6588,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Diferencia");
 
-                    b.Property<string>("Estiba");
-
-                    b.Property<decimal?>("FactorSacos");
-
-                    b.Property<decimal>("InventarioFisicoCantidad");
+                    b.Property<decimal>("InventarioFisico");
 
                     b.Property<int>("InventarioFisicoId");
-
-                    b.Property<int?>("NSacos");
-
-                    b.Property<int?>("No");
 
                     b.Property<string>("Observacion");
 
@@ -6665,23 +6600,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("SaldoLibros");
 
-                    b.Property<int?>("UnitOfMeasureId");
-
-                    b.Property<string>("UnitOfMeasureName");
-
-                    b.Property<int?>("WarehouseId");
-
-                    b.Property<string>("WarehouseName");
-
                     b.HasKey("Id");
 
                     b.HasIndex("InventarioFisicoId");
 
                     b.HasIndex("ProductoId");
-
-                    b.HasIndex("UnitOfMeasureId");
-
-                    b.HasIndex("WarehouseId");
 
                     b.ToTable("InventarioFisicoLines");
                 });
@@ -7405,8 +7328,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("KardexDate");
 
                     b.Property<int>("KardexTypeId");
-
-                    b.Property<bool?>("Max");
 
                     b.Property<long?>("ProducId");
 
@@ -10710,7 +10631,7 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BranchId");
+                    b.Property<int>("BranchId");
 
                     b.Property<double>("CapacidadBodega");
 
@@ -10750,8 +10671,6 @@ namespace ERPAPI.Migrations
                         .IsRequired();
 
                     b.HasKey("WarehouseId");
-
-                    b.HasIndex("BranchId");
 
                     b.ToTable("Warehouse");
                 });
@@ -12459,40 +12378,22 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("WarehouseId");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.InventarioBodegaHabilitada", b =>
+            modelBuilder.Entity("ERPAPI.Models.InventarioFisico", b =>
                 {
-                    b.HasOne("ERPAPI.Models.InventarioFisico", "inventarioFisico")
-                        .WithMany("InventarioBodegaHabilitadaLines")
+                    b.HasOne("ERPAPI.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.InventarioFisico", "Inventario")
+                        .WithMany()
                         .HasForeignKey("InventarioFisicoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.SubProduct", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductoId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
-
                     b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")
                         .WithMany()
-                        .HasForeignKey("WarehouseId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InventarioFisico", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId");
-
-                    b.HasOne("ERPAPI.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("ERPAPI.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InventarioFisicoLine", b =>
@@ -12506,14 +12407,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("ProductoId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
-
-                    b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")
-                        .WithMany()
-                        .HasForeignKey("WarehouseId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InventoryTransfer", b =>
@@ -13087,13 +12980,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer")
                         .WithMany("_Vendor")
                         .HasForeignKey("CustomerId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Warehouse", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId");
                 });
 
             modelBuilder.Entity("OFAC.sdnListM", b =>

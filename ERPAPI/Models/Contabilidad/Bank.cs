@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -22,5 +23,8 @@ namespace ERPAPI.Models
         public DateTime FechaModificacion { get; set; }
         public string UsuarioModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
+
+        [DefaultValue(1)]
+        public int IdEstado { get; set; } = 1;
     }
 }

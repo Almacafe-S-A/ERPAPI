@@ -171,7 +171,7 @@ namespace ERPAPI.Controllers
             List<AccountManagement> Items = new List<AccountManagement>();
             try
             {
-                Items = await _context.AccountManagement.Where(q => q.BankId == BankId && q.TypeAccountId == TypeAccountId).ToListAsync();
+                Items = await _context.AccountManagement.Where(q => q.BankId == BankId && q.TypeAccountId == TypeAccountId && (!string.IsNullOrEmpty(q.Status) && q.Status.Equals("Activo")) ).ToListAsync();
             }
             catch (Exception ex)
             {
