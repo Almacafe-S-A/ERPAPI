@@ -136,7 +136,37 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        private InventarioFisico CheckDetailsInventario(InventarioFisico inventario) {
 
+            foreach (var producto in inventario.InventarioFisicoLines)
+            {
+                producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : producto.ProductoNombre;
+                producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
+                producto.Product = null;
+                producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : producto.UnitOfMeasureName;
+                producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
+                producto.UnitOfMeasure = null;
+                //producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
+                //producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : "";
+                //producto.Warehouse = null;
+            }
+            foreach (var producto in inventario.InventarioBodegaHabilitadaLines)
+            {
+                producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : producto.ProductoNombre;
+                producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
+                producto.Product = null;
+                producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : producto.UnitOfMeasureName;
+                producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
+                producto.UnitOfMeasure = null;
+                producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
+                producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : producto.WarehouseName;
+                producto.Warehouse = null;
+            }
+
+            return inventario;
+
+
+        }
 
         /// <summary>
         /// Inserta una nueva InventarioFisico
@@ -153,30 +183,8 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        foreach (var producto in _InventarioFisico.InventarioFisicoLines)
-                        {
-                            producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : "";
-                            producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
-                            producto.Product = null;
-                            producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : "";
-                            producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
-                            producto.UnitOfMeasure = null;
-                            //producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
-                            //producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : "";
-                            //producto.Warehouse = null;
-                        }
-                        foreach (var producto in _InventarioFisico.InventarioBodegaHabilitadaLines)
-                        {
-                            producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : "";
-                            producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
-                            producto.Product = null;
-                            producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : "";
-                            producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
-                            producto.UnitOfMeasure = null;
-                            producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
-                            producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : "";
-                            producto.Warehouse = null;
-                        }
+
+                        _InventarioFisico = CheckDetailsInventario(_InventarioFisico);
                         _context.InventarioFisico.Add(_InventarioFisico);
                         
 
@@ -233,16 +241,37 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<InventarioFisico>> Update([FromBody] InventarioFisico _InventarioFisico)
         {
-            InventarioFisico _InventarioFisicoq = _InventarioFisico;
+            InventarioFisico _InventarioFisicoq = new InventarioFisico(); 
+            _InventarioFisicoq = CheckDetailsInventario(_InventarioFisico);
             try
             {
-                _InventarioFisicoq = await (from c in _context.InventarioFisico
-                                 .Where(q => q.Id == _InventarioFisico.Id)
-                                         select c
-                                ).FirstOrDefaultAsync();
+                _InventarioFisicoq = await _context.InventarioFisico
+                    .Where(q => q.Id == _InventarioFisico.Id)
+                    .Include(i => i.InventarioBodegaHabilitadaLines)
+                    .Include(i => i.InventarioFisicoLines)
+                    .FirstOrDefaultAsync();
 
                 _context.Entry(_InventarioFisicoq).CurrentValues.SetValues((_InventarioFisico));
 
+                foreach (var item in _InventarioFisicoq.InventarioBodegaHabilitadaLines)
+                {
+                    var det = _InventarioFisico.InventarioBodegaHabilitadaLines.Where(q => q.Id == item.Id).FirstOrDefault();
+                    _context.Entry(item).CurrentValues.SetValues(det);
+                }
+
+                foreach (var item in _InventarioFisicoq.InventarioFisicoLines)
+                {
+                    var det = _InventarioFisico.InventarioFisicoLines.Where(q => q.Id == item.Id).FirstOrDefault();
+                    _context.Entry(item).CurrentValues.SetValues(det);
+                }
+                _InventarioFisicoq.InventarioBodegaHabilitadaLines
+                    .AddRange(_InventarioFisico.InventarioBodegaHabilitadaLines
+                    .Where(q => q.InventarioFisicoId == 0).ToList());
+                _InventarioFisicoq.InventarioFisicoLines
+                    .AddRange(_InventarioFisico.InventarioFisicoLines.Where(q => q.InventarioFisicoId == 0).ToList());
+
+                 
+               
                 //_context.InventarioFisico.Update(_InventarioFisicoq);
                 await _context.SaveChangesAsync();
             }
