@@ -245,6 +245,21 @@ namespace ERPAPI.Controllers
             _InventarioFisicoq = CheckDetailsInventario(_InventarioFisico);
             try
             {
+                
+                var InventariodetEliminarbh = _context.InventarioBodegaHabilitada
+                    .Where(q => q.InventarioFisicoId == _InventarioFisico.Id && 
+                    !_InventarioFisico.InventarioBodegaHabilitadaLines.Where(s => s.Id != 0)
+                    .Any(a => a.Id == q.Id )).ToList();
+                _context.InventarioBodegaHabilitada.RemoveRange(InventariodetEliminarbh); 
+
+
+                var InventariodetEliminar = _context.InventarioFisicoLines
+                    .Where(q => q.InventarioFisicoId == _InventarioFisico.Id &&
+                    !_InventarioFisico.InventarioFisicoLines.Where(s => s.Id != 0)
+                    .Any(a => a.Id == q.Id)).ToList();
+                _context.InventarioFisicoLines.RemoveRange(InventariodetEliminar);
+
+
                 _InventarioFisicoq = await _context.InventarioFisico
                     .Where(q => q.Id == _InventarioFisico.Id)
                     .Include(i => i.InventarioBodegaHabilitadaLines)
@@ -256,22 +271,26 @@ namespace ERPAPI.Controllers
                 foreach (var item in _InventarioFisicoq.InventarioBodegaHabilitadaLines)
                 {
                     var det = _InventarioFisico.InventarioBodegaHabilitadaLines.Where(q => q.Id == item.Id).FirstOrDefault();
+                    if (det != null)
                     _context.Entry(item).CurrentValues.SetValues(det);
                 }
 
                 foreach (var item in _InventarioFisicoq.InventarioFisicoLines)
                 {
                     var det = _InventarioFisico.InventarioFisicoLines.Where(q => q.Id == item.Id).FirstOrDefault();
-                    _context.Entry(item).CurrentValues.SetValues(det);
+                    if (det != null)
+                        _context.Entry(item).CurrentValues.SetValues(det);
                 }
+
+                
                 _InventarioFisicoq.InventarioBodegaHabilitadaLines
                     .AddRange(_InventarioFisico.InventarioBodegaHabilitadaLines
                     .Where(q => q.InventarioFisicoId == 0).ToList());
                 _InventarioFisicoq.InventarioFisicoLines
                     .AddRange(_InventarioFisico.InventarioFisicoLines.Where(q => q.InventarioFisicoId == 0).ToList());
 
-                 
-               
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 //_context.InventarioFisico.Update(_InventarioFisicoq);
                 await _context.SaveChangesAsync();
             }
