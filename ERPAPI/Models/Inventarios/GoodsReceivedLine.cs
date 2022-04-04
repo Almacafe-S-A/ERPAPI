@@ -49,6 +49,8 @@ namespace ERPAPI.Models
 
         public decimal? SaldoporCertificar { get; set; }
 
+        public int? Estiba { get; set; }
+
 
         [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
