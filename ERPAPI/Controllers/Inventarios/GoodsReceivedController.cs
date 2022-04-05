@@ -546,7 +546,7 @@ namespace ERPAPI.Controllers
                         }                      
                         _GoodsReceivedq.BoletaSalidaId = boletasalida.Value.BoletaDeSalidaId;
                         _context.GoodsReceived.Add(_GoodsReceivedq);
-                        // await _context.SaveChangesAsync();
+                         //await _context.SaveChangesAsync();
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
@@ -651,7 +651,7 @@ namespace ERPAPI.Controllers
                     SubProductName = item.SubProductName,
                     QuantityEntry = item.Quantity,
                     QuantityOut = 0,
-                    QuantityEntryBags = item.QuantitySacos,
+                    QuantityEntryBags = item.QuantitySacos== null? 0 : (decimal)item.QuantitySacos,
                     BranchId = _GoodsReceivedq.BranchId,
                     BranchName = _GoodsReceivedq.BranchName,
                     WareHouseId = item.WareHouseId,
@@ -660,18 +660,13 @@ namespace ERPAPI.Controllers
                     UnitOfMeasureName = item.UnitOfMeasureName,
                     TypeOperationId = TipoOperacion.Entrada,
                     TypeOperationName = "Entrada",
-                    Total = item.Total,
-                    TotalBags = item.QuantitySacos,
-                    QuantityEntryCD = item.Quantity - (item.Quantity * producto.Merma),
-                    FechaCreacion = DateTime.Now,
-                    FechaModificacion = DateTime.Now,
+                    Total = item.Quantity,
+                    TotalBags = item.QuantitySacos == null ? 0 : (decimal)item.QuantitySacos,
                     KardexDate = DateTime.Now,
                     KardexTypeId = KardexTypes.InventarioFisico,
                     CustomerId = _GoodsReceivedq.CustomerId,
                     CustomerName = _GoodsReceivedq.CustomerName,
                     DocumentId = _GoodsReceivedq.GoodsReceivedId,
-                    UsuarioCreacion = _GoodsReceivedq.UsuarioCreacion,
-                    UsuarioModificacion = _GoodsReceivedq.UsuarioModificacion,
                 });
 
 

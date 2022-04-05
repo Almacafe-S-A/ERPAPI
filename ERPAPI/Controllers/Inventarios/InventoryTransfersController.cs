@@ -190,52 +190,52 @@ namespace ERPAPI.Controllers
                             
 
                             //////Entrada de Inventario///////////
-                            _InventoryTransfers.Kardex._KardexLine.Add(new KardexLine
-                            {
-                                DocumentDate = _InventoryTransfers.DateGenerated,
-                                ProducId = Convert.ToInt64(item.ProductId),
-                                ProductName = item.ProductName,
-                                SubProducId = 0,
-                                SubProductName = "N/A",
-                                QuantityEntry = (item.QtyIn),
-                                QuantityOut = 0,
-                                BranchId = Convert.ToInt64(_InventoryTransfers.TargetBranchId),
-                                //BranchName = _InventoryTransfers.Branch.BranchName,
-                                WareHouseId = 0,
-                                WareHouseName = "N/A",
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 7,
-                                TypeOperationName = "Orden de Compra",
-                                Total = _KardexLineTarget.Total + (item.QtyIn),
-                                // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
-                                //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
-                            });
+                            ////_InventoryTransfers.Kardex._KardexLine.Add(new KardexLine
+                            ////{
+                            ////    DocumentDate = _InventoryTransfers.DateGenerated,
+                            ////    ProducId = Convert.ToInt64(item.ProductId),
+                            ////    ProductName = item.ProductName,
+                            ////    SubProducId = 0,
+                            ////    SubProductName = "N/A",
+                            ////    QuantityEntry = (item.QtyIn),
+                            ////    QuantityOut = 0,
+                            ////    BranchId = Convert.ToInt64(_InventoryTransfers.TargetBranchId),
+                            ////    //BranchName = _InventoryTransfers.Branch.BranchName,
+                            ////    WareHouseId = 0,
+                            ////    WareHouseName = "N/A",
+                            ////    UnitOfMeasureId = item.UnitOfMeasureId,
+                            ////    UnitOfMeasureName = item.UnitOfMeasureName,
+                            ////    TypeOperationId = 7,
+                            ////    TypeOperationName = "Orden de Compra",
+                            ////    Total = _KardexLineTarget.Total + (item.QtyIn),
+                            ////    // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                            ////    //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                            ////    //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                            ////});
 
                             //////Salida de Inventario///////////
-                            _InventoryTransfers.Kardex._KardexLine.Add(new KardexLine
-                            {
-                                DocumentDate = _InventoryTransfers.DateGenerated,
-                                ProducId = Convert.ToInt64(item.ProductId),
-                                ProductName = item.ProductName,
-                                SubProducId = 0,
-                                SubProductName = "N/A",
-                                QuantityEntry = 0,
-                                QuantityOut = (item.QtyIn),
-                                BranchId = Convert.ToInt64(_InventoryTransfers.SourceBranch),
-                                //BranchName = _InventoryTransfers.Branch.BranchName,
-                                WareHouseId = 0,
-                                WareHouseName = "N/A",
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 7,
-                                TypeOperationName = "Orden de Compra",
-                                Total = _KardexLineSource.Total - (item.QtyIn),
-                                // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
-                                //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
-                            });
+                            //_InventoryTransfers.Kardex._KardexLine.Add(new KardexLine
+                            //{
+                            //    DocumentDate = _InventoryTransfers.DateGenerated,
+                            //    ProducId = Convert.ToInt64(item.ProductId),
+                            //    ProductName = item.ProductName,
+                            //    SubProducId = 0,
+                            //    SubProductName = "N/A",
+                            //    QuantityEntry = 0,
+                            //    QuantityOut = (item.QtyIn),
+                            //    BranchId = Convert.ToInt64(_InventoryTransfers.SourceBranch),
+                            //    //BranchName = _InventoryTransfers.Branch.BranchName,
+                            //    WareHouseId = 0,
+                            //    WareHouseName = "N/A",
+                            //    UnitOfMeasureId = item.UnitOfMeasureId,
+                            //    UnitOfMeasureName = item.UnitOfMeasureName,
+                            //    TypeOperationId = 7,
+                            //    TypeOperationName = "Orden de Compra",
+                            //    Total = _KardexLineSource.Total - (item.QtyIn),
+                            //    // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                            //    //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                            //    //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                            //});
 
 
                         }
@@ -244,8 +244,6 @@ namespace ERPAPI.Controllers
                         _InventoryTransfers.Kardex.DocType = 0;
                         _InventoryTransfers.Kardex.DocumentName = "FacturaProforma/InventoryTransfers";
                         _InventoryTransfers.Kardex.DocumentDate = _InventoryTransfers.DateGenerated;
-                        _InventoryTransfers.Kardex.FechaCreacion = DateTime.Now;
-                        _InventoryTransfers.Kardex.FechaModificacion = DateTime.Now;
                         _InventoryTransfers.Kardex.TypeOperationId = TipoOperacion.Entrada;
                         _InventoryTransfers.Kardex.TypeOperationName = "Salida";
                         _InventoryTransfers.Kardex.KardexDate = DateTime.Now;
@@ -254,11 +252,7 @@ namespace ERPAPI.Controllers
 
                         _InventoryTransfers.Kardex.CustomerId = 0;
                         _InventoryTransfers.Kardex.CustomerName = "N/A";
-                        _InventoryTransfers.Kardex.CurrencyId = Convert.ToInt32(_InventoryTransfers.CurrencyId);
-                        _InventoryTransfers.Kardex.CurrencyName = _InventoryTransfers.CurrencyName;
                         _InventoryTransfers.Kardex.DocumentId = _InventoryTransfers.Id;
-                        _InventoryTransfers.Kardex.UsuarioCreacion = _InventoryTransfers.UsuarioCreacion;
-                        _InventoryTransfers.Kardex.UsuarioModificacion = _InventoryTransfers.UsuarioModificacion;
                         _context.Kardex.Add(_InventoryTransfers.Kardex);
 
                         await _context.SaveChangesAsync();

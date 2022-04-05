@@ -40,23 +40,7 @@ namespace ERPAPI.Models
         public TipoOperacion? TypeOperationId { get; set; }
 
         [Display(Name = "Entrada/Salida")]
-        public string TypeOperationName { get; set; }
-
-        [Display(Name = "Moneda")]
-        public Int64? CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
-
-
-        [Display(Name = "Fecha de creación")]
-        public DateTime FechaCreacion { get; set; }
-        [Display(Name = "Fecha de modificación")]
-        public DateTime FechaModificacion { get; set; }
-        [Display(Name = "Usuario de creación")]
-        public string UsuarioCreacion { get; set; }
-        [Display(Name = "Usuario de modificación")]
-        public string UsuarioModificacion { get; set; }
+        public string TypeOperationName { get; set; }       
 
 
         [Display(Name = "Sucursal")]
@@ -71,16 +55,11 @@ namespace ERPAPI.Models
         [Display(Name = "Bodega")]
         public string WareHouseName { get; set; }
 
-        public bool? Max { get; set; }
-
-
         [Display(Name = "Estiba")]
         public Int64? ControlEstibaId { get; set; }
 
-        [Display(Name = "Estiba")]
-        public string ControlEstibaName { get; set; }
 
-        [Display(Name = "Producto")]
+        [Display(Name = "Servicio")]
         public Int64? ProducId { get; set; }
 
         [Display(Name = "Producto")]
@@ -103,43 +82,26 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Entrada")]
-        public decimal? QuantityEntry { get; set; }
+        public decimal QuantityEntry { get; set; }
 
         [Display(Name = "Salida")]
-        public decimal? QuantityOut { get; set; }
-
-        [Display(Name = "Entrada de sacos")]
-        public decimal? QuantityEntryBags { get; set; }
-
-        [Display(Name = "Salida de sacos")]
-        public decimal? QuantityOutBags { get; set; }
-
-        [Display(Name = "Entrada certificado deposito")]
-        public decimal? QuantityEntryCD { get; set; }
-
-        [Display(Name = "Salida de certificado de deposito")]
-        public decimal? QuantityOutCD { get; set; }
-
-        [Display(Name = "Saldo Certificado depositos")]
-        public decimal? TotalCD { get; set; }
-
-        [Display(Name = "Saldo sacos")]
-        public decimal? TotalBags { get; set; }
+        public decimal QuantityOut { get; set; }
 
         [Display(Name = "Saldo")]
-        public decimal? Total { get; set; }
+        public decimal Total { get; set; }
 
+        [Display(Name = "Entrada de sacos")]
+        public decimal QuantityEntryBags { get; set; }
 
-        [Display(Name = "Centro de costos")]
-        public Int64? CostCenterId { get; set; }
+        [Display(Name = "Salida de sacos")]
+        public decimal QuantityOutBags { get; set; }
 
-        [Display(Name = "Centro de costos")]
-        public string CostCenterName { get; set; }
+        [Display(Name = "Saldo sacos")]
+        public decimal TotalBags { get; set; }
 
         public KardexTypes KardexTypeId { get; set; }
 
-
-        public List<KardexLine> _KardexLine { get; set; }
+        //public List<KardexLine> _KardexLine { get; set; }
 
 
     }

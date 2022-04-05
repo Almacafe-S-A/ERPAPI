@@ -187,7 +187,7 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                       
+
 
                         Customer _customer = new Customer();
                         _customer = _context.Customer
@@ -197,13 +197,13 @@ namespace ERPAPI.Controllers
 
                         foreach (var CertificadoId in _Kardexq.Ids)
                         {
-                            _kardexproduct =await _context.Kardex
+                            _kardexproduct = await _context.Kardex
                                                       .Where(q => q.DocumentId == CertificadoId)
                                                       .Where(q => q.DocumentName == _Kardexq.DocumentName)
                                                       .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
                                                       .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
                                                       //.Select(q => q.KardexId)
-                                                      .Include(q => q._KardexLine)
+                                                      //.Include(q => q._KardexLine)
                                                       .ToListAsync();
 
                             //Si no hubo movimientos de kardex durante el mes , y sigue estando activo
@@ -212,9 +212,9 @@ namespace ERPAPI.Controllers
                             {
                                 _kardexproduct = await _context.Kardex
                                      .Where(q => q.DocumentId == CertificadoId)
-                                     .Where(q => q.DocumentName == _Kardexq.DocumentName)  
-                                     .OrderByDescending(q=>q.DocumentDate) 
-                                     .Include(q => q._KardexLine)
+                                     .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                     .OrderByDescending(q => q.DocumentDate)
+                                     //.Include(q => q._KardexLine)
                                      .ToListAsync();
                             }
 
@@ -234,11 +234,11 @@ namespace ERPAPI.Controllers
                                                  .Include(q => q._CertificadoLine)
                                                  .FirstOrDefaultAsync();
 
-                                   _so = await _context.SalesOrder
-                                                           .Where(q => q.CustomerId == _cd.CustomerId)
-                                                           .Where(q=>q.SalesOrderId == _Kardexq.SalesOrderId)
-                                                           .Include(q=>q.SalesOrderLines)
-                                                           .OrderByDescending(q => q.SalesOrderId).FirstOrDefaultAsync();
+                                    _so = await _context.SalesOrder
+                                                            .Where(q => q.CustomerId == _cd.CustomerId)
+                                                            .Where(q => q.SalesOrderId == _Kardexq.SalesOrderId)
+                                                            .Include(q => q.SalesOrderLines)
+                                                            .OrderByDescending(q => q.SalesOrderId).FirstOrDefaultAsync();
 
                                     List<CustomerConditions> _cc = await _context.CustomerConditions
                                         .Where(q => q.CustomerId == _so.CustomerId)
@@ -252,7 +252,7 @@ namespace ERPAPI.Controllers
                                     {
                                         dias = item.DocumentDate.Day <= 15 ? 30 : 15;
                                     }
-                                    else if(item.TypeOperationName=="Salida")
+                                    else if (item.TypeOperationName == "Salida")
                                     {
                                         dias = item.DocumentDate.Day <= 15 ? 15 : 30;
                                     }
@@ -266,34 +266,34 @@ namespace ERPAPI.Controllers
                                             decimal cantidad = 0;
                                             if (item.TypeOperationName == "Entrada")
                                             {
-                                                cantidad =   (item._KardexLine
-                                                                .Where(q => q.SubProducId == lineascertificadas.SubProductId)
-                                                                .Select(q => q.QuantityEntry)
-                                                             ).FirstOrDefault() ;
+                                                //cantidad =   (item._KardexLine
+                                                //                .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                //                .Select(q => q.QuantityEntry)
+                                                //             ).FirstOrDefault() ;
 
 
                                             }
-                                            else if(item.TypeOperationName == "Salida")
+                                            else if (item.TypeOperationName == "Salida")
                                             {
                                                 List<Kardex> salidas = await (_context.Kardex.Where(q => q.DocumentId == _cd.IdCD)
                                                                              .Where(q => q.DocumentName == _Kardexq.DocumentName)
-                                                                             .Where(q=>q.TypeOperationName=="Salida")
+                                                                             .Where(q => q.TypeOperationName == "Salida")
                                                                              ).ToListAsync();
 
                                                 foreach (var salida in salidas)
                                                 {
-                                                   cantidad += (salida._KardexLine
-                                                                .Where(q => q.SubProducId == lineascertificadas.SubProductId)
-                                                                .Select(q => q.QuantityOut)
-                                                               ).FirstOrDefault();
+                                                    //cantidad += (salida._KardexLine
+                                                    //             .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                    //             .Select(q => q.QuantityOut)
+                                                    //            ).FirstOrDefault();
                                                 }
 
-                                               decimal entrada =  (item._KardexLine
-                                                                .Where(q => q.SubProducId == lineascertificadas.SubProductId)
-                                                                .Select(q => q.QuantityEntry)
-                                                             ).FirstOrDefault();
+                                                //decimal entrada =  (item._KardexLine
+                                                //                 .Where(q => q.SubProducId == lineascertificadas.SubProductId)
+                                                //                 .Select(q => q.QuantityEntry)
+                                                //              ).FirstOrDefault();
 
-                                                cantidad = entrada - cantidad;
+                                                //cantidad = entrada - cantidad;
                                             }
 
 
@@ -304,27 +304,27 @@ namespace ERPAPI.Controllers
                                                 case ">=":
                                                     if (lineascertificadas.Price >= Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
+                                                    totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "<=":
                                                     if (lineascertificadas.Price <= Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
+                                                    totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case ">":
                                                     if (lineascertificadas.Price > Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
+                                                    totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "<":
                                                     if (lineascertificadas.Price < Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
+                                                    totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 case "=":
                                                     if (lineascertificadas.Price == Convert.ToDecimal(condicion.ValueToEvaluate))
                                                         totalfacturar += ((condicion.ValueDecimal * (lineascertificadas.Price * cantidad)) / 30) * dias;
-                                                        totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
+                                                    totalfacturarmerma += ((totalfacturarmerma / (1 - _subproduct.Merma)) * _subproduct.Merma) * condicion.ValueDecimal;
                                                     break;
                                                 default:
                                                     break;
@@ -333,246 +333,204 @@ namespace ERPAPI.Controllers
                                     }
 
 
-                                    foreach (var linea in item._KardexLine)
-                                    {
-                                        CertificadoLine cdline = _cd._CertificadoLine
-                                                   .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
+                                    //    foreach (var linea in item._KardexLine)
+                                    //    {
+                                    //        CertificadoLine cdline = _cd._CertificadoLine
+                                    //                   .Where(q => q.SubProductId == linea.SubProducId).FirstOrDefault();
 
-                                        decimal cantidad = 0;
-                                        if (item.TypeOperationName == "Entrada")
-                                        {
-                                            cantidad = (item._KardexLine
-                                                            .Where(q => q.SubProducId == cdline.SubProductId)
-                                                            .Select(q => q.QuantityEntry)
-                                                         ).FirstOrDefault();
-
-
-                                        }
-                                        else if (item.TypeOperationName == "Salida")
-                                        {
-                                            List<Kardex> salidas = await (_context.Kardex.Where(q => q.DocumentId == _cd.IdCD)
-                                                                         .Where(q => q.DocumentName == _Kardexq.DocumentName)
-                                                                         .Where(q => q.TypeOperationName == "Salida")
-                                                                         ).ToListAsync();
-
-                                            foreach (var salida in salidas)
-                                            {
-                                                cantidad += (salida._KardexLine
-                                                             .Where(q => q.SubProducId == cdline.SubProductId)
-                                                             .Select(q => q.QuantityOut)
-                                                            ).FirstOrDefault();
-                                            }
-
-                                            decimal entrada = (item._KardexLine
-                                                             .Where(q => q.SubProducId == cdline.SubProductId)
-                                                             .Select(q => q.QuantityEntry)
-                                                          ).FirstOrDefault();
-
-                                            cantidad = entrada - cantidad;
-                                        }
-
-                                        SubProduct _subproduct = await _context.SubProduct
-                                                                      .Where(q => q.SubproductId == linea.SubProducId).FirstOrDefaultAsync();
+                                    //        decimal cantidad = 0;
+                                    //        if (item.TypeOperationName == "Entrada")
+                                    //        {
+                                    //            //cantidad = (item._KardexLine
+                                    //            //                .Where(q => q.SubProducId == cdline.SubProductId)
+                                    //            //                .Select(q => q.QuantityEntry)
+                                    //            //             ).FirstOrDefault();
 
 
-                                        decimal valormerma = ((cantidad / (1 - _subproduct.Merma)) * _subproduct.Merma) * cdline.Price;
+                                    //        }
+                                    //        else if (item.TypeOperationName == "Salida")
+                                    //        {
+                                    //            List<Kardex> salidas = await (_context.Kardex.Where(q => q.DocumentId == _cd.IdCD)
+                                    //                                         .Where(q => q.DocumentName == _Kardexq.DocumentName)
+                                    //                                         .Where(q => q.TypeOperationName == "Salida")
+                                    //                                         ).ToListAsync();
 
-                                        _context.InvoiceCalculation.Add(new InvoiceCalculation
-                                        {
-                                            CustomerId = item.CustomerId,
-                                            CustomerName = item.CustomerName,
-                                            DocumentDate = item.DocumentDate,
-                                            NoCD = _cd.IdCD,
-                                            Dias = dias,
-                                            ProductId = linea.SubProducId,
-                                            ProductName = linea.SubProductName,
-                                            UnitPrice = cdline.Price,
-                                            Quantity = cantidad,
-                                            IngresoMercadería = cantidad/_subproduct.Merma,
-                                            MercaderiaCertificada = cantidad,
-                                            ValorLps = cdline.Price * cantidad,
-                                            ValorFacturar = totalfacturar,
-                                            Identificador = Identificador,                                           
-                                            PorcentajeMerma = _subproduct.Merma,
-                                            ValorLpsMerma = valormerma,
-                                            ValorAFacturarMerma = (totalfacturar / (1 - _subproduct.Merma)) * _subproduct.Merma,
-                                            FechaCreacion = DateTime.Now,
-                                            FechaModificacion = DateTime.Now,
-                                            UsuarioCreacion = _Kardexq.UsuarioCreacion,
-                                            UsuarioModificacion = _Kardexq.UsuarioModificacion,
-                                        });
+                                    //            foreach (var salida in salidas)
+                                    //            {
+                                    //                //cantidad += (salida._KardexLine
+                                    //                //             .Where(q => q.SubProducId == cdline.SubProductId)
+                                    //                //             .Select(q => q.QuantityOut)
+                                    //                //            ).FirstOrDefault();
+                                    //            }
+
+                                    //            //decimal entrada = (item._KardexLine
+                                    //            //                 .Where(q => q.SubProducId == cdline.SubProductId)
+                                    //            //                 .Select(q => q.QuantityEntry)
+                                    //            //              ).FirstOrDefault();
+
+                                    //            cantidad = entrada - cantidad;
+                                    //        }
+
+                                    //        SubProduct _subproduct = await _context.SubProduct
+                                    //                                      .Where(q => q.SubproductId == linea.SubProducId).FirstOrDefaultAsync();
 
 
-                                        if (item.TypeOperationName == "Entrada")
-                                        {
-                                            facturo = true;
-                                        }
-                                    }
+                                    //        decimal valormerma = ((cantidad / (1 - _subproduct.Merma)) * _subproduct.Merma) * cdline.Price;
+
+                                    //        _context.InvoiceCalculation.Add(new InvoiceCalculation
+                                    //        {
+                                    //            CustomerId = item.CustomerId,
+                                    //            CustomerName = item.CustomerName,
+                                    //            DocumentDate = item.DocumentDate,
+                                    //            NoCD = _cd.IdCD,
+                                    //            Dias = dias,
+                                    //            ProductId = linea.SubProducId,
+                                    //            ProductName = linea.SubProductName,
+                                    //            UnitPrice = cdline.Price,
+                                    //            Quantity = cantidad,
+                                    //            IngresoMercadería = cantidad/_subproduct.Merma,
+                                    //            MercaderiaCertificada = cantidad,
+                                    //            ValorLps = cdline.Price * cantidad,
+                                    //            ValorFacturar = totalfacturar,
+                                    //            Identificador = Identificador,                                           
+                                    //            PorcentajeMerma = _subproduct.Merma,
+                                    //            ValorLpsMerma = valormerma,
+                                    //            ValorAFacturarMerma = (totalfacturar / (1 - _subproduct.Merma)) * _subproduct.Merma,
+                                    //            FechaCreacion = DateTime.Now,
+                                    //            FechaModificacion = DateTime.Now,
+                                    //        });
+
+
+                                    //        if (item.TypeOperationName == "Entrada")
+                                    //        {
+                                    //            facturo = true;
+                                    //        }
+                                    //    }
+
+
+                                    //}
 
 
                                 }
 
 
-                            }                      
 
 
-
-
-                        }
-
-
-                        await _context.SaveChangesAsync();
-                        transaction.Commit();
-                        //Retornar la proforma con calculos(Resumen: Almacenaje,Bascula,Banda Transportadora)
-
-                        List<InvoiceCalculation> _InvoiceCalculationlist = await  _context.InvoiceCalculation
-                                                                                    .Where(q=>q.Identificador==Identificador)  
-                                                                                    .ToListAsync();
-                        Tax _tax = await _context.Tax
-                            .Where(q => q.TaxCode == "I.S.V")
-                            .FirstOrDefaultAsync();
-
-                        SalesOrderLine _soline = new SalesOrderLine();
-                        SubProduct _su = new SubProduct();
-
-                        //1. Almacenaje
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 1).FirstOrDefaultAsync();
-                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-                        decimal valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q=>q.ValorAFacturarMerma);
-                        List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
-                        ProformaInvoiceLineT.Add(new ProformaInvoiceLine
-                        {
-                             SubProductId = 1,
-                             SubProductName = "Almacenaje",
-                             Price = _InvoiceCalculationlist[0].UnitPrice,
-                             Quantity = _InvoiceCalculationlist.Sum(q=>q.Quantity),
-                             Amount = valfacturar,//_InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist.Sum(q => q.Quantity),
-                             UnitOfMeasureId = _soline.UnitOfMeasureId,
-                             UnitOfMeasureName = _soline.UnitOfMeasureName,
-                             SubTotal = valfacturar,
-                             TaxAmount = valfacturar * (_tax.TaxPercentage/100),
-                             TaxId = _tax.TaxId,
-                             TaxCode = _tax.TaxCode,      
-                             TaxPercentage = _tax.TaxPercentage,
-                             Total = valfacturar + (valfacturar * (_tax.TaxPercentage / 100)),
-
-                        });
-
-                        //2 Seguro
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 2).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-
-                        decimal preciocot = 0;
-                        var quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
-                        decimal taxamount = ((preciocot * valfacturar) / 1000) * (_tax.TaxPercentage/100);
-                        if (_soline != null)
-                        {
-                             preciocot = _soline.Price;                           
-                             taxamount = ((preciocot * valfacturar) / 1000) * (_tax.TaxPercentage/100);
-                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
-                            {
-                                SubProductId = _su.SubproductId,
-                                SubProductName = _su.ProductName,
-                                Price = preciocot,
-                                Quantity = quantitycot,
-                                Amount = (preciocot * valfacturar) / 1000, //preciocot * quantitycot,
-                                SubTotal = (preciocot * valfacturar)/1000,
-                                TaxAmount = taxamount,
-                                TaxId = _tax.TaxId,
-                                UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                TaxCode = _tax.TaxCode,
-                                TaxPercentage = _tax.TaxPercentage,
-                                Total = (preciocot * valfacturar) / 1000 + taxamount,
-
-                            });
-                        }
-
-                        //4 Bascula
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 4).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-
-                        if (_soline != null)
-                        {
-
-                            preciocot = _soline.Price ;
-
-                            List<Int64> IdsRecibos = await _context.RecibosCertificado.Where(q => _Kardexq.Ids.Contains(q.IdCD)).Select(q=>q.IdRecibo).ToListAsync();
-
-                            List<GoodsReceived> _entradas = await _context.GoodsReceived
-                                                                   .Include(q=>q._GoodsReceivedLine)
-                                                                   .Where(q => q.CustomerId == _customer.CustomerId)
-                                                                   .Where(q=> IdsRecibos.Contains(q.GoodsReceivedId))
-                                                                   .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
-                                                                   .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
-                            decimal sumaentradas = 0;
-                            foreach (var entrada in _entradas)
-                            {
-                                sumaentradas += entrada._GoodsReceivedLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
                             }
 
-                            List<Int64> IdsEntregas = await _context.RecibosCertificado.Where(q => _Kardexq.Ids.Contains(q.IdCD)).Select(q => q.IdRecibo).ToListAsync();
-                            List<GoodsDelivered> _salidas = await _context.GoodsDelivered
 
-                                                                  .Include(q => q._GoodsDeliveredLine)
-                                                                  .Where(q=>q.CustomerId== _customer.CustomerId)
-                                                                    .Where(q => IdsEntregas.Contains(q.GoodsDeliveredId))
-                                                                  .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
-                                                                  .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
-                            decimal sumasalidas = 0;
-                            foreach (var _salida in _salidas)
-                            {
-                                sumasalidas += _salida._GoodsDeliveredLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
-                            }
+                            await _context.SaveChangesAsync();
+                            transaction.Commit();
+                            //Retornar la proforma con calculos(Resumen: Almacenaje,Bascula,Banda Transportadora)
 
-                            decimal totalentradassalidas = 0;
-                            totalentradassalidas = sumaentradas + sumasalidas;
-                            quantitycot = totalentradassalidas;
-                            taxamount = ((preciocot * totalentradassalidas)) * (_tax.TaxPercentage / 100);
-                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
-                            {
-                                SubProductId = _su.SubproductId,
-                                SubProductName = _su.ProductName,
-                                UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                Price = preciocot,
-                                Quantity = quantitycot,
-                                Amount = (preciocot * quantitycot), //totalentradassalidas * preciocot ,
-                                SubTotal = (preciocot * quantitycot) ,
-                                TaxAmount = taxamount,
-                                TaxId = _tax.TaxId,
-                                TaxCode = _tax.TaxCode,
-                                TaxPercentage = _tax.TaxPercentage,
-                                Total = (preciocot * quantitycot) + taxamount,
-
-                            });
-                        }
-
-                        //5 Banda
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 5).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-
-                        if (_soline != null)
-                        {
-                            taxamount = preciocot = quantitycot = 0;                           
-                            preciocot = _soline.Price;
-                            SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
-                            _subservicewarehouse = await _context.SubServicesWareHouse
-                                .Where(q => q.SubServiceId == _su.SubproductId)
-                                .Where(q=>q.DocumentDate>=Convert.ToDateTime(fechainicio))
-                                .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                            List<InvoiceCalculation> _InvoiceCalculationlist = await _context.InvoiceCalculation
+                                                                                        .Where(q => q.Identificador == Identificador)
+                                                                                        .ToListAsync();
+                            Tax _tax = await _context.Tax
+                                .Where(q => q.TaxCode == "I.S.V")
                                 .FirstOrDefaultAsync();
-                            if (_subservicewarehouse != null)
-                            {
-                                quantitycot = _subservicewarehouse.QuantityHours;
 
-                                taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                            SalesOrderLine _soline = new SalesOrderLine();
+                            SubProduct _su = new SubProduct();
+
+                            //1. Almacenaje
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 1).FirstOrDefaultAsync();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+                            decimal valfacturar = _InvoiceCalculationlist.Sum(q => q.ValorFacturar) + _InvoiceCalculationlist.Sum(q => q.ValorAFacturarMerma);
+                            List<ProformaInvoiceLine> ProformaInvoiceLineT = new List<ProformaInvoiceLine>();
+                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            {
+                                SubProductId = 1,
+                                SubProductName = "Almacenaje",
+                                Price = _InvoiceCalculationlist[0].UnitPrice,
+                                Quantity = _InvoiceCalculationlist.Sum(q => q.Quantity),
+                                Amount = valfacturar,//_InvoiceCalculationlist[0].UnitPrice * _InvoiceCalculationlist.Sum(q => q.Quantity),
+                                UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                SubTotal = valfacturar,
+                                TaxAmount = valfacturar * (_tax.TaxPercentage / 100),
+                                TaxId = _tax.TaxId,
+                                TaxCode = _tax.TaxCode,
+                                TaxPercentage = _tax.TaxPercentage,
+                                Total = valfacturar + (valfacturar * (_tax.TaxPercentage / 100)),
+
+                            });
+
+                            //2 Seguro
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 2).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                            decimal preciocot = 0;
+                            var quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
+                            decimal taxamount = ((preciocot * valfacturar) / 1000) * (_tax.TaxPercentage / 100);
+                            if (_soline != null)
+                            {
+                                preciocot = _soline.Price;
+                                taxamount = ((preciocot * valfacturar) / 1000) * (_tax.TaxPercentage / 100);
+                                ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                {
+                                    SubProductId = _su.SubproductId,
+                                    SubProductName = _su.ProductName,
+                                    Price = preciocot,
+                                    Quantity = quantitycot,
+                                    Amount = (preciocot * valfacturar) / 1000, //preciocot * quantitycot,
+                                    SubTotal = (preciocot * valfacturar) / 1000,
+                                    TaxAmount = taxamount,
+                                    TaxId = _tax.TaxId,
+                                    UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                    UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                    TaxCode = _tax.TaxCode,
+                                    TaxPercentage = _tax.TaxPercentage,
+                                    Total = (preciocot * valfacturar) / 1000 + taxamount,
+
+                                });
+                            }
+
+                            //4 Bascula
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 4).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                            if (_soline != null)
+                            {
+
+                                preciocot = _soline.Price;
+
+                                List<Int64> IdsRecibos = await _context.RecibosCertificado.Where(q => _Kardexq.Ids.Contains(q.IdCD)).Select(q => q.IdRecibo).ToListAsync();
+
+                                List<GoodsReceived> _entradas = await _context.GoodsReceived
+                                                                       .Include(q => q._GoodsReceivedLine)
+                                                                       .Where(q => q.CustomerId == _customer.CustomerId)
+                                                                       .Where(q => IdsRecibos.Contains(q.GoodsReceivedId))
+                                                                       .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                                                       .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
+                                decimal sumaentradas = 0;
+                                foreach (var entrada in _entradas)
+                                {
+                                    sumaentradas += entrada._GoodsReceivedLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
+                                }
+
+                                List<Int64> IdsEntregas = await _context.RecibosCertificado.Where(q => _Kardexq.Ids.Contains(q.IdCD)).Select(q => q.IdRecibo).ToListAsync();
+                                List<GoodsDelivered> _salidas = await _context.GoodsDelivered
+
+                                                                      .Include(q => q._GoodsDeliveredLine)
+                                                                      .Where(q => q.CustomerId == _customer.CustomerId)
+                                                                        .Where(q => IdsEntregas.Contains(q.GoodsDeliveredId))
+                                                                      .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                                                      .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin)).ToListAsync();
+                                decimal sumasalidas = 0;
+                                foreach (var _salida in _salidas)
+                                {
+                                    sumasalidas += _salida._GoodsDeliveredLine.Where(q => q.UnitOfMeasureName == "QUINTALES").Sum(q => q.Quantity);
+                                }
+
+                                decimal totalentradassalidas = 0;
+                                totalentradassalidas = sumaentradas + sumasalidas;
+                                quantitycot = totalentradassalidas;
+                                taxamount = ((preciocot * totalentradassalidas)) * (_tax.TaxPercentage / 100);
                                 ProformaInvoiceLineT.Add(new ProformaInvoiceLine
                                 {
                                     SubProductId = _su.SubproductId,
@@ -581,7 +539,7 @@ namespace ERPAPI.Controllers
                                     UnitOfMeasureName = _soline.UnitOfMeasureName,
                                     Price = preciocot,
                                     Quantity = quantitycot,
-                                    Amount = (preciocot * quantitycot),
+                                    Amount = (preciocot * quantitycot), //totalentradassalidas * preciocot ,
                                     SubTotal = (preciocot * quantitycot),
                                     TaxAmount = taxamount,
                                     TaxId = _tax.TaxId,
@@ -591,309 +549,350 @@ namespace ERPAPI.Controllers
 
                                 });
                             }
-                        }
 
-                        //6 Monta carga
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 6).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+                            //5 Banda
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 5).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
 
-                        if (_soline != null)
-                        {
-                            taxamount = preciocot = quantitycot = 0;
-                            preciocot = _soline.Price;
-                            SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
-                            _subservicewarehouse = await _context.SubServicesWareHouse
-                                .Where(q => q.SubServiceId == _su.SubproductId)
-                                .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
-                                .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
-                                .FirstOrDefaultAsync();
-                            if (_subservicewarehouse != null)
+                            if (_soline != null)
                             {
-                                quantitycot = _subservicewarehouse.QuantityHours;
-
-                                taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
-                                ProformaInvoiceLineT.Add(new ProformaInvoiceLine
-                                {
-                                    SubProductId = _su.SubproductId,
-                                    SubProductName = _su.ProductName,
-                                    UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                    UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                    Price = preciocot,
-                                    Quantity = quantitycot,
-                                    Amount = (preciocot * quantitycot),
-                                    SubTotal = (preciocot * quantitycot),
-                                    TaxAmount = taxamount,
-                                    TaxId = _tax.TaxId,
-                                    TaxCode = _tax.TaxCode,
-                                    TaxPercentage = _tax.TaxPercentage,
-                                    Total = (preciocot * quantitycot) + taxamount,
-
-                                });
-                            }
-                        }
-
-                        //7 Tarimas
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 7).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-
-                        if (_soline != null)
-                        {
-                            taxamount = preciocot = quantitycot = 0;
-                            preciocot = _soline.Price;
-                            SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
-                            _subservicewarehouse = await _context.SubServicesWareHouse
-                                .Where(q => q.SubServiceId == _su.SubproductId)
-                                .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
-                                .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
-                                .FirstOrDefaultAsync();
-
-                            if (_subservicewarehouse != null)
-                            {
-                                quantitycot = _subservicewarehouse.QuantityHours;
-
-                                taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
-                                ProformaInvoiceLineT.Add(new ProformaInvoiceLine
-                                {
-                                    SubProductId = _su.SubproductId,
-                                    SubProductName = _su.ProductName,
-                                    UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                    UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                    Price = preciocot,
-                                    Quantity = quantitycot,
-                                    Amount = (preciocot * quantitycot),
-                                    SubTotal = (preciocot * quantitycot),
-                                    TaxAmount = taxamount,
-                                    TaxId = _tax.TaxId,
-                                    TaxCode = _tax.TaxCode,
-                                    TaxPercentage = _tax.TaxPercentage,
-                                    Total = (preciocot * quantitycot) + taxamount,
-
-                                });
-                            }
-                        }
-
-
-
-                        //8 Comisión arancelarias
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 8).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline =  _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-
-                        if(_soline!=null)
-                        {
-                            quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
-                            preciocot = _soline.Price/100;
-                            taxamount = ((preciocot * valfacturar) ) * (_tax.TaxPercentage/100);
-                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
-                            {
-                                SubProductId = _su.SubproductId,
-                                SubProductName = _su.ProductName,
-                                UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                Price = preciocot,
-                                Quantity = quantitycot,
-                                Amount = ((preciocot) * valfacturar), //preciocot * quantitycot,
-                                SubTotal = ((preciocot) * valfacturar) ,
-                                TaxAmount = taxamount,
-                                TaxId = _tax.TaxId,
-                                TaxCode = _tax.TaxCode,
-                                TaxPercentage = _tax.TaxPercentage,
-                                Total = (preciocot * valfacturar) + taxamount,
-                            });
-
-                        }
-
-
-                        //9 Horas Extras
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 9).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
-
-                        if (_soline != null)
-                        {
-                            taxamount = preciocot = quantitycot = 0;
-                           
-                            List<Int64> _EmployeeExtraHours = new List<long>();
-                            _EmployeeExtraHours = await _context.EmployeeExtraHours
-                               // .Where(q => q. == _so.ProductId)
-                                .Where(q => q.WorkDate >= Convert.ToDateTime(fechainicio))
-                                .Where(q => q.WorkDate <= Convert.ToDateTime(fechafin))
-                                .Select(q=>q.EmployeeExtraHoursId)
-                                .ToListAsync();
-
-                            List<Int64> _schedulelist = new List<Int64>();
-                            _schedulelist = await _context.ScheduleSubservices
-                                    .Where(q => q.ServiceId == _so.ProductId)
+                                taxamount = preciocot = quantitycot = 0;
+                                preciocot = _soline.Price;
+                                SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
+                                _subservicewarehouse = await _context.SubServicesWareHouse
                                     .Where(q => q.SubServiceId == _su.SubproductId)
-                                    .Select(q => q.ScheduleSubservicesId)
-                                    .ToListAsync();
+                                    .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                    .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                                    .FirstOrDefaultAsync();
+                                if (_subservicewarehouse != null)
+                                {
+                                    quantitycot = _subservicewarehouse.QuantityHours;
 
-                            List<Int64> schedulecustomer =
-                                   await _context.PaymentScheduleRulesByCustomer
-                                           .Where(q => _schedulelist.Contains(q.ScheduleSubservicesId))
-                                           .Where(q => q.CustomerId == _customer.CustomerId)
-                                           .OrderByDescending(q => q.ScheduleSubservicesId)
-                                           .Select(q=>q.ScheduleSubservicesId)
-                                           .ToListAsync();
+                                    taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                                    ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                    {
+                                        SubProductId = _su.SubproductId,
+                                        SubProductName = _su.ProductName,
+                                        UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                        UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                        Price = preciocot,
+                                        Quantity = quantitycot,
+                                        Amount = (preciocot * quantitycot),
+                                        SubTotal = (preciocot * quantitycot),
+                                        TaxAmount = taxamount,
+                                        TaxId = _tax.TaxId,
+                                        TaxCode = _tax.TaxCode,
+                                        TaxPercentage = _tax.TaxPercentage,
+                                        Total = (preciocot * quantitycot) + taxamount,
 
-                            List<ScheduleSubservices> _schedule = new List<ScheduleSubservices>();
-                            _schedule = await _context.ScheduleSubservices
-                               .Where(q => schedulecustomer.Contains( q.ScheduleSubservicesId))
-                               .ToListAsync();
-
-                            List<EmployeeExtraHoursDetail> _employeeextra = await _context.EmployeeExtraHoursDetail
-                                               .Where(q => q.CustomerId == _customer.CustomerId)
-                                               .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
-                                               .ToListAsync();
-
-                            decimal subtotal = 0;
-                           
-                            foreach (var item in _schedule)
-                            {
-                                List<EmployeeExtraHoursDetail> _EmployeeExtraHoursDetail = new List<EmployeeExtraHoursDetail>();
-                                _EmployeeExtraHoursDetail = _employeeextra
-                                                              .Where(q => q.StartTime >= item.StartTime)
-                                                              .Where(q => q.EndTime <= item.EndTime)
-                                                              .ToList();
-
-                                //EmployeeExtraHours _EmployeeExtraHoursf = new EmployeeExtraHours();
-                                //_EmployeeExtraHoursf = await _context.EmployeeExtraHours
-                                //    .Where(q => q.EmployeeExtraHoursId == _EmployeeExtraHoursDetail.EmployeeExtraHoursId)
-                                //    .FirstOrDefaultAsync();
-                                preciocot += item.FactorHora;
-                                subtotal += _EmployeeExtraHoursDetail.Sum(q=>q.QuantityHours) * item.FactorHora;
+                                    });
+                                }
                             }
 
-                            preciocot = preciocot / _schedule.Count;
-                            quantitycot = await _context.EmployeeExtraHoursDetail
-                                               .Where(q => q.CustomerId == _customer.CustomerId)
-                                               .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
-                                              .Select(q => q.QuantityHours).SumAsync();
+                            //6 Monta carga
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 6).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
 
-
-                            taxamount = (subtotal) * (_tax.TaxPercentage / 100);
-                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                            if (_soline != null)
                             {
-                                SubProductId = _su.SubproductId,
-                                SubProductName = _su.ProductName,
-                                UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                Price = preciocot,
-                                Quantity = quantitycot,
-                                Amount = (subtotal),
-                                SubTotal = subtotal,
-                                TaxAmount = taxamount,
-                                TaxId = _tax.TaxId,
-                                TaxCode = _tax.TaxCode,
-                                TaxPercentage = _tax.TaxPercentage,
-                                Total = (subtotal) + taxamount,
+                                taxamount = preciocot = quantitycot = 0;
+                                preciocot = _soline.Price;
+                                SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
+                                _subservicewarehouse = await _context.SubServicesWareHouse
+                                    .Where(q => q.SubServiceId == _su.SubproductId)
+                                    .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                    .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
+                                    .FirstOrDefaultAsync();
+                                if (_subservicewarehouse != null)
+                                {
+                                    quantitycot = _subservicewarehouse.QuantityHours;
 
-                            });
-                        }
+                                    taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                                    ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                    {
+                                        SubProductId = _su.SubproductId,
+                                        SubProductName = _su.ProductName,
+                                        UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                        UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                        Price = preciocot,
+                                        Quantity = quantitycot,
+                                        Amount = (preciocot * quantitycot),
+                                        SubTotal = (preciocot * quantitycot),
+                                        TaxAmount = taxamount,
+                                        TaxId = _tax.TaxId,
+                                        TaxCode = _tax.TaxCode,
+                                        TaxPercentage = _tax.TaxPercentage,
+                                        Total = (preciocot * quantitycot) + taxamount,
 
-                        //10 Alimentación
-                        _su = new SubProduct();
-                        _su = await _context.SubProduct.Where(q => q.SubproductId == 10).FirstOrDefaultAsync();
-                        _soline = new SalesOrderLine();
-                        _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+                                    });
+                                }
+                            }
 
-                        if (_soline != null)
-                        {
-                            taxamount = preciocot = quantitycot = 0;
-                            //preciocot = _soline.Price;
-                            List<Int64> _EmployeeExtraHours = new List<long>();
-                            _EmployeeExtraHours = await _context.EmployeeExtraHours
-                                .Where(q => q.WorkDate >= Convert.ToDateTime(fechainicio))
-                                .Where(q => q.WorkDate <= Convert.ToDateTime(fechafin))
-                                .Select(q => q.EmployeeExtraHoursId)
-                                .ToListAsync();
+                            //7 Tarimas
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 7).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
 
-                            quantitycot = await _context.EmployeeExtraHoursDetail
-                                                .Where(q => q.CustomerId == _customer.CustomerId)
-                                                .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
-                                               .Select(q => q.QuantityHours).SumAsync();
-
-                            List<EmployeeExtraHoursDetail> _EmployeeExtraHoursDetail = new List<EmployeeExtraHoursDetail>();
-
-                            _EmployeeExtraHoursDetail = await _context.EmployeeExtraHoursDetail
-                                                .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
-                                                 .ToListAsync();
-
-                            foreach (var item in _EmployeeExtraHoursDetail)
+                            if (_soline != null)
                             {
-                                List<Int64> _schedulelist = new List<Int64>();
-                                _schedulelist = await _context.ScheduleSubservices
-                                        .Where(q => q.SubServiceId == _su.SubproductId)
-                                        .Select(q => q.ScheduleSubservicesId)
-                                         .ToListAsync();
-
-                                PaymentScheduleRulesByCustomer _scheduledetail
-                                    = await _context.PaymentScheduleRulesByCustomer
-                                             .Where(q => _schedulelist.Contains(q.ScheduleSubservicesId))
-                                             .Where(q => q.CustomerId == _customer.CustomerId)
-                                             .OrderByDescending(q => q.ScheduleSubservicesId)
-                                             .FirstOrDefaultAsync();
-
-                                ScheduleSubservices _schedule = new ScheduleSubservices();
-                                 _schedule = await _context.ScheduleSubservices
-                                    .Where(q => q.ScheduleSubservicesId == _scheduledetail.ScheduleSubservicesId)
+                                taxamount = preciocot = quantitycot = 0;
+                                preciocot = _soline.Price;
+                                SubServicesWareHouse _subservicewarehouse = new SubServicesWareHouse();
+                                _subservicewarehouse = await _context.SubServicesWareHouse
+                                    .Where(q => q.SubServiceId == _su.SubproductId)
+                                    .Where(q => q.DocumentDate >= Convert.ToDateTime(fechainicio))
+                                    .Where(q => q.DocumentDate <= Convert.ToDateTime(fechafin))
                                     .FirstOrDefaultAsync();
 
-                                if (_schedule.StartTime >= item.StartTime && _schedule.EndTime <= item.EndTime)
+                                if (_subservicewarehouse != null)
                                 {
-                                    preciocot += _schedule.Almuerzo + _schedule.Desayuno + _schedule.Cena;
+                                    quantitycot = _subservicewarehouse.QuantityHours;
+
+                                    taxamount = ((preciocot * quantitycot)) * (_tax.TaxPercentage / 100);
+                                    ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                    {
+                                        SubProductId = _su.SubproductId,
+                                        SubProductName = _su.ProductName,
+                                        UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                        UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                        Price = preciocot,
+                                        Quantity = quantitycot,
+                                        Amount = (preciocot * quantitycot),
+                                        SubTotal = (preciocot * quantitycot),
+                                        TaxAmount = taxamount,
+                                        TaxId = _tax.TaxId,
+                                        TaxCode = _tax.TaxCode,
+                                        TaxPercentage = _tax.TaxPercentage,
+                                        Total = (preciocot * quantitycot) + taxamount,
+
+                                    });
                                 }
                             }
 
-                            taxamount = ((preciocot)) * (_tax.TaxPercentage / 100);
-                            ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+
+
+                            //8 Comisión arancelarias
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 8).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                            if (_soline != null)
                             {
-                                SubProductId = _su.SubproductId,
-                                SubProductName = _su.ProductName,
-                                UnitOfMeasureId = _soline.UnitOfMeasureId,
-                                UnitOfMeasureName = _soline.UnitOfMeasureName,
-                                Price = preciocot,
-                                Quantity = quantitycot,
-                                Amount = (preciocot ),
-                                SubTotal = (preciocot ),
-                                TaxAmount = taxamount,
-                                TaxId = _tax.TaxId,
-                                TaxCode = _tax.TaxCode,
-                                TaxPercentage = _tax.TaxPercentage,
-                                Total = (preciocot * quantitycot) + taxamount,
+                                quantitycot = _InvoiceCalculationlist.Sum(q => q.Quantity);
+                                preciocot = _soline.Price / 100;
+                                taxamount = ((preciocot * valfacturar)) * (_tax.TaxPercentage / 100);
+                                ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                {
+                                    SubProductId = _su.SubproductId,
+                                    SubProductName = _su.ProductName,
+                                    UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                    UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                    Price = preciocot,
+                                    Quantity = quantitycot,
+                                    Amount = ((preciocot) * valfacturar), //preciocot * quantitycot,
+                                    SubTotal = ((preciocot) * valfacturar),
+                                    TaxAmount = taxamount,
+                                    TaxId = _tax.TaxId,
+                                    TaxCode = _tax.TaxCode,
+                                    TaxPercentage = _tax.TaxPercentage,
+                                    Total = (preciocot * valfacturar) + taxamount,
+                                });
 
-                            });
+                            }
+
+
+                            //9 Horas Extras
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 9).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                            if (_soline != null)
+                            {
+                                taxamount = preciocot = quantitycot = 0;
+
+                                List<Int64> _EmployeeExtraHours = new List<long>();
+                                _EmployeeExtraHours = await _context.EmployeeExtraHours
+                                    // .Where(q => q. == _so.ProductId)
+                                    .Where(q => q.WorkDate >= Convert.ToDateTime(fechainicio))
+                                    .Where(q => q.WorkDate <= Convert.ToDateTime(fechafin))
+                                    .Select(q => q.EmployeeExtraHoursId)
+                                    .ToListAsync();
+
+                                List<Int64> _schedulelist = new List<Int64>();
+                                _schedulelist = await _context.ScheduleSubservices
+                                        .Where(q => q.ServiceId == _so.ProductId)
+                                        .Where(q => q.SubServiceId == _su.SubproductId)
+                                        .Select(q => q.ScheduleSubservicesId)
+                                        .ToListAsync();
+
+                                List<Int64> schedulecustomer =
+                                       await _context.PaymentScheduleRulesByCustomer
+                                               .Where(q => _schedulelist.Contains(q.ScheduleSubservicesId))
+                                               .Where(q => q.CustomerId == _customer.CustomerId)
+                                               .OrderByDescending(q => q.ScheduleSubservicesId)
+                                               .Select(q => q.ScheduleSubservicesId)
+                                               .ToListAsync();
+
+                                List<ScheduleSubservices> _schedule = new List<ScheduleSubservices>();
+                                _schedule = await _context.ScheduleSubservices
+                                   .Where(q => schedulecustomer.Contains(q.ScheduleSubservicesId))
+                                   .ToListAsync();
+
+                                List<EmployeeExtraHoursDetail> _employeeextra = await _context.EmployeeExtraHoursDetail
+                                                   .Where(q => q.CustomerId == _customer.CustomerId)
+                                                   .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                                   .ToListAsync();
+
+                                decimal subtotal = 0;
+
+                                foreach (var item in _schedule)
+                                {
+                                    List<EmployeeExtraHoursDetail> _EmployeeExtraHoursDetail = new List<EmployeeExtraHoursDetail>();
+                                    _EmployeeExtraHoursDetail = _employeeextra
+                                                                  .Where(q => q.StartTime >= item.StartTime)
+                                                                  .Where(q => q.EndTime <= item.EndTime)
+                                                                  .ToList();
+
+                                    //EmployeeExtraHours _EmployeeExtraHoursf = new EmployeeExtraHours();
+                                    //_EmployeeExtraHoursf = await _context.EmployeeExtraHours
+                                    //    .Where(q => q.EmployeeExtraHoursId == _EmployeeExtraHoursDetail.EmployeeExtraHoursId)
+                                    //    .FirstOrDefaultAsync();
+                                    preciocot += item.FactorHora;
+                                    subtotal += _EmployeeExtraHoursDetail.Sum(q => q.QuantityHours) * item.FactorHora;
+                                }
+
+                                preciocot = preciocot / _schedule.Count;
+                                quantitycot = await _context.EmployeeExtraHoursDetail
+                                                   .Where(q => q.CustomerId == _customer.CustomerId)
+                                                   .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                                  .Select(q => q.QuantityHours).SumAsync();
+
+
+                                taxamount = (subtotal) * (_tax.TaxPercentage / 100);
+                                ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                {
+                                    SubProductId = _su.SubproductId,
+                                    SubProductName = _su.ProductName,
+                                    UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                    UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                    Price = preciocot,
+                                    Quantity = quantitycot,
+                                    Amount = (subtotal),
+                                    SubTotal = subtotal,
+                                    TaxAmount = taxamount,
+                                    TaxId = _tax.TaxId,
+                                    TaxCode = _tax.TaxCode,
+                                    TaxPercentage = _tax.TaxPercentage,
+                                    Total = (subtotal) + taxamount,
+
+                                });
+                            }
+
+                            //10 Alimentación
+                            _su = new SubProduct();
+                            _su = await _context.SubProduct.Where(q => q.SubproductId == 10).FirstOrDefaultAsync();
+                            _soline = new SalesOrderLine();
+                            _soline = _so.SalesOrderLines.Where(q => q.SubProductId == _su.SubproductId).FirstOrDefault();
+
+                            if (_soline != null)
+                            {
+                                taxamount = preciocot = quantitycot = 0;
+                                //preciocot = _soline.Price;
+                                List<Int64> _EmployeeExtraHours = new List<long>();
+                                _EmployeeExtraHours = await _context.EmployeeExtraHours
+                                    .Where(q => q.WorkDate >= Convert.ToDateTime(fechainicio))
+                                    .Where(q => q.WorkDate <= Convert.ToDateTime(fechafin))
+                                    .Select(q => q.EmployeeExtraHoursId)
+                                    .ToListAsync();
+
+                                quantitycot = await _context.EmployeeExtraHoursDetail
+                                                    .Where(q => q.CustomerId == _customer.CustomerId)
+                                                    .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                                   .Select(q => q.QuantityHours).SumAsync();
+
+                                List<EmployeeExtraHoursDetail> _EmployeeExtraHoursDetail = new List<EmployeeExtraHoursDetail>();
+
+                                _EmployeeExtraHoursDetail = await _context.EmployeeExtraHoursDetail
+                                                    .Where(q => _EmployeeExtraHours.Contains(q.EmployeeExtraHoursId))
+                                                     .ToListAsync();
+
+                                foreach (var item in _EmployeeExtraHoursDetail)
+                                {
+                                    List<Int64> _schedulelist = new List<Int64>();
+                                    _schedulelist = await _context.ScheduleSubservices
+                                            .Where(q => q.SubServiceId == _su.SubproductId)
+                                            .Select(q => q.ScheduleSubservicesId)
+                                             .ToListAsync();
+
+                                    PaymentScheduleRulesByCustomer _scheduledetail
+                                        = await _context.PaymentScheduleRulesByCustomer
+                                                 .Where(q => _schedulelist.Contains(q.ScheduleSubservicesId))
+                                                 .Where(q => q.CustomerId == _customer.CustomerId)
+                                                 .OrderByDescending(q => q.ScheduleSubservicesId)
+                                                 .FirstOrDefaultAsync();
+
+                                    ScheduleSubservices _schedule = new ScheduleSubservices();
+                                    _schedule = await _context.ScheduleSubservices
+                                       .Where(q => q.ScheduleSubservicesId == _scheduledetail.ScheduleSubservicesId)
+                                       .FirstOrDefaultAsync();
+
+                                    if (_schedule.StartTime >= item.StartTime && _schedule.EndTime <= item.EndTime)
+                                    {
+                                        preciocot += _schedule.Almuerzo + _schedule.Desayuno + _schedule.Cena;
+                                    }
+                                }
+
+                                taxamount = ((preciocot)) * (_tax.TaxPercentage / 100);
+                                ProformaInvoiceLineT.Add(new ProformaInvoiceLine
+                                {
+                                    SubProductId = _su.SubproductId,
+                                    SubProductName = _su.ProductName,
+                                    UnitOfMeasureId = _soline.UnitOfMeasureId,
+                                    UnitOfMeasureName = _soline.UnitOfMeasureName,
+                                    Price = preciocot,
+                                    Quantity = quantitycot,
+                                    Amount = (preciocot),
+                                    SubTotal = (preciocot),
+                                    TaxAmount = taxamount,
+                                    TaxId = _tax.TaxId,
+                                    TaxCode = _tax.TaxCode,
+                                    TaxPercentage = _tax.TaxPercentage,
+                                    Total = (preciocot * quantitycot) + taxamount,
+
+                                });
+                            }
+
+
+
+
+                            _proforma = new ProformaInvoiceDTO
+                            {
+                                CustomerId = _customer.CustomerId,
+                                CustomerName = _customer.CustomerName,
+                                CustomerRefNumber = _customer.CustomerRefNumber,
+                                Correo = _customer.Email,
+                                Direccion = _customer.Address,
+                                Tefono = _customer.Phone,
+                                RTN = _customer.RTN,
+                                ProformaName = _customer.CustomerName,
+                                BranchId = _tcd.BranchId,
+                                BranchName = _tcd.BranchName,
+                                SubTotal = _InvoiceCalculationlist.Sum(q => q.ValorFacturar),
+                                Identificador = Identificador,
+                                ProformaInvoiceLine = ProformaInvoiceLineT,
+                                ProductId = _so.ProductId,
+                                ProductName = _so.ProductName,
+                            };
+
+
                         }
-
-
-
-
-                        _proforma = new ProformaInvoiceDTO
-                        {
-                             CustomerId = _customer.CustomerId,
-                             CustomerName = _customer.CustomerName,
-                             CustomerRefNumber = _customer.CustomerRefNumber,
-                             Correo = _customer.Email,
-                             Direccion = _customer.Address,
-                             Tefono = _customer.Phone,
-                             RTN = _customer.RTN,                            
-                             ProformaName = _customer.CustomerName,
-                             BranchId = _tcd.BranchId,
-                             BranchName = _tcd.BranchName,
-                             SubTotal = _InvoiceCalculationlist.Sum(q=>q.ValorFacturar),
-                             Identificador = Identificador,
-                             ProformaInvoiceLine = ProformaInvoiceLineT,
-                             ProductId = _so.ProductId,
-                             ProductName = _so.ProductName,
-                        };
-
-
                     }
                     catch (Exception ex)
                     {

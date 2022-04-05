@@ -340,59 +340,104 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]/{BranchId}/{CustomerId}")]
-        public async Task<IActionResult> GetSaldoLibros(int BranchId, long CustomerId)
+        public async Task<IActionResult> GetSaldoLibros(int BranchId, long CustomerId, int ProductId = 0)
         {
             List<InventarioFisicoLine> inventarioFisicoLines = new List<InventarioFisicoLine>();
+            List<InventarioFisicoLine> SaldoLibros = new List<InventarioFisicoLine>();
             try
             {
                 
                 List<Kardex> kardex = await _context.Kardex.Where(q =>
                 //q.WareHouseId == WarehouseId 
-                q.BranchId == BranchId
-                && q.Max == true
-                ).ToListAsync();
-
-                /* inventarioFisicoLines = (from k in kardex.GroupBy(g => g.ProducId)
-                                          select new InventarioFisicoLine
-                                          {
-                                              ProductoId = (long) k.Key,
-                                              ProductoNombre =  k.First().ProductName,
-                                              Diferencia = 0,
-                                              SaldoLibros =k.Sum(s => (decimal)s.TotalBags),
-                                              InventarioFisicoCantidad = 0,
-
-                                          }).ToList();*/
-
-                inventarioFisicoLines = (from k in _context.GoodsReceivedLine.Include(g => g.GoodsReceived)
-                                         .Include(p => p.SubProduct)
-                    .Where(q =>
-                   // q.WareHouseId == WarehouseId
-                    q.GoodsReceived.BranchId == BranchId
-                    && (CustomerId == 0 || q.GoodsReceived.CustomerId == CustomerId)
-                    )
-                                         select new InventarioFisicoLine {
-                                            ProductoId = (long)k.SubProductId,
-                                            ProductoNombre = k.SubProductName,
-                                            Diferencia = - ( k.QuantitySacos != null && k.QuantitySacos > 0 ? (decimal)k.QuantitySacos : k.Quantity),
-                                            SaldoLibros = k.QuantitySacos != null && k.QuantitySacos>0 ?  (decimal)k.QuantitySacos: k.Quantity,
-                                            InventarioFisicoCantidad = 0,
-                                            Product = k.SubProduct,
-                                            UnitOfMeasure = _context.UnitOfMeasure.Where(e => e.UnitOfMeasureId == k.UnitOfMeasureId).FirstOrDefault(),
-                                            UnitOfMeasureId = (int)k.UnitOfMeasureId,
-                                            Estiba = k.ControlPalletsId.ToString(),
-                                            WarehouseId = (int)k.WareHouseId,
-                                            WarehouseName = k.WareHouseName,
-                                            NSacos = (int)k.QuantitySacos,
-
-
-
-
-                                         
-                                         
-                                         
-                                         }).ToList();
+                q.BranchId == BranchId).ToListAsync();
 
                 
+
+                //SaldoLibros = (from k in _context.GoodsReceivedLine.Include(i => i.GoodsReceived).Where(q => q.GoodsReceived.BranchId == BranchId) //.Include(i => i.SubProductId)
+                //                                         .GroupBy(g => new { g.SubProductId,
+                //                                             g.ControlPalletsId,
+                //                                             g.WareHouseId,
+                //                                             g.UnitOfMeasureId,
+                //                                             g.SubProductName,
+                //                                             g.UnitOfMeasureName,
+                //                                             g.WareHouseName }
+                //                                             )
+                //                                         //.Where(q => q.Sum(s => s.Total))
+                //                                         select new InventarioFisicoLine
+                //                                         {
+                //                                             ProductoId = (long) k.Key.SubProductId,
+                //                                             ProductoNombre =  k.Key.SubProductName,
+                //                                             Diferencia = 0,
+                //                                             SaldoLibros = k.Sum(s => s.Total),
+                //                                             UnitOfMeasureId = (int)k.Key.UnitOfMeasureId,
+                //                                             UnitOfMeasureName = k.Key.UnitOfMeasureName,
+                //                                             NSacos =Convert.ToInt32( k.Sum(s => s.QuantitySacos)),
+                //                                             InventarioFisicoCantidad = 0,
+                //                                             WarehouseName = k.Key.WareHouseName,
+                //                                             Estiba = k.Key.ControlPalletsId.ToString(),
+                //                                             //Product = k.Key.
+
+                //                                         }).ToList();
+
+                SaldoLibros = (from k in _context.Kardex
+                               .Where(q => q.BranchId == BranchId 
+                               && (q.CustomerId == CustomerId || CustomerId == 0 
+                               && (q.ProducId == ProductId || ProductId == 0)
+                               ))  //.Include(i => i.SubProductId)
+                                                         .GroupBy(g => new {
+                                                             g.SubProducId,
+                                                             g.ControlEstibaId,
+                                                             g.WareHouseId,
+                                                             g.UnitOfMeasureId,
+                                                             g.SubProductName,
+                                                             g.UnitOfMeasureName,
+                                                             g.WareHouseName
+                                                         }
+                                                             )
+                                   //.Where(q => q.Sum(s => s.Total))
+                               select new InventarioFisicoLine
+                               {
+                                   ProductoId = (long)k.Key.SubProducId,
+                                   ProductoNombre = k.Key.SubProductName,
+                                   Diferencia = 0,
+                                   SaldoLibros = k.Sum(s => (decimal)s.Total),
+                                   UnitOfMeasureId = (int)k.Key.UnitOfMeasureId,
+                                   UnitOfMeasureName = k.Key.UnitOfMeasureName,
+                                   //NSacos = Convert.ToInt32(k.Sum(s => s.TotalBags)),
+                                   NSacos =0,
+                                   FactorSacos = Convert.ToInt32(k.Sum(s => s.TotalBags))==0? 
+                                    1: k.Sum(s => (decimal)s.Total)/ Convert.ToInt32(k.Sum(s => s.TotalBags)),
+                                   InventarioFisicoCantidad = 0,
+                                   WarehouseName = k.Key.WareHouseName,
+                                   Estiba = k.Key.ControlEstibaId.ToString(),
+                                   //Product = k.Key.
+
+                               }).ToList();
+
+
+                //inventarioFisicoLines = (from k in _context.GoodsReceivedLine.Include(g => g.GoodsReceived)
+                //                         .Include(p => p.SubProduct)
+                //    .Where(q =>
+                //   // q.WareHouseId == WarehouseId
+                //    q.GoodsReceived.BranchId == BranchId
+                //    && (CustomerId == 0 || q.GoodsReceived.CustomerId == CustomerId)
+                //    )
+                //                         select new InventarioFisicoLine {
+                //                            ProductoId = (long)k.SubProductId,
+                //                            ProductoNombre = k.SubProductName,
+                //                            Diferencia = - ( k.QuantitySacos != null && k.QuantitySacos > 0 ? (decimal)k.QuantitySacos : k.Quantity),
+                //                            SaldoLibros = k.QuantitySacos != null && k.QuantitySacos>0 ?  (decimal)k.QuantitySacos: k.Quantity,
+                //                            InventarioFisicoCantidad = 0,
+                //                            Product = k.SubProduct,
+                //                            UnitOfMeasure = _context.UnitOfMeasure.Where(e => e.UnitOfMeasureId == k.UnitOfMeasureId).FirstOrDefault(),
+                //                            UnitOfMeasureId = (int)k.UnitOfMeasureId,
+                //                            Estiba = k.ControlPalletsId.ToString(),
+                //                            WarehouseId = (int)k.WareHouseId,
+                //                            WarehouseName = k.WareHouseName,
+                //                            NSacos = (int)k.QuantitySacos,
+                //                         }).ToList();
+
+
 
             }
             catch (Exception ex)
@@ -402,7 +447,8 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(inventarioFisicoLines);
+            //return Ok(inventarioFisicoLines);
+            return Ok(SaldoLibros);
         }
 
 

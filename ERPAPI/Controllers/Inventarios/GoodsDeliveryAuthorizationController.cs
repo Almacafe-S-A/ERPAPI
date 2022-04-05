@@ -340,7 +340,7 @@ namespace ERPAPI.Controllers
                                 //TotalBags = item. + _KardexLine.TotalBags,
                                // QuantityEntryCD = item.Quantity / (1 + _subproduct.Merma),
                                 //QuantityOutCD = item.Quantity,
-                                TotalCD = item.valorcertificado ,
+                                //TotalCD = item.valorcertificado ,
                             });
 
                             ///////////////////////Sale del Certificado////////////////
@@ -366,10 +366,10 @@ namespace ERPAPI.Controllers
                                 DocumentName = "Certificado Deposito/Autorizacion Retiro",
                                 DocType = 2,
                                 Total = kardexMaxCertificadodeposito.Total - item.valorcertificado,
-                                //TotalBags = item. + _KardexLine.TotalBags,
-                                QuantityEntryCD = 0,
-                                QuantityOutCD = item.Quantity / (1 + Convert.ToDecimal(_subproduct.Merma)),
-                                TotalCD = kardexMaxCertificadodeposito.Total - item.Quantity,
+                                ////TotalBags = item. + _KardexLine.TotalBags,
+                                //QuantityEntryCD = 0,
+                                //QuantityOutCD = item.Quantity / (1 + Convert.ToDecimal(_subproduct.Merma)),
+                                //TotalCD = kardexMaxCertificadodeposito.Total - item.Quantity,
                             }) ;
 
                             certificadoLine.CantidadDisponibleAutorizar = certificadoLine.CantidadDisponibleAutorizar == null ?certificadoLine.Quantity - item.Quantity
