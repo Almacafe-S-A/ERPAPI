@@ -286,28 +286,28 @@ namespace ERPAPI.Controllers
                             }
 
 
-                            _ProformaInvoice.Kardex._KardexLine.Add(new KardexLine
-                            {
-                                DocumentDate = _ProformaInvoice.OrderDate,
-                                ProducId = item.ProductId,
-                                ProductName = item.ProductName,
-                                SubProducId = item.SubProductId,
-                                SubProductName = item.SubProductName,
-                                QuantityEntry = 0,
-                                QuantityOut = item.Quantity,
-                                BranchId = _ProformaInvoice.BranchId,
-                                BranchName = _ProformaInvoice.BranchName,
-                                WareHouseId = item.WareHouseId,
-                                WareHouseName = item.WareHouseName,
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 1,
-                                TypeOperationName = "Salida",
-                                Total = item.Total,
-                               // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
-                                //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
-                            });
+                            //_ProformaInvoice.Kardex._KardexLine.Add(new KardexLine
+                            //{
+                            //    DocumentDate = _ProformaInvoice.OrderDate,
+                            //    ProducId = item.ProductId,
+                            //    ProductName = item.ProductName,
+                            //    SubProducId = item.SubProductId,
+                            //    SubProductName = item.SubProductName,
+                            //    QuantityEntry = 0,
+                            //    QuantityOut = item.Quantity,
+                            //    BranchId = _ProformaInvoice.BranchId,
+                            //    BranchName = _ProformaInvoice.BranchName,
+                            //    WareHouseId = item.WareHouseId,
+                            //    WareHouseName = item.WareHouseName,
+                            //    UnitOfMeasureId = item.UnitOfMeasureId,
+                            //    UnitOfMeasureName = item.UnitOfMeasureName,
+                            //    TypeOperationId = 1,
+                            //    TypeOperationName = "Salida",
+                            //    Total = item.Total,
+                            //   // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                            //    //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                            //    //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                            //});
 
 
                         }
@@ -316,8 +316,6 @@ namespace ERPAPI.Controllers
                         _ProformaInvoice.Kardex.DocType = 0;
                         _ProformaInvoice.Kardex.DocumentName = "FacturaProforma/ProformaInvoice";
                         _ProformaInvoice.Kardex.DocumentDate = _ProformaInvoice.OrderDate;
-                        _ProformaInvoice.Kardex.FechaCreacion = DateTime.Now;
-                        _ProformaInvoice.Kardex.FechaModificacion = DateTime.Now;
                         _ProformaInvoice.Kardex.TypeOperationId = TipoOperacion.Entrada;
                         _ProformaInvoice.Kardex.TypeOperationName = "Salida";
                         _ProformaInvoice.Kardex.KardexDate = DateTime.Now;
@@ -326,11 +324,7 @@ namespace ERPAPI.Controllers
 
                         _ProformaInvoice.Kardex.CustomerId = _ProformaInvoice.CustomerId;
                         _ProformaInvoice.Kardex.CustomerName = _ProformaInvoice.CustomerName;
-                        _ProformaInvoice.Kardex.CurrencyId = _ProformaInvoice.CurrencyId;
-                        _ProformaInvoice.Kardex.CurrencyName = _ProformaInvoice.CurrencyName;
                         _ProformaInvoice.Kardex.DocumentId = _ProformaInvoice.ProformaId;
-                        _ProformaInvoice.Kardex.UsuarioCreacion = _ProformaInvoice.UsuarioCreacion;
-                        _ProformaInvoice.Kardex.UsuarioModificacion = _ProformaInvoice.UsuarioModificacion;
                         _context.Kardex.Add(_ProformaInvoice.Kardex);
 
                         await _context.SaveChangesAsync();

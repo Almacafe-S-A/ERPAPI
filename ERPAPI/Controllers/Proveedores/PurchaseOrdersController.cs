@@ -190,28 +190,28 @@ namespace ERPAPI.Controllers
                             
 
 
-                            _PurchaseOrders.Kardex._KardexLine.Add(new KardexLine
-                            {
-                                DocumentDate = _PurchaseOrders.DatePlaced,
-                                ProducId = Convert.ToInt64(item.ProductId),
-                                ProductName = item.ProductDescription,
-                                SubProducId = 0,
-                                SubProductName = "N/A",
-                                QuantityEntry = Convert.ToDecimal(item.QtyReceived),
-                                QuantityOut = 0,
-                                BranchId = Convert.ToInt64(_PurchaseOrders.BranchId),
-                                //BranchName = _PurchaseOrders.Branch.BranchName,
-                                WareHouseId = 0,
-                                WareHouseName = "N/A",
-                                UnitOfMeasureId = item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
-                                TypeOperationId = 1,
-                                TypeOperationName = "Orden de Compra",
-                                Total = Convert.ToDecimal(item.QtyReceivedToDate),
-                                // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
-                                //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
-                                //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
-                            });
+                            //_PurchaseOrders.Kardex._KardexLine.Add(new KardexLine
+                            //{
+                            //    DocumentDate = _PurchaseOrders.DatePlaced,
+                            //    ProducId = Convert.ToInt64(item.ProductId),
+                            //    ProductName = item.ProductDescription,
+                            //    SubProducId = 0,
+                            //    SubProductName = "N/A",
+                            //    QuantityEntry = Convert.ToDecimal(item.QtyReceived),
+                            //    QuantityOut = 0,
+                            //    BranchId = Convert.ToInt64(_PurchaseOrders.BranchId),
+                            //    //BranchName = _PurchaseOrders.Branch.BranchName,
+                            //    WareHouseId = 0,
+                            //    WareHouseName = "N/A",
+                            //    UnitOfMeasureId = item.UnitOfMeasureId,
+                            //    UnitOfMeasureName = item.UnitOfMeasureName,
+                            //    TypeOperationId = 1,
+                            //    TypeOperationName = "Orden de Compra",
+                            //    Total = Convert.ToDecimal(item.QtyReceivedToDate),
+                            //    // TotalBags = item.QuantitySacos - _KardexLine.TotalBags,
+                            //    //QuantityOutCD = item.Quantity - (item.Quantity * _subproduct.Merma),
+                            //    //TotalCD = _KardexLine.TotalCD - (item.Quantity - (item.Quantity * _subproduct.Merma)),
+                            //});
 
 
                         }
@@ -220,8 +220,6 @@ namespace ERPAPI.Controllers
                         _PurchaseOrders.Kardex.DocType = 0;
                         _PurchaseOrders.Kardex.DocumentName = "FacturaProforma/PurchaseOrders";
                         _PurchaseOrders.Kardex.DocumentDate = _PurchaseOrders.DatePlaced;
-                        _PurchaseOrders.Kardex.FechaCreacion = DateTime.Now;
-                        _PurchaseOrders.Kardex.FechaModificacion = DateTime.Now;
                         _PurchaseOrders.Kardex.TypeOperationId = TipoOperacion.Salida;
                         _PurchaseOrders.Kardex.TypeOperationName = "Salida";
                         _PurchaseOrders.Kardex.KardexDate = DateTime.Now;
@@ -230,11 +228,7 @@ namespace ERPAPI.Controllers
 
                         _PurchaseOrders.Kardex.CustomerId = 0;
                         _PurchaseOrders.Kardex.CustomerName = "N/A";
-                        _PurchaseOrders.Kardex.CurrencyId = Convert.ToInt32(_PurchaseOrders.CurrencyId);
-                        _PurchaseOrders.Kardex.CurrencyName = _PurchaseOrders.CurrencyName;
                         _PurchaseOrders.Kardex.DocumentId = _PurchaseOrders.Id;
-                        _PurchaseOrders.Kardex.UsuarioCreacion = _PurchaseOrders.UsuarioCreacion;
-                        _PurchaseOrders.Kardex.UsuarioModificacion = _PurchaseOrders.UsuarioModificacion;
                         _context.Kardex.Add(_PurchaseOrders.Kardex);
 
                         await _context.SaveChangesAsync();
