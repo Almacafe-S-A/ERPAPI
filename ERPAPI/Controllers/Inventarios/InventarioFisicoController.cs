@@ -253,6 +253,7 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_InventarioFisicoq).CurrentValues.SetValues((_InventarioFisico));
 
+
                 foreach (var item in _InventarioFisicoq.InventarioBodegaHabilitadaLines)
                 {
                     var det = _InventarioFisico.InventarioBodegaHabilitadaLines.Where(q => q.Id == item.Id).FirstOrDefault();
@@ -267,6 +268,7 @@ namespace ERPAPI.Controllers
                 _InventarioFisicoq.InventarioBodegaHabilitadaLines
                     .AddRange(_InventarioFisico.InventarioBodegaHabilitadaLines
                     .Where(q => q.InventarioFisicoId == 0).ToList());
+
                 _InventarioFisicoq.InventarioFisicoLines
                     .AddRange(_InventarioFisico.InventarioFisicoLines.Where(q => q.InventarioFisicoId == 0).ToList());
 

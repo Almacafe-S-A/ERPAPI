@@ -100,6 +100,7 @@ namespace ERPAPI.Controllers
             {
                 Items = await _context.CustomerContract
                     .Where(q => q.CustomerContractId_Source == null)
+                    .Include(i => i.customerContractWarehouse)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -271,6 +272,7 @@ namespace ERPAPI.Controllers
                 Items = await _context.CustomerContract
                     .Include(i => i.customerContractLines)
                     .Include(i => i.customerContractLinesTerms)
+                    .Include(i => i.customerContractWarehouse)
                     .Where(q => q.CustomerContractId == CustomerContractId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
@@ -347,6 +349,7 @@ namespace ERPAPI.Controllers
                     _CustomerContractq.IncrementoAnual = salesOrder.IncrementoAnual;
                     _CustomerContractq.AdendumNo = adendumno;
                     _CustomerContractq.CustomerContractId_Source = salesOrder.CustomerContractId_Source;
+                    _CustomerContractq.BranchId = salesOrder.BranchId;
                     _CustomerContractq.customerContractLines = new List<CustomerContractLines>();
 
                     foreach (var item in salesOrder.SalesOrderLines)
@@ -422,6 +425,14 @@ namespace ERPAPI.Controllers
             CustomerContract _CustomerContractq = new CustomerContract();
             try
             {
+
+                foreach (var item in _CustomerContract.customerContractWarehouse)
+                {
+                        _context.CustomerContractWareHouse.Add(item);
+                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();                    
+                }
+
                 _CustomerContractq = _CustomerContract;
                 _context.CustomerContract.Add(_CustomerContractq);
 
@@ -457,9 +468,22 @@ namespace ERPAPI.Controllers
                                             select c
                                 ).FirstOrDefaultAsync();
 
-                _context.Entry(_CustomerContractq).CurrentValues.SetValues((_CustomerContract));
 
-                //_context.CustomerContract.Update(_CustomerContractq);
+                foreach (var item in _CustomerContract.customerContractWarehouse)
+                {
+                    if (item.CustomerContractWareHouseId == 0)
+                    {
+                        var x = _context.CustomerContractWareHouse.Where(w => w.WareHouseId == item.WareHouseId && w.CustomerContractId == item.CustomerContractId).FirstOrDefault();
+                        if (x == null)
+                        {
+                            _context.CustomerContractWareHouse.Add(item);
+                            //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                        }
+                    }
+                }
+
+                _context.Entry(_CustomerContractq).CurrentValues.SetValues((_CustomerContract));
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
@@ -547,10 +571,6 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_CustomerContractq));
 
         }
-
-
-
-
 
 
 

@@ -141,5 +141,10 @@ namespace ERPAPI.Models
 
         public List<CustomerContractLinesTerms> customerContractLinesTerms  { get; set; }
 
+
+        public int BranchId { get; set; }
+
+        public List<CustomerContractWareHouse> customerContractWarehouse { get; set; }
+
     }
 }

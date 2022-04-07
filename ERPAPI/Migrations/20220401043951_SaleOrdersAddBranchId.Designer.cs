@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220401043951_SaleOrdersAddBranchId")]
+    partial class SaleOrdersAddBranchId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3359,8 +3361,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("WareHouseName");
 
                     b.HasKey("CustomerContractWareHouseId");
-
-                    b.HasIndex("CustomerContractId");
 
                     b.ToTable("CustomerContractWareHouse");
                 });
@@ -11936,14 +11936,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CustomerContractWareHouse", b =>
-                {
-                    b.HasOne("ERPAPI.Models.CustomerContract")
-                        .WithMany("customerContractWarehouse")
-                        .HasForeignKey("CustomerContractId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

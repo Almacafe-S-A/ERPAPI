@@ -210,7 +210,32 @@ namespace ERPAPI.Controllers
         }
 
 
+        [HttpPost("[action]")]
+        public async Task<IActionResult> DeleteCustomerContractWarehouse([FromBody] CustomerContractWareHouse _CustomerContractWareHouse)
+        {
+            CustomerContractWareHouse _CustomerContractq = new CustomerContractWareHouse();
+            try
+            {
+                _CustomerContractq = _context.CustomerContractWareHouse
+                .Where(x => x.WareHouseId == _CustomerContractWareHouse.WareHouseId && x.CustomerContractId == _CustomerContractWareHouse.CustomerContractId)
+                .FirstOrDefault();
+                if (_CustomerContractq != null) {
+                    _context.CustomerContractWareHouse.Remove(_CustomerContractq);
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                    await _context.SaveChangesAsync();
+                }
+                    
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
 
+            return await Task.Run(() => Ok(_CustomerContractq));
+
+        }
 
 
 
