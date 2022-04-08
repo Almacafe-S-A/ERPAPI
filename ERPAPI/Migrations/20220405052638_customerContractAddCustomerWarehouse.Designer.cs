@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220405052638_customerContractAddCustomerWarehouse")]
+    partial class customerContractAddCustomerWarehouse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5760,8 +5762,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<int?>("Estiba");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
@@ -7380,6 +7380,16 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("ControlEstibaId");
 
+                    b.Property<string>("ControlEstibaName");
+
+                    b.Property<long?>("CostCenterId");
+
+                    b.Property<string>("CostCenterName");
+
+                    b.Property<long?>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
+
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -7394,21 +7404,31 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DocumentName");
 
+                    b.Property<DateTime>("FechaCreacion");
+
+                    b.Property<DateTime>("FechaModificacion");
+
                     b.Property<DateTime>("KardexDate");
 
                     b.Property<int>("KardexTypeId");
+
+                    b.Property<bool?>("Max");
 
                     b.Property<long?>("ProducId");
 
                     b.Property<string>("ProductName");
 
-                    b.Property<decimal>("QuantityEntry");
+                    b.Property<decimal?>("QuantityEntry");
 
-                    b.Property<decimal>("QuantityEntryBags");
+                    b.Property<decimal?>("QuantityEntryBags");
 
-                    b.Property<decimal>("QuantityOut");
+                    b.Property<decimal?>("QuantityEntryCD");
 
-                    b.Property<decimal>("QuantityOutBags");
+                    b.Property<decimal?>("QuantityOut");
+
+                    b.Property<decimal?>("QuantityOutBags");
+
+                    b.Property<decimal?>("QuantityOutCD");
 
                     b.Property<decimal?>("SaldoAnterior");
 
@@ -7416,9 +7436,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("SubProductName");
 
-                    b.Property<decimal>("Total");
+                    b.Property<decimal?>("Total");
 
-                    b.Property<decimal>("TotalBags");
+                    b.Property<decimal?>("TotalBags");
+
+                    b.Property<decimal?>("TotalCD");
 
                     b.Property<int?>("TypeOperationId");
 
@@ -7427,6 +7449,10 @@ namespace ERPAPI.Migrations
                     b.Property<long?>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
+
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
 
                     b.Property<long?>("WareHouseId");
 
@@ -7506,6 +7532,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("WareHouseName");
 
                     b.HasKey("KardexLineId");
+
+                    b.HasIndex("KardexId");
 
                     b.ToTable("KardexLine");
                 });
@@ -11916,7 +11944,7 @@ namespace ERPAPI.Migrations
             modelBuilder.Entity("ERPAPI.Models.CustomerContractWareHouse", b =>
                 {
                     b.HasOne("ERPAPI.Models.CustomerContract")
-                        .WithMany("customerContractWarehouse")
+                        .WithMany("customerContactWarehouse")
                         .HasForeignKey("CustomerContractId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -12621,6 +12649,14 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
                         .WithMany("JournalEntryLines")
                         .HasForeignKey("JournalEntryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.KardexLine", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Kardex")
+                        .WithMany("_KardexLine")
+                        .HasForeignKey("KardexId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
