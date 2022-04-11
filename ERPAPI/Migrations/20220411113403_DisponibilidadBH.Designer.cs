@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220411113403_DisponibilidadBH")]
+    partial class DisponibilidadBH
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6645,13 +6647,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Comentarios");
 
-                    b.Property<bool?>("Control");
-
                     b.Property<long?>("CustomerId");
-
-                    b.Property<long?>("EstadoId");
-
-                    b.Property<string>("EstadoName");
 
                     b.Property<DateTime>("Fecha");
 
@@ -6676,8 +6672,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("BranchId");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("EstadoId");
 
                     b.HasIndex("ProductId");
 
@@ -12524,10 +12518,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId");
-
-                    b.HasOne("ERPAPI.Models.Estados", "Estado")
-                        .WithMany()
-                        .HasForeignKey("EstadoId");
 
                     b.HasOne("ERPAPI.Models.Product", "Product")
                         .WithMany()

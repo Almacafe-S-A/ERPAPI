@@ -34,6 +34,14 @@ namespace ERPAPI.Models
 
         public string Cliente { get; set; }
 
+        public bool? Control { get; set; }
+
+        public Int64? EstadoId { get; set; }
+        [ForeignKey("EstadoId")]
+        public Estados Estado { get; set; }
+
+        public string EstadoName { get; set; }
+
         public string Comentarios { get; set; }
 
         public DateTime FechaCreacion { get; set; }
