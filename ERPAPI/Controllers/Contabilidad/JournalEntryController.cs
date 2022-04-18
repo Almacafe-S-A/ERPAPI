@@ -308,7 +308,7 @@ namespace ERPAPI.Controllers
                         
                         await _context.SaveChangesAsync();
                         ///Actualiza el Saldo del Catalogo contable                       
-                        Funciones.ActualizarSaldoCuentas(_context, _JournalEntry);
+                        ContabilidadHandler.ActualizarSaldoCuentas(_context, _JournalEntry);
                     }
                     catch (Exception ex)
                     {

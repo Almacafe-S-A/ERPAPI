@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220411113805_InventariosFisicoControl")]
+    partial class InventariosFisicoControl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5795,9 +5797,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<int?>("Estiba");
 
-                    b.Property<long>("GoodsReceivedId");
+                    b.Property<DateTime?>("FechaCreacion");
 
-                    b.Property<long?>("MaxKardexId");
+                    b.Property<DateTime?>("FechaModificacion");
+
+                    b.Property<long>("GoodsReceivedId");
 
                     b.Property<decimal>("Price");
 
@@ -5821,6 +5825,10 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UnitOfMeasureName");
 
+                    b.Property<string>("UsuarioCreacion");
+
+                    b.Property<string>("UsuarioModificacion");
+
                     b.Property<long>("WareHouseId");
 
                     b.Property<string>("WareHouseName");
@@ -5828,8 +5836,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("GoodsReceiveLinedId");
 
                     b.HasIndex("GoodsReceivedId");
-
-                    b.HasIndex("MaxKardexId");
 
                     b.HasIndex("SubProductId");
 
@@ -7415,6 +7421,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BranchName");
 
+                    b.Property<long?>("ControlEstibaId");
+
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -7428,8 +7436,6 @@ namespace ERPAPI.Migrations
                     b.Property<int?>("DocumentLine");
 
                     b.Property<string>("DocumentName");
-
-                    b.Property<long?>("Estiba");
 
                     b.Property<DateTime>("KardexDate");
 
@@ -12301,10 +12307,6 @@ namespace ERPAPI.Migrations
                         .WithMany("_GoodsReceivedLine")
                         .HasForeignKey("GoodsReceivedId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.Kardex", "Kardex")
-                        .WithMany()
-                        .HasForeignKey("MaxKardexId");
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()

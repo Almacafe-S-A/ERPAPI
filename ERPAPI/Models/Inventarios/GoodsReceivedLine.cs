@@ -61,12 +61,12 @@ namespace ERPAPI.Models
         [Display(Name = "Centro de costos")]
         public Int64 CostCenterId { get; set; }
 
-        
+        public Int64? MaxKardexId { get; set; }
+        [ForeignKey("MaxKardexId")]
+        public Kardex Kardex { get; set; }
 
-        public DateTime? FechaCreacion { get; set; }
-        public DateTime? FechaModificacion { get; set; }
-        public string UsuarioCreacion { get; set; }
-        public string UsuarioModificacion { get; set; }
+
+
 
     }
 

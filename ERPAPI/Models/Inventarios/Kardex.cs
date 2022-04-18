@@ -56,7 +56,7 @@ namespace ERPAPI.Models
         public string WareHouseName { get; set; }
 
         [Display(Name = "Estiba")]
-        public Int64? ControlEstibaId { get; set; }
+        public Int64? Estiba { get; set; }
 
 
         [Display(Name = "Servicio")]
@@ -98,6 +98,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Saldo sacos")]
         public decimal TotalBags { get; set; }
+
+        public bool MaxKardex { get; set; } = true;
 
         public KardexTypes KardexTypeId { get; set; }
 

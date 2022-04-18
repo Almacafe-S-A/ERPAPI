@@ -137,7 +137,7 @@ namespace ERPAPI.Controllers
         }
 
         private InventarioFisico CheckDetailsInventario(InventarioFisico inventario) {
-
+            
             foreach (var producto in inventario.InventarioFisicoLines)
             {
                 producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : producto.ProductoNombre;
@@ -185,6 +185,8 @@ namespace ERPAPI.Controllers
                     {
 
                         _InventarioFisico = CheckDetailsInventario(_InventarioFisico);
+                        _InventarioFisico.EstadoName = "Abierto";
+                        _InventarioFisico.EstadoId = 1;
                         _context.InventarioFisico.Add(_InventarioFisico);
                         
 
@@ -241,11 +243,27 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<InventarioFisico>> Update([FromBody] InventarioFisico _InventarioFisico)
         {
+            
             InventarioFisico _InventarioFisicoq = new InventarioFisico(); 
-            _InventarioFisicoq = CheckDetailsInventario(_InventarioFisico);
+           
             try
             {
-                
+                if (_InventarioFisico.InventarioBodegaHabilitadaLines == null && _InventarioFisico.InventarioFisicoLines == null)
+                {
+                   
+                    //_context.InventarioFisico.Update(_InventarioFisicoq);
+                    
+                    _InventarioFisicoq = await _context.InventarioFisico
+                    .Where(q => q.Id == _InventarioFisico.Id)
+                    .FirstOrDefaultAsync();
+                    _context.Entry(_InventarioFisicoq).CurrentValues.SetValues((_InventarioFisico));
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                    await _context.SaveChangesAsync();
+                    return await Task.Run(() => Ok(_InventarioFisicoq));
+                }
+
+
+                _InventarioFisicoq = CheckDetailsInventario(_InventarioFisico);
                 var InventariodetEliminarbh = _context.InventarioBodegaHabilitada
                     .Where(q => q.InventarioFisicoId == _InventarioFisico.Id && 
                     !_InventarioFisico.InventarioBodegaHabilitadaLines.Where(s => s.Id != 0)
@@ -388,7 +406,7 @@ namespace ERPAPI.Controllers
                                ))  //.Include(i => i.SubProductId)
                                                          .GroupBy(g => new {
                                                              g.SubProducId,
-                                                             g.ControlEstibaId,
+                                                             g.Estiba,
                                                              g.WareHouseId,
                                                              g.UnitOfMeasureId,
                                                              g.SubProductName,
@@ -411,7 +429,7 @@ namespace ERPAPI.Controllers
                                     1: k.Sum(s => (decimal)s.Total)/ Convert.ToInt32(k.Sum(s => s.TotalBags)),
                                    InventarioFisicoCantidad = 0,
                                    WarehouseName = k.Key.WareHouseName,
-                                   Estiba = k.Key.ControlEstibaId.ToString(),
+                                   Estiba = k.Key.Estiba.ToString(),
                                    //Product = k.Key.
 
                                }).ToList();

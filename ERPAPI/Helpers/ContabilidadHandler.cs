@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace ERPAPI.Helpers
 {
-    public static class Funciones
+    public static class ContabilidadHandler
     {
         
         /// <summary>

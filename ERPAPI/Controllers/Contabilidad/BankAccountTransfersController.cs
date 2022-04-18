@@ -324,7 +324,7 @@ Newtonsoft.Json.JsonConvert.SerializeObject(je, new JsonSerializerSettings { Ref
                 _context.SaveChanges();
 
                 ////Actualiza el saldo de  las cuentas del catalogo contable 
-                Funciones.ActualizarSaldoCuentas(_context, transfers.JournalEntry);
+                ContabilidadHandler.ActualizarSaldoCuentas(_context, transfers.JournalEntry);
                 return await Task.Run(() => Ok(transfers));
             }
             catch (Exception)

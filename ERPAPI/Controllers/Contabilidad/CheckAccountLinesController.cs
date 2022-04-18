@@ -478,7 +478,7 @@ namespace ERPAPI.Controllers
                     journalEntry.ApprovedBy = User.Identity.Name;
                     journalEntry.ApprovedDate = DateTime.Now;
                     ////Actualiza el saldo de las cuentas contables del catalogo 
-                    Funciones.ActualizarSaldoCuentas(_context, journalEntry);
+                    ContabilidadHandler.ActualizarSaldoCuentas(_context, journalEntry);
                 }
                 else
                 {
@@ -625,7 +625,7 @@ namespace ERPAPI.Controllers
                     await _context.SaveChangesAsync();
                     //Actualizar el saldo de las cuentas con el asiento reversado 
                     
-                    Funciones.ActualizarSaldoCuentas(_context, jeAnulacion);
+                    ContabilidadHandler.ActualizarSaldoCuentas(_context, jeAnulacion);
 
                     _context.JournalEntryCanceled.Add(new JournalEntryCanceled()
                     {

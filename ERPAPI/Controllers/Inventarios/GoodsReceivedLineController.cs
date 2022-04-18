@@ -195,10 +195,10 @@ namespace ERPAPI.Controllers
                     Alerta.AlertName = "Productos";
                     Alerta.Code = "PRODUCT01";
                     Alerta.DescriptionAlert = "Lista de producto Prohibida";
-                    Alerta.FechaCreacion = Convert.ToDateTime(_GoodsReceivedLine.FechaCreacion);
-                    Alerta.FechaModificacion = Convert.ToDateTime(_GoodsReceivedLine.FechaModificacion);
-                    Alerta.UsuarioCreacion = _GoodsReceivedLine.UsuarioCreacion;
-                    Alerta.UsuarioModificacion = _GoodsReceivedLine.UsuarioModificacion;
+                    Alerta.FechaCreacion = DateTime.Now;
+                    Alerta.FechaModificacion = DateTime.Now;
+                    Alerta.UsuarioCreacion = User.Identity.Name;
+                    Alerta.UsuarioModificacion = User.Identity.Name;
                     var AlertaP = await InsertAlert(Alerta);
                 }
                 using (var transaction = _context.Database.BeginTransaction())
@@ -218,11 +218,10 @@ namespace ERPAPI.Controllers
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _GoodsReceivedLineq.UsuarioCreacion,
-                            UsuarioModificacion = _GoodsReceivedLineq.UsuarioModificacion,
-                            UsuarioEjecucion = _GoodsReceivedLineq.UsuarioModificacion,
+                            UsuarioCreacion = User.Identity.Name,
+                            UsuarioModificacion = User.Identity.Name,
 
-                        });
+                    });
 
 
                     }
@@ -270,10 +269,10 @@ namespace ERPAPI.Controllers
                     Alerta.AlertName = "Productos";
                     Alerta.Code = "PRODUCT01";
                     Alerta.DescriptionAlert = "Lista de producto Prohibida";
-                    Alerta.FechaCreacion = Convert.ToDateTime(_GoodsReceivedLine.FechaCreacion);
-                    Alerta.FechaModificacion = Convert.ToDateTime(_GoodsReceivedLine.FechaModificacion);
-                    Alerta.UsuarioCreacion = _GoodsReceivedLine.UsuarioCreacion;
-                    Alerta.UsuarioModificacion = _GoodsReceivedLine.UsuarioModificacion;
+                    Alerta.FechaCreacion = DateTime.Now;
+                    Alerta.FechaModificacion = DateTime.Now;
+                    Alerta.UsuarioCreacion = User.Identity.Name;
+                    Alerta.UsuarioModificacion = User.Identity.Name;
                     Alerta.Description = $"Producto Prohibido {_GoodsReceivedLine.SubProductName} en recibo de mercaderia";
                     Alerta.DescriptionAlert = $"Producto Prohibido {_GoodsReceivedLine.SubProductName} en recibo de mercaderia";
                     Alerta.Type = "169";
@@ -297,11 +296,10 @@ namespace ERPAPI.Controllers
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _GoodsReceivedLineq.UsuarioCreacion,
-                            UsuarioModificacion = _GoodsReceivedLineq.UsuarioModificacion,
-                            UsuarioEjecucion = _GoodsReceivedLineq.UsuarioModificacion,
+                            UsuarioCreacion = User.Identity.Name,
+                            UsuarioModificacion = User.Identity.Name,
 
-                        });
+                    });
 
 
                     }
@@ -340,9 +338,8 @@ namespace ERPAPI.Controllers
                             Accion = "Deletw",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _GoodsReceivedLine.UsuarioCreacion,
-                            UsuarioModificacion = _GoodsReceivedLine.UsuarioModificacion,
-                            UsuarioEjecucion = _GoodsReceivedLineq.UsuarioModificacion,
+                            UsuarioCreacion = User.Identity.Name,
+                            UsuarioModificacion = User.Identity.Name,
 
                         });
 
@@ -408,10 +405,8 @@ namespace ERPAPI.Controllers
                                 Accion = "Deletw",
                                 FechaCreacion = DateTime.Now,
                                 FechaModificacion = DateTime.Now,
-                                UsuarioCreacion = _GoodsReceivedLine.UsuarioCreacion,
-                                UsuarioModificacion = _GoodsReceivedLine.UsuarioModificacion,
-                                UsuarioEjecucion = _GoodsReceivedLineq.UsuarioModificacion,
-
+                                UsuarioCreacion = User.Identity.Name,
+                                UsuarioModificacion = User.Identity.Name,
                             });
 
 
