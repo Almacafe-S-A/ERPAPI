@@ -442,10 +442,10 @@ namespace ERPAPI.Controllers
                 Alerta.AlertName = "Productos";
                 Alerta.Code = "PRODUCT01";
                 Alerta.DescriptionAlert = "Lista de producto Prohibida";
-                Alerta.FechaCreacion = Convert.ToDateTime(producto.FechaCreacion);
-                Alerta.FechaModificacion = Convert.ToDateTime(producto.FechaModificacion);
-                Alerta.UsuarioCreacion = producto.UsuarioCreacion;
-                Alerta.UsuarioModificacion = producto.UsuarioModificacion;
+                Alerta.FechaCreacion = DateTime.Now;
+                Alerta.FechaModificacion = DateTime.Now;
+                Alerta.UsuarioCreacion = User.Identity.Name;
+                Alerta.UsuarioModificacion = User.Identity.Name;
                 Alerta.PersonName = goodsReceived.CustomerName;
                 Alerta.Description = $"Producto Prohibido {producto.SubProductName} en recibo de mercaderia";
                 Alerta.DescriptionAlert = $"Producto Prohibido {producto.SubProductName} en recibo de mercaderia";
@@ -486,14 +486,15 @@ namespace ERPAPI.Controllers
         }
 
 
-        private async Task<ActionResult<GoodsReceived>> ValidarEsCafe(GoodsReceived goodsReceived) {
-            
+        private async Task<ActionResult<bool>> ValidarProductoTipoCafe(GoodsReceived goodsReceived) {
+
             foreach (var item in goodsReceived._GoodsReceivedLine)
             {
                 SubProduct subProduct =await _context.SubProduct.Where(q => q.SubproductId == item.SubProductId).FirstOrDefaultAsync();
                 if (goodsReceived.esCafe!= null&&(bool)goodsReceived.esCafe&& subProduct.TipoCafe == 0)
                 {
-                    return BadRequest("Los recibos de mercaderias que contienen cafe solo pueden contener ese tipo de producto");
+                    return BadRequest("Error en el ");
+
 
                 }
                 goodsReceived.esCafe = subProduct.TipoCafe != 0;
@@ -502,7 +503,7 @@ namespace ERPAPI.Controllers
 
 
 
-            return goodsReceived;
+            return (bool)goodsReceived.esCafe;
         
         
         
@@ -529,36 +530,42 @@ namespace ERPAPI.Controllers
                     {
 
                         _GoodsReceivedq = _GoodsReceived;
-
-                        var valido =  await ValidarEsCafe(_GoodsReceivedq);
-
-                        if (valido.Result is BadRequestObjectResult)
+                        var validarProductoTipoCafe = await ValidarProductoTipoCafe(_GoodsReceivedq);
+                        if (validarProductoTipoCafe.Result is BadRequestObjectResult)
                         {
-                            return BadRequest(valido.Result.ToString());
+                            return BadRequest("Los recibos de mercaderias que contienen cafe solo pueden contener ese tipo de producto"); 
                         }
-                        _GoodsReceived = (GoodsReceived)valido.Value;
+                        //_GoodsReceived = (GoodsReceived)valido.Value;
+                        _GoodsReceived.esCafe = validarProductoTipoCafe.Value;
 
-                         var boletasalida = await InsertBoletaSalida(_GoodsReceivedq);
-                        if (boletasalida.Result is BadRequestObjectResult)
+                        if (_GoodsReceivedq.ControlId > 0)/// valida si proviene de una boleta de peso y marca Control de Ingresos  como recibida
                         {
-                            transaction.Rollback();
-                            return BadRequest(boletasalida);
-                        }                      
-                        _GoodsReceivedq.BoletaSalidaId = boletasalida.Value.BoletaDeSalidaId;
+                            ControlPallets controlPallets = await _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId)
+                           .FirstOrDefaultAsync();
+                            controlPallets.Estado = "Recibido";
+                            _context.ControlPallets.Update(controlPallets);
+                            _GoodsReceivedq.SubProductName = controlPallets.SubProductName;
+                            Boleto_Sal boleto = _context.Boleto_Sal.Where(q => q.clave_e > controlPallets.WeightBallot).FirstOrDefault();
+                            _GoodsReceivedq.TaraTransporte = boleto != null ? boleto.peso_s : 0;
+                        }
+                        else //Marca el producto del encabezado como productos Varios
+                        {
+                            _GoodsReceivedq.SubProductName = "Productos Varios No Pesado";
+                        }
                         _context.GoodsReceived.Add(_GoodsReceivedq);
-                         //await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
-                            item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
+                            //item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
                             var validarproductos = await ValidarProductosProhibidos(item,_GoodsReceivedq);
                             if (validarproductos.Result is BadRequestObjectResult)// Valida si es o no producto prohibido
                             {
 
                             }
-                            _context.GoodsReceivedLine.Add(item); // Siempre Agrega el prodcuto
+                            //_context.GoodsReceivedLine.Add(item); // Siempre Agrega el prodcuto
                             var generarKardex = await GenerarKardexRecibo(item,_GoodsReceivedq,validarproductos.Value); // Genera el Kardex Fisico
-
+                            item.Kardex =  generarKardex.Value;
                             item.SaldoporCertificar = item.Quantity;////Asigna el valor al saldo por certificar al detalle
 
                             
@@ -569,22 +576,6 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
                         
 
-                        if (_GoodsReceived.ControlId > 0)/// valida si proviene de una boleta de peso y marca Control de Ingresos  como recibida
-                        {
-                            ControlPallets controlPallets = await _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId)
-                           .FirstOrDefaultAsync();
-                            controlPallets.Estado = "Recibido";
-                             _context.ControlPallets.Update(controlPallets);
-                            _GoodsReceivedq.SubProductName = controlPallets.SubProductName;
-                            Boleto_Sal boleto = _context.Boleto_Sal.Where(q => q.clave_e > controlPallets.WeightBallot).FirstOrDefault();
-                            _GoodsReceivedq.TaraTransporte = boleto != null ? boleto.peso_s:0 ;
-                        }
-                        else //Marca el producto del encabezado como productos Varios
-                        {
-                            _GoodsReceivedq.SubProductName = "Productos Varios No Pesado";
-                        }
-
-                        await _context.SaveChangesAsync();
 
                         
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
@@ -606,13 +597,23 @@ namespace ERPAPI.Controllers
 
                           
                         }
+
+
+                        var boletasalida = await InsertBoletaSalida(_GoodsReceivedq);
+                        if (boletasalida.Result is BadRequestObjectResult)
+                        {
+                            transaction.Rollback();
+                            return BadRequest(boletasalida);
+                        }
+                        _GoodsReceivedq.BoletaSalidaId = boletasalida.Value.BoletaDeSalidaId;
+                        
                         await _context.SaveChangesAsync();///Asigna el numero del recibo a la boleta de salida 
                         //TODO : Validar si es necesario
-                        BoletaDeSalida _bol = await _context.BoletaDeSalida
-                                              .Where(q => q.BoletaDeSalidaId == boletasalida.Value.BoletaDeSalidaId).FirstOrDefaultAsync();
+                        //BoletaDeSalida _bol = await _context.BoletaDeSalida
+                        //                      .Where(q => q.BoletaDeSalidaId == boletasalida.Value.BoletaDeSalidaId).FirstOrDefaultAsync();
 
-                        _bol.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
-                        _context.Entry(_bol).CurrentValues.SetValues((_bol));
+                        //_bol.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
+                        //_context.Entry(_bol).CurrentValues.SetValues((_bol));
                         var generarasiento = await GeneraAsientoReciboMercaderias(_GoodsReceivedq);
                         transaction.Commit();
                     }
@@ -639,19 +640,19 @@ namespace ERPAPI.Controllers
             
             try
             {
-
-                _context.Kardex.Add(new Kardex
+                Kardex kardex = new Kardex
                 {
                     DocumentDate = _GoodsReceivedq.DocumentDate,
                     DocumentName = "ReciboMercaderia/GoodsReceived",
                     DocType = 1,
+                    DocumentLine = (int)item.GoodsReceiveLinedId,
                     ProducId = _GoodsReceivedq.ProductId,
                     ProductName = _GoodsReceivedq.ProductName,
                     SubProducId = item.SubProductId,
                     SubProductName = item.SubProductName,
                     QuantityEntry = item.Quantity,
                     QuantityOut = 0,
-                    QuantityEntryBags = item.QuantitySacos== null? 0 : (decimal)item.QuantitySacos,
+                    QuantityEntryBags = item.QuantitySacos == null ? 0 : (decimal)item.QuantitySacos,
                     BranchId = _GoodsReceivedq.BranchId,
                     BranchName = _GoodsReceivedq.BranchName,
                     WareHouseId = item.WareHouseId,
@@ -667,11 +668,14 @@ namespace ERPAPI.Controllers
                     CustomerId = _GoodsReceivedq.CustomerId,
                     CustomerName = _GoodsReceivedq.CustomerName,
                     DocumentId = _GoodsReceivedq.GoodsReceivedId,
-                });
+                    Estiba = item.ControlPalletsId,
+                    
+                };   
+                _context.Kardex.Add(kardex);
 
+                await _context.SaveChangesAsync();
 
-
-                return Ok();
+                return kardex;
             }
             catch (Exception)
             {

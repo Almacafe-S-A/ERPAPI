@@ -406,7 +406,7 @@ namespace ERPAPI.Controllers
                                ))  //.Include(i => i.SubProductId)
                                                          .GroupBy(g => new {
                                                              g.SubProducId,
-                                                             g.ControlEstibaId,
+                                                             g.Estiba,
                                                              g.WareHouseId,
                                                              g.UnitOfMeasureId,
                                                              g.SubProductName,
@@ -429,7 +429,7 @@ namespace ERPAPI.Controllers
                                     1: k.Sum(s => (decimal)s.Total)/ Convert.ToInt32(k.Sum(s => s.TotalBags)),
                                    InventarioFisicoCantidad = 0,
                                    WarehouseName = k.Key.WareHouseName,
-                                   Estiba = k.Key.ControlEstibaId.ToString(),
+                                   Estiba = k.Key.Estiba.ToString(),
                                    //Product = k.Key.
 
                                }).ToList();
