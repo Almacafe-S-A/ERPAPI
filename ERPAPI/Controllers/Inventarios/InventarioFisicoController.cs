@@ -95,10 +95,14 @@ namespace ERPAPI.Controllers
             List<InventarioFisico> Items = new List<InventarioFisico>();
             try
             {
-                Items = await _context.InventarioFisico.Where(q => q.CustomerId == CustomerId)
+                InventarioFisico inventario = await _context.InventarioFisico.Where(q => q.CustomerId == CustomerId)
                     .OrderByDescending(d => d.Id)
-                    .Take(3)
-                    .ToListAsync();
+
+                    .Where(q => q.EstadoName == "Aprobado")
+                    .LastOrDefaultAsync();
+                if (inventario != null)
+                Items.Add(inventario);
+                    
             }
             catch (Exception ex)
             {
