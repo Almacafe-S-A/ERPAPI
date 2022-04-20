@@ -196,6 +196,41 @@ namespace ERPAPI.Controllers
 
         }
 
+        private List<CertificadoLine> ObtenerDetalleCertificarInvetario(List<InventarioBodegaHabilitada> inventarioFisicoLines)
+        {           
+            List<CertificadoLine> detalleaCertificar = new List<CertificadoLine>();
+            detalleaCertificar = (from lineasrecibo in inventarioFisicoLines
+                                  select new CertificadoLine()
+                                  {
+                                      CertificadoLineId = 0,
+                                      UnitMeasurName = lineasrecibo.UnitOfMeasureName,
+                                      UnitMeasureId = (long)lineasrecibo.UnitOfMeasureId,
+                                      Quantity = lineasrecibo.SaldoPendienteCertificar == 0 || lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
+                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100)) :
+                                           (decimal)lineasrecibo.SaldoPendienteCertificar,
+                                      SubProductId = (long)lineasrecibo.ProductoId,
+                                      SubProductName = lineasrecibo.ProductoNombre,
+                                      ReciboId = (int)lineasrecibo.Id,
+                                      Price = 1
+                                      ,
+                                      WarehouseId = (int)lineasrecibo.WarehouseId
+                                      ,
+                                      WarehouseName = lineasrecibo.WarehouseName
+                                      ,
+                                      Amount = (decimal)lineasrecibo.Cantidad * 1
+                                      ,
+                                      CantidadDisponible = lineasrecibo.SaldoPendienteCertificar == 0 || lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
+                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100)) :
+                                           (decimal)lineasrecibo.SaldoPendienteCertificar,
+                                      ValorUnitarioDerechos = 0
+                                      ,
+                                      DerechosFiscales = 0,
+                                  }).ToList();
+
+            return detalleaCertificar;
+
+        }
+
 
 
 
@@ -232,7 +267,7 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
-                    //recibospendientes.AddRange(ObtenerDetalleCertificarLiquidado(detallerecibos));
+                    recibospendientes.AddRange(ObtenerDetalleCertificarInvetario(inventarioBodegas));
                 }
                 recibospendientes = recibospendientes.OrderBy(q => q.SubProductId).OrderBy(q => q.UnitMeasureId).ToList();
 

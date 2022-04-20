@@ -52,6 +52,11 @@ namespace ERPAPI.Models
 
         public decimal? ValorPergamino { get; set; }
 
+
+        public decimal SaldoCertificado { get; set; }
+
+        public decimal SaldoPendienteCertificar { get; set; }
+
         public string Observacion { get; set; }
     }
 }
