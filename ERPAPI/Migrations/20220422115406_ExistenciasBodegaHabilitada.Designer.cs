@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220422115406_ExistenciasBodegaHabilitada")]
+    partial class ExistenciasBodegaHabilitada
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4989,9 +4991,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("IngresandoHoy");
 
-                    b.Property<int>("InventarioFisicoId");
+                    b.Property<int>("InventarioBodegaHabilidaId");
 
-                    b.Property<bool>("Max");
+                    b.Property<int?>("InventarioBodegaHabilitadaId");
 
                     b.Property<decimal>("RetencionesCafeInferiores");
 
@@ -5005,7 +5007,7 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InventarioFisicoId");
+                    b.HasIndex("InventarioBodegaHabilitadaId");
 
                     b.HasIndex("SubProductId");
 
@@ -12199,10 +12201,9 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.ExistenciaBodegaHabilitada", b =>
                 {
-                    b.HasOne("ERPAPI.Models.InventarioFisico", "InventarioFisico")
+                    b.HasOne("ERPAPI.Models.InventarioBodegaHabilitada", "InventarioBodegaHabilitada")
                         .WithMany()
-                        .HasForeignKey("InventarioFisicoId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("InventarioBodegaHabilitadaId");
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()

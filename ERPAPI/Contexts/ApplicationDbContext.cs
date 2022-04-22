@@ -84,7 +84,7 @@ namespace ERP.Contexts
 
         public DbSet<InventarioBodegaHabilitada> InventarioBodegaHabilitada { get; set; }
 
-        public DbSet<DisponibleBodegaHabilitada> DisponibleBodegaHabilitadas { get; set; }
+        public DbSet<ExistenciaBodegaHabilitada> ExistenciaBodegaHabilitadas { get; set; }
 
 
         #endregion
