@@ -196,7 +196,7 @@ namespace ERPAPI.Controllers
                                 SubProductId = item.SubProductId,
                                 SubProductName = item.SubProductName,
                                 Quantity = item.Quantity,
-                                UnitOfMeasureId = item.UnitOfMeasureId,
+                                UnitOfMeasureId = (int)item.UnitOfMeasureId,
                                 UnitOfMeasureName = item.UnitOfMeasureName,
                                 Warehouseid = (int)item.WareHouseId,
                                 WarehouseName = item.WareHouseName,

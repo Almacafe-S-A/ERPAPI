@@ -243,11 +243,21 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<BoletaDeSalida>> Insert([FromBody]BoletaDeSalida _BoletaDeSalida)
         {
-            BoletaDeSalida _BoletaDeSalidaq = new BoletaDeSalida();
             try
             {
-                _BoletaDeSalidaq = _BoletaDeSalida;
-                _context.BoletaDeSalida.Add(_BoletaDeSalidaq);
+
+                foreach (var item in _BoletaDeSalida.BoletaDeSalidaLines) {
+                    item.WarehouseName = item.Warehouse.WarehouseName;
+                    item.Warehouseid = item.Warehouse.WarehouseId;
+                    item.Warehouse = null;
+                    item.UnitOfMeasureId = item.UnitOfMeasure.UnitOfMeasureId;
+                    item.UnitOfMeasureName = item.UnitOfMeasure.UnitOfMeasureName;
+                    item.UnitOfMeasure = null;
+                    item.SubProductId = item.SubProduct.SubproductId;
+                    item.SubProductName = item.SubProduct.ProductName;
+                    item.SubProduct = null;
+                }
+                _context.BoletaDeSalida.Add(_BoletaDeSalida);
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
@@ -261,7 +271,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return Ok(_BoletaDeSalidaq);
+            return Ok(_BoletaDeSalida);
         }
 
         /// <summary>
