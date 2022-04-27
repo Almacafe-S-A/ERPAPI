@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220422115647_fkInventarioFisicoExistencias")]
+    partial class fkInventarioFisicoExistencias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -728,7 +730,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Quantity");
 
-                    b.Property<long?>("SubProductId");
+                    b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
 
@@ -765,7 +767,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("SubProductName");
 
-                    b.Property<int?>("UnitOfMeasureId");
+                    b.Property<long?>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
 
@@ -776,10 +778,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("BoletaSalidaLineId");
 
                     b.HasIndex("BoletaSalidaId");
-
-                    b.HasIndex("SubProductId");
-
-                    b.HasIndex("UnitOfMeasureId");
 
                     b.HasIndex("Warehouseid");
 
@@ -11558,15 +11556,6 @@ namespace ERPAPI.Migrations
                         .WithMany("BoletaDeSalidaLines")
                         .HasForeignKey("BoletaSalidaId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
 
                     b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")
                         .WithMany()

@@ -245,6 +245,47 @@ namespace ERPAPI.Controllers
         /// <param name="_InventarioFisico"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
+        public async Task<ActionResult<InventarioFisico>> Aprobar([FromBody] InventarioFisico _InventarioFisico)
+        {
+
+            InventarioFisico _InventarioFisicoq = new InventarioFisico();
+
+            try
+            {
+                _InventarioFisicoq = await _context.InventarioFisico
+                    .Include(i => i.InventarioBodegaHabilitadaLines)
+                    .Where(q => q.Id == _InventarioFisico.Id)
+                    .FirstOrDefaultAsync();
+                _InventarioFisicoq.EstadoId = 1;
+                _InventarioFisicoq.EstadoName = "Aprobado";
+                //foreach (var item in _InventarioFisicoq.InventarioBodegaHabilitadaLines)
+                //{
+
+                //}
+                
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                
+                //_context.InventarioFisico.Update(_InventarioFisicoq);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_InventarioFisicoq));
+        }
+
+
+
+        /// <summary>
+        /// Actualiza la InventarioFisico
+        /// </summary>
+        /// <param name="_InventarioFisico"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
         public async Task<ActionResult<InventarioFisico>> Update([FromBody] InventarioFisico _InventarioFisico)
         {
             

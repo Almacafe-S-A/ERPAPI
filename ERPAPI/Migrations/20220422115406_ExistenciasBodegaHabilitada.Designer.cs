@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220422115406_ExistenciasBodegaHabilitada")]
+    partial class ExistenciasBodegaHabilitada
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -728,7 +730,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Quantity");
 
-                    b.Property<long?>("SubProductId");
+                    b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
 
@@ -765,7 +767,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("SubProductName");
 
-                    b.Property<int?>("UnitOfMeasureId");
+                    b.Property<long?>("UnitOfMeasureId");
 
                     b.Property<string>("UnitOfMeasureName");
 
@@ -776,10 +778,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("BoletaSalidaLineId");
 
                     b.HasIndex("BoletaSalidaId");
-
-                    b.HasIndex("SubProductId");
-
-                    b.HasIndex("UnitOfMeasureId");
 
                     b.HasIndex("Warehouseid");
 
@@ -4993,9 +4991,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("IngresandoHoy");
 
-                    b.Property<int>("InventarioFisicoId");
+                    b.Property<int>("InventarioBodegaHabilidaId");
 
-                    b.Property<bool>("Max");
+                    b.Property<int?>("InventarioBodegaHabilitadaId");
 
                     b.Property<decimal>("RetencionesCafeInferiores");
 
@@ -5009,7 +5007,7 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InventarioFisicoId");
+                    b.HasIndex("InventarioBodegaHabilitadaId");
 
                     b.HasIndex("SubProductId");
 
@@ -11559,15 +11557,6 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("BoletaSalidaId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
-                        .WithMany()
-                        .HasForeignKey("SubProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
-                        .WithMany()
-                        .HasForeignKey("UnitOfMeasureId");
-
                     b.HasOne("ERPAPI.Models.Warehouse", "Warehouse")
                         .WithMany()
                         .HasForeignKey("Warehouseid");
@@ -12212,10 +12201,9 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.ExistenciaBodegaHabilitada", b =>
                 {
-                    b.HasOne("ERPAPI.Models.InventarioFisico", "InventarioFisico")
+                    b.HasOne("ERPAPI.Models.InventarioBodegaHabilitada", "InventarioBodegaHabilitada")
                         .WithMany()
-                        .HasForeignKey("InventarioFisicoId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("InventarioBodegaHabilitadaId");
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()
