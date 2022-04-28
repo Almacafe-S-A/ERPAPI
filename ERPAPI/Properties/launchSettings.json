@@ -3,7 +3,6 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      //"applicationUrl": "http://localhost:8022",
       "applicationUrl": "http://localhost:8022",
       "sslPort": 0
     }
@@ -16,7 +15,8 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "ancmHostingModel": "InProcess"
     },
     "ERPAPI": {
       "commandName": "Project",
