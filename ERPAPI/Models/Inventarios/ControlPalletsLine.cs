@@ -21,6 +21,8 @@ namespace ERPAPI.Models
         public int Ancho { get; set; }
         public int Otros { get; set; }
         public double Totallinea { get; set; }
+
+        public int Estiba { get; set; } 
         [Display(Name = "Cantidad de Sacos Yute")]
         public int cantidadYute { get; set; }
         [Display(Name = "Cantidad de Sacos de Polietileno")]
