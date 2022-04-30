@@ -158,8 +158,6 @@ namespace ERPAPI.Controllers
                   _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
             }
-        
-
         }
 
 

@@ -8,6 +8,7 @@ using AutoMapper;
 using ERP.Contexts;
 using ERPAPI.Contexts;
 using ERPAPI.Models;
+using ERPAPI.Models.Seguridad;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -350,6 +351,71 @@ namespace ERPAPI.Controllers
             {
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
+        }
+
+
+
+        /// <summary>
+        ///    Obtiene el reporte filtrado de la vista de base de datos
+        /// </summary>
+        /// <param name="UserId">Nulable id del usuario </param>
+        /// <param name="RoleId">Nulabe id del role </param>
+        /// <returns></returns>
+        //[HttpGet("[action]/{UserId}/{RoleId}")]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetReportePermisos(Guid? UserId, Guid? RoleId)
+        {
+            List<ReportePermisos> lst = new List<ReportePermisos>();
+            try
+            {
+                string sql = @"SELECT * FROM [dbo].ERP_V_REPORTE_PERMISOS ";
+                if (UserId != null)
+                    sql = $"{sql} WHERE UserId = '{Convert.ToString(UserId)}' ";
+
+                if (RoleId != null)
+                    sql = $"{sql} AND RoleId = '{Convert.ToString(RoleId)}' ";
+
+                sql = $"{sql} ORDER BY RoleName ";
+
+                using (var dr = await _context.Database.ExecuteSqlQueryAsync(sql))
+                {
+                    var rd = dr.DbDataReader;
+                    while (rd.Read())
+                    {
+                        var _reportePermisos = new ReportePermisos();
+                        _reportePermisos.RoleId = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("RoleId")) ? "" : rd["RoleId"]);
+                        _reportePermisos.RoleName = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("RoleName")) ? "" : rd["RoleName"]);
+                        _reportePermisos.RoleNormalizedName = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("NormalizedName")) ? "" : rd["NormalizedName"]);
+                        _reportePermisos.IdEstado = Convert.ToInt32(rd.IsDBNull(rd.GetOrdinal("IdEstado")) ?0 : rd["IdEstado"]);
+                        _reportePermisos.UserId = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("UserId")) ? "" : rd["UserId"]);
+                        _reportePermisos.UserName = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("UserName")) ? "" : rd["UserName"]);
+
+                       // _reportePermisos.EstadoRolUser = Convert.ToInt32(rd.IsDBNull(rd.GetOrdinal("EstadoRolUser")) ? -1 : rd["EstadoRolUser"]);
+
+                        if(!rd.IsDBNull(rd.GetOrdinal("EstadoRolUser")))
+                            _reportePermisos.EstadoRolUser = Convert.ToInt32(rd["EstadoRolUser"]);
+
+                        if (!rd.IsDBNull(rd.GetOrdinal("FechaCreacionRolUser")))
+                            _reportePermisos.FechaCreacionRolUser = Convert.ToDateTime(rd["FechaCreacionRolUser"]);
+                       
+                        _reportePermisos.UsuarioCreacionUser = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("UsuarioCreacionUser")) ? "" : rd["UsuarioCreacionUser"]);
+
+                        if (!rd.IsDBNull(rd.GetOrdinal("FechaModificacionUser")))
+                            _reportePermisos.FechaModificacionUser = Convert.ToDateTime(rd["FechaModificacionUser"]);
+
+                        _reportePermisos.UsuarioModificoUser = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("UsuarioModificoUser")) ? "" : rd["UsuarioModificoUser"]);
+                        _reportePermisos.ClaimType = Convert.ToString(rd.IsDBNull(rd.GetOrdinal("ClaimType")) ? "" : rd["ClaimType"]);
+
+                        lst.Add(_reportePermisos);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(lst));
         }
 
     }
