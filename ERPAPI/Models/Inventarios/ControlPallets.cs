@@ -120,7 +120,21 @@ namespace ERPAPI.Models
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
 
         public List<ControlPalletsLine> _ControlPalletsLine { get; set; } = new List<ControlPalletsLine>();
-       // public List<ControlPalletsLine> _ControlPalletsLine = new List<ControlPalletsLine>();
+
+
+        #region Not Mapped
+        [NotMapped]
+        public double taracamion { get; set; }
+        [NotMapped]
+        public double pesobruto { get; set; }
+        [NotMapped]
+        public double pesoneto { get; set; }
+        [NotMapped]
+        public double pesoneto2 { get; set; }
+        [NotMapped]
+        public Boleto_Ent boleto_Ent { get; set; }
+        #endregion
+        // public List<ControlPalletsLine> _ControlPalletsLine = new List<ControlPalletsLine>();
 
     }
 }
