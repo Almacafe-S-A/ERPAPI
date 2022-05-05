@@ -150,9 +150,9 @@ namespace ERPAPI.Controllers
                 producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : producto.UnitOfMeasureName;
                 producto.UnitOfMeasureId = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureId : 1;
                 producto.UnitOfMeasure = null;
-                //producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
-                //producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : "";
-                //producto.Warehouse = null;
+                producto.WarehouseId = producto.Warehouse != null ? (int)producto.Warehouse.WarehouseId : 1;
+                producto.WarehouseName = producto.Warehouse != null ? producto.Warehouse.WarehouseName : producto.WarehouseName;
+                producto.Warehouse = null;
             }
             foreach (var producto in inventario.InventarioBodegaHabilitadaLines)
             {
