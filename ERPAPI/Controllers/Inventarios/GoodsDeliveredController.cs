@@ -105,11 +105,11 @@ namespace ERPAPI.Controllers
             List<GoodsDelivered> Items = new List<GoodsDelivered>();
             try
             {
-                List<Int64> listayaprocesada = _context.BoletaDeSalida
-                                              .Where(q => q.GoodsDeliveredId > 0)
-                                              .Select(q => q.GoodsDeliveredId).ToList();
+                List<int> listayaprocesada = _context.BoletaDeSalida
+                                              .Where(q => q.DocumentoId > 0 && q.Cargadoname == "Cargado")
+                                              .Select(q => q.DocumentoId).ToList();
 
-                Items = await _context.GoodsDelivered.Where(q => !listayaprocesada.Contains(q.GoodsDeliveredId)).ToListAsync();
+                Items = await _context.GoodsDelivered.Where(q => !listayaprocesada.Contains((int)q.GoodsDeliveredId)).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -178,8 +178,8 @@ namespace ERPAPI.Controllers
                             Quantity = _GoodsDelivered._GoodsDeliveredLine.Select(q => q.QuantitySacos).Sum(),
                             SubProductId = _GoodsDelivered.SubProductId,
                             SubProductName = _GoodsDelivered.SubProductName,
-                            GoodsDeliveryAuthorizationId = _GoodsDelivered.GoodsDeliveryAuthorizationId,
-                            GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId,
+                           //oodsDeliveryAuthorizationId = _GoodsDelivered.GoodsDeliveryAuthorizationId,
+                            DocumentoId = (int)_GoodsDeliveredq.GoodsDeliveredId,
                             CargadoId = 13,
                             Cargadoname = "Cargado",
                             UsuarioCreacion = _GoodsDelivered.UsuarioCreacion,
@@ -269,7 +269,7 @@ namespace ERPAPI.Controllers
 
                       
 
-                        _boletadesalida.GoodsDeliveredId = _GoodsDeliveredq.GoodsDeliveredId;
+                        _boletadesalida.DocumentoId = (int)_GoodsDeliveredq.GoodsDeliveredId;
 
                         await _context.SaveChangesAsync();
 

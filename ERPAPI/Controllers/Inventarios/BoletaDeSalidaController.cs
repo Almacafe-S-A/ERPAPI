@@ -220,6 +220,7 @@ namespace ERPAPI.Controllers
                 await _context.SaveChangesAsync();
 
                 boleta.GuiaRemisionId = guiaRemision.Id;
+                boleta.GuiRemisionNo = guiaRemision.NumeroDocumento;
                 numeracionSAR.Correlativo++;
                 await _context.SaveChangesAsync();
 
