@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220507144420_AddedFieldsBOletadeSAlida")]
+    partial class AddedFieldsBOletadeSAlida
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -712,13 +714,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("DocumentDate");
 
-                    b.Property<int>("DocumentoId");
-
-                    b.Property<string>("DocumentoTipo");
-
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
+
+                    b.Property<long>("GoodsDeliveredId");
+
+                    b.Property<long>("GoodsDeliveryAuthorizationId");
+
+                    b.Property<long>("GoodsReceivedId");
 
                     b.Property<string>("GuiRemisionNo");
 
@@ -735,8 +739,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("PesoBruto");
 
                     b.Property<string>("Placa");
-
-                    b.Property<string>("ProductName");
 
                     b.Property<long?>("Producto");
 

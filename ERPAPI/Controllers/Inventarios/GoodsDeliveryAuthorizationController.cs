@@ -206,18 +206,18 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
+        
         [HttpGet("[action]")]
         public async Task<IActionResult> GetGoodsDeliveryAuthorizationNoSelectedBoletaSalida()
         {
             List<GoodsDeliveryAuthorization> Items = new List<GoodsDeliveryAuthorization>();
             try
             {
-                List<Int64> listayaprocesada = _context.BoletaDeSalida
-                                              .Where(q => q.GoodsDeliveryAuthorizationId > 0)
-                                              .Select(q => q.GoodsDeliveryAuthorizationId).ToList();
+                List<int> listayaprocesada = _context.BoletaDeSalida
+                                              //.Where(q => q.GoodsDeliveryAuthorizationId > 0)
+                                              .Select(q => q.DocumentoId).ToList();
 
-                Items = await _context.GoodsDeliveryAuthorization.Where(q => !listayaprocesada.Contains(q.GoodsDeliveryAuthorizationId)).ToListAsync();
+                Items = await _context.GoodsDeliveryAuthorization.Where(q => !listayaprocesada.Contains((int)q.GoodsDeliveryAuthorizationId)).ToListAsync();
             }
             catch (Exception ex)
             {
