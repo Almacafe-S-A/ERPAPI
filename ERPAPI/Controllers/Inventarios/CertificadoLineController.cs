@@ -167,7 +167,7 @@ namespace ERPAPI.Controllers
                                                   CertificadoLineId = 0,
                                                   UnitMeasurName = detalle.UnitOfMeasureName,
                                                   UnitMeasureId = (long)detalle.UnitOfMeasureId,
-                                                  Quantity = (decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),
+                                                  Quantity = (decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)) - ((decimal)detalle.ValorPergamino * (7 / 100)),
                                                   SubProductId = (long)detalle.ProductoId,
                                                   SubProductName = detalle.ProductoNombre,
                                                   ReciboId = (int)detalle.InventarioFisicoId,
