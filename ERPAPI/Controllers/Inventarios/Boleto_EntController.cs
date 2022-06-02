@@ -47,6 +47,9 @@ namespace ERPAPI.Controllers
                 //Items = await _context.Boleto_Ent.ToListAsync();
                 var query = (from c in _context.Boleto_Ent
                              join d in _context.Boleto_Sal on c.clave_e equals d.clave_e into ba
+                             join p in _context.SubProduct on c.clave_p equals p.ProductCode 
+                             join cl in _context.Customer on c.clave_C equals cl.CustomerRefNumber
+                             //join u in _context.UnitOfMeasure on c.unidad_e equals u.
                              from e in ba.DefaultIfEmpty()
                              select new Boleto_Ent
                              {
@@ -67,7 +70,10 @@ namespace ERPAPI.Controllers
                                  turno_oe = c.turno_oe,
                                  t_entrada = c.t_entrada,
                                  unidad_e = c.unidad_e,
-                                 Boleto_Sal = e
+                                 Boleto_Sal = e,
+                                 Cliente = cl.CustomerName,
+                                 NombreProducto = p.ProductName,
+                                 
                                  //  Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
 
                              }).AsQueryable();
@@ -441,6 +447,26 @@ namespace ERPAPI.Controllers
 
                         _Boleto_Entq = _Boleto_Ent;
                         _context.Boleto_Ent.Add(_Boleto_Entq);
+                        long maxid = _context.Boleto_Ent.Max(m => m.clave_e);
+                        _Boleto_Ent.clave_e = maxid + 1;
+
+                        SubProduct  subproduct = await _context.SubProduct.Where(q => q.SubproductId == _Boleto_Ent.SubProductId).FirstOrDefaultAsync();
+                        Customer customer = await _context.Customer.Where(c => c.CustomerId == _Boleto_Ent.CustomerId).FirstOrDefaultAsync();
+
+                        _Boleto_Ent.hora_e = _Boleto_Ent.fecha_e.ToString("hh:mm:ss");
+                        _Boleto_Ent.unidad_e = "lb E.";
+                        _Boleto_Ent.bascula_e = "1";
+                        _Boleto_Ent.t_entrada = 1;
+                        _Boleto_Ent.clave_C = customer.CustomerRefNumber;
+                        _Boleto_Ent.clave_p = subproduct.ProductCode;
+                        _Boleto_Ent.clave_u = User.Identity.Name;
+                        _Boleto_Ent.nombre_oe = User.Identity.Name;
+                        _Boleto_Ent.turno_oe = "MATUTINO";
+
+
+                        
+
+
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
