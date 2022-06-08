@@ -31,7 +31,7 @@ namespace ERPAPI.Models
 
         public string ProductoNombre { get; set; }
 
-
+        [Column(TypeName = "Money")]
         public decimal Cantidad{ get; set; }
 
         public string Estiba { get; set; }
@@ -43,13 +43,13 @@ namespace ERPAPI.Models
 
         public string UnitOfMeasureName { get; set; }
 
-
+        [Column(TypeName = "Money")]
         public decimal Factor { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal Valor { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? FactorPergamino { get; set; }
-
+        [Column(TypeName = "Money")]
         public decimal? ValorPergamino { get; set; }
 
 

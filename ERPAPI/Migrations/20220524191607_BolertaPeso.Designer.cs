@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220524191607_BolertaPeso")]
+    partial class BolertaPeso
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -816,23 +818,13 @@ namespace ERPAPI.Migrations
                 {
                     b.Property<long>("clave_e");
 
-                    b.Property<string>("Barco");
-
                     b.Property<long?>("CustomerId");
 
                     b.Property<string>("CustomerName");
 
-                    b.Property<string>("Destino");
-
-                    b.Property<string>("MarcaVehiculo");
-
-                    b.Property<string>("Orden");
-
                     b.Property<decimal>("PesoKG");
 
                     b.Property<decimal>("PesoLBS");
-
-                    b.Property<decimal>("PesoPuerto");
 
                     b.Property<decimal>("PesoQQ");
 
@@ -841,8 +833,6 @@ namespace ERPAPI.Migrations
                     b.Property<long?>("SubProductId");
 
                     b.Property<string>("SubProductName");
-
-                    b.Property<string>("Tranportista");
 
                     b.Property<string>("bascula_e");
 
