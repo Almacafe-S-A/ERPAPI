@@ -416,6 +416,15 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.Boleto_Ent.Include(q=>q.Boleto_Sal).Where(q => q.clave_e == Boleto_EntId).FirstOrDefaultAsync();
+                if (Items.CustomerId == null && Items!=null && Items.clave_e!=0)
+                {
+                    Items.CustomerId = _context.Customer.Where(q => q.CustomerRefNumber == Items.clave_C).FirstOrDefault().CustomerId;
+                    Items.SubProductId = _context.SubProduct.Where(q => q.ProductCode == Items.clave_p).FirstOrDefault().SubproductId;
+                }
+                if (Items.clave_e == 0)
+                {
+                    Items = null;
+                }
             }
             catch (Exception ex)
             {
@@ -527,12 +536,22 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _Boleto_Entq = await (from c in _context.Boleto_Ent
-                                 .Where(q => q.clave_e == _Boleto_Ent.clave_e)
-                                              select c
-                                ).FirstOrDefaultAsync();
+                        Boleto_Ent boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _Boleto_Ent.clave_e).FirstOrDefault();
+                        boleto_Ent.observa_e = _Boleto_Entq.observa_e;
+                        boleto_Ent.completo = true;
 
-                        _context.Entry(_Boleto_Entq).CurrentValues.SetValues((_Boleto_Ent));
+
+                        Boleto_Sal boleto_Sal = new Boleto_Sal()
+                        {
+                            clave_e = _Boleto_Entq.clave_e,
+                            completo = true,
+                            fecha_s = DateTime.Now,
+                            hora_s = DateTime.Now.ToString("HH:mm:ss"),
+                            peso_n = _Boleto_Ent.Boleto_Sal.peso_n,
+                            
+
+                        };
+
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
