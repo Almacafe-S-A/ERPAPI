@@ -541,6 +541,7 @@ namespace ERPAPI.Controllers
                         boleto_Ent.completo = true;
 
 
+
                         Boleto_Sal boleto_Sal = new Boleto_Sal()
                         {
                             clave_e = _Boleto_Entq.clave_e,
@@ -548,6 +549,10 @@ namespace ERPAPI.Controllers
                             fecha_s = DateTime.Now,
                             hora_s = DateTime.Now.ToString("HH:mm:ss"),
                             peso_n = _Boleto_Ent.Boleto_Sal.peso_n,
+                            turno_s = "MATUTINO",
+                            s_manual = true,
+                            bascula_s = "MA"
+                           
                             
 
                         };
