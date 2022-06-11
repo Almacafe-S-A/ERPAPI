@@ -47,8 +47,8 @@ namespace ERPAPI.Controllers
                 //Items = await _context.Boleto_Ent.ToListAsync();
                 var query = (from c in _context.Boleto_Ent
                              join d in _context.Boleto_Sal on c.clave_e equals d.clave_e into ba
-                             join p in _context.SubProduct on c.clave_p equals p.ProductCode 
-                             join cl in _context.Customer on c.clave_C equals cl.CustomerRefNumber
+                             join p in _context.SubProduct on c.SubProductId equals p.SubproductId 
+                             join cl in _context.Customer on c.CustomerId equals cl.CustomerId
                              //join u in _context.UnitOfMeasure on c.unidad_e equals u.
                              from e in ba.DefaultIfEmpty()
                              select new Boleto_Ent
@@ -124,7 +124,7 @@ namespace ERPAPI.Controllers
                                  join d in _context.Boleto_Sal on c.clave_e equals d.clave_e                                 
                                  into ba
                                  from e in ba
-                                 join p in _context.SubProduct on c.clave_p equals p.ProductCode
+                                 join p in _context.SubProduct on c.SubProductId equals p.SubproductId
                                  select new Boleto_Ent
                                  {
                                      clave_e = c.clave_e,
@@ -147,32 +147,7 @@ namespace ERPAPI.Controllers
                                      Boleto_Sal = e,
                                      NombreProducto = p.ProductName
                                  }).AsQueryable();
-
-                //if (esIngreso)
-                //{
-                //    Items = await query
-                //    .OrderByDescending(q => q.clave_e)
-                //         .Include(q => q.Boleto_Sal)
-                //         //.Where(q => q.peso_e > q.Boleto_Sal.peso_s)
-                //                     .ToListAsync();
-                //    Items = Items.Where(q => q.Boleto_Sal != null).ToList();
-                //    Items = Items.Where(q => q.peso_e > q.Boleto_Sal.peso_s).ToList();
-                //}
-                //else
-                //{
-                //    Items = await query
-                //    .OrderByDescending(q => q.clave_e)
-                //    //     .Include(q => q.Boleto_Sal)
-                //    //     .Where(q => q.peso_e < q.Boleto_Sal.peso_s)
-                //                     .ToListAsync();
-                //    Items = Items.Where(q => q.Boleto_Sal != null).ToList();  //////Elimina los posibles errores por boletas de entrada que no tengan salidas
-                //    Items = Items.Where(q => q.peso_e < q.Boleto_Sal.peso_s).ToList(); 
-                //}
                 Items =  query.ToList();
-                         //.OrderByDescending(q => q.clave_e)
-                         //.Include(q => q.Boleto_Sal)
-                                     //.ToListAsync();
-
                 Items = Items
                     .Where(q => !_context.ControlPallets.Select(c => c.WeightBallot).Contains(q.clave_e))
                     .OrderByDescending(q => q.clave_e)
@@ -236,15 +211,6 @@ namespace ERPAPI.Controllers
                                       .Take(cantidadDeRegistros)
                                      .ToListAsync();
 
-                 
-                         
-
-                //foreach (var item in Items)
-                //{
-                //   item.Boleto_Sal =  await _context.Boleto_Sal.Where(q => q.clave_e == item.clave_e).FirstOrDefaultAsync();
-                //}
-                
-
                 Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
                 Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
 
@@ -294,16 +260,6 @@ namespace ERPAPI.Controllers
             {
 
                Total = await _context.Boleto_Ent.CountAsync();
-
-                //Items = await _context.Boleto_Ent.ToListAsync();
-                //_Boleto_Ent = await _context.Boleto_Ent.FromSql("select  count(clave_e) clave_e  from Boleto_Ent ").FirstOrDefaultAsync();
-                //_Boleto_Ent = await _context.Query<Boleto_Ent>()
-                // .FromSql($"SELECT count(clave_e) as clave_e FROM dbo.Boleto_Ent ")
-                //  .AsNoTracking()
-                //  .FirstOrDefaultAsync();
-
-               // Total = _Boleto_Ent.clave_e;
-                //Items = await _context.Boleto_Ent.ToListAsync();
             }
             catch (Exception ex)
             {
@@ -413,6 +369,10 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetBoleto_EntById(Int64 Boleto_EntId)
         {
             Boleto_Ent Items = new Boleto_Ent();
+            if (Boleto_EntId == 0)
+            {
+                return NotFound();
+            }
             try
             {
                 Items = await _context.Boleto_Ent.Include(q=>q.Boleto_Sal).Where(q => q.clave_e == Boleto_EntId).FirstOrDefaultAsync();
@@ -446,6 +406,7 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<Boleto_Ent>> Insert([FromBody]Boleto_Ent _Boleto_Ent)
         {
+            _Boleto_Ent.Boleto_Sal = null;
             Boleto_Ent _Boleto_Entq = new Boleto_Ent();
             try
             {
@@ -468,6 +429,7 @@ namespace ERPAPI.Controllers
                         _Boleto_Ent.t_entrada = 1;
                         _Boleto_Ent.clave_C = customer.CustomerRefNumber;
                         _Boleto_Ent.clave_p = subproduct.ProductCode;
+                        _Boleto_Ent.SubProductName = subproduct.ProductName;
                         _Boleto_Ent.clave_u = User.Identity.Name;
                         _Boleto_Ent.nombre_oe = User.Identity.Name;
                         _Boleto_Ent.turno_oe = "MATUTINO";
@@ -537,25 +499,33 @@ namespace ERPAPI.Controllers
                     try
                     {
                         Boleto_Ent boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _Boleto_Ent.clave_e).FirstOrDefault();
+                        boleto_Ent.Boleto_Sal = _context.Boleto_Sal.Where(q => q.clave_e == _Boleto_Ent.clave_e).FirstOrDefault();
                         boleto_Ent.observa_e = _Boleto_Entq.observa_e;
                         boleto_Ent.completo = true;
-
-
-
-                        Boleto_Sal boleto_Sal = new Boleto_Sal()
+                        boleto_Ent.PesoKG = _Boleto_Entq.PesoKG;
+                        boleto_Ent.PesoLBS = _Boleto_Entq.PesoLBS;
+                        boleto_Ent.PesoQQ = _Boleto_Entq.PesoQQ;
+                        if (boleto_Ent.Boleto_Sal ==null)
                         {
-                            clave_e = _Boleto_Entq.clave_e,
-                            completo = true,
-                            fecha_s = DateTime.Now,
-                            hora_s = DateTime.Now.ToString("HH:mm:ss"),
-                            peso_n = _Boleto_Ent.Boleto_Sal.peso_n,
-                            turno_s = "MATUTINO",
-                            s_manual = true,
-                            bascula_s = "MA"
-                           
-                            
+                            Boleto_Sal boleto_Sal = new Boleto_Sal()
+                            {
+                                clave_e = _Boleto_Entq.clave_e,
+                                completo = true,
+                                fecha_s = DateTime.Now,
+                                hora_s = DateTime.Now.ToString("HH:mm:ss"),
+                                peso_n = _Boleto_Ent.Boleto_Sal.peso_n,
+                                peso_s = _Boleto_Ent.Boleto_Sal.peso_s,
+                                turno_s = "MATUTINO",
+                                s_manual = true,
+                                bascula_s = "MA"
 
-                        };
+
+
+                            };
+
+                            _context.Boleto_Sal.Add(boleto_Sal);
+
+                        }
 
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
