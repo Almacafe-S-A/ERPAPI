@@ -505,6 +505,7 @@ namespace ERPAPI.Controllers
                         boleto_Ent.PesoKG = _Boleto_Entq.PesoKG;
                         boleto_Ent.PesoLBS = _Boleto_Entq.PesoLBS;
                         boleto_Ent.PesoQQ = _Boleto_Entq.PesoQQ;
+                        boleto_Ent.PesoTM = _Boleto_Entq.PesoTM;
                         if (boleto_Ent.Boleto_Sal ==null)
                         {
                             Boleto_Sal boleto_Sal = new Boleto_Sal()
