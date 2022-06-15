@@ -36,6 +36,13 @@ namespace ERPAPI.Models
         public decimal PesoTM { get; set; }
         public decimal PesoQQ { get; set; }
 
+        public decimal PesoLBSI { get; set; }
+
+        public decimal PesoKGI { get; set; }
+
+        public decimal PesoTMI { get; set; }
+        public decimal PesoQQI { get; set; }
+
         public string Destino { get; set; }
 
         public string MarcaVehiculo { get; set; }
@@ -46,11 +53,9 @@ namespace ERPAPI.Models
 
         public string Tranportista { get; set; }
 
+        public string RTNTransportista { get; set; }
+
         public string Orden { get; set; }
-
-
-        [Display(Name = "Clave del operador")]
-        public string clave_o { get; set; }
         [Display(Name = "Clave del producto")]
         [NotMapped]
         public string NombreProducto { get; set; }
@@ -70,12 +75,12 @@ namespace ERPAPI.Models
         public string placas { get; set; }
         [Display(Name = "Nombre del conductor del vehiculo")]
         public string conductor { get; set; }
+
+        public string DNIConductor { get; set; }
         [Display(Name = "Valor del peso de entrada")]
         public Int32 peso_e { get; set; }
         [Display(Name = "Observaciones del proceso de captura")]
         public string observa_e { get; set; }
-        [Display(Name = "Nombre del operador de entrada")]
-        public string nombre_oe { get; set; }
         [Display(Name = "Turno del operador de entrada")]
         public string turno_oe { get; set; }
         [Display(Name = "Unidades de la pesada de entrada")]
@@ -86,6 +91,8 @@ namespace ERPAPI.Models
         public int t_entrada { get; set; }
         [Display(Name = "Clave del usuario")]
         public string clave_u { get; set; }
+
+        public bool CapturaAutomatica { get; set; }
 
         public virtual Boleto_Sal Boleto_Sal { get; set; }
     }

@@ -56,14 +56,12 @@ namespace ERPAPI.Controllers
                                  clave_e = c.clave_e,
                                  bascula_e = c.bascula_e,
                                  clave_C = c.clave_C,
-                                 clave_o = c.clave_o,
                                  clave_p = c.clave_p,
                                  clave_u = c.clave_u,
                                  fecha_e = c.fecha_e,
                                  completo = c.completo,
                                  hora_e = c.hora_e,
                                  conductor = c.conductor,
-                                 nombre_oe = c.nombre_oe,
                                  observa_e = c.observa_e,
                                  peso_e = c.peso_e,
                                  placas = c.placas,
@@ -130,14 +128,12 @@ namespace ERPAPI.Controllers
                                      clave_e = c.clave_e,
                                      bascula_e = c.bascula_e,
                                      clave_C = c.clave_C,
-                                     clave_o = c.clave_o,
                                      clave_p = c.clave_p,
                                      clave_u = c.clave_u,
                                      fecha_e = c.fecha_e,
                                      completo = c.completo,
                                      hora_e = c.hora_e,
                                      conductor = c.conductor,
-                                     nombre_oe = c.nombre_oe,
                                      observa_e = c.observa_e,
                                      peso_e = c.peso_e,
                                      placas = c.placas,
@@ -183,14 +179,12 @@ namespace ERPAPI.Controllers
                                  clave_e = c.clave_e,
                                  bascula_e = c.bascula_e,
                                  clave_C = c.clave_C,
-                                 clave_o = c.clave_o,
                                  clave_p = c.clave_p,
                                  clave_u = c.clave_u,
                                  fecha_e = c.fecha_e,
                                  completo = c.completo,
                                  hora_e = c.hora_e,
                                  conductor = c.conductor,
-                                 nombre_oe = c.nombre_oe,
                                  observa_e = c.observa_e,
                                  peso_e = c.peso_e,
                                  placas = c.placas,
@@ -431,7 +425,6 @@ namespace ERPAPI.Controllers
                         _Boleto_Ent.clave_p = subproduct.ProductCode;
                         _Boleto_Ent.SubProductName = subproduct.ProductName;
                         _Boleto_Ent.clave_u = User.Identity.Name;
-                        _Boleto_Ent.nombre_oe = User.Identity.Name;
                         _Boleto_Ent.turno_oe = "MATUTINO";
 
 
@@ -506,6 +499,7 @@ namespace ERPAPI.Controllers
                         boleto_Ent.PesoLBS = _Boleto_Entq.PesoLBS;
                         boleto_Ent.PesoQQ = _Boleto_Entq.PesoQQ;
                         boleto_Ent.PesoTM = _Boleto_Entq.PesoTM;
+
                         if (boleto_Ent.Boleto_Sal ==null)
                         {
                             Boleto_Sal boleto_Sal = new Boleto_Sal()
