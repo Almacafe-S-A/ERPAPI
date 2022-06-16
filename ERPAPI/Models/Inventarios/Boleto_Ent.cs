@@ -32,18 +32,21 @@ namespace ERPAPI.Models
         public decimal PesoLBS { get; set; }
 
         public decimal PesoKG { get; set; }
+        [Column(TypeName = "Money")]
 
         public decimal PesoTM { get; set; }
         public decimal PesoQQ { get; set; }
 
         public decimal PesoLBSI { get; set; }
-
         public decimal PesoKGI { get; set; }
+        [Column(TypeName = "Money")]
 
         public decimal PesoTMI { get; set; }
         public decimal PesoQQI { get; set; }
 
         public string Destino { get; set; }
+
+        public string PlacaContenedor { get; set; }
 
         public string MarcaVehiculo { get; set; }
 
