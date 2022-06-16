@@ -499,6 +499,10 @@ namespace ERPAPI.Controllers
                         boleto_Ent.PesoLBS = _Boleto_Entq.PesoLBS;
                         boleto_Ent.PesoQQ = _Boleto_Entq.PesoQQ;
                         boleto_Ent.PesoTM = _Boleto_Entq.PesoTM;
+                        boleto_Ent.PesoKGI = _Boleto_Entq.PesoKGI;
+                        boleto_Ent.PesoLBSI = _Boleto_Entq.PesoLBSI;
+                        boleto_Ent.PesoQQI = _Boleto_Entq.PesoQQI;
+                        boleto_Ent.PesoTMI = _Boleto_Entq.PesoTMI;
 
                         if (boleto_Ent.Boleto_Sal ==null)
                         {
