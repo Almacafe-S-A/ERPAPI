@@ -31,6 +31,8 @@ namespace ERPAPI.Models
 
         public bool? completo { get; set; }
 
+        public string UsuarioSegundaPesada { get; set; }
+
         public virtual Boleto_Ent Boleto_Ent { get; set; }
 
     }
