@@ -516,7 +516,9 @@ namespace ERPAPI.Controllers
                                 peso_s = _Boleto_Ent.Boleto_Sal.peso_s,
                                 turno_s = "MATUTINO",
                                 s_manual = true,
-                                bascula_s = "MA"
+                                bascula_s = "MA",
+                                UsuarioSegundaPesada = User.Identity.Name,
+                                
 
 
 
