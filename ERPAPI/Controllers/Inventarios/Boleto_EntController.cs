@@ -102,7 +102,7 @@ namespace ERPAPI.Controllers
             List<Boleto_Ent> Items = new List<Boleto_Ent>();
             Customer customer = _context.Customer.Where(q => q.CustomerId == customerId).FirstOrDefault();
             List<Boleto_Ent> boletas = new List<Boleto_Ent>();
-            esIngreso = true;
+            //esIngreso = true;
             if (customer == null || customer.CustomerRefNumber == null)
             {
                 return BadRequest("No se encontro Cliente");
@@ -110,11 +110,11 @@ namespace ERPAPI.Controllers
             try
             {
                     boletas = await _context.Boleto_Ent
-                    .Where(q => q.clave_C == customer.CustomerRefNumber 
+                    .Where(q => q.CustomerId == customerId
                     && _context.ControlPallets.Any(a => a.WeightBallot!= q.clave_e)
-                    && q.completo == completo
-                    ).ToListAsync();
-                   
+                    //&& q.completo == completo
+                    && q.Ingreso == esIngreso
+                    ).ToListAsync();                   
                     var query =  (from c in boletas
                                  //
                                  //&& q.completo == completo

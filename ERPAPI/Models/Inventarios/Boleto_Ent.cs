@@ -58,6 +58,8 @@ namespace ERPAPI.Models
 
         public string RTNTransportista { get; set; }
 
+        public bool? Ingreso { get; set; }
+
         public string Orden { get; set; }
         [Display(Name = "Clave del producto")]
         [NotMapped]
