@@ -175,7 +175,7 @@ namespace ERPAPI.Controllers
             }
 
             //  int Count = Items.Count();
-            Items = Items.Where(q => q.CustomerId != null).ToList();
+            Items = Items.Where(q => q.CustomerId == null).ToList();
             return await Task.Run(() => Ok(Items));
         }
         
