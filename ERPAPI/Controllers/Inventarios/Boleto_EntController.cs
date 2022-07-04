@@ -71,6 +71,7 @@ namespace ERPAPI.Controllers
                                  Boleto_Sal = e,
                                  Cliente = cl.CustomerName,
                                  NombreProducto = p.ProductName,
+                                 Ingreso =  c.Ingreso,
                                  
                                  //  Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
 
@@ -109,19 +110,30 @@ namespace ERPAPI.Controllers
             }
             try
             {
+                if (completo) {
                     boletas = await _context.Boleto_Ent
                     .Where(q => q.CustomerId == customerId
-                    && _context.ControlPallets.Any(a => a.WeightBallot!= q.clave_e)
-                    //&& q.completo == completo
+                    && _context.ControlPallets.Any(a => a.WeightBallot != q.clave_e) 
+                    && (_context.BoletaDeSalida.Any(a => a.WeightBallot != q.clave_e))
+                    && q.completo == completo
+                    //&& q.Ingreso == esIngreso
+                    ).ToListAsync();
+                }
+                else
+                {
+                    boletas = await _context.Boleto_Ent
+                    .Where(q => q.CustomerId == customerId
+                    && _context.ControlPallets.Any(a => a.WeightBallot != q.clave_e) 
+                    && (_context.BoletaDeSalida.Any(a => a.WeightBallot != q.clave_e))
+                    && q.completo == completo
                     && q.Ingreso == esIngreso
-                    ).ToListAsync();                   
+                    ).ToListAsync();
+                }
+                                       
                     var query =  (from c in boletas
-                                 //
-                                 //&& q.completo == completo
-                                 //)
                                  join d in _context.Boleto_Sal on c.clave_e equals d.clave_e                                 
                                  into ba
-                                 from e in ba
+                                 from e in ba.DefaultIfEmpty()
                                  join p in _context.SubProduct on c.SubProductId equals p.SubproductId
                                  select new Boleto_Ent
                                  {
