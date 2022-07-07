@@ -107,6 +107,14 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Creación")]
         public string UsuarioModificacion { get; set; }
 
+        public DateTime? FechaIngreso { get; set; }
+
+        public DateTime? FechaSalida { get; set; }
+
+        public string RTNTransportista { get; set; }
+
+        public string DNIMotorista { get; set; }
+
         public List<BoletaDeSalidaLine> BoletaDeSalidaLines { get; set; }
 
 
