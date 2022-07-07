@@ -370,6 +370,14 @@ namespace ERPAPI.Controllers
         private async Task<ActionResult<BoletaDeSalida>> InsertBoletaSalida(GoodsReceived _GoodsReceived) {
             try
             {
+                ControlPallets controlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId).Include(i => i._ControlPalletsLine).FirstOrDefault();
+
+                Boleto_Ent boletapeso = await  _context.Boleto_Ent.Where(q => q.clave_e == controlPallets.WeightBallot).FirstOrDefaultAsync();
+
+               
+
+
+
                 BoletaDeSalida _boletadesalida = new BoletaDeSalida
                 {
                     BranchId = _GoodsReceived.BranchId,
@@ -386,8 +394,11 @@ namespace ERPAPI.Controllers
                     SubProductId = (long)_GoodsReceived._GoodsReceivedLine[0].SubProductId,
                     SubProductName = _GoodsReceived._GoodsReceivedLine.Count()>1?"Productos Varios":
                                 _GoodsReceived._GoodsReceivedLine[0].SubProductName,
+                    ProductName = _GoodsReceived.ProductName,     
+                    Producto = _GoodsReceived.SubProductId,
                     CargadoId = 14,
                     Cargadoname = "Vacío",
+                    DocumentoTipo = "Recibo de Mercaderías",
                     UsuarioCreacion = _GoodsReceived.UsuarioCreacion,
                     UsuarioModificacion = _GoodsReceived.UsuarioModificacion,
                     UnitOfMeasureId = _GoodsReceived._GoodsReceivedLine[0].UnitOfMeasureId,
@@ -397,25 +408,45 @@ namespace ERPAPI.Controllers
                     VigilanteId = _GoodsReceived.VigilanteId,
                     Vigilante = _GoodsReceived.VigilanteName,
                     BoletaDeSalidaLines =  new List<BoletaDeSalidaLine>(),
+                    
 
                 };
 
-                foreach (var item in _GoodsReceived._GoodsReceivedLine)
+                if (boletapeso!=null)
+                {
+                    boletapeso.Boleto_Sal = await _context.Boleto_Sal.Where(q => q.clave_e == boletapeso.clave_e).FirstOrDefaultAsync();
+                    _boletadesalida.OrdenNo = boletapeso.Orden;
+                    _boletadesalida.Transportista = boletapeso.Tranportista;
+                    _boletadesalida.Motorista = boletapeso.conductor;
+                    _boletadesalida.RTNTransportista = boletapeso.RTNTransportista;
+                    _boletadesalida.DNIMotorista = boletapeso.DNIConductor;
+                    _boletadesalida.FechaIngreso = boletapeso.fecha_e;
+                    _boletadesalida.FechaSalida = boletapeso.Boleto_Sal.fecha_s;
+
+                }
+
+                
+
+
+                foreach (var item in controlPallets._ControlPalletsLine)
                 {
                     _boletadesalida.BoletaDeSalidaLines.Add(new BoletaDeSalidaLine()
                     {
                         SubProductId =(long) item.SubProductId,
                         SubProductName = item.SubProductName,
-                        Quantity = item.Quantity,
-                        UnitOfMeasureId = (int)item.UnitOfMeasureId,
-                        UnitOfMeasureName =  item.UnitOfMeasureName,
-                        WarehouseName = item.WareHouseName,
-                        Warehouseid = (int)item.WareHouseId,
+                        Quantity = (decimal) item.Totallinea,
+                        UnitOfMeasureId = (int)item.UnitofMeasureId,
+                        UnitOfMeasureName =  item.UnitofMeasureName,
+                        WarehouseName = item.WarehouseName,
+                        Warehouseid = (int)item.WarehouseId,
                         
                     });
                 }
 
-                _context.BoletaDeSalida.Add(_boletadesalida);
+                 _context.BoletaDeSalida.Add(_boletadesalida);
+                await _context.SaveChangesAsync();
+
+                _boletadesalida.DocumentoId = (int)_GoodsReceived.GoodsReceivedId;
                 await _context.SaveChangesAsync();
                 return _boletadesalida;
             }

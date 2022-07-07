@@ -200,6 +200,7 @@ namespace ERPAPI.Controllers
                     Fecha = DateTime.Now,
                     GuiaRemisionLines = new List<GuiaRemisionLine>(),
                     Vigilante = boleta.Vigilante,
+                    
                     //Observaciones = boleta.=
                     
 
