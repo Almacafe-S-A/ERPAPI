@@ -115,6 +115,8 @@ namespace ERPAPI.Models
 
         public string DNIMotorista { get; set; }
 
+        public int? ARNo { get; set; }
+
         public List<BoletaDeSalidaLine> BoletaDeSalidaLines { get; set; }
 
 
