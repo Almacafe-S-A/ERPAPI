@@ -124,25 +124,125 @@ namespace ERPAPI.Controllers
                         _Periodoq = _Periodo;
                         _context.Periodo.Add(_Periodoq);
 
+                        List<BitacoraCierreContable> CierresMensuales = new List<BitacoraCierreContable>();
+
+
+
+                        
+
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                         await _context.SaveChangesAsync();
 
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
+                        for (int i = 1; i < 13; i++)
                         {
-                            IdOperacion = _Periodo.Id,
-                            DocType = "Periodo",
-                            ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Periodo, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _Periodo.UsuarioCreacion,
-                            UsuarioModificacion = _Periodo.UsuarioModificacion,
-                            UsuarioEjecucion = _Periodo.UsuarioModificacion,
 
-                        });
+                            BitacoraCierreContable CierresMes = new BitacoraCierreContable
+                            {
+                                Anio = _Periodoq.Anio,
+                                PeriodoId = _Periodoq.Id,
+                                Mes = i,
+                                FechaCierre = null,
+                                Mensaje = "Pendiente",
+                                UsuarioModificacion = User.Identity.Name,
+                                FechaCreacion = DateTime.Now,
+                                FechaModificacion = DateTime.Now,
+                                CierreContableLineas = new List<BitacoraCierreProcesos>(),
+
+                            };
+                            
+                            CierresMes.CierreContableLineas.Add(new BitacoraCierreProcesos
+                            {
+                                Estatus = "Pendiente",
+                                FechaCreacion = DateTime.Now,
+                                PasoCierre = 1,
+                                UsuarioCreacion = User.Identity.Name,
+                                FechaCierre = null,
+                                Mensaje = "",
+                                Proceso = "VALOR MAXIMO CERTIFICADO DE DEPOSITO",
+                                
+                            }) ;
+                            CierresMes.CierreContableLineas.Add(new BitacoraCierreProcesos
+                            {
+                                Estatus = "Pendiente",
+                                FechaCreacion = DateTime.Now,
+                                PasoCierre = 2,
+                                UsuarioCreacion = User.Identity.Name,
+                                FechaCierre = null,
+                                Mensaje = "",
+                                Proceso = "POLIZAS DE SEGURO VENCIDAS",
+
+                            });
+                            CierresMes.CierreContableLineas.Add(new BitacoraCierreProcesos
+                            {
+                                Estatus = "Pendiente",
+                                FechaCreacion = DateTime.Now,
+                                PasoCierre = 3,
+                                UsuarioCreacion = User.Identity.Name,
+                                FechaCierre = null,
+                                Mensaje = "",
+                                Proceso = "Depreciacion de Activos",
+
+                            });
+                            CierresMes.CierreContableLineas.Add(new BitacoraCierreProcesos
+                            {
+                                Estatus = "Pendiente",
+                                FechaCreacion = DateTime.Now,
+                                PasoCierre = 4,
+                                UsuarioCreacion = User.Identity.Name,
+                                FechaCierre = null,
+                                Mensaje = "",
+                                Proceso = "Ejecucion Presupuestaria Mensual",
+
+                            });
+                            
+                            CierresMes.CierreContableLineas.Add(new BitacoraCierreProcesos
+                            {
+                                Estatus = "Pendiente",
+                                FechaCreacion = DateTime.Now,
+                                PasoCierre = 5,
+                                UsuarioCreacion = User.Identity.Name,
+                                FechaCierre = null,
+                                Mensaje = "",
+                                Proceso = "Diferenciales Cambiarios",
+
+                            });
+
+                            if (i==12)
+                            {
+                                CierresMes.CierreContableLineas.Add(new BitacoraCierreProcesos
+                                {
+                                    Estatus = "Pendiente",
+                                    FechaCreacion = DateTime.Now,
+                                    PasoCierre = 6,
+                                    UsuarioCreacion = User.Identity.Name,
+                                    FechaCierre = null,
+                                    Mensaje = "",
+                                    Proceso = "Cierre Año Fiscal",
+
+                                });
+                                CierresMes.CierreContableLineas.Add(new BitacoraCierreProcesos
+                                {
+                                    Estatus = "Pendiente",
+                                    FechaCreacion = DateTime.Now,
+                                    PasoCierre = 7,
+                                    UsuarioCreacion = User.Identity.Name,
+                                    FechaCierre = null,
+                                    Mensaje = "",
+                                    Proceso = "Apertura Año Fiscal",
+
+                                });
+                            }
+                            
+
+                            CierresMensuales.Add(CierresMes);
+
+                        }
+
+                        _context.BitacoraCierreContable.AddRange(CierresMensuales);
+
+                        
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
