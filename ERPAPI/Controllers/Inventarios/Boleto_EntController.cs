@@ -423,7 +423,7 @@ namespace ERPAPI.Controllers
 
                         _Boleto_Entq = _Boleto_Ent;
                         _context.Boleto_Ent.Add(_Boleto_Entq);
-                        long maxid = _context.Boleto_Ent.Max(m => m.clave_e);
+                        long maxid = _context.Boleto_Ent.DefaultIfEmpty().Max(m => m.clave_e);                        
                         _Boleto_Ent.clave_e = maxid + 1;
 
                         SubProduct  subproduct = await _context.SubProduct.Where(q => q.SubproductId == _Boleto_Ent.SubProductId).FirstOrDefaultAsync();
