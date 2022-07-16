@@ -1,4 +1,5 @@
 ﻿using ERPAPI.Helpers;
+using ERPAPI.Models.Clientes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -80,7 +81,6 @@ namespace ERPAPI.Models
         //public virtual Party Party { get; set; }
         //public int? PartyId { get; set; }
 
-        [Required]
         [Display(Name = "Identidad del contacto")]
         public string Identidad { get; set; }
         public string Email { get; set; }
@@ -100,7 +100,7 @@ namespace ERPAPI.Models
         public string GrupoEconomico { get; set; }
 
         [Display(Name = "Monto de activos")]
-        public double MontoActivos { get; set; }
+        public double? MontoActivos { get; set; }
 
         [Display(Name = "Ingresos anuales")]
         public double MontoIngresosAnuales { get; set; }
@@ -164,6 +164,20 @@ namespace ERPAPI.Models
         public List<CustomersOfCustomer> _Customers { get; set; }
 
         public List<VendorOfCustomer> _Vendor { get; set; }
+
+        public string LugarNacimiento { get; set; }
+        public DateTime? FechaNacimiento { get; set; }
+        public int? Edad { get; set; }
+        public EstadoCivilEnum? EstadoCivil { get; set; }
+        public string ProfesionOficio { get; set; }
+        public string Nacionalidad { get; set; }
+        public string GiroActividadNegocio { get; set; }
+        public bool? CargosPublicos { get; set; }
+        public string Familiares { get; set; }
+        public string Conyugue { get; set; }
+        public bool? InstitucionSupervisada { get; set; }
+        public string NombreFuncionario { get; set; }
+        public string FirmaAuditoriaExterna { get; set; }
 
     }
 
