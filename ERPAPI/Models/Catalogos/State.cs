@@ -33,9 +33,7 @@ namespace ERPAPI.Models
 
         [Display(Name = "Estado")]
         [DefaultValue(1)]
-        public Int64 IdEstado { get; set; } = 1;
-
-
+        public int? IdEstado { get; set; } = 1;
 
         public List<City> City { get; set; }
 
