@@ -286,16 +286,6 @@ namespace ERPAPI.Controllers
                 });
 
                 await _context.SaveChangesAsync();
-                //     transaction.Commit();
-                //}
-                //catch (Exception ex)
-                //  {
-                // transaction.Rollback();
-                //_logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                //  throw ex;
-                // return BadRequest($"Ocurrio un error:{ex.Message}");
-                //}
-                // }
             }
             catch (Exception ex)
             {
@@ -436,7 +426,7 @@ namespace ERPAPI.Controllers
                         SubProductName = item.SubProductName,
                         Quantity = (decimal) item.Totallinea,
                         UnitOfMeasureId = (int)item.UnitofMeasureId,
-                        UnitOfMeasureName = item.UnitofMeasureName,
+                        UnitOfMeasureName = item.cantidadPoliEtileno>0|| item.cantidadYute>0?"Sacos": item.UnitofMeasureName,
                         WarehouseName = item.WarehouseName,
                         Warehouseid = (int)item.WarehouseId,
                         
