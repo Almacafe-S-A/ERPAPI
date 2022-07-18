@@ -40,6 +40,16 @@ namespace ERPAPI.Models
         [Display(Name = "Servicio")]
         public string ServiceName { get; set; }
 
+        public long? EmpleadoId { get; set; }
+        [ForeignKey("EmpleadoId")]
+        public Employees Employees { get; set; }
+
+        public string Motivo { get; set; }
+
+
+        public string Solicitante { get; set; }
+
+        public decimal? Cantidad { get; set; }
 
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }

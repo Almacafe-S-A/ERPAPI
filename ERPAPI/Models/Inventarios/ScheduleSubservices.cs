@@ -60,6 +60,9 @@ namespace ERPAPI.Models
         [Display(Name = "Id Condición")]
         public Int64 LogicalConditionId { get; set; }
 
+
+        
+
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
 
