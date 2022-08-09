@@ -91,27 +91,21 @@ namespace ERPAPI.Controllers
                  CertificadoLineId = 0,
                  UnitMeasurName = lineasrecibo.UOM,
                  UnitMeasureId = (long)lineasrecibo.GoodsReceivedLine.UnitOfMeasureId,
-                 Quantity = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null|| lineasrecibo.GoodsReceivedLine.SaldoporCertificar == lineasrecibo.GoodsReceivedLine.Quantity ?
+                 Quantity =Decimal.Round( lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null|| lineasrecibo.GoodsReceivedLine.SaldoporCertificar == lineasrecibo.GoodsReceivedLine.Quantity ?
                       (decimal)lineasrecibo.CantidadRecibida - ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100)) :
-                      (decimal)lineasrecibo.GoodsReceivedLine.SaldoporCertificar,
+                      (decimal)lineasrecibo.GoodsReceivedLine.SaldoporCertificar,2),
                  SubProductId = (long)lineasrecibo.SubProductId,
                  SubProductName = lineasrecibo.SubProductName,
                  ReciboId = (int)lineasrecibo.GoodsReceivedLine.GoodsReceivedId,
-                 Price = (decimal)lineasrecibo.PrecioUnitarioCIF
-                 ,
-                 WarehouseId = (int)lineasrecibo.GoodsReceivedLine.WareHouseId
-                 ,
-                 WarehouseName = lineasrecibo.GoodsReceivedLine.WareHouseName
-                 ,
-                 Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF
-                 ,
+                 Price = (decimal)lineasrecibo.PrecioUnitarioCIF,
+                 WarehouseId = (int)lineasrecibo.GoodsReceivedLine.WareHouseId,
+                 WarehouseName = lineasrecibo.GoodsReceivedLine.WareHouseName,
+                 Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF,
                  CantidadDisponible = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null || lineasrecibo.GoodsReceivedLine.Quantity== lineasrecibo.GoodsReceivedLine.SaldoporCertificar ?
                           (decimal)lineasrecibo.CantidadRecibida -
                               ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100))
-                          : lineasrecibo.GoodsReceivedLine.SaldoporCertificar
-                 ,
-                 ValorUnitarioDerechos = (decimal)lineasrecibo.ValorUnitarioDerechos
-                 ,
+                          : lineasrecibo.GoodsReceivedLine.SaldoporCertificar,
+                 ValorUnitarioDerechos = (decimal)lineasrecibo.ValorUnitarioDerechos,
                  DerechosFiscales = lineasrecibo.ValorUnitarioDerechos * lineasrecibo.CantidadRecibida,
                  GoodsReceivedLineId = lineasrecibo.GoodsReceivedLineId
              }).ToList();
@@ -129,9 +123,9 @@ namespace ERPAPI.Controllers
                                                   CertificadoLineId = 0,
                                                   UnitMeasurName = detalle.UnitOfMeasureName,
                                                   UnitMeasureId = (long)detalle.UnitOfMeasureId,
-                                                  Quantity = detalle.SaldoporCertificar == null || detalle.SaldoporCertificar==detalle.Quantity ?
+                                                  Quantity =Decimal.Round( detalle.SaldoporCertificar == null || detalle.SaldoporCertificar==detalle.Quantity ?
                                                      (decimal)detalle.Quantity - ((decimal)detalle.Quantity * (detalle.SubProduct.Merma / 100)) :
-                                                     (decimal)detalle.SaldoporCertificar,
+                                                     (decimal)detalle.SaldoporCertificar,2),
                                                   SubProductId = (long)detalle.SubProductId,
                                                   SubProductName = detalle.SubProductName,
                                                   ReciboId = (int)detalle.GoodsReceivedId,
@@ -147,13 +141,7 @@ namespace ERPAPI.Controllers
                                                   GoodsReceivedLineId = detalle.GoodsReceiveLinedId
                                               }
                          ).ToList();
-
-
             return detallependienteCertificarcafe;
-
-
-
-
         }
 
 
@@ -167,7 +155,8 @@ namespace ERPAPI.Controllers
                                                   CertificadoLineId = 0,
                                                   UnitMeasurName = detalle.UnitOfMeasureName,
                                                   UnitMeasureId = (long)detalle.UnitOfMeasureId,
-                                                  Quantity = (decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)) - ((decimal)detalle.ValorPergamino * (7 / 100)),
+                                                  Quantity =Decimal.Round( (decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)) 
+                                                  - ((decimal)detalle.ValorPergamino * (7 / 100)),2),
                                                   SubProductId = (long)detalle.ProductoId,
                                                   SubProductName = detalle.ProductoNombre,
                                                   ReciboId = (int)detalle.InventarioFisicoId,
@@ -175,7 +164,8 @@ namespace ERPAPI.Controllers
                                                   WarehouseId = (int)detalle.WarehouseId,
                                                   WarehouseName = detalle.WarehouseName,
                                                   Amount = (decimal)detalle.Cantidad * ObtenerPrecioCafe(detalle.Product, preciodelcafe),
-                                                  CantidadDisponible = (decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),
+                                                  CantidadDisponible = (decimal)detalle.ValorPergamino 
+                                                  - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),
                                                   ValorUnitarioDerechos = 0,
                                                   DerechosFiscales = 0,
                                                   //GoodsReceivedLineId = detalle.GoodsReceiveLinedId
@@ -189,7 +179,7 @@ namespace ERPAPI.Controllers
             detalleAgrupado.FirstOrDefault().Amount = detalleAgrupado.FirstOrDefault().Quantity * detalleAgrupado.FirstOrDefault().Price;
             
 
-            return detalleAgrupado;
+            return detallependienteCertificarcafe;
 
 
 
@@ -205,25 +195,21 @@ namespace ERPAPI.Controllers
                                       CertificadoLineId = 0,
                                       UnitMeasurName = lineasrecibo.UnitOfMeasureName,
                                       UnitMeasureId = (long)lineasrecibo.UnitOfMeasureId,
-                                      Quantity = lineasrecibo.SaldoPendienteCertificar == 0 || lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
-                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100)) :
+                                      Quantity = lineasrecibo.SaldoPendienteCertificar == 0 || 
+                                            lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
+                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100)) - ((decimal)lineasrecibo.Cantidad * (7/ 100)) :
                                            (decimal)lineasrecibo.SaldoPendienteCertificar,
                                       SubProductId = (long)lineasrecibo.ProductoId,
                                       SubProductName = lineasrecibo.ProductoNombre,
                                       ReciboId = (int)lineasrecibo.Id,
-                                      Price = 1
-                                      ,
-                                      WarehouseId = (int)lineasrecibo.WarehouseId
-                                      ,
-                                      WarehouseName = lineasrecibo.WarehouseName
-                                      ,
-                                      Amount = (decimal)lineasrecibo.Cantidad * 1
-                                      ,
+                                      Price = 1,
+                                      WarehouseId = (int)lineasrecibo.WarehouseId,
+                                      WarehouseName = lineasrecibo.WarehouseName,
+                                      Amount = (decimal)lineasrecibo.Cantidad * 1,
                                       CantidadDisponible = lineasrecibo.SaldoPendienteCertificar == 0 || lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
-                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100)) :
+                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100))- ((decimal)lineasrecibo.Cantidad * (7 / 100)) :
                                            (decimal)lineasrecibo.SaldoPendienteCertificar,
-                                      ValorUnitarioDerechos = 0
-                                      ,
+                                      ValorUnitarioDerechos = 0,
                                       DerechosFiscales = 0,
                                   }).ToList();
 
@@ -248,11 +234,6 @@ namespace ERPAPI.Controllers
                 .Where(q => q.InventarioFisicoId == inventario).ToList();
 
             List<CertificadoLine> recibospendientes = new List<CertificadoLine>();
-
-
-
-
-
             PrecioCafe preciodelcafe = _context.PrecioCafe.Where(q => q.Id == preciocafe).FirstOrDefault();
             try
             {
@@ -261,9 +242,7 @@ namespace ERPAPI.Controllers
                 {
                     List<InventarioBodegaHabilitada> detallereciboscafe = inventarioBodegas
                     .Where(q => q.Product.TipoCafe != TipoCaFe.NoesCafe).ToList();
-
                     recibospendientes.AddRange(detalleInventarioCafe(detallereciboscafe, preciodelcafe));
-
                 }
                 else
                 {
@@ -300,10 +279,6 @@ namespace ERPAPI.Controllers
                 return BadRequest("Ocurrio un error:" + ex.Message);
             }
         }
-
-
-
-
 
         /// <summary>
         /// Obtienne los productos de los recibos de mercaderias que han sido liquidados 

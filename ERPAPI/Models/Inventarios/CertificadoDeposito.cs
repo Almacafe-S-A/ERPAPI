@@ -74,12 +74,12 @@ namespace ERPAPI.Models
         [Display(Name = "No. Poliza")]
         public string NoPoliza { get; set; }
         [Display(Name = "Sujetos a pago")]
-        public double? SujetasAPago { get; set; }
+        public decimal? SujetasAPago { get; set; }
         [Display(Name = "Fecha de vencimiento")]
         public DateTime FechaVencimientoDeposito { get; set; }
 
         [Display(Name = "Número de traslado")]
-        public Int64? NoTraslado { get; set; }
+        public string NoTraslado { get; set; }
 
 
         [Display(Name = "Aduana")]
@@ -142,7 +142,11 @@ namespace ERPAPI.Models
         public EndososCertificados Endoso { get; set; } 
 
         public string Impreso { get; set; }
-        
+
+        public int Impresiones { get; set; }
+
+        public int impresionesTalon { get; set; }
+
         public List<CertificadoLine> _CertificadoLine { get; set; } = new List<CertificadoLine>();
     }
 

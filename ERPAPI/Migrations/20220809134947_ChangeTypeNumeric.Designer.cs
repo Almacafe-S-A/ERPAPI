@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220809134947_ChangeTypeNumeric")]
+    partial class ChangeTypeNumeric
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1263,8 +1265,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdEstado");
 
-                    b.Property<int>("Impresiones");
-
                     b.Property<string>("Impreso");
 
                     b.Property<int?>("InsuranceId");
@@ -1316,8 +1316,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<int>("impresionesTalon");
 
                     b.HasKey("IdCD");
 
@@ -2937,8 +2935,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Address");
 
-                    b.Property<bool?>("CargosPublicos");
-
                     b.Property<string>("City");
 
                     b.Property<long?>("CityId");
@@ -2948,8 +2944,6 @@ namespace ERPAPI.Migrations
                     b.Property<bool>("ConfirmacionCorreo");
 
                     b.Property<string>("ContactPerson");
-
-                    b.Property<string>("Conyugue");
 
                     b.Property<long?>("CountryId");
 
@@ -2968,8 +2962,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("DireccionEnvio");
 
-                    b.Property<int?>("Edad");
-
                     b.Property<string>("Email");
 
                     b.Property<bool>("EnviarlaMensajero");
@@ -2978,21 +2970,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<int?>("EstadoCivil");
-
-                    b.Property<string>("Familiares");
-
                     b.Property<string>("Fax");
 
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<DateTime?>("FechaNacimiento");
-
-                    b.Property<string>("FirmaAuditoriaExterna");
-
-                    b.Property<string>("GiroActividadNegocio");
 
                     b.Property<string>("GrupoEconomico");
 
@@ -3000,23 +2982,16 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdEstado");
 
-                    b.Property<string>("Identidad");
+                    b.Property<string>("Identidad")
+                        .IsRequired();
 
                     b.Property<string>("IdentidadApoderado");
 
-                    b.Property<bool?>("InstitucionSupervisada");
-
-                    b.Property<string>("LugarNacimiento");
-
-                    b.Property<double?>("MontoActivos");
+                    b.Property<double>("MontoActivos");
 
                     b.Property<double>("MontoIngresosAnuales");
 
-                    b.Property<string>("Nacionalidad");
-
                     b.Property<string>("NombreApoderado");
-
-                    b.Property<string>("NombreFuncionario");
 
                     b.Property<string>("Observaciones");
 
@@ -3025,8 +3000,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Phone");
 
                     b.Property<long?>("ProductTypeId");
-
-                    b.Property<string>("ProfesionOficio");
 
                     b.Property<string>("Proveedor1");
 
@@ -10063,7 +10036,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<int?>("IdEstado");
+                    b.Property<long>("IdEstado");
 
                     b.Property<string>("Name");
 
