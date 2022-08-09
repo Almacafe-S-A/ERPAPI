@@ -31,38 +31,6 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
-        /// Obtiene el Listado de ControlPallets paginado
-        /// </summary>
-        /// <returns></returns>    
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetControlPalletsPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
-        {
-            List<ControlPallets> Items = new List<ControlPallets>();
-            try
-            {
-                var query = _context.ControlPallets.AsQueryable();
-                var totalRegistro = query.Count();
-
-                Items = await query
-                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
-                   .Take(cantidadDeRegistros)
-                    .ToListAsync();
-
-                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
-                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-        }
-
-        /// <summary>
         /// Obtiene el Listado de Control Estibas 
         /// El estado define cuales son los cai activos
         /// </summary>
@@ -78,7 +46,9 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.ControlPallets.Where(p => p.EsIngreso ==1 && branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.ControlPalletsId).ToListAsync();
+                    Items = await _context.ControlPallets.Where(p => p.EsIngreso ==1 
+                        && branchlist.Any(b => p.BranchId == b.BranchId))
+                        .OrderByDescending(b => b.ControlPalletsId).ToListAsync();
                 }
                 else
                 {
@@ -202,9 +172,6 @@ namespace ERPAPI.Controllers
                             producto = "Productos Varios";
                         }
                         _ControlPalletsq.SubProductName = producto;
-                        //_ControlPalletsq.WeightBallot = _ControlPalletsq.WeightBallot == 0 ? null : _ControlPalletsq.WeightBallot;
-
-                        
                         _context.ControlPallets.Add(_ControlPalletsq);
 
                       

@@ -418,27 +418,33 @@ namespace ERPAPI.Controllers
             {
                 return BadRequest();
             }
-            foreach (var item in certificado._CertificadoLine)
+            if (certificado.ServicioId!=3)
+            
             {
-                ///Actualiza el saldo del detalle del recibo
-                GoodsReceivedLine linearecibo = _context.GoodsReceivedLine
-                    .Where(q => q.GoodsReceiveLinedId == item.GoodsReceivedLineId)
-                    .FirstOrDefault();
-                linearecibo.SaldoporCertificar = item.CantidadDisponible - item.Quantity;
 
-                ///Actualiza el estado del recibo de Mercaderias
-                GoodsReceived recibo = _context.GoodsReceived
-                       .Where(q => q.GoodsReceivedId == item.ReciboId)
-                       .Include(a => a._GoodsReceivedLine)
-                       .FirstOrDefault();
-
-                if (recibo._GoodsReceivedLine.Count() == recibo._GoodsReceivedLine.Where(q => q.SaldoporCertificar == 0).Count())
+                foreach (var item in certificado._CertificadoLine)
                 {
-                    recibo.Porcertificar = false;
+                    ///Actualiza el saldo del detalle del recibo
+                    GoodsReceivedLine linearecibo = _context.GoodsReceivedLine
+                        .Where(q => q.GoodsReceiveLinedId == item.GoodsReceivedLineId)
+                        .FirstOrDefault();
+                    linearecibo.SaldoporCertificar = item.CantidadDisponible - item.Quantity;
+
+                    ///Actualiza el estado del recibo de Mercaderias
+                    GoodsReceived recibo = _context.GoodsReceived
+                           .Where(q => q.GoodsReceivedId == item.ReciboId)
+                           .Include(a => a._GoodsReceivedLine)
+                           .FirstOrDefault();
+
+                    if (recibo._GoodsReceivedLine.Count() == recibo._GoodsReceivedLine.Where(q => q.SaldoporCertificar == 0).Count())
+                    {
+                        recibo.Porcertificar = false;
+                    }
+                    //_context.Kardex.Add(GeneraKardexCertificado(item, certificado));
+                    //_context.CertificadoLine.Add(item);
                 }
-                //_context.Kardex.Add(GeneraKardexCertificado(item, certificado));
-                //_context.CertificadoLine.Add(item);
             }
+
 
             certificado.IdEstado = 6;
             certificado.Estado = "Vigente";
@@ -447,6 +453,28 @@ namespace ERPAPI.Controllers
 
             return certificado;
 
+        }
+
+        private bool AutorizacionCNBS(decimal ValorCertificar, int SucursalId) {
+            Branch branch = new Branch();
+            branch = _context.Branch.Where(q => q.BranchId==SucursalId).FirstOrDefault();
+            if (branch == null) return false;
+            if (ValorCertificar>branch.LimitCNBS) return false;
+            return true;       
+        }
+
+        private bool ValidarPoliza(decimal ValorCertificar, long PolizaId)
+        {
+            InsurancePolicy insurancePolicy = new InsurancePolicy();
+            insurancePolicy = _context.InsurancePolicy.Where(q => q.InsurancePolicyId == PolizaId).FirstOrDefault();
+            if (insurancePolicy == null) return false;
+            decimal valorCertificado = _context.CertificadoDeposito
+                .Where(q => q.InsurancePolicyId == PolizaId 
+                && q.IdEstado == 5).Sum(s=> s.Total);
+            decimal valorPoliza = insurancePolicy.LpsAmount;
+            decimal NuevoValorCertificado = valorCertificado + ValorCertificar;
+            if (NuevoValorCertificado > valorPoliza) return false;
+            return true;
         }
 
 
@@ -461,10 +489,13 @@ namespace ERPAPI.Controllers
             
             SolicitudCertificadoDeposito _SolicitudCertificado ;
             CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
+
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
+
+                    
                     _context.CertificadoDeposito.Add(_CertificadoDeposito);
                     
                     _CertificadoDeposito.IdEstado = 5;
@@ -472,6 +503,15 @@ namespace ERPAPI.Controllers
                     _CertificadoDeposito.Total = _CertificadoDeposito._CertificadoLine.Sum(s => s.Amount);
                     _CertificadoDeposito.Quantitysum = _CertificadoDeposito._CertificadoLine.Sum(s => s.Quantity);
                     _CertificadoDeposito.TotalDerechos = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
+                    _CertificadoDeposito.SujetasAPago = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
+
+                    if (!AutorizacionCNBS(_CertificadoDeposito.Total, _CertificadoDeposito.BranchId))                    
+                        return BadRequest("Limite CNBS ha sido superado");                    
+
+                    if (!ValidarPoliza(_CertificadoDeposito.Total, (long)_CertificadoDeposito.InsurancePolicyId))                    
+                        return BadRequest("Limite Mercadria asegurado ha sido superado");
+                    
+
 
 
                     _CertificadoDeposito.Producto = "Productos Varios";
@@ -543,16 +583,37 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _CertificadoDepositoq = await _context.CertificadoDeposito
+                                .Include(i => i._CertificadoLine)
                                  .Where(q => q.IdCD == _CertificadoDeposito.IdCD)
                                 .FirstOrDefaultAsync();
 
+                        if (_CertificadoDepositoq.FechaCertificado.Date != DateTime.Now.Date)
+                            return BadRequest("Los Certificados solo pueden ser anulados el mismo dia que se emitieron");
+
+                        if (_CertificadoDepositoq.ServicioId != 3)
+
+                        {
+
+                            foreach (var item in _CertificadoDepositoq._CertificadoLine)
+                            {
+                                ///Actualiza el saldo del detalle del recibo
+                                GoodsReceivedLine linearecibo = _context.GoodsReceivedLine
+                                    .Where(q => q.GoodsReceiveLinedId == item.GoodsReceivedLineId)
+                                    .FirstOrDefault();
+                                linearecibo.SaldoporCertificar = item.CantidadDisponible + item.Quantity;
+
+                                ///Actualiza el estado del recibo de Mercaderias
+                                GoodsReceived recibo = _context.GoodsReceived
+                                       .Where(q => q.GoodsReceivedId == item.ReciboId)
+                                       .Include(a => a._GoodsReceivedLine)
+                                       .FirstOrDefault();
+                                recibo.Porcertificar = true;
+
+                            }
+                        }
+
                         _CertificadoDepositoq.IdEstado = _CertificadoDeposito.IdEstado;
                         _CertificadoDepositoq.Estado = _CertificadoDeposito.Estado;
-
-                        //SolicitudCertificadoDeposito _solicitudq = await (from c in _context.SolicitudCertificadoDeposito
-                        //              .Where(q => q.NoCD == _CertificadoDepositoq.NoCD)
-                        //                                                  select c
-                        //              ).FirstOrDefaultAsync();
 
                         _context.Entry(_CertificadoDepositoq).CurrentValues.SetValues((_CertificadoDepositoq));
 

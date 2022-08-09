@@ -53,7 +53,7 @@ namespace ERPAPI.Models
         public DateTime? FechaVencimientoDeposito { get; set; }
 
         [Display(Name = "Número de traslado")]
-        public Int64? NoTraslado { get; set; }
+        public string NoTraslado { get; set; }
 
         [Display(Name = "Fecha de vencimiento")]
         public DateTime FechaVencimiento { get; set; }
