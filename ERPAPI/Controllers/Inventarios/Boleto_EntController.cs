@@ -45,7 +45,7 @@ namespace ERPAPI.Controllers
             try
             {
                 //Items = await _context.Boleto_Ent.ToListAsync();
-                var query = (from c in _context.Boleto_Ent
+                Items =  await  (from c in _context.Boleto_Ent
                              join d in _context.Boleto_Sal on c.clave_e equals d.clave_e into ba
                              join p in _context.SubProduct on c.SubProductId equals p.SubproductId 
                              join cl in _context.Customer on c.CustomerId equals cl.CustomerId
@@ -72,17 +72,16 @@ namespace ERPAPI.Controllers
                                  Cliente = cl.CustomerName,
                                  NombreProducto = p.ProductName,
                                  Ingreso =  c.Ingreso,
+                                 PesoLBS = c.PesoLBS,
                                  
                                  //  Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
 
-                             }).AsQueryable();
+                             }).ToListAsync();
 
-                var totalRegistro = query.Count();
 
-                Items = await query
-                    .OrderByDescending(q => q.clave_e)
-                         .Include(q => q.Boleto_Sal)                             
-                                     .ToListAsync();
+                //Items = await query
+                //                     //.Include(q => q.Boleto_Sal)                             
+                //                     .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -113,8 +112,8 @@ namespace ERPAPI.Controllers
                 if (completo) {
                     boletas = await _context.Boleto_Ent
                     .Where(q => q.CustomerId == customerId
-                    && _context.ControlPallets.Any(a => a.WeightBallot != q.clave_e) 
-                    && (_context.BoletaDeSalida.Any(a => a.WeightBallot != q.clave_e))
+                    && !_context.ControlPallets.Any(a => a.WeightBallot == q.clave_e) 
+                    && !(_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e))
                     && q.completo == completo
                     //&& q.Ingreso == esIngreso
                     ).ToListAsync();
@@ -123,8 +122,8 @@ namespace ERPAPI.Controllers
                 {
                     boletas = await _context.Boleto_Ent
                     .Where(q => q.CustomerId == customerId
-                    && _context.ControlPallets.Any(a => a.WeightBallot != q.clave_e) 
-                    && (_context.BoletaDeSalida.Any(a => a.WeightBallot != q.clave_e))
+                    && !_context.ControlPallets.Any(a => a.WeightBallot == q.clave_e) 
+                    && !(_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e))
                     && q.completo == completo
                     && q.Ingreso == esIngreso
                     ).ToListAsync();
