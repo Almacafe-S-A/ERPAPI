@@ -76,7 +76,7 @@ namespace ERPAPI.Controllers
                                  
                                  //  Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
 
-                             }).ToListAsync();
+                             }).OrderByDescending(o => o.clave_e).ToListAsync();
 
 
                 //Items = await query

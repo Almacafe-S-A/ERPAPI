@@ -149,7 +149,7 @@ namespace ERPAPI.Controllers
                     Items = await _context.InsurancePolicy
                         .Where(q => q.Propias 
                         && q.PolicyDueDate.Date>=DateTime.Now.Date
-                        && q.EstadoId == 1)
+                        && q.EstadoId == 1||q.EstadoId ==101)
                         .ToListAsync();
                 }
                 else
@@ -191,8 +191,8 @@ namespace ERPAPI.Controllers
                     try
                     {
                         InsurancePolicyq = _InsurancePolicy;
-                        InsurancePolicyq.EstadoId = 1;
-                        InsurancePolicyq.Estado = "Activo";
+                        //InsurancePolicyq.EstadoId = 1;
+                        //InsurancePolicyq.Estado = "Activo";
 
                         _context.InsurancePolicy.Add(InsurancePolicyq);
 
