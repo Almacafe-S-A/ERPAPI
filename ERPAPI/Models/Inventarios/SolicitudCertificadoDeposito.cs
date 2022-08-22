@@ -20,10 +20,7 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
-        [Display(Name = "Bodega")]
-        public Int64 WarehouseId { get; set; }
-        [Display(Name = "Bodega")]
-        public string WarehouseName { get; set; }
+        
 
         [Display(Name = "Tipo Servicio")]
         public Int64 ServicioId { get; set; }
@@ -72,30 +69,7 @@ namespace ERPAPI.Models
         [Display(Name = "Otros Cargos")]
         public string OtrosCargos { get; set; }
 
-        [Display(Name = "Banco")]
-        public Int64? BankId { get; set; }
-        [Display(Name = "Banco")]
-        public string BankName { get; set; }
-        [Display(Name = "Moneda")]
-        public Int64 CurrencyId { get; set; }
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
-        [Display(Name = "Monto de garantia")]
-        public double? MontoGarantia { get; set; }
-        [Display(Name = "Fecha pago")]
-        public DateTime? FechaPagoBanco { get; set; }
-
-        [Display(Name = "Porcentaje intereses")]
-        public double? PorcentajeInteresesInsolutos { get; set; }
-
-        [Display(Name = "Fecha de inicio")]
-        public DateTime? FechaInicioComputo { get; set; }
-
-        [Display(Name = "Lugar de firma")]
-        public string LugarFirma { get; set; }
-
-        [Display(Name = "Fecha de firma")]
-        public DateTime? FechaFirma { get; set; }
+       
 
         [Display(Name = "Nombre prestatario")]
         public string NombrePrestatario { get; set; }
@@ -120,8 +94,6 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public string Impreso { get; set; }
-
         public List<SolicitudCertificadoLine> _SolicitudCertificadoLine { get; set; } = new List<SolicitudCertificadoLine>();
 
 
@@ -144,30 +116,22 @@ namespace ERPAPI.Models
                 EmpresaSeguro = _CertificadoDeposito.EmpresaSeguro;
                 Estado = _CertificadoDeposito.Estado;
                 FechaCertificado = _CertificadoDeposito.FechaCertificado;
-                //FechaFirma = _CertificadoDeposito.FechaFirma;
-                //FechaInicioComputo = _CertificadoDeposito.FechaInicioComputo;
                 FechaVencimientoDeposito = _CertificadoDeposito.FechaVencimientoDeposito;
-                //FechaVencimiento = _CertificadoDeposito.FechaVencimiento;
                 NoCD = _CertificadoDeposito.IdCD;
-                //FechaPagoBanco = _CertificadoDeposito.FechaPagoBanco;
                 NombreEmpresa = _CertificadoDeposito.NombreEmpresa;
-                //LugarFirma = _CertificadoDeposito.LugarFirma;
-                //MontoGarantia = _CertificadoDeposito.MontoGarantia;
                 NoPoliza = _CertificadoDeposito.NoPoliza;
-                //NombrePrestatario = _CertificadoDeposito.NombrePrestatario;
                 NoTraslado = _CertificadoDeposito.NoTraslado;
                 OtrosCargos = _CertificadoDeposito.OtrosCargos;
-                //PorcentajeInteresesInsolutos = _CertificadoDeposito.PorcentajeInteresesInsolutos;
                 Seguro = _CertificadoDeposito.Seguro;
                 ServicioId = _CertificadoDeposito.ServicioId;
                 ServicioName = _CertificadoDeposito.ServicioName;
                 Quantitysum = _CertificadoDeposito.Quantitysum;
                 Total = _CertificadoDeposito.Total;
                 SujetasAPago = _CertificadoDeposito.SujetasAPago == null ? 0 : (double)_CertificadoDeposito.SujetasAPago;
-                // WarehouseId = _CertificadoDeposito.WarehouseId;
-                // WarehouseName = _CertificadoDeposito.WarehouseName;
                 Aduana = _CertificadoDeposito.Aduana;
                 ManifiestoNo = _CertificadoDeposito.ManifiestoNo;
+                UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion;
+
 
               _SolicitudCertificadoLine = ToSolicitudLine(_CertificadoDeposito._CertificadoLine);
 
@@ -191,6 +155,7 @@ namespace ERPAPI.Models
                          TotalCantidad = linea.TotalCantidad,
                          UnitMeasureId = linea.UnitMeasureId,
                          UnitMeasurName = linea.UnitMeasurName,
+                         Pda = (int)linea.PdaNo,
                          ReciboId = linea.ReciboId == null ? 0 : (int)linea.ReciboId,
                          GoodsReceivedLineId = linea.GoodsReceivedLineId
 

@@ -448,6 +448,13 @@ namespace ERPAPI.Controllers
 
             certificado.IdEstado = 6;
             certificado.Estado = "Vigente";
+            certificado.UsuarioModificacion = User.Identity.Name;
+
+            SolicitudCertificadoDeposito solicitudCertificado = _context.SolicitudCertificadoDeposito.Where(q => q.NoCD == certificado.IdCD).FirstOrDefault();
+            if (solicitudCertificado!= null)
+            {
+                solicitudCertificado.UsuarioModificacion = User.Identity.Name;
+            }
 
             await _context.SaveChangesAsync();
 
@@ -510,6 +517,8 @@ namespace ERPAPI.Controllers
 
                     if (!ValidarPoliza(_CertificadoDeposito.Total, (long)_CertificadoDeposito.InsurancePolicyId))                    
                         return BadRequest("Limite Mercadria asegurado ha sido superado");
+                    if (_CertificadoDeposito._CertificadoLine.LastOrDefault().PdaNo > 8)
+                        return BadRequest("Limite de partidas de un ccertificado es 8");
                     
 
 
@@ -535,7 +544,8 @@ namespace ERPAPI.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    _CertificadoDeposito.SolicitudCertificadoId = (int)_SolicitudCertificado.IdSCD;                                      
+                    _CertificadoDeposito.SolicitudCertificadoId = (int)_SolicitudCertificado.IdSCD;     
+                    _SolicitudCertificado.NoCD = (int)_CertificadoDeposito.IdCD;
 
                     await _context.SaveChangesAsync();
 

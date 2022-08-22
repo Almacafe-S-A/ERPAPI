@@ -17,11 +17,14 @@ namespace ERPAPI.Models
 
         public int ReciboId { get; set; }
 
+
         public Int64 SubProductId { get; set; }
         [ForeignKey("SubProductId")]
         public SubProduct Product { get; set; }
         [Display(Name = "Nombre producto")]
         public string SubProductName { get; set; }
+
+        public int Pda { get; set; }
 
         [Display(Name = "Unidad de medida")]
         public Int64 UnitMeasureId { get; set; }
