@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220822220649_PDA_Solicitud")]
+    partial class PDA_Solicitud
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -9902,6 +9904,14 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Almacenaje");
 
+                    b.Property<long?>("BankId");
+
+                    b.Property<string>("BankName");
+
+                    b.Property<long>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
+
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -9916,7 +9926,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaCreacion");
 
+                    b.Property<DateTime?>("FechaFirma");
+
+                    b.Property<DateTime?>("FechaInicioComputo");
+
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<DateTime?>("FechaPagoBanco");
 
                     b.Property<DateTime>("FechaVencimiento");
 
@@ -9924,7 +9940,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
+                    b.Property<string>("Impreso");
+
+                    b.Property<string>("LugarFirma");
+
                     b.Property<string>("ManifiestoNo");
+
+                    b.Property<double?>("MontoGarantia");
 
                     b.Property<long>("NoCD");
 
@@ -9937,6 +9959,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("NombrePrestatario");
 
                     b.Property<string>("OtrosCargos");
+
+                    b.Property<double?>("PorcentajeInteresesInsolutos");
 
                     b.Property<decimal>("Quantitysum");
 
@@ -9953,6 +9977,10 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
+
+                    b.Property<long>("WarehouseId");
+
+                    b.Property<string>("WarehouseName");
 
                     b.HasKey("IdSCD");
 
