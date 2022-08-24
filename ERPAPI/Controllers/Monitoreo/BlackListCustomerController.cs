@@ -110,7 +110,7 @@ namespace ERPAPI.Controllers
             List<BlackListCustomers> Items = new List<BlackListCustomers>();
             try
             {
-                Items = await _context.BlackListCustomers.Where(q=>q.CustomerName.Contains(_BlackListCustomers.CustomerName)).ToListAsync();
+                Items = await _context.BlackListCustomers.ToListAsync();
             }
             catch (Exception ex)
             {
