@@ -289,6 +289,8 @@ namespace ERPAPI.Controllers
 
                         _customer.FechaCreacion = customerq.FechaCreacion;
                         _customer.UsuarioCreacion = customerq.UsuarioCreacion;
+                        _customer.FechaModificacion = customerq.FechaModificacion;
+                        _customer.UsuarioModificacion = User.Identity.Name;
 
                         //_context.Customer.Update(_customer);
 

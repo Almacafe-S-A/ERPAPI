@@ -14,7 +14,7 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id Cliente")]
         public Int64 CustomerId { get; set; }
-        [Required]
+        
         [Display(Name = "Nombre del cliente")]
         public string CustomerName { get; set; }
 
@@ -77,9 +77,6 @@ namespace ERPAPI.Models
 
         [Display(Name = "Teléfono de trabajo")]
         public string WorkPhone { get; set; }
-        //[Display(Name = "Party")]
-        //public virtual Party Party { get; set; }
-        //public int? PartyId { get; set; }
 
         [Display(Name = "Identidad del contacto")]
         public string Identidad { get; set; }
@@ -112,10 +109,10 @@ namespace ERPAPI.Models
         public string Proveedor2 { get; set; }
 
         [Display(Name = "Proveedor 2")]
-        public bool ClienteRecoger { get; set; }
+        public bool? ClienteRecoger { get; set; }
 
         [Display(Name = "Proveedor 2")]
-        public bool EnviarlaMensajero { get; set; }
+        public bool? EnviarlaMensajero { get; set; }
 
         [Display(Name = "Dirección de envío con puntos de referencia")]
         public string DireccionEnvio { get; set; }
@@ -141,7 +138,7 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Confirmación por correo")]
-        public bool ConfirmacionCorreo { get; set; }
+        public bool? ConfirmacionCorreo { get; set; }
 
 
         public int? UnitOfMeasurePreference { get; set; }
@@ -149,17 +146,17 @@ namespace ERPAPI.Models
 
         public UnitOfMeasure UnitOfMeasure { get; set; }
 
-        [Required]
+        
         public string UsuarioCreacion { get; set; }
 
-        [Required]
+       
         public string UsuarioModificacion { get; set; }
 
-        [Required]
-        public DateTime FechaCreacion { get; set; }
+        
+        public DateTime? FechaCreacion { get; set; }
 
-        [Required]
-        public DateTime FechaModificacion { get; set; }
+       
+        public DateTime? FechaModificacion { get; set; }
 
         public List<CustomersOfCustomer> _Customers { get; set; }
 
