@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220826214244_CamposEmpresaClientePersonaNatural")]
+    partial class CamposEmpresaClientePersonaNatural
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2999,6 +3001,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdEstado");
 
+                    b.Property<string>("Identidad");
+
                     b.Property<string>("IdentidadApoderado");
 
                     b.Property<bool?>("InstitucionSupervisada");
@@ -3033,8 +3037,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("RTN")
                         .IsRequired();
-
-                    b.Property<string>("RTNGerenteGeneral");
 
                     b.Property<string>("SolicitadoPor");
 
