@@ -78,11 +78,17 @@ namespace ERPAPI.Models
         [Display(Name = "Teléfono de trabajo")]
         public string WorkPhone { get; set; }
 
-        [Display(Name = "Identidad del contacto")]
-        public string Identidad { get; set; }
+        [Display(Name = "RTN Gerente General")]
+        public string RTNGerenteGeneral { get; set; }
         public string Email { get; set; }
         [Display(Name = "Persona de Contacto ")]
         public string ContactPerson { get; set; }
+
+        public string NombreEmpresaPN { get; set; }
+
+        public string TelefonoEmpresaPN { get; set; }
+
+        public string DireccionEmpresaPN { get; set; }
 
         [Display(Name = "Activo/Inactivo ")]
         public Int64? IdEstado { get; set; } = null;
