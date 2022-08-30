@@ -17,13 +17,13 @@ namespace ERPAPI.Models
         [Required]
         public string UsuarioCreacion { get; set; }
 
-        [Required]
+        
         public string UsuarioModificacion { get; set; }
 
         [Required]
         public DateTime FechaCreacion { get; set; }
 
-        [Required]
+        
         public DateTime FechaModificacion { get; set; }
     }
 
