@@ -362,6 +362,8 @@ namespace ERPAPI.Controllers
             {
                 ControlPallets controlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId).Include(i => i._ControlPalletsLine).FirstOrDefault();
 
+
+                if (controlPallets == null) return BadRequest(); 
                 Boleto_Ent boletapeso = await  _context.Boleto_Ent.Where(q => q.clave_e == controlPallets.WeightBallot).FirstOrDefaultAsync();
 
                
@@ -621,14 +623,13 @@ namespace ERPAPI.Controllers
 
 
                         var boletasalida = await InsertBoletaSalida(_GoodsReceivedq);
-                        if (boletasalida.Result is BadRequestObjectResult)
+                        if (!(boletasalida.Result is BadRequestResult))
                         {
-                            transaction.Rollback();
-                            return BadRequest(boletasalida);
+                            _GoodsReceivedq.BoletaSalidaId = boletasalida.Value.BoletaDeSalidaId;
+
+                            await _context.SaveChangesAsync();///Asigna el numero del recibo a la boleta de salida 
                         }
-                        _GoodsReceivedq.BoletaSalidaId = boletasalida.Value.BoletaDeSalidaId;
-                        
-                        await _context.SaveChangesAsync();///Asigna el numero del recibo a la boleta de salida 
+
                         //TODO : Validar si es necesario
                         //BoletaDeSalida _bol = await _context.BoletaDeSalida
                         //                      .Where(q => q.BoletaDeSalidaId == boletasalida.Value.BoletaDeSalidaId).FirstOrDefaultAsync();

@@ -43,13 +43,13 @@ namespace ERPAPI.Controllers
                 var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
                 int count = user.Count();
                 List<UserBranch> branchlist = await _context.UserBranch
-                    //.Where(w => w.UserId == user.FirstOrDefault().Id)
+                    .Where(w => w.UserId == user.FirstOrDefault().Id)
                     .ToListAsync();
                 if (branchlist.Count > 0)
                 {
                     Items = await _context.InventarioFisico
-                        //.Include(i => i.Warehouse.)
-                        //.Where(p => branchlist.Any(b => p.Warehouse.BranchId == b.BranchId))
+                        //.Include(i => i.Warehouse)
+                        .Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
                         .OrderByDescending(b => b.Id).ToListAsync();
                 }
                 else
