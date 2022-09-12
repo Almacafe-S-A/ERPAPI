@@ -72,7 +72,11 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Area Utilizada")]
-        public double UsedArea { get; set; }        
+        public double UsedArea { get; set; }
+
+       
+
+
 
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
@@ -82,6 +86,8 @@ namespace ERPAPI.Models
         public string Impreso { get; set; }
 
         public List<CustomerAreaProduct> CustomerAreaProduct { get; set; }
+
+        public bool Cerrado { get; set; }
 
     }
 }
