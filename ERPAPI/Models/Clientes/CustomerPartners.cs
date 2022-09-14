@@ -36,7 +36,7 @@ namespace ERPAPI.Models
         [Display(Name = "Listados sancionados")]
         public string Listados { get; set; }
 
-        [EmailAddress]
+        
         public string Correo { get; set; }
 
         public string UsuarioCreacion { get; set; }
