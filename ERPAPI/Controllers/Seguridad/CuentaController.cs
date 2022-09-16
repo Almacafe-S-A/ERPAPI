@@ -84,7 +84,9 @@ namespace ERPAPI.Controllers
 
             if (result.Succeeded)
             {
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 await _context.SaveChangesAsync();
+
                 return await Task.Run(() => Ok());
             }
             else
