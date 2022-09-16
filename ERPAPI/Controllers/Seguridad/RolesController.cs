@@ -336,6 +336,9 @@ namespace ERPAPI.Controllers
 
                     _context.RoleClaims.RemoveRange(permisosBorrar);
                     _context.RoleClaims.AddRange(permisosInsertar);
+                    
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     _context.SaveChanges();
 
                     return new EmptyResult();
