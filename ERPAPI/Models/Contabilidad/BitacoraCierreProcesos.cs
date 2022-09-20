@@ -17,13 +17,15 @@ namespace ERPAPI.Models
         [ForeignKey("IdBitacoraCierre")]
         public BitacoraCierreContable BitacoraCierresContable { get; set; }
 
-        public DateTime FechaCierre { get; set; }
+        public DateTime? FechaCierre { get; set; }        
 
         public int PasoCierre { get; set; }
 
         public string Proceso { get; set; }
 
         public string Mensaje { get; set; }
+
+        public string Asientos { get; set; }
 
         public string Estatus { get; set; }
 

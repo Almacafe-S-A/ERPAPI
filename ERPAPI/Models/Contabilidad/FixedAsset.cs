@@ -93,6 +93,14 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         public decimal NetValue { get; set; }
 
+        public string Codigo { get; set; }
+
+        public string Marca { get; set; }
+
+        public string Serie { get; set; }
+
+        public string Modelo { get; set; }
+
         [Display(Name = "Depreciacion acumulada")]
         [Column(TypeName = "Money")]
         public decimal AccumulatedDepreciation { get; set; }
