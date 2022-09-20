@@ -67,14 +67,14 @@ namespace ERPAPI.Controllers
         /// </summary>
 
         // GET: api/BitacoraCierreContable
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetBitacoraCierreContable()
+        [HttpGet("[action]/{PeriodoId}")]
+        public async Task<IActionResult> GetBitacoraCierreContable(int periodoId)
 
         {
             List<BitacoraCierreContable> Items = new List<BitacoraCierreContable>();
             try
             {
-                Items = await _context.BitacoraCierreContable.OrderByDescending(c => c.FechaCierre).ToListAsync();
+                Items = await _context.BitacoraCierreContable.Where(q => q.PeriodoId==periodoId).OrderBy(c => c.Mes).ToListAsync();
             }
             catch (Exception ex)
             {

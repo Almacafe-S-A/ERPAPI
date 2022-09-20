@@ -7,27 +7,22 @@ using System.Threading.Tasks;
 
 namespace ERPAPI.Models
 {
-    public class BitacoraCierreContable
+    public class CierresProceso
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public DateTime? FechaCierre { get; set; }
+        public string NombreProceso { get; set; }
 
-        public int? Anio { get; set; }
+        public string Descripcion { get; set; }
 
-        public int? Mes { get; set; }
+        public string Modulo { get; set; }
 
-        public int? PeriodoId { get; set; }
+        public int MesEjecucion { get; set; }
 
-        [ForeignKey("PeriodoId")]
-        public Periodo Periodo { get; set; }
+        public Int64 EstadoId { get; set; }
 
-        public Int64 EstatusId { get; set; }
-
-        public string Estatus { get; set; }
-
-        public string Mensaje { get; set; }
+        public string Estatus { get; set; }        
 
         public DateTime FechaCreacion { get; set; }
 
@@ -37,6 +32,5 @@ namespace ERPAPI.Models
 
         public string UsuarioModificacion { get; set; }
 
-        public List<BitacoraCierreProcesos> CierreContableLineas { get; set; }
     }
 }

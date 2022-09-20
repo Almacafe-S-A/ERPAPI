@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220712220426_ProcesosMensualesCierres")]
+    partial class ProcesosMensualesCierres
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -330,7 +332,8 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion")
                         .IsRequired();
 
-                    b.Property<string>("UsuarioModificacion");
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
 
                     b.HasKey("UserId", "RoleId");
 
@@ -613,8 +616,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Asientos");
-
                     b.Property<string>("Estatus");
 
                     b.Property<DateTime?>("FechaCierre");
@@ -660,6 +661,10 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CountryName");
 
+                    b.Property<long>("CustomerId");
+
+                    b.Property<string>("CustomerName");
+
                     b.Property<string>("CustomerReference");
 
                     b.Property<DateTime>("DocumentDate");
@@ -673,8 +678,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("IdEstado");
 
                     b.Property<string>("Identidad");
-
-                    b.Property<string>("Nombre");
 
                     b.Property<string>("Origen");
 
@@ -1270,8 +1273,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdEstado");
 
-                    b.Property<int>("Impresiones");
-
                     b.Property<string>("Impreso");
 
                     b.Property<int?>("InsuranceId");
@@ -1286,7 +1287,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NoPoliza");
 
-                    b.Property<string>("NoTraslado");
+                    b.Property<long?>("NoTraslado");
 
                     b.Property<string>("NombreEmpresa");
 
@@ -1314,7 +1315,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("SolicitudCertificadoId");
 
-                    b.Property<decimal?>("SujetasAPago");
+                    b.Property<double?>("SujetasAPago");
 
                     b.Property<decimal>("Total");
 
@@ -1323,8 +1324,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<int>("impresionesTalon");
 
                     b.HasKey("IdCD");
 
@@ -2944,25 +2943,22 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Address");
 
-                    b.Property<bool?>("CargosPublicos");
-
                     b.Property<string>("City");
 
                     b.Property<long?>("CityId");
 
-                    b.Property<bool?>("ClienteRecoger");
+                    b.Property<bool>("ClienteRecoger");
 
-                    b.Property<bool?>("ConfirmacionCorreo");
+                    b.Property<bool>("ConfirmacionCorreo");
 
                     b.Property<string>("ContactPerson");
-
-                    b.Property<string>("Conyugue");
 
                     b.Property<long?>("CountryId");
 
                     b.Property<string>("CountryName");
 
-                    b.Property<string>("CustomerName");
+                    b.Property<string>("CustomerName")
+                        .IsRequired();
 
                     b.Property<string>("CustomerRefNumber");
 
@@ -2972,35 +2968,21 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Denominacion");
 
-                    b.Property<string>("DireccionEmpresaPN");
-
                     b.Property<string>("DireccionEnvio");
-
-                    b.Property<int?>("Edad");
 
                     b.Property<string>("Email");
 
-                    b.Property<bool?>("EnviarlaMensajero");
+                    b.Property<bool>("EnviarlaMensajero");
 
                     b.Property<bool?>("EsExonerado");
 
                     b.Property<string>("Estado");
 
-                    b.Property<int?>("EstadoCivil");
-
-                    b.Property<string>("Familiares");
-
                     b.Property<string>("Fax");
 
-                    b.Property<DateTime?>("FechaCreacion");
+                    b.Property<DateTime>("FechaCreacion");
 
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<DateTime?>("FechaNacimiento");
-
-                    b.Property<string>("FirmaAuditoriaExterna");
-
-                    b.Property<string>("GiroActividadNegocio");
+                    b.Property<DateTime>("FechaModificacion");
 
                     b.Property<string>("GrupoEconomico");
 
@@ -3008,23 +2990,16 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("IdEstado");
 
+                    b.Property<string>("Identidad")
+                        .IsRequired();
+
                     b.Property<string>("IdentidadApoderado");
 
-                    b.Property<bool?>("InstitucionSupervisada");
-
-                    b.Property<string>("LugarNacimiento");
-
-                    b.Property<double?>("MontoActivos");
+                    b.Property<double>("MontoActivos");
 
                     b.Property<double>("MontoIngresosAnuales");
 
-                    b.Property<string>("Nacionalidad");
-
                     b.Property<string>("NombreApoderado");
-
-                    b.Property<string>("NombreEmpresaPN");
-
-                    b.Property<string>("NombreFuncionario");
 
                     b.Property<string>("Observaciones");
 
@@ -3034,16 +3009,12 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("ProductTypeId");
 
-                    b.Property<string>("ProfesionOficio");
-
                     b.Property<string>("Proveedor1");
 
                     b.Property<string>("Proveedor2");
 
                     b.Property<string>("RTN")
                         .IsRequired();
-
-                    b.Property<string>("RTNGerenteGeneral");
 
                     b.Property<string>("SolicitadoPor");
 
@@ -3053,13 +3024,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("TaxId");
 
-                    b.Property<string>("TelefonoEmpresaPN");
-
                     b.Property<int?>("UnitOfMeasurePreference");
 
-                    b.Property<string>("UsuarioCreacion");
+                    b.Property<string>("UsuarioCreacion")
+                        .IsRequired();
 
-                    b.Property<string>("UsuarioModificacion");
+                    b.Property<string>("UsuarioModificacion")
+                        .IsRequired();
 
                     b.Property<double?>("ValorSeveridadRiesgo");
 
@@ -3102,8 +3073,6 @@ namespace ERPAPI.Migrations
                     b.Property<long>("BranchId");
 
                     b.Property<string>("BranchName");
-
-                    b.Property<bool>("Cerrado");
 
                     b.Property<long>("CustomerId");
 
@@ -9939,6 +9908,14 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Almacenaje");
 
+                    b.Property<long?>("BankId");
+
+                    b.Property<string>("BankName");
+
+                    b.Property<long>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
+
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -9953,7 +9930,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaCreacion");
 
+                    b.Property<DateTime?>("FechaFirma");
+
+                    b.Property<DateTime?>("FechaInicioComputo");
+
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<DateTime?>("FechaPagoBanco");
 
                     b.Property<DateTime>("FechaVencimiento");
 
@@ -9961,19 +9944,27 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
+                    b.Property<string>("Impreso");
+
+                    b.Property<string>("LugarFirma");
+
                     b.Property<string>("ManifiestoNo");
+
+                    b.Property<double?>("MontoGarantia");
 
                     b.Property<long>("NoCD");
 
                     b.Property<string>("NoPoliza");
 
-                    b.Property<string>("NoTraslado");
+                    b.Property<long?>("NoTraslado");
 
                     b.Property<string>("NombreEmpresa");
 
                     b.Property<string>("NombrePrestatario");
 
                     b.Property<string>("OtrosCargos");
+
+                    b.Property<double?>("PorcentajeInteresesInsolutos");
 
                     b.Property<decimal>("Quantitysum");
 
@@ -9990,6 +9981,10 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
+
+                    b.Property<long>("WarehouseId");
+
+                    b.Property<string>("WarehouseName");
 
                     b.HasKey("IdSCD");
 
@@ -10009,8 +10004,6 @@ namespace ERPAPI.Migrations
                     b.Property<long?>("GoodsReceivedLineId");
 
                     b.Property<long>("IdSCD");
-
-                    b.Property<int>("Pda");
 
                     b.Property<decimal>("Price");
 
@@ -10051,7 +10044,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<int?>("IdEstado");
+                    b.Property<long>("IdEstado");
 
                     b.Property<string>("Name");
 
@@ -10127,15 +10120,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BranchName");
 
-                    b.Property<decimal?>("Cantidad");
-
                     b.Property<long>("CustomerId");
 
                     b.Property<string>("CustomerName");
 
                     b.Property<DateTime>("DocumentDate");
-
-                    b.Property<long?>("EmpleadoId");
 
                     b.Property<long>("EmployeeId");
 
@@ -10151,15 +10140,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<string>("Motivo");
-
                     b.Property<decimal>("QuantityHours");
 
                     b.Property<long>("ServiceId");
 
                     b.Property<string>("ServiceName");
-
-                    b.Property<string>("Solicitante");
 
                     b.Property<DateTime>("StartTime");
 
@@ -10176,8 +10161,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("WareHouseName");
 
                     b.HasKey("SubServicesWareHouseId");
-
-                    b.HasIndex("EmpleadoId");
 
                     b.ToTable("SubServicesWareHouse");
                 });
@@ -13170,13 +13153,6 @@ namespace ERPAPI.Migrations
                         .WithMany("State")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.SubServicesWareHouse", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Employees", "Employees")
-                        .WithMany()
-                        .HasForeignKey("EmpleadoId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.TipoBonificacion", b =>

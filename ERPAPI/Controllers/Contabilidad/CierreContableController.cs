@@ -79,7 +79,7 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> EjecutarCierreContable([FromBody] BitacoraCierreContable pBitacoraCierre)
         {
             /////obtiene el ultimo cierre
-            BitacoraCierreContable cierre = await _context.BitacoraCierreContable.Where(w => w.FechaCierre.Date == pBitacoraCierre.FechaCierre.Date).OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
+            BitacoraCierreContable cierre = await _context.BitacoraCierreContable.Where(w => w.FechaCierre == pBitacoraCierre.FechaCierre).OrderByDescending(i => i.FechaCierre).FirstOrDefaultAsync();
             ExchangeRate tasacambio = await _context.ExchangeRate
                             //.Where(b => b.DayofRate >= DateTime.Now.AddDays(-1)).FirstOrDefaultAsync();
                             .Where(b => b.DayofRate >= DateTime.Now.AddDays(-1) && b.CurrencyId == 2).FirstOrDefaultAsync();
@@ -110,7 +110,7 @@ namespace ERPAPI.Controllers
             ////Si no existe Ciere lo crea
             cierre = new BitacoraCierreContable
             {
-                FechaCierre = pBitacoraCierre.FechaCierre.Date,
+                FechaCierre = pBitacoraCierre.FechaCierre,
                 FechaCreacion = DateTime.Now,
                 Estatus = "PENDIENTE",
                 EstatusId = 1,
@@ -193,9 +193,9 @@ namespace ERPAPI.Controllers
             _context.BitacoraCierreProceso.Add(procesoValorMaximoCD);
             _context.BitacoraCierreProceso.Add(procesoSegurosVencimineto);
             _context.BitacoraCierreProceso.Add(procesoGarantiasVenc);
-            
+           
 
-            if (cierre.FechaCierre.Day == DateTime.DaysInMonth(cierre.FechaCierre.Year, cierre.FechaCierre.Month)) ///////Se ejecuta solo si es fin de mes
+            if (Convert.ToDateTime(cierre.FechaCierre).Day == DateTime.DaysInMonth(Convert.ToDateTime(cierre.FechaCierre).Year, Convert.ToDateTime(cierre.FechaCierre).Month)) ///////Se ejecuta solo si es fin de mes
             {
                 BitacoraCierreProcesos procesoDepreciacion = new BitacoraCierreProcesos
                 {
@@ -247,7 +247,7 @@ namespace ERPAPI.Controllers
                 _context.BitacoraCierreProceso.Add(procesoDiferencialesCambiarios);
                 _context.BitacoraCierreProceso.Add(procesoEjecucionPresupuestaria);
 
-                await DepreciacionActivosFijos(procesoDepreciacion, cierre, cierre.FechaCierre);
+                await DepreciacionActivosFijos(procesoDepreciacion, cierre, (DateTime)cierre.FechaCierre);
                 await DiferencialesCambiarios(procesoDiferencialesCambiarios, procesoDiferencialesCambiarios.IdProceso);
                 await EjecucionPresupuestaria(procesoEjecucionPresupuestaria.IdProceso);
 
@@ -384,9 +384,9 @@ namespace ERPAPI.Controllers
                     //.............................///////
                     JournalEntry _je = new JournalEntry
                     {
-                        Date = proceso.FechaCierre,
+                        Date = (DateTime)proceso.FechaCierre,
                         Memo = "Diferenciales Cambiaron en Seguros Endosados",
-                        DatePosted = proceso.FechaCierre,
+                        DatePosted = (DateTime)proceso.FechaCierre,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
                         ModifiedUser = User.Identity.Name,
@@ -474,7 +474,7 @@ namespace ERPAPI.Controllers
                         IsCash = item.IsCash,
                         ParentAccountId = item.ParentAccountId,
                         TypeAccountId = item.TypeAccountId,
-                        FechaCierre = proceso.FechaCierre,
+                        FechaCierre = (DateTime)proceso.FechaCierre,
                         BitacoraCierreContableId = proceso.IdBitacoraCierre,
                         UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
                         UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
@@ -503,7 +503,7 @@ namespace ERPAPI.Controllers
                         TotalCredit = item.TotalCredit,
                         TotalDebit = item.TotalDebit,
                         BitacoraCierreContableId = proceso.IdBitacoraCierre,
-                        FechaCierre = proceso.FechaCierre,
+                        FechaCierre = (DateTime)proceso.FechaCierre,
                         CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
                         ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
                         CreatedDate = item.CreatedDate,
@@ -522,7 +522,7 @@ namespace ERPAPI.Controllers
                             Debit = detalle.Debit,
                             Credit = detalle.Credit,
                             BitacoraCierreContableId = proceso.IdBitacoraCierre,
-                            FechaCierre = proceso.FechaCierre,
+                            FechaCierre = (DateTime)proceso.FechaCierre,
                             CreatedUser = User.Claims.FirstOrDefault().Value.ToString(),
                             ModifiedUser = User.Claims.FirstOrDefault().Value.ToString(),
                             CreatedDate = detalle.CreatedDate,
@@ -1136,7 +1136,7 @@ namespace ERPAPI.Controllers
                         await VencimientoGarantiasBancarias(item.IdProceso);
                         break;
                     case 4:
-                        await DepreciacionActivosFijos(item, pCierre, item.FechaCierre);
+                        await DepreciacionActivosFijos(item, pCierre, (DateTime)item.FechaCierre);
                         break;
                     case 5:
                         await VencimientoGarantiasBancarias(item.IdProceso);
