@@ -96,6 +96,39 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los certificados de deposito por cliente.
+        /// </summary>
+        /// <param name="IdCD"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdCD}")]
+        public async Task<ActionResult<GoodsDeliveryAuthorization>> Aprobar(int IdCD)
+        {
+
+            GoodsDeliveryAuthorization autorizacion = await _context.GoodsDeliveryAuthorization
+                .Where(q => q.GoodsDeliveryAuthorizationId == IdCD)
+                //.Include(i => i.autor)
+                .FirstOrDefaultAsync();
+
+            if (autorizacion == null)
+            {
+                return BadRequest();
+            }
+
+
+
+            autorizacion.EstadoId = 6;
+            autorizacion.Estado = "Aprobado";
+            autorizacion.UsuarioModificacion = User.Identity.Name;
+            autorizacion.FechaModificacion = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return autorizacion;
+
+        }
+
+
 
         /// <summary>
         /// Obtienne los productos de los recibos de mercaderias que han sido liquidados 
@@ -247,6 +280,9 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _GoodsDeliveryAuthorizationq = _GoodsDeliveryAuthorization;
+                        _GoodsDeliveryAuthorizationq.Estado = "Revisión";
+                        _GoodsDeliveryAuthorizationq.EstadoId = 5;
+
                         
                         //Firmas
 
