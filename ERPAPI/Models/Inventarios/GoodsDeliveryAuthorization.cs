@@ -96,6 +96,12 @@ namespace ERPAPI.Models
 
         [Display(Name = "Carta de porte o manifiesto No.")]
         public string ManifiestoNo { get; set; }
+
+        public string Estado { get; set; }
+
+        public int EstadoId { get; set; }
+
+
         [NotMapped]
         public Int64[] Firmas { get; set; }
 
