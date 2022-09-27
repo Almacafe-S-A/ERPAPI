@@ -58,6 +58,46 @@ namespace ERPAPI.Controllers
 
         }
 
+        /// <summary>
+        /// EjecutarProcesoCierre
+        /// </summary>
+        /// <param name="ProcesoId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ProcesoId}")]
+        public async Task<IActionResult> EjecutarPasoCierre(int ProcesoId)
+        {
+            BitacoraCierreProcesos proceso = new BitacoraCierreProcesos();
+            proceso = _context.BitacoraCierreProceso.Where(q => q.IdProceso == ProcesoId).FirstOrDefault();
+
+            BitacoraCierreContable cierre = new BitacoraCierreContable();
+            cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault(); 
+
+
+            switch (proceso.PasoCierre)
+            {
+                case 3:
+                    await DepreciacionActivosFijos(proceso, cierre, DateTime.Now);
+                    break;
+
+                case 5:
+                    await DiferencialesCambiarios(proceso, proceso.IdProceso);
+                    break;
+
+                case 4:
+                    await EjecucionPresupuestaria(proceso.IdProceso);
+                    break;
+                    
+                default:
+                    proceso.Estatus = "ERROR";
+                    proceso.Mensaje = "No existe un proceso registrado";
+                    break;
+            }
+            _context.SaveChanges();
+
+            return Ok();
+
+
+        }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> EjecutarCierrePartidasCierre(int periodo)
@@ -736,6 +776,8 @@ namespace ERPAPI.Controllers
 
                     foreach (var grupo in depreciaciongrupos)
                     {
+
+
                         JournalEntryLine jelDepreciacion = new JournalEntryLine
                         {
                             JournalEntryId = _je.JournalEntryId,

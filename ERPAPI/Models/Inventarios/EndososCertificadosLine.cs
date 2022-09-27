@@ -16,6 +16,8 @@ namespace ERPAPI.Models
         [Display(Name = "Id Endoso")]
         public Int64 EndososCertificadosId { get; set; }
 
+        public int Pda { get; set; }
+
         [Display(Name = "Unidad de medida")]
         public Int64 UnitOfMeasureId { get; set; }
 
@@ -41,6 +43,10 @@ namespace ERPAPI.Models
         public decimal ValorEndoso { get; set; }
 
         public decimal Saldo { get; set; }
+
+        public decimal? DerechosFiscales { get; set; }
+
+        public decimal? ValorUnitarioDerechos { get; set; }
 
 
     }
