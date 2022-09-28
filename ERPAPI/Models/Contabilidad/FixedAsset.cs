@@ -101,6 +101,12 @@ namespace ERPAPI.Models
 
         public string Modelo { get; set; }
 
+        public decimal VidaUtilNIIF { get; set; }
+
+        public decimal DepreciacionMensualNIIF { get; set; }
+
+        public decimal TotalaDepreciarNIIF { get; set; }
+
         [Display(Name = "Depreciacion acumulada")]
         [Column(TypeName = "Money")]
         public decimal AccumulatedDepreciation { get; set; }

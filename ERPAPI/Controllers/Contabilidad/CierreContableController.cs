@@ -751,7 +751,9 @@ namespace ERPAPI.Controllers
                     //    Depreciacion = g.Sum(s => s.ToDepreciate)
                     //})
                     //.ToListAsync();
-                    var depreciaciongrupos = await _context.FixedAssetGroup.Include(q => q.DepreciationFixedAssetAccounting).Include(c => c.FixedAssetAccounting).ToListAsync();
+                    var depreciaciongrupos = await _context.FixedAssetGroup
+                        .Include(q => q.DepreciationFixedAssetAccounting)
+                        .Include(c => c.FixedAssetAccounting).ToListAsync();
 
 
                     JournalEntry _je = new JournalEntry
@@ -767,8 +769,10 @@ namespace ERPAPI.Controllers
                         VoucherType = 21,
                         TypeJournalName = "Depreciacion",
                         EstadoId = 5,
-                        EstadoName = "Aprobado Sistema",
+                        EstadoName = "Enviado a Aprobacion",
+                        TypeOfAdjustmentName = "Cierre Mensual",
                         TypeOfAdjustmentId = 65,
+
 
                         //VoucherType = Convert.ToInt32(tipoDocumento.IdTipoDocumento),                      
 
@@ -776,17 +780,20 @@ namespace ERPAPI.Controllers
 
                     foreach (var grupo in depreciaciongrupos)
                     {
-
+                        if (grupo.DepreciationFixedAssetAccounting == null)
+                        {
+                            continue;
+                        }
 
                         JournalEntryLine jelDepreciacion = new JournalEntryLine
                         {
                             JournalEntryId = _je.JournalEntryId,
-                            AccountId = Convert.ToInt32(grupo.DepreciationFixedAssetAccounting.AccountId),
-                            AccountName = grupo.DepreciationFixedAssetAccounting.AccountName,
+                            AccountId = Convert.ToInt32(grupo.DepreciationFixedAssetAccounting.AccountId), 
+                            AccountName = $"{grupo.DepreciationFixedAssetAccounting.AccountCode} - {grupo.DepreciationFixedAssetAccounting.AccountName}",
                             Debit = 0,
                             //CostCenterId = item.CenterCostId,
                             //CostCenterName = item.CenterCostName,
-                            CreatedUser = "SYSTEM",
+                            CreatedUser = User.Identity.Name,
                             CreatedDate = DateTime.Now,
                             ModifiedDate = DateTime.Now,
                             ModifiedUser = User.Identity.Name
@@ -796,11 +803,11 @@ namespace ERPAPI.Controllers
                         {
                             JournalEntryId = _je.JournalEntryId,
                             AccountId = Convert.ToInt32(grupo.FixedAssetAccounting.AccountId),
-                            AccountName = grupo.FixedAssetAccounting.AccountName,
+                            AccountName = $"{grupo.FixedAssetAccounting.AccountCode} - {grupo.FixedAssetAccounting.AccountName}",
                             Credit = 0,
                             //CostCenterId = item.CenterCostId,
                             //CostCenterName = item.CenterCostName,
-                            CreatedUser = "SYSTEM",
+                            CreatedUser = User.Identity.Name,
                             CreatedDate = DateTime.Now,
                             ModifiedDate = DateTime.Now,
                             ModifiedUser = User.Identity.Name
@@ -912,6 +919,11 @@ namespace ERPAPI.Controllers
                             jeActivo.Credit += adepreciar;
                             jelDepreciacion.Debit += adepreciar;
                         }
+                        if (jelDepreciacion.Credit==0 &&jelDepreciacion.Debit==0)
+                        {
+                           
+                            continue;
+                        }
                         _je.JournalEntryLines.Add(jelDepreciacion);
                         _je.JournalEntryLines.Add(jeActivo);
                         //_je.JournalEntryLines = new List<JournalEntryLine>();
@@ -919,11 +931,18 @@ namespace ERPAPI.Controllers
 
                     }
 
+                    _je.TotalCredit = _je.JournalEntryLines.Sum(s => s.Credit);
+                    _je.TotalDebit = _je.JournalEntryLines.Sum(s => s.Debit);
+
                     _context.JournalEntry.Add(_je);
+
                     pProceso.Estatus = "FINALIZADO";
                     pProceso.Mensaje = "";
-                    transaction.Commit();
+                    pProceso.FechaCierre = System.DateTime.Now;
                     await _context.SaveChangesAsync();
+                   
+                    transaction.Commit();
+                    pProceso.Asientos = _je.JournalEntryId.ToString();
                 }
                 catch (Exception ex)
                 {
