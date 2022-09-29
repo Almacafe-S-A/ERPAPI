@@ -15,6 +15,7 @@ using System.Collections;
 using AutoMapper.Configuration.Conventions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace ERPAPI.Controllers
 {
@@ -76,7 +77,7 @@ namespace ERPAPI.Controllers
             switch (proceso.PasoCierre)
             {
                 case 3:
-                    await DepreciacionActivosFijos(proceso, cierre, DateTime.Now);
+                    await DepreciacionActivosFijos(proceso, cierre, new DateTime((int)cierre.Anio,(int)cierre.Mes,1));
                     break;
 
                 case 5:
@@ -735,31 +736,16 @@ namespace ERPAPI.Controllers
             {
                 try
                 {
-
-                    //    var depreciaciongrupos = await _context.FixedAsset
-                    //.GroupBy(g => new
-                    //{
-                    //    g.FixedAssetGroupId,
-                    //    g.CenterCostId,
-                    //    g.CenterCostName
-                    //})
-                    //.Select(g => new
-                    //{
-                    //    CentroCostoName = g.Key.CenterCostName,
-                    //    CentroCostoID = g.Key.CenterCostId,
-                    //    Grupo = g.Key.FixedAssetGroupId,
-                    //    Depreciacion = g.Sum(s => s.ToDepreciate)
-                    //})
-                    //.ToListAsync();
                     var depreciaciongrupos = await _context.FixedAssetGroup
                         .Include(q => q.DepreciationFixedAssetAccounting)
+                        .Include(q => q.AccumulatedDepreciationAccounting)
                         .Include(c => c.FixedAssetAccounting).ToListAsync();
 
 
                     JournalEntry _je = new JournalEntry
                     {
                         Date = DateTime.Now,
-                        Memo = "Depreciacion de Activos Cierre Mensual" + pCierre.FechaCierre,
+                        Memo = "Depreciacion de Activos Cierre Mensual " + pfecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-HN")),
                         DatePosted = pfecha,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
@@ -780,7 +766,7 @@ namespace ERPAPI.Controllers
 
                     foreach (var grupo in depreciaciongrupos)
                     {
-                        if (grupo.DepreciationFixedAssetAccounting == null)
+                        if (grupo.DepreciationFixedAssetAccounting == null||grupo.AccumulatedDepreciationAccounting == null)
                         {
                             continue;
                         }
@@ -799,11 +785,11 @@ namespace ERPAPI.Controllers
                             ModifiedUser = User.Identity.Name
                         };
 
-                        JournalEntryLine jeActivo = new JournalEntryLine
+                        JournalEntryLine jelDepreciacionMensual = new JournalEntryLine
                         {
                             JournalEntryId = _je.JournalEntryId,
-                            AccountId = Convert.ToInt32(grupo.FixedAssetAccounting.AccountId),
-                            AccountName = $"{grupo.FixedAssetAccounting.AccountCode} - {grupo.FixedAssetAccounting.AccountName}",
+                            AccountId = Convert.ToInt32(grupo.AccumulatedDepreciationAccounting.AccountId),
+                            AccountName = $"{grupo.AccumulatedDepreciationAccounting.AccountCode} - {grupo.AccumulatedDepreciationAccounting.AccountName}",
                             Credit = 0,
                             //CostCenterId = item.CenterCostId,
                             //CostCenterName = item.CenterCostName,
@@ -818,12 +804,9 @@ namespace ERPAPI.Controllers
                         {
                             var adepreciar = item.TotalDepreciated;
 
-                            if (adepreciar > item.ResidualValue)
+                            if (adepreciar > item.NetValue)
                             {
-                                adepreciar = item.ResidualValue;
-                            }
-                            if (item.ResidualValue - adepreciar <= 0)
-                            {
+                                adepreciar = item.NetValue;
                                 item.IdEstado = 51;
                                 item.Estado = "Depreciado";
                             }
@@ -832,9 +815,9 @@ namespace ERPAPI.Controllers
                                 item.IdEstado = 47;
                                 item.Estado = "Depreciandose";
                             }
+                        
 
-                            item.AccumulatedDepreciation += item.ToDepreciate;
-                            item.NetValue -= item.ToDepreciate;
+                           
                             var depreciacion = _context.DepreciationFixedAsset.Where(q => q.FixedAssetId == item.FixedAssetId && q.Year == pfecha.Year).FirstOrDefault();
                             if (depreciacion != null)
                             {
@@ -916,23 +899,27 @@ namespace ERPAPI.Controllers
                             item.AccumulatedDepreciation += adepreciar;
                             item.NetValue -= adepreciar;
 
-                            jeActivo.Credit += adepreciar;
-                            jelDepreciacion.Debit += adepreciar;
+                            
+
+                            jelDepreciacionMensual.Debit += adepreciar;
+                            jelDepreciacion.Credit += adepreciar;
                         }
+                        
+                        
                         if (jelDepreciacion.Credit==0 &&jelDepreciacion.Debit==0)
                         {
                            
                             continue;
                         }
+                        _je.JournalEntryLines.Add(jelDepreciacionMensual);
                         _je.JournalEntryLines.Add(jelDepreciacion);
-                        _je.JournalEntryLines.Add(jeActivo);
                         //_je.JournalEntryLines = new List<JournalEntryLine>();
 
 
                     }
 
-                    _je.TotalCredit = _je.JournalEntryLines.Sum(s => s.Credit);
                     _je.TotalDebit = _je.JournalEntryLines.Sum(s => s.Debit);
+                    _je.TotalCredit = _je.JournalEntryLines.Sum(s => s.Credit);
 
                     _context.JournalEntry.Add(_je);
 
