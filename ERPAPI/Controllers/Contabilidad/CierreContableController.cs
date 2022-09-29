@@ -901,8 +901,8 @@ namespace ERPAPI.Controllers
 
                             
 
-                            jelDepreciacionMensual.Debit += adepreciar;
-                            jelDepreciacion.Credit += adepreciar;
+                            jelDepreciacionMensual.Credit += adepreciar;
+                            jelDepreciacion.Debit += adepreciar;
                         }
                         
                         
@@ -911,8 +911,9 @@ namespace ERPAPI.Controllers
                            
                             continue;
                         }
-                        _je.JournalEntryLines.Add(jelDepreciacionMensual);
                         _je.JournalEntryLines.Add(jelDepreciacion);
+                        _je.JournalEntryLines.Add(jelDepreciacionMensual);
+                        
                         //_je.JournalEntryLines = new List<JournalEntryLine>();
 
 
