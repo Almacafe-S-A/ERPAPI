@@ -187,6 +187,156 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_FixedAssetq));
         }
 
+
+        /// <summary>
+        /// Obtiene los Datos de la FixedAsset por medio del Id enviado.
+        /// </summary>
+        /// <param name="FixedAssetId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{FixedAssetId}/{motivo}")]
+        public async Task<IActionResult> BajaActivo(Int64 FixedAssetId, int motivo)
+        {
+            FixedAsset _FixedAssetq = new FixedAsset();
+            try
+            {
+                _FixedAssetq = await _context.FixedAsset.Where(q => q.FixedAssetId == FixedAssetId).FirstOrDefaultAsync();
+                _FixedAssetq = _context.FixedAsset
+                    .Include(q => q.FixedAssetGroup.DepreciationFixedAssetAccounting)
+                    .Include(q => q.FixedAssetGroup.FixedAssetAccounting)
+                    .Include(q => q.FixedAssetGroup.AccumulatedDepreciationAccounting)
+                .Where(x => x.FixedAssetId == FixedAssetId)
+                .FirstOrDefault();
+
+                if (_FixedAssetq.IdEstado == 105)
+                {
+                    return BadRequest("No se Puede dar de baja el activo");
+                }
+                if (_FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting == null)
+                {
+                    return BadRequest("no se encontro la cuenta de Depreciacion");
+                }
+
+                if (_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting == null)
+                {
+                    return BadRequest("no se encontro la cuenta de Depreciacion Acumulada");
+                }
+
+                decimal valorlibros = _FixedAssetq.NetValue;
+                decimal depreciacionacumulada = _FixedAssetq.AccumulatedDepreciation;
+                decimal valorresidual = _FixedAssetq.ResidualValue;
+                decimal valoractivo = _FixedAssetq.ActiveTotalCost;
+                //decimal valorasiento = 0;
+                //valorasiento = valordepreciado;
+
+                _FixedAssetq.ResidualValue = 0;
+                _FixedAssetq.AccumulatedDepreciation = 0;
+                _FixedAssetq.NetValue = 0;
+                var valorasiento = valoractivo;
+
+                string motivoMensaje = motivo == 1 ? "Venta" : "Obsolecensia";
+
+                JournalEntry _je = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    Memo = $"Se dio de baja el Activo {_FixedAssetq.FixedAssetName} por motivo de {motivoMensaje}",
+                    DatePosted = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    CreatedUser = User.Identity.Name,
+                    DocumentId = _FixedAssetq.FixedAssetId,
+                    TotalDebit = valorasiento,
+                    TotalCredit = valorasiento,
+                    TypeJournalName = "Activos",
+                    VoucherType = 24,
+                    EstadoId = 5,
+                    EstadoName = "Enviado a Aprobación",
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento diario"
+
+                };
+                _je.JournalEntryLines = new List<JournalEntryLine>();
+
+                ////////Valor del Activo
+                _je.JournalEntryLines.Add(new JournalEntryLine()
+                {
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    CreatedUser = User.Identity.Name,
+                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.FixedAssetAccountingId),
+                    AccountName = _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.FixedAssetAccounting.AccountName,
+                    CostCenterId = _FixedAssetq.CenterCostId,
+                    CostCenterName = _FixedAssetq.CenterCostName,
+                    Credit = valoractivo
+
+                });
+
+                ////////Lineas de Asiento por valor LIBROS//////////////
+                _je.JournalEntryLines.Add(new JournalEntryLine()
+                {
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    CreatedUser = User.Identity.Name,
+                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccountingId),
+                    AccountName = _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountName,
+                    CostCenterId = _FixedAssetq.CenterCostId,
+                    CostCenterName = _FixedAssetq.CenterCostName,
+                    Debit = depreciacionacumulada
+                });
+
+                Accounting cuentaMotivo = new Accounting();
+                string codigoCuentamotivo = "";
+
+                if (motivo == 1) /// por venta 
+                {
+                    codigoCuentamotivo = "143010309";
+                }
+                else  /// por obsolecencia
+                {
+                    codigoCuentamotivo = "65304";
+                }
+                cuentaMotivo = _context.Accounting.Where(q => q.AccountCode==codigoCuentamotivo).FirstOrDefault();
+
+                if (cuentaMotivo == null) return BadRequest("No se encontro la cuenta relacionoada al motivo de baja");
+
+                _je.JournalEntryLines.Add(new JournalEntryLine()
+                {
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    CreatedUser = User.Identity.Name,
+                    AccountId = (int)cuentaMotivo.AccountId,
+                    AccountName =cuentaMotivo.AccountCode + "--" + cuentaMotivo.AccountName,
+                    CostCenterId = _FixedAssetq.CenterCostId,
+                    CostCenterName = _FixedAssetq.CenterCostName,
+                    Debit = valorlibros
+                });
+
+
+                
+
+
+                ///////Actualiza el saldo de las cuentas ///////////
+                //ContabilidadHandler.ActualizarSaldoCuentas(_context, _je);
+                _context.JournalEntry.Add(_je);
+                _FixedAssetq.IdEstado = 105;
+                _FixedAssetq.Estado = "Dado de Baja";
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(_FixedAssetq));
+        }
+
         /// <summary>
         /// Da de baja un activo y genera un asiento contable de la accion     
         /// </summary>
