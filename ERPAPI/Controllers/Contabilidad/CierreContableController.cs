@@ -745,7 +745,7 @@ namespace ERPAPI.Controllers
                     JournalEntry _je = new JournalEntry
                     {
                         Date = DateTime.Now,
-                        Memo = $"Depreciacion de Activos {pfecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-HN"))} {pfecha.ToString("YYYY")}",
+                        Memo = $"Depreciacion de Activos {pfecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-HN"))} {pfecha.ToString("yyyy")}",
                         DatePosted = pfecha,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
@@ -764,164 +764,176 @@ namespace ERPAPI.Controllers
 
                     };
 
-                    foreach (var grupo in depreciaciongrupos)
+                    List<CostCenter> costCenters = _context.CostCenter.Where(q => q.IdEstado == 1).ToList();
+                    foreach (var costCenter in costCenters)
                     {
-                        if (grupo.DepreciationFixedAssetAccounting == null||grupo.AccumulatedDepreciationAccounting == null)
+                        foreach (var grupo in depreciaciongrupos)
                         {
-                            continue;
-                        }
-
-                        JournalEntryLine jelDepreciacion = new JournalEntryLine
-                        {
-                            JournalEntryId = _je.JournalEntryId,
-                            AccountId = Convert.ToInt32(grupo.DepreciationFixedAssetAccounting.AccountId), 
-                            AccountName = $"{grupo.DepreciationFixedAssetAccounting.AccountCode} - {grupo.DepreciationFixedAssetAccounting.AccountName}",
-                            Debit = 0,
-                            //CostCenterId = item.CenterCostId,
-                            //CostCenterName = item.CenterCostName,
-                            CreatedUser = User.Identity.Name,
-                            CreatedDate = DateTime.Now,
-                            ModifiedDate = DateTime.Now,
-                            ModifiedUser = User.Identity.Name
-                        };
-
-                        JournalEntryLine jelDepreciacionMensual = new JournalEntryLine
-                        {
-                            JournalEntryId = _je.JournalEntryId,
-                            AccountId = Convert.ToInt32(grupo.AccumulatedDepreciationAccounting.AccountId),
-                            AccountName = $"{grupo.AccumulatedDepreciationAccounting.AccountCode} - {grupo.AccumulatedDepreciationAccounting.AccountName}",
-                            Credit = 0,
-                            //CostCenterId = item.CenterCostId,
-                            //CostCenterName = item.CenterCostName,
-                            CreatedUser = User.Identity.Name,
-                            CreatedDate = DateTime.Now,
-                            ModifiedDate = DateTime.Now,
-                            ModifiedUser = User.Identity.Name
-                        };
-
-                        var activos = await _context.FixedAsset.Where(p => p.IdEstado != 51 && p.FixedAssetGroupId == grupo.FixedAssetGroupId).ToListAsync();
-                        foreach (var item in activos)
-                        {
-                            var adepreciar = item.TotalDepreciated;
-                            if (item.IdEstado == 105)
+                            if (grupo.DepreciationFixedAssetAccounting == null || grupo.AccumulatedDepreciationAccounting == null)
                             {
                                 continue;
                             }
 
-                            if (adepreciar > item.NetValue)
+                            JournalEntryLine jelDepreciacion = new JournalEntryLine
                             {
-                                adepreciar = item.NetValue;
-                                item.IdEstado = 51;
-                                item.Estado = "Depreciado";
-                            }
-                            else
-                            {
-                                item.IdEstado = 47;
-                                item.Estado = "Depreciandose";
-                            }
-                        
+                                JournalEntryId = _je.JournalEntryId,
+                                AccountId = Convert.ToInt32(grupo.DepreciationFixedAssetAccounting.AccountId),
+                                AccountName = $"{grupo.DepreciationFixedAssetAccounting.AccountCode} - {grupo.DepreciationFixedAssetAccounting.AccountName}",
+                                Debit = 0,
+                                CostCenterId = costCenter.CostCenterId,
+                                CostCenterName = costCenter.CostCenterName,
+                                CreatedUser = User.Identity.Name,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                ModifiedUser = User.Identity.Name
 
-                           
-                            var depreciacion = _context.DepreciationFixedAsset.Where(q => q.FixedAssetId == item.FixedAssetId && q.Year == pfecha.Year).FirstOrDefault();
-                            if (depreciacion != null)
-                            {
-                                depreciacion.FixedAssetId = item.FixedAssetId;
-                                depreciacion.Year = pfecha.Year;
-                                depreciacion.January = pfecha.Month == 1 ? adepreciar : depreciacion.January;
-                                depreciacion.February = pfecha.Month == 2 ? adepreciar : depreciacion.February;
-                                depreciacion.March = pfecha.Month == 3 ? adepreciar : depreciacion.March;
-                                depreciacion.April = pfecha.Month == 4 ? adepreciar : depreciacion.April;
-                                depreciacion.May = pfecha.Month == 5 ? adepreciar : depreciacion.May;
-                                depreciacion.June = pfecha.Month == 6 ? adepreciar : depreciacion.June;
-                                depreciacion.July = pfecha.Month == 7 ? adepreciar : depreciacion.July;
-                                depreciacion.August = pfecha.Month == 8 ? adepreciar : depreciacion.August;
-                                depreciacion.September = pfecha.Month == 9 ? adepreciar : depreciacion.September;
-                                depreciacion.October = pfecha.Month == 10 ? adepreciar : depreciacion.October;
-                                depreciacion.November = pfecha.Month == 11 ? adepreciar : depreciacion.November;
-                                depreciacion.December = pfecha.Month == 12 ? adepreciar : depreciacion.December;
-                                depreciacion.TotalDepreciated = depreciacion.January
-                                                                + depreciacion.February
-                                                                + depreciacion.March
-                                                                + depreciacion.April
-                                                                + depreciacion.May
-                                                                + depreciacion.June
-                                                                + depreciacion.July
-                                                                + depreciacion.August
-                                                                + depreciacion.September
-                                                                + depreciacion.October
-                                                                + depreciacion.November
-                                                                + depreciacion.December;
+                            };
 
-                                depreciacion.FechaCreacion = DateTime.Now;
-                                depreciacion.FechaModificacion = DateTime.Now;
-                                depreciacion.UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString();
-                                depreciacion.UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString();
-                            }
-                            else
+                            JournalEntryLine jelDepreciacionMensual = new JournalEntryLine
                             {
-                                //////Si el activo se adquirio del 15 en adelante se calcula una depreciacion diaria si se Aquirio el ultimo del mes no se deprecia en el mes actual
+                                JournalEntryId = _je.JournalEntryId,
+                                AccountId = Convert.ToInt32(grupo.AccumulatedDepreciationAccounting.AccountId),
+                                AccountName = $"{grupo.AccumulatedDepreciationAccounting.AccountCode} - {grupo.AccumulatedDepreciationAccounting.AccountName}",
+                                Credit = 0,
+                                CostCenterId = costCenter.CostCenterId,
+                                CostCenterName = costCenter.CostCenterName,
+                                CreatedUser = User.Identity.Name,
+                                CreatedDate = DateTime.Now,
+                                ModifiedDate = DateTime.Now,
+                                ModifiedUser = User.Identity.Name
+                            };
 
-                                if (_context.DepreciationFixedAsset.Where(w => w.FixedAssetId == item.FixedAssetId).ToList() != null)
+                            var activos = await _context.FixedAsset
+                                .Where(p => p.IdEstado != 51 
+                                && p.IdEstado != 105
+                                && p.FixedAssetGroupId == grupo.FixedAssetGroupId
+                                && p.CenterCostId == costCenter.CostCenterId
+                                )
+                                .ToListAsync();
+                            foreach (var item in activos)
+                            {
+                                var adepreciar = item.TotalDepreciated;                                
+
+                                if (adepreciar > item.NetValue)
                                 {
-                                    if (item.AssetDate.Day >= DateTime.DaysInMonth(item.AssetDate.Year, item.AssetDate.Month) - 1
-                                        && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
-                                    {
-                                        continue;
-                                    }
-                                    if (item.AssetDate.Day > 14 && item.AssetDate.Day < 30 && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
-                                    {
-                                        adepreciar = (item.TotalDepreciated / 30) * item.AssetDate.Day;
-                                    }
+                                    adepreciar = item.NetValue;
+                                    item.IdEstado = 51;
+                                    item.Estado = "Depreciado";
+                                }
+                                else
+                                {
+                                    item.IdEstado = 47;
+                                    item.Estado = "Depreciandose";
                                 }
 
 
-                                _context.DepreciationFixedAsset.Add(new DepreciationFixedAsset
+
+                                var depreciacion = _context.DepreciationFixedAsset.Where(q => q.FixedAssetId == item.FixedAssetId && q.Year == pfecha.Year).FirstOrDefault();
+                                if (depreciacion != null)
                                 {
-                                    FixedAssetId = item.FixedAssetId,
-                                    Year = pfecha.Year,
-                                    January = pfecha.Month == 1 ? adepreciar : 0,
-                                    February = pfecha.Month == 2 ? adepreciar : 0,
-                                    March = pfecha.Month == 3 ? adepreciar : 0,
-                                    April = pfecha.Month == 4 ? adepreciar : 0,
-                                    May = pfecha.Month == 5 ? adepreciar : 0,
-                                    June = pfecha.Month == 6 ? adepreciar : 0,
-                                    July = pfecha.Month == 7 ? adepreciar : 0,
-                                    August = pfecha.Month == 8 ? adepreciar : 0,
-                                    September = pfecha.Month == 9 ? adepreciar : 0,
-                                    October = pfecha.Month == 10 ? adepreciar : 0,
-                                    November = pfecha.Month == 11 ? adepreciar : 0,
-                                    December = pfecha.Month == 12 ? adepreciar : 0,
-                                    TotalDepreciated = adepreciar,
-                                    FechaCreacion = DateTime.Now,
-                                    FechaModificacion = DateTime.Now,
-                                    UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
-                                    UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
-                                });
+                                    depreciacion.FixedAssetId = item.FixedAssetId;
+                                    depreciacion.Year = pfecha.Year;
+                                    depreciacion.January = pfecha.Month == 1 ? adepreciar : depreciacion.January;
+                                    depreciacion.February = pfecha.Month == 2 ? adepreciar : depreciacion.February;
+                                    depreciacion.March = pfecha.Month == 3 ? adepreciar : depreciacion.March;
+                                    depreciacion.April = pfecha.Month == 4 ? adepreciar : depreciacion.April;
+                                    depreciacion.May = pfecha.Month == 5 ? adepreciar : depreciacion.May;
+                                    depreciacion.June = pfecha.Month == 6 ? adepreciar : depreciacion.June;
+                                    depreciacion.July = pfecha.Month == 7 ? adepreciar : depreciacion.July;
+                                    depreciacion.August = pfecha.Month == 8 ? adepreciar : depreciacion.August;
+                                    depreciacion.September = pfecha.Month == 9 ? adepreciar : depreciacion.September;
+                                    depreciacion.October = pfecha.Month == 10 ? adepreciar : depreciacion.October;
+                                    depreciacion.November = pfecha.Month == 11 ? adepreciar : depreciacion.November;
+                                    depreciacion.December = pfecha.Month == 12 ? adepreciar : depreciacion.December;
+                                    depreciacion.TotalDepreciated = depreciacion.January
+                                                                    + depreciacion.February
+                                                                    + depreciacion.March
+                                                                    + depreciacion.April
+                                                                    + depreciacion.May
+                                                                    + depreciacion.June
+                                                                    + depreciacion.July
+                                                                    + depreciacion.August
+                                                                    + depreciacion.September
+                                                                    + depreciacion.October
+                                                                    + depreciacion.November
+                                                                    + depreciacion.December;
+
+                                    depreciacion.FechaCreacion = DateTime.Now;
+                                    depreciacion.FechaModificacion = DateTime.Now;
+                                    depreciacion.UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString();
+                                    depreciacion.UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString();
+                                }
+                                else
+                                {
+                                    //////Si el activo se adquirio del 15 en adelante se calcula una depreciacion diaria si se Aquirio el ultimo del mes no se deprecia en el mes actual
+
+                                    if (_context.DepreciationFixedAsset.Where(w => w.FixedAssetId == item.FixedAssetId).ToList() != null)
+                                    {
+                                        if (item.AssetDate.Day >= DateTime.DaysInMonth(item.AssetDate.Year, item.AssetDate.Month) - 1
+                                            && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
+                                        {
+                                            continue;
+                                        }
+                                        if (item.AssetDate.Day > 14 && item.AssetDate.Day < 30 && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
+                                        {
+                                            adepreciar = (item.TotalDepreciated / 30) * item.AssetDate.Day;
+                                        }
+                                    }
+
+
+                                    _context.DepreciationFixedAsset.Add(new DepreciationFixedAsset
+                                    {
+                                        FixedAssetId = item.FixedAssetId,
+                                        Year = pfecha.Year,
+                                        January = pfecha.Month == 1 ? adepreciar : 0,
+                                        February = pfecha.Month == 2 ? adepreciar : 0,
+                                        March = pfecha.Month == 3 ? adepreciar : 0,
+                                        April = pfecha.Month == 4 ? adepreciar : 0,
+                                        May = pfecha.Month == 5 ? adepreciar : 0,
+                                        June = pfecha.Month == 6 ? adepreciar : 0,
+                                        July = pfecha.Month == 7 ? adepreciar : 0,
+                                        August = pfecha.Month == 8 ? adepreciar : 0,
+                                        September = pfecha.Month == 9 ? adepreciar : 0,
+                                        October = pfecha.Month == 10 ? adepreciar : 0,
+                                        November = pfecha.Month == 11 ? adepreciar : 0,
+                                        December = pfecha.Month == 12 ? adepreciar : 0,
+                                        TotalDepreciated = adepreciar,
+                                        FechaCreacion = DateTime.Now,
+                                        FechaModificacion = DateTime.Now,
+                                        UsuarioCreacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                        UsuarioModificacion = User.Claims.FirstOrDefault().Value.ToString(),
+                                    });
+                                }
+
+                                /////Actualiza los 
+                                item.AccumulatedDepreciation += adepreciar;
+                                item.NetValue -= adepreciar;
+
+
+
+                                jelDepreciacionMensual.Credit += adepreciar;
+                                jelDepreciacion.Debit += adepreciar;
                             }
 
-                            /////Actualiza los 
-                            item.AccumulatedDepreciation += adepreciar;
-                            item.NetValue -= adepreciar;
 
-                            
+                            if (jelDepreciacion.Credit == 0 && jelDepreciacion.Debit == 0)
+                            {
 
-                            jelDepreciacionMensual.Credit += adepreciar;
-                            jelDepreciacion.Debit += adepreciar;
+                                continue;
+                            }
+                            _je.JournalEntryLines.Add(jelDepreciacion);
+                            _je.JournalEntryLines.Add(jelDepreciacionMensual);
+
+                            //_je.JournalEntryLines = new List<JournalEntryLine>();
+
+
                         }
-                        
-                        
-                        if (jelDepreciacion.Credit==0 &&jelDepreciacion.Debit==0)
-                        {
-                           
-                            continue;
-                        }
-                        _je.JournalEntryLines.Add(jelDepreciacion);
-                        _je.JournalEntryLines.Add(jelDepreciacionMensual);
-                        
-                        //_je.JournalEntryLines = new List<JournalEntryLine>();
-
-
                     }
+
+                    
+
+
+
 
                     _je.TotalDebit = _je.JournalEntryLines.Sum(s => s.Debit);
                     _je.TotalCredit = _je.JournalEntryLines.Sum(s => s.Credit);
