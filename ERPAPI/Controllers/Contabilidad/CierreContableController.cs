@@ -745,7 +745,7 @@ namespace ERPAPI.Controllers
                     JournalEntry _je = new JournalEntry
                     {
                         Date = DateTime.Now,
-                        Memo = "Depreciacion de Activos Cierre Mensual " + pfecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-HN")),
+                        Memo = $"Depreciacion de Activos {pfecha.ToString("MMMM", CultureInfo.GetCultureInfo("es-HN"))} {pfecha.ToString("YYYY")}",
                         DatePosted = pfecha,
                         ModifiedDate = DateTime.Now,
                         CreatedDate = DateTime.Now,
@@ -915,6 +915,7 @@ namespace ERPAPI.Controllers
                            
                             continue;
                         }
+                        _je.JournalEntryLines.Add(jelDepreciacion);
                         _je.JournalEntryLines.Add(jelDepreciacionMensual);
                         
                         //_je.JournalEntryLines = new List<JournalEntryLine>();

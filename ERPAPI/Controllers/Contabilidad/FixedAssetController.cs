@@ -233,7 +233,7 @@ namespace ERPAPI.Controllers
                 _FixedAssetq.NetValue = 0;
                 var valorasiento = valoractivo;
 
-                string motivoMensaje = motivo == 1 ? "Venta" : "Obsolecensia";
+                string motivoMensaje = motivo == 1 ? "Venta" : "Obsolecencia";
 
                 JournalEntry _je = new JournalEntry
                 {
