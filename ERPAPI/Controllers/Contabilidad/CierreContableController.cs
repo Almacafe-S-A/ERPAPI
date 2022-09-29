@@ -803,6 +803,10 @@ namespace ERPAPI.Controllers
                         foreach (var item in activos)
                         {
                             var adepreciar = item.TotalDepreciated;
+                            if (item.IdEstado == 105)
+                            {
+                                continue;
+                            }
 
                             if (adepreciar > item.NetValue)
                             {
@@ -911,7 +915,6 @@ namespace ERPAPI.Controllers
                            
                             continue;
                         }
-                        _je.JournalEntryLines.Add(jelDepreciacion);
                         _je.JournalEntryLines.Add(jelDepreciacionMensual);
                         
                         //_je.JournalEntryLines = new List<JournalEntryLine>();
