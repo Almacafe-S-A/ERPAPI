@@ -101,7 +101,27 @@ namespace ERPAPI.Controllers
 
 
         // GET: api/JournalEntry
-        [HttpGet("[action]")]
+        [HttpGet("[action]/{PeriodoId}")]
+        public async Task<IActionResult> GetJournalEntryAsientosByPeriodo(int PeriodoId)
+        {
+            List<JournalEntry> Items = new List<JournalEntry>();
+            try
+            {
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 65 && q.PeriodoId == PeriodoId).ToListAsync();
+                //Items = await _context.JournalEntry.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+        
+
+
+      // GET: api/JournalEntry
+      [HttpGet("[action]")]
         public async Task<IActionResult> GetJournalEntryAjustes()
 
         {
