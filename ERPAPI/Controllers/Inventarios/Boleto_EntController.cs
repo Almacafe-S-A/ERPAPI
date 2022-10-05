@@ -103,7 +103,7 @@ namespace ERPAPI.Controllers
             Customer customer = _context.Customer.Where(q => q.CustomerId == customerId).FirstOrDefault();
             List<Boleto_Ent> boletas = new List<Boleto_Ent>();
             //esIngreso = true;
-            if (customer == null || customer.CustomerRefNumber == null)
+            if (customer == null )
             {
                 return BadRequest("No se encontro Cliente");
             }
@@ -173,65 +173,6 @@ namespace ERPAPI.Controllers
         }
 
 
-
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetBoleto_EntPag(int numeroDePagina=1,int cantidadDeRegistros=3500)
-        {
-            List<Boleto_Ent> Items = new List<Boleto_Ent>();
-            try
-            {
-
-
-
-                var query = (from c in _context.Boleto_Ent
-                             join d in _context.Boleto_Sal on  c.clave_e   equals d.clave_e into ba
-                             from e in ba.DefaultIfEmpty()
-                             select new Boleto_Ent {
-                                 clave_e = c.clave_e,
-                                 bascula_e = c.bascula_e,
-                                 clave_C = c.clave_C,
-                                 clave_p = c.clave_p,
-                                 clave_u = c.clave_u,
-                                 fecha_e = c.fecha_e,
-                                 completo = c.completo,
-                                 hora_e = c.hora_e,
-                                 conductor = c.conductor,
-                                 observa_e = c.observa_e,
-                                 peso_e = c.peso_e,
-                                 placas = c.placas,
-                                 turno_oe = c.turno_oe,
-                                 t_entrada = c.t_entrada,
-                                 unidad_e = c.unidad_e,
-                                 Boleto_Sal = e
-                               //  Boleto_Sal =  _context.Boleto_Sal.Where(q => q.clave_e == c.clave_e).FirstOrDefault(),
-
-                            } ) .AsQueryable();
-
-                var totalRegistro = query.Count();
-
-                Items = await query                       
-                    .OrderByDescending(q=>q.clave_e)
-                         .Include(q=>q.Boleto_Sal)
-                             .Skip(cantidadDeRegistros*(numeroDePagina-1))
-                                      .Take(cantidadDeRegistros)
-                                     .ToListAsync();
-
-                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
-                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
-
-
-
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return Ok(Items);
-        }
 
 
         [HttpGet("[action]")]
@@ -401,6 +342,47 @@ namespace ERPAPI.Controllers
 
             return Ok(Items);
         }
+
+
+        /// <summary>
+        /// Obtiene los Datos de la Boleto_Ent por medio del Id enviado.
+        /// </summary>
+        /// <param name="Boleto_EntId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{Boleto_EntId}")]
+        public async Task<IActionResult> GetBoleto_EntByIdCustomerUOM(Int64 Boleto_EntId)
+        {
+            Boleto_Ent Items = new Boleto_Ent();
+            if (Boleto_EntId == 0)
+            {
+                return NotFound();
+            }
+            try
+            {
+                Items = await _context.Boleto_Ent
+                    .Include(q => q.Boleto_Sal)
+                    .Include(q => q.Customer)
+                    .Where(q => q.clave_e == Boleto_EntId)
+                    .FirstOrDefaultAsync();
+
+                Items.PesoUnidadPreferida = Items.Convercion(Items.peso_e, (int)Items.Customer.UnitOfMeasurePreference);
+
+                
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:No se encontro la unidad preferidad del cliente");
+            }
+
+
+            return Ok(Items);
+        }
+
+
+        
 
 
         /// <summary>

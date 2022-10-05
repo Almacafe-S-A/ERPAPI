@@ -148,9 +148,6 @@ namespace ERPAPI.Models
 
 
         public int? UnitOfMeasurePreference { get; set; }
-        [ForeignKey("UnitOfMeasurePreference")]
-
-        public UnitOfMeasure UnitOfMeasure { get; set; }
 
         
         public string UsuarioCreacion { get; set; }
