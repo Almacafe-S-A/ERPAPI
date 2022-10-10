@@ -244,6 +244,12 @@ namespace ERPAPI.Controllers
 
 
 
+                    Periodo periodoactivo = new Periodo();
+                    periodoactivo = await _context.Periodo.Where(q => q.Estado == "Abierto").FirstOrDefaultAsync();
+                    _je.PeriodoId = periodoactivo.Id;
+                    _je.Periodo = periodoactivo.Anio.ToString();
+
+
                     _je.JournalEntryLines.AddRange(journalEntryLines);
 
                     _context.JournalEntry.Add(_je);
