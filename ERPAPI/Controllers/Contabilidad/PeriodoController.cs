@@ -107,6 +107,32 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
+        /// Obtiene el periodo activo
+        /// </summary>
+  
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Periodo>> GetPeriodoActivo()
+        {
+            Periodo Items = new Periodo();
+            try
+            {
+                Items = await _context.Periodo.Where(q => q.Estado == "Abierto").FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
+        /// <summary>
         /// Inserta una nueva Periodo
         /// </summary>
         /// <param name="_Periodo"></param>

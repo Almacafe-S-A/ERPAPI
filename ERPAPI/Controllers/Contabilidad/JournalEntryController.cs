@@ -185,6 +185,12 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _JournalEntryq = _JournalEntry;
+                        
+                        Periodo periodoactivo = new Periodo();
+                        periodoactivo = await _context.Periodo.Where(q => q.Estado == "Abierto").FirstOrDefaultAsync(); 
+                        _JournalEntryq.PeriodoId = periodoactivo.Id;
+                        _JournalEntryq.Periodo = periodoactivo.Anio.ToString();
+
                         _context.JournalEntry.Add(_JournalEntryq);
                         // await _context.SaveChangesAsync();
                         decimal sumacreditos = 0, sumadebitos = 0;
