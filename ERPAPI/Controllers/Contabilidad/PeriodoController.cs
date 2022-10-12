@@ -117,7 +117,7 @@ namespace ERPAPI.Controllers
             Periodo Items = new Periodo();
             try
             {
-                Items = await _context.Periodo.Where(q => q.Estado == "Abierto").FirstOrDefaultAsync();
+                Items = await _context.Periodo.Where(q => q.Estado != "Cerrado" && q.Estado !="Bloqueado").FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -314,6 +314,27 @@ namespace ERPAPI.Controllers
                                         ).FirstOrDefaultAsync();
 
                         _context.Entry(_Periodoq).CurrentValues.SetValues((_Periodo));
+
+                        Periodo periodoactivo = _context.Periodo.Where(q => q.IdEstado == 105  || q.IdEstado == 107).FirstOrDefault();
+
+                        if (_Periodo.IdEstado == 106) 
+                        {
+                            return BadRequest("Pendiente la ejecucion de cierres");
+                        }
+                        if (_Periodo.IdEstado == 107 && periodoactivo != null)
+                        {
+                            return BadRequest("Solo puede existir un periodo abierto");
+                        }
+                        if (_Periodo.IdEstado == 105)
+                        {
+                            ///valida un periodo abierto
+                            ///
+
+                        }
+                        if (_Periodoq.IdEstado == 108)
+                        {
+
+                        }
 
                         //_context.Periodo.Update(_Periodoq);
 

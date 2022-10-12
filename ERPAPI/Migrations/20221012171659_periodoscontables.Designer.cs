@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221012171659_periodoscontables")]
+    partial class periodoscontables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3083,6 +3085,8 @@ namespace ERPAPI.Migrations
                         .IsUnique();
 
                     b.HasIndex("StateId");
+
+                    b.HasIndex("UnitOfMeasurePreference");
 
                     b.ToTable("Customer");
                 });
@@ -12077,6 +12081,10 @@ namespace ERPAPI.Migrations
                         .WithMany("Customer")
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ERPAPI.Models.UnitOfMeasure", "UnitOfMeasure")
+                        .WithMany()
+                        .HasForeignKey("UnitOfMeasurePreference");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerAreaProduct", b =>
