@@ -319,7 +319,7 @@ namespace ERPAPI.Controllers
 
                         if (_Periodo.IdEstado == 106) 
                         {
-                            //Validar Cierres
+                            return BadRequest("Pendiente la ejecucion de cierres");
                         }
                         if (_Periodo.IdEstado == 107 && periodoactivo != null)
                         {
