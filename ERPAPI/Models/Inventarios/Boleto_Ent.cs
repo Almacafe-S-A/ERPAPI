@@ -97,7 +97,15 @@ namespace ERPAPI.Models
         [Display(Name = "Clave del usuario")]
         public string clave_u { get; set; }
         [NotMapped]
-        public decimal PesoUnidadPreferida { get; set; }
+        public decimal PesoUnidadPreferidaEntrada { get; set; }
+        [NotMapped]
+        public decimal PesoUnidadPreferidaSalida { get; set; }
+        [NotMapped]
+        public decimal PesoUnidadPreferidaNeto { get; set; }
+        [NotMapped]
+        public string UnidadPreferida { get; set; }
+        [NotMapped]
+        public int UnidadPreferidaId { get; set; }
 
         public bool CapturaAutomatica { get; set; }
 

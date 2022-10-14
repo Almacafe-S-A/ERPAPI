@@ -365,9 +365,14 @@ namespace ERPAPI.Controllers
                     .Where(q => q.clave_e == Boleto_EntId)
                     .FirstOrDefaultAsync();
 
-                Items.PesoUnidadPreferida = Items.Convercion(Items.peso_e, (int)Items.Customer.UnitOfMeasurePreference);
+                int uompreferida = Items.Customer.UnitOfMeasurePreference == null ? 3 : (int)Items.Customer.UnitOfMeasurePreference;
 
-                
+                Items.PesoUnidadPreferidaEntrada = Items.Convercion(Items.peso_e, uompreferida);
+                Items.PesoUnidadPreferidaNeto = Items.Convercion(Items.Boleto_Sal.peso_s, uompreferida);
+                Items.PesoUnidadPreferidaSalida = Items.Convercion(Items.Boleto_Sal.peso_n, uompreferida);
+                Items.UnidadPreferidaId = uompreferida;
+
+
 
             }
             catch (Exception ex)
