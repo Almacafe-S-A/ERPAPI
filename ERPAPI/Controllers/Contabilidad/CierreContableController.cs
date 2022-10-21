@@ -71,9 +71,9 @@ namespace ERPAPI.Controllers
             proceso = _context.BitacoraCierreProceso.Where(q => q.IdProceso == ProcesoId).FirstOrDefault();
 
             BitacoraCierreContable cierre = new BitacoraCierreContable();
-            cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault(); 
+            cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();
 
-
+            await ActualizarSaldoCatalogo();
             switch (proceso.PasoCierre)
             {
                 case 3:
@@ -101,10 +101,10 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> EjecutarCierrePartidasCierre(int periodo)
+        public async Task<IActionResult> ActualizarSaldoCatalogo()
         {
 
-            await _context.Database.ExecuteSqlCommandAsync("Cierres @p0", periodo); ////Ejecuta SP Cierres
+            await _context.Database.ExecuteSqlCommandAsync("[ActualizarSaldoCatalogoContable]"); ////Ejecuta SP Cierres
 
             return Ok();
 
@@ -1067,61 +1067,97 @@ namespace ERPAPI.Controllers
         
         private async Task EjecucionPresupuestaria(int procesoId)
         {
-            BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso.Where(w => w.IdProceso == procesoId).FirstOrDefaultAsync();
+            BitacoraCierreProcesos proceso = await _context.BitacoraCierreProceso
+                .Where(w => w.IdProceso == procesoId)
+                .Include(i => i.BitacoraCierresContable)
+                .FirstOrDefaultAsync();
+
             proceso.Estatus = "EJECUTANDO";
             _context.BitacoraCierreProceso.Update(proceso);
             await _context.SaveChangesAsync();
 
-            var periodo = _context.Periodo.Where(q => q.IdEstado == 1).OrderByDescending(q => q.Anio).FirstOrDefaultAsync();
+            Periodo periodo = await _context.Periodo.Where(q => q.Id == proceso.BitacoraCierresContable.PeriodoId).FirstOrDefaultAsync();
             List<Presupuesto> cuentasPresupuesto = await _context.Presupuesto.Where(q => q.PeriodoId == periodo.Id).ToListAsync();
-            foreach (var item in cuentasPresupuesto)
+            int mes = (int)proceso.BitacoraCierresContable.Mes;
+            int anio = (int) proceso.BitacoraCierresContable.Anio;
+            foreach (var cuentaPresupuestada in cuentasPresupuesto)
             {
-                Accounting cuenta = await _context.Accounting.Where(q => q.AccountId == item.AccountigId).FirstOrDefaultAsync();
-                var mes = DateTime.Now.Month;
+               
+
+                List<JournalEntryLine> detalleasientos = await _context.JournalEntryLine.Where(j => 
+                j.JournalEntry.PeriodoId == periodo.Id
+                && j.AccountId == cuentaPresupuestada.AccountigId
+                &&j.JournalEntry.DatePosted < new DateTime(anio, mes + 1, 1) 
+                && j.JournalEntry.DatePosted >= new DateTime(anio, mes , 1) 
+                && j.JournalEntry.EstadoId ==6)
+                    .Include(j => j.JournalEntry)
+                    .ToListAsync();
+                if (detalleasientos.Count == 0)
+                {
+                    continue;
+
+                }
+                decimal credito = detalleasientos.Sum(s => s.Credit);
+                decimal debito = detalleasientos.Sum(s => s.Debit);
+
+                decimal balance = 0;
+
+                Accounting cuenta = await _context.Accounting.Where(q => q.AccountId == cuentaPresupuestada.AccountigId).FirstOrDefaultAsync();
+
+                balance = cuenta.DeudoraAcreedora == "D" ? debito - credito : credito - debito;
+
+
                 switch (mes)
                 {
                     case 1:
-                        item.EjecucionEnero = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionEnero = Convert.ToDecimal(balance);
                         break;
                     case 2:
-                        item.EjecucionFebrero = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionFebrero = Convert.ToDecimal(balance);
                         break;
                     case 3:
-                        item.EjecucionMarzo = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionMarzo = Convert.ToDecimal(balance);
                         break;
                     case 4:
-                        item.EjecucionAbril = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionAbril = Convert.ToDecimal(balance);
                         break;
                     case 5:
-                        item.EjecucionMayo = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionMayo = Convert.ToDecimal(balance);
                         break;
                     case 6:
-                        item.EjecucionJunio = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionJunio = Convert.ToDecimal(balance);
                         break;
                     case 7:
-                        item.EjecucionJulio = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionJulio = Convert.ToDecimal(balance);
                         break;
                     case 8:
-                        item.EjecucionAgosto = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionAgosto = Convert.ToDecimal(balance);
                         break;
                     case 9:
-                        item.EjecucionSeptiembre = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionSeptiembre = Convert.ToDecimal(balance);
                         break;
                     case 10:
-                        item.EjecucionOctubre = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionOctubre = Convert.ToDecimal(balance);
                         break;
                     case 11:
-                        item.EjecucionNoviembre = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionNoviembre = Convert.ToDecimal(balance);
                         break;
                     case 12:
-                        item.EjecucionDiciembre = Convert.ToDecimal(cuenta.AccountBalance);
+                        cuentaPresupuestada.EjecucionDiciembre = Convert.ToDecimal(balance);
                         break;
                     default:
                         break;
                 }
             }
 
-
+            proceso.FechaCierre = DateTime.Now;
+            proceso.FechaModificacion = DateTime.Now;
+            proceso.FechaCreacion= DateTime.Now;
+            proceso.FechaCierre = DateTime.Now;
+            proceso.Asientos = "Este procceso no genera asientos contables";
+            proceso.Mensaje = "Se ha actualizado el saldo del catalogo de cuentas";
+            proceso.UsuarioCreacion = User.Identity.Name;
+            proceso.UsuarioModificacion = User.Identity.Name;
             proceso.Estatus = "FINALIZADO";
             await _context.SaveChangesAsync();
 
