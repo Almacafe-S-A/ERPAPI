@@ -86,13 +86,16 @@ namespace ERPAPI.Controllers
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
-        [HttpGet("[action]/{periodoId}")]
-        public async Task<ActionResult<List<Presupuesto>>> GetPreuspuestosByPeriodo(int periodoId)
+        [HttpGet("[action]/{periodoId}/{centrocosto}")]
+        public async Task<ActionResult<List<Presupuesto>>> GetPreuspuestosByPeriodo(int periodoId,int centrocosto)
         {
             List<Presupuesto> Items = new List<Presupuesto>();
             try
             {
-                Items = await _context.Presupuesto.Where(a =>a.PeriodoId == periodoId).Include("Accounting").ToListAsync();
+                Items = await _context.Presupuesto
+                    .Where(a =>a.PeriodoId == periodoId 
+                    && (a.CostCenterId == centrocosto||centrocosto==0))
+                    .Include("Accounting").ToListAsync();
             }
             catch (Exception ex)
             {
