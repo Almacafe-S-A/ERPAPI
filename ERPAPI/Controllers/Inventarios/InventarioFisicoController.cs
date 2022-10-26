@@ -154,7 +154,7 @@ namespace ERPAPI.Controllers
             }
             foreach (var producto in inventario.InventarioBodegaHabilitadaLines)
             {
-                producto.ProductoNombre = producto.Product != null ? producto.Product.ProductName : producto.ProductoNombre;
+                producto.ProductoNombre = producto.Product != null ? producto.Product.SubProductName : producto.ProductoNombre;
                 producto.ProductoId = producto.Product != null ? producto.Product.SubproductId : 1;
                 producto.Product = null;
                 producto.UnitOfMeasureName = producto.UnitOfMeasure != null ? producto.UnitOfMeasure.UnitOfMeasureName : producto.UnitOfMeasureName;
@@ -402,7 +402,7 @@ namespace ERPAPI.Controllers
         /// El estado define cuales son los cai activos
         /// </summary>
         /// <returns></returns>
-        [HttpGet("[action]/{BranchId}/{CustomerId}")]
+        [HttpGet("[action]/{BranchId}/{CustomerId}/{ProductId}")]
         public async Task<IActionResult> GetSaldoLibros(int BranchId, long CustomerId, int ProductId = 0)
         {
             List<InventarioFisicoLine> inventarioFisicoLines = new List<InventarioFisicoLine>();

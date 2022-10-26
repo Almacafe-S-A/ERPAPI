@@ -64,9 +64,20 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetBranchByCustomer(Int64 CustomerId)
         {
             List<Branch> Items = new List<Branch>();
+
+            
+
             try
             {
-                Items = await _context.Branch.Where(q => q.CustomerId == CustomerId).ToListAsync();
+
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                List<UserBranch> UserBranches = await _context.UserBranch
+                    .Where(w => w.UserId == user.FirstOrDefault().Id)
+                    .ToListAsync();
+
+
+                Items = await _context.Branch.Where(q => q.CustomerId == CustomerId 
+                && UserBranches.Any(a => a.BranchId == q.BranchId)).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -112,7 +123,6 @@ namespace ERPAPI.Controllers
             try
             {
                 var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
-                int count = user.Count();
                 List<UserBranch> branchlist = await _context.UserBranch
                     .Where(w => w.UserId == user.FirstOrDefault().Id)
                     .ToListAsync();

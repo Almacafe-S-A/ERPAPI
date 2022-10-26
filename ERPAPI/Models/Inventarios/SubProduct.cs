@@ -14,6 +14,10 @@ namespace ERPAPI.Models
         public Int64 SubproductId { get; set; }
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
+
+        [NotMapped]
+        public string SubProductName { get; set; }
+    
         [Display(Name = "Tipo de producto")]
         public Int64 ProductTypeId { get; set; }
         [Display(Name = "Tipo de producto")]
