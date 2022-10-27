@@ -403,18 +403,18 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("[action]/{BranchId}/{CustomerId}/{ProductId}")]
-        public async Task<IActionResult> GetSaldoLibros(int BranchId, long CustomerId, int ProductId = 0)
+        public async Task<IActionResult> GetSaldoLibros(int BranchId, long CustomerId = 0, int ProductId = 0 )
         {
             List<InventarioFisicoLine> inventarioFisicoLines = new List<InventarioFisicoLine>();
             List<InventarioFisicoLine> SaldoLibros = new List<InventarioFisicoLine>();
             try
             {
-                
-                List<Kardex> kardex = await _context.Kardex.Where(q =>
-                //q.WareHouseId == WarehouseId 
-                q.BranchId == BranchId).ToListAsync();
 
-                
+                //List<Kardex> kardex = await _context.Kardex.Where(q =>
+                //q.WareHouseId == WarehouseId 
+                //q.BranchId == BranchId).ToListAsync();
+
+
 
                 //SaldoLibros = (from k in _context.GoodsReceivedLine.Include(i => i.GoodsReceived).Where(q => q.GoodsReceived.BranchId == BranchId) //.Include(i => i.SubProductId)
                 //                                         .GroupBy(g => new { g.SubProductId,
@@ -441,22 +441,23 @@ namespace ERPAPI.Controllers
                 //                                             //Product = k.Key.
 
                 //                                         }).ToList();
+                List<Kardex> kardex = _context.Kardex.Where(q => q.BranchId == BranchId
+                               && (q.CustomerId == CustomerId || CustomerId == 0)
+                               && (q.ProducId == ProductId || ProductId == 0)).ToList();
 
-                SaldoLibros = (from k in _context.Kardex
-                               .Where(q => q.BranchId == BranchId 
-                               && (q.CustomerId == CustomerId || CustomerId == 0 
-                               && (q.ProducId == ProductId || ProductId == 0)
-                               ))  //.Include(i => i.SubProductId)
-                                                         .GroupBy(g => new {
-                                                             g.SubProducId,
-                                                             g.Estiba,
-                                                             g.WareHouseId,
-                                                             g.UnitOfMeasureId,
-                                                             g.SubProductName,
-                                                             g.UnitOfMeasureName,
-                                                             g.WareHouseName
-                                                         }
-                                                             )
+
+                SaldoLibros = (from k in kardex.GroupBy(g => new
+                                        {
+                                            g.SubProducId,
+                                            g.Estiba,
+                                            g.WareHouseId,
+                                            g.UnitOfMeasureId,
+                                            g.SubProductName,
+                                            g.UnitOfMeasureName,
+                                            g.WareHouseName
+                                        })
+                                   //.Include(i => i.SubProductId)
+
                                    //.Where(q => q.Sum(s => s.Total))
                                select new InventarioFisicoLine
                                {

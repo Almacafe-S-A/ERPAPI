@@ -330,6 +330,11 @@ namespace ERPAPI.Controllers
                             }
                         }
 
+                        if (_JournalEntry.PeriodoId == null)
+                        {
+                            throw new Exception($"El asiento contable {_JournalEntry.JournalEntryId} no tiene un periodo asignado no se puede actualizar");
+                        }
+
                         transaction.Commit();
                         
                         await _context.SaveChangesAsync();
