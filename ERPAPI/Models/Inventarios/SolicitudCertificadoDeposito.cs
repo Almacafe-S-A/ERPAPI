@@ -30,6 +30,8 @@ namespace ERPAPI.Models
 
         [Display(Name = "Dirección")]
         public string Direccion { get; set; }
+
+        public string SituadoEn { get; set; }
         [Display(Name = "Fecha de certificado")]
         public DateTime FechaCertificado { get; set; }
 
@@ -131,6 +133,8 @@ namespace ERPAPI.Models
                 Aduana = _CertificadoDeposito.Aduana;
                 ManifiestoNo = _CertificadoDeposito.ManifiestoNo;
                 UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion;
+                SituadoEn = _CertificadoDeposito.SituadoEn;
+            
 
 
               _SolicitudCertificadoLine = ToSolicitudLine(_CertificadoDeposito._CertificadoLine);
