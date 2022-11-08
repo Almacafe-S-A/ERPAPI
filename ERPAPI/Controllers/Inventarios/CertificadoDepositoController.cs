@@ -501,7 +501,8 @@ namespace ERPAPI.Controllers
             {
                 try
                 {
-
+                    Branch branch = new Branch();
+                    branch = _context.Branch.Where(q => q.BranchId == _CertificadoDeposito.BranchId).FirstOrDefault();
                     
                     _context.CertificadoDeposito.Add(_CertificadoDeposito);
                     
@@ -511,6 +512,8 @@ namespace ERPAPI.Controllers
                     _CertificadoDeposito.Quantitysum = _CertificadoDeposito._CertificadoLine.Sum(s => s.Quantity);
                     _CertificadoDeposito.TotalDerechos = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
                     _CertificadoDeposito.SujetasAPago = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
+                    _CertificadoDeposito.SituadoEn = branch.Address;
+
 
                     if (!AutorizacionCNBS(_CertificadoDeposito.Total, _CertificadoDeposito.BranchId))                    
                         return BadRequest("Limite CNBS ha sido superado");                    
