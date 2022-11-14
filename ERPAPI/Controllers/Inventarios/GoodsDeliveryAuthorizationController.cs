@@ -96,6 +96,40 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene los certificados de deposito por cliente.
+        /// </summary>
+        /// <param name="IdCD"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdCD}")]
+        public async Task<ActionResult<GoodsDeliveryAuthorization>> Revisar(int IdCD)
+        {
+
+            GoodsDeliveryAuthorization autorizacion = await _context.GoodsDeliveryAuthorization
+                .Where(q => q.GoodsDeliveryAuthorizationId == IdCD)
+                //.Include(i => i.autor)
+                .FirstOrDefaultAsync();
+
+            if (autorizacion == null)
+            {
+                return BadRequest();
+            }
+
+
+
+            autorizacion.EstadoId = 6;
+            autorizacion.Estado = "Revisado";
+            autorizacion.UsuarioModificacion = User.Identity.Name;
+            autorizacion.FechaModificacion = DateTime.Now;
+            autorizacion.UsuarioRevisor = User.Identity.Name;
+
+            await _context.SaveChangesAsync();
+
+            return autorizacion;
+
+        }
+
         /// <summary>
         /// Obtiene los certificados de deposito por cliente.
         /// </summary>
@@ -121,6 +155,7 @@ namespace ERPAPI.Controllers
             autorizacion.Estado = "Aprobado";
             autorizacion.UsuarioModificacion = User.Identity.Name;
             autorizacion.FechaModificacion = DateTime.Now;
+            autorizacion.UsuarioAprobacion = User.Identity.Name;
 
             await _context.SaveChangesAsync();
 
@@ -279,6 +314,10 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        _GoodsDeliveryAuthorization.TotalAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.Price);
+                        _GoodsDeliveryAuthorization.TotalCantidad = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.Quantity); ;
+                        //_GoodsDeliveryAuthorization.TotalDerechos =  _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => (decimal)s.DerechosFiscales); ;
+                        _GoodsDeliveryAuthorization.ProductoAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.FirstOrDefault().SubProductName;
                         _GoodsDeliveryAuthorizationq = _GoodsDeliveryAuthorization;
                         _GoodsDeliveryAuthorizationq.Estado = "Revisión";
                         _GoodsDeliveryAuthorizationq.EstadoId = 5;

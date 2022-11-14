@@ -33,9 +33,17 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
+        public string ProductoAutorizado { get; set; }
+
         public string Autorizados { get; set; }
 
         public string RetiroAutorizadoA { get; set; }
+
+        public decimal TotalAutorizado { get; set; }
+
+        public decimal TotalDerechos { get; set; }
+
+        public decimal TotalCantidad { get; set; }
 
 
 
@@ -69,6 +77,12 @@ namespace ERPAPI.Models
         public DateTime? FechaCreacion { get; set; }
         [Display(Name = "Fecha de Modificación")]
         public DateTime? FechaModificacion { get; set; }
+
+        public string UsuarioAprobacion { get; set; }
+
+        public string UsuarioRevisor { get; set; }
+
+
         [Display(Name = "Usuario de Creacion")]
         public string UsuarioCreacion { get; set; }
 
@@ -78,25 +92,12 @@ namespace ERPAPI.Models
         public string Impreso { get; set; }
 
         [Display(Name = "Póliza No.")]
-        public Int64 NoPoliza { get; set; }
+        public Int64 NoPolizaImportacion { get; set; }
 
         [Display(Name = "Delegado Fiscal")]
         public string DelegadoFiscal { get; set; }
 
-        [Display(Name = "Seguro")]
-        public string EmpresaSeguro { get; set; }
-
-
-        [Display(Name = "Número de traslado")]
-        public string NoTraslado { get; set; }
-
-
-        [Display(Name = "Aduana")]
-        public string Aduana { get; set; }
-
-        [Display(Name = "Carta de porte o manifiesto No.")]
-        public string ManifiestoNo { get; set; }
-
+        
         public string Estado { get; set; }
 
         public int EstadoId { get; set; }
