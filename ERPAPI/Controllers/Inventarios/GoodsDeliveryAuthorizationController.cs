@@ -194,7 +194,7 @@ namespace ERPAPI.Controllers
                                                GoodsDeliveryAuthorizationId = 0,
                                                UnitOfMeasureName = cd.UnitMeasurName,
                                                UnitOfMeasureId = (long)cd.UnitMeasureId,
-                                               Quantity = cd.CantidadDisponibleAutorizar==null? cd.Quantity : (decimal)cd.CantidadDisponibleAutorizar,
+                                               Quantity = 0,
                                                SubProductId = (long)cd.SubProductId,
                                                SubProductName = cd.SubProductName,
                                                CertificadoLineId = cd.CertificadoLineId,
@@ -202,7 +202,7 @@ namespace ERPAPI.Controllers
                                                Price = (long)cd.Price,
                                                WarehouseId = (int)cd.WarehouseId,
                                                WarehouseName = cd.WarehouseName,
-                                               valorcertificado = cd.Amount,
+                                               valorcertificado = 0,
                                                SaldoProducto = cd.CantidadDisponibleAutorizar == null ? cd.Quantity : (decimal)cd.CantidadDisponibleAutorizar,
                                                ValorUnitarioDerechos = cd.ValorUnitarioDerechos,
                                                ValorImpuestos = 0,
@@ -314,7 +314,7 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        _GoodsDeliveryAuthorization.TotalAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.Price);
+                        _GoodsDeliveryAuthorization.TotalAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.valorcertificado);
                         _GoodsDeliveryAuthorization.TotalCantidad = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.Quantity); ;
                         //_GoodsDeliveryAuthorization.TotalDerechos =  _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => (decimal)s.DerechosFiscales); ;
                         _GoodsDeliveryAuthorization.ProductoAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.FirstOrDefault().SubProductName;
