@@ -455,6 +455,8 @@ namespace ERPAPI.Controllers
             {
                 solicitudCertificado.UsuarioModificacion = User.Identity.Name;
             }
+            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
 
             await _context.SaveChangesAsync();
 
@@ -537,18 +539,20 @@ namespace ERPAPI.Controllers
                     _SolicitudCertificado = new SolicitudCertificadoDeposito(_CertificadoDeposito);
 
                     //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                    
 
                     await _context.SaveChangesAsync();
 
                     _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
                     _context.SolicitudCertificadoLine.AddRange(_SolicitudCertificado._SolicitudCertificadoLine);
-                    
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
 
                     _CertificadoDeposito.SolicitudCertificadoId = (int)_SolicitudCertificado.IdSCD;     
                     _SolicitudCertificado.NoCD = (int)_CertificadoDeposito.IdCD;
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
 
                     await _context.SaveChangesAsync();
 
@@ -570,6 +574,8 @@ namespace ERPAPI.Controllers
 
                     List<Kardex> kardex = GeneraKardexCertificado(_CertificadoDeposito);
                     _context.AddRange(kardex);
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
@@ -603,7 +609,7 @@ namespace ERPAPI.Controllers
                         if (_CertificadoDepositoq.FechaCertificado.Date != DateTime.Now.Date)
                             return BadRequest("Los Certificados solo pueden ser anulados el mismo dia que se emitieron");
 
-                        if (_CertificadoDepositoq.ServicioId != 3)
+                        if (_CertificadoDepositoq.ServicioId != 3 && _CertificadoDepositoq.Estado == "Vigente")
 
                         {
 
@@ -799,46 +805,6 @@ namespace ERPAPI.Controllers
                     }
                     
                 }
-
-
-                
-
-
-
-                //_goodsreceivedlis = await _context.CertificadoDeposito.Where(q => q.IdCD == Convert.ToInt64(listacertificados[0])).FirstOrDefault();
-
-                //using (var command = _context.Database.GetDbConnection().CreateCommand())
-                //{
-                //    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName         "
-                //   + " , SUM(Quantity) AS Cantidad, SUM(grl.IdCD) AS IdCD         "                    
-                //   + " , SUM(grl.Quantity) * (grl.Price)  AS Total                            "
-                //   + " ,Price "
-                //   + $"  FROM CertificadoLine grl                 where  CertificadoLineId in ({inparams})                                "
-                //   + "  GROUP BY grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName,grl.IdCD,grl.Price       "
-                // );
-
-                //    _context.Database.OpenConnection();
-                //    using (var result = command.ExecuteReader())
-                //    {
-                //        // do something with result
-                //        while (await result.ReadAsync())
-                //        {
-                //            _goodsreceivedlis._CertificadoLine.Add(new CertificadoLine
-                //            {                                
-                //                SubProductId = Convert.ToInt64(result["SubProductId"]),
-                //                SubProductName = result["SubProductName"].ToString(),
-                //                UnitMeasureId = Convert.ToInt64(result["UnitMeasureId"]),
-                //                UnitMeasurName = result["UnitMeasurName"].ToString(),
-                //                Quantity = Convert.ToInt32(result["Cantidad"]),
-                //                IdCD = Convert.ToInt32(result["IdCD"]),
-                //                Price = Convert.ToDouble(result["Price"]),
-
-                //               // Total = Convert.ToDouble(result["Total"]),
-
-                //            });
-                //        }
-                //    }
-                //}
 
 
             }
