@@ -184,11 +184,8 @@ namespace ERPAPI.Controllers
             {
                 pendientes = await (from cd in _context.CertificadoLine
                                            where
-                                           //lineasrecibo.GoodsReceived.CustomerId == customerid && 
-                                           //lineasrecibo.GoodsReceived.ProductId == servicio &&
                                            certificados.Any(q => q == cd.IdCD)  
                                            && cd.CantidadDisponibleAutorizar !=0
-                                           //  && !_context.CertificadoLine.Any(a => a.CertificadoLineId == lineasrecibo.GoodsReceiveLinedId)
                                            select new GoodsDeliveryAuthorizationLine()
                                            {
                                                GoodsDeliveryAuthorizationId = 0,
@@ -230,7 +227,7 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.GoodsDeliveryAuthorization
-                    //.Include(q=>q.GoodsDeliveryAuthorizationLine)
+                       .Include(q=>q.GoodsDeliveryAuthorizationLine)
                     //.Include(i => i.goodsDeliveryAuthorizedSignatures)
                        .Where(q => q.GoodsDeliveryAuthorizationId == GoodsDeliveryAuthorizationId).FirstOrDefaultAsync();
                 if (Items!=null)
@@ -321,6 +318,7 @@ namespace ERPAPI.Controllers
                         _GoodsDeliveryAuthorizationq = _GoodsDeliveryAuthorization;
                         _GoodsDeliveryAuthorizationq.Estado = "Revisión";
                         _GoodsDeliveryAuthorizationq.EstadoId = 5;
+                        _GoodsDeliveryAuthorizationq.Certificados = String.Join(", ", _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Select(s => s.NoCertificadoDeposito).Distinct().ToArray());
 
                         
                         //Firmas

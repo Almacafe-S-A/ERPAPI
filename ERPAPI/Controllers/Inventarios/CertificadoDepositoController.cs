@@ -164,11 +164,9 @@ namespace ERPAPI.Controllers
                     {
                         Items = await _context.CertificadoDeposito
                         .Where(p =>
-                            //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                            
                             p.CustomerId == clienteid &&
                             p.ServicioId == servicioid
-                           //&& p.IdEstado != 6
-                           //&& !_context.CertificadoDeposito.Any(a => a. == p.GoodsReceivedId)
                            )
 
                         .OrderByDescending(b => b.IdCD).ToListAsync();
@@ -177,11 +175,10 @@ namespace ERPAPI.Controllers
                     {
                         Items = await _context.CertificadoDeposito
                        .Where(p =>
-                            //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                            
                             p.CustomerId == clienteid &&
                             p.ServicioId == servicioid
-                           //&& p.IdEstado != 6
-                           //&& _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId)
+
                            )
 
                        .OrderByDescending(b => b.IdCD).ToListAsync();
