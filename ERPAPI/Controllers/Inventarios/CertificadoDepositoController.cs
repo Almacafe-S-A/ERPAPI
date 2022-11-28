@@ -122,9 +122,10 @@ namespace ERPAPI.Controllers
                           branchlist.Any(b => p.BranchId == b.BranchId) &&
                           p.CustomerId == clienteid &&
                           p.ServicioId == servicioid &&
-                          p.PendienteAutorizar == null || p.PendienteAutorizar == true &&
-                          p.Estado != "Anulado"                          
-                          // p._CertificadoLine.Sum(s=>s.CantidadDisponibleAutorizar).
+                         ( p.PendienteAutorizar == null || p.PendienteAutorizar == true )&&
+                          !p.Estado.Equals("Anulado") &&
+                          p.Estado.Equals("Vigente")
+                         // p._CertificadoLine.Sum(s=>s.CantidadDisponibleAutorizar).
                          //&& p.IdEstado != 6
                          //&& _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId)
                          )
