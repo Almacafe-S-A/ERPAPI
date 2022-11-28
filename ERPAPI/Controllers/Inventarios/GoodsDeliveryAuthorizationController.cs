@@ -208,7 +208,7 @@ namespace ERPAPI.Controllers
                                                SubProductName = cd.Key.SubProductName,
                                                //CertificadoLineId = cd.CertificadoLineId,
                                                NoCertificadoDeposito = (int)cd.Key.IdCD,
-                                               Price = (long)cd.Key.Price,
+                                               Price = (decimal)cd.Key.Price,
                                                WarehouseId = (int)cd.Key.WarehouseId,
                                                WarehouseName = cd.Key.WarehouseName,
                                                valorcertificado = 0,
@@ -363,8 +363,8 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationLine)
                         {
-                            item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
-                            _context.GoodsDeliveryAuthorizationLine.Add(item);
+                            //item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
+                            //_context.GoodsDeliveryAuthorizationLine.Add(item);
 
                             
 
@@ -498,9 +498,9 @@ namespace ERPAPI.Controllers
 
                         });
 
-                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                        //new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
-                        await _context.SaveChangesAsync();
+                        //await _context.SaveChangesAsync();
 
                        
 
@@ -520,6 +520,8 @@ namespace ERPAPI.Controllers
                             }
 
                         }
+
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                         await _context.SaveChangesAsync();
 
