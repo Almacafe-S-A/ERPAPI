@@ -119,10 +119,11 @@ namespace ERPAPI.Controllers
                 Items = await _context.CertificadoDeposito
                     .Include(i => i._CertificadoLine)
                      .Where(p =>
-                          //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                          branchlist.Any(b => p.BranchId == b.BranchId) &&
                           p.CustomerId == clienteid &&
                           p.ServicioId == servicioid &&
-                          p.PendienteAutorizar == null || p.PendienteAutorizar == true
+                          p.PendienteAutorizar == null || p.PendienteAutorizar == true &&
+                          p.Estado != "Anulado"                          
                           // p._CertificadoLine.Sum(s=>s.CantidadDisponibleAutorizar).
                          //&& p.IdEstado != 6
                          //&& _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId)
@@ -378,7 +379,7 @@ namespace ERPAPI.Controllers
                     UnitOfMeasureName = item.UnitMeasurName,
                     TypeOperationId = TipoOperacion.Entrada,
                     TypeOperationName = "Entrada",
-                    Total = item.TotalCantidad,
+                    Total = item.Quantity,
                     DocumentLine= (int)item.CertificadoLineId,
                     DocumentName = "Certficado de Depósito",
                     DocumentId = _CertificadoDeposito.IdCD,

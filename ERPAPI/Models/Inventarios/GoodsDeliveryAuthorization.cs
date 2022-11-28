@@ -11,20 +11,12 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
-
-        [Display(Name = "Nombre de autorizacion")]
-        public string AuthorizationName { get; set; }
+                
         [Display(Name = "Fecha de documento")]
         public DateTime DocumentDate { get; set; }
 
         [Display(Name = "Fecha de autorizacion")]
         public DateTime AuthorizationDate { get; set; }
-
-        [Display(Name = "Fecha de documento")]
-        public Int64 NoCD { get; set; }
-
-        [Display(Name = "Fecha de documento")]
-        public string Name { get; set; }
 
         public string Certificados { get; set; }
 
