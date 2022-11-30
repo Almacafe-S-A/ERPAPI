@@ -183,6 +183,38 @@ namespace ERPAPI.Controllers
             try
             {
                 List<CertificadoLine> certificadoLines = await _context.CertificadoLine.Where(q => certificados.Any(idCD => idCD == q.IdCD)).ToListAsync();
+                certificadoLines = (from cd in certificadoLines
+                                    select new CertificadoLine() {
+                                        Amount = cd.Amount,
+                                        CantidadDisponible = cd.CantidadDisponible,
+                                        CantidadDisponibleAutorizar = cd.CantidadDisponibleAutorizar.HasValue ? cd.CantidadDisponibleAutorizar: cd.Quantity,
+                                        CertificadoLineId = cd.CertificadoLineId,
+                                        Observaciones = cd.Observaciones,
+                                        Merma = cd.Merma,
+                                        PdaNo = cd.PdaNo,
+                                        Quantity =cd.Quantity,
+                                        Description = cd.Description,
+                                        IdCD = cd.IdCD,
+                                        DerechosFiscales = cd.DerechosFiscales, 
+                                        GoodsReceivedLine = cd.GoodsReceivedLine,
+                                        GoodsReceivedLineId = cd.GoodsReceivedLineId,
+                                        Price = cd.Price,
+                                        ReciboId = cd.ReciboId,
+                                        Saldo = cd.Saldo,
+                                        SaldoEndoso = cd.SaldoEndoso,
+                                        //SubProduct = cd.SubProduct,
+                                        SubProductId = cd.SubProductId,
+                                        SubProductName = cd.SubProductName,
+                                        TotalCantidad = cd.TotalCantidad,
+                                        UnitMeasureId = cd.UnitMeasureId,   
+                                        UnitMeasurName = cd.UnitMeasurName,
+                                        ValorUnitarioDerechos = cd.ValorUnitarioDerechos,
+                                        WarehouseId = cd.WarehouseId,
+                                        WarehouseName = cd.WarehouseName,
+                                        
+                                    
+                                    }).ToList();    
+
                 pendientes =  (from cd in certificadoLines.Where(q => q.CantidadDisponibleAutorizar >0 || q.CantidadDisponibleAutorizar == null)
                                            .GroupBy(g => new
                                            {
@@ -212,8 +244,8 @@ namespace ERPAPI.Controllers
                                                WarehouseId = (int)cd.Key.WarehouseId,
                                                WarehouseName = cd.Key.WarehouseName,
                                                valorcertificado = 0,
-                                               SaldoProducto = cd.Sum(s => s.CantidadDisponibleAutorizar) == 0 ? cd.Sum(s => s.Quantity) : (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
-                                              // SaldoProducto = (decimal)cd.Sum(s => s.Quantity),
+                                               //SaldoProducto = cd.Sum(s => s.CantidadDisponibleAutorizar.HasValue) == 0  ? cd.Sum(s => s.Quantity) : (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),                                               
+                                               SaldoProducto = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
                                                ValorUnitarioDerechos = cd.Key.ValorUnitarioDerechos,
                                                ValorImpuestos = 0,
                                                DerechosFiscales = cd.Sum(s =>s.DerechosFiscales),
