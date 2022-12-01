@@ -238,13 +238,11 @@ namespace ERPAPI.Controllers
                                                Quantity = 0,
                                                SubProductId = (long)cd.Key.SubProductId,
                                                SubProductName = cd.Key.SubProductName,
-                                               //CertificadoLineId = cd.CertificadoLineId,
                                                NoCertificadoDeposito = (int)cd.Key.IdCD,
                                                Price = (decimal)cd.Key.Price,
                                                WarehouseId = (int)cd.Key.WarehouseId,
                                                WarehouseName = cd.Key.WarehouseName,
-                                               valorcertificado = 0,
-                                               //SaldoProducto = cd.Sum(s => s.CantidadDisponibleAutorizar.HasValue) == 0  ? cd.Sum(s => s.Quantity) : (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),                                               
+                                               valorcertificado = 0,                                          
                                                SaldoProducto = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
                                                ValorUnitarioDerechos = cd.Key.ValorUnitarioDerechos,
                                                ValorImpuestos = 0,
@@ -328,7 +326,6 @@ namespace ERPAPI.Controllers
             try
             {
                 List<int> listayaprocesada = _context.BoletaDeSalida
-                                              //.Where(q => q.GoodsDeliveryAuthorizationId > 0)
                                               .Select(q => q.DocumentoId).ToList();
 
                 Items = await _context.GoodsDeliveryAuthorization.Where(q => !listayaprocesada.Contains((int)q.GoodsDeliveryAuthorizationId)).ToListAsync();
@@ -361,8 +358,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _GoodsDeliveryAuthorization.TotalAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.valorcertificado);
-                        _GoodsDeliveryAuthorization.TotalCantidad = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.Quantity); ;
-                        //_GoodsDeliveryAuthorization.TotalDerechos =  _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => (decimal)s.DerechosFiscales); ;
+                        _GoodsDeliveryAuthorization.TotalCantidad = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.Quantity); 
                         _GoodsDeliveryAuthorization.ProductoAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.FirstOrDefault().SubProductName;
                         _GoodsDeliveryAuthorizationq = _GoodsDeliveryAuthorization;
                         _GoodsDeliveryAuthorizationq.Estado = "Revisión";
@@ -395,18 +391,8 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationLine)
                         {
-                            //item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
-                            //_context.GoodsDeliveryAuthorizationLine.Add(item);
-
-                            
-
                             CertificadoDeposito certificadoDeposito = await _context.CertificadoDeposito
-                                //.Include(i => i._CertificadoLine)
                                 .Where(q => q.IdCD == item.NoCertificadoDeposito).FirstOrDefaultAsync();
-
-                            
-
-
                             
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                      .Where(q => q.SubproductId == item.SubProductId)
@@ -598,7 +584,6 @@ namespace ERPAPI.Controllers
                       .Where(p =>
                            p.CustomerId == clienteid
                           && p.ProductId == servicioid
-                          //&& (p.Porcertificar == null || (bool)p.Porcertificar)
                           )
                       .OrderByDescending(b => b.GoodsDeliveryAuthorizationId).ToListAsync();
 
@@ -608,7 +593,6 @@ namespace ERPAPI.Controllers
                 else
                 {
                     return await Task.Run(() => Ok(Items));
-                    // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
                 }
             }
             catch (Exception ex)
