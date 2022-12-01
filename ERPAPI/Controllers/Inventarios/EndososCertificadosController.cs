@@ -109,6 +109,9 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+        
+
         [HttpPost("[action]")]
         public async Task<IActionResult> GetEndososSaldoByLineByIdCD(EndososCertificadosLine _EndososCertificadosLine)
         {
