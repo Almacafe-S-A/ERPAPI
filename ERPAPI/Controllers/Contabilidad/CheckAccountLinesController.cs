@@ -125,6 +125,7 @@ namespace ERPAPI.Controllers
 
                 List<JournalEntryLine> journalEntryLines = _CheckAccountLinesq.JournalEntry.JournalEntryLines;
 
+                
                 check = new CheckAccountLines
                 {
                     CheckAccountId = _CheckAccountLinesq.CheckAccountId,
@@ -147,11 +148,11 @@ namespace ERPAPI.Controllers
                     Impreso = false,
                     PartyId = _CheckAccountLinesq.PartyId,
                     PartyTypeId = _CheckAccountLinesq.PartyTypeId
+                    
 
 
                 };
 
-                
 
 
                 int actual = Convert.ToInt32(check.CheckNumber);
@@ -238,7 +239,8 @@ namespace ERPAPI.Controllers
                         EstadoId = 5,
                         EstadoName = "Enviada a Aprobacion",
                         TypeOfAdjustmentId = 65,
-                        TypeOfAdjustmentName = "Asiento diario"
+                        TypeOfAdjustmentName = "Asiento diario",
+
 
                     };
 
@@ -551,10 +553,15 @@ namespace ERPAPI.Controllers
                 {
                     return BadRequest("Solo se pueden anular cheques de estado Emitido, Aprobado, o Emitido Reimpreso");
                 }
+
+                Periodo periodoactivo = new Periodo();
+                periodoactivo = await _context.Periodo.Where(q => q.Estado == "Abierto").FirstOrDefaultAsync();
+
                 _CheckAccountLinesq.AmountWords = "Anulado";
                 _CheckAccountLinesq.Ammount = 0;
                 _CheckAccountLinesq.Estado = "Anulado";
-                _CheckAccountLinesq.IdEstado = 53;                
+                _CheckAccountLinesq.IdEstado = 53;       
+                
 
                 if (_CheckAccountLinesq.RetencionId != null)
                 {
@@ -592,7 +599,10 @@ namespace ERPAPI.Controllers
                         EstadoId = 6,
                         EstadoName = "Aprobado",
                         TypeOfAdjustmentId = 65,
-                        TypeOfAdjustmentName = "Asiento diario"
+                        TypeOfAdjustmentName = "Asiento diario",
+                        PeriodoId = periodoactivo.Id,
+                        Periodo= periodoactivo.Anio.ToString(),
+
                     };
                     var lineas = await _context.JournalEntryLine.Where(w => w.JournalEntryId == jecheck.JournalEntryId).ToListAsync();
 
