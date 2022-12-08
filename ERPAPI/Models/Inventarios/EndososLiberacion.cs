@@ -17,6 +17,9 @@ namespace ERPAPI.Models
         [Display(Name = "Linea Endoso Id")]
         public Int64 EndososLineId { get; set; }
 
+
+        public int Pda { get; set; }
+
         [Display(Name = "Tipo de Endoso")]
         public string TipoEndoso { get; set; }
 
