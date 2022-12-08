@@ -34,13 +34,17 @@ namespace ERPAPI.Models
         public string SubProductName { get; set; }
 
         [Display(Name = "Cantidad")]
-        public decimal Quantity { get; set; }        
+        public decimal Quantity { get; set; }
 
         [Display(Name = "Precio")]
         public decimal Price { get; set; }
 
         [Display(Name = "Valor endoso")]
         public decimal ValorEndoso { get; set; }
+        [NotMapped]
+        public decimal CantidadLiberacion { get; set; }
+        [NotMapped]
+        public decimal ValorLiberado { get; set; }
 
         public decimal Saldo { get; set; }
 

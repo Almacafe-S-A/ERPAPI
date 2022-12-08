@@ -214,6 +214,7 @@ namespace ERPAPI.Controllers
                         foreach (var item in _EndososCertificadosq.EndososCertificadosLine)
                         {
                             item.EndososCertificadosId = _EndososCertificados.EndososCertificadosId;
+                            //item.Saldo = item.Quantity;
                             _context.EndososCertificadosLine.Add(item);
                         }
 
@@ -273,12 +274,43 @@ namespace ERPAPI.Controllers
             EndososCertificados _EndososCertificadosq = _EndososCertificados;
             try
             {
-                _EndososCertificadosq = await (from c in _context.EndososCertificados
+                _EndososCertificadosq = await (from c in _context.EndososCertificados.Include(i => i.EndososCertificadosLine)
                                  .Where(q => q.EndososCertificadosId == _EndososCertificados.EndososCertificadosId)
                                                select c
                                 ).FirstOrDefaultAsync();
 
                 _context.Entry(_EndososCertificadosq).CurrentValues.SetValues((_EndososCertificados));
+
+                foreach (var item in _EndososCertificados.EndososCertificadosLine)
+                {
+                    _context.EndososLiberacion.Add(new EndososLiberacion {
+                        Pda = item.Pda,
+                        EndososId = item.EndososCertificadosId,
+                        EndososLineId = item.EndososCertificadosLineId,
+                        Quantity = item.CantidadLiberacion,
+                        UnitOfMeasureId = item.UnitOfMeasureId,
+                        UnitOfMeasureName = item.UnitOfMeasureName, 
+                        FechaCreacion =DateTime.Now,
+                        FechaLiberacion = (DateTime) _EndososCertificados.FechaCancelacion,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name,
+                        Saldo = item.Quantity - item.CantidadLiberacion,
+                        FechaModificacion= DateTime.Now,
+                        SubProductName = item.SubProductName,
+                        SubProductId = item.SubProductId,   
+                        TipoEndoso = _EndososCertificados.TipoEndosoName,
+                        
+                        
+                    
+                    
+                    });
+
+                    EndososCertificadosLine linea = _EndososCertificadosq.EndososCertificadosLine.Where(q => q.EndososCertificadosLineId == item.EndososCertificadosLineId).FirstOrDefault();
+
+                    linea.Saldo = item.Saldo - item.CantidadLiberacion;
+                }
+
+                _EndososCertificadosq.Saldo = _EndososCertificadosq.EndososCertificadosLine.Sum(s=>s.ValorEndoso);
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
