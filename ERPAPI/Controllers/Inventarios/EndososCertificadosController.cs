@@ -208,6 +208,7 @@ namespace ERPAPI.Controllers
                         _EndososCertificadosq = _EndososCertificados;
                         _EndososCertificadosq.FechaCancelacion = null;
                         _EndososCertificadosq.FechaLiberacion = null;
+                        _EndososCertificadosq.Saldo = _EndososCertificados.EndososCertificadosLine.Sum(s => s.Saldo);
 
                         _context.EndososCertificados.Add(_EndososCertificadosq);
 
@@ -310,7 +311,8 @@ namespace ERPAPI.Controllers
                     linea.Saldo = item.Saldo - item.CantidadLiberacion;
                 }
 
-                _EndososCertificadosq.Saldo = _EndososCertificadosq.EndososCertificadosLine.Sum(s=>s.ValorEndoso);
+                _EndososCertificadosq.Saldo = _EndososCertificadosq.EndososCertificadosLine.Sum(s=>s.Saldo);
+
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();

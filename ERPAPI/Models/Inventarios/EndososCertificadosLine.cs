@@ -48,6 +48,10 @@ namespace ERPAPI.Models
 
         public decimal Saldo { get; set; }
 
+        [NotMapped]
+        public decimal SaldoPrev { get; set; }
+
+
         public decimal? DerechosFiscales { get; set; }
 
         public decimal? ValorUnitarioDerechos { get; set; }
