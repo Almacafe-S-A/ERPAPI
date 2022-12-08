@@ -267,6 +267,37 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+
+        /// <summary>
+        /// Obtiene los certificados liberados
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetCertificadosNoEndosados(Int64 CustomerId)
+        {
+            List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
+
+            List<EndososCertificados> endosos = new List<EndososCertificados>();
+            try
+            {
+                Items = await _context.CertificadoDeposito.Where(q => q.CustomerId == CustomerId).ToListAsync();
+
+                endosos = await _context.EndososCertificados.Where(q => q.CustomerId == CustomerId).ToListAsync();
+
+                Items = Items.Where(q => !endosos.Any(a => a.NoCD == q.IdCD)).ToList();
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene los certificados de deposito por cliente.
         /// </summary>

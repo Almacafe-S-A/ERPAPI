@@ -157,6 +157,7 @@ namespace ERPAPI.Controllers
                                   ValorUnitarioDerechos = cd.Key.ValorUnitarioDerechos,
                                   CertificadoLineId = 0,
                                   Saldo = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
+                                  SaldoPrev = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
                                   DerechosFiscales = cd.Sum(s => s.DerechosFiscales),
                                   Pda = (int)cd.Key.PdaNo,
                               }).ToList();
