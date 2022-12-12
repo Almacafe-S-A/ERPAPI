@@ -209,6 +209,10 @@ namespace ERPAPI.Controllers
                         _EndososCertificadosq.FechaCancelacion = null;
                         _EndososCertificadosq.FechaLiberacion = null;
                         _EndososCertificadosq.Saldo = _EndososCertificados.EndososCertificadosLine.Sum(s => s.Saldo);
+                        _EndososCertificadosq.CantidadEndosar = _EndososCertificados.EndososCertificadosLine.Sum(p => p.Quantity);
+                        _EndososCertificadosq.ProductoEndosado = _EndososCertificados.EndososCertificadosLine.Count > 1 ? "Productos Varios" : _EndososCertificados.EndososCertificadosLine.FirstOrDefault().SubProductName;
+
+                        
 
                         _context.EndososCertificados.Add(_EndososCertificadosq);
 
@@ -299,7 +303,7 @@ namespace ERPAPI.Controllers
                         FechaModificacion= DateTime.Now,
                         SubProductName = item.SubProductName,
                         SubProductId = item.SubProductId,   
-                        TipoEndoso = _EndososCertificados.TipoEndosoName,
+                        TipoEndoso = _EndososCertificados.NombreEndoso,
                         
                         
                     
