@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221212143955_TotalCantidad")]
+    partial class TotalCantidad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4774,6 +4776,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("BankName");
 
+                    b.Property<decimal>("CantidadEndosada");
+
                     b.Property<decimal>("CantidadEndosar");
 
                     b.Property<long>("CurrencyId");
@@ -4812,13 +4816,17 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("ProductName");
 
-                    b.Property<string>("ProductoEndosado");
-
                     b.Property<decimal>("Saldo");
 
                     b.Property<decimal>("TasaDeInteres");
 
                     b.Property<long>("TipoEndoso");
+
+                    b.Property<long>("TipoEndosoId");
+
+                    b.Property<string>("TipoEndosoName");
+
+                    b.Property<decimal>("TotalCantidad");
 
                     b.Property<decimal>("TotalEndoso");
 
