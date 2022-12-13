@@ -138,6 +138,7 @@ namespace ERPAPI.Controllers
                                                   CantidadDisponible = detalle.SaldoporCertificar == null || detalle.SaldoporCertificar == detalle.Quantity ?
                                                      Decimal.Round(detalle.Quantity - (detalle.Quantity * (detalle.SubProduct.Merma / 100)) ,2):
                                                      Decimal.Round((decimal)detalle.SaldoporCertificar,2),
+                                                  Merma = Decimal.Round(detalle.Quantity * (detalle.SubProduct.Merma / 100),2),
                                                   ValorUnitarioDerechos = 0,
                                                   DerechosFiscales = 0,
                                                   GoodsReceivedLineId = detalle.GoodsReceiveLinedId
@@ -165,10 +166,12 @@ namespace ERPAPI.Controllers
                                                   Price = ObtenerPrecioCafe(detalle.Product, preciodelcafe),
                                                   WarehouseId = (int)detalle.WarehouseId,
                                                   WarehouseName = detalle.WarehouseName,
-                                                  Amount = (decimal)detalle.Cantidad * ObtenerPrecioCafe(detalle.Product, preciodelcafe),
+                                                  Amount = Decimal.Round((decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100))
+                                                  - ((decimal)detalle.ValorPergamino * (7 / 100)), 2) * (decimal)detalle.Cantidad * ObtenerPrecioCafe(detalle.Product, preciodelcafe),
                                                   CantidadDisponible = Decimal.Round((decimal)detalle.ValorPergamino 
                                                   - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),2),
                                                   ValorUnitarioDerechos = 0,
+                                                  Merma = Decimal.Round(detalle.Cantidad * (detalle.Product.Merma / 100), 2),
                                                   DerechosFiscales = 0,
                                                   //GoodsReceivedLineId = detalle.GoodsReceiveLinedId
                                               }
@@ -211,6 +214,7 @@ namespace ERPAPI.Controllers
                                       CantidadDisponible = lineasrecibo.SaldoPendienteCertificar == 0 || lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
                                           Decimal.Round( (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100))- ((decimal)lineasrecibo.Cantidad * (7 / 100)) ):
                                            Decimal.Round((decimal)lineasrecibo.SaldoPendienteCertificar, 2),
+                                      Merma = Decimal.Round(lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100), 2),
                                       ValorUnitarioDerechos = 0,
                                       DerechosFiscales = 0,
                                   }).ToList();
