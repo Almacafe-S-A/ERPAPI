@@ -527,7 +527,6 @@ namespace ERPAPI.Controllers
         {
             
             SolicitudCertificadoDeposito _SolicitudCertificado ;
-            CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
 
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -564,6 +563,13 @@ namespace ERPAPI.Controllers
                         _CertificadoDeposito.Producto = _CertificadoDeposito._CertificadoLine.FirstOrDefault().SubProductName;
                     }
 
+
+                    foreach (var lineacertificado in _CertificadoDeposito._CertificadoLine)
+                    {
+                        lineacertificado.Amount = lineacertificado.Quantity * lineacertificado.Price;
+                        lineacertificado.DerechosFiscales = lineacertificado.ValorUnitarioDerechos * lineacertificado.Quantity;
+
+                    }
 
 
                     _SolicitudCertificado = new SolicitudCertificadoDeposito(_CertificadoDeposito);
