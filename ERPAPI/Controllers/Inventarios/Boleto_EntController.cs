@@ -115,7 +115,7 @@ namespace ERPAPI.Controllers
                     && !_context.ControlPallets.Any(a => a.WeightBallot == q.clave_e) 
                     && !(_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e))
                     && q.completo == completo
-                    //&& q.Ingreso == esIngreso
+                    && q.Ingreso == esIngreso
                     ).ToListAsync();
                 }
                 else
