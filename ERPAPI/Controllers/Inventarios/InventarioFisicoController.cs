@@ -448,6 +448,7 @@ namespace ERPAPI.Controllers
             {
                 
                 List<Kardex> kardex = _context.Kardex.Where(q => q.BranchId == BranchId
+                               && (q.DocType == 1)
                                && (q.CustomerId == CustomerId || CustomerId == 0)
                                && (q.ProducId == ProductId || ProductId == 0)).ToList();
 
@@ -455,12 +456,12 @@ namespace ERPAPI.Controllers
                 SaldoLibros = (from k in kardex.GroupBy(g => new
                                         {
                                             g.SubProducId,
-                                            g.Estiba,
+                                            g.SubProductName,
+                                            g.WareHouseName,
                                             g.WareHouseId,
                                             g.UnitOfMeasureId,
-                                            g.SubProductName,
                                             g.UnitOfMeasureName,
-                                            g.WareHouseName
+                                            g.Estiba
                                         })
                                    //.Include(i => i.SubProductId)
 
@@ -470,7 +471,7 @@ namespace ERPAPI.Controllers
                                    ProductoId = (long)k.Key.SubProducId,
                                    ProductoNombre = k.Key.SubProductName,
                                    Diferencia = 0,
-                                   SaldoLibros = k.Sum(s => (decimal)s.Total),
+                                   SaldoLibros = k.Sum(s => (decimal)s.QuantityEntry) - k.Sum(s => (decimal)s.QuantityOut),
                                    UnitOfMeasureId = (int)k.Key.UnitOfMeasureId,
                                    UnitOfMeasureName = k.Key.UnitOfMeasureName,
                                    //NSacos = Convert.ToInt32(k.Sum(s => s.TotalBags)),
@@ -479,6 +480,7 @@ namespace ERPAPI.Controllers
                                     1: k.Sum(s => (decimal)s.Total)/ Convert.ToInt32(k.Sum(s => s.TotalBags)),
                                    InventarioFisicoCantidad = 0,
                                    WarehouseName = k.Key.WareHouseName,
+                                   WarehouseId = (int)k.Key.WareHouseId,
                                    Estiba = k.Key.Estiba.ToString(),
                                    //Product = k.Key.
 
