@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221220213532_EliminarCamposControlPallet")]
+    partial class EliminarCamposControlPallet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4770,10 +4772,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("DocumentDate");
 
-                    b.Property<string>("Estado");
-
-                    b.Property<int>("EstadoId");
-
                     b.Property<DateTime>("ExpirationDate");
 
                     b.Property<DateTime?>("FechaCancelacion");
@@ -5607,6 +5605,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("ControlPalletsId");
 
+                    b.Property<long>("CostCenterId");
+
                     b.Property<string>("Description");
 
                     b.Property<DateTime?>("FechaCreacion");
@@ -5617,13 +5617,13 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("NoAR");
 
-                    b.Property<long?>("NoARLine");
-
-                    b.Property<int>("NoARLineId");
-
                     b.Property<long>("NoCD");
 
                     b.Property<double>("Price");
+
+                    b.Property<long>("ProducId");
+
+                    b.Property<string>("ProductName");
 
                     b.Property<decimal>("Quantity");
 
@@ -5653,9 +5653,28 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("GoodsDeliveredId");
 
-                    b.HasIndex("NoARLine");
-
                     b.ToTable("GoodsDeliveredLine");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<decimal>("Cantidad");
+
+                    b.Property<int>("GoodsAuhorizationLineId");
+
+                    b.Property<int>("GoodsDeliveredLinedId");
+
+                    b.Property<long?>("GoodsDeliveredLinedId1");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GoodsDeliveredLinedId1");
+
+                    b.ToTable("GoodsDeliveryAuthLines");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorization", b =>
@@ -5698,8 +5717,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime?>("FechaModificacion");
 
-                    b.Property<long?>("GoodsDeliveredId");
-
                     b.Property<string>("Impreso");
 
                     b.Property<string>("LiberacionEndosoDocName");
@@ -5733,8 +5750,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioRevisor");
 
                     b.HasKey("GoodsDeliveryAuthorizationId");
-
-                    b.HasIndex("GoodsDeliveredId");
 
                     b.ToTable("GoodsDeliveryAuthorization");
                 });
@@ -12324,7 +12339,7 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.EndososCertificadosLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.EndososCertificados", "EndososCertificados")
+                    b.HasOne("ERPAPI.Models.EndososCertificados")
                         .WithMany("EndososCertificadosLine")
                         .HasForeignKey("EndososCertificadosId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -12414,17 +12429,13 @@ namespace ERPAPI.Migrations
                         .WithMany("_GoodsDeliveredLine")
                         .HasForeignKey("GoodsDeliveredId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorizationLine", "GoodsDeliveryAuthorizationLine")
-                        .WithMany()
-                        .HasForeignKey("NoARLine");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorization", b =>
+            modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthLine", b =>
                 {
-                    b.HasOne("ERPAPI.Models.GoodsDelivered")
-                        .WithMany("GoodsDeliveryAuthorizations")
-                        .HasForeignKey("GoodsDeliveredId");
+                    b.HasOne("ERPAPI.Models.GoodsDeliveredLine")
+                        .WithMany("GoodsDeliveryAuthLine")
+                        .HasForeignKey("GoodsDeliveredLinedId1");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorizationLine", b =>

@@ -210,8 +210,11 @@ namespace ERPAPI.Controllers
                         _EndososCertificadosq.FechaLiberacion = null;
                         _EndososCertificadosq.Saldo = _EndososCertificados.EndososCertificadosLine.Sum(s => s.Saldo);
                         _EndososCertificadosq.CantidadEndosar = _EndososCertificados.EndososCertificadosLine.Sum(p => p.Quantity);
-                        _EndososCertificadosq.ProductoEndosado = _EndososCertificados.EndososCertificadosLine.Count > 1 ? "Productos Varios" : _EndososCertificados.EndososCertificadosLine.FirstOrDefault().SubProductName;
+                        _EndososCertificadosq.TotalEndoso = _EndososCertificados.EndososCertificadosLine.Sum(p => p.Price )* _EndososCertificadosq.CantidadEndosar;
 
+                        _EndososCertificadosq.ProductoEndosado = _EndososCertificados.EndososCertificadosLine.Count > 1 ? "Productos Varios" : _EndososCertificados.EndososCertificadosLine.FirstOrDefault().SubProductName;
+                        _EndososCertificadosq.Estado = "Vigente";
+                        _EndososCertificadosq.EstadoId = 1;
                         
 
                         _context.EndososCertificados.Add(_EndososCertificadosq);
@@ -242,6 +245,8 @@ namespace ERPAPI.Controllers
                             UsuarioCreacion = _EndososCertificadosq.UsuarioCreacion,
                             UsuarioModificacion = _EndososCertificadosq.UsuarioModificacion,
                             UsuarioEjecucion = _EndososCertificadosq.UsuarioModificacion,
+                            
+
 
                         });
 
@@ -279,12 +284,14 @@ namespace ERPAPI.Controllers
             EndososCertificados _EndososCertificadosq = _EndososCertificados;
             try
             {
-                _EndososCertificadosq = await (from c in _context.EndososCertificados.Include(i => i.EndososCertificadosLine)
-                                 .Where(q => q.EndososCertificadosId == _EndososCertificados.EndososCertificadosId)
-                                               select c
-                                ).FirstOrDefaultAsync();
+                _EndososCertificadosq = await _context.EndososCertificados
+                    .Where(q => q.EndososCertificadosId == _EndososCertificados.EndososCertificadosId)
+                    .Include(i => i.EndososCertificadosLine)
+                    .FirstOrDefaultAsync();
 
-                _context.Entry(_EndososCertificadosq).CurrentValues.SetValues((_EndososCertificados));
+               // _context.Entry(_EndososCertificadosq).CurrentValues.SetValues((_EndososCertificados));
+               _EndososCertificadosq.FechaCancelacion = _EndososCertificados.FechaCancelacion;
+
 
                 foreach (var item in _EndososCertificados.EndososCertificadosLine)
                 {
@@ -310,12 +317,19 @@ namespace ERPAPI.Controllers
                     
                     });
 
-                    EndososCertificadosLine linea = _EndososCertificadosq.EndososCertificadosLine.Where(q => q.EndososCertificadosLineId == item.EndososCertificadosLineId).FirstOrDefault();
+                    EndososCertificadosLine linea = _EndososCertificadosq.EndososCertificadosLine
+                        .Where(q => q.EndososCertificadosLineId == item.EndososCertificadosLineId).FirstOrDefault();
 
                     linea.Saldo = item.Saldo - item.CantidadLiberacion;
                 }
 
                 _EndososCertificadosq.Saldo = _EndososCertificadosq.EndososCertificadosLine.Sum(s=>s.Saldo);
+
+                if (_EndososCertificadosq.Saldo == 0)
+                {
+                    _EndososCertificadosq.Estado = "Cancelado";
+                    _EndososCertificadosq.EstadoId = 2;
+                }
 
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA

@@ -11,7 +11,7 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
-                
+
         [Display(Name = "Fecha de documento")]
         public DateTime DocumentDate { get; set; }
 
@@ -89,7 +89,7 @@ namespace ERPAPI.Models
         [Display(Name = "Delegado Fiscal")]
         public string DelegadoFiscal { get; set; }
 
-        
+
         public string Estado { get; set; }
 
         public int EstadoId { get; set; }
@@ -106,10 +106,6 @@ namespace ERPAPI.Models
 
     public class GoodsDeliveryAuthorizationDTO : GoodsDeliveryAuthorization
     {
-        public int editar { get; set; } = 1;
-
-        public Kardex Kardex { get; set; } = new Kardex();
-
         public List<Int64> CertificadosAsociados { get; set; }
 
 
