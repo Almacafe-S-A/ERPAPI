@@ -87,22 +87,7 @@ namespace ERPAPI.Models
         public double QQPesoNeto { get; set; }
         public double QQPesoFinal { get; set; }
 
-        public bool? ProductoPesado { get; set; }
-
-        [Display(Name = "Id")]
-        public int? Alto { get; set; }
-        public int? Ancho { get; set; }
-        public int? Otros { get; set; }
-        public double? Totallinea { get; set; }
-        [Display(Name = "Cantidad de Sacos Yute")]
-        public int? cantidadYute { get; set; }
-        [Display(Name = "Cantidad de Sacos de Polietileno")]
-        public int? cantidadPoliEtileno { get; set; }
-
-        [Display(Name = "Centro de costos")]
-        public Int64? CenterCostId { get; set; }
-        [Display(Name = "Centro de costos")]
-        public string CenterCostName { get; set; }       
+        public bool? ProductoPesado { get; set; } 
 
         public DateTime? FechaCreacion { get; set; }
         public DateTime? FechaModificacion { get; set; }
@@ -134,7 +119,6 @@ namespace ERPAPI.Models
         [NotMapped]
         public Boleto_Ent boleto_Ent { get; set; }
         #endregion
-        // public List<ControlPalletsLine> _ControlPalletsLine = new List<ControlPalletsLine>();
 
     }
 }

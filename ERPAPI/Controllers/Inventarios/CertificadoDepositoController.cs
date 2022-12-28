@@ -131,6 +131,8 @@ namespace ERPAPI.Controllers
                          )
 
                      .OrderByDescending(b => b.IdCD).ToListAsync();
+                List<EndososCertificados> endosos = _context.EndososCertificados.Where(q => q.Saldo > 0 && q.CustomerId == clienteid ).ToList();
+
                
             }
             catch (Exception ex)

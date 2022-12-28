@@ -173,16 +173,23 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetDetalleCertificadosPendientes([FromQuery(Name = "Recibos")] int[] certificados)
         {
 
+            
             List<GoodsDeliveryAuthorizationLine> pendientes = new List<GoodsDeliveryAuthorizationLine>();
+            if (certificados.Count() == 0) return Ok(pendientes);
 
-            if (_context.EndososCertificados.Where(q => certificados.Any(a =>a == q.IdCD) && q.FechaCancelacion!=null).Count()>0)
+            List<EndososCertificados> endosos = _context.EndososCertificados
+                .Include(i => i.EndososCertificadosLine)
+                .Where(q => certificados.Any(a => a == q.IdCD) && q.Saldo > 0).ToList();
+
+            if (_context.EndososLiberacion.Where(q => endosos.Any(a => a.EndososCertificadosId == q.EndososId)).ToList().Count <= 0)
             {
                 return BadRequest("El Certificado se encuentra endosado, no se puede emitir autorización");
             }
-            
+
             try
             {
-                List<CertificadoLine> certificadoLines = await _context.CertificadoLine.Where(q => certificados.Any(idCD => idCD == q.IdCD)).ToListAsync();
+                List<CertificadoLine> certificadoLines = await _context.CertificadoLine
+                    .Where(q => certificados.Any(idCD => idCD == q.IdCD)).ToListAsync();
                 certificadoLines = (from cd in certificadoLines
                                     select new CertificadoLine() {
                                         Amount = cd.Amount,
@@ -213,7 +220,9 @@ namespace ERPAPI.Controllers
                                         WarehouseName = cd.WarehouseName,
                                         
                                     
-                                    }).ToList();    
+                                    }).ToList();
+
+               
 
                 pendientes =  (from cd in certificadoLines.Where(q => q.CantidadDisponibleAutorizar >0 || q.CantidadDisponibleAutorizar == null)
                                            .GroupBy(g => new
@@ -249,6 +258,20 @@ namespace ERPAPI.Controllers
                                                DerechosFiscales = cd.Sum(s =>s.DerechosFiscales),
                                                Pda = cd.Key.PdaNo,
                                            }).ToList();
+
+                List<EndososCertificadosLine> endososCertificadosLines = _context.EndososCertificadosLine.Include(i => i.EndososCertificados)
+                   .Where(q => endosos.Any(a => a.EndososCertificadosId == q.EndososCertificadosId)).ToList();
+
+                foreach (var item in pendientes)
+                {
+                    var endoso = endososCertificadosLines
+                        .Where(q => q.Pda ==  item.Pda && q.EndososCertificados.IdCD == item.NoCertificadoDeposito).FirstOrDefault();
+                    if (endoso != null) {
+                        item.Saldo = item.Saldo - endoso.Saldo;
+                        item.SaldoProducto = item.SaldoProducto - endoso.Saldo;
+                    }
+                }
+
                 if (pendientes.Count>7)
                 {
                     return BadRequest("La autorizacion solo puede contener 7 lineas de detalle");

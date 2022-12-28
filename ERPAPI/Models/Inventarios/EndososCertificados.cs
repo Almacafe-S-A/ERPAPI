@@ -77,6 +77,10 @@ namespace ERPAPI.Models
         [Display(Name = "Total endoso")]
         public decimal TotalEndoso { get; set; }
 
+        public string Estado { get; set; }
+
+        public int EstadoId { get; set; }
+
 
         public DateTime? FechaLiberacion { get; set; }/// automatica al cancelar un endoso
 

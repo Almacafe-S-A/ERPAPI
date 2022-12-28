@@ -103,7 +103,9 @@ namespace ERPAPI.Models
         public string Impreso { get; set; }
         public List<GoodsDeliveredLine> _GoodsDeliveredLine { get; set; } = new List<GoodsDeliveredLine>();
 
-     //   public Kardex Kardex { get; set; }
+        public List<GoodsDeliveryAuthorization> GoodsDeliveryAuthorizations { get; set; } = new List<GoodsDeliveryAuthorization>();
+
+        //   public Kardex Kardex { get; set; }
     }
 
 

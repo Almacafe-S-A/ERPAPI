@@ -88,7 +88,7 @@ namespace ERPAPI.Controllers
 
             if (_context.EndososCertificados.Where(q => q.IdCD == IdCD) == null)
             {
-                return BadRequest("El Certificado se encuentra endosado, no se puede emitir autorización");
+                return BadRequest("El Certificado se encuentra endosado, no se puede endosar");
             }
 
 
