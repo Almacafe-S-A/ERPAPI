@@ -16,6 +16,9 @@ namespace ERPAPI.Models
         [Display(Name = "Id certificado")]
         public Int64 IdCD { get; set; }
 
+        [ForeignKey("IdCD")]
+        public CertificadoDeposito CertificadoDeposito { get; set; }
+
         [Display(Name = "Número de certificado")]
         public Int64 NoCD { get; set; }
 

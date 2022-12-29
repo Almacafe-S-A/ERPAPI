@@ -186,7 +186,32 @@ namespace ERPAPI.Controllers
 
             return Ok(Items);
         }
-       
+
+
+        /// <summary>
+        /// Obtiene los Datos de la EndososCertificados por medio del Id enviado.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetEndososporVencer()
+        {
+            List<EndososCertificados> Items = new List<EndososCertificados>();
+            try
+            {
+                Items = await _context.EndososCertificados.Include(i => i.CertificadoDeposito)
+                    .Where(q => DateTime.Now -  q.CertificadoDeposito.FechaVencimientoCertificado <TimeSpan.FromDays(30)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return Ok(Items);
+        }
+
 
 
 
@@ -281,6 +306,10 @@ namespace ERPAPI.Controllers
         [HttpPut("[action]")]
         public async Task<ActionResult<EndososCertificados>> Update([FromBody]EndososCertificados _EndososCertificados)
         {
+            if (_EndososCertificados.FechaCancelacion == null)
+            {
+                return BadRequest("Fecha de cancelacion no puede ser Nula");
+            }
             EndososCertificados _EndososCertificadosq = _EndososCertificados;
             try
             {
