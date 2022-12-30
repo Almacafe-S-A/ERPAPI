@@ -179,11 +179,11 @@ namespace ERPAPI.Controllers
 
             List<EndososCertificados> endosos = _context.EndososCertificados
                 .Include(i => i.EndososCertificadosLine)
-                .Where(q => certificados.Any(a => a == q.IdCD) && q.Saldo > 0).ToList();
+                .Where(q => certificados.Any(a => a == q.IdCD) && q.Saldo == q.CantidadEndosar).ToList();
 
-            if (_context.EndososLiberacion.Where(q => endosos.Any(a => a.EndososCertificadosId == q.EndososId)).ToList().Count <= 0)
+            if (endosos.Count>0)
             {
-                return BadRequest("El Certificado se encuentra endosado, no se puede emitir autorización");
+                return BadRequest($"Los Certificados {String.Join(",",endosos.Select(s => s.IdCD).ToList())} se encuentran endosados y no tienen saldo disponible a autorizar, no se puede emitir autorización");
             }
 
             try
