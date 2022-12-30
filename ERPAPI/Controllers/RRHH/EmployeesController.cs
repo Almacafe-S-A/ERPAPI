@@ -74,14 +74,7 @@ namespace ERPAPI.Controllers
             List<Employees> Items = new List<Employees>();
             try
             {
-                Items = await _context.Employees//0.Include(c => c.Bank)
-                                                //.Include(c => c.Branch)
-                                                //.Include(c =>c.City)
-                                                //.Include(c =>c.Country)
-                                                //.Include(c => c.Departamento)
-                                                //.Include(c => c.ApplicationUser)
-                                                .Include(c=> c.Puesto)
-                                                .ToListAsync();
+                Items = await _context.Employees.Include(c=> c.Puesto).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -124,31 +117,35 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
         /// <summary>
-        /// Inserta una nueva Employees
+        /// Obtiene los Datos de la Employees por medio del Id enviado.
         /// </summary>
-        /// <param name="_Employees"></param>
+        /// <param name="IdDepto"></param>
         /// <returns></returns>
-        //[HttpPost("[action]")]
-        //public async Task<ActionResult<Employees>> Insert([FromBody]Employees _Employees)
-        //{
-        //    Employees _Employeesq = new Employees();
-        //    try
-        //    {
-        //        _Employeesq = _Employees;
-        //        _context.Employees.Add(_Employeesq);
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
+        [HttpGet("[action]/{IdDepto}")]
+        public async Task<IActionResult> GetEmployeesByDepartament(Int64 IdDepto)
+        {
+            List<Employees> Items = new List<Employees>();
+            try
+            {
+                Items = await _context.Employees.Include(c => c.Bank)
+                                                .Include(c => c.Branch)
+                                                .Include(c => c.City)
+                                                .Include(c => c.Country)
+                                                .Include(c => c.Departamento)
+                                                .Include(c => c.ApplicationUser)
+                                                .Where(q => q.IdDepartamento == IdDepto).ToListAsync();
+            }
+            catch (Exception ex)
+            {
 
-        //        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-        //        return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
-        //    }
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
 
-        //    return await Task.Run(() => Ok(_Employeesq));
-        //}
+
+            return await Task.Run(() => Ok(Items));
+        }
 
         [HttpPost("[action]")]
         public async Task<ActionResult<Employees>> Insert([FromBody]Employees _Employees)
