@@ -168,6 +168,7 @@ namespace ERPAPI.Controllers
             {
                 boleta = await _context.BoletaDeSalida
                     .Include(i=>i.BoletaDeSalidaLines)
+                    .Include(i => i.Customer)
                     .Where(q => q.BoletaDeSalidaId == BoletaDeSalidaId).FirstOrDefaultAsync();
                 if (boleta.CargadoId != 13)
                 {
@@ -185,6 +186,8 @@ namespace ERPAPI.Controllers
                 {
                     return BadRequest("No existe una numeracion SAR Activa o Vigente para la Generacion de las Guias de Remisión");
                 }
+
+
                 guiaRemision = new GuiaRemision {
                     NumeroDocumento =  numeracionSAR.GetNumeroSiguiente(),
                     CAI = numeracionSAR._cai,
@@ -192,7 +195,15 @@ namespace ERPAPI.Controllers
                     Rango = numeracionSAR.getRango(),
                     CustomerName = boleta.CustomerName,
                     CustomerId = (int)boleta.CustomerId,
-                    Transportista = boleta.Motorista,
+                    Transportista = boleta.Transportista,
+                    OrdenNo = boleta.OrdenNo,
+                    Origen = "ALMACAFE",
+                    Destino = $"{boleta.Customer.Address} - {boleta.CustomerName}",
+                    DNIMotorista = boleta.DNIMotorista,
+                    FechaDocuemto= boleta.FechaIngreso,
+                    FechaSalida= boleta.FechaSalida,
+                    FechaEntrada= boleta.FechaIngreso,
+                    PlacaContenedor = boleta.PlacaContenedor,
                     Placa = boleta.Placa,
                     UsuarioCreacion = User.Identity.Name,
                     FechaCreacion = DateTime.Now,
@@ -200,6 +211,7 @@ namespace ERPAPI.Controllers
                     Fecha = DateTime.Now,
                     GuiaRemisionLines = new List<GuiaRemisionLine>(),
                     Vigilante = boleta.Vigilante,
+                    RTNTransportista = boleta.RTNTransportista,
                     
                     //Observaciones = boleta.=
                     

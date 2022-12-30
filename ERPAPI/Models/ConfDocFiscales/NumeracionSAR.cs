@@ -50,19 +50,19 @@ namespace ERPAPI.Models
             }
 
             this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo + 1}";
+            int correlativosiguiente = (int)this.Correlativo + 1;
 
-
-            return $"{this.GetPrefijo()}-{this.Correlativo + 1}";
+            return $"{this.GetPrefijo()}-{correlativosiguiente.ToString().PadLeft(8,'0')}";
 
         }
         public string GetPrefijo()
         {
-            return $"000-{this.DocType.Substring(0, 2)}-{this.PuntoEmision}";
+            return $"000-{this.PuntoEmision}-{this.DocType.Substring(0, 2)}";
 
         }
 
         public string getRango() {
-            return $"{this.GetPrefijo()}-{this.NoInicio} - {this.GetPrefijo()}-{this.NoFin}";
+            return $"{this.GetPrefijo()}-{this.NoInicio.PadLeft(8,'0')} - {this.GetPrefijo()}-{this.NoFin.PadLeft(8, '0')}";
         }
 
 
