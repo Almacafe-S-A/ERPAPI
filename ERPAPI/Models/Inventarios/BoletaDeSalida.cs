@@ -47,6 +47,8 @@ namespace ERPAPI.Models
 
         public string Motorista { get; set; }
 
+        public string Observaciones { get; set; }
+
 
         public string PlacaContenedor { get; set; }
 

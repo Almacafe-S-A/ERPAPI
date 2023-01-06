@@ -43,6 +43,8 @@ namespace ERPAPI.Models
 
         public string DNIMotorista { get; set; }
 
+        public string Montorista { get; set; }
+
         public string Vigilante { get; set; }
 
         public string Observaciones { get; set; }

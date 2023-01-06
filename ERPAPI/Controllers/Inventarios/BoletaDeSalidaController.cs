@@ -180,11 +180,12 @@ namespace ERPAPI.Controllers
                     .Where(q => q.IdEstado == 1
                     && q.DocTypeId == 13
                     && q.FechaLimite > DateTime.Now
+                    && q.Correlativo <= Convert.ToInt32(q.NoFin)
                     ).FirstOrDefault();
 
                 if (numeracionSAR == null)
                 {
-                    return BadRequest("No existe una numeracion SAR Activa o Vigente para la Generacion de las Guias de Remisión");
+                    return BadRequest("No existe una numeracion SAR Vigente para la Generacion de las Guias de Remisión Valide la Numeracion SAR para este tipo de documento");
                 }
 
 
@@ -212,6 +213,7 @@ namespace ERPAPI.Controllers
                     GuiaRemisionLines = new List<GuiaRemisionLine>(),
                     Vigilante = boleta.Vigilante,
                     RTNTransportista = boleta.RTNTransportista,
+                    Montorista = boleta.Motorista,
                     
                     //Observaciones = boleta.=
                     
