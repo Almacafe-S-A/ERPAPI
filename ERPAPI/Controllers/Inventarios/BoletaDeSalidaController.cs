@@ -213,7 +213,7 @@ namespace ERPAPI.Controllers
                     GuiaRemisionLines = new List<GuiaRemisionLine>(),
                     Vigilante = boleta.Vigilante,
                     RTNTransportista = boleta.RTNTransportista,
-                    Montorista = boleta.Motorista,
+                    Motorista = boleta.Motorista,
                     
                     //Observaciones = boleta.=
                     
