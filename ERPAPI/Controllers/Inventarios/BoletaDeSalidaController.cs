@@ -175,21 +175,31 @@ namespace ERPAPI.Controllers
                     return BadRequest("Las guias de remision solo pueden ser genradas a partir de una boleta de Salida cuyo origen sea un Retiro de Mercaderia");
                 }
 
+                List<NumeracionSAR> numeracionSARs= new List<NumeracionSAR>();  
 
-                NumeracionSAR numeracionSAR = _context.NumeracionSAR
+               numeracionSARs  = _context.NumeracionSAR
                     .Where(q => q.IdEstado == 1
                     && q.DocTypeId == 13
                     && q.FechaLimite > DateTime.Now
-                    && q.Correlativo <= Convert.ToInt32(q.NoFin)
-                    ).FirstOrDefault();
+                    && (q.Correlativo <= Convert.ToInt32(q.NoFin)||q.Correlativo == null)
+                    && q.IdEstado == 1
+                    ).ToList();
+
+                
+                if (numeracionSARs.Count>1)
+                {
+                    return BadRequest("Se encontraron mas de una numeracion SAR vigente para este tipo de documento");
+                }
+
+                NumeracionSAR numeracionSAR = numeracionSARs.FirstOrDefault();
 
                 if (numeracionSAR == null)
                 {
                     return BadRequest("No existe una numeracion SAR Vigente para la Generacion de las Guias de Remisión Valide la Numeracion SAR para este tipo de documento");
                 }
+                               
 
-
-                guiaRemision = new GuiaRemision {
+               guiaRemision = new GuiaRemision {
                     NumeroDocumento =  numeracionSAR.GetNumeroSiguiente(),
                     CAI = numeracionSAR._cai,
                     FechaLimiteEmision = numeracionSAR.FechaLimite,
@@ -214,11 +224,7 @@ namespace ERPAPI.Controllers
                     Vigilante = boleta.Vigilante,
                     RTNTransportista = boleta.RTNTransportista,
                     Motorista = boleta.Motorista,
-                    
-                    //Observaciones = boleta.=
-                    
-
-                };
+               };
 
                 foreach (var item in boleta.BoletaDeSalidaLines)
                 {
@@ -232,13 +238,17 @@ namespace ERPAPI.Controllers
                 }
                 _context.Add(guiaRemision);
 
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                 await _context.SaveChangesAsync();
 
                 boleta.GuiaRemisionId = guiaRemision.Id;
                 boleta.GuiRemisionNo = guiaRemision.NumeroDocumento;
                 numeracionSAR.Correlativo++;
-                await _context.SaveChangesAsync();
 
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -266,12 +276,32 @@ namespace ERPAPI.Controllers
                     item.WarehouseName = item.Warehouse.WarehouseName;
                     item.Warehouseid = item.Warehouse.WarehouseId;
                     item.Warehouse = null;
-                    item.UnitOfMeasureId = item.UnitOfMeasure.UnitOfMeasureId;
-                    item.UnitOfMeasureName = item.UnitOfMeasure.UnitOfMeasureName;
-                    item.UnitOfMeasure = null;
-                    item.SubProductId = item.SubProduct.SubproductId;
-                    item.SubProductName = item.SubProduct.ProductName;
-                    item.SubProduct = null;
+
+                    if (item.UnitOfMeasure != null)
+                    {
+                        item.UnitOfMeasureId = item.UnitOfMeasure.UnitOfMeasureId;
+                        item.UnitOfMeasureName = item.UnitOfMeasure.UnitOfMeasureName;
+                        item.UnitOfMeasure = null;
+                    }
+                    if (item.SubProduct != null)
+                    {
+                        item.SubProductId = item.SubProduct.SubproductId;
+                        item.SubProductName = item.SubProduct.ProductName;
+                        item.SubProduct = null;
+                    }
+                    
+                }
+                _BoletaDeSalida.UnitOfMeasureName = _BoletaDeSalida.BoletaDeSalidaLines.FirstOrDefault().UnitOfMeasureName;
+                _BoletaDeSalida.UnitOfMeasureId = _BoletaDeSalida.BoletaDeSalidaLines.FirstOrDefault().UnitOfMeasureId;
+                _BoletaDeSalida.Quantity = _BoletaDeSalida.BoletaDeSalidaLines.Sum(s => s.Quantity);
+
+                if (_BoletaDeSalida.BoletaDeSalidaLines.Count > 1)
+                {
+                    _BoletaDeSalida.SubProductName = "Productos Varios";
+                }
+                else
+                {
+                    _BoletaDeSalida.SubProductName = _BoletaDeSalida.BoletaDeSalidaLines.FirstOrDefault().SubProductName;
                 }
                 _context.BoletaDeSalida.Add(_BoletaDeSalida);
 
@@ -279,6 +309,8 @@ namespace ERPAPI.Controllers
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                 await _context.SaveChangesAsync();
+
+                
             }
             catch (Exception ex)
             {
