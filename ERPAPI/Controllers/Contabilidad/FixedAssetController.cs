@@ -315,13 +315,20 @@ namespace ERPAPI.Controllers
                 });
 
 
-                
+                Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
+
+                _je.PeriodoId = periodo?.Id;
+                _je.Periodo = periodo.Anio.ToString();
+                _je.TypeJournalName = "Voucher de Registros";
+                _je.VoucherType = 9;
+
+
 
 
                 ///////Actualiza el saldo de las cuentas ///////////
                 //ContabilidadHandler.ActualizarSaldoCuentas(_context, _je);
                 _context.JournalEntry.Add(_je);
-                _FixedAssetq.IdEstado = 105;
+                _FixedAssetq.IdEstado = 2;
                 _FixedAssetq.Estado = "Dado de Baja";
 
                 await _context.SaveChangesAsync();

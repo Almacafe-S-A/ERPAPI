@@ -803,11 +803,13 @@ namespace ERPAPI.Controllers
                                 ModifiedUser = User.Identity.Name
                             };
 
+
                             var activos = await _context.FixedAsset
-                                .Where(p => p.IdEstado != 51 
+                                .Where(p => p.IdEstado != 51
                                 && p.IdEstado != 105
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
+                                && p.AssetDate >= new DateTime((int)pCierre.Anio, (int)pCierre.Mes, 30)
                                 )
                                 .ToListAsync();
                             foreach (var item in activos)
@@ -937,6 +939,14 @@ namespace ERPAPI.Controllers
 
                     _je.TotalDebit = _je.JournalEntryLines.Sum(s => s.Debit);
                     _je.TotalCredit = _je.JournalEntryLines.Sum(s => s.Credit);
+                    
+                    Periodo periodo= _context.Periodo.Where(q=>q.Anio == pCierre.Anio).FirstOrDefault();
+
+                    _je.PeriodoId = periodo?.Id;
+                    _je.Periodo = periodo.Anio.ToString();
+                    _je.TypeJournalName = "Voucher de Registros";
+                    _je.VoucherType = 9;
+                    _je.DatePosted = new DateTime((int)pCierre.Anio,(int)pCierre.Mes, 30);
 
                     _context.JournalEntry.Add(_je);
 
