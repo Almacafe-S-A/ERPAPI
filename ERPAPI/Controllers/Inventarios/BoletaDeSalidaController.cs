@@ -209,7 +209,7 @@ namespace ERPAPI.Controllers
                     Transportista = boleta.Transportista,
                     OrdenNo = boleta.OrdenNo,
                     Origen = "ALMACAFE",
-                    Destino = $"{boleta.Customer.Address} - {boleta.CustomerName}",
+                    Destino = $"{boleta.CustomerName} - {boleta.Customer.Address}",
                     DNIMotorista = boleta.DNIMotorista,
                     FechaDocuemto= boleta.FechaIngreso,
                     FechaSalida= boleta.FechaSalida,
