@@ -816,7 +816,7 @@ namespace ERPAPI.Controllers
                                 && p.IdEstado != 105
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
-                                && p.AssetDate >= new DateTime(pfecha.Year, pfecha.Month, DateTime.DaysInMonth(pfecha.Year, pfecha.Month))
+                                //&& p.AssetDate <= new DateTime(pfecha.Year, pfecha.Month-1, DateTime.DaysInMonth(pfecha.Year, pfecha.Month-1))
                                 )
                                 .ToListAsync();
                             foreach (var item in activos)
