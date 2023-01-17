@@ -193,19 +193,40 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="FixedAssetId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{FixedAssetId}/{motivo}")]
-        public async Task<IActionResult> BajaActivo(Int64 FixedAssetId, int motivo)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> BajaActivo([FromBody] FixedAssetDTO _FixedAsset)
         {
             FixedAsset _FixedAssetq = new FixedAsset();
             try
             {
-                _FixedAssetq = await _context.FixedAsset.Where(q => q.FixedAssetId == FixedAssetId).FirstOrDefaultAsync();
                 _FixedAssetq = _context.FixedAsset
                     .Include(q => q.FixedAssetGroup.DepreciationFixedAssetAccounting)
                     .Include(q => q.FixedAssetGroup.FixedAssetAccounting)
                     .Include(q => q.FixedAssetGroup.AccumulatedDepreciationAccounting)
-                .Where(x => x.FixedAssetId == FixedAssetId)
+                .Where(x => x.FixedAssetId == _FixedAsset.FixedAssetId)
                 .FirstOrDefault();
+
+                Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
+
+                List<BitacoraCierreProcesos> procesos = _context.BitacoraCierreProceso
+                    .Where(q => q.BitacoraCierresContable.PeriodoId == periodo.Id
+                    && q.PasoCierre == 3
+                    && q.BitacoraCierresContable.Mes == _FixedAsset.FechaBaja.Month)
+                    .Include(i => i.BitacoraCierresContable).ToList();
+
+                foreach (var item in procesos)
+                {
+                    if (item.Estatus == "FINALIZADO")
+                    {
+                        return BadRequest("No se Puede dar de baja el activo en la fecha indicada, se ha ejecutado una depreciacion previamente en el mes de baja seleccionado");
+                    }
+                }
+                
+
+                if (_FixedAssetq.AssetDate >  _FixedAsset.FechaBaja)
+                {
+                    return BadRequest("No se Puede dar de baja el activo la fecha de baja es previa a la fecha de adquisicion");
+                }
 
                 if (_FixedAssetq.IdEstado == 105)
                 {
@@ -233,7 +254,7 @@ namespace ERPAPI.Controllers
                 _FixedAssetq.NetValue = 0;
                 var valorasiento = valoractivo;
 
-                string motivoMensaje = motivo == 1 ? "Venta" : "Obsolecencia";
+                string motivoMensaje = _FixedAsset.MotivoId == 1 ? "Venta" : "Obsolecencia";
 
                 JournalEntry _je = new JournalEntry
                 {
@@ -289,7 +310,7 @@ namespace ERPAPI.Controllers
                 Accounting cuentaMotivo = new Accounting();
                 string codigoCuentamotivo = "";
 
-                if (motivo == 1) /// por venta 
+                if (_FixedAsset.MotivoId == 1) /// por venta 
                 {
                     codigoCuentamotivo = "143010309";
                 }
@@ -315,7 +336,7 @@ namespace ERPAPI.Controllers
                 });
 
 
-                Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
+                //Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
 
                 _je.PeriodoId = periodo?.Id;
                 _je.Periodo = periodo.Anio.ToString();

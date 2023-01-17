@@ -16,6 +16,7 @@ using AutoMapper.Configuration.Conventions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using System.Globalization;
+using SQLitePCL;
 
 namespace ERPAPI.Controllers
 {
@@ -70,13 +71,18 @@ namespace ERPAPI.Controllers
             BitacoraCierreProcesos proceso = new BitacoraCierreProcesos();
             proceso = _context.BitacoraCierreProceso.Where(q => q.IdProceso == ProcesoId).FirstOrDefault();
 
-            BitacoraCierreContable cierre = new BitacoraCierreContable();
-            cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();
+            if (proceso.Estatus == "FINALIZADO") return BadRequest("Este proceso ya ha sido ejecutado previmente el " + proceso.FechaCierre?.ToString("dd/MM/yyyy"));
 
-            await ActualizarSaldoCatalogo();
+            BitacoraCierreContable cierre = new BitacoraCierreContable();
+            cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();         
+            
+
+
+
             switch (proceso.PasoCierre)
             {
                 case 3:
+                    
                     await DepreciacionActivosFijos(proceso, cierre, new DateTime((int)cierre.Anio,(int)cierre.Mes,1));
                     break;
 
@@ -93,6 +99,7 @@ namespace ERPAPI.Controllers
                     proceso.Mensaje = "No existe un proceso registrado";
                     break;
             }
+            await ActualizarSaldoCatalogo();
             _context.SaveChanges();
 
             return Ok();
@@ -809,7 +816,7 @@ namespace ERPAPI.Controllers
                                 && p.IdEstado != 105
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
-                                && p.AssetDate >= new DateTime((int)pCierre.Anio, (int)pCierre.Mes, 30)
+                                && p.AssetDate >= new DateTime(pfecha.Year, pfecha.Month, DateTime.DaysInMonth(pfecha.Year, pfecha.Month))
                                 )
                                 .ToListAsync();
                             foreach (var item in activos)
@@ -946,7 +953,7 @@ namespace ERPAPI.Controllers
                     _je.Periodo = periodo.Anio.ToString();
                     _je.TypeJournalName = "Voucher de Registros";
                     _je.VoucherType = 9;
-                    _je.DatePosted = new DateTime((int)pCierre.Anio,(int)pCierre.Mes, 30);
+                    _je.DatePosted = new DateTime(pfecha.Year, pfecha.Month, DateTime.DaysInMonth(pfecha.Year, pfecha.Month));
 
                     _context.JournalEntry.Add(_je);
 
@@ -962,6 +969,7 @@ namespace ERPAPI.Controllers
                 {
                     transaction.Rollback();
                     pProceso.Estatus = "ERROR";
+                    _logger.LogError(ex.ToString());
                     //throw;
                     await _context.SaveChangesAsync();
                     return;
