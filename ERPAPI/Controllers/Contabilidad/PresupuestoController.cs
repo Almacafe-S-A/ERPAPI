@@ -148,6 +148,8 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        
+
                         Accounting _Presupuestop = await (from c in _context.Accounting
                                          .Where(q => q.AccountId == _Presupuesto.AccountigId
                                          )
