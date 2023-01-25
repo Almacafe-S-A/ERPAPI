@@ -469,6 +469,11 @@ namespace ERP.Contexts
            .IsUnique(true);
 
 
+            modelBuilder.Entity<Presupuesto>()
+          .HasIndex(p => new { p.CostCenterId, p.PeriodoId ,p.AccountigId})
+          .IsUnique(true);
+
+
 
             modelBuilder.Entity<Contrato_plan_pagos>().HasKey(t => new { t.Nro_cuota, t.ContratoId });
 
@@ -478,6 +483,8 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
+
+           
 
             modelBuilder.Entity<CheckAccount>()
           .HasIndex(u => u.CheckAccountNo)

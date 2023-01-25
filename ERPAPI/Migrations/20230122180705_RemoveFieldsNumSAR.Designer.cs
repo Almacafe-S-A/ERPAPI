@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230122180705_RemoveFieldsNumSAR")]
+    partial class RemoveFieldsNumSAR
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8059,9 +8061,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdPuntoEmision");
 
-                    b.Property<long>("NoFin");
+                    b.Property<string>("NoFin");
 
-                    b.Property<long>("NoInicio");
+                    b.Property<string>("NoInicio");
 
                     b.Property<string>("PuntoEmision");
 
@@ -8820,10 +8822,9 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("AccountigId");
 
-                    b.HasIndex("PeriodoId");
+                    b.HasIndex("CostCenterId");
 
-                    b.HasIndex("CostCenterId", "PeriodoId", "AccountigId")
-                        .IsUnique();
+                    b.HasIndex("PeriodoId");
 
                     b.ToTable("Presupuesto");
                 });

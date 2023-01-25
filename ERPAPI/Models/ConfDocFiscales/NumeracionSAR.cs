@@ -1,9 +1,12 @@
-﻿using System;
+﻿using ERP.Contexts;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Models
 {
@@ -17,8 +20,8 @@ namespace ERPAPI.Models
 
         public string _cai { get; set; }
 
-        public string NoInicio { get; set; }
-        public string NoFin { get; set; }
+        public Int64 NoInicio { get; set; }
+        public Int64 NoFin { get; set; }
         public DateTime FechaLimite { get; set; }
         public int CantidadOtorgada { get; set; }
 
@@ -32,8 +35,6 @@ namespace ERPAPI.Models
         public string PuntoEmision { get; set; }
         public Int64 DocTypeId { get; set; }
         public string DocType { get; set; }
-        public Int64 DocSubTypeId { get; set; }
-        public string DocSubType { get; set; }
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
         [Display(Name = "Estado")]
@@ -62,9 +63,40 @@ namespace ERPAPI.Models
         }
 
         public string getRango() {
-            return $"{this.GetPrefijo()}-{this.NoInicio.PadLeft(8,'0')} - {this.GetPrefijo()}-{this.NoFin.PadLeft(8, '0')}";
+            return $"{this.GetPrefijo()}-{this.NoInicio.ToString().PadLeft(8,'0')} - {this.GetPrefijo()}-{this.NoFin.ToString().PadLeft(8, '0')}";
         }
 
+
+        public NumeracionSAR ObtenerNumeracionSarValida(ApplicationDbContext dbContext, int tipoDocumento) {
+            
+            NumeracionSAR numeracionSAR= new NumeracionSAR();
+            List<NumeracionSAR> numeracionSARs= new List<NumeracionSAR>();
+            numeracionSARs = dbContext.NumeracionSAR
+                    .Where(q => q.IdEstado == 1
+                    && q.DocTypeId == tipoDocumento
+                    && q.FechaLimite < DateTime.Now
+                    && (q.Correlativo <= q.NoFin || q.SiguienteNumero == null)
+                    && q.IdEstado == 1
+                    ).ToList();
+
+            if (numeracionSARs.Count == 0)
+            {
+                Exception exception = new Exception("No existe numeracion valida");
+                throw exception;
+            }
+            if (numeracionSARs.Count > 1)
+            {
+                Exception exception = new Exception("Se encontro mas de una numeracion valida");
+                throw exception;
+            }
+
+
+            numeracionSAR = numeracionSARs.FirstOrDefault();
+
+            return numeracionSAR;
+
+
+        }
 
     }
 }

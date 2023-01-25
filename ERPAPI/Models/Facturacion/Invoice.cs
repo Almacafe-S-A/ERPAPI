@@ -32,16 +32,6 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo de Factura")]
         public int InvoiceTypeId { get; set; }
 
-        [Display(Name = "Cotización Asociada")]
-        public Int64 SalesOrderId { get; set; }
-
-        [Display(Name = "Proforma Asociada")]
-        public Int64 ProformaInvoiceId { get; set; }
-
-
-        [Display(Name = "Certificado depósito")]
-        public Int64 CertificadoDepositoId { get; set; }
-
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
 
@@ -96,6 +86,10 @@ namespace ERPAPI.Models
         [Display(Name = "Customer")]
         public int CustomerId { get; set; }
 
+        public long? CustomerContractId { get; set; }
+        [ForeignKey("CustomerContractId")]
+        public CustomerContract CustomerContract { get; set; }
+
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
 
@@ -109,7 +103,7 @@ namespace ERPAPI.Models
         public DateTime DeliveryDate { get; set; }
 
         [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
+        public int? CurrencyId { get; set; }
 
         [Display(Name = "Moneda")]
         public string CurrencyName { get; set; }
@@ -164,7 +158,7 @@ namespace ERPAPI.Models
 
         public string TotalLetras { get; set; }
 
-        public Int64 IdEstado { get; set; }
+        public Int64? IdEstado { get; set; }
 
         public string Estado { get; set; }
 
