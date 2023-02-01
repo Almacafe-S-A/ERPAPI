@@ -35,6 +35,8 @@ namespace ERPAPI.Models
         [Display(Name = "RTN del cliente")]
         public string RTN { get; set; }
 
+        public bool Exonerado { get; set; }
+
         [Display(Name = "Tipo de cliente")]
         public long? CustomerTypeId { get; set; } = null;
         [ForeignKey("CustomerTypeId")]

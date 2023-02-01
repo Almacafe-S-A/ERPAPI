@@ -29,37 +29,7 @@ namespace ERPAPI.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Obtiene el Listado de CustomerContract paginado
-        /// </summary>
-        /// <returns></returns>    
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetCustomerContractPag(int numeroDePagina = 1, int cantidadDeRegistros = 20)
-        {
-            List<CustomerContract> Items = new List<CustomerContract>();
-            try
-            {
-                var query = _context.CustomerContract.AsQueryable();
-                var totalRegistro = query.Count();
-
-                Items = await query
-                   .Skip(cantidadDeRegistros * (numeroDePagina - 1))
-                   .Take(cantidadDeRegistros)
-                    .ToListAsync();
-
-                Response.Headers["X-Total-Registros"] = totalRegistro.ToString();
-                Response.Headers["X-Cantidad-Paginas"] = ((Int64)Math.Ceiling((double)totalRegistro / cantidadDeRegistros)).ToString();
-            }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-            //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
-        }
+       
 
         /// <summary>
         /// Obtiene el Listado de CustomerContractes 
@@ -259,7 +229,7 @@ namespace ERPAPI.Controllers
 
 
         [HttpGet("[action]/{CustomerId}")]
-        public async Task<IActionResult> GetCustomerContractActiveByCustomerId(Int64 CustomerId)
+        public async Task<IActionResult> GetByCustomerId(Int64 CustomerId)
         {
             List<CustomerContract> Items = new List<CustomerContract>();
             try
@@ -282,6 +252,39 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+        
+
+         [HttpGet("[action]/{CustomerId}/{ServiceId}")]
+        public async Task<IActionResult> GetByCustomerService(Int64 CustomerId, int ServiceId)
+        {
+            List<CustomerContract> Items = new List<CustomerContract>();
+            try
+            {
+                Items = await _context.CustomerContract
+                    .Where(q => q.CustomerId == CustomerId 
+                    && q.ProductId == ServiceId
+                    //q.Estado == "Vigente" && 
+                    //q.TypeContractId == 1
+                    //q.CustomerContractId_Source == null
+                    )
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
+
+
         /// <summary>
         /// Obtiene los Datos de la CustomerContract por medio del Id enviado.
         /// </summary>

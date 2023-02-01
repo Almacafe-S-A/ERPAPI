@@ -240,7 +240,7 @@ namespace ERPAPI.Controllers
             try
             {
                 bool flag = false;
-                var VariableVendor = _context.ProformaInvoice.Where(a => a.ProductId == _Product.ProductId)
+                var VariableVendor = _context.Invoice.Where(a => a.ProductId == _Product.ProductId)
                                     .FirstOrDefault();
                 if (VariableVendor == null)
                 {

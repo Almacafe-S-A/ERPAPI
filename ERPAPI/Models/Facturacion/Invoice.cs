@@ -24,6 +24,9 @@ namespace ERPAPI.Models
        
         [Display(Name = "Fecha de Factura")]
         public DateTime InvoiceDate { get; set; }
+
+        public int DiasVencimiento { get; set; }
+
         [Display(Name = "Fecha de vencimiento")]
         public DateTime InvoiceDueDate { get; set; }
 
@@ -42,13 +45,15 @@ namespace ERPAPI.Models
         public string TipoDocumento { get; set; }
 
         [Display(Name = "Numero de Factura")]
-        public int NumeroDEI { get; set; }
+        public string NumeroDEI { get; set; }
 
         [Display(Name = "Numero de inicio")]
         public string NoInicio { get; set; }
 
         [Display(Name = "Numero fin")]
         public string NoFin { get; set; }
+
+        public string Rango { get; set; }
 
         [Display(Name = "Fecha Limite")]
         public DateTime FechaLimiteEmision { get; set; }

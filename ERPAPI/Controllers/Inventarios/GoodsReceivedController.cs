@@ -262,10 +262,6 @@ namespace ERPAPI.Controllers
             Alert _Alertq = new Alert();
             try
             {
-                // using (var transaction = _context.Database.BeginTransaction())
-                //{
-                // try
-                // {
                 _Alertq = _Alert;
                 _context.Alert.Add(_Alertq);
                 await _context.SaveChangesAsync();
@@ -289,7 +285,6 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }

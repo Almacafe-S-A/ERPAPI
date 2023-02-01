@@ -53,7 +53,9 @@ namespace ERPAPI.Models
             this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo + 1}";
             int correlativosiguiente = (int)this.Correlativo + 1;
 
-            return $"{this.GetPrefijo()}-{correlativosiguiente.ToString().PadLeft(8,'0')}";
+            this.Correlativo = correlativosiguiente;
+
+            return $"{this.GetPrefijo()}-{this.Correlativo.ToString().PadLeft(8,'0')}";
 
         }
         public string GetPrefijo()
@@ -66,18 +68,19 @@ namespace ERPAPI.Models
             return $"{this.GetPrefijo()}-{this.NoInicio.ToString().PadLeft(8,'0')} - {this.GetPrefijo()}-{this.NoFin.ToString().PadLeft(8, '0')}";
         }
 
+        public NumeracionSAR ObtenerNumeracionSarValida(int tipoDocumento,ApplicationDbContext _context)
+        {
 
-        public NumeracionSAR ObtenerNumeracionSarValida(ApplicationDbContext dbContext, int tipoDocumento) {
-            
-            NumeracionSAR numeracionSAR= new NumeracionSAR();
-            List<NumeracionSAR> numeracionSARs= new List<NumeracionSAR>();
-            numeracionSARs = dbContext.NumeracionSAR
-                    .Where(q => q.IdEstado == 1
-                    && q.DocTypeId == tipoDocumento
-                    && q.FechaLimite < DateTime.Now
-                    && (q.Correlativo <= q.NoFin || q.SiguienteNumero == null)
-                    && q.IdEstado == 1
-                    ).ToList();
+            NumeracionSAR numeracionSAR = new NumeracionSAR();
+            List<NumeracionSAR> numeracionSARs = new List<NumeracionSAR>();
+            DateTime fecha = DateTime.Now;
+
+            numeracionSARs = _context.NumeracionSAR
+                    .Where(q => q.DocTypeId == tipoDocumento
+                    && fecha < q.FechaLimite
+                    && (q.Correlativo <= q.NoFin || q.SiguienteNumero == null || q.Correlativo == null)
+                    && q.IdEstado == 1)
+                    .ToList();
 
             if (numeracionSARs.Count == 0)
             {
@@ -97,6 +100,8 @@ namespace ERPAPI.Models
 
 
         }
+
+
 
     }
 }
