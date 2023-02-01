@@ -63,7 +63,7 @@ namespace ERPAPI.Controllers
 
 
         [HttpGet("[action]/{InvoiceId}")]
-        public async Task<IActionResult> GetInvoiceLineByInvoiceId(Int64 InvoiceId)
+        public async Task<IActionResult> GetByInvoiceId(Int64 InvoiceId)
         {
             List<InvoiceLine> Items = new List<InvoiceLine>();
             try
@@ -81,6 +81,108 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+
+
+        [HttpGet("[action]/{CustomerId}/{ContractId}/{ProductId}")]
+        public async Task<IActionResult> GetByServiciosUtilizados(int CustomerId,int ContractId, int ProductId)
+        {
+            List<InvoiceLine> Items = new List<InvoiceLine>();
+            try
+            {
+                //Servicios Utilizados
+                List<SubServicesWareHouse> subServicesWareHouses= new List<SubServicesWareHouse>(); 
+
+                subServicesWareHouses = await _context.SubServicesWareHouse
+                    .Where(q => q.InvoiceLineId == null 
+                    && q.CustomerId == CustomerId
+                    && q.ServiceId== ProductId
+                    ).ToListAsync();
+
+                Tax tax= _context.Tax.Where(q => q.TaxId == 1).FirstOrDefault();
+
+                if (tax == null)
+                {
+                    return BadRequest("No se encontro ninngun impuesto para aplicar");
+                }
+
+                Customer customer = _context.Customer.Where(q => q.CustomerId == CustomerId).FirstOrDefault();
+
+
+
+                Items = (from c in subServicesWareHouses
+                         .GroupBy(g => new {
+                                    g.ServiceId,
+                                    g.ServiceName,
+                                    g.CustomerId,
+                                    g.CustomerName,
+                                    g.SubServiceId,
+                                    g.SubServiceName
+                
+                                 })
+                         select new InvoiceLine {
+                            SubProductId = c.Key.SubServiceId,
+                            SubProductName = c.Key.SubServiceName,
+                            ProductId = c.Key.ServiceId,
+                            ProductName = c.Key.ServiceName,
+                            Quantity = c.Sum(s => s.QuantityHours),
+                            //UnitOfMeasureId = c.
+                            Price = 0,
+                            Amount = 0,
+                            TaxId = tax.TaxId,
+                            TaxAmount= 0,
+                            TaxCode= tax.TaxCode,
+                            TaxPercentage= tax.TaxPercentage,
+                            
+                         
+                         } ).ToList();
+
+                CustomerContract customerContract = await _context.CustomerContract
+                    .Where( q => q.CustomerContractId == ContractId)
+                    .Include(i => i.customerContractLines)
+                    .FirstOrDefaultAsync();
+
+                
+                    foreach (var item in Items)
+                    {
+                        if (customerContract != null)
+                        {
+                            CustomerContractLines customerContractLines = customerContract.customerContractLines
+                                .Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
+                                if (customerContractLines != null)
+                                {
+                                    item.UnitOfMeasureName= customerContractLines.UnitOfMeasureName;
+                                    item.UnitOfMeasureId = (int)customerContractLines.UnitOfMeasureId;
+                                    item.Price = customerContractLines.Price;
+                                    item.Amount = item.Price * item.Quantity;
+                                }
+                            
+                        }
+                        if (!customer.Exonerado)
+                        {
+                            item.TaxAmount = item.Amount * (item.TaxPercentage/100);
+                            item.Total = item.Amount + item.TaxAmount;
+                        }                     
+                        
+
+                    }
+                
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
 
 
 

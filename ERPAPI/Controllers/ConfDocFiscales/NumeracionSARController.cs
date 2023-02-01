@@ -267,7 +267,37 @@ namespace ERPAPI.Controllers
         }
 
 
+        public NumeracionSAR ObtenerNumeracionSarValida( int tipoDocumento)
+        {
 
+            NumeracionSAR numeracionSAR = new NumeracionSAR();
+            List<NumeracionSAR> numeracionSARs = new List<NumeracionSAR>();
+            numeracionSARs = _context.NumeracionSAR
+                    .Where(q => q.IdEstado == 1
+                    && q.DocTypeId == tipoDocumento
+                    && q.FechaLimite <= DateTime.Now
+                    && (q.Correlativo <= q.NoFin || q.SiguienteNumero == null || q.Correlativo == null)
+                    && q.IdEstado == 1
+                    ).ToList();
+
+            if (numeracionSARs.Count == 0)
+            {
+                Exception exception = new Exception("No existe numeracion valida");
+                throw exception;
+            }
+            if (numeracionSARs.Count > 1)
+            {
+                Exception exception = new Exception("Se encontro mas de una numeracion valida");
+                throw exception;
+            }
+
+
+            numeracionSAR = numeracionSARs.FirstOrDefault();
+
+            return numeracionSAR;
+
+
+        }
 
 
 

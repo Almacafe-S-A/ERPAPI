@@ -192,8 +192,6 @@ namespace ERP.Contexts
         public virtual DbSet<Warehouse> Warehouse { get; set; }
         public virtual DbSet<SalesType> SalesType { get; set; }
         public virtual DbSet<UnitOfMeasure> UnitOfMeasure { get; set; }
-        public DbSet<ProformaInvoice> ProformaInvoice { get; set; }
-        public DbSet<ProformaInvoiceLine> ProformaInvoiceLine { get; set; }
         public DbSet<InvoiceCalculation> InvoiceCalculation { get; set; }
 
         public DbSet<JournalEntryConfiguration> JournalEntryConfiguration { get; set; }

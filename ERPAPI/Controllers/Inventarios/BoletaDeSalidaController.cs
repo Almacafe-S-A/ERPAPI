@@ -139,7 +139,7 @@ namespace ERPAPI.Controllers
                 
                   
                 NumeracionSAR numeracionSAR = new NumeracionSAR();
-                numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(_context,13);
+                numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(13, _context);
 
                 
                guiaRemision = new GuiaRemision {

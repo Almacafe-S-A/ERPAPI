@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230201161621_deleteProformaInvoice")]
+    partial class deleteProformaInvoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7076,7 +7078,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NoSAG");
 
-                    b.Property<string>("NumeroDEI");
+                    b.Property<int>("NumeroDEI");
 
                     b.Property<DateTime>("OrderDate");
 
@@ -7087,8 +7089,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ProductName");
 
                     b.Property<string>("RTN");
-
-                    b.Property<string>("Rango");
 
                     b.Property<string>("Remarks");
 

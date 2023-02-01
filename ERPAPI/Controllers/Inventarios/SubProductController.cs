@@ -500,8 +500,6 @@ namespace ERPAPI.Controllers
                 //var Items = await _context.Product.CountAsync();
                 Int64 Items = await _context.InvoiceLine.Where(a => a.SubProductId == SubproductId)
                                     .CountAsync();
-                Items = await _context.ProformaInvoiceLine.Where(a => a.SubProductId == SubproductId)
-                                    .CountAsync();
                 return await Task.Run(() => Ok(Items));
 
 

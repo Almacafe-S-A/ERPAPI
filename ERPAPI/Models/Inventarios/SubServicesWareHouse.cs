@@ -28,6 +28,11 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
 
+        public long? InvoiceLineId { get; set; }
+
+        [ForeignKey("InvoiceLineId")]
+        public InvoiceLine InvoiceLine { get; set; }
+
         [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
 
