@@ -229,7 +229,7 @@ namespace ERPAPI.Controllers
                     if (item.SubProduct != null)
                     {
                         item.SubProductId = item.SubProduct.SubproductId;
-                        item.SubProductName = item.SubProduct.ProductName;
+                        item.SubProductName = item.SubProduct.SubProductName;
                         item.SubProduct = null;
                     }
                     

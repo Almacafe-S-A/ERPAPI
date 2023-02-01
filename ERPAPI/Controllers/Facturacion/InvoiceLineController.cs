@@ -98,6 +98,29 @@ namespace ERPAPI.Controllers
                     && q.ServiceId== ProductId
                     ).ToListAsync();
 
+                //Area Ocupada
+                CustomerArea customerArea = await _context.CustomerArea
+                    .Where(q => q.CustomerId == (long)CustomerId)
+                    .LastOrDefaultAsync();
+
+                if (customerArea!=null)
+                {
+                    subServicesWareHouses.Add(new SubServicesWareHouse
+                    {
+                        SubServiceId = 47,
+                        SubServiceName = "ALMACENAJE",
+                        QuantityHours = (decimal)customerArea.UsedArea,
+                        ServiceId = 1,
+                        ServiceName = "AlmacenajeGeneral",
+
+
+                    });
+                }
+
+                
+
+
+
                 Tax tax= _context.Tax.Where(q => q.TaxId == 1).FirstOrDefault();
 
                 if (tax == null)
