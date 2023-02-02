@@ -355,13 +355,21 @@ namespace ERPAPI.Controllers
         private async Task<ActionResult<BoletaDeSalida>> InsertBoletaSalida(GoodsReceived _GoodsReceived) {
             try
             {
-                ControlPallets controlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId).Include(i => i._ControlPalletsLine).FirstOrDefault();
+                ControlPallets controlPallets = _context.ControlPallets
+                    .Where(q => q.ControlPalletsId == _GoodsReceived.ControlId)
+                    .Include(i => i._ControlPalletsLine).FirstOrDefault();
 
 
                 if (controlPallets == null) return BadRequest(); 
-                Boleto_Ent boletapeso = await  _context.Boleto_Ent.Where(q => q.clave_e == controlPallets.WeightBallot).FirstOrDefaultAsync();
+                Boleto_Ent boletapeso = await  _context.Boleto_Ent
+                    .Where(q => q.clave_e == controlPallets.WeightBallot)
+                    .FirstOrDefaultAsync();
 
-               
+                boletapeso.Boleto_Sal = _context.Boleto_Sal
+                    .Where(q => q.clave_e == boletapeso.clave_e)
+                    .FirstOrDefault();
+
+                decimal cantidadSacos = (decimal)_GoodsReceived._GoodsReceivedLine.Sum(s => s.QuantitySacos);
 
 
 
@@ -377,7 +385,7 @@ namespace ERPAPI.Controllers
                     Marca = _GoodsReceived.Marca,
                     Placa = _GoodsReceived.Placa,
                     Motorista = _GoodsReceived.Motorista,
-                    Quantity = (decimal)_GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
+                    Quantity = cantidadSacos == 0 ? (decimal)boletapeso.Boleto_Sal.peso_n:cantidadSacos,
                     SubProductId = (long)_GoodsReceived._GoodsReceivedLine[0].SubProductId,
                     SubProductName = _GoodsReceived._GoodsReceivedLine.Count()>1?"Productos Varios":
                                 _GoodsReceived._GoodsReceivedLine[0].SubProductName,
