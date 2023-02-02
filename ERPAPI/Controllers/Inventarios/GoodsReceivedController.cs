@@ -385,7 +385,7 @@ namespace ERPAPI.Controllers
                     Marca = _GoodsReceived.Marca,
                     Placa = _GoodsReceived.Placa,
                     Motorista = _GoodsReceived.Motorista,
-                    Quantity = cantidadSacos == 0 ? (decimal)boletapeso.Boleto_Sal.peso_n:cantidadSacos,
+                    Quantity = cantidadSacos == 0 ? (decimal) _GoodsReceived.PesoNeto2 :cantidadSacos,
                     SubProductId = (long)_GoodsReceived._GoodsReceivedLine[0].SubProductId,
                     SubProductName = _GoodsReceived._GoodsReceivedLine.Count()>1?"Productos Varios":
                                 _GoodsReceived._GoodsReceivedLine[0].SubProductName,
