@@ -17,6 +17,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using System.Globalization;
 using SQLitePCL;
+using System.Data.SqlClient;
 
 namespace ERPAPI.Controllers
 {
@@ -69,7 +70,10 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> EjecutarPasoCierre(int ProcesoId)
         {
             BitacoraCierreProcesos proceso = new BitacoraCierreProcesos();
-            proceso = _context.BitacoraCierreProceso.Where(q => q.IdProceso == ProcesoId).FirstOrDefault();
+            proceso = _context.BitacoraCierreProceso
+                .Where(q => q.IdProceso == ProcesoId)
+                .Include(i => i.BitacoraCierresContable)
+                .FirstOrDefault();
 
             if (proceso.Estatus == "FINALIZADO") return BadRequest("Este proceso ya ha sido ejecutado previmente el " + proceso.FechaCierre?.ToString("dd/MM/yyyy"));
 
@@ -93,6 +97,14 @@ namespace ERPAPI.Controllers
                 case 4:
                     await EjecucionPresupuestaria(proceso.IdProceso);
                     break;
+
+                case 6:
+                    await PartidaCierre(proceso);
+                    break;
+                case 7:
+                    await PartidaApertura(proceso);
+                    break;
+
                     
                 default:
                     proceso.Estatus = "ERROR";
@@ -106,6 +118,156 @@ namespace ERPAPI.Controllers
 
 
         }
+
+
+
+        private async Task<IActionResult> PartidaCierre(BitacoraCierreProcesos proceso) {
+            try
+            {
+                int anio = (int)proceso.BitacoraCierresContable.Anio;
+                int mes = 12;
+                int nivel = 12;
+                int centroconsto = 0;
+
+                List<BalanceSaldos> balanceSaldos = new List<BalanceSaldos>();
+
+                List<SqlParameter> parms = new List<SqlParameter>
+                    {
+                        // Create parameter(s)    
+                        new SqlParameter { ParameterName = "@MES", Value = mes },
+                        new SqlParameter { ParameterName = "@ANIO", Value = anio },
+                        new SqlParameter { ParameterName = "@NIVEL", Value = nivel },
+                        new SqlParameter { ParameterName = "@CENTROCOSTO", Value = centroconsto },
+
+                    };
+
+                string sql = @"EXEC	 [dbo].[GenerarBalanceComparativo2]
+		                        @MES,
+		                        @ANIO,
+		                        @NIVEL,
+		                        @CENTROCOSTO";
+
+                balanceSaldos = await _context.BalanceSaldos.FromSql<BalanceSaldos>(sql, parms.ToArray()).ToListAsync();
+
+                List<BalanceSaldos> cuentaspartida = balanceSaldos.Where(q => !q.Totaliza).OrderBy(o => o.AccountId).ToList();
+
+                 JournalEntry partidaCierre = new JournalEntry {
+                    Date= DateTime.Now,
+                    DatePosted= new DateTime(anio,mes,31),
+                    CreatedUser = User.Identity.Name,
+                    CreatedDate= DateTime.Now,
+                    EstadoId = 5,
+                    EstadoName = "Enviada a Aprobación",
+                    PeriodoId = proceso.BitacoraCierresContable.PeriodoId,
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Partida Cierre",
+                    JournalEntryLines = new List<JournalEntryLine>(),
+                    Memo = "Partida de Cierrre " + anio,
+                    Periodo = anio.ToString(),
+                    Posted = false,
+                    TotalCredit = 0,
+                    TotalDebit= 0,
+                    ModifiedDate= DateTime.Now,
+                    ModifiedUser= User.Identity.Name,
+                    
+
+
+                 
+                 };
+                
+
+                foreach (var item in cuentaspartida)
+                {
+                    partidaCierre.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (int)item.AccountId,
+                        AccountName = $"{item.AccountCode}- {item.Descripcion}",
+                        CostCenterId = 1,
+                        CostCenterName = "San Pedro Sula",
+                        Debit = item.DeudoraAcreedora == "1" ? 0: (decimal)item.AñoActual ,
+                        Credit = item.DeudoraAcreedora == "2" ? 0: (decimal)item.AñoActual ,
+                        CreatedDate= DateTime.Now,
+                        CreatedUser= User.Identity.Name,
+                        ModifiedUser= User.Identity.Name,
+                        ModifiedDate= DateTime.Now,
+
+
+
+                    }) ;
+                }
+
+
+
+                partidaCierre.TotalDebit = partidaCierre.JournalEntryLines.Sum(s => s.Debit);
+                partidaCierre.TotalCredit = partidaCierre.JournalEntryLines.Sum(s => s.Credit);
+
+                decimal utilidad = partidaCierre.TotalDebit - partidaCierre.TotalCredit;
+
+                partidaCierre.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = 924,
+                    AccountName = $"32501--UTILIDAD DEL PERÍODO",
+                    CostCenterId = 1,
+                    CostCenterName = "San Pedro Sula",
+                    Debit = 0,
+                    Credit = utilidad,
+                    CreatedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    ModifiedDate = DateTime.Now,
+
+
+
+                });
+
+                partidaCierre.TotalDebit = partidaCierre.JournalEntryLines.Sum(s => s.Debit);
+                partidaCierre.TotalCredit = partidaCierre.JournalEntryLines.Sum(s => s.Credit);
+
+
+
+
+                JournalClosing journalClosing = new JournalClosing
+                {
+                    YearClosed = anio,
+                    JournalEntry = partidaCierre,
+
+                };
+
+                _context.JournalClosings.Add(journalClosing);
+
+                _context.SaveChanges();
+
+                proceso.Estatus = "FINALIZADO";
+                proceso.Asientos = partidaCierre.JournalEntryId.ToString();
+                proceso.Mensaje = "";
+
+
+                return Ok(partidaCierre);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            
+
+
+        }
+
+
+        private async Task<IActionResult> PartidaApertura(BitacoraCierreProcesos proceso)
+        {
+            await _context.Database.ExecuteSqlCommandAsync("[ActualizarSaldoCatalogoContable]"); ////Ejecuta SP Cierres
+
+            return Ok();
+
+
+
+        }
+
+
+
 
         [HttpGet("[action]")]
         public async Task<IActionResult> ActualizarSaldoCatalogo()
