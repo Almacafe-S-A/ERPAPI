@@ -18,6 +18,8 @@ using Newtonsoft.Json;
 using System.Globalization;
 using SQLitePCL;
 using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Diagnostics;
 
 namespace ERPAPI.Controllers
 {
@@ -75,7 +77,14 @@ namespace ERPAPI.Controllers
                 .Include(i => i.BitacoraCierresContable)
                 .FirstOrDefault();
 
-            if (proceso.Estatus == "FINALIZADO") return BadRequest("Este proceso ya ha sido ejecutado previmente el " + proceso.FechaCierre?.ToString("dd/MM/yyyy"));
+            if (proceso.Estatus == "FINALIZADO" ) return BadRequest("Este proceso ya ha sido ejecutado previmente el " + proceso.FechaCierre?.ToString("dd/MM/yyyy"));
+
+            if (proceso.Estatus == "PROCESANDO") return BadRequest("Este proceso actualmente se encuentra en EJECUCION");
+
+            proceso.Estatus = "PROCESANDO";
+
+            _context.SaveChanges();
+
 
             BitacoraCierreContable cierre = new BitacoraCierreContable();
             cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();         
@@ -109,10 +118,13 @@ namespace ERPAPI.Controllers
                 default:
                     proceso.Estatus = "ERROR";
                     proceso.Mensaje = "No existe un proceso registrado";
+                    _context.SaveChanges();
                     break;
             }
+
+            
             await ActualizarSaldoCatalogo();
-            _context.SaveChanges();
+            
 
             return Ok();
 
@@ -122,16 +134,22 @@ namespace ERPAPI.Controllers
 
 
         private async Task<IActionResult> PartidaCierre(BitacoraCierreProcesos proceso) {
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                int anio = (int)proceso.BitacoraCierresContable.Anio;
-                int mes = 12;
-                int nivel = 12;
-                int centroconsto = 0;
 
-                List<BalanceSaldos> balanceSaldos = new List<BalanceSaldos>();
 
-                List<SqlParameter> parms = new List<SqlParameter>
+                try
+                {
+
+
+                    int anio = (int)proceso.BitacoraCierresContable.Anio;
+                    int mes = 12;
+                    int nivel = 12;
+                    int centroconsto = 0;
+
+                    List<BalanceSaldos> balanceSaldos = new List<BalanceSaldos>();
+
+                    List<SqlParameter> parms = new List<SqlParameter>
                     {
                         // Create parameter(s)    
                         new SqlParameter { ParameterName = "@MES", Value = mes },
@@ -141,117 +159,155 @@ namespace ERPAPI.Controllers
 
                     };
 
-                string sql = @"EXEC	 [dbo].[GenerarBalanceComparativo2]
+                    string sql = @"EXEC	 [dbo].[GenerarBalanceComparativo2]
 		                        @MES,
 		                        @ANIO,
 		                        @NIVEL,
 		                        @CENTROCOSTO";
 
-                balanceSaldos = await _context.BalanceSaldos.FromSql<BalanceSaldos>(sql, parms.ToArray()).ToListAsync();
-
-                List<BalanceSaldos> cuentaspartida = balanceSaldos.Where(q => !q.Totaliza).OrderBy(o => o.AccountId).ToList();
-
-                 JournalEntry partidaCierre = new JournalEntry {
-                    Date= DateTime.Now,
-                    DatePosted= new DateTime(anio,mes,31),
-                    CreatedUser = User.Identity.Name,
-                    CreatedDate= DateTime.Now,
-                    EstadoId = 5,
-                    EstadoName = "Enviada a Aprobación",
-                    PeriodoId = proceso.BitacoraCierresContable.PeriodoId,
-                    TypeOfAdjustmentId = 65,
-                    TypeOfAdjustmentName = "Partida Cierre",
-                    JournalEntryLines = new List<JournalEntryLine>(),
-                    Memo = "Partida de Cierrre " + anio,
-                    Periodo = anio.ToString(),
-                    Posted = false,
-                    TotalCredit = 0,
-                    TotalDebit= 0,
-                    ModifiedDate= DateTime.Now,
-                    ModifiedUser= User.Identity.Name,
-                    
+                    balanceSaldos = await _context.BalanceSaldos.FromSql<BalanceSaldos>(sql, parms.ToArray())
+                        .ToListAsync();
 
 
-                 
-                 };
-                
 
-                foreach (var item in cuentaspartida)
-                {
+                    List<BalanceSaldosDTO> cuentaspartida = (from c in balanceSaldos
+                                                             join a in _context.Accounting on c.AccountId equals (int)a.AccountId
+                                                             select new BalanceSaldosDTO
+                                                             {
+                                                                 AccountCode = c.AccountCode,
+                                                                 AccountId = c.AccountId,
+                                                                 AñoActual = c.AñoActual,
+                                                                 BloqueoDiarios = a.BlockedInJournal,
+                                                                 Debe = c.Debe,
+                                                                 Haber = c.Haber,
+                                                                 Descripcion = c.Descripcion,
+                                                                 DeudoraAcreedora = c.DeudoraAcreedora,
+                                                                 Estado = c.Estado,
+                                                                 ParentAccountId = c.ParentAccountId,
+                                                                 Totaliza = c.Totaliza
+                                                             }).Where(q => q.BloqueoDiarios == false && q.AñoActual > 0).OrderBy(o => o.AccountId).ToList();
+
+
+
+
+                    JournalEntry partidaCierre = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        DatePosted = new DateTime(anio, mes, 31),
+                        CreatedUser = User.Identity.Name,
+                        CreatedDate = DateTime.Now,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobación",
+                        PeriodoId = proceso.BitacoraCierresContable.PeriodoId,
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Partida Cierre",
+                        JournalEntryLines = new List<JournalEntryLine>(),
+                        Memo = "Partida de Cierrre " + anio,
+                        Periodo = anio.ToString(),
+                        Posted = false,
+                        TotalCredit = 0,
+                        TotalDebit = 0,
+                        ModifiedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+
+
+
+
+                    };
+
+
+                    partidaCierre.JournalEntryLines = (from c in cuentaspartida
+
+                                                       select new JournalEntryLine
+                                                       {
+                                                           AccountId = (int)c.AccountId,
+                                                           AccountName = $"{c.AccountCode}- {c.Descripcion}",
+                                                           CostCenterId = 1,
+                                                           CostCenterName = "San Pedro Sula",
+                                                           Debit = c.DeudoraAcreedora == "1" ? 0 : (decimal)c.AñoActual,
+                                                           Credit = c.DeudoraAcreedora == "2" ? 0 : (decimal)c.AñoActual,
+                                                           CreatedDate = DateTime.Now,
+                                                           CreatedUser = User.Identity.Name,
+                                                           ModifiedUser = User.Identity.Name,
+                                                           ModifiedDate = DateTime.Now,
+
+                                                       }).ToList();
+
+
+
+
+                    partidaCierre.TotalDebit = partidaCierre.JournalEntryLines.Sum(s => s.Debit);
+                    partidaCierre.TotalCredit = partidaCierre.JournalEntryLines.Sum(s => s.Credit);
+
+                    JournalEntryLine jel = partidaCierre.JournalEntryLines.Where(q => q.AccountId == 1279).FirstOrDefault();
+
+                    if (jel != null)
+                    {
+                        partidaCierre.JournalEntryLines.Remove(jel);
+                    }
+
+                    decimal utilidad = (decimal)cuentaspartida.Where(q => q.AccountId == 1279).FirstOrDefault().AñoActual;
+
                     partidaCierre.JournalEntryLines.Add(new JournalEntryLine
                     {
-                        AccountId = (int)item.AccountId,
-                        AccountName = $"{item.AccountCode}- {item.Descripcion}",
+                        AccountId = 924,
+                        AccountName = $"32501--UTILIDAD DEL PERÍODO",
                         CostCenterId = 1,
                         CostCenterName = "San Pedro Sula",
-                        Debit = item.DeudoraAcreedora == "1" ? 0: (decimal)item.AñoActual ,
-                        Credit = item.DeudoraAcreedora == "2" ? 0: (decimal)item.AñoActual ,
-                        CreatedDate= DateTime.Now,
-                        CreatedUser= User.Identity.Name,
-                        ModifiedUser= User.Identity.Name,
-                        ModifiedDate= DateTime.Now,
+                        Debit = 0,
+                        Credit = utilidad,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
 
 
 
-                    }) ;
+                    });
+
+                    partidaCierre.TotalDebit = partidaCierre.JournalEntryLines.Sum(s => s.Debit);
+                    partidaCierre.TotalCredit = partidaCierre.JournalEntryLines.Sum(s => s.Credit);
+
+
+
+
+                    JournalClosing journalClosing = new JournalClosing
+                    {
+                        YearClosed = anio,
+                        JournalEntry = partidaCierre,
+
+                    };
+
+                    _context.JournalClosings.Add(journalClosing);
+
+                    await _context.SaveChangesAsync();
+
+                    proceso.Estatus = "FINALIZADO";
+                    proceso.Asientos = partidaCierre.JournalEntryId.ToString();
+                    proceso.Mensaje = "";
+
+                    await _context.SaveChangesAsync();
+
+                    
+                    transaction.Commit();
+
+                    return Ok(partidaCierre);
+
+                }
+                catch (Exception ex)
+                {
+
+                    transaction.Rollback();
+                    proceso.Estatus = "ERROR";
+                    _logger.LogError(ex.ToString());
+                    //throw;
+                    await _context.SaveChangesAsync();
+                    return BadRequest("Error en la ejecucion del cierre");
                 }
 
-
-
-                partidaCierre.TotalDebit = partidaCierre.JournalEntryLines.Sum(s => s.Debit);
-                partidaCierre.TotalCredit = partidaCierre.JournalEntryLines.Sum(s => s.Credit);
-
-                decimal utilidad = partidaCierre.TotalDebit - partidaCierre.TotalCredit;
-
-                partidaCierre.JournalEntryLines.Add(new JournalEntryLine
-                {
-                    AccountId = 924,
-                    AccountName = $"32501--UTILIDAD DEL PERÍODO",
-                    CostCenterId = 1,
-                    CostCenterName = "San Pedro Sula",
-                    Debit = 0,
-                    Credit = utilidad,
-                    CreatedDate = DateTime.Now,
-                    CreatedUser = User.Identity.Name,
-                    ModifiedUser = User.Identity.Name,
-                    ModifiedDate = DateTime.Now,
-
-
-
-                });
-
-                partidaCierre.TotalDebit = partidaCierre.JournalEntryLines.Sum(s => s.Debit);
-                partidaCierre.TotalCredit = partidaCierre.JournalEntryLines.Sum(s => s.Credit);
-
-
-
-
-                JournalClosing journalClosing = new JournalClosing
-                {
-                    YearClosed = anio,
-                    JournalEntry = partidaCierre,
-
-                };
-
-                _context.JournalClosings.Add(journalClosing);
-
-                _context.SaveChanges();
-
-                proceso.Estatus = "FINALIZADO";
-                proceso.Asientos = partidaCierre.JournalEntryId.ToString();
-                proceso.Mensaje = "";
-
-
-                return Ok(partidaCierre);
+                finally { transaction.Dispose(); }
 
             }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            
-
 
         }
 
@@ -1140,6 +1196,8 @@ namespace ERPAPI.Controllers
 
 
         }
+
+
 
         private async Task VencimientoGarantiasBancarias(int pProcesoId)
         {

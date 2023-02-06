@@ -27,6 +27,8 @@ namespace ERPAPI.Models
 
         public string Estado { get; set; }
 
+        
+
         public bool Totaliza { get; set; }
 
         public double? Debe { get; set; }
@@ -34,6 +36,17 @@ namespace ERPAPI.Models
         public double? Haber { get; set; }
 
         public double? AñoActual { get; set; }
+
+       
+
+
+
+    }
+
+    public class BalanceSaldosDTO: BalanceSaldos {
+        public bool? BloqueoDiarios { get; set; }
+
+
 
     }
 }
