@@ -123,7 +123,7 @@ namespace ERPAPI.Controllers
             }
 
             
-            //await ActualizarSaldoCatalogo();
+            await ActualizarSaldoCatalogo();
             
 
             return Ok();
