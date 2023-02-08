@@ -139,7 +139,7 @@ namespace ERPAPI.Controllers
                 NumeracionSAR numeracionSAR = new NumeracionSAR();
                 numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida( 1,_context);
 
-                factura.NumeroDEI = numeracionSAR.GetNumeroSiguiente();
+                factura.NumeroDEI = numeracionSAR.GetCorrelativo();
                 factura.Rango = numeracionSAR.getRango();
                 factura.CAI = numeracionSAR._cai;
                 factura.NoInicio = numeracionSAR.NoInicio.ToString();

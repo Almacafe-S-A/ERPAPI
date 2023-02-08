@@ -143,7 +143,7 @@ namespace ERPAPI.Controllers
 
                 
                guiaRemision = new GuiaRemision {
-                    NumeroDocumento =  numeracionSAR.GetNumeroSiguiente(),
+                    NumeroDocumento =  numeracionSAR.GetCorrelativo(),
                     CAI = numeracionSAR._cai,
                     FechaLimiteEmision = numeracionSAR.FechaLimite,
                     Rango = numeracionSAR.getRango(),
@@ -187,7 +187,6 @@ namespace ERPAPI.Controllers
 
                 boleta.GuiaRemisionId = guiaRemision.Id;
                 boleta.GuiRemisionNo = guiaRemision.NumeroDocumento;
-                numeracionSAR.Correlativo++;
 
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 

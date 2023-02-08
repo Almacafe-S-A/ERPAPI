@@ -44,18 +44,24 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public string GetNumeroSiguiente() {
+        public string GetCorrelativo() {
             if (this.Correlativo == null)
             {
                 this.Correlativo = Convert.ToInt64(this.NoInicio);
             }
 
-            this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo + 1}";
-            int correlativosiguiente = (int)this.Correlativo + 1;
+            string correlativo =  $"{this.GetPrefijo()}-{this.Correlativo.ToString().PadLeft(8, '0')}";
 
-            this.Correlativo = correlativosiguiente;
 
-            return $"{this.GetPrefijo()}-{this.Correlativo.ToString().PadLeft(8,'0')}";
+            
+            this.Correlativo = this.Correlativo++;
+
+
+            this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo}";
+
+            
+
+            return correlativo ;
 
         }
         public string GetPrefijo()
