@@ -61,7 +61,11 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
+        /// <summary>
+        /// Obtiene el detalle de la factura por el Id proporcionado 
+        /// </summary>
+        /// <param name="InvoiceId"></param>
+        /// <returns></returns>
         [HttpGet("[action]/{InvoiceId}")]
         public async Task<IActionResult> GetByInvoiceId(Int64 InvoiceId)
         {
@@ -82,7 +86,13 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
+        /// <summary>
+        /// Obtiene el detalle a facturar por cliente contrato y servicio utilizado
+        /// </summary>
+        /// <param name="CustomerId"></param>
+        /// <param name="ContractId"></param>
+        /// <param name="ProductId"></param>
+        /// <returns></returns>
         [HttpGet("[action]/{CustomerId}/{ContractId}/{ProductId}")]
         public async Task<IActionResult> GetByServiciosUtilizados(int CustomerId,int ContractId, int ProductId)
         {

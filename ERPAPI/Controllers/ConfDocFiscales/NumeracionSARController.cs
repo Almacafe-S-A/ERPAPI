@@ -266,7 +266,11 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
-
+        /// <summary>
+        /// Obtiene la nuemracion SAR valida para el tipo de documento 
+        /// </summary>
+        /// <param name="tipoDocumento"></param>
+        /// <returns></returns>
         public NumeracionSAR ObtenerNumeracionSarValida( int tipoDocumento)
         {
 
