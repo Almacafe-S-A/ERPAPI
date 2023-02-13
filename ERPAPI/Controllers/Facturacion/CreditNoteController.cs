@@ -137,44 +137,24 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _CreditNoteq = _CreditNote;
-                        if (!_CreditNote.Fiscal)
-                        {
-                            CreditNote _creditnote = await _context.CreditNote.Where(q => q.BranchId == _CreditNote.BranchId)
-                                                 .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision)
-                                                 .FirstOrDefaultAsync();
-                            if (_creditnote != null)
-                            {
-                                _CreditNoteq.NúmeroDEI = _context.CreditNote.Where(q => q.BranchId == _CreditNote.BranchId)
-                                                      .Where(q => q.IdPuntoEmision == _CreditNote.IdPuntoEmision).Max(q => q.NúmeroDEI);
-                            }
-
-                            _CreditNoteq.NúmeroDEI += 1;
 
 
-                            //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_Invoiceq.UsuarioCreacion).Select(q=>q.)
-
-                            Int64 IdCai = await _context.NumeracionSAR
-                                                     .Where(q => q.BranchId == _CreditNoteq.BranchId)
-                                                     .Where(q => q.IdPuntoEmision == _CreditNoteq.IdPuntoEmision)
-                                                     .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
-
-
-                            if (IdCai == 0)
-                            {
-                                return BadRequest("No existe un CAI activo para el punto de emisión");
-                            }
-
-                            _CreditNoteq.Sucursal = await _context.Branch.Where(q => q.BranchId == _CreditNote.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
-                            //  _Invoiceq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
-                            _CreditNoteq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
-                        }
                         Numalet let;
                         let = new Numalet();
                         let.SeparadorDecimalSalida = "Lempiras";
                         let.MascaraSalidaDecimal = "00/100 ";
                         let.ApocoparUnoParteEntera = true;
                         _CreditNoteq.TotalLetras = let.ToCustomCardinal((_CreditNoteq.Total)).ToUpper();
-                        _CreditNoteq = _CreditNote;
+                        _CreditNoteq.Total = _CreditNoteq.CreditNoteLine.Sum(x => x.Total);
+                        _CreditNoteq.Tax = _CreditNoteq.CreditNoteLine.Sum(x => x.TaxAmount);
+                        _CreditNoteq.Discount = _CreditNoteq.CreditNoteLine.Sum(x => x.DiscountAmount);
+                        _CreditNoteq.UsuarioCreacion= User.Identity.Name;
+                        _CreditNoteq.UsuarioModificacion = User.Identity.Name;
+                        _CreditNoteq.CreditNoteDate = DateTime.Now;
+                        _CreditNoteq.NumeroSAR = "PROFORMA";
+                        _CreditNoteq.NúmeroDEI = 0;
+
+
                         _context.CreditNote.Add(_CreditNoteq);
 
                         foreach (var item in _CreditNote.CreditNoteLine)
@@ -188,7 +168,7 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
-                      
+                      /*
                         JournalEntry _je = new JournalEntry
                         {
                             Date = _CreditNoteq.CreditNoteDate,
@@ -228,7 +208,7 @@ namespace ERPAPI.Controllers
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
-                        await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync();*/
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {

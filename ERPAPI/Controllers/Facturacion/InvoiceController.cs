@@ -125,6 +125,34 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la Invoice por medio del Id enviado.
         /// </summary>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetFacturasByCustomer(int CustomerId)
+        {
+            List<Invoice> Items = new List<Invoice>();
+            try
+            {
+                Items = await _context.Invoice
+                    .Where(q => q.CustomerId == CustomerId
+                    //&& q.NumeroDEI != "PROFORMA"
+                    ).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Obtiene los Datos de la Invoice por medio del Id enviado.
+        /// </summary>
         /// <param name="InvoiceId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{InvoiceId}")]
@@ -214,6 +242,24 @@ namespace ERPAPI.Controllers
                         _Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
                         _Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
                         _Invoiceq.NumeroDEI = "PROFORMA";
+                        foreach (var item in _Invoiceq.InvoiceLine)
+                        {
+                            if (item.UnitOfMeasure !=null)
+                            {
+                                item.UnitOfMeasureId = item.UnitOfMeasure.UnitOfMeasureId;
+                                item.UnitOfMeasureName= item.UnitOfMeasure.UnitOfMeasureName;
+                                
+                            }
+                            if (item.SubProduct != null)
+                            {
+                                item.SubProductId = item.SubProduct.SubproductId;
+                                item.SubProductName = item.SubProduct.SubProductName;
+
+                            }
+                            item.UnitOfMeasure = null;
+                            item.SubProduct = null;
+                            //item.
+                        }
 
 
                         _context.Invoice.Add(_Invoiceq);

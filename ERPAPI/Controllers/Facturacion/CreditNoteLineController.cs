@@ -110,7 +110,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]/{CreditNoteId}")]
-        public async Task<IActionResult> GetCreditNoteLineByCreditNoteId(Int64 CreditNoteId)
+        public async Task<IActionResult> GetByCreditNoteId(Int64 CreditNoteId)
         {
             List<CreditNoteLine> Items = new List<CreditNoteLine>();
             try
@@ -122,6 +122,68 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Obtiene el detalle de la factura en forma de Nota de credito
+        /// </summary>
+        /// <param name="InvoiceId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{InvoiceId}")]
+        public async Task<IActionResult> GetByInvoiceId(int InvoiceId)
+        {
+            List<CreditNoteLine> Items = new List<CreditNoteLine>();
+            try
+            {
+                Invoice invoice = new Invoice();
+
+                invoice = await _context.Invoice.Where(q => q.InvoiceId == InvoiceId)
+                    .Include(i => i.InvoiceLine).FirstOrDefaultAsync();
+
+                if (invoice == null) { return Ok(Items); }
+
+                Items = (from c in invoice.InvoiceLine
+                         select new CreditNoteLine {
+                            AccountId= c.AccountId,
+                            AccountName= c.AccountName,
+                            Amount= c.Amount,
+                            CostCenterId= c.CostCenterId,
+                            CostCenterName= c.CostCenterName,
+                            Description= c.Description,
+                            DiscountAmount= c.DiscountAmount,
+                            Price= c.Price,
+                            ProductName= c.ProductName,
+                            Quantity = (double)c.Quantity,
+                            UnitOfMeasureId= c.UnitOfMeasureId, 
+                            UnitOfMeasureName= c.UnitOfMeasureName,
+                            TaxAmount= c.TaxAmount,
+                            TaxPercentage= c.TaxPercentage,
+                            Total = c.Total,
+                            TaxId= c.TaxId,
+                            TaxCode= c.TaxCode,
+                            SubTotal= c.SubTotal,
+                            SubProductId= c.SubProductId,
+                            SubProductName= c.SubProductName,
+                            DiscountPercentage= c.DiscountPercentage,
+                            ProductId= c.ProductId,
+                            WareHouseId= c.WareHouseId,
+
+                         }
+                         ).ToList();
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
