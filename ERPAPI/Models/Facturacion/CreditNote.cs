@@ -52,11 +52,15 @@ namespace ERPAPI.Models
         [Display(Name = "Número de Nota de crédito")]
         public int NúmeroDEI { get; set; }
 
+        public string NumeroSAR { get; set; }
+
         [Display(Name = "Número de inicio")]
         public string NoInicio { get; set; }
 
         [Display(Name = "Número fin")]
         public string NoFin { get; set; }
+
+        public string RangoAutorizado { get; set; }
 
         [Display(Name = "Fecha Limite de emisión")]
         public DateTime FechaLimiteEmision { get; set; }
