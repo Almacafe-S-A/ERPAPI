@@ -20,7 +20,13 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
-        
+        public int BranchId { get; set; }
+        [ForeignKey("BranchId")]
+        public Branch Branch { get; set; }
+
+        public string BranchName { get; set; }
+
+
 
         [Display(Name = "Tipo Servicio")]
         public Int64 ServicioId { get; set; }
@@ -134,6 +140,7 @@ namespace ERPAPI.Models
                 ManifiestoNo = _CertificadoDeposito.ManifiestoNo;
                 UsuarioCreacion = _CertificadoDeposito.UsuarioCreacion;
                 SituadoEn = _CertificadoDeposito.SituadoEn;
+                
             
 
 
