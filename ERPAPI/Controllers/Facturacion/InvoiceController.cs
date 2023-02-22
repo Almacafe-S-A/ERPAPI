@@ -125,6 +125,56 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la Invoice por medio del Id enviado.
         /// </summary>
+        /// <param name="InvoiceId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{InvoiceId}/{estado}")]
+        public async Task<IActionResult> ChangeInvoiceStatus(Int64 InvoiceId, int estado)
+        {
+            Invoice Items = new Invoice();
+            try
+            {
+                Items = await _context
+                    .Invoice
+                    .Where(q => q.InvoiceId == InvoiceId).
+                    FirstOrDefaultAsync();
+
+                switch (estado)
+                {
+                    case 1:
+                        Items.Estado = "Revisado";
+                        break;
+                    case 2:
+                        Items.Estado = "Aprobado";
+                        break;
+                    case 3:
+                        Items.Estado = "Rechazado";
+                        break;
+                    default:
+                        break;
+                }
+
+                Items.UsuarioModificacion = User.Identity.Name;
+                Items.FechaModificacion = DateTime.Now;
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>
+        /// Obtiene los Datos de la Invoice por medio del Id enviado.
+        /// </summary>
         /// <param name="CustomerId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{CustomerId}")]
@@ -175,8 +225,10 @@ namespace ERPAPI.Controllers
                 factura.FechaLimiteEmision = numeracionSAR.FechaLimite;
                 factura.UsuarioModificacion = User.Identity.Name.ToUpper();
                 factura.FechaModificacion = DateTime.Now;
+                factura.ExpirationDate = DateTime.Now.AddDays(factura.DiasVencimiento);
+                factura.Estado = "Emitido";
 
-
+                _context.NumeracionSAR.Update(numeracionSAR);
 
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -192,6 +244,9 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(factura));
         }
+
+
+
 
 
         [HttpPost("[action]")]
@@ -236,12 +291,24 @@ namespace ERPAPI.Controllers
                         _Invoiceq.FechaCreacion = DateTime.Now;
                         _Invoiceq.UsuarioModificacion = User.Identity.Name;
                         _Invoiceq.FechaModificacion= DateTime.Now;
-                        _Invoiceq.TotalGravado = _Invoiceq.InvoiceLine.Sum(s =>s.TaxAmount);
+                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s =>s.TaxAmount);                        
                         _Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
                         _Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);
                         _Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
                         _Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
+                        _Invoiceq.TotalGravado = _Invoiceq.SubTotal;
+                        _Invoiceq.Estado = "Revisión";
+
                         _Invoiceq.NumeroDEI = "PROFORMA";
+
+                        Numalet let;
+                        let = new Numalet();
+                        let.SeparadorDecimalSalida = "Lempiras";
+                        let.MascaraSalidaDecimal = "00/100 ";
+                        let.ApocoparUnoParteEntera = true;
+                        _Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
+
+
                         foreach (var item in _Invoiceq.InvoiceLine)
                         {
                             if (item.UnitOfMeasure !=null)
@@ -253,9 +320,11 @@ namespace ERPAPI.Controllers
                             if (item.SubProduct != null)
                             {
                                 item.SubProductId = item.SubProduct.SubproductId;
-                                item.SubProductName = item.SubProduct.SubProductName;
+                                item.SubProductName = item.SubProduct.ProductName;
 
                             }
+                            item.ProductId = _Invoiceq.ProductId;
+                            item.ProductName= _Invoiceq.ProductName;
                             item.UnitOfMeasure = null;
                             item.SubProduct = null;
                             //item.

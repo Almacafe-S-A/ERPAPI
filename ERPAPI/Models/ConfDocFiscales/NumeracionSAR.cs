@@ -54,7 +54,7 @@ namespace ERPAPI.Models
 
 
             
-            this.Correlativo = this.Correlativo++;
+            this.Correlativo = this.Correlativo+1;
 
 
             this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo}";

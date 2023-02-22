@@ -20,7 +20,7 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
-        public int BranchId { get; set; }
+        public int? BranchId { get; set; }
         [ForeignKey("BranchId")]
         public Branch Branch { get; set; }
 

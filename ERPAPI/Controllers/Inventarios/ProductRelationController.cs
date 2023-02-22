@@ -84,6 +84,9 @@ namespace ERPAPI.Controllers
                                    Product = new Product {
                                         ProductName  = e.ProductName
                                    },
+                                   AccountId= c.AccountId,
+                                   AccountName= c.AccountName,
+
                                    Estado = c.Estado
 
 
