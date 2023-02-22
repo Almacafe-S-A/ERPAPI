@@ -54,7 +54,7 @@ namespace ERPAPI.Models
 
 
             
-            this.Correlativo = this.Correlativo++;
+            this.Correlativo = this.Correlativo+1;
 
 
             this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo}";
@@ -71,7 +71,7 @@ namespace ERPAPI.Models
         }
 
         public string getRango() {
-            return $"{this.GetPrefijo()}-{this.NoInicio.ToString().PadLeft(8,'0')} - {this.GetPrefijo()}-{this.NoFin.ToString().PadLeft(8, '0')}";
+            return $"{this.GetPrefijo()}-{this.NoInicio.ToString().PadLeft(8,'0')} al {this.GetPrefijo()}-{this.NoFin.ToString().PadLeft(8, '0')}";
         }
 
         public NumeracionSAR ObtenerNumeracionSarValida(int tipoDocumento,ApplicationDbContext _context)
