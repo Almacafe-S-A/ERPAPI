@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230223170452_FKAccountingJournalentry")]
+    partial class FKAccountingJournalentry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5534,8 +5536,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("BoletaPesoId");
-
                     b.Property<long>("BranchId");
 
                     b.Property<string>("BranchName");
@@ -5604,10 +5604,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion");
 
-                    b.Property<long>("VigilanteId");
-
-                    b.Property<string>("VigilanteName");
-
                     b.Property<int>("WarehouseId");
 
                     b.Property<string>("WarehouseName");
@@ -5642,8 +5638,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("NoARLineId");
 
                     b.Property<long>("NoCD");
-
-                    b.Property<int>("Pda");
 
                     b.Property<double>("Price");
 
@@ -10075,14 +10069,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("CuentaImpuestoporCobrarId");
-
-                    b.Property<string>("CuentaImpuestoporCobrarNombre");
-
-                    b.Property<long?>("CuentaImpuestoporPagarId");
-
-                    b.Property<string>("CuentaImpuestoporPagarNombre");
-
                     b.Property<string>("Description");
 
                     b.Property<string>("Estado");
@@ -10102,10 +10088,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("TaxId");
-
-                    b.HasIndex("CuentaImpuestoporCobrarId");
-
-                    b.HasIndex("CuentaImpuestoporPagarId");
 
                     b.ToTable("Tax");
                 });
@@ -13109,17 +13091,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.InvoiceLine", "InvoiceLine")
                         .WithMany()
                         .HasForeignKey("InvoiceLineId");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Tax", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaImpuestoporCobrarNav")
-                        .WithMany()
-                        .HasForeignKey("CuentaImpuestoporCobrarId");
-
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaImpuestoporPagarNav")
-                        .WithMany()
-                        .HasForeignKey("CuentaImpuestoporPagarId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.TipoBonificacion", b =>

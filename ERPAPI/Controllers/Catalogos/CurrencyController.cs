@@ -310,12 +310,7 @@ namespace ERPAPI.Controllers
                 {
                     flag = true;
                 }
-                var VariableJournalEntry = _context.JournalEntry.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                    .FirstOrDefault();
-                if (VariableJournalEntry == null)
-                {
-                    flag = true;
-                }
+                
                 var VariableVendorInvoice = _context.VendorInvoice.Where(a => a.CurrencyId == _Currency.CurrencyId)
                                     .FirstOrDefault();
                 if (VariableVendorInvoice == null)

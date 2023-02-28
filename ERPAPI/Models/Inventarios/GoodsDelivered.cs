@@ -72,10 +72,18 @@ namespace ERPAPI.Models
         [Display(Name = "Referencia")]
         public string Reference { get; set; }
 
+        public int BoletaPesoId { get; set; }
+
         [Display(Name = "Boleta de salida")]
         public Int64 ExitTicket { get; set; }
         public string Placa { get; set; }
         public string Marca { get; set; }
+
+        [Display(Name = "Vigilante")]
+        public Int64 VigilanteId { get; set; }
+
+        [Display(Name = "Vigilante")]
+        public string VigilanteName { get; set; }
 
         [Display(Name = "Boleta de peso")]
         public Int64 WeightBallot { get; set; }

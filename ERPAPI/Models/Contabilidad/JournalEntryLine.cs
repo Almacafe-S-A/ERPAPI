@@ -27,7 +27,9 @@ namespace ERPAPI.Models
         public string Description { get; set; }
 
         [Display(Name = "Id Clase Cuenta")]
-        public int AccountId { get; set; }
+        public Int64 AccountId { get; set; }
+        [ForeignKey ("AccountId")]
+        public  Accounting Account { get; set; }
 
         [Display(Name = "Cuenta")]
         public string AccountName { get; set; }
@@ -66,7 +68,7 @@ namespace ERPAPI.Models
         public string PartyName { get; set; }
 
         public virtual JournalEntry JournalEntry { get; set; }
-        public virtual Accounting Account { get; set; }
+        
         [Required]
         [Display(Name = "Usuario de creacion")]
         public string CreatedUser { get; set; }

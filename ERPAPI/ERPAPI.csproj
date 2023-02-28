@@ -40,6 +40,8 @@
     <Compile Remove="Migrations\20211019052125_ValorUnitDerechosCertificadioLine.Designer.cs" />
     <Compile Remove="Migrations\20230222133143_AccountserviceSubService.cs" />
     <Compile Remove="Migrations\20230222133143_AccountserviceSubService.Designer.cs" />
+    <Compile Remove="Migrations\20230227135506_CuentaContableImpuesto.cs" />
+    <Compile Remove="Migrations\20230227135506_CuentaContableImpuesto.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />

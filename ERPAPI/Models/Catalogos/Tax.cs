@@ -22,6 +22,15 @@ namespace ERPAPI.Models
         public Int64 IdEstado { get; set; }
         public string Estado { get; set; }
         public decimal TaxPercentage { get; set; }
+
+        public Int64? CuentaImpuestoporCobrarId { get; set; }
+        public string CuentaImpuestoporCobrarNombre { get; set; }
+        [ForeignKey("CuentaImpuestoporCobrarId")]
+        public Accounting CuentaImpuestoporCobrarNav { get; set; }
+        public Int64? CuentaImpuestoporPagarId { get; set; }
+        public string CuentaImpuestoporPagarNombre { get; set; }
+        [ForeignKey("CuentaImpuestoporPagarId")]
+        public Accounting CuentaImpuestoporPagarNav { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
