@@ -126,7 +126,8 @@ namespace ERPAPI.Controllers
                                                 g.SubProductName,
                                                 g.Pda,
                                                 g.NoCertificadoDeposito,
-                                                g.GoodsDeliveryAuthorizationId
+                                                g.GoodsDeliveryAuthorizationId,
+                                                g.Quantity,
                                                 }
                                               )
                                        select
