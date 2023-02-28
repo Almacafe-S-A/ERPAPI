@@ -121,14 +121,13 @@ namespace ERPAPI.Controllers
 
 
       // GET: api/JournalEntry
-      [HttpGet("[action]")]
-        public async Task<IActionResult> GetJournalEntryAjustes()
-
+      [HttpGet("[action]/{tipo}")]
+        public async Task<IActionResult> GetJournalEntryPorTipo(int tipo)
         {
             List<JournalEntry> Items = new List<JournalEntry>();
             try
             {
-                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 66).ToListAsync();
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == tipo).ToListAsync();
                 //Items = await _context.JournalEntry.ToListAsync();
             }
             catch (Exception ex)

@@ -708,7 +708,7 @@ namespace ERPAPI.Controllers
                         {
                             JournalEntryId = detalle.JournalEntryId,
                             JournalEntryLineId = detalle.JournalEntryLineId,
-                            AccountId = detalle.AccountId,
+                            //AccountId = detalle.AccountId,
                             AccountName = detalle.AccountName,
                             Debit = detalle.Debit,
                             Credit = detalle.Credit,

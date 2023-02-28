@@ -15,6 +15,8 @@ namespace ERPAPI.Models
         [Display(Name = "Recibo de mercaderia")]
         public Int64 GoodsDeliveredId { get; set; }
 
+        public int Pda { get; set; }
+
         [Display(Name = "Número de certificado de depósito")]
         public Int64 NoCD { get; set; }
 

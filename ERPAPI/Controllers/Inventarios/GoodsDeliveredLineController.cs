@@ -109,75 +109,80 @@ namespace ERPAPI.Controllers
             List<GoodsDeliveryAuthorizationLine> goodsDeliveryAuthorizationsLines = new List<GoodsDeliveryAuthorizationLine>();
             List<GoodsDeliveredLine> goodsDeliveredLines = new List<GoodsDeliveredLine>();
 
-
-
-            ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == controlid).FirstOrDefault();
-            Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
-            if (_Boleto_Ent != null && _Boleto_Ent.Boleto_Sal != null)
-            {
-                _ControlPallets.pesobruto = Math.Round(Convert.ToDouble(_Boleto_Ent.peso_e) / Convert.ToDouble(100), 2, MidpointRounding.AwayFromZero);
-                _ControlPallets.pesoneto = Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - Convert.ToDouble(_ControlPallets.taracamion), 2, MidpointRounding.AwayFromZero);
-                _ControlPallets.boleto_Ent = _Boleto_Ent;
-
-                double yute = Math.Round((double)_ControlPallets.TotalSacosYute * 1 / 100, 2, MidpointRounding.AwayFromZero);
-                double polietileno = Math.Round(Convert.ToDouble((_ControlPallets.TotalSacosPolietileno * 0.5)) / Convert.ToDouble(100), 2, MidpointRounding.AwayFromZero);
-                double tarasaco = Math.Round(Math.Round(yute, 2) + Math.Round(polietileno, 2), 2, MidpointRounding.AwayFromZero);
-                _ControlPallets.Tara = tarasaco;
-                _ControlPallets.pesoneto2 = Convert.ToDouble(_ControlPallets.pesoneto) - Convert.ToDouble(tarasaco);
-                
-                if (_Boleto_Ent.peso_e > _Boleto_Ent.Boleto_Sal.peso_n)
-                {
-                    _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.peso_e - _Boleto_Ent.Boleto_Sal.peso_n) / Convert.ToDouble(100));
-                }
-                else if (_Boleto_Ent.peso_e < _Boleto_Ent.Boleto_Sal.peso_n)
-                {
-                    _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.peso_e)) / Convert.ToDouble(100);
-                }
-            }
-            
-
-           
-            controlPalletsLines = await _context.ControlPalletsLine
-                .Where(q => q.ControlPalletsId == controlid)
-                
+            goodsDeliveryAuthorizationsLines = await _context.GoodsDeliveryAuthorizationLine
+                .Where(q => ARs.Any(a => a == q.GoodsDeliveryAuthorizationId))
                 .ToListAsync();
-            goodsDeliveryAuthorizationsLines = await _context.GoodsDeliveryAuthorizationLine.Where(q => ARs.Any(a => a == q.GoodsDeliveryAuthorizationId)).ToListAsync();
 
             try
             {
                 //Obtiene el detalle de los recibos liquidados
-                goodsDeliveredLines = (from line in controlPalletsLines
+                goodsDeliveredLines = (from line in goodsDeliveryAuthorizationsLines
                                        .GroupBy(g => new {
                                                 g.SubProductId,
-                                                g.ControlPalletsId,
                                                 g.WarehouseName,
-                                                g.UnitofMeasureName,
-                                                g.UnitofMeasureId,
+                                                g.UnitOfMeasureId,
+                                                g.UnitOfMeasureName,
                                                 g.WarehouseId,
                                                 g.SubProductName,
-                                                g.Totallinea,
-                                                g.Estiba
+                                                g.Pda,
+                                                g.NoCertificadoDeposito,
+                                                g.GoodsDeliveryAuthorizationId,
+                                                g.Quantity,
                                                 }
                                               )
                                        select
                                     new GoodsDeliveredLine
                                     {
                                         SubProductId = (long)line.Key.SubProductId,
-                                        Quantity = line.First().Qty == null ? (decimal)_ControlPallets.pesoneto2 : (decimal)line.Sum(s => s.Qty),
-                                        QuantityAuthorized = 0,
-                                        Total = line.First().Qty == null ? (decimal)_ControlPallets.pesoneto2 : (decimal)line.Sum(s => s.Qty),
+                                        QuantityAuthorized = line.Sum(s => s.Quantity),                 
+                                        Quantity = 0,
                                         Description = line.Key.SubProductName,
                                         SubProductName = line.Key.SubProductName,
-                                        UnitOfMeasureId = (long)line.Key.UnitofMeasureId,
-                                        UnitOfMeasureName = line.Key.UnitofMeasureName,
+                                        UnitOfMeasureId = (long)line.Key.UnitOfMeasureId,
+                                        UnitOfMeasureName = line.Key.UnitOfMeasureName,
                                         WareHouseId =(long)line.Key.WarehouseId,
                                         WareHouseName = line.Key.WarehouseName,
-                                        QuantitySacos =  line.Sum(s =>s.cantidadPoliEtileno) + line.Sum(s => s.cantidadYute),
-                                        ControlPalletsId = line.Key.Estiba ,
+                                        NoCD = line.Key.NoCertificadoDeposito,
+                                        NoAR= line.Key.GoodsDeliveryAuthorizationId,
+                                        Pda = (int)line.Key.Pda,
                                     }).ToList();
+                ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == controlid).FirstOrDefault();
+                Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
+                if (_Boleto_Ent != null && _Boleto_Ent.Boleto_Sal != null)
+                {
+                    _ControlPallets.pesobruto = Math.Round(Convert.ToDouble(_Boleto_Ent.peso_e) / Convert.ToDouble(100), 2, MidpointRounding.AwayFromZero);
+                    _ControlPallets.pesoneto = Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - Convert.ToDouble(_ControlPallets.taracamion), 2, MidpointRounding.AwayFromZero);
+                    _ControlPallets.boleto_Ent = _Boleto_Ent;
+
+                    double yute = Math.Round((double)_ControlPallets.TotalSacosYute * 1 / 100, 2, MidpointRounding.AwayFromZero);
+                    double polietileno = Math.Round(Convert.ToDouble((_ControlPallets.TotalSacosPolietileno * 0.5)) / Convert.ToDouble(100), 2, MidpointRounding.AwayFromZero);
+                    double tarasaco = Math.Round(Math.Round(yute, 2) + Math.Round(polietileno, 2), 2, MidpointRounding.AwayFromZero);
+                    _ControlPallets.Tara = tarasaco;
+                    _ControlPallets.pesoneto2 = Convert.ToDouble(_ControlPallets.pesoneto) - Convert.ToDouble(tarasaco);
+
+                    if (_Boleto_Ent.peso_e > _Boleto_Ent.Boleto_Sal.peso_n)
+                    {
+                        _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.peso_e - _Boleto_Ent.Boleto_Sal.peso_n) / Convert.ToDouble(100));
+                    }
+                    else if (_Boleto_Ent.peso_e < _Boleto_Ent.Boleto_Sal.peso_n)
+                    {
+                        _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.peso_e)) / Convert.ToDouble(100);
+                    }
+                }
+                controlPalletsLines = await _context.ControlPalletsLine
+                    .Where(q => q.ControlPalletsId == controlid)
+
+                    .ToListAsync();
+
                 foreach (var item in goodsDeliveredLines)
                 {
                     List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines.Where(q => q.SubProductId == item.SubProductId).ToList();
+
+                    item.Quantity = _ControlPallets._ControlPalletsLine.First().Qty == null ? (decimal)_ControlPallets.pesoneto2 : (decimal) _ControlPallets._ControlPalletsLine.Sum(s => s.Qty);
+                    item.Total = (decimal)_ControlPallets.pesoneto2;
+                    item.QuantitySacos = (int)_ControlPallets.TotalSacos;
+                    item.ControlPalletsId = _ControlPallets.PalletId;
+                    
                     if (authorizationLines.Count() == 0)
                     {
                         continue;
@@ -189,15 +194,11 @@ namespace ERPAPI.Controllers
                         if (autorizacion.Quantity>item.Quantity )
                         {
                             item.QuantityAuthorized = item.Quantity;
-                            item.NoAR = autorizacion.GoodsDeliveryAuthorizationLineId;
-                            item.NoCD = autorizacion.CertificadoLineId;
                             continue;
                         }
                         else
                         {
                             item.QuantityAuthorized += autorizacion.Quantity;
-                            item.NoAR = autorizacion.GoodsDeliveryAuthorizationLineId;
-                            item.NoCD = autorizacion.CertificadoLineId;
                         }
                     }
                     //item.QuantityAuthorized = authorizationLines.Sum(s => s.Quantity);
@@ -205,6 +206,9 @@ namespace ERPAPI.Controllers
                     
 
                 }
+
+
+                
 
 
                 return Ok(goodsDeliveredLines);

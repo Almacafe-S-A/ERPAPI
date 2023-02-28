@@ -109,27 +109,15 @@ namespace ERPAPI.Controllers
             }
             try
             {
-                if (completo) {
-                    boletas = await _context.Boleto_Ent
-                    .Where(q => q.CustomerId == customerId
-                    && !_context.ControlPallets.Any(a => a.WeightBallot == q.clave_e) 
-                    && !(_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e))
-                    && q.completo == completo
-                    && q.Ingreso == esIngreso
-                    ).ToListAsync();
-                }
-                else
-                {
-                    boletas = await _context.Boleto_Ent
-                    .Where(q => q.CustomerId == customerId
-                    && !_context.ControlPallets.Any(a => a.WeightBallot == q.clave_e) 
-                    && !(_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e))
-                    && q.completo == completo
-                    && q.Ingreso == esIngreso
-                    ).ToListAsync();
-                }
-                                       
-                    var query =  (from c in boletas
+                ///Filtra las Boletas de peso que no han sido utilizadas en ningun Control de salidas o ingresos
+                boletas = await _context.Boleto_Ent
+                .Where(q => q.CustomerId == customerId
+                && !_context.ControlPallets.Any(a => a.WeightBallot == q.clave_e)
+                && !(_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e))
+                && q.completo == completo
+                && q.Ingreso == esIngreso
+                ).ToListAsync();
+                var query =  (from c in boletas
                                  join d in _context.Boleto_Sal on c.clave_e equals d.clave_e                                 
                                  into ba
                                  from e in ba.DefaultIfEmpty()
@@ -158,7 +146,7 @@ namespace ERPAPI.Controllers
                 Items = Items
                     .Where(q => !_context.ControlPallets.Select(c => c.WeightBallot).Contains(q.clave_e))
                     .OrderByDescending(q => q.clave_e)
-                    .ToList(); ///Filtra las Boletas de peso que no han sido utilizadas en ningun Control de salidas o ingresos
+                    .ToList(); 
                 
             }
             catch (Exception ex)
@@ -365,7 +353,15 @@ namespace ERPAPI.Controllers
                     .Where(q => q.clave_e == Boleto_EntId)
                     .FirstOrDefaultAsync();
 
+
+
                 int uompreferida = Items.Customer.UnitOfMeasurePreference == null ? 3 : (int)Items.Customer.UnitOfMeasurePreference;
+
+                if (Items.Boleto_Sal == null)
+                {
+                    throw new Exception("No se ha completado la boleta de peso");
+
+                }
 
                 Items.PesoUnidadPreferidaEntrada = Items.Convercion(Items.peso_e, uompreferida);
                 Items.PesoUnidadPreferidaNeto = Items.Convercion(Items.Boleto_Sal.peso_s, uompreferida);
@@ -379,7 +375,7 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:No se encontro la unidad preferidad del cliente");
+                return BadRequest(ex.Message);
             }
 
 

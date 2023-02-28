@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ERP.Contexts;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -30,5 +32,18 @@ namespace ERPAPI.Models
 
 
 
+
+        public Periodo PeriodoActivo(ApplicationDbContext dbContext)
+        {
+            Periodo Items = new Periodo();
+            Items = dbContext.Periodo.Where(q => q.Estado != "Cerrado" && q.Estado != "Bloqueado").FirstOrDefault();
+
+            return Items;
+
+        }
+
     }
+
+
+    
 }
