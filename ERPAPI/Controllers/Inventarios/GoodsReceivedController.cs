@@ -390,7 +390,7 @@ namespace ERPAPI.Controllers
                     SubProductName = _GoodsReceived._GoodsReceivedLine.Count()>1?"Productos Varios":
                                 _GoodsReceived._GoodsReceivedLine[0].SubProductName,
                     ProductName = _GoodsReceived.ProductName,     
-                    Producto = _GoodsReceived.SubProductId,
+                    Producto = _GoodsReceived.ProductId,
                     CargadoId = 14,
                     Cargadoname = "Vacío",
                     DocumentoTipo = "Recibo de Mercaderías",

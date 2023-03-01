@@ -73,6 +73,7 @@ namespace ERPAPI.Models
         public Int64 WeightBallot { get; set; }
 
         public Int64? Producto { get; set; }
+
         [ForeignKey("Producto")]
         public Product Product { get; set; }
 
