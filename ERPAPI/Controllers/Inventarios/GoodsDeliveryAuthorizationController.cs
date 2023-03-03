@@ -140,6 +140,7 @@ namespace ERPAPI.Controllers
         {
 
             GoodsDeliveryAuthorization autorizacion = await _context.GoodsDeliveryAuthorization
+                .Include(i => i.GoodsDeliveryAuthorizationLine)
                 .Where(q => q.GoodsDeliveryAuthorizationId == IdCD)
                 //.Include(i => i.autor)
                 .FirstOrDefaultAsync();
@@ -153,10 +154,19 @@ namespace ERPAPI.Controllers
 
             autorizacion.EstadoId = 6;
             autorizacion.Estado = "Aprobado";
+
             autorizacion.UsuarioModificacion = User.Identity.Name;
             autorizacion.FechaModificacion = DateTime.Now;
             autorizacion.UsuarioAprobacion = User.Identity.Name;
 
+            Numalet let;
+            let = new Numalet();
+            let.SeparadorDecimalSalida = autorizacion.GoodsDeliveryAuthorizationLine
+                .FirstOrDefault().UnitOfMeasureName;
+            let.MascaraSalidaDecimal = "00/100 ";
+            let.ApocoparUnoParteEntera = true;
+            autorizacion.TotalUnidadesLetras = let.ToCustomCardinal((autorizacion.TotalAutorizado))
+                .ToUpper();
             await _context.SaveChangesAsync();
 
             return autorizacion;
