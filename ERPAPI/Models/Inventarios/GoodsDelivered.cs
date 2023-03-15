@@ -39,20 +39,13 @@ namespace ERPAPI.Models
         public Int64 IdEstado { get; set; }
         public string Estado { get; set; }
 
-        [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
+   
 
         [Display(Name = "Moneda tasa")]
         public decimal Currency { get; set; }
 
 
-        [Display(Name = "Bodega")]
-        public int WarehouseId { get; set; }
-
-        [Display(Name = "Bodega")]
+       
         public string WarehouseName { get; set; }
 
         [Display(Name = "Producto Cliente")]
@@ -85,8 +78,9 @@ namespace ERPAPI.Models
         [Display(Name = "Vigilante")]
         public string VigilanteName { get; set; }
 
-        [Display(Name = "Boleta de peso")]
-        public Int64 WeightBallot { get; set; }
+        public string Certificados { get; set; }
+
+        public string Autorizaciones { get; set; }
 
         public decimal PesoBruto { get; set; }
 
@@ -106,7 +100,6 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public Int64 GoodsDeliveryAuthorizationId { get; set; }
 
         public string Impreso { get; set; }
         public List<GoodsDeliveredLine> _GoodsDeliveredLine { get; set; } = new List<GoodsDeliveredLine>();

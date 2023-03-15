@@ -7,7 +7,8 @@ namespace ERPAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "TotalUnidadesLetras",
+                name: "TotalUnidadesLetras" +
+                "",
                 table: "GoodsDeliveryAuthorization",
                 nullable: true);
         }

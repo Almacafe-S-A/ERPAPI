@@ -187,23 +187,66 @@ namespace ERPAPI.Controllers
                             UsuarioModificacion = _GoodsDelivered.UsuarioModificacion,
                             UnitOfMeasureId = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureId,
                             UnitOfMeasureName = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureName,
-                            WeightBallot = _GoodsDelivered.WeightBallot,
+                            WeightBallot = _GoodsDelivered.BoletaPesoId,
                             BoletaDeSalidaLines = new List<BoletaDeSalidaLine>(),
                         };
 
                         foreach (var item in _GoodsDelivered._GoodsDeliveredLine)
                         {
+                            if (item.Quantity == 0)
+                            {
+                                _GoodsDelivered._GoodsDeliveredLine.Remove(item);
+                                continue;
+                            }
                             _boletadesalida.BoletaDeSalidaLines.Add(new BoletaDeSalidaLine() {
                                 SubProductId = item.SubProductId,
                                 SubProductName = item.SubProductName,
-                                Quantity = item.Quantity,
+                                Quantity = item.QuantitySacos,
+                                
                                 UnitOfMeasureId = (int)item.UnitOfMeasureId,
-                                UnitOfMeasureName = item.UnitOfMeasureName,
+                                UnitOfMeasureName = "Sacos",
                                 Warehouseid = (int)item.WareHouseId,
                                 WarehouseName = item.WareHouseName,
                             });
                         }
-                        
+
+                        _GoodsDeliveredq.SubProductName =String.Join(',' ,_GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.SubProductName));
+                        _GoodsDeliveredq.Certificados = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoCD));
+                        _GoodsDeliveredq.Autorizaciones = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoAR));
+                        _GoodsDeliveredq.Estado = "Emitido";
+                        ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsDeliveredq.ControlId).FirstOrDefault();
+                        Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
+                        if (_Boleto_Ent != null)
+                        {
+
+                            _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.Boleto_Sal.peso_s)) / Convert.ToDouble(100);
+                            _ControlPallets.pesobruto = Math.Round(Convert.ToDouble(_Boleto_Ent.Boleto_Sal.peso_n), 2, MidpointRounding.AwayFromZero);
+                            _ControlPallets.pesoneto = Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - Convert.ToDouble(_ControlPallets.taracamion), 2, MidpointRounding.AwayFromZero);
+                            _ControlPallets.boleto_Ent = _Boleto_Ent;
+
+                            double yute = Math.Round((double)_ControlPallets.TotalSacosYute * 1, 2, MidpointRounding.AwayFromZero);
+                            double polietileno = Math.Round(Convert.ToDouble((_ControlPallets.TotalSacosPolietileno * 0.5)), 2, MidpointRounding.AwayFromZero);
+                            double tarasaco = (Math.Round(Math.Round(yute, 2) + Math.Round(polietileno, 2), 2, MidpointRounding.AwayFromZero));
+                            _ControlPallets.Tara = tarasaco;
+                            _ControlPallets.pesoneto2 = Convert.ToDouble(_ControlPallets.pesoneto) - Convert.ToDouble(tarasaco);
+
+                            _ControlPallets.Tara = Convert.ToDouble(_Boleto_Ent.Convercion(_ControlPallets.Tara, _Boleto_Ent.UnidadPreferidaId));
+                            _ControlPallets.pesoneto2 = Convert.ToDouble(_Boleto_Ent.Convercion(_ControlPallets.pesoneto2, _Boleto_Ent.UnidadPreferidaId));
+                            _ControlPallets.pesobruto = Convert.ToDouble(_Boleto_Ent.Convercion(_ControlPallets.pesobruto, _Boleto_Ent.UnidadPreferidaId));
+                            _ControlPallets.pesoneto = Convert.ToDouble(_Boleto_Ent.Convercion(_ControlPallets.pesoneto, _Boleto_Ent.UnidadPreferidaId));
+                            _ControlPallets.taracamion = Convert.ToDouble(_Boleto_Ent.Convercion(_ControlPallets.taracamion, _Boleto_Ent.UnidadPreferidaId));
+                            _ControlPallets.UnitOfMeasureId = _Boleto_Ent.UnidadPreferidaId;
+
+
+                        }
+
+                        _GoodsDeliveredq.PesoBruto = (decimal)_ControlPallets.pesobruto;
+                        _GoodsDeliveredq.PesoNeto = (decimal)_ControlPallets.pesoneto;
+                        _GoodsDeliveredq.TaraTransporte = (decimal)_ControlPallets.taracamion;
+                        _GoodsDeliveredq.TaraUnidadMedida = (decimal)_ControlPallets.Tara;
+
+
+
 
                         _context.BoletaDeSalida.Add(_boletadesalida);
 
@@ -211,6 +254,8 @@ namespace ERPAPI.Controllers
 
 
                         _GoodsDeliveredq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
+
+                        _GoodsDeliveredq.PesoNeto2 = _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity);
 
                         _context.GoodsDelivered.Add(_GoodsDeliveredq);
                         await _context.SaveChangesAsync();
