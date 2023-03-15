@@ -215,6 +215,8 @@ namespace ERPAPI.Controllers
                         _GoodsDeliveredq.Autorizaciones = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoAR));
                         _GoodsDeliveredq.Estado = "Emitido";
                         ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsDeliveredq.ControlId).FirstOrDefault();
+                        _ControlPallets.Estado = "Entregado";
+
                         Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
                         if (_Boleto_Ent != null)
                         {
