@@ -23,10 +23,10 @@ namespace ERPAPI.Models
         [Display(Name = "Número de autorización de retiro")]
         public Int64 NoAR { get; set; }
 
-        public int NoARLineId { get; set; }
+        public Int64? NoARLineId { get; set; }
 
-        [ForeignKey("NoARLine")]
-        public GoodsDeliveryAuthorizationLine GoodsDeliveryAuthorizationLine { get; set; }
+        //[ForeignKey("NoARLineId")]
+        //public GoodsDeliveryAuthorizationLine GoodsDeliveryAuthorizationLine { get; set; }
 
 
         [Display(Name = "Unidad de Medida")]

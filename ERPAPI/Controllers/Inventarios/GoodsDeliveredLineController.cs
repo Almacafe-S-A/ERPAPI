@@ -128,13 +128,14 @@ namespace ERPAPI.Controllers
                                                 g.NoCertificadoDeposito,
                                                 g.GoodsDeliveryAuthorizationId,
                                                 g.Quantity,
+                                                g.GoodsDeliveryAuthorizationLineId
                                                 }
                                               )
                                        select
                                     new GoodsDeliveredLine
                                     {
                                         SubProductId = (long)line.Key.SubProductId,
-                                        QuantityAuthorized = line.Sum(s => s.Quantity),                 
+                                        QuantityAuthorized = line.Sum(s => s.SaldoProducto),                 
                                         Quantity = 0,
                                         Description = line.Key.SubProductName,
                                         SubProductName = line.Key.SubProductName,
@@ -145,20 +146,12 @@ namespace ERPAPI.Controllers
                                         NoCD = line.Key.NoCertificadoDeposito,
                                         NoAR= line.Key.GoodsDeliveryAuthorizationId,
                                         Pda = (int)line.Key.Pda,
+                                        NoARLineId = (int)line.Key.GoodsDeliveryAuthorizationLineId,
                                     }).ToList();
                 ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == controlid).FirstOrDefault();
                 Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
                 if (_Boleto_Ent != null && _Boleto_Ent.Boleto_Sal != null)
                 {
-
-                    //if (_Boleto_Ent.peso_e > _Boleto_Ent.Boleto_Sal.peso_n)
-                    //{
-                    //    _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.peso_e - _Boleto_Ent.Boleto_Sal.peso_n) / Convert.ToDouble(100));
-                    //}
-                    //else if (_Boleto_Ent.peso_e < _Boleto_Ent.Boleto_Sal.peso_n)
-                    //{
-                       
-                    //}
                     _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.Boleto_Sal.peso_s)) / Convert.ToDouble(100);
                     _ControlPallets.pesobruto = Math.Round(Convert.ToDouble(_Boleto_Ent.Boleto_Sal.peso_n), 2, MidpointRounding.AwayFromZero);
                     _ControlPallets.pesoneto = Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - Convert.ToDouble(_ControlPallets.taracamion), 2, MidpointRounding.AwayFromZero);
