@@ -37,6 +37,8 @@ namespace ERPAPI.Models
 
         public decimal TotalCantidad { get; set; }
 
+        public string TotalUnidadesLetras { get; set; }
+
 
 
         [Display(Name = "Banco")]

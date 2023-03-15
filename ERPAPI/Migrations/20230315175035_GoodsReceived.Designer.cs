@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230315175035_GoodsReceived")]
+    partial class GoodsReceived
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5631,7 +5633,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("NoAR");
 
-                    b.Property<long?>("NoARLineId");
+                    b.Property<long?>("NoARLine");
+
+                    b.Property<int>("NoARLineId");
 
                     b.Property<long>("NoCD");
 
@@ -5666,6 +5670,8 @@ namespace ERPAPI.Migrations
                     b.HasKey("GoodsDeliveredLinedId");
 
                     b.HasIndex("GoodsDeliveredId");
+
+                    b.HasIndex("NoARLine");
 
                     b.ToTable("GoodsDeliveredLine");
                 });
@@ -12317,6 +12323,10 @@ namespace ERPAPI.Migrations
                         .WithMany("_GoodsDeliveredLine")
                         .HasForeignKey("GoodsDeliveredId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorizationLine", "GoodsDeliveryAuthorizationLine")
+                        .WithMany()
+                        .HasForeignKey("NoARLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorization", b =>

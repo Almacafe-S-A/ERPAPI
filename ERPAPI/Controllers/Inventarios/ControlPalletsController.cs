@@ -74,10 +74,16 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetControlPalletsSalida()
         {
-            List<ControlPallets> Items = new List<ControlPallets>();
+            List<ControlPallets> controlPalletsAvailable = new List<ControlPallets>();
             try
             {
-                Items = await _context.ControlPallets.Where(q=>q.EsIngreso==0).ToListAsync();
+                controlPalletsAvailable = await _context.ControlPallets.Where(q=>q.EsIngreso==0).ToListAsync();
+
+                controlPalletsAvailable = await _context.ControlPallets
+                    .Where(q => q.EsIngreso == 1 && q.Estado != "Recibido"
+                         && !_context.GoodsDelivered.Any(a => a.ControlId == q.ControlPalletsId)
+                    // && q.BoletaPeso.Boleto_Sal !=  null
+                    ).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -87,7 +93,7 @@ namespace ERPAPI.Controllers
             }
 
             //  int Count = Items.Count();
-            return await Task.Run(() => Ok(Items));
+            return await Task.Run(() => Ok(controlPalletsAvailable));
         }
 
         /// <summary>

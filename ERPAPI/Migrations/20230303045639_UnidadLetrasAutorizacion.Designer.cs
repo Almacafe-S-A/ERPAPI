@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230303045639_UnidadLetrasAutorizacion")]
+    partial class UnidadLetrasAutorizacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -5534,21 +5536,21 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Autorizaciones");
-
                     b.Property<int>("BoletaPesoId");
 
                     b.Property<long>("BranchId");
 
                     b.Property<string>("BranchName");
 
-                    b.Property<string>("Certificados");
-
                     b.Property<string>("Comments");
 
                     b.Property<long>("ControlId");
 
                     b.Property<decimal>("Currency");
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
 
                     b.Property<long>("CustomerId");
 
@@ -5565,6 +5567,8 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime?>("FechaCreacion");
 
                     b.Property<DateTime?>("FechaModificacion");
+
+                    b.Property<long>("GoodsDeliveryAuthorizationId");
 
                     b.Property<long>("IdEstado");
 
@@ -5606,7 +5610,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("VigilanteName");
 
+                    b.Property<int>("WarehouseId");
+
                     b.Property<string>("WarehouseName");
+
+                    b.Property<long>("WeightBallot");
 
                     b.HasKey("GoodsDeliveredId");
 
@@ -5631,7 +5639,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("NoAR");
 
-                    b.Property<long?>("NoARLineId");
+                    b.Property<long?>("NoARLine");
+
+                    b.Property<int>("NoARLineId");
 
                     b.Property<long>("NoCD");
 
@@ -5666,6 +5676,8 @@ namespace ERPAPI.Migrations
                     b.HasKey("GoodsDeliveredLinedId");
 
                     b.HasIndex("GoodsDeliveredId");
+
+                    b.HasIndex("NoARLine");
 
                     b.ToTable("GoodsDeliveredLine");
                 });
@@ -12317,6 +12329,10 @@ namespace ERPAPI.Migrations
                         .WithMany("_GoodsDeliveredLine")
                         .HasForeignKey("GoodsDeliveredId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorizationLine", "GoodsDeliveryAuthorizationLine")
+                        .WithMany()
+                        .HasForeignKey("NoARLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.GoodsDeliveryAuthorization", b =>
