@@ -77,10 +77,9 @@ namespace ERPAPI.Controllers
             List<ControlPallets> controlPalletsAvailable = new List<ControlPallets>();
             try
             {
-                controlPalletsAvailable = await _context.ControlPallets.Where(q=>q.EsIngreso==0).ToListAsync();
-
+                
                 controlPalletsAvailable = await _context.ControlPallets
-                    .Where(q => q.EsIngreso == 1 && q.Estado != "Recibido"
+                    .Where(q => q.EsIngreso == 0 && q.Estado != "Entregado"
                          && !_context.GoodsDelivered.Any(a => a.ControlId == q.ControlPalletsId)
                     // && q.BoletaPeso.Boleto_Sal !=  null
                     ).ToListAsync();
