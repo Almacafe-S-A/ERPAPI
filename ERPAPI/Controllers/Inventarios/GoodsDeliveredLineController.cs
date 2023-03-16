@@ -152,8 +152,8 @@ namespace ERPAPI.Controllers
                 Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
                 if (_Boleto_Ent != null && _Boleto_Ent.Boleto_Sal != null)
                 {
-                    _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.peso_e)) / Convert.ToDouble(100);
-                    _ControlPallets.pesobruto = Math.Round(Convert.ToDouble(_Boleto_Ent.Boleto_Sal.peso_n), 2, MidpointRounding.AwayFromZero);
+                    _ControlPallets.taracamion = Convert.ToDouble((_Boleto_Ent.peso_e)) ;
+                    _ControlPallets.pesobruto = Math.Round(Convert.ToDouble(_Boleto_Ent.Boleto_Sal.peso_s), 2, MidpointRounding.AwayFromZero);
                     _ControlPallets.pesoneto = Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - Convert.ToDouble(_ControlPallets.taracamion), 2, MidpointRounding.AwayFromZero);
                     _ControlPallets.boleto_Ent = _Boleto_Ent;
 
