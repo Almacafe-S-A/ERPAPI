@@ -126,6 +126,38 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(controlPalletsAvailable));
         }
 
+
+        /// <summary>
+        /// Controles de ingresos Dsiponibles para nuevos Recibos de Mercaderias 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetControlPalletsNoSelectedSalida()
+        {
+            List<ControlPallets> controlPalletsAvailable = new List<ControlPallets>();
+            try
+            {
+                /////Selecciona todos los control de ingresos con boleta de peso asociada y completos
+                controlPalletsAvailable = await _context.ControlPallets
+                    .Where(q => q.EsIngreso == 0 && q.Estado != "Entregado"
+                         && !_context.GoodsDelivered.Any(a => a.ControlId == q.ControlPalletsId)
+                    // && q.BoletaPeso.Boleto_Sal !=  null
+                    ).ToListAsync();
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(controlPalletsAvailable));
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la ControlPallets por medio del Id enviado.
         /// </summary>
