@@ -79,8 +79,8 @@ namespace ERPAPI.Controllers
             {
                 
                 controlPalletsAvailable = await _context.ControlPallets
-                    .Where(q => q.EsIngreso == 0 && q.Estado != "Entregado"
-                         && !_context.GoodsDelivered.Any(a => a.ControlId == q.ControlPalletsId)
+                    .Where(q => q.EsIngreso == 0 //&& q.Estado != "Entregado"
+                        // 
                     // && q.BoletaPeso.Boleto_Sal !=  null
                     ).ToListAsync();
             }
@@ -107,7 +107,8 @@ namespace ERPAPI.Controllers
             {
                /////Selecciona todos los control de ingresos con boleta de peso asociada y completos
                 controlPalletsAvailable = await _context.ControlPallets
-                    .Where(q => q.EsIngreso == 1 && q.Estado!="Recibido"
+                    .Where(q => q.EsIngreso == 1 && q.Estado!="Recibido" && q.Estado != "Entregado"
+                         && !_context.GoodsDelivered.Any(a => a.ControlId == q.ControlPalletsId)
                          && !_context.GoodsReceived.Any(a => a.ControlId == q.ControlPalletsId) 
                         // && q.BoletaPeso.Boleto_Sal !=  null
                     ).ToListAsync();
