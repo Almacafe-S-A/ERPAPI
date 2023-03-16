@@ -175,7 +175,7 @@ namespace ERPAPI.Controllers
                             FechaModificacion = DateTime.Now,
                             Marca = _GoodsDelivered.Marca,
                             Placa = _GoodsDelivered.Placa,
-                            Motorista = _GoodsDelivered.Name,
+                            Motorista = _GoodsDelivered.Motorista,
                             Quantity = _GoodsDelivered._GoodsDeliveredLine.Select(q => q.QuantitySacos).Sum(),
                             SubProductId = _GoodsDelivered.SubProductId,
                             SubProductName = _GoodsDelivered.SubProductName,
@@ -210,6 +210,8 @@ namespace ERPAPI.Controllers
                             });
                         }
 
+                        
+
                         _GoodsDeliveredq.SubProductName =String.Join(',' ,_GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.SubProductName));
                         _GoodsDeliveredq.Certificados = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoCD));
                         _GoodsDeliveredq.Autorizaciones = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoAR));
@@ -221,18 +223,19 @@ namespace ERPAPI.Controllers
                         if (_Boleto_Ent != null)
                         {
 
-                            double taracamion= Convert.ToDouble((_Boleto_Ent.Boleto_Sal.peso_s)) / Convert.ToDouble(100);
+                            double taracamion= Convert.ToDouble((_Boleto_Ent.Boleto_Sal.peso_s)) ;
                             _GoodsDeliveredq.PesoBruto =(decimal) Math.Round(Convert.ToDouble(_Boleto_Ent.Boleto_Sal.peso_n), 2, MidpointRounding.AwayFromZero);
-                            _GoodsDeliveredq.PesoNeto =(decimal) Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - Convert.ToDouble(taracamion), 2, MidpointRounding.AwayFromZero);
+                            _GoodsDeliveredq.PesoNeto =(decimal) Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - taracamion, 2, MidpointRounding.AwayFromZero);
                             
 
                             double yute = Math.Round((double)_ControlPallets.TotalSacosYute * 1, 2, MidpointRounding.AwayFromZero);
                             double polietileno = Math.Round(Convert.ToDouble((_ControlPallets.TotalSacosPolietileno * 0.5)), 2, MidpointRounding.AwayFromZero);
                             double tarasaco = (Math.Round(Math.Round(yute, 2) + Math.Round(polietileno, 2), 2, MidpointRounding.AwayFromZero));
                             _GoodsDeliveredq.TaraUnidadMedida = (decimal) tarasaco;
+                            
                             _GoodsDeliveredq.PesoNeto2 = _GoodsDeliveredq.PesoNeto - (decimal)tarasaco;
 
-                            _GoodsDeliveredq.TaraUnidadMedida =_Boleto_Ent.Convercion(_ControlPallets.Tara, _Boleto_Ent.UnidadPreferidaId);
+                            _GoodsDeliveredq.TaraUnidadMedida =_Boleto_Ent.Convercion(taracamion, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.PesoNeto2 = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoNeto2, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.PesoBruto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoBruto, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.PesoNeto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoNeto, _Boleto_Ent.UnidadPreferidaId);
@@ -240,17 +243,9 @@ namespace ERPAPI.Controllers
                            
 
                         }
-
-                        //_GoodsDeliveredq.PesoBruto = (decimal)_ControlPallets.pesobruto;
-                        //_GoodsDeliveredq.PesoNeto = (decimal)_ControlPallets.pesoneto;
-                        //_GoodsDeliveredq.TaraTransporte = (decimal)_ControlPallets.taracamion;
-                        //_GoodsDeliveredq.TaraUnidadMedida = (decimal)_ControlPallets.Tara;
-
-
-
-
+                        
                         _context.BoletaDeSalida.Add(_boletadesalida);
-
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
 
 
@@ -259,6 +254,7 @@ namespace ERPAPI.Controllers
                         _GoodsDeliveredq.PesoNeto2 = _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity);
 
                         _context.GoodsDelivered.Add(_GoodsDeliveredq);
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
 
                         foreach (var item in _GoodsDeliveredq._GoodsDeliveredLine)
@@ -337,7 +333,7 @@ namespace ERPAPI.Controllers
                             //}
 
                         }
-
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
@@ -357,7 +353,13 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
-                      
+                        List<GoodsDeliveryAuthorization> ARs = _context.GoodsDeliveryAuthorization
+                            .Where(q => _GoodsDeliveredq._GoodsDeliveredLine.Any(a => a.NoAR == q.GoodsDeliveryAuthorizationId)).ToList();
+
+                        _GoodsDeliveredq.EntregadoA = String.Join(",", ARs.Select(s =>s.RetiroAutorizadoA));
+
+
+
 
                         _boletadesalida.DocumentoId = (int)_GoodsDeliveredq.GoodsDeliveredId;
 

@@ -26,8 +26,7 @@ namespace ERPAPI.Models
         public string DeudoraAcreedora { get; set; }
 
         public string Estado { get; set; }
-
-        
+               
 
         public bool Totaliza { get; set; }
 

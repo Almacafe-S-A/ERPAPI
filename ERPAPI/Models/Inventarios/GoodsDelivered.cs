@@ -37,14 +37,7 @@ namespace ERPAPI.Models
         public string BranchName { get; set; }
 
         public Int64 IdEstado { get; set; }
-        public string Estado { get; set; }
-
-   
-
-        [Display(Name = "Moneda tasa")]
-        public decimal Currency { get; set; }
-
-
+        public string Estado { get; set; }   
        
         public string WarehouseName { get; set; }
 
@@ -60,8 +53,10 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
+
+
         [Display(Name = "Recibimos de")]
-        public string Name { get; set; }
+        public string EntregadoA { get; set; }
         [Display(Name = "Referencia")]
         public string Reference { get; set; }
 
@@ -71,6 +66,8 @@ namespace ERPAPI.Models
         public Int64 ExitTicket { get; set; }
         public string Placa { get; set; }
         public string Marca { get; set; }
+
+        public string Motorista { get; set; }
 
         [Display(Name = "Vigilante")]
         public Int64 VigilanteId { get; set; }
