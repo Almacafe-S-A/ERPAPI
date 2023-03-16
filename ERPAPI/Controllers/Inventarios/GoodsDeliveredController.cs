@@ -223,9 +223,9 @@ namespace ERPAPI.Controllers
                         if (_Boleto_Ent != null)
                         {
 
-                            double taracamion= Convert.ToDouble((_Boleto_Ent.Boleto_Sal.peso_s)) ;
-                            _GoodsDeliveredq.PesoBruto =(decimal) Math.Round(Convert.ToDouble(_Boleto_Ent.Boleto_Sal.peso_n), 2, MidpointRounding.AwayFromZero);
-                            _GoodsDeliveredq.PesoNeto =(decimal) Math.Round(Convert.ToDouble(_ControlPallets.pesobruto) - taracamion, 2, MidpointRounding.AwayFromZero);
+                            double taracamion= Convert.ToDouble((_Boleto_Ent.peso_e)) ;
+                            _GoodsDeliveredq.PesoBruto =(decimal) Math.Round(Convert.ToDouble(_Boleto_Ent.Boleto_Sal.peso_s), 2, MidpointRounding.AwayFromZero);
+                            _GoodsDeliveredq.PesoNeto =(decimal) Math.Round(Convert.ToDouble(_GoodsDeliveredq.PesoBruto) - taracamion, 2, MidpointRounding.AwayFromZero);
                             
 
                             double yute = Math.Round((double)_ControlPallets.TotalSacosYute * 1, 2, MidpointRounding.AwayFromZero);
@@ -235,11 +235,11 @@ namespace ERPAPI.Controllers
                             
                             _GoodsDeliveredq.PesoNeto2 = _GoodsDeliveredq.PesoNeto - (decimal)tarasaco;
 
-                            _GoodsDeliveredq.TaraUnidadMedida =_Boleto_Ent.Convercion(taracamion, _Boleto_Ent.UnidadPreferidaId);
+                            _GoodsDeliveredq.TaraUnidadMedida =_Boleto_Ent.Convercion(tarasaco, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.PesoNeto2 = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoNeto2, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.PesoBruto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoBruto, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.PesoNeto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoNeto, _Boleto_Ent.UnidadPreferidaId);
-                            _GoodsDeliveredq.TaraTransporte = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.TaraTransporte, _Boleto_Ent.UnidadPreferidaId);
+                            _GoodsDeliveredq.TaraTransporte = _Boleto_Ent.Convercion(taracamion, _Boleto_Ent.UnidadPreferidaId);
                            
 
                         }
