@@ -179,6 +179,9 @@ namespace ERPAPI.Controllers
                             Quantity = _GoodsDelivered._GoodsDeliveredLine.Select(q => q.QuantitySacos).Sum(),
                             SubProductId = _GoodsDelivered.SubProductId,
                             SubProductName = _GoodsDelivered.SubProductName,
+                            Vigilante = _GoodsDelivered.VigilanteName,
+                            ARNo = (int)_GoodsDelivered._GoodsDeliveredLine.FirstOrDefault().NoAR,
+                            DocumentoTipo  = "E/M ",
                            //oodsDeliveryAuthorizationId = _GoodsDelivered.GoodsDeliveryAuthorizationId,
                             DocumentoId = (int)_GoodsDeliveredq.GoodsDeliveredId,
                             CargadoId = 13,
@@ -190,6 +193,8 @@ namespace ERPAPI.Controllers
                             WeightBallot = _GoodsDelivered.BoletaPesoId,
                             BoletaDeSalidaLines = new List<BoletaDeSalidaLine>(),
                         };
+
+                        _GoodsDelivered._GoodsDeliveredLine = _GoodsDelivered._GoodsDeliveredLine.Where(q => q.Quantity > 0).ToList();
 
                         foreach (var item in _GoodsDelivered._GoodsDeliveredLine)
                         {
@@ -356,10 +361,7 @@ namespace ERPAPI.Controllers
                         List<GoodsDeliveryAuthorization> ARs = _context.GoodsDeliveryAuthorization
                             .Where(q => _GoodsDeliveredq._GoodsDeliveredLine.Any(a => a.NoAR == q.GoodsDeliveryAuthorizationId)).ToList();
 
-                        _GoodsDeliveredq.EntregadoA = String.Join(",", ARs.Select(s =>s.RetiroAutorizadoA));
-
-
-
+                        
 
                         _boletadesalida.DocumentoId = (int)_GoodsDeliveredq.GoodsDeliveredId;
 

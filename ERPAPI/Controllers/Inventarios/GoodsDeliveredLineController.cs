@@ -127,7 +127,6 @@ namespace ERPAPI.Controllers
                                                 g.Pda,
                                                 g.NoCertificadoDeposito,
                                                 g.GoodsDeliveryAuthorizationId,
-                                                g.Quantity,
                                                 g.GoodsDeliveryAuthorizationLineId
                                                 }
                                               )
@@ -216,7 +215,7 @@ namespace ERPAPI.Controllers
                 
 
 
-                return Ok(goodsDeliveredLines.Where(q => q.Quantity > 0).ToList());
+                return Ok(goodsDeliveredLines.ToList());
             }
             catch (Exception ex)
             {
