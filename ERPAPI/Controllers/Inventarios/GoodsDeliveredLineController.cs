@@ -111,6 +111,7 @@ namespace ERPAPI.Controllers
 
             goodsDeliveryAuthorizationsLines = await _context.GoodsDeliveryAuthorizationLine
                 .Where(q => ARs.Any(a => a == q.GoodsDeliveryAuthorizationId))
+                .OrderBy(o => o.SaldoProducto)
                 .ToListAsync();
 
             try
