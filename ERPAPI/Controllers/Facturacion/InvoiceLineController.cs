@@ -100,38 +100,48 @@ namespace ERPAPI.Controllers
             try
             {
                 //Servicios Utilizados
-                List<SubServicesWareHouse> subServicesWareHouses= new List<SubServicesWareHouse>(); 
+                List<SubServicesWareHouse> subServicesWareHouses = new List<SubServicesWareHouse>();
 
                 subServicesWareHouses = await _context.SubServicesWareHouse
-                    .Where(q => q.InvoiceLineId == null 
+                    .Where(q => q.InvoiceLineId == null
                     && q.CustomerId == CustomerId
-                    && q.ServiceId== ProductId
+                    && q.ServiceId == ProductId
+                    && q.InvoiceId == null
+
                     ).ToListAsync();
+
 
                 //Area Ocupada
                 CustomerArea customerArea = await _context.CustomerArea
-                    .Where(q => q.CustomerId == (long)CustomerId)
+                    .Where(q =>
+                     q.CustomerId == (long)CustomerId
+                    && q.InvoiceId == null
+                    && q.ProductId == ProductId
+                    && q.TypeId == 4
+
+                    )
                     .LastOrDefaultAsync();
 
-                if (customerArea!=null)
-                {
-                    subServicesWareHouses.Add(new SubServicesWareHouse
-                    {
-                        SubServiceId = 47,
-                        SubServiceName = "ALMACENAJE",
-                        QuantityHours = (decimal)customerArea.UsedArea,
-                        ServiceId = 1,
-                        ServiceName = "AlmacenajeGeneral",
-
-
-                    });
-                }
-
-                
+                //if (customerArea!=null)
+                //{
+                //    subServicesWareHouses.Add(new SubServicesWareHouse
+                //    {
+                //        SubServiceId = 47,
+                //        SubServiceName = "ALMACENAJE",
+                //        QuantityHours = (decimal)customerArea.UsedArea,
+                //        ServiceId = 1,
+                //        ServiceName = "AlmacenajeGeneral",
 
 
 
-                Tax tax= _context.Tax.Where(q => q.TaxId == 1).FirstOrDefault();
+                //    });
+                //}
+
+
+
+
+
+                Tax tax = _context.Tax.Where(q => q.TaxId == 1).FirstOrDefault();
 
                 if (tax == null)
                 {
@@ -143,61 +153,96 @@ namespace ERPAPI.Controllers
 
 
                 Items = (from c in subServicesWareHouses
-                         .GroupBy(g => new {
-                                    g.ServiceId,
-                                    g.ServiceName,
-                                    g.CustomerId,
-                                    g.CustomerName,
-                                    g.SubServiceId,
-                                    g.SubServiceName
-                
-                                 })
-                         select new InvoiceLine {
-                            SubProductId = c.Key.SubServiceId,
-                            SubProductName = c.Key.SubServiceName,
-                            ProductId = c.Key.ServiceId,
-                            ProductName = c.Key.ServiceName,
-                            Quantity = c.Sum(s => s.QuantityHours),
-                            //UnitOfMeasureId = c.
-                            Price = 0,
-                            Amount = 0,
-                            TaxId = tax.TaxId,
-                            TaxAmount= 0,
-                            TaxCode= tax.TaxCode,
-                            TaxPercentage= tax.TaxPercentage,
-                            
-                         
-                         } ).ToList();
+                         .GroupBy(g => new
+                         {
+                             g.ServiceId,
+                             g.ServiceName,
+                             g.CustomerId,
+                             g.CustomerName,
+                             g.SubServiceId,
+                             g.SubServiceName
+
+                         })
+                         select new InvoiceLine
+                         {
+                             SubProductId = c.Key.SubServiceId,
+                             SubProductName = c.Key.SubServiceName,
+                             ProductId = c.Key.ServiceId,
+                             ProductName = c.Key.ServiceName,
+                             Quantity = c.Sum(s => s.QuantityHours),
+                             //SubservicesWarehouseId = c.Key.,
+                             //UnitOfMeasureId = c.
+                             Price = 0,
+                             Amount = 0,
+                             TaxId = tax.TaxId,
+                             TaxAmount = 0,
+                             TaxCode = tax.TaxCode,
+                             TaxPercentage = tax.TaxPercentage,
+
+
+                         }).ToList();
+
+
 
                 CustomerContract customerContract = await _context.CustomerContract
-                    .Where( q => q.CustomerContractId == ContractId)
+                    .Where(q => q.CustomerContractId == ContractId)
                     .Include(i => i.customerContractLines)
                     .FirstOrDefaultAsync();
 
-                
+
+                if (customerArea != null)
+                {
+                    Items.Add(new InvoiceLine
+                    {
+                        SubProductId = 47,
+                        SubProductName = "ALMACENAJE",
+                        Quantity = (decimal)customerArea.UsedArea,
+                        ProductId = customerArea.ProductId,
+                        ProductName = customerArea.ProductName,
+
+
+                    });
+                }
+
+                if (customerContract != null)
+                {
                     foreach (var item in Items)
                     {
-                        if (customerContract != null)
+
+
+
+                        CustomerContractLines customerContractLines = customerContract.customerContractLines
+                                    .Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
+                        if (customerContractLines != null && item.Price == 0)
                         {
-                            CustomerContractLines customerContractLines = customerContract.customerContractLines
-                                .Where(q => q.SubProductId == item.SubProductId).FirstOrDefault();
-                                if (customerContractLines != null)
-                                {
-                                    item.UnitOfMeasureName= customerContractLines.UnitOfMeasureName;
-                                    item.UnitOfMeasureId = (int)customerContractLines.UnitOfMeasureId;
-                                    item.Price = customerContractLines.Price;
-                                    item.Amount = item.Price * item.Quantity;
-                                }
-                            
+                            item.UnitOfMeasureName = customerContractLines.UnitOfMeasureName;
+                            item.UnitOfMeasureId = (int)customerContractLines.UnitOfMeasureId;
+                            item.Price = customerContractLines.Price;
+                            item.Amount = item.Price * item.Quantity;
                         }
                         if (!customer.Exonerado)
                         {
-                            item.TaxAmount = item.Amount * (item.TaxPercentage/100);
+                            item.TaxAmount = item.Amount * (tax.TaxPercentage / 100);
+                            item.TaxPercentage = tax.TaxPercentage;
+                            item.TaxCode = tax.TaxCode;
+                            item.TaxId = tax.TaxId;
                             item.Total = item.Amount + item.TaxAmount;
-                        }                     
-                        
+                        }
+                        else
+                        {
+                            item.Total = item.SubTotal + item.TaxAmount;
+                            item.SubTotal = item.Amount - item.DiscountAmount;
+                        }
+
+                       
+
 
                     }
+                }
+                
+
+
+            
                 
 
 
