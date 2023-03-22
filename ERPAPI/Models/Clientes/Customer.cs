@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ERPAPI.Models
@@ -160,7 +161,13 @@ namespace ERPAPI.Models
         
         public DateTime? FechaCreacion { get; set; }
 
-       
+        public bool PEP { get; set; }
+
+        public bool AFND { get; set; }
+
+        public DateTime? FechaBaja { get; set; }
+
+
         public DateTime? FechaModificacion { get; set; }
 
         public List<CustomersOfCustomer> _Customers { get; set; }
