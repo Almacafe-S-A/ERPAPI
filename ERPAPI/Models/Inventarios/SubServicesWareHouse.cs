@@ -13,7 +13,7 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 SubServicesWareHouseId { get; set; }
 
-        [Display(Name = "Fecha de Subservicios")]      
+        [Display(Name = "Fecha de Subservicios")]
         public DateTime DocumentDate { get; set; }
 
         [Display(Name = "Cliente")]
@@ -62,6 +62,9 @@ namespace ERPAPI.Models
         [Display(Name = "Estado")]
         public string Estado { get; set; }
 
+        public int? InvoiceId { get; set; }
+        [ForeignKey("InvoiceId")]
+        public Invoice Invoice { get; set; }
 
 
         [Display(Name = "Sub Servicio")]

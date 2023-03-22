@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230321184533_ccTax")]
+    partial class ccTax
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8942,13 +8944,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("AccountIdPorCobrar");
 
-                    b.Property<long?>("CuentaContableIdPorCobrar");
+                    b.Property<string>("AccountName");
 
-                    b.Property<long?>("CuentaContableIngresosId");
-
-                    b.Property<string>("CuentaContableIngresosNombre");
-
-                    b.Property<string>("CuentaContablePorCobrarNombre");
+                    b.Property<string>("AccountNamePorCobrar");
 
                     b.Property<string>("Estado");
 
@@ -10085,17 +10083,13 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("CuentaContableIngresosId");
-
-                    b.Property<string>("CuentaContableIngresosNombre");
-
-                    b.Property<long?>("CuentaContablePorCobrarId");
-
-                    b.Property<string>("CuentaContablePorCobrarNombre");
-
                     b.Property<long?>("CuentaImpuestoporCobrarId");
 
+                    b.Property<string>("CuentaImpuestoporCobrarNombre");
+
                     b.Property<long?>("CuentaImpuestoporPagarId");
+
+                    b.Property<string>("CuentaImpuestoporPagarNombre");
 
                     b.Property<string>("Description");
 
@@ -12989,11 +12983,11 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.ProductRelation", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaContableIngresos")
+                    b.HasOne("ERPAPI.Models.Accounting", "Accounting")
                         .WithMany()
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaContablePorCobrar")
+                    b.HasOne("ERPAPI.Models.Accounting", "AccountingPorCobrar")
                         .WithMany()
                         .HasForeignKey("AccountIdPorCobrar");
 
@@ -13138,11 +13132,11 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.Tax", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaContableIngresos")
+                    b.HasOne("ERPAPI.Models.Accounting", "CuentaImpuestoporCobrar")
                         .WithMany()
                         .HasForeignKey("CuentaImpuestoporCobrarId");
 
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaContablePorCobrar")
+                    b.HasOne("ERPAPI.Models.Accounting", "CuentaImpuestoporPagar")
                         .WithMany()
                         .HasForeignKey("CuentaImpuestoporPagarId");
                 });

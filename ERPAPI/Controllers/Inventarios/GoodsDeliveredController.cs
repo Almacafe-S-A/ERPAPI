@@ -146,6 +146,158 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        private BoletaDeSalida InsertBoletaSalida( GoodsDelivered _GoodsDelivered) {
+            BoletaDeSalida _boletadesalida = new BoletaDeSalida
+            {
+                BranchId = _GoodsDelivered.BranchId,
+                BranchName = _GoodsDelivered.BranchName,
+                CustomerId = _GoodsDelivered.CustomerId,
+                CustomerName = _GoodsDelivered.CustomerName,
+                DocumentDate = _GoodsDelivered.DocumentDate,
+                FechaCreacion = DateTime.Now,
+                FechaModificacion = DateTime.Now,
+                Marca = _GoodsDelivered.Marca,
+                Placa = _GoodsDelivered.Placa,
+                Motorista = _GoodsDelivered.Motorista,
+                Quantity = _GoodsDelivered._GoodsDeliveredLine.Select(q => q.QuantitySacos).Sum(),
+                SubProductId = _GoodsDelivered.SubProductId,
+                SubProductName = _GoodsDelivered.SubProductName,
+                Vigilante = _GoodsDelivered.VigilanteName,
+                ARNo = (int)_GoodsDelivered._GoodsDeliveredLine.FirstOrDefault().NoAR,
+                DocumentoTipo = "E/M ",
+                DocumentoId = (int)_GoodsDelivered.GoodsDeliveredId,
+                CargadoId = 13,
+                Cargadoname = "Cargado",
+                UsuarioCreacion = _GoodsDelivered.UsuarioCreacion,
+                UsuarioModificacion = _GoodsDelivered.UsuarioModificacion,
+                UnitOfMeasureId = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureId,
+                UnitOfMeasureName = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureName,
+                WeightBallot = _GoodsDelivered.BoletaPesoId,
+                BoletaDeSalidaLines = new List<BoletaDeSalidaLine>(),
+            };
+
+
+            foreach (var item in _GoodsDelivered._GoodsDeliveredLine)
+            {
+                if (item.Quantity == 0)
+                {
+                    _GoodsDelivered._GoodsDeliveredLine.Remove(item);
+                    continue;
+                }
+                _boletadesalida.BoletaDeSalidaLines.Add(new BoletaDeSalidaLine()
+                {
+                    SubProductId = item.SubProductId,
+                    SubProductName = item.SubProductName,
+                    Quantity = item.QuantitySacos,
+
+                    UnitOfMeasureId = (int)item.UnitOfMeasureId,
+                    UnitOfMeasureName = "Sacos",
+                    Warehouseid = (int)item.WareHouseId,
+                    WarehouseName = item.WareHouseName,
+                });
+            }
+            _context.BoletaDeSalida.Add(_boletadesalida);
+
+            return _boletadesalida;
+
+
+        }
+
+        private async Task<ActionResult<Kardex>> KardexEntrega(GoodsDelivered  _GoodsDeliveredq) {
+            foreach (var item in _GoodsDeliveredq._GoodsDeliveredLine)
+            {
+                GoodsDeliveryAuthorizationLine ARL = _context.GoodsDeliveryAuthorizationLine
+                    .Where(q => q.GoodsDeliveryAuthorizationLineId == item.NoARLineId)
+                    .FirstOrDefault();
+                if (ARL == null)
+                {
+                    return BadRequest("No se encontro detalle en autorizacion de retiro");
+                }
+                _context.Kardex.Add(new Kardex
+                {
+                    DocumentDate = _GoodsDeliveredq.DocumentDate,
+                    KardexDate = DateTime.Now,
+                    ProducId = _GoodsDeliveredq.ProductId,
+                    ProductName = _GoodsDeliveredq.ProductName,
+                    SubProducId = Convert.ToInt32(item.SubProductId),
+                    SubProductName = item.SubProductName,
+                    QuantityEntry = 0,
+                    QuantityOut = item.Quantity,
+                    QuantityOutBags = item.QuantitySacos,
+                    BranchId = _GoodsDeliveredq.BranchId,
+                    BranchName = _GoodsDeliveredq.BranchName,
+                    WareHouseId = Convert.ToInt32(item.WareHouseId),
+                    WareHouseName = item.WareHouseName,
+                    UnitOfMeasureId = item.UnitOfMeasureId,
+                    UnitOfMeasureName = item.UnitOfMeasureName,
+                    TypeOperationId = TipoOperacion.Salida,
+                    TypeOperationName = "Salida",
+                    Total = (decimal)item.QuantityAuthorized - item.Quantity,
+                    DocumentLine = (int)ARL.GoodsDeliveryAuthorizationLineId,
+                    DocumentName = "Autorizacion de Retiro",
+                    DocumentId = ARL.GoodsDeliveryAuthorizationId,
+                    DocType = 3,
+                    CustomerName = _GoodsDeliveredq.CustomerName,
+                    CustomerId = _GoodsDeliveredq.CustomerId,
+
+
+                });
+                ARL.SaldoProducto = ARL.SaldoProducto - item.Quantity;
+
+                List<CertificadoLine> cdls = _context.CertificadoLine.Where(q => q.PdaNo == ARL.Pda &&q.IdCD == ARL.NoCertificadoDeposito)
+                    .ToList();
+                decimal cantrebajar = item.Quantity;
+                foreach (var cdl in cdls)
+                {
+                    if (cantrebajar == 0)
+                    {
+                        break;
+                    }
+                    if (cdl != null)
+                    {
+
+                        decimal cantrebajarlinea = cantrebajar <= (decimal)cdl.CantidadDisponible ?
+                            (decimal)cdl.CantidadDisponible - cantrebajar : (decimal)cdl.CantidadDisponible;
+                        _context.Kardex.Add(new Kardex
+                        {
+                            DocumentDate = _GoodsDeliveredq.DocumentDate,
+                            KardexDate = DateTime.Now,
+                            ProducId = _GoodsDeliveredq.ProductId,
+                            ProductName = _GoodsDeliveredq.ProductName,
+                            SubProducId = Convert.ToInt32(item.SubProductId),
+                            SubProductName = item.SubProductName,
+                            QuantityEntry = 0,
+                            QuantityOut = cantrebajarlinea,
+                            QuantityOutBags = item.QuantitySacos,
+                            QuantityEntryBags = 0,
+                            BranchId = _GoodsDeliveredq.BranchId,
+                            BranchName = _GoodsDeliveredq.BranchName,
+                            WareHouseId = Convert.ToInt32(item.WareHouseId),
+                            WareHouseName = item.WareHouseName,
+                            UnitOfMeasureId = item.UnitOfMeasureId,
+                            UnitOfMeasureName = item.UnitOfMeasureName,
+                            TypeOperationId = TipoOperacion.Salida,
+                            TypeOperationName = "Salida",
+                            Total = (decimal)cdl.CantidadDisponible - item.Quantity,
+                            DocumentLine = cdl.PdaNo,
+                            DocumentName = "Certficado de Depósito",
+                            DocumentId = cdl.IdCD,
+                            DocType = 2,
+                            CustomerName = _GoodsDeliveredq.CustomerName,
+                            CustomerId = _GoodsDeliveredq.CustomerId,
+
+
+                        });
+
+                        cdl.CantidadDisponible = cdl.CantidadDisponible- cantrebajarlinea;
+                        cantrebajar = cantrebajar - cantrebajarlinea;
+                    }
+                }
+
+            }
+            return Ok();
+        }
+
 
         /// <summary>
         /// Inserta una nueva GoodsDelivered
@@ -164,58 +316,8 @@ namespace ERPAPI.Controllers
                     {
                         _GoodsDeliveredq = _GoodsDelivered;
 
-                        BoletaDeSalida _boletadesalida = new BoletaDeSalida
-                        {
-                            BranchId = _GoodsDelivered.BranchId,
-                            BranchName = _GoodsDelivered.BranchName,
-                            CustomerId = _GoodsDelivered.CustomerId,
-                            CustomerName = _GoodsDelivered.CustomerName,
-                            DocumentDate = _GoodsDelivered.DocumentDate,
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            Marca = _GoodsDelivered.Marca,
-                            Placa = _GoodsDelivered.Placa,
-                            Motorista = _GoodsDelivered.Motorista,
-                            Quantity = _GoodsDelivered._GoodsDeliveredLine.Select(q => q.QuantitySacos).Sum(),
-                            SubProductId = _GoodsDelivered.SubProductId,
-                            SubProductName = _GoodsDelivered.SubProductName,
-                            Vigilante = _GoodsDelivered.VigilanteName,
-                            ARNo = (int)_GoodsDelivered._GoodsDeliveredLine.FirstOrDefault().NoAR,
-                            DocumentoTipo  = "E/M ",
-                           //oodsDeliveryAuthorizationId = _GoodsDelivered.GoodsDeliveryAuthorizationId,
-                            DocumentoId = (int)_GoodsDeliveredq.GoodsDeliveredId,
-                            CargadoId = 13,
-                            Cargadoname = "Cargado",
-                            UsuarioCreacion = _GoodsDelivered.UsuarioCreacion,
-                            UsuarioModificacion = _GoodsDelivered.UsuarioModificacion,
-                            UnitOfMeasureId = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureId,
-                            UnitOfMeasureName = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureName,
-                            WeightBallot = _GoodsDelivered.BoletaPesoId,
-                            BoletaDeSalidaLines = new List<BoletaDeSalidaLine>(),
-                        };
-
                         _GoodsDelivered._GoodsDeliveredLine = _GoodsDelivered._GoodsDeliveredLine.Where(q => q.Quantity > 0).ToList();
 
-                        foreach (var item in _GoodsDelivered._GoodsDeliveredLine)
-                        {
-                            if (item.Quantity == 0)
-                            {
-                                _GoodsDelivered._GoodsDeliveredLine.Remove(item);
-                                continue;
-                            }
-                            _boletadesalida.BoletaDeSalidaLines.Add(new BoletaDeSalidaLine() {
-                                SubProductId = item.SubProductId,
-                                SubProductName = item.SubProductName,
-                                Quantity = item.QuantitySacos,
-                                
-                                UnitOfMeasureId = (int)item.UnitOfMeasureId,
-                                UnitOfMeasureName = "Sacos",
-                                Warehouseid = (int)item.WareHouseId,
-                                WarehouseName = item.WareHouseName,
-                            });
-                        }
-
-                        
 
                         _GoodsDeliveredq.SubProductName =String.Join(',' ,_GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.SubProductName));
                         _GoodsDeliveredq.Certificados = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoCD));
@@ -224,7 +326,10 @@ namespace ERPAPI.Controllers
                         ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsDeliveredq.ControlId).FirstOrDefault();
                         _ControlPallets.Estado = "Entregado";
 
-                        Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
+                        Boleto_Ent _Boleto_Ent = _context.Boleto_Ent
+                            .Where(q => q.clave_e == _ControlPallets.WeightBallot)
+                            .Include(i => i.Boleto_Sal).FirstOrDefault();
+
                         if (_Boleto_Ent != null)
                         {
 
@@ -245,130 +350,27 @@ namespace ERPAPI.Controllers
                             _GoodsDeliveredq.PesoBruto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoBruto, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.PesoNeto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoNeto, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.TaraTransporte = _Boleto_Ent.Convercion(taracamion, _Boleto_Ent.UnidadPreferidaId);
-                           
+
 
                         }
-                        
-                        _context.BoletaDeSalida.Add(_boletadesalida);
-                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-                        await _context.SaveChangesAsync();
 
 
-                        _GoodsDeliveredq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
-
-                        _GoodsDeliveredq.PesoNeto2 = _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity);
+                        if (_GoodsDeliveredq.PesoNeto2 != _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity)) {
+                            return BadRequest("Los el peso del detalle no coincide con el peso de la boleta");
+                        }
 
                         _context.GoodsDelivered.Add(_GoodsDeliveredq);
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
 
-                        foreach (var item in _GoodsDeliveredq._GoodsDeliveredLine)
-                        {
-                            GoodsDeliveryAuthorizationLine ARL = _context.GoodsDeliveryAuthorizationLine
-                                .Where(q => q.GoodsDeliveryAuthorizationLineId == item.NoARLineId)
-                                .FirstOrDefault();
-                            if (ARL == null)
-                            {
-                                return BadRequest("No se encontro detalle en autorizacion de retiro");
-                            }
-                                _context.Kardex.Add(new Kardex
-                                {
-                                    DocumentDate = _GoodsDeliveredq.DocumentDate,
-                                    KardexDate = DateTime.Now,
-                                    ProducId = _GoodsDeliveredq.ProductId,
-                                    ProductName = _GoodsDeliveredq.ProductName,
-                                    SubProducId = Convert.ToInt32(item.SubProductId),
-                                    SubProductName = item.SubProductName,
-                                    QuantityEntry = 0,
-                                    QuantityOut = item.Quantity,
-                                    QuantityOutBags = item.QuantitySacos,
-                                    BranchId = _GoodsDeliveredq.BranchId,
-                                    BranchName = _GoodsDeliveredq.BranchName,
-                                    WareHouseId = Convert.ToInt32(item.WareHouseId),
-                                    WareHouseName = item.WareHouseName,
-                                    UnitOfMeasureId = item.UnitOfMeasureId,
-                                    UnitOfMeasureName = item.UnitOfMeasureName,
-                                    TypeOperationId = TipoOperacion.Salida,
-                                    TypeOperationName = "Salida",
-                                    Total = (decimal)item.QuantityAuthorized - item.Quantity,
-                                    DocumentLine = (int)ARL.GoodsDeliveryAuthorizationLineId,
-                                    DocumentName = "Autorizacion de Retiro",
-                                    DocumentId = ARL.GoodsDeliveryAuthorizationId,
-                                    DocType = 3,
-                                    CustomerName = _GoodsDeliveredq.CustomerName,
-                                    CustomerId = _GoodsDeliveredq.CustomerId,
+                        BoletaDeSalida _boletadesalida =  InsertBoletaSalida(_GoodsDeliveredq);
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();                        
+                        await _context.SaveChangesAsync();
 
-
-                                });
-                            ARL.SaldoProducto = ARL.SaldoProducto - item.Quantity;
-
-                            //CertificadoLine cdl = _context.CertificadoLine.Where(q => q.IdCD == item.NoCD && q.PdaNo == item.Pda).FirstOrDefault();
-                            //if (cdl != null)
-                            //{
-                                
-                            //    _context.Kardex.Add(new Kardex
-                            //    {
-                            //        DocumentDate = _GoodsDeliveredq.DocumentDate,
-                            //        KardexDate = DateTime.Now,
-                            //        ProducId = _GoodsDeliveredq.ProductId,
-                            //        ProductName = _GoodsDeliveredq.ProductName,
-                            //        SubProducId = Convert.ToInt32(item.SubProductId),
-                            //        SubProductName = item.SubProductName,
-                            //        QuantityEntry = item.Quantity,
-                            //        QuantityOut = 0,
-                            //        QuantityEntryBags = item.Quantity,
-                            //        BranchId = _GoodsDeliveredq.BranchId,
-                            //        BranchName = _GoodsDeliveredq.BranchName,
-                            //        WareHouseId = Convert.ToInt32(item.WareHouseId),
-                            //        WareHouseName = item.WareHouseName,
-                            //        UnitOfMeasureId = item.UnitOfMeasureId,
-                            //        UnitOfMeasureName = item.UnitOfMeasureName,
-                            //        TypeOperationId = TipoOperacion.Salida,
-                            //        TypeOperationName = "Salida",
-                            //        Total = item.Quantity,
-                            //        DocumentLine = cdl.PdaNo,
-                            //        DocumentName = "Certficado de Depósito",
-                            //        DocumentId = cdl.IdCD,
-                            //        DocType = 2,
-                            //        CustomerName = _GoodsDeliveredq.CustomerName,
-                            //        CustomerId = _GoodsDeliveredq.CustomerId,
-
-
-                            //    });
-                            //}
-
-                        }
+                        KardexEntrega(_GoodsDelivered);
+                        _GoodsDeliveredq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _GoodsDelivered.GoodsDeliveredId,
-                            DocType = "GoodsDelivered",
-                            ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDelivered, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsDelivered, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insert",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _GoodsDelivered.UsuarioCreacion,
-                            UsuarioModificacion = _GoodsDelivered.UsuarioModificacion,
-                            UsuarioEjecucion = _GoodsDelivered.UsuarioModificacion,
-
-                        });
-
-                        await _context.SaveChangesAsync();
-
-                        List<GoodsDeliveryAuthorization> ARs = _context.GoodsDeliveryAuthorization
-                            .Where(q => _GoodsDeliveredq._GoodsDeliveredLine.Any(a => a.NoAR == q.GoodsDeliveryAuthorizationId)).ToList();
-
-                        
-
-                        _boletadesalida.DocumentoId = (int)_GoodsDeliveredq.GoodsDeliveredId;
-
-                        await _context.SaveChangesAsync();
-
-
-
 
                         transaction.Commit();
                     }

@@ -37,9 +37,11 @@ namespace ERPAPI.Models
         [Display(Name = "Unidad de Medida")]
         public string UnitOfMeasureName { get; set; }
 
-        public long? SubservicesWarehouseId { get; set; }
-        [ForeignKey("SubservicesWarehouseId")]
-        public SubServicesWareHouse SubServicesWareHouse { get; set; }
+       
+        public Int64? CustomerAreaId { get; set; }
+
+        [ForeignKey("CustomerAreaId")]
+        public CustomerArea CustomerArea { get; set; }
 
 
         [ForeignKey("UnitOfMeasureId")]

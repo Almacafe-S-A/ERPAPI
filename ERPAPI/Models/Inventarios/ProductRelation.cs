@@ -19,10 +19,15 @@ namespace ERPAPI.Models
         [ForeignKey("SubProductId")]
         public SubProduct SubProduct { get; set; }
 
-        public string AccountName { get; set; }
-        public Int64? AccountId { get; set; }
+        public string CuentaContableIngresosNombre { get; set; }
+        public Int64? CuentaContableIngresosId { get; set; }
         [ForeignKey("AccountId")]
-        public Accounting Accounting { get; set; }
+        public Accounting CuentaContableIngresos { get; set; }
+
+        public string CuentaContablePorCobrarNombre { get; set; }
+        public Int64? CuentaContableIdPorCobrar { get; set; }
+        [ForeignKey("AccountIdPorCobrar")]
+        public Accounting CuentaContablePorCobrar { get; set; }
         public Int64 IdEstado { get; set; }
         [ForeignKey("IdEstado")]
         public Estados Estados { get; set; }

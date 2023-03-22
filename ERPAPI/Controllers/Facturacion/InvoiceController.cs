@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
@@ -8,6 +10,7 @@ using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -204,45 +207,55 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{InvoiceId}")]
         public async Task<IActionResult> GenerarFactura(Int64 InvoiceId)
         {
-            Invoice factura = new Invoice();
-            try
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                factura = await _context.Invoice.Where(q => q.InvoiceId == InvoiceId).FirstOrDefaultAsync();
+                Invoice factura = new Invoice();
+                try
+                {
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
+                    factura = await _context.Invoice.Include(i => i.InvoiceLine).Where(q => q.InvoiceId == InvoiceId).FirstOrDefaultAsync();
 
 
-                NumeracionSAR numeracionSAR = new NumeracionSAR();
-                numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida( 1,_context);
 
-                factura.NumeroDEI = numeracionSAR.GetCorrelativo();
-                factura.Rango = numeracionSAR.getRango();
-                factura.CAI = numeracionSAR._cai;
-                factura.NoInicio = numeracionSAR.NoInicio.ToString();
-                factura.NoFin = numeracionSAR.NoFin.ToString();
-                factura.FechaLimiteEmision = numeracionSAR.FechaLimite;
-                factura.UsuarioModificacion = User.Identity.Name.ToUpper();
-                factura.FechaModificacion = DateTime.Now;
-                factura.ExpirationDate = DateTime.Now.AddDays(factura.DiasVencimiento);
-                factura.Estado = "Emitido";
+                    NumeracionSAR numeracionSAR = new NumeracionSAR();
+                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(1, _context);
 
-                _context.NumeracionSAR.Update(numeracionSAR);
+                    factura.NumeroDEI = numeracionSAR.GetCorrelativo();
+                    factura.Rango = numeracionSAR.getRango();
+                    factura.CAI = numeracionSAR._cai;
+                    factura.NoInicio = numeracionSAR.NoInicio.ToString();
+                    factura.NoFin = numeracionSAR.NoFin.ToString();
+                    factura.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                    factura.UsuarioModificacion = User.Identity.Name.ToUpper();
+                    factura.FechaModificacion = DateTime.Now;
+                    factura.ExpirationDate = DateTime.Now.AddDays(factura.DiasVencimiento);
+                    factura.Estado = "Emitido";
 
-                var alerta = await GeneraAlerta(factura);
+                    _context.NumeracionSAR.Update(numeracionSAR);
 
-                var asiento = await GeneraAsientoFactura(factura);
+                    var alerta = await GeneraAlerta(factura);
 
-                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                    var asiento = await GeneraAsientoFactura(factura);
 
-                await _context.SaveChangesAsync();
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    transaction.Rollback();
+                    return BadRequest($"Ocurrio un error:{ex.Message}");
+                }
+
+
+                return await Task.Run(() => Ok(factura));
             }
-            catch (Exception ex)
-            {
-
-                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
-
-
-            return await Task.Run(() => Ok(factura));
+           
         }
 
 
@@ -290,13 +303,7 @@ namespace ERPAPI.Controllers
                         _Invoiceq.UsuarioCreacion= User.Identity.Name;
                         _Invoiceq.FechaCreacion = DateTime.Now;
                         _Invoiceq.UsuarioModificacion = User.Identity.Name;
-                        _Invoiceq.FechaModificacion= DateTime.Now;
-                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s =>s.TaxAmount);                        
-                        _Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
-                        _Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);
-                        _Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
-                        _Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
-                        _Invoiceq.TotalGravado = _Invoiceq.SubTotal;
+                        _Invoiceq.FechaModificacion= DateTime.Now;                       
                         _Invoiceq.Estado = "Revisión";
 
                         _Invoiceq.NumeroDEI = "PROFORMA";
@@ -328,7 +335,18 @@ namespace ERPAPI.Controllers
                             item.UnitOfMeasure = null;
                             item.SubProduct = null;
                             //item.
+
+                            item.SubTotal = item.Amount - item.DiscountAmount;
+                            item.Total = item.SubTotal + item.TaxAmount;
                         }
+
+
+                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
+                        _Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
+                        _Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);                        
+                        _Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.SubTotal);
+                        _Invoiceq.TotalGravado = _Invoiceq.InvoiceLine.Where(q => q.TaxAmount> 0).Sum(s => s.SubTotal);
+                        _Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
 
 
                         _context.Invoice.Add(_Invoiceq);
@@ -339,6 +357,40 @@ namespace ERPAPI.Controllers
                        
                  
 
+                        await _context.SaveChangesAsync();
+
+
+
+                        //Servicios Utilizados
+                        List<SubServicesWareHouse> subServicesWareHouses = new List<SubServicesWareHouse>();
+
+                        subServicesWareHouses = await _context.SubServicesWareHouse
+                            .Where(q => q.InvoiceLineId == null
+                            && q.CustomerId == _Invoiceq.CustomerId
+                            && q.ServiceId == _Invoiceq.ProductId
+                            && q.InvoiceId == null
+
+                            ).ToListAsync();
+
+                        foreach (var item in subServicesWareHouses)
+                        {
+                            item.InvoiceId = _Invoiceq.InvoiceId;
+                        }
+
+                        CustomerArea customerArea = await _context.CustomerArea
+                           .Where(q =>
+                            q.CustomerId == (long)_Invoiceq.CustomerId
+                           && q.InvoiceId == null
+                           && q.ProductId == _Invoiceq.ProductId
+                           && q.TypeId == 4
+
+                           )
+                           .LastOrDefaultAsync();
+
+                        customerArea.InvoiceId= _Invoiceq.InvoiceId;
+
+
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
 
 
@@ -448,48 +500,130 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_alert));
         }
 
+        /// <summary>
+        /// Genera el asiento de la factura
+        /// </summary>
+        /// <param name="factura"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<ActionResult<JournalEntry>> GeneraAsientoFactura(Invoice factura) {
+            try
+            {
+                Periodo periodo = new Periodo();
+                periodo = periodo.PeriodoActivo(_context);
 
-        public async Task<ActionResult<JournalEntry>> GeneraAsientoFactura(Invoice _Invoiceq) {
+                JournalEntry partida = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    DatePosted = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    CreatedDate = DateTime.Now,
+                    EstadoId = 5,
+                    EstadoName = "Enviada a Aprobación",
+                    PeriodoId = periodo.Id,
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Partida Apertura",
+                    JournalEntryLines = new List<JournalEntryLine>(),
+                    Memo = $"Factura #{factura.NumeroDEI} a Cliente {factura.CustomerName} por concepto de {factura.ProductName}",
+                    Periodo = periodo.Anio.ToString(),
+                    Posted = false,
+                    TotalCredit = 0,
+                    TotalDebit = 0,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
 
-            Periodo periodoActivo= new Periodo();
-            periodoActivo = periodoActivo.PeriodoActivo(_context);
 
 
-            
-            List<JournalEntryLine> detalleasiento = new List<JournalEntryLine>();
-            JournalEntry asientofactura = new JournalEntry {
-                Date = DateTime.Now,
-                DocumentId = _Invoiceq.InvoiceId,
-                EstadoId = 5,
-                EstadoName = "Enviado a Aprobacion",
-                TypeOfAdjustmentId = 65,
-                TypeJournalName = "Asiento Diario",
-                CreatedUser = User.Identity.Name,
-                CreatedDate= DateTime.Now,
-                PeriodoId= periodoActivo.Id,
-                Periodo = periodoActivo.Anio.ToString(),
-                Memo= $"Asiento por FACTURA NO {_Invoiceq.NumeroDEI}, Cliente {_Invoiceq.CustomerName}, por Servicio {_Invoiceq.ProductName}", 
-                ModifiedDate= DateTime.Now,
-                ModifiedUser= User.Identity.Name,
-                VoucherType = 1,
-                PartyTypeId = _Invoiceq.CustomerId,
-                PartyName = _Invoiceq.CustomerName,
-                PartyTypeName = "Cliente",
-                TotalCredit = detalleasiento.Sum(x => x.Credit),
-                TotalDebit = detalleasiento.Sum(_ => _.Debit),
+
+                };
+
+
+
+
+                ///Impuesto 
+                ///
+                Tax tax = new Tax();
+                tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
+
+                partida.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = (long)tax.CuentaContablePorCobrarId,
+                    AccountName = tax.CuentaContablePorCobrarNombre,
+                    CostCenterId = 1,
+                    CostCenterName = "San Pedro Sula",
+                    Debit = factura.Tax,
+                    Credit = 0,
+                    CreatedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    ModifiedDate = DateTime.Now,
+
+
+
+                });
+
+
+                foreach (var item in factura.InvoiceLine)
+                {
+                    ProductRelation relation = new ProductRelation();
+                    relation = _context.ProductRelation.Where(x =>
+                    x.ProductId == factura.ProductId
+                    && x.SubProductId == item.SubProductId
+                    )
+                        .FirstOrDefault();
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (long)relation.CuentaContableIdPorCobrar,
+                        AccountName = relation.CuentaContableIngresosNombre,
+                        CostCenterId = 1,
+                        CostCenterName = "San Pedro Sula",
+                        Debit = item.SubTotal,
+                        Credit = 0,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+                    });
+
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (int)relation.CuentaContableIngresosId,
+                        AccountName = relation.CuentaContablePorCobrarNombre,
+                        CostCenterId = 1,
+                        CostCenterName = "San Pedro Sula",
+                        Debit = 0,
+                        Credit = item.Total,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+
+
+
+                    });
+                }
+
+                partida.TotalCredit= partida.JournalEntryLines.Sum(s => s.Credit);
+                partida.TotalDebit= partida.JournalEntryLines.Sum(s => s.Debit);
+
+                partida.JournalEntryLines = partida.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+
+                _context.JournalEntry.Add(partida);
+            }
+            catch (Exception)
+            {
                 
-                
-
-                JournalEntryLines = detalleasiento,
+                throw new Exception("Falta la configuracion contable en los subservicios utilizados");
+            }
             
+
+
+
+
+            //new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
             
-            };
-
-
-            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-            _context.JournalEntry.Add(asientofactura);
-
-            _context.SaveChangesAsync();
+            // await _context.SaveChangesAsync();
 
             
             return Ok();
