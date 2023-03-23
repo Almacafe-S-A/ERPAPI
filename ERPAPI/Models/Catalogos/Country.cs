@@ -54,6 +54,8 @@ namespace ERPAPI.Models
         [Display(Name = "Comentarios")]
         public string Comments { get; set; }
 
+        public string Code { get; set; }
+
         [Display(Name = "Estado")]
         public long IdEstado { get; set; } // bigint
         [Display(Name = "Estado")]
