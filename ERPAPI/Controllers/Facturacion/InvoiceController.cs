@@ -237,11 +237,21 @@ namespace ERPAPI.Controllers
 
                     var alerta = await GeneraAlerta(factura);
 
-                    var asiento = await GeneraAsientoFactura(factura);
+                    JournalEntry asiento = GeneraAsientoFactura(factura).Result.Value;
+
+                    
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
+
+                    factura.JournalEntryId= asiento.JournalEntryId;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+
                     transaction.Commit();
                 }
                 catch (Exception ex)
@@ -507,12 +517,13 @@ namespace ERPAPI.Controllers
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public async Task<ActionResult<JournalEntry>> GeneraAsientoFactura(Invoice factura) {
+            JournalEntry partida = new JournalEntry();
             try
             {
                 Periodo periodo = new Periodo();
                 periodo = periodo.PeriodoActivo(_context);
 
-                JournalEntry partida = new JournalEntry
+                partida = new JournalEntry
                 {
                     Date = DateTime.Now,
                     DatePosted = DateTime.Now,
@@ -626,7 +637,7 @@ namespace ERPAPI.Controllers
             // await _context.SaveChangesAsync();
 
             
-            return Ok();
+            return Ok(partida);
         }
 
         /// <summary>

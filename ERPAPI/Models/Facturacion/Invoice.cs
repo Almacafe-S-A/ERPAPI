@@ -11,7 +11,7 @@ namespace ERPAPI.Models
     {
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int InvoiceId { get; set; }       
+        public int InvoiceId { get; set; }
         public string InvoiceName { get; set; }
         [Display(Name = "Envio")]
         public int ShipmentId { get; set; }
@@ -21,7 +21,7 @@ namespace ERPAPI.Models
 
         [Display(Name = "Punto de emisión")]
         public Int64 IdPuntoEmision { get; set; }
-       
+
         [Display(Name = "Fecha de Factura")]
         public DateTime InvoiceDate { get; set; }
 
@@ -162,6 +162,11 @@ namespace ERPAPI.Models
         public decimal Total { get; set; }
 
         public decimal Saldo { get; set; }
+
+
+        public Int64? JournalEntryId { get; set; }
+        [ForeignKey("JournalEntryId")]
+        public JournalEntry JournalEntry { get; set; }
 
         public string TotalLetras { get; set; }
 
