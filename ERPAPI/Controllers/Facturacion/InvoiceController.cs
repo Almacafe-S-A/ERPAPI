@@ -199,6 +199,35 @@ namespace ERPAPI.Controllers
         }
 
 
+
+        /// <summary>
+        /// Obtiene los Datos de la Invoice por medio del Id enviado.
+        /// </summary>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetFacturasPendientesPagoByCustomer(int CustomerId)
+        {
+            List<Invoice> Items = new List<Invoice>();
+            try
+            {
+                Items = await _context.Invoice
+                    .Where(q => q.CustomerId == CustomerId
+                    && q.Saldo > 0 
+                    ).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la Invoice por medio del Id enviado.
         /// </summary>
@@ -239,6 +268,8 @@ namespace ERPAPI.Controllers
 
                     JournalEntry asiento = GeneraAsientoFactura(factura).Result.Value;
 
+
+
                     
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
@@ -246,6 +277,8 @@ namespace ERPAPI.Controllers
                     await _context.SaveChangesAsync();
 
                     factura.JournalEntryId= asiento.JournalEntryId;
+                    factura.FechaModificacion = DateTime.Now;
+                    factura.Saldo = factura.Total;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -533,7 +566,7 @@ namespace ERPAPI.Controllers
                     EstadoName = "Enviada a Aprobación",
                     PeriodoId = periodo.Id,
                     TypeOfAdjustmentId = 65,
-                    TypeOfAdjustmentName = "Partida Apertura",
+                    TypeOfAdjustmentName = "Asiento Diario",
                     JournalEntryLines = new List<JournalEntryLine>(),
                     Memo = $"Factura #{factura.NumeroDEI} a Cliente {factura.CustomerName} por concepto de {factura.ProductName}",
                     Periodo = periodo.Anio.ToString(),

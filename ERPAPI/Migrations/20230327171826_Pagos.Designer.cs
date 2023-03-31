@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230327171826_Pagos")]
+    partial class Pagos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7118,8 +7120,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Saldo");
 
-                    b.Property<decimal>("SaldoImpuesto");
-
                     b.Property<int>("SalesTypeId");
 
                     b.Property<int>("ShipmentId");
@@ -7268,8 +7268,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Quantity");
 
-                    b.Property<decimal>("Saldo");
-
                     b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
@@ -7322,8 +7320,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CantidadenLetras");
 
-                    b.Property<string>("CuentaBancaria");
-
                     b.Property<long?>("CuentaBancariaId");
 
                     b.Property<int>("CustomerId");
@@ -7342,6 +7338,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaPago");
 
+                    b.Property<int>("InvoivceId");
+
                     b.Property<long>("JournalId");
 
                     b.Property<decimal>("MontoAdeudaPrevio");
@@ -7349,8 +7347,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("MontoAdeudado");
 
                     b.Property<decimal>("MontoPagado");
-
-                    b.Property<string>("NoDocumentos");
 
                     b.Property<int>("NoPago");
 
@@ -7370,54 +7366,11 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("CuentaBancariaId");
 
+                    b.HasIndex("InvoivceId");
+
                     b.HasIndex("JournalId");
 
                     b.ToTable("InvoicePayments");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InvoicePaymentsLine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime?>("FechaModificacion");
-
-                    b.Property<int>("InvoicePaymentId");
-
-                    b.Property<int>("InvoivceId");
-
-                    b.Property<decimal>("MontoAdeudaPrevio");
-
-                    b.Property<decimal>("MontoPagado");
-
-                    b.Property<decimal>("MontoRestante");
-
-                    b.Property<string>("NoDocumento");
-
-                    b.Property<long?>("SubProductId");
-
-                    b.Property<string>("SubProductName");
-
-                    b.Property<int>("TipoDocumento");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.Property<decimal>("ValorOriginal");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InvoicePaymentId");
-
-                    b.HasIndex("InvoivceId");
-
-                    b.HasIndex("SubProductId");
-
-                    b.ToTable("InvoicePaymentsLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.InvoiceTransReport", b =>
@@ -12896,27 +12849,15 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("CuentaBancariaId");
 
-                    b.HasOne("ERPAPI.Models.JournalEntry", "journalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.InvoicePaymentsLine", b =>
-                {
-                    b.HasOne("ERPAPI.Models.InvoicePayments", "InvoicePayment")
-                        .WithMany("InvoicePaymentsLines")
-                        .HasForeignKey("InvoicePaymentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("ERPAPI.Models.Invoice", "Invoice")
                         .WithMany()
                         .HasForeignKey("InvoivceId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
+                    b.HasOne("ERPAPI.Models.JournalEntry", "journalEntry")
                         .WithMany()
-                        .HasForeignKey("SubProductId");
+                        .HasForeignKey("JournalId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.JournalClosing", b =>

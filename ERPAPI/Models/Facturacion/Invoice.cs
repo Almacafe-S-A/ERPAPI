@@ -163,6 +163,8 @@ namespace ERPAPI.Models
 
         public decimal Saldo { get; set; }
 
+        public decimal SaldoImpuesto { get; set; }
+
 
         public Int64? JournalEntryId { get; set; }
         [ForeignKey("JournalEntryId")]

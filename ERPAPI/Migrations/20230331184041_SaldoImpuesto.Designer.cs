@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230331184041_SaldoImpuesto")]
+    partial class SaldoImpuesto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7397,7 +7399,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NoDocumento");
 
-                    b.Property<long?>("SubProductId");
+                    b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
 
@@ -12916,7 +12918,8 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()
-                        .HasForeignKey("SubProductId");
+                        .HasForeignKey("SubProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.JournalClosing", b =>

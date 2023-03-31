@@ -50,6 +50,8 @@
     <Compile Remove="Migrations\20230315195244_GDA_GDsss.Designer.cs" />
     <Compile Remove="Migrations\20230321162146_InvoiceService.cs" />
     <Compile Remove="Migrations\20230321162146_InvoiceService.Designer.cs" />
+    <Compile Remove="Migrations\20230327053929_Pagosfacturas.cs" />
+    <Compile Remove="Migrations\20230327053929_Pagosfacturas.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />

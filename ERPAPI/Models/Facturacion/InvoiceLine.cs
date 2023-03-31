@@ -97,5 +97,7 @@ namespace ERPAPI.Models
         public decimal TaxAmount { get; set; }
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
+
+        public decimal Saldo { get; set; }
     }
 }
