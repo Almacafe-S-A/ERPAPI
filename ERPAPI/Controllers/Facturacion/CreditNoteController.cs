@@ -151,9 +151,15 @@ namespace ERPAPI.Controllers
                         _CreditNoteq.UsuarioCreacion= User.Identity.Name;
                         _CreditNoteq.UsuarioModificacion = User.Identity.Name;
                         _CreditNoteq.CreditNoteDate = DateTime.Now;
+                       
+                        
                         _CreditNoteq.NumeroSAR = "PROFORMA";
                         _CreditNoteq.NúmeroDEI = 0;
 
+
+                        Invoice factura = await _context.Invoice.Where(q => q.InvoiceId == _CreditNote.InvoiceId).FirstOrDefaultAsync();
+
+                        
 
                         _context.CreditNote.Add(_CreditNoteq);
 
@@ -168,47 +174,7 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
-                      /*
-                        JournalEntry _je = new JournalEntry
-                        {
-                            Date = _CreditNoteq.CreditNoteDate,
-                            Memo = "Nota de credito de clientes",
-                            DatePosted = _CreditNoteq.CreditNoteDueDate,
-                            ModifiedDate = DateTime.Now,
-                            CreatedDate = DateTime.Now,
-                            ModifiedUser = _CreditNoteq.UsuarioModificacion,
-                            CreatedUser = _CreditNoteq.UsuarioCreacion,
-                            DocumentId = _CreditNoteq.CreditNoteId,
-                        };
-
-                        Accounting account = new Accounting();
-
-                        foreach (var item in _CreditNoteq.CreditNoteLine)
-                        {
-                            account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
-
-                            _je.JournalEntryLines.Add(new JournalEntryLine
-                            {
-                                AccountId = Convert.ToInt32(item.AccountId),
-                                AccountName = account.AccountName,
-                                Description = account.AccountName,
-                                Credit = item.Total,
-                                Debit = 0,
-                                CreatedDate = DateTime.Now,
-                                ModifiedDate = DateTime.Now,
-                                CreatedUser = _CreditNoteq.UsuarioCreacion,
-                                ModifiedUser = _CreditNoteq.UsuarioModificacion,
-                                Memo = "Nota de débito",
-                            });
-
-                        }
-
-                        _context.JournalEntry.Add(_je);
-
-                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-
-                        await _context.SaveChangesAsync();*/
+                        
 
                         BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
                         {
