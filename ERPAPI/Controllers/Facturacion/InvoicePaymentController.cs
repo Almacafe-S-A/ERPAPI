@@ -276,13 +276,8 @@ namespace ERPAPI.Controllers
                         _InvoicePaymentsq = _InvoicePayments;
                         _InvoicePaymentsq.UsuarioCreacion= User.Identity.Name;
                         _InvoicePaymentsq.FechaCreacion = DateTime.Now;                    
-                        _InvoicePaymentsq.Estado = "Activo";
+                        _InvoicePaymentsq.Estado = "En Revisión";
                         _InvoicePaymentsq.EstadoId = 1;
-                        
-
-                        
-
-
                         Numalet let;
                         let = new Numalet();
                         let.SeparadorDecimalSalida = "Lempiras";
@@ -295,11 +290,11 @@ namespace ERPAPI.Controllers
 
                         JournalEntry asiento = resppuesta.Result.Value as JournalEntry;
 
-                        _InvoicePaymentsq.NoDocumentos = String.Join(", ", _InvoicePaymentsq.InvoicePaymentsLines.DistinctBy(d => d.InvoivceId).Select(s => s.NoDocumento)); 
-                            
+                                                  
 
 
                         _InvoicePaymentsq.JournalId = asiento.JournalEntryId;
+                        _InvoicePaymentsq.NoDocumentos = String.Join(", ", _InvoicePaymentsq.InvoicePaymentsLines.DistinctBy(d => d.InvoivceId).Select(s => s.NoDocumento));
 
 
                         _context.InvoicePayments.Add(_InvoicePaymentsq);
@@ -310,8 +305,40 @@ namespace ERPAPI.Controllers
                         await _context.SaveChangesAsync();
 
 
+                        _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
+                        {
+                            Credito = _InvoicePaymentsq.MontoPagado,
+                            Fecha = DateTime.Now,
+                            CustomerName = _InvoicePaymentsq.CustomerName,
+                            CustomerId = _InvoicePaymentsq.CustomerId,
+                            Debito = 0,
+                            Sinopsis = "Comprobante de Ingresos",
+                            InvoiceId = null,
+                            NoDocumento = _InvoicePaymentsq.Id.ToString(),
+                        });
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
+                        await _context.SaveChangesAsync();
 
+                        foreach (var item in _InvoicePaymentsq.InvoicePaymentsLines)
+                        {
+                            if (item.SubProductId == null)
+                            {
+                                Invoice invoice = _context.Invoice.Where(q => q.NumeroDEI == item.NoDocumento ).FirstOrDefault();
+                                invoice.SaldoImpuesto = invoice.SaldoImpuesto - item.MontoPagado;
+                                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                                await _context.SaveChangesAsync();
+                                continue;
+
+                            }
+                            InvoiceLine invoiceLine = _context.InvoiceLine.Where(q => q.Invoice.NumeroDEI == item.NoDocumento && item.SubProductId == q.SubProductId ).FirstOrDefault();
+                            invoiceLine.Saldo = invoiceLine.Saldo - item.MontoPagado;
+                            invoiceLine.Invoice.Saldo = invoiceLine.Invoice.Saldo - item.MontoPagado;
+                            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                            await _context.SaveChangesAsync();
+                        }
+
+                       
                         transaction.Commit();
                     }
                     catch (Exception ex)

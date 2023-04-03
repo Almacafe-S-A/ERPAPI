@@ -266,19 +266,43 @@ namespace ERPAPI.Controllers
 
                     var alerta = await GeneraAlerta(factura);
 
-                    JournalEntry asiento = GeneraAsientoFactura(factura).Result.Value;
+                    JournalEntry asiento;
+
+                    var resppuesta = GeneraAsientoFactura(factura).Result.Value;
+
+                    asiento = resppuesta as JournalEntry;
+
+                    factura.JournalEntryId = asiento.JournalEntryId;
 
 
-
-                    
+                    factura.Saldo = factura.SubTotal;
+                    factura.SaldoImpuesto = factura.Tax;
+                    foreach (var item in factura.InvoiceLine)
+                    {
+                        item.Saldo = item.SubTotal;
+                    }
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
 
-                    factura.JournalEntryId= asiento.JournalEntryId;
+                    _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
+                    {
+                        Credito = 0,
+                        Fecha = DateTime.Now,
+                        CustomerName = factura.CustomerName,
+                        Debito = factura.Total,
+                        Sinopsis = factura.Sinopsis,
+                        InvoiceId = factura.InvoiceId,
+                        NoDocumento = factura.NumeroDEI,
+                        CustomerId = factura.CustomerId,
+
+
+                    });
+
+                   
                     factura.FechaModificacion = DateTime.Now;
-                    factura.Saldo = factura.Total;
+                    //factura.Saldo = factura.Total;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -662,15 +686,8 @@ namespace ERPAPI.Controllers
             }
             
 
-
-
-
-            //new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
             
-            // await _context.SaveChangesAsync();
-
-            
-            return Ok(partida);
+            return partida;
         }
 
         /// <summary>
