@@ -35,7 +35,7 @@ namespace ERPAPI.Models
 
         public string Observaciones { get; set; }
 
-        
+        public string Sinopsis { get; set; }
 
 
         public string Referrencia { get; set; }
