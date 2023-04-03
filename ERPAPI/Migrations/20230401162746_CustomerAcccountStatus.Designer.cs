@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230401162746_CustomerAcccountStatus")]
+    partial class CustomerAcccountStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3101,6 +3103,8 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CreditNoteTypeId");
+
                     b.Property<decimal>("Credito");
 
                     b.Property<long>("CustomerId");
@@ -3109,17 +3113,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Debito");
 
-                    b.Property<DateTime>("Fecha");
-
                     b.Property<int?>("InvoiceId");
 
-                    b.Property<int?>("InvoicePaymentId");
-
-                    b.Property<string>("NoDocumento");
+                    b.Property<int>("InvoicePaymentId");
 
                     b.Property<decimal>("Saldo");
-
-                    b.Property<string>("Sinopsis");
 
                     b.HasKey("Id");
 
@@ -7160,8 +7158,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("SalesTypeId");
 
                     b.Property<int>("ShipmentId");
-
-                    b.Property<string>("Sinopsis");
 
                     b.Property<decimal>("SubTotal");
 
@@ -12157,7 +12153,8 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.InvoicePayments", "InvoicePayments")
                         .WithMany()
-                        .HasForeignKey("InvoicePaymentId");
+                        .HasForeignKey("InvoicePaymentId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerArea", b =>

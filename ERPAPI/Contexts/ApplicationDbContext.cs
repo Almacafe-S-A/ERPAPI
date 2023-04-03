@@ -156,6 +156,10 @@ namespace ERP.Contexts
 
         public DbSet<InvoicePaymentsLine> InvoicePaymentsLine { get; set; }
 
+
+
+        public DbSet<CustomerAcccountStatus> CustomerAcccountStatus { get; set; }
+
         public DbSet<EmployeeExtraHours> EmployeeExtraHours { get; set; }
         public DbSet<EmployeeExtraHoursDetail> EmployeeExtraHoursDetail { get; set; }
         public DbSet<ScheduleSubservices> ScheduleSubservices { get; set; }

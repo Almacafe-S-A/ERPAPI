@@ -41,6 +41,9 @@ namespace ERPAPI.Models
         [Display(Name = "Caja")]
         public string Caja { get; set; }
 
+
+        public string Sinopsis { get; set; }
+
         [Display(Name = "Numero de Factura")]
         public string TipoDocumento { get; set; }
 
