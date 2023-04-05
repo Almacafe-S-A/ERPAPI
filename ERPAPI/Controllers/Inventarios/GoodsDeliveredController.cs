@@ -242,7 +242,7 @@ namespace ERPAPI.Controllers
 
 
                 });
-                ARL.SaldoProducto = ARL.SaldoProducto - item.Quantity;
+                ARL.Saldo = ARL.Saldo - item.Quantity;
 
                 List<CertificadoLine> cdls = _context.CertificadoLine.Where(q => q.PdaNo == ARL.Pda &&q.IdCD == ARL.NoCertificadoDeposito)
                     .ToList();
