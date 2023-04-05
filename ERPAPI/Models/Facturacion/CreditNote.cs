@@ -25,12 +25,7 @@ namespace ERPAPI.Models
        
         [Display(Name = "Fecha de nota de crédito")]
         public DateTime CreditNoteDate { get; set; }
-        [Display(Name = "Fecha de vencimiento")]
-        public DateTime CreditNoteDueDate { get; set; }
-
-        [Display(Name = "Fecha de vencimiento")]
-        public DateTime ExpirationDate { get; set; }
-        [Display(Name = "Tipo de Factura")]
+        
         public int CreditNoteTypeId { get; set; }
 
         [Display(Name = "Factura Asociada")]
@@ -107,8 +102,7 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Producto")]
         public string ProductName { get; set; }
 
-        public DateTime OrderDate { get; set; }
-        public DateTime DeliveryDate { get; set; }
+      
 
         [Display(Name = "Moneda")]
         public int CurrencyId { get; set; }

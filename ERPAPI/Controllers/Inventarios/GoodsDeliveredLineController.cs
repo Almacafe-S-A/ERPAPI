@@ -135,7 +135,7 @@ namespace ERPAPI.Controllers
                                     new GoodsDeliveredLine
                                     {
                                         SubProductId = (long)line.Key.SubProductId,
-                                        QuantityAuthorized = line.Sum(s => s.SaldoProducto),                 
+                                        QuantityAuthorized = line.Sum(s => s.Quantity),                 
                                         Quantity = 0,
                                         Description = line.Key.SubProductName,
                                         SubProductName = line.Key.SubProductName,

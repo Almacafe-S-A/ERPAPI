@@ -158,6 +158,8 @@ namespace ERPAPI.Controllers
             autorizacion.UsuarioModificacion = User.Identity.Name;
             autorizacion.FechaModificacion = DateTime.Now;
             autorizacion.UsuarioAprobacion = User.Identity.Name;
+            
+
 
             Numalet let;
             let = new Numalet();
@@ -165,8 +167,13 @@ namespace ERPAPI.Controllers
                 .FirstOrDefault().UnitOfMeasureName;
             let.MascaraSalidaDecimal = "00/100 ";
             let.ApocoparUnoParteEntera = true;
-            autorizacion.TotalUnidadesLetras = let.ToCustomCardinal((autorizacion.TotalAutorizado))
+            autorizacion.TotalUnidadesLetras = let.ToCustomCardinal((autorizacion.TotalCantidad))
                 .ToUpper();
+
+            foreach (var item in autorizacion.GoodsDeliveryAuthorizationLine)
+            {
+                item.Saldo = item.Quantity;
+            }
             await _context.SaveChangesAsync();
 
             return autorizacion;
