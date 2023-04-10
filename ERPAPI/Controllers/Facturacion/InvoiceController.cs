@@ -244,9 +244,22 @@ namespace ERPAPI.Controllers
                     Periodo periodo = new Periodo();
                     periodo = periodo.PeriodoActivo(_context);
 
-                    factura = await _context.Invoice.Include(i => i.InvoiceLine).Where(q => q.InvoiceId == InvoiceId).FirstOrDefaultAsync();
+                    factura = await _context.Invoice
+                        .Include(i => i.InvoiceLine)
+                        .Where(q => q.InvoiceId == InvoiceId)
+                        .FirstOrDefaultAsync();
 
+                    Customer customer = _context.Customer
+                        .Where(q => q.CustomerId == factura.CustomerId)
+                        .FirstOrDefault();
 
+                    if (customer != null && customer.Exonerado == true  )
+                    {
+                        if (factura.NoConstanciadeRegistro == String.Empty || factura.NoOCExenta == String.Empty)
+                        {
+                            throw new Exception("Para generar la factura debe ingresar el numero de Compra excenta y Constancia de registro");
+                        }
+                    }
 
                     NumeracionSAR numeracionSAR = new NumeracionSAR();
                     numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(1, _context);
@@ -497,67 +510,64 @@ namespace ERPAPI.Controllers
             Alert _alert = new Alert();
             try
             {
-                using (var transaction = _context.Database.BeginTransaction())
+                try
                 {
-                    try
+                    _elemento = await _context.ElementoConfiguracion.Where(q => q.Id == 76).FirstOrDefaultAsync();
+                    if (_elemento != null)
                     {
-                        _elemento = await _context.ElementoConfiguracion.Where(q => q.Id == 76).FirstOrDefaultAsync();
-                        if (_elemento != null)
-                        {
-                            return BadRequest("No se encontro configuracion para generar alerta en el elemeento configuracion  76");
-                        }
-
-                        if (_invoice.Total < Convert.ToDecimal(_elemento.Valordecimal))
-                        {
-                            return Ok("No se genero Alerta");
-                        }
-
-                        //se agrega la alerta
-                        
-                        _alert.DocumentId = _invoice.InvoiceId;
-                        _alert.DocumentName = "FACTURA";
-                        _alert.AlertName = "Sancionados";
-                        _alert.Code = "PERSON004";
-                        _alert.ActionTakenId = 0;
-                        _alert.ActionTakenName = "";
-                        _alert.IdEstado = 0;
-                        _alert.SujetaARos = false;
-                        _alert.FalsoPositivo = false;
-                        _alert.CloseDate = DateTime.MinValue;
-                        _alert.DescriptionAlert = _invoice.InvoiceId.ToString() + " / " + _invoice.CustomerName + " / " + _invoice.Total.ToString();
-                        _alert.FechaCreacion = DateTime.Now;
-                        _alert.FechaModificacion = DateTime.Now;
-                        _alert.UsuarioCreacion = _invoice.UsuarioCreacion;
-                        _alert.UsuarioModificacion = _invoice.UsuarioModificacion;
-                        _alert.PersonName = _invoice.CustomerName;
-                        _alert.Description = $"Factura {_invoice.InvoiceName}";
-                        _alert.DescriptionAlert = $"Factura {_invoice.InvoiceName}";
-                        _alert.Type = "170";
-                        _alert.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 170).FirstOrDefault().Nombre;
-                        _context.Alert.Add(_alert);
-
-                        //se agrega la informacion a la tabla InvoiceTransReport
-                        InvoiceTransReport _report = new InvoiceTransReport();
-                        _report.Amount = _invoice.Total;
-                        _report.CustomerId = _invoice.CustomerId;
-                        _report.InvoiceDate = _invoice.InvoiceDate;
-                        _report.FechaCreacion = DateTime.Now;
-                        _report.FechaModificacion = DateTime.Now;
-                        _report.UsuarioCreacion = _invoice.UsuarioCreacion;
-                        _report.UsuarioModificacion = _invoice.UsuarioModificacion;
-                        _context.InvoiceTransReport.Add(_report);
-
-                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-                        await _context.SaveChangesAsync();                        
-
-                        transaction.Commit();
+                        return BadRequest("No se encontro configuracion para generar alerta en el elemeento configuracion  76");
                     }
-                    catch (Exception ex)
+
+                    if (_invoice.Total < Convert.ToDecimal(_elemento.Valordecimal))
                     {
-                        transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        throw ex;
+                        return Ok("No se genero Alerta");
                     }
+
+                    //se agrega la alerta
+
+                    _alert.DocumentId = _invoice.InvoiceId;
+                    _alert.DocumentName = "FACTURA";
+                    _alert.AlertName = "Sancionados";
+                    _alert.Code = "PERSON004";
+                    _alert.ActionTakenId = 0;
+                    _alert.ActionTakenName = "";
+                    _alert.IdEstado = 0;
+                    _alert.SujetaARos = false;
+                    _alert.FalsoPositivo = false;
+                    _alert.CloseDate = DateTime.MinValue;
+                    _alert.DescriptionAlert = _invoice.InvoiceId.ToString() + " / " + _invoice.CustomerName + " / " + _invoice.Total.ToString();
+                    _alert.FechaCreacion = DateTime.Now;
+                    _alert.FechaModificacion = DateTime.Now;
+                    _alert.UsuarioCreacion = _invoice.UsuarioCreacion;
+                    _alert.UsuarioModificacion = _invoice.UsuarioModificacion;
+                    _alert.PersonName = _invoice.CustomerName;
+                    _alert.Description = $"Factura {_invoice.InvoiceName}";
+                    _alert.DescriptionAlert = $"Factura {_invoice.InvoiceName}";
+                    _alert.Type = "170";
+                    _alert.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 170).FirstOrDefault().Nombre;
+                    _context.Alert.Add(_alert);
+
+                    //se agrega la informacion a la tabla InvoiceTransReport
+                    InvoiceTransReport _report = new InvoiceTransReport();
+                    _report.Amount = _invoice.Total;
+                    _report.CustomerId = _invoice.CustomerId;
+                    _report.InvoiceDate = _invoice.InvoiceDate;
+                    _report.FechaCreacion = DateTime.Now;
+                    _report.FechaModificacion = DateTime.Now;
+                    _report.UsuarioCreacion = _invoice.UsuarioCreacion;
+                    _report.UsuarioModificacion = _invoice.UsuarioModificacion;
+                    _context.InvoiceTransReport.Add(_report);
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                    await _context.SaveChangesAsync();
+
+                   // transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    //transaction.Rollback();
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    throw ex;
                 }
             }
             catch (Exception ex)
