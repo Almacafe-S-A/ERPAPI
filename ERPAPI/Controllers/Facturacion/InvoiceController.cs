@@ -453,8 +453,11 @@ namespace ERPAPI.Controllers
 
                            )
                            .LastOrDefaultAsync();
+                        if (customerArea !=null)
+                        {
 
                         customerArea.InvoiceId= _Invoiceq.InvoiceId;
+                        }
 
 
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
