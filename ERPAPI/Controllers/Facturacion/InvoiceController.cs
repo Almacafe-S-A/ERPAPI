@@ -277,7 +277,7 @@ namespace ERPAPI.Controllers
 
                     _context.NumeracionSAR.Update(numeracionSAR);
 
-                    var alerta = await GeneraAlerta(factura);
+                    //var alerta = await GeneraAlerta(factura);
 
                     JournalEntry asiento;
 
