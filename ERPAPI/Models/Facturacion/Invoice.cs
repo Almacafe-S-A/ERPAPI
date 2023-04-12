@@ -25,6 +25,8 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Factura")]
         public DateTime InvoiceDate { get; set; }
 
+        public bool Exonerado { get; set; }
+
         public int DiasVencimiento { get; set; }
 
         [Display(Name = "Fecha de vencimiento")]

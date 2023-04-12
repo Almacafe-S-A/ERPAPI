@@ -139,6 +139,8 @@ namespace ERPAPI.Controllers
                     {
 
                         _SubServicesWareHouseq = _SubServicesWareHouse;
+                        _SubServicesWareHouseq.UsuarioCreacion = User.Identity.Name;
+                        _SubServicesWareHouseq.FechaCreacion = DateTime.Now;
                         _context.SubServicesWareHouse.Add(_SubServicesWareHouseq);
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
@@ -203,6 +205,8 @@ namespace ERPAPI.Controllers
                                                         select c
                              ).FirstOrDefaultAsync();
 
+                        _SubServicesWareHouse.FechaCreacion= _SubServicesWareHouseq.FechaCreacion;
+                        _SubServicesWareHouse.UsuarioCreacion= _SubServicesWareHouseq.UsuarioCreacion;
                         _context.Entry(_SubServicesWareHouseq).CurrentValues.SetValues((_SubServicesWareHouse));
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA

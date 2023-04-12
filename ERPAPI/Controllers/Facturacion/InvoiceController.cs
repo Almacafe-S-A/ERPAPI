@@ -286,8 +286,6 @@ namespace ERPAPI.Controllers
                     asiento = resppuesta as JournalEntry;
 
                     factura.JournalEntryId = asiento.JournalEntryId;
-
-
                     factura.Saldo = factura.SubTotal;
                     factura.SaldoImpuesto = factura.Tax;
                     foreach (var item in factura.InvoiceLine)
@@ -309,13 +307,10 @@ namespace ERPAPI.Controllers
                         InvoiceId = factura.InvoiceId,
                         NoDocumento = factura.NumeroDEI,
                         CustomerId = factura.CustomerId,
-
-
                     });
 
                    
                     factura.FechaModificacion = DateTime.Now;
-                    //factura.Saldo = factura.Total;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -378,6 +373,13 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        if (_Invoice.Exonerado )
+                        {
+                            if (_Invoice.NoOCExenta == String.Empty || _Invoice.NoConstanciadeRegistro == String.Empty)
+                            {
+                                throw new Exception("Numero de OC y No contancia son requeridos para clientes exonerados");
+                            }
+                        }
 
                         _Invoiceq = _Invoice;
                         _Invoiceq.UsuarioCreacion= User.Identity.Name;
@@ -455,6 +457,7 @@ namespace ERPAPI.Controllers
                         foreach (var item in subServicesWareHouses)
                         {
                             item.InvoiceId = _Invoiceq.InvoiceId;
+                            item.Estado = "Facturado";
                         }
 
                         CustomerArea customerArea = await _context.CustomerArea
@@ -470,6 +473,8 @@ namespace ERPAPI.Controllers
                         {
 
                         customerArea.InvoiceId= _Invoiceq.InvoiceId;
+                            customerArea.Cerrado = true;
+                            
                         }
 
 
@@ -588,6 +593,15 @@ namespace ERPAPI.Controllers
         /// <exception cref="Exception"></exception>
         public async Task<ActionResult<JournalEntry>> GeneraAsientoFactura(Invoice factura) {
             JournalEntry partida = new JournalEntry();
+            ///Impuesto 
+            ///
+            Tax tax = new Tax();
+            tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
+
+            if (tax.CuentaContablePorCobrarId == null || tax.CuentaContableIngresosId == null)
+            {
+                throw new Exception("No se han configurado las cuentas contables para el ISV");
+            }
             try
             {
                 Periodo periodo = new Periodo();
@@ -621,10 +635,7 @@ namespace ERPAPI.Controllers
 
 
 
-                ///Impuesto 
-                ///
-                Tax tax = new Tax();
-                tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
+                
 
                 partida.JournalEntryLines.Add(new JournalEntryLine
                 {
@@ -692,7 +703,7 @@ namespace ERPAPI.Controllers
 
                 _context.JournalEntry.Add(partida);
             }
-            catch (Exception)
+            catch (Exception )
             {
                 
                 throw new Exception("Falta la configuracion contable en los subservicios utilizados");
