@@ -285,12 +285,8 @@ namespace ERPAPI.Controllers
                 {
                     flag = true;
                 }
-                var VariableDebitNote = _context.DebitNote.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                                    .FirstOrDefault();
-                if (VariableDebitNote == null)
-                {
-                    flag = true;
-                }
+               
+               
                 var VariableEmployees = _context.Employees.Where(a => a.IdCurrency == _Currency.CurrencyId)
                                                     .FirstOrDefault();
                 if (VariableEmployees == null)

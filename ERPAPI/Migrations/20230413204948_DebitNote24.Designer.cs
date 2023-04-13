@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230413204948_DebitNote24")]
+    partial class DebitNote24
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3746,14 +3748,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Correo");
 
-                    b.Property<long?>("CuentaContableDebitoId");
-
-                    b.Property<string>("CuentaContableDebitoNombre");
-
-                    b.Property<long?>("CuentaContableIngresosId");
-
-                    b.Property<string>("CuentaContableIngresosNombre");
-
                     b.Property<int>("CustomerId");
 
                     b.Property<string>("CustomerName");
@@ -3829,10 +3823,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("DebitNoteId");
-
-                    b.HasIndex("CuentaContableDebitoId");
-
-                    b.HasIndex("CuentaContableIngresosId");
 
                     b.HasIndex("InvoiceId");
 
@@ -12205,14 +12195,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.DebitNote", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaContableDebito")
-                        .WithMany()
-                        .HasForeignKey("CuentaContableDebitoId");
-
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaContableIngresos")
-                        .WithMany()
-                        .HasForeignKey("CuentaContableIngresosId");
-
                     b.HasOne("ERPAPI.Models.Invoice", "Invoice")
                         .WithMany()
                         .HasForeignKey("InvoiceId");
