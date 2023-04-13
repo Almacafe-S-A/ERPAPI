@@ -159,19 +159,7 @@ namespace ERPAPI.Controllers
                                                      .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
 
 
-                            if (IdCai == 0)
-                            {
-                                return BadRequest("No existe un CAI activo para el punto de emisión");
-                            }
-
-                            _DebitNoteq.Sucursal = await _context.Branch.Where(q => q.BranchId == _DebitNote.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
-                            _DebitNoteq.FechaLimiteEmision = await _context.NumeracionSAR
-                                                     .Where(q => q.BranchId == _DebitNoteq.BranchId)
-                                                     .Where(q => q.IdCAI == IdCai)
-                                                     .Where(q => q.IdPuntoEmision == _DebitNoteq.IdPuntoEmision)
-                                                     .Where(q => q.Estado == "Activo").Select(q => q.FechaLimite).FirstOrDefaultAsync();
-                            //  _DebitNoteq.Caja = await _context.PuntoEmision.Where(q=>q.IdPuntoEmision== _Invoice.IdPuntoEmision).Select(q => q.PuntoEmisionCod).FirstOrDefaultAsync();
-                            _DebitNoteq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+                            
                         }
                         Numalet let;
                         let = new Numalet();
@@ -198,7 +186,7 @@ namespace ERPAPI.Controllers
                         {
                             Date = _DebitNoteq.DebitNoteDate,
                             Memo = "Nota de débito de clientes",
-                            DatePosted = _DebitNoteq.DebitNoteDueDate,
+                            DatePosted = _DebitNoteq.DebitNoteDate,
                             ModifiedDate = DateTime.Now,
                             CreatedDate = DateTime.Now,
                             ModifiedUser = _DebitNoteq.UsuarioModificacion,
@@ -210,26 +198,26 @@ namespace ERPAPI.Controllers
                         Accounting account = new Accounting();
 
 
-                        foreach (var item in _DebitNoteq.DebitNoteLine)
-                        {
-                            account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
+                        //foreach (var item in _DebitNoteq.DebitNoteLine)
+                        //{
+                        //    account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
 
-                            _je.JournalEntryLines.Add(new JournalEntryLine
-                            {
-                                AccountId = Convert.ToInt32(item.AccountId),
-                                AccountName = account.AccountName,
-                                Description = account.AccountName,
-                                Credit = item.Total,
-                                Debit = 0,
-                                CreatedDate = DateTime.Now,
-                                ModifiedDate = DateTime.Now,
-                                CreatedUser = _DebitNoteq.UsuarioCreacion,
-                                ModifiedUser = _DebitNoteq.UsuarioModificacion,
-                                Memo = "Nota de débito",
-                            });
+                        //    _je.JournalEntryLines.Add(new JournalEntryLine
+                        //    {
+                        //        AccountId = Convert.ToInt32(item.AccountId),
+                        //        AccountName = account.AccountName,
+                        //        Description = account.AccountName,
+                        //        Credit = item.Total,
+                        //        Debit = 0,
+                        //        CreatedDate = DateTime.Now,
+                        //        ModifiedDate = DateTime.Now,
+                        //        CreatedUser = _DebitNoteq.UsuarioCreacion,
+                        //        ModifiedUser = _DebitNoteq.UsuarioModificacion,
+                        //        Memo = "Nota de débito",
+                        //    });
 
-                        }
-                        _context.JournalEntry.Add(_je);
+                        //}
+                        //_context.JournalEntry.Add(_je);
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
