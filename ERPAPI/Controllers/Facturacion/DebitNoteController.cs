@@ -166,7 +166,7 @@ namespace ERPAPI.Controllers
                         let.SeparadorDecimalSalida = "Lempiras";
                         let.MascaraSalidaDecimal = "00/100 ";
                         let.ApocoparUnoParteEntera = true;
-                        _DebitNoteq.TotalLetras = let.ToCustomCardinal((_DebitNoteq.Total)).ToUpper();
+                        _DebitNoteq.TotalLetras = let.ToCustomCardinal((_DebitNoteq.Amount)).ToUpper();
 
                         _DebitNoteq = _DebitNote;
                         _context.DebitNote.Add(_DebitNoteq);
