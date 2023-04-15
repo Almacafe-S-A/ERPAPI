@@ -1311,6 +1311,11 @@ namespace ERPAPI.Controllers
                     default:
                         break;
                 }
+                cuentaPresupuestada.TotalMontoEjecucion = (cuentaPresupuestada.EjecucionEnero + cuentaPresupuestada.EjecucionFebrero +
+                           cuentaPresupuestada.EjecucionMarzo + cuentaPresupuestada.EjecucionAbril + cuentaPresupuestada.EjecucionMayo +
+                           cuentaPresupuestada.EjecucionJunio + cuentaPresupuestada.EjecucionJulio + cuentaPresupuestada.EjecucionAgosto +
+                          cuentaPresupuestada.EjecucionSeptiembre + cuentaPresupuestada.EjecucionOctubre + cuentaPresupuestada.EjecucionNoviembre +
+                          cuentaPresupuestada.EjecucionDiciembre);
             }
 
             proceso.FechaCierre = DateTime.Now;
