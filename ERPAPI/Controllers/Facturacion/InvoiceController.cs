@@ -228,6 +228,8 @@ namespace ERPAPI.Controllers
         }
 
 
+
+
         /// <summary>
         /// Obtiene los Datos de la Invoice por medio del Id enviado.
         /// </summary>
@@ -246,6 +248,7 @@ namespace ERPAPI.Controllers
 
                     factura = await _context.Invoice
                         .Include(i => i.InvoiceLine)
+                        .Include(i => i.accountManagement)
                         .Where(q => q.InvoiceId == InvoiceId)
                         .FirstOrDefaultAsync();
 
@@ -279,11 +282,33 @@ namespace ERPAPI.Controllers
 
                     //var alerta = await GeneraAlerta(factura);
 
-                    JournalEntry asiento;
+                    JournalEntry asiento = new JournalEntry();
 
-                    var resppuesta = GeneraAsientoFactura(factura).Result.Value;
 
-                    asiento = resppuesta as JournalEntry;
+                    if (factura.SalesTypeId == 2)
+                    {
+                        _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
+                        {
+                            Credito = 0,
+                            Fecha = DateTime.Now,
+                            CustomerName = factura.CustomerName,
+                            Debito = factura.Total,
+                            Sinopsis = factura.Sinopsis,
+                            InvoiceId = factura.InvoiceId,
+                            NoDocumento = factura.NumeroDEI,
+                            CustomerId = factura.CustomerId,
+                        });
+
+                        asiento = GeneraAsientoPorCobrarFactura(factura).Result.Value;
+                    }
+                    else
+                    {
+                        asiento = GeneraAsientoContadoFactura(factura).Result.Value;
+                    }
+
+                    
+
+                    
 
                     factura.JournalEntryId = asiento.JournalEntryId;
                     factura.Saldo = factura.SubTotal;
@@ -297,17 +322,8 @@ namespace ERPAPI.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
-                    {
-                        Credito = 0,
-                        Fecha = DateTime.Now,
-                        CustomerName = factura.CustomerName,
-                        Debito = factura.Total,
-                        Sinopsis = factura.Sinopsis,
-                        InvoiceId = factura.InvoiceId,
-                        NoDocumento = factura.NumeroDEI,
-                        CustomerId = factura.CustomerId,
-                    });
+
+                    
 
                    
                     factura.FechaModificacion = DateTime.Now;
@@ -585,13 +601,151 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_alert));
         }
 
+
+        
+
+
         /// <summary>
         /// Genera el asiento de la factura
         /// </summary>
         /// <param name="factura"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<ActionResult<JournalEntry>> GeneraAsientoFactura(Invoice factura) {
+        public async Task<ActionResult<JournalEntry>> GeneraAsientoContadoFactura(Invoice factura)
+        {
+            JournalEntry partida = new JournalEntry();
+            ///Impuesto 
+            ///
+            Tax tax = new Tax();
+            tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
+
+            if (tax.CuentaContablePorCobrarId == null || tax.CuentaContableIngresosId == null)
+            {
+                throw new Exception("No se han configurado las cuentas contables para el ISV");
+            }
+            try
+            {
+                Periodo periodo = new Periodo();
+                periodo = periodo.PeriodoActivo(_context);
+
+                partida = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    DatePosted = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    CreatedDate = DateTime.Now,
+                    EstadoId = 5,
+                    EstadoName = "Enviada a Aprobación",
+                    PeriodoId = periodo.Id,
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento Diario",
+                    JournalEntryLines = new List<JournalEntryLine>(),
+                    Memo = $"Factura #{factura.NumeroDEI} a Cliente {factura.CustomerName} por concepto de {factura.ProductName}",
+                    Periodo = periodo.Anio.ToString(),
+                    Posted = false,
+                    TotalCredit = 0,
+                    TotalDebit = 0,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+
+
+
+
+                };
+
+                partida.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = (long)tax.CuentaContableIngresosId,
+                    AccountName = tax.CuentaContableIngresosNombre,
+                    CostCenterId = 1,
+                    CostCenterName = "San Pedro Sula",
+                    Debit = 0,
+                    Credit = factura.Tax,
+                    CreatedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    ModifiedDate = DateTime.Now,
+
+
+
+                });
+
+
+                foreach (var item in factura.InvoiceLine)
+                {
+                    ProductRelation relation = new ProductRelation();
+                    relation = _context.ProductRelation.Where(x =>
+                    x.ProductId == factura.ProductId
+                    && x.SubProductId == item.SubProductId
+                    )
+                        .FirstOrDefault();
+                    
+
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (int)relation.CuentaContableIngresosId,
+                        AccountName = relation.CuentaContablePorCobrarNombre,
+                        CostCenterId = 1,
+                        CostCenterName = "San Pedro Sula",
+                        Debit = 0,
+                        Credit = item.Amount - item.DiscountAmount,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+
+
+
+                    });
+                }
+
+                Accounting accounting = _context.Accounting.Where(q => q.AccountId == factura.accountManagement.AccountId).FirstOrDefault();
+
+                partida.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = accounting.AccountId,
+                    AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
+                    CostCenterId = 1,
+                    CostCenterName = "San Pedro Sula",
+                    Debit = factura.Total,
+                    Credit = 0,
+                    CreatedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    ModifiedDate = DateTime.Now,
+
+
+
+                });
+
+
+
+                partida.TotalCredit = partida.JournalEntryLines.Sum(s => s.Credit);
+                partida.TotalDebit = partida.JournalEntryLines.Sum(s => s.Debit);
+
+                partida.JournalEntryLines = partida.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+
+                _context.JournalEntry.Add(partida);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Falta la configuracion contable en los subservicios utilizados");
+            }
+
+
+
+            return partida;
+        }
+
+        /// <summary>
+        /// Genera el asiento de la factura
+        /// </summary>
+        /// <param name="factura"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<ActionResult<JournalEntry>> GeneraAsientoPorCobrarFactura(Invoice factura) {
             JournalEntry partida = new JournalEntry();
             ///Impuesto 
             ///
