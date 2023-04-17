@@ -137,7 +137,7 @@ namespace ERPAPI.Controllers
                     periodo = periodo.PeriodoActivo(_context);
 
                     debitnote = await _context.DebitNote
-                        //.Include(i => i.InvoiceLine)
+                        .Include(i => i.accountManagement)
                         .Where(q => q.DebitNoteId == Id)
                         .FirstOrDefaultAsync();
 
@@ -147,7 +147,7 @@ namespace ERPAPI.Controllers
 
                     
                     NumeracionSAR numeracionSAR = new NumeracionSAR();
-                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(7, _context);
+                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(9, _context);
 
                     debitnote.NumeroDEI = numeracionSAR.GetCorrelativo();
                     debitnote.RangoAutorizado = numeracionSAR.getRango();
@@ -250,33 +250,51 @@ namespace ERPAPI.Controllers
                     TotalDebit = 0,
                     ModifiedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
-
+                    VoucherType = 4,
 
 
 
                 };
 
-
-
-
-
-
-                partida.JournalEntryLines.Add(new JournalEntryLine
+                if (debitnote.SalesTypeId == 2)
                 {
-                    AccountId = (long)debitnote.CuentaContableIngresosId,
-                    AccountName = debitnote.CuentaContableIngresosNombre,
-                    CostCenterId = 1,
-                    CostCenterName = "San Pedro Sula",
-                    Debit = debitnote.Amount,
-                    Credit = 0,
-                    CreatedDate = DateTime.Now,
-                    CreatedUser = User.Identity.Name,
-                    ModifiedUser = User.Identity.Name,
-                    ModifiedDate = DateTime.Now,
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (long)debitnote.CuentaContableIngresosId,
+                        AccountName = debitnote.CuentaContableIngresosNombre,
+                        CostCenterId = 1,
+                        CostCenterName = "San Pedro Sula",
+                        Debit = debitnote.Amount,
+                        Credit = 0,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+                    });
+                }
+                else
+                {
+                    Accounting accounting = _context.Accounting
+                        .Where(q => q.AccountId == debitnote.accountManagement.AccountId)
+                        .FirstOrDefault();
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = accounting.AccountId,
+                        AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
+                        CostCenterId = 1,
+                        CostCenterName = "San Pedro Sula",
+                        Debit = debitnote.Amount,
+                        Credit = 0,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
 
 
 
-                });
+                    });
+                }
+               
 
                 partida.JournalEntryLines.Add(new JournalEntryLine
                 {
@@ -333,6 +351,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _DebitNoteq = _DebitNote;
+                        _DebitNoteq.Estado = "Borrador";
 
                         Numalet let;
                         let = new Numalet();
@@ -350,25 +369,6 @@ namespace ERPAPI.Controllers
                             _context.DebitNoteLine.Add(item);
                         }
 
-                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-
-                        await _context.SaveChangesAsync();
-
-                        JournalEntry _je = new JournalEntry
-                        {
-                            Date = _DebitNoteq.DebitNoteDate,
-                            Memo = "Nota de débito de clientes",
-                            DatePosted = _DebitNoteq.DebitNoteDate,
-                            ModifiedDate = DateTime.Now,
-                            CreatedDate = DateTime.Now,
-                            ModifiedUser = _DebitNoteq.UsuarioModificacion,
-                            CreatedUser = _DebitNoteq.UsuarioCreacion,
-                            DocumentId = _DebitNoteq.DebitNoteId,
-                            VoucherType = 4,
-                    };
-
-                        
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
