@@ -11,11 +11,17 @@ namespace ERPAPI.Models
     {
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 DebitNoteId { get; set; }       
+        public Int64 DebitNoteId { get; set; }
         public string DebitNoteName { get; set; }
-        
+
         [Display(Name = "Fiscal")]
         public bool Fiscal { get; set; }
+
+        public Int64? JournalEntryId { get; set; }
+        [ForeignKey("JournalEntryId")]
+        public JournalEntry JournalEntry { get; set; }
+
+        public decimal Saldo { get; set; }
 
         public string Descripcion { get; set; }
 
@@ -46,13 +52,24 @@ namespace ERPAPI.Models
         [ForeignKey("CuentaContableDebitoId")]
         public Accounting CuentaContableDebito { get; set; }
 
+        public string RangoAutorizado { get; set; }
+
+        public Int64? CuentaBancariaId { get; set; }
+        [ForeignKey("CuentaBancariaId ")]
+        public AccountManagement accountManagement { get; set; }
+
+        public Int64 Bank { get; set; }
+
+        public string BankName { get; set; }
+
+        public string CuentaBancaria { get; set; }
 
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
 
 
         [Display(Name = "Número de Factura")]
-        public int NúmeroDEI { get; set; }
+        public string NumeroDEI { get; set; }
 
         [Display(Name = "Número de inicio")]
         public string NoInicio { get; set; }
@@ -94,7 +111,10 @@ namespace ERPAPI.Models
         public string BranchName { get; set; }
 
         [Display(Name = "Customer")]
-        public int CustomerId { get; set; }
+        public Int64 CustomerId { get; set; }
+        
+        [ForeignKey("CustomerId")]
+        public Customer Customer { get; set; }
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
