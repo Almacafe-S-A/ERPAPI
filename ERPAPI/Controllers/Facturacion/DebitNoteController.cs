@@ -120,6 +120,202 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene los Datos de la Invoice por medio del Id enviado.
+        /// </summary>
+        /// <param name="InvoiceId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GenerarNotaDebito(Int64 Id)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                DebitNote debitnote = new DebitNote();
+                try
+                {
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
+                    debitnote = await _context.DebitNote
+                        //.Include(i => i.InvoiceLine)
+                        .Where(q => q.DebitNoteId == Id)
+                        .FirstOrDefaultAsync();
+
+                    Customer customer = _context.Customer
+                        .Where(q => q.CustomerId == debitnote.CustomerId)
+                        .FirstOrDefault();
+
+                    
+                    NumeracionSAR numeracionSAR = new NumeracionSAR();
+                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(7, _context);
+
+                    debitnote.NumeroDEI = numeracionSAR.GetCorrelativo();
+                    debitnote.RangoAutorizado = numeracionSAR.getRango();
+                    debitnote.CAI = numeracionSAR._cai;
+                    debitnote.NoInicio = numeracionSAR.NoInicio.ToString();
+                    debitnote.NoFin = numeracionSAR.NoFin.ToString();
+                    debitnote.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                    debitnote.UsuarioModificacion = User.Identity.Name.ToUpper();
+                    debitnote.FechaModificacion = DateTime.Now;
+                    debitnote.DebitNoteDueDate = DateTime.Now.AddDays(debitnote.DiasVencimiento);
+                    debitnote.Estado = "Emitido";
+
+                    _context.NumeracionSAR.Update(numeracionSAR);
+
+                    //var alerta = await GeneraAlerta(debitnote);
+
+                    JournalEntry asiento;
+
+                    var resppuesta = GeneraAsientoNotaDebito(debitnote).Result.Value;
+
+                    asiento = resppuesta as JournalEntry;
+
+                    debitnote.JournalEntryId = asiento.JournalEntryId;
+                    debitnote.Saldo = debitnote.Amount;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
+                    {
+                        Credito = 0,
+                        Fecha = DateTime.Now,
+                        CustomerName = debitnote.CustomerName,
+                        Debito = debitnote.Total,
+                        Sinopsis = debitnote.Remarks,
+                        InvoiceId = debitnote.InvoiceId,
+                        NoDocumento = debitnote.NumeroDEI,
+                        CustomerId = debitnote.CustomerId,
+                    });
+
+
+                    debitnote.FechaModificacion = DateTime.Now;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    transaction.Rollback();
+                    return BadRequest($"Ocurrio un error:{ex.Message}");
+                }
+
+
+                return await Task.Run(() => Ok(debitnote));
+            }
+
+        }
+
+        /// <summary>
+        /// Genera el asiento de la debitnote
+        /// </summary>
+        /// <param name="debitnote"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<ActionResult<JournalEntry>> GeneraAsientoNotaDebito(DebitNote debitnote)
+        {
+            JournalEntry partida = new JournalEntry();
+            ///Impuesto 
+            ///
+          
+
+            try
+            {
+                Periodo periodo = new Periodo();
+                periodo = periodo.PeriodoActivo(_context);
+
+                partida = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    DatePosted = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    CreatedDate = DateTime.Now,
+                    EstadoId = 5,
+                    EstadoName = "Enviada a Aprobación",
+                    PeriodoId = periodo.Id,
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento Diario",
+                    JournalEntryLines = new List<JournalEntryLine>(),
+                    Memo = $"Nota de Debito #{debitnote.NumeroDEI} a Cliente {debitnote.CustomerName} por concepto de {debitnote.Remarks}",
+                    Periodo = periodo.Anio.ToString(),
+                    Posted = false,
+                    TotalCredit = 0,
+                    TotalDebit = 0,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+
+
+
+
+                };
+
+
+
+
+
+
+                partida.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = (long)debitnote.CuentaContableIngresosId,
+                    AccountName = debitnote.CuentaContableIngresosNombre,
+                    CostCenterId = 1,
+                    CostCenterName = "San Pedro Sula",
+                    Debit = debitnote.Amount,
+                    Credit = 0,
+                    CreatedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    ModifiedDate = DateTime.Now,
+
+
+
+                });
+
+                partida.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = (long)debitnote.CuentaContableDebitoId,
+                    AccountName = debitnote.CuentaContableDebitoNombre,
+                    CostCenterId = 1,
+                    CostCenterName = "San Pedro Sula",
+                    Debit = 0,
+                    Credit = debitnote.Amount,
+                    CreatedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    ModifiedDate = DateTime.Now,
+
+
+
+                });
+
+
+
+                partida.TotalCredit = partida.JournalEntryLines.Sum(s => s.Credit);
+                partida.TotalDebit = partida.JournalEntryLines.Sum(s => s.Debit);
+
+                partida.JournalEntryLines = partida.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+
+                _context.JournalEntry.Add(partida);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Falta la configuracion contable en los subservicios utilizados");
+            }
+
+
+
+            return partida;
+        }
+
 
         /// <summary>
         /// Inserta una nueva DebitNote
@@ -137,30 +333,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _DebitNoteq = _DebitNote;
-                        if (!_DebitNote.Fiscal)
-                        {
-                            DebitNote _debitnote = await _context.DebitNote.Where(q => q.BranchId == _DebitNote.BranchId)
-                                                 .Where(q => q.IdPuntoEmision == _DebitNote.IdPuntoEmision)
-                                                 .FirstOrDefaultAsync();
-                            if (_debitnote != null)
-                            {
-                                _DebitNoteq.NúmeroDEI = _context.DebitNote.Where(q => q.BranchId == _DebitNote.BranchId)
-                                                      .Where(q => q.IdPuntoEmision == _DebitNote.IdPuntoEmision).Max(q => q.NúmeroDEI);
-                            }
 
-                            _DebitNoteq.NúmeroDEI += 1;
-
-
-                            //  Int64 puntoemision = _context.Users.Where(q=>q.Email==_DebitNoteq.UsuarioCreacion).Select(q=>q.)
-
-                            Int64 IdCai = await _context.NumeracionSAR
-                                                     .Where(q => q.BranchId == _DebitNoteq.BranchId)
-                                                     .Where(q => q.IdPuntoEmision == _DebitNoteq.IdPuntoEmision)
-                                                     .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
-
-
-                            
-                        }
                         Numalet let;
                         let = new Numalet();
                         let.SeparadorDecimalSalida = "Lempiras";
@@ -195,47 +368,10 @@ namespace ERPAPI.Controllers
                             VoucherType = 4,
                     };
 
-                        Accounting account = new Accounting();
-
-
-                        //foreach (var item in _DebitNoteq.DebitNoteLine)
-                        //{
-                        //    account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
-
-                        //    _je.JournalEntryLines.Add(new JournalEntryLine
-                        //    {
-                        //        AccountId = Convert.ToInt32(item.AccountId),
-                        //        AccountName = account.AccountName,
-                        //        Description = account.AccountName,
-                        //        Credit = item.Total,
-                        //        Debit = 0,
-                        //        CreatedDate = DateTime.Now,
-                        //        ModifiedDate = DateTime.Now,
-                        //        CreatedUser = _DebitNoteq.UsuarioCreacion,
-                        //        ModifiedUser = _DebitNoteq.UsuarioModificacion,
-                        //        Memo = "Nota de débito",
-                        //    });
-
-                        //}
-                        //_context.JournalEntry.Add(_je);
+                        
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-
-                        await _context.SaveChangesAsync();
-
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _DebitNote.DebitNoteId,
-                            DocType = "DebitNote",
-                            ClaseInicial =
-                                         Newtonsoft.Json.JsonConvert.SerializeObject(_DebitNote, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_DebitNote, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insert",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-
-                        });
 
                         await _context.SaveChangesAsync();
 
