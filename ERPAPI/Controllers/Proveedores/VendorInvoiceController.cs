@@ -147,6 +147,9 @@ namespace ERPAPI.Controllers
                     _context.VendorInvoice.Add(_VendorInvoiceq);
                     //await _context.SaveChangesAsync();
 
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
                     JournalEntry _je = new JournalEntry
                     {
                         Date = _VendorInvoiceq.VendorInvoiceDate,
@@ -167,9 +170,13 @@ namespace ERPAPI.Controllers
                         EstadoId = 5,
                         EstadoName = "Enviada a Aprobacion",
                         TypeOfAdjustmentId = 65,
-                        TypeOfAdjustmentName = "Asiento diario"
+                        TypeOfAdjustmentName = "Asiento diario",
+                        Periodo = periodo.Anio.ToString(),
+                        Posted = false,
 
                     };
+
+
 
                     Accounting account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountId).FirstOrDefaultAsync();
                     _je.JournalEntryLines.Add(new JournalEntryLine
@@ -231,6 +238,9 @@ namespace ERPAPI.Controllers
                             });
                         }
                     }
+
+                    _je.TotalCredit= _je.JournalEntryLines.Sum(s => s.Credit);
+                    _je.TotalDebit= _je.JournalEntryLines.Sum(s => s.Debit); ;
 
                     
                     _context.JournalEntry.Add(_je);
