@@ -957,6 +957,8 @@ namespace ERPAPI.Controllers
                             var activos = await _context.FixedAsset
                                 .Where(p => p.IdEstado != 51
                                 && p.IdEstado != 105
+                                && p.IdEstado != 109
+                                && p.Estado != "Depreciado"
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
                                 //&& p.AssetDate <= new DateTime(pfecha.Year, pfecha.Month-1, DateTime.DaysInMonth(pfecha.Year, pfecha.Month-1))
