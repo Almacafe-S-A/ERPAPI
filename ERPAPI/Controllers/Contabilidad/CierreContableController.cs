@@ -955,9 +955,7 @@ namespace ERPAPI.Controllers
 
 
                             var activos = await _context.FixedAsset
-                                .Where(p => p.IdEstado != 51
-                                && p.IdEstado != 105
-                                && p.IdEstado != 109
+                                .Where(p => p.IdEstado != 109
                                 && p.Estado != "Depreciado"
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
@@ -971,7 +969,7 @@ namespace ERPAPI.Controllers
                                 if (adepreciar > item.NetValue)
                                 {
                                     adepreciar = item.NetValue;
-                                    item.IdEstado = 51;
+                                    item.IdEstado = 109;
                                     item.Estado = "Depreciado";
                                 }
                                 else
