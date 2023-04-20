@@ -956,6 +956,7 @@ namespace ERPAPI.Controllers
 
                             var activos = await _context.FixedAsset
                                 .Where(p => p.IdEstado != 109
+                                && p.IdEstado != 110
                                 && p.Estado != "Depreciado"
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
