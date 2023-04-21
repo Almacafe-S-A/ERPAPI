@@ -1054,6 +1054,7 @@ namespace ERPAPI.Controllers
                                 {
                                     item.IdEstado = 109;
                                     item.Estado = "Depreciado";
+                                    item.NetValue = item.ResidualValue;
                                 }
                                 else
                                 {
