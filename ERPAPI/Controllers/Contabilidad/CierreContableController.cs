@@ -967,20 +967,7 @@ namespace ERPAPI.Controllers
                             {
                                 var adepreciar = item.TotalDepreciated;                                
 
-                                if (adepreciar > item.NetValue)
-                                {
-                                    adepreciar = item.NetValue;
-                                    item.IdEstado = 109;
-                                    item.Estado = "Depreciado";
-                                }
-                                else
-                                {
-                                    item.IdEstado = 47;
-                                    item.Estado = "Depreciandose";
-                                }
-
-
-
+                                
                                 var depreciacion = _context.DepreciationFixedAsset.Where(q => q.FixedAssetId == item.FixedAssetId && q.Year == pfecha.Year).FirstOrDefault();
                                 if (depreciacion != null)
                                 {
@@ -1061,6 +1048,18 @@ namespace ERPAPI.Controllers
                                 /////Actualiza los 
                                 item.AccumulatedDepreciation += adepreciar;
                                 item.NetValue -= adepreciar;
+
+
+                                if (Convert.ToInt32(item.NetValue) == Convert.ToInt32(item.ResidualValue))
+                                {
+                                    item.IdEstado = 109;
+                                    item.Estado = "Depreciado";
+                                }
+                                else
+                                {
+                                    item.IdEstado = 47;
+                                    item.Estado = "Depreciandose";
+                                }
 
 
 
