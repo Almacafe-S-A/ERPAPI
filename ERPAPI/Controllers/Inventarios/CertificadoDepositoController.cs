@@ -420,6 +420,9 @@ namespace ERPAPI.Controllers
                     DocType = 2,
                     CustomerName = _CertificadoDeposito.CustomerName,
                     CustomerId = _CertificadoDeposito.CustomerId,
+                    PdaNo = item.PdaNo,
+                    ValorTotal = item.Price * item.Quantity,
+                    ValorMovimiento = item.Price * item.Quantity,   
                     
 
                 };
