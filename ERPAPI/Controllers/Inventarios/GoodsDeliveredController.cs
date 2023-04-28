@@ -283,11 +283,19 @@ namespace ERPAPI.Controllers
                             DocumentName = "Certficado de Depósito",
                             DocumentId = cdl.IdCD,
                             DocType = 2,
+                            SourceDocumentId = (int) _GoodsDeliveredq.GoodsDeliveredId,
+                            SourceDocumentName = "Entrega de Mercaderias",                            
                             CustomerName = _GoodsDeliveredq.CustomerName,
                             CustomerId = _GoodsDeliveredq.CustomerId,
+                            PdaNo = cdl.PdaNo,
+                            GoodsAuthorizationId= ARL.GoodsDeliveryAuthorizationId,
+                            ValorTotal = ((decimal)cdl.CantidadDisponible - item.Quantity) * Convert.ToDecimal(item.Price),
+                            ValorMovimiento = cantrebajarlinea * Convert.ToDecimal(item.Price),
 
 
                         });
+
+                        
 
                         cdl.CantidadDisponible = cdl.CantidadDisponible- cantrebajarlinea;
                         cantrebajar = cantrebajar - cantrebajarlinea;
