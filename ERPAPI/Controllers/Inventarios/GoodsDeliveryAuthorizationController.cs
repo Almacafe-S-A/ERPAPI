@@ -508,32 +508,36 @@ namespace ERPAPI.Controllers
 
 
                                 ///////////////////////Sale del Certificado////////////////
-                                _context.Kardex.Add(new Kardex
-                                {
-                                    KardexDate = DateTime.Now,
-                                    DocumentDate = kardexMaxCertificadodeposito.DocumentDate,
-                                    CustomerId = _GoodsDeliveryAuthorization.CustomerId,
-                                    CustomerName = _GoodsDeliveryAuthorization.CustomerName,
-                                    ProducId = kardexMaxCertificadodeposito.ProducId,
-                                    ProductName = kardexMaxCertificadodeposito.ProductName,
-                                    SubProducId = Convert.ToInt32(kardexMaxCertificadodeposito.SubProducId),
-                                    SubProductName = item.SubProductName,
-                                    QuantityEntry = 0,
-                                    QuantityOut = autorizado,
-                                    QuantityEntryBags = 0,
-                                    BranchId = kardexMaxCertificadodeposito.BranchId,
-                                    BranchName = kardexMaxCertificadodeposito.BranchName,
-                                    WareHouseId = Convert.ToInt32(kardexMaxCertificadodeposito.WareHouseId),
-                                    WareHouseName = kardexMaxCertificadodeposito.WareHouseName,
-                                    UnitOfMeasureId = kardexMaxCertificadodeposito.UnitOfMeasureId,
-                                    UnitOfMeasureName = kardexMaxCertificadodeposito.UnitOfMeasureName,
-                                    TypeOperationId = TipoOperacion.Salida,
-                                    TypeOperationName = "Salida",
-                                    DocumentName = "Certificado Deposito/Autorizacion Retiro",
-                                    DocType = 2,
-                                    DocumentId = certificadoDeposito.IdCD,
-                                    Total = kardexMaxCertificadodeposito.Total - autorizado,
-                                });
+                                //_context.Kardex.Add(new Kardex
+                                //{
+                                //    KardexDate = DateTime.Now,
+                                //    DocumentDate = kardexMaxCertificadodeposito.DocumentDate,
+                                //    CustomerId = _GoodsDeliveryAuthorization.CustomerId,
+                                //    CustomerName = _GoodsDeliveryAuthorization.CustomerName,
+                                //    ProducId = kardexMaxCertificadodeposito.ProducId,
+                                //    ProductName = kardexMaxCertificadodeposito.ProductName,
+                                //    SubProducId = Convert.ToInt32(kardexMaxCertificadodeposito.SubProducId),
+                                //    SubProductName = item.SubProductName,
+                                //    QuantityEntry = 0,
+                                //    QuantityOut = autorizado,
+                                //    QuantityEntryBags = 0,
+                                //    BranchId = kardexMaxCertificadodeposito.BranchId,
+                                //    BranchName = kardexMaxCertificadodeposito.BranchName,
+                                //    WareHouseId = Convert.ToInt32(kardexMaxCertificadodeposito.WareHouseId),
+                                //    WareHouseName = kardexMaxCertificadodeposito.WareHouseName,
+                                //    UnitOfMeasureId = kardexMaxCertificadodeposito.UnitOfMeasureId,
+                                //    UnitOfMeasureName = kardexMaxCertificadodeposito.UnitOfMeasureName,
+                                //    TypeOperationId = TipoOperacion.Salida,
+                                //    TypeOperationName = "Salida",
+                                //    DocumentName = "Certificado Deposito/Autorizacion Retiro",
+                                //    DocType = 2,
+                                //    DocumentId = certificadoDeposito.IdCD,
+                                //    Total = kardexMaxCertificadodeposito.Total - autorizado,
+                                //    PdaNo = item.Pda,
+                                //    DocumentName = "Autorizacion de Retiro",
+                                //    sou = 3,
+                                //    GoodsAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId,
+                                //});
                             }
 
                         }

@@ -349,7 +349,7 @@ namespace ERPAPI.Controllers
                 ///////Actualiza el saldo de las cuentas ///////////
                 //ContabilidadHandler.ActualizarSaldoCuentas(_context, _je);
                 _context.JournalEntry.Add(_je);
-                _FixedAssetq.IdEstado = 2;
+                _FixedAssetq.IdEstado = 110;
                 _FixedAssetq.Estado = "Dado de Baja";
 
                 await _context.SaveChangesAsync();

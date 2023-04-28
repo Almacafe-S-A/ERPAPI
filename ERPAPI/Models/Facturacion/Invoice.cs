@@ -25,6 +25,18 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Factura")]
         public DateTime InvoiceDate { get; set; }
 
+        public bool Exonerado { get; set; }
+
+        public Int64? CuentaBancariaId { get; set; }
+        [ForeignKey("CuentaBancariaId ")]
+        public AccountManagement accountManagement { get; set; }
+
+        public Int64 Bank { get; set; }
+
+        public string BankName { get; set; }
+
+        public string CuentaBancaria { get; set; }
+
         public int DiasVencimiento { get; set; }
 
         [Display(Name = "Fecha de vencimiento")]

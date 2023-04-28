@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230413211116_CuentasDebitNote")]
+    partial class CuentasDebitNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3738,10 +3740,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
 
-                    b.Property<long>("Bank");
-
-                    b.Property<string>("BankName");
-
                     b.Property<int>("BranchId");
 
                     b.Property<string>("BranchName");
@@ -3749,10 +3747,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("CAI");
 
                     b.Property<string>("Correo");
-
-                    b.Property<string>("CuentaBancaria");
-
-                    b.Property<long?>("CuentaBancariaId");
 
                     b.Property<long?>("CuentaContableDebitoId");
 
@@ -3762,7 +3756,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CuentaContableIngresosNombre");
 
-                    b.Property<long>("CustomerId");
+                    b.Property<int>("CustomerId");
 
                     b.Property<string>("CustomerName");
 
@@ -3797,8 +3791,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<int?>("InvoiceId");
 
-                    b.Property<long?>("JournalEntryId");
-
                     b.Property<string>("NoConstanciadeRegistro");
 
                     b.Property<string>("NoFin");
@@ -3809,15 +3801,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NoSAG");
 
-                    b.Property<string>("NumeroDEI");
+                    b.Property<int>("NúmeroDEI");
 
                     b.Property<string>("RTN");
 
-                    b.Property<string>("RangoAutorizado");
-
                     b.Property<string>("Remarks");
-
-                    b.Property<decimal>("Saldo");
 
                     b.Property<int>("SalesTypeId");
 
@@ -3844,17 +3832,11 @@ namespace ERPAPI.Migrations
 
                     b.HasKey("DebitNoteId");
 
-                    b.HasIndex("CuentaBancariaId");
-
                     b.HasIndex("CuentaContableDebitoId");
 
                     b.HasIndex("CuentaContableIngresosId");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("InvoiceId");
-
-                    b.HasIndex("JournalEntryId");
 
                     b.ToTable("DebitNote");
                 });
@@ -7046,10 +7028,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Amount");
 
-                    b.Property<long>("Bank");
-
-                    b.Property<string>("BankName");
-
                     b.Property<int>("BranchId");
 
                     b.Property<string>("BranchName");
@@ -7059,10 +7037,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Caja");
 
                     b.Property<string>("Correo");
-
-                    b.Property<string>("CuentaBancaria");
-
-                    b.Property<long?>("CuentaBancariaId");
 
                     b.Property<decimal>("Currency");
 
@@ -7187,8 +7161,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("InvoiceId");
-
-                    b.HasIndex("CuentaBancariaId");
 
                     b.HasIndex("CustomerContractId");
 
@@ -7761,17 +7733,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("Estiba");
 
-                    b.Property<long?>("GoodsAuthorizationId");
-
                     b.Property<DateTime>("KardexDate");
 
                     b.Property<int>("KardexTypeId");
 
                     b.Property<bool>("MaxKardex");
-
-                    b.Property<int?>("PdaNo");
-
-                    b.Property<decimal?>("Precio");
 
                     b.Property<long?>("ProducId");
 
@@ -7786,12 +7752,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("QuantityOutBags");
 
                     b.Property<decimal?>("SaldoAnterior");
-
-                    b.Property<int?>("SourceDocumentId");
-
-                    b.Property<int?>("SourceDocumentLine");
-
-                    b.Property<string>("SourceDocumentName");
 
                     b.Property<long?>("SubProducId");
 
@@ -7809,17 +7769,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UnitOfMeasureName");
 
-                    b.Property<decimal?>("ValorMovimiento");
-
-                    b.Property<decimal?>("ValorTotal");
-
                     b.Property<long?>("WareHouseId");
 
                     b.Property<string>("WareHouseName");
 
                     b.HasKey("KardexId");
-
-                    b.HasIndex("GoodsAuthorizationId");
 
                     b.ToTable("Kardex");
                 });
@@ -12253,10 +12207,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.DebitNote", b =>
                 {
-                    b.HasOne("ERPAPI.Models.AccountManagement", "accountManagement")
-                        .WithMany()
-                        .HasForeignKey("CuentaBancariaId");
-
                     b.HasOne("ERPAPI.Models.Accounting", "CuentaContableDebito")
                         .WithMany()
                         .HasForeignKey("CuentaContableDebitoId");
@@ -12265,18 +12215,9 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("CuentaContableIngresosId");
 
-                    b.HasOne("ERPAPI.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("ERPAPI.Models.Invoice", "Invoice")
                         .WithMany()
                         .HasForeignKey("InvoiceId");
-
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.DebitNoteLine", b =>
@@ -12949,10 +12890,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.Invoice", b =>
                 {
-                    b.HasOne("ERPAPI.Models.AccountManagement", "accountManagement")
-                        .WithMany()
-                        .HasForeignKey("CuentaBancariaId");
-
                     b.HasOne("ERPAPI.Models.CustomerContract", "CustomerContract")
                         .WithMany()
                         .HasForeignKey("CustomerContractId");
@@ -13056,13 +12993,6 @@ namespace ERPAPI.Migrations
                         .WithMany("JournalEntryLines")
                         .HasForeignKey("JournalEntryId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Kardex", b =>
-                {
-                    b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorization", "GoodsDeliveryAuthorization")
-                        .WithMany()
-                        .HasForeignKey("GoodsAuthorizationId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Liquidacion", b =>

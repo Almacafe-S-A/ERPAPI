@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230428145801_KardexValores")]
+    partial class KardexValores
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7771,7 +7773,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int?>("PdaNo");
 
-                    b.Property<decimal?>("Precio");
+                    b.Property<decimal>("Precio");
 
                     b.Property<long?>("ProducId");
 
@@ -7809,9 +7811,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UnitOfMeasureName");
 
-                    b.Property<decimal?>("ValorMovimiento");
+                    b.Property<decimal>("ValorMovimiento");
 
-                    b.Property<decimal?>("ValorTotal");
+                    b.Property<decimal>("ValorTotal");
 
                     b.Property<long?>("WareHouseId");
 

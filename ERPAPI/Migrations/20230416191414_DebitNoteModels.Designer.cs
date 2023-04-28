@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230416191414_DebitNoteModels")]
+    partial class DebitNoteModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7761,17 +7763,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<long?>("Estiba");
 
-                    b.Property<long?>("GoodsAuthorizationId");
-
                     b.Property<DateTime>("KardexDate");
 
                     b.Property<int>("KardexTypeId");
 
                     b.Property<bool>("MaxKardex");
-
-                    b.Property<int?>("PdaNo");
-
-                    b.Property<decimal?>("Precio");
 
                     b.Property<long?>("ProducId");
 
@@ -7786,12 +7782,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("QuantityOutBags");
 
                     b.Property<decimal?>("SaldoAnterior");
-
-                    b.Property<int?>("SourceDocumentId");
-
-                    b.Property<int?>("SourceDocumentLine");
-
-                    b.Property<string>("SourceDocumentName");
 
                     b.Property<long?>("SubProducId");
 
@@ -7809,17 +7799,11 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UnitOfMeasureName");
 
-                    b.Property<decimal?>("ValorMovimiento");
-
-                    b.Property<decimal?>("ValorTotal");
-
                     b.Property<long?>("WareHouseId");
 
                     b.Property<string>("WareHouseName");
 
                     b.HasKey("KardexId");
-
-                    b.HasIndex("GoodsAuthorizationId");
 
                     b.ToTable("Kardex");
                 });
@@ -13056,13 +13040,6 @@ namespace ERPAPI.Migrations
                         .WithMany("JournalEntryLines")
                         .HasForeignKey("JournalEntryId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Kardex", b =>
-                {
-                    b.HasOne("ERPAPI.Models.GoodsDeliveryAuthorization", "GoodsDeliveryAuthorization")
-                        .WithMany()
-                        .HasForeignKey("GoodsAuthorizationId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.Liquidacion", b =>

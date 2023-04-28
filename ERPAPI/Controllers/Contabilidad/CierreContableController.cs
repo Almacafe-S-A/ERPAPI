@@ -955,8 +955,9 @@ namespace ERPAPI.Controllers
 
 
                             var activos = await _context.FixedAsset
-                                .Where(p => p.IdEstado != 51
-                                && p.IdEstado != 105
+                                .Where(p => p.IdEstado != 109
+                                && p.IdEstado != 110
+                                && p.Estado != "Depreciado"
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
                                 //&& p.AssetDate <= new DateTime(pfecha.Year, pfecha.Month-1, DateTime.DaysInMonth(pfecha.Year, pfecha.Month-1))
@@ -966,20 +967,7 @@ namespace ERPAPI.Controllers
                             {
                                 var adepreciar = item.TotalDepreciated;                                
 
-                                if (adepreciar > item.NetValue)
-                                {
-                                    adepreciar = item.NetValue;
-                                    item.IdEstado = 51;
-                                    item.Estado = "Depreciado";
-                                }
-                                else
-                                {
-                                    item.IdEstado = 47;
-                                    item.Estado = "Depreciandose";
-                                }
-
-
-
+                                
                                 var depreciacion = _context.DepreciationFixedAsset.Where(q => q.FixedAssetId == item.FixedAssetId && q.Year == pfecha.Year).FirstOrDefault();
                                 if (depreciacion != null)
                                 {
@@ -1060,6 +1048,19 @@ namespace ERPAPI.Controllers
                                 /////Actualiza los 
                                 item.AccumulatedDepreciation += adepreciar;
                                 item.NetValue -= adepreciar;
+
+
+                                if (Convert.ToInt32(item.NetValue) == Convert.ToInt32(item.ResidualValue))
+                                {
+                                    item.IdEstado = 109;
+                                    item.Estado = "Depreciado";
+                                    item.NetValue = item.ResidualValue;
+                                }
+                                else
+                                {
+                                    item.IdEstado = 47;
+                                    item.Estado = "Depreciandose";
+                                }
 
 
 
@@ -1311,6 +1312,11 @@ namespace ERPAPI.Controllers
                     default:
                         break;
                 }
+                cuentaPresupuestada.TotalMontoEjecucion = (cuentaPresupuestada.EjecucionEnero + cuentaPresupuestada.EjecucionFebrero +
+                           cuentaPresupuestada.EjecucionMarzo + cuentaPresupuestada.EjecucionAbril + cuentaPresupuestada.EjecucionMayo +
+                           cuentaPresupuestada.EjecucionJunio + cuentaPresupuestada.EjecucionJulio + cuentaPresupuestada.EjecucionAgosto +
+                          cuentaPresupuestada.EjecucionSeptiembre + cuentaPresupuestada.EjecucionOctubre + cuentaPresupuestada.EjecucionNoviembre +
+                          cuentaPresupuestada.EjecucionDiciembre);
             }
 
             proceso.FechaCierre = DateTime.Now;

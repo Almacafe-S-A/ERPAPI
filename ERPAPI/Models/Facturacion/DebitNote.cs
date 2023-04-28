@@ -11,15 +11,28 @@ namespace ERPAPI.Models
     {
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 DebitNoteId { get; set; }       
+        public Int64 DebitNoteId { get; set; }
         public string DebitNoteName { get; set; }
-        [Display(Name = "Envío")]
-        public int ShipmentId { get; set; }
-
 
         [Display(Name = "Fiscal")]
         public bool Fiscal { get; set; }
-             
+
+        public Int64? JournalEntryId { get; set; }
+        [ForeignKey("JournalEntryId")]
+        public JournalEntry JournalEntry { get; set; }
+
+        public decimal Saldo { get; set; }
+
+        public string Descripcion { get; set; }
+
+        public int DiasVencimiento { get; set; }
+
+        public string TipoDocumento { get; set; }
+
+        public int? InvoiceId { get; set; }
+        [ForeignKey("InvoiceId")]
+        public Invoice Invoice { get; set; }
+
 
         [Display(Name = "Punto de emisión")]
         public Int64 IdPuntoEmision { get; set; }
@@ -27,37 +40,36 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de Nota de débito")]
         public DateTime DebitNoteDate { get; set; }
         [Display(Name = "Fecha de vencimiento")]
-        public DateTime DebitNoteDueDate { get; set; }
+        public DateTime? DebitNoteDueDate { get; set; }
 
-        [Display(Name = "Fecha de vencimiento")]
-        public DateTime ExpirationDate { get; set; }
+        public string CuentaContableIngresosNombre { get; set; }
+        public Int64? CuentaContableIngresosId { get; set; }
+        [ForeignKey("CuentaContableIngresosId")]
+        public Accounting CuentaContableIngresos { get; set; }
 
-        [Display(Name = "Tipo de Nota de débito")]
-        public int DebitNoteTypeId { get; set; }
+        public string CuentaContableDebitoNombre { get; set; }
+        public Int64? CuentaContableDebitoId { get; set; }
+        [ForeignKey("CuentaContableDebitoId")]
+        public Accounting CuentaContableDebito { get; set; }
 
-        [Display(Name = "Cotización Asociada")]
-        public Int64 SalesOrderId { get; set; }     
+        public string RangoAutorizado { get; set; }
 
-        [Display(Name = "Certificado depósito")]
-        public Int64 CertificadoDepositoId { get; set; }
+        public Int64? CuentaBancariaId { get; set; }
+        [ForeignKey("CuentaBancariaId ")]
+        public AccountManagement accountManagement { get; set; }
+
+        public Int64 Bank { get; set; }
+
+        public string BankName { get; set; }
+
+        public string CuentaBancaria { get; set; }
 
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
 
-        [Display(Name = "Caja")]
-        public string Caja { get; set; }
 
         [Display(Name = "Número de Factura")]
-        public string TipoDocumento { get; set; }
-
-        [Display(Name = "SubProducto")]
-        public Int64? SubProductId { get; set; }
-
-        [Display(Name = "Nombre SubProducto")]
-        public string SubProductName { get; set; }
-
-        [Display(Name = "Número de Factura")]
-        public int NúmeroDEI { get; set; }
+        public string NumeroDEI { get; set; }
 
         [Display(Name = "Número de inicio")]
         public string NoInicio { get; set; }
@@ -99,31 +111,14 @@ namespace ERPAPI.Models
         public string BranchName { get; set; }
 
         [Display(Name = "Customer")]
-        public int CustomerId { get; set; }
+        public Int64 CustomerId { get; set; }
+        
+        [ForeignKey("CustomerId")]
+        public Customer Customer { get; set; }
 
         [Display(Name = "Nombre Cliente")]
         public string CustomerName { get; set; }
 
-        [Display(Name = "Id")]
-        public Int64 ProductId { get; set; }
-
-        [Display(Name = "Nombre Producto")]
-        public string ProductName { get; set; }
-
-        public DateTime OrderDate { get; set; }
-        public DateTime DeliveryDate { get; set; }
-
-        [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
-
-        [Display(Name = "Moneda tasa")]
-        public decimal Currency { get; set; }
-
-        [Display(Name = "Número de referencia de cliente")]
-        public string CustomerRefNumber { get; set; }
         [Display(Name = "Tipo de ventas")]
         public int SalesTypeId { get; set; }
 
@@ -147,30 +142,7 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         public decimal Tax { get; set; }
 
-        [Display(Name = "Impuesto 18%")]
-        [Column(TypeName = "Money")]
-        public decimal Tax18 { get; set; }
-
-
-        [Display(Name = "Flete")]
-        [Column(TypeName = "Money")]
-        public decimal Freight { get; set; }
-
-        [Display(Name = "Total exento")]
-        [Column(TypeName = "Money")]
-        public decimal TotalExento { get; set; }
-
-        [Display(Name = "Total exonerado")]
-        [Column(TypeName = "Money")]
-        public decimal TotalExonerado { get; set; }
-
-        [Display(Name = "Total Gravado")]
-        [Column(TypeName = "Money")]
-        public decimal TotalGravado { get; set; }
-
-        [Display(Name = "Total Gravado 18%")]
-        [Column(TypeName = "Money")]
-        public decimal TotalGravado18 { get; set; }
+        
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
 
@@ -193,7 +165,6 @@ namespace ERPAPI.Models
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
 
-        public string Impreso { get; set; }
         public List<DebitNoteLine> DebitNoteLine { get; set; } = new List<DebitNoteLine>();
 
     }
