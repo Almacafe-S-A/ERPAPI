@@ -186,22 +186,22 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Aprueba (pasa a Estatus Cerrado),para que el subservcio pase a contabilidad, CxC, Facturacion.
         /// </summary>
-        /// <param name="_SubServicesWareHouse"></param>
+        /// <param name="_SubServicesWareHouseq"></param>
         /// <returns></returns>
-        [HttpPost("[action]")]
-        public async Task<ActionResult<SubServicesWareHouse>> Aprobar([FromBody] SubServicesWareHouse _SubServicesWareHouse)
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<SubServicesWareHouse>> Aprobar (int id)
         {
 
-            InventarioFisico _InventarioFisicoq = new InventarioFisico();
+            SubServicesWareHouse _SubServicesWareHouseq = new SubServicesWareHouse();
 
             try
             {
-                _SubServicesWareHouse = await _context.SubServicesWareHouse
-                    .Where(q => q.SubServicesWareHouseId == _SubServicesWareHouse.SubServicesWareHouseId)
+                _SubServicesWareHouseq = await _context.SubServicesWareHouse
+                    .Where(q => q.SubServicesWareHouseId == id)
                     .FirstOrDefaultAsync();
-                _SubServicesWareHouse.IdEstado = 2;
-                _SubServicesWareHouse.Estado = "Inactivo";
-                _SubServicesWareHouse.UsuarioModificacion = User.Identity.Name;
+                _SubServicesWareHouseq.IdEstado = 2;
+                _SubServicesWareHouseq.Estado = "Inactivo";
+                _SubServicesWareHouseq.UsuarioModificacion = User.Identity.Name;
 
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 await _context.SaveChangesAsync();
@@ -213,7 +213,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_SubServicesWareHouse));
+            return await Task.Run(() => Ok(_SubServicesWareHouseq));
         }
 
         /// <summary>
