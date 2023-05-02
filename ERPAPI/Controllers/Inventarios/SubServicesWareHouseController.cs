@@ -186,6 +186,39 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Aprueba (pasa a Estatus Cerrado),para que el subservcio pase a contabilidad, CxC, Facturacion.
+        /// </summary>
+        /// <param name="_SubServicesWareHouseq"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<SubServicesWareHouse>> Aprobar (int id)
+        {
+
+            SubServicesWareHouse _SubServicesWareHouseq = new SubServicesWareHouse();
+
+            try
+            {
+                _SubServicesWareHouseq = await _context.SubServicesWareHouse
+                    .Where(q => q.SubServicesWareHouseId == id)
+                    .FirstOrDefaultAsync();
+                _SubServicesWareHouseq.IdEstado = 2;
+                _SubServicesWareHouseq.Estado = "Inactivo";
+                _SubServicesWareHouseq.UsuarioModificacion = User.Identity.Name;
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(_SubServicesWareHouseq));
+        }
+
+        /// <summary>
         /// Actualiza la SubServicesWareHouse
         /// </summary>
         /// <param name="_SubServicesWareHouse"></param>
