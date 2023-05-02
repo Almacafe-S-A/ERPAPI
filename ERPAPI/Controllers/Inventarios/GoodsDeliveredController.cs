@@ -239,6 +239,8 @@ namespace ERPAPI.Controllers
                     DocType = 3,
                     CustomerName = _GoodsDeliveredq.CustomerName,
                     CustomerId = _GoodsDeliveredq.CustomerId,
+                    ValorTotal = ((decimal)item.QuantityAuthorized - item.Quantity) * Convert.ToDecimal(item.Price),
+                    ValorMovimiento = item.Quantity * Convert.ToDecimal(item.Price),
 
 
                 });
@@ -257,7 +259,8 @@ namespace ERPAPI.Controllers
                     {
 
                         decimal cantrebajarlinea = cantrebajar <= (decimal)cdl.CantidadDisponible ?
-                            (decimal)cdl.CantidadDisponible - cantrebajar : (decimal)cdl.CantidadDisponible;
+                            //(decimal)cdl.CantidadDisponible - 
+                            cantrebajar : (decimal)cdl.CantidadDisponible;
                         _context.Kardex.Add(new Kardex
                         {
                             DocumentDate = _GoodsDeliveredq.DocumentDate,
@@ -278,7 +281,7 @@ namespace ERPAPI.Controllers
                             UnitOfMeasureName = item.UnitOfMeasureName,
                             TypeOperationId = TipoOperacion.Salida,
                             TypeOperationName = "Salida",
-                            Total = (decimal)cdl.CantidadDisponible - item.Quantity,
+                            Total = (decimal)cdl.CantidadDisponible - cantrebajarlinea,
                             DocumentLine = cdl.PdaNo,
                             DocumentName = "Certficado de Depósito",
                             DocumentId = cdl.IdCD,
@@ -289,8 +292,8 @@ namespace ERPAPI.Controllers
                             CustomerId = _GoodsDeliveredq.CustomerId,
                             PdaNo = cdl.PdaNo,
                             GoodsAuthorizationId= ARL.GoodsDeliveryAuthorizationId,
-                            ValorTotal = ((decimal)cdl.CantidadDisponible - item.Quantity) * Convert.ToDecimal(item.Price),
-                            ValorMovimiento = cantrebajarlinea * Convert.ToDecimal(item.Price),
+                            ValorTotal = Math.Abs((decimal) cdls.Sum(s => s.CantidadDisponible) - cantrebajarlinea) * Convert.ToDecimal(cdl.Price),
+                            ValorMovimiento = cantrebajarlinea * Convert.ToDecimal(cdl.Price),
 
 
                         });
@@ -375,7 +378,7 @@ namespace ERPAPI.Controllers
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();                        
                         await _context.SaveChangesAsync();
 
-                        KardexEntrega(_GoodsDelivered);
+                        await KardexEntrega(_GoodsDelivered);
                         _GoodsDeliveredq.ExitTicket = _boletadesalida.BoletaDeSalidaId;
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                         await _context.SaveChangesAsync();
