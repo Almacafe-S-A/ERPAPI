@@ -147,7 +147,7 @@ namespace ERPAPI.Controllers
                                         NoAR= line.Key.GoodsDeliveryAuthorizationId,
                                         Pda = (int)line.Key.Pda,
                                         NoARLineId = (int)line.Key.GoodsDeliveryAuthorizationLineId,
-                                    }).ToList();
+                                    }).OrderBy(o => o.QuantityAuthorized).ToList();
                 ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == controlid).FirstOrDefault();
                 Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
                 if (_Boleto_Ent != null && _Boleto_Ent.Boleto_Sal != null)
