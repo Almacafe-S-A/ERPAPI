@@ -183,6 +183,10 @@ namespace ERPAPI.Controllers
 
                 foreach (var item in goodsDeliveredLines)
                 {
+                    item.WareHouseId = (long)_ControlPallets.WarehouseId;
+                    item.WareHouseName = _ControlPallets.WarehouseName;
+                    item.ControlPalletsId = (long)_ControlPallets.PalletId;
+                    
                     List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines.Where(q => q.SubProductId == item.SubProductId).ToList();
                     decimal pesoentregalinea = 0;
                     if (item.QuantityAuthorized >= pesoentregar)
@@ -206,16 +210,8 @@ namespace ERPAPI.Controllers
                     item.Total = pesoentregar;
                     item.QuantitySacos = cantsacos ;
                     item.ControlPalletsId = _ControlPallets.PalletId;
-                    
-                 
-                    
 
                 }
-
-
-                
-
-
                 return Ok(goodsDeliveredLines.ToList());
             }
             catch (Exception ex)
