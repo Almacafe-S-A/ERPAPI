@@ -206,6 +206,7 @@ namespace ERPAPI.Controllers
         private async Task<ActionResult<Kardex>> KardexEntrega(GoodsDelivered  _GoodsDeliveredq) {
             foreach (var item in _GoodsDeliveredq._GoodsDeliveredLine)
             {
+                if (item.Quantity == 0) { continue; }
                 GoodsDeliveryAuthorizationLine ARL = _context.GoodsDeliveryAuthorizationLine
                     .Where(q => q.GoodsDeliveryAuthorizationLineId == item.NoARLineId)
                     .FirstOrDefault();
@@ -246,12 +247,13 @@ namespace ERPAPI.Controllers
                 });
                 ARL.Saldo = ARL.Saldo - item.Quantity;
 
-                List<CertificadoLine> cdls = _context.CertificadoLine.Where(q => q.PdaNo == ARL.Pda &&q.IdCD == ARL.NoCertificadoDeposito)
+                List<CertificadoLine> cdls = _context.CertificadoLine.Where(q => q.PdaNo == ARL.Pda &&q.IdCD == ARL.NoCertificadoDeposito&&q.CantidadDisponible<1)
                     .ToList();
                 decimal cantrebajar = item.Quantity;
                 foreach (var cdl in cdls)
                 {
-                    if (cantrebajar == 0)
+                    
+                    if (cantrebajar == 0 )
                     {
                         break;
                     }
@@ -287,10 +289,13 @@ namespace ERPAPI.Controllers
                             DocumentId = cdl.IdCD,
                             DocType = 2,
                             SourceDocumentId = (int) _GoodsDeliveredq.GoodsDeliveredId,
-                            SourceDocumentName = "Entrega de Mercaderias",                            
+                            SourceDocumentName = "Entrega de Mercaderias",  
+                            SourceDocumentLine = (int)cdl.CertificadoLineId,
                             CustomerName = _GoodsDeliveredq.CustomerName,
                             CustomerId = _GoodsDeliveredq.CustomerId,
                             PdaNo = cdl.PdaNo,
+                            Precio = cdl.Price,
+
                             GoodsAuthorizationId= ARL.GoodsDeliveryAuthorizationId,
                             ValorTotal = Math.Abs((decimal) cdls.Sum(s => s.CantidadDisponible) - cantrebajarlinea) * Convert.ToDecimal(cdl.Price),
                             ValorMovimiento = cantrebajarlinea * Convert.ToDecimal(cdl.Price),
