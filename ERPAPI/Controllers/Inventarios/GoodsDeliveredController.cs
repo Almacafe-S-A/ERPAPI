@@ -281,7 +281,7 @@ namespace ERPAPI.Controllers
                             UnitOfMeasureName = item.UnitOfMeasureName,
                             TypeOperationId = TipoOperacion.Salida,
                             TypeOperationName = "Salida",
-                            Total = (decimal)cdls.Sum(s => s.CantidadDisponible) - cantrebajarlinea,
+                            Total = Math.Abs((decimal)cdls.Sum(s => s.CantidadDisponible) - cantrebajarlinea),
                             DocumentLine = cdl.PdaNo,
                             DocumentName = "Certficado de Depósito",
                             DocumentId = cdl.IdCD,
