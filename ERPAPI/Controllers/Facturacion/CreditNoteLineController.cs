@@ -148,11 +148,11 @@ namespace ERPAPI.Controllers
 
                 if (invoice == null) { return Ok(Items); }
 
-                Items = (from c in invoice.InvoiceLine
+                Items = (from c in invoice.InvoiceLine.Where(q =>q.Saldo >0)
                          select new CreditNoteLine {
                             AccountId= c.AccountId,
                             AccountName= c.AccountName,
-                            Amount= c.Amount,
+                            Amount= c.Saldo,
                             CostCenterId= c.CostCenterId,
                             CostCenterName= c.CostCenterName,
                             Description= c.Description,
@@ -164,7 +164,7 @@ namespace ERPAPI.Controllers
                             UnitOfMeasureName= c.UnitOfMeasureName,
                             TaxAmount= c.TaxAmount,
                             TaxPercentage= c.TaxPercentage,
-                            Total = c.Total,
+                            Total = c.Saldo,
                             TaxId= c.TaxId,
                             TaxCode= c.TaxCode,
                             SubTotal= c.SubTotal,
@@ -177,7 +177,7 @@ namespace ERPAPI.Controllers
                          }
                          ).ToList();
 
-
+               
 
             }
             catch (Exception ex)

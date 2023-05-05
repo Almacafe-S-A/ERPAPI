@@ -285,26 +285,28 @@ namespace ERPAPI.Controllers
                     JournalEntry asiento = new JournalEntry();
 
 
-                    if (factura.SalesTypeId == 2)
+                    _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
                     {
-                        _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
-                        {
-                            Credito = 0,
-                            Fecha = DateTime.Now,
-                            CustomerName = factura.CustomerName,
-                            Debito = factura.Total,
-                            Sinopsis = factura.Sinopsis,
-                            InvoiceId = factura.InvoiceId,
-                            NoDocumento = factura.NumeroDEI,
-                            CustomerId = factura.CustomerId,
-                        });
+                        Credito = 0,
+                        Fecha = DateTime.Now,
+                        CustomerName = factura.CustomerName,
+                        Debito = factura.Total,
+                        Sinopsis = factura.Sinopsis,
+                        InvoiceId = factura.InvoiceId,
+                        NoDocumento = factura.NumeroDEI,
+                        CustomerId = factura.CustomerId,
+                    });
 
-                        asiento = GeneraAsientoPorCobrarFactura(factura).Result.Value;
-                    }
-                    else
-                    {
-                        asiento = GeneraAsientoContadoFactura(factura).Result.Value;
-                    }
+                    asiento = GeneraAsientoPorCobrarFactura(factura).Result.Value;
+
+                    //if (factura.SalesTypeId == 2)
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                    //    //asiento = GeneraAsientoContadoFactura(factura).Result.Value;
+                    //}
 
                     
 
@@ -659,8 +661,8 @@ namespace ERPAPI.Controllers
                     AccountName = tax.CuentaContableIngresosNombre,
                     CostCenterId = 1,
                     CostCenterName = "San Pedro Sula",
-                    Debit = 0,
-                    Credit = factura.Tax,
+                    Debit = factura.Tax,
+                    Credit = 0,
                     CreatedDate = DateTime.Now,
                     CreatedUser = User.Identity.Name,
                     ModifiedUser = User.Identity.Name,
@@ -687,8 +689,8 @@ namespace ERPAPI.Controllers
                         AccountName = relation.CuentaContablePorCobrarNombre,
                         CostCenterId = 1,
                         CostCenterName = "San Pedro Sula",
-                        Debit = 0,
-                        Credit = item.Amount - item.DiscountAmount,
+                        Debit = item.Amount - item.DiscountAmount,
+                        Credit = 0,
                         CreatedDate = DateTime.Now,
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
@@ -707,8 +709,8 @@ namespace ERPAPI.Controllers
                     AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
                     CostCenterId = 1,
                     CostCenterName = "San Pedro Sula",
-                    Debit = factura.Total,
-                    Credit = 0,
+                    Debit = 0,
+                    Credit = factura.Total,
                     CreatedDate = DateTime.Now,
                     CreatedUser = User.Identity.Name,
                     ModifiedUser = User.Identity.Name,
