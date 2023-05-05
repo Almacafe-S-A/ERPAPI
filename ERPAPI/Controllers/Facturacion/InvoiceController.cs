@@ -291,7 +291,7 @@ namespace ERPAPI.Controllers
                         Fecha = DateTime.Now,
                         CustomerName = factura.CustomerName,
                         Debito = factura.Total,
-                        Sinopsis = factura.Sinopsis,
+                        Sinopsis = $"Cargo por Factura #{factura.NumeroDEI} " + factura.Sinopsis,
                         InvoiceId = factura.InvoiceId,
                         NoDocumento = factura.NumeroDEI,
                         CustomerId = factura.CustomerId,

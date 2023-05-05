@@ -183,10 +183,11 @@ namespace ERPAPI.Controllers
                         Fecha = DateTime.Now,
                         CustomerName = debitnote.CustomerName,
                         Debito = debitnote.Total,
-                        Sinopsis = debitnote.Remarks,
+                        Sinopsis = $"Nota de debito #{debitnote.NumeroDEI} " +debitnote.Remarks,
                         InvoiceId = debitnote.InvoiceId,
                         NoDocumento = debitnote.NumeroDEI,
                         CustomerId = debitnote.CustomerId,
+                        
                     });
 
 
