@@ -312,7 +312,7 @@ namespace ERPAPI.Controllers
                             CustomerName = _InvoicePaymentsq.CustomerName,
                             CustomerId = _InvoicePaymentsq.CustomerId,
                             Debito = 0,
-                            Sinopsis = "Comprobante de Ingresos",
+                            Sinopsis = $"Recibo de Pago #{_InvoicePaymentsq.Id} por Facturas # {_InvoicePaymentsq.NoDocumentos} ",
                             InvoiceId = null,
                             NoDocumento = _InvoicePaymentsq.Id.ToString(),
                         });
