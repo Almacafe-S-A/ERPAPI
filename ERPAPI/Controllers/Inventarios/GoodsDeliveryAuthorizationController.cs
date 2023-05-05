@@ -456,6 +456,7 @@ namespace ERPAPI.Controllers
                                 QuantityEntry = item.Quantity,
                                 QuantityOut = 0,
                                 QuantityEntryBags = 0,
+                                Precio = item.Price,
                                 BranchId = _GoodsDeliveryAuthorization.BranchId,
                                 BranchName = _GoodsDeliveryAuthorization.BranchName,
                                 WareHouseId = Convert.ToInt32(item.WarehouseId),
@@ -467,7 +468,13 @@ namespace ERPAPI.Controllers
                                 DocumentName = "Autorizacion de Retiro",
                                 DocType = 3,
                                 DocumentId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId,
+                                DocumentLine= (int)item.GoodsDeliveryAuthorizationLineId,
                                 Total = item.Quantity,
+                                SourceDocumentId = (int)_GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId,
+                                SourceDocumentName = "Autorizacion de Retiro",
+                                SourceDocumentLine = (int)item.GoodsDeliveryAuthorizationLineId,
+                                PdaNo = item.Pda,
+
                             });
 
                             
@@ -505,39 +512,7 @@ namespace ERPAPI.Controllers
                                 {
                                     BadRequest($"No se Encontro Kardex Para este Producto en el Certificado");
                                 }
-
-
-                                ///////////////////////Sale del Certificado////////////////
-                                //_context.Kardex.Add(new Kardex
-                                //{
-                                //    KardexDate = DateTime.Now,
-                                //    DocumentDate = kardexMaxCertificadodeposito.DocumentDate,
-                                //    CustomerId = _GoodsDeliveryAuthorization.CustomerId,
-                                //    CustomerName = _GoodsDeliveryAuthorization.CustomerName,
-                                //    ProducId = kardexMaxCertificadodeposito.ProducId,
-                                //    ProductName = kardexMaxCertificadodeposito.ProductName,
-                                //    SubProducId = Convert.ToInt32(kardexMaxCertificadodeposito.SubProducId),
-                                //    SubProductName = item.SubProductName,
-                                //    QuantityEntry = 0,
-                                //    QuantityOut = autorizado,
-                                //    QuantityEntryBags = 0,
-                                //    BranchId = kardexMaxCertificadodeposito.BranchId,
-                                //    BranchName = kardexMaxCertificadodeposito.BranchName,
-                                //    WareHouseId = Convert.ToInt32(kardexMaxCertificadodeposito.WareHouseId),
-                                //    WareHouseName = kardexMaxCertificadodeposito.WareHouseName,
-                                //    UnitOfMeasureId = kardexMaxCertificadodeposito.UnitOfMeasureId,
-                                //    UnitOfMeasureName = kardexMaxCertificadodeposito.UnitOfMeasureName,
-                                //    TypeOperationId = TipoOperacion.Salida,
-                                //    TypeOperationName = "Salida",
-                                //    DocumentName = "Certificado Deposito/Autorizacion Retiro",
-                                //    DocType = 2,
-                                //    DocumentId = certificadoDeposito.IdCD,
-                                //    Total = kardexMaxCertificadodeposito.Total - autorizado,
-                                //    PdaNo = item.Pda,
-                                //    DocumentName = "Autorizacion de Retiro",
-                                //    sou = 3,
-                                //    GoodsAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId,
-                                //});
+                                
                             }
 
                         }
@@ -559,12 +534,6 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _GoodsDeliveryAuthorization.UsuarioModificacion,
 
                         });
-
-                        //new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-
-                        //await _context.SaveChangesAsync();
-
-                       
 
                         foreach (var item in _GoodsDeliveryAuthorization.CertificadosAsociados)
                         {

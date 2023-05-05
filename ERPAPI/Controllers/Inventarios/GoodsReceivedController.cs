@@ -694,7 +694,11 @@ namespace ERPAPI.Controllers
                     CustomerName = _GoodsReceivedq.CustomerName,
                     DocumentId = _GoodsReceivedq.GoodsReceivedId,
                     Estiba = item.ControlPalletsId,
+                    SourceDocumentId = (int)_GoodsReceivedq.GoodsReceivedId,
+                    SourceDocumentName = "ReciboMercaderia/GoodsReceived",
+                    SourceDocumentLine = (int)item.GoodsReceiveLinedId,
                     
+
                 };   
                 _context.Kardex.Add(kardex);
 

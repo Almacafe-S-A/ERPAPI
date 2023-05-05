@@ -214,6 +214,8 @@ namespace ERPAPI.Controllers
                 {
                     return BadRequest("No se encontro detalle en autorizacion de retiro");
                 }
+
+                /// Sale de la AR
                 _context.Kardex.Add(new Kardex
                 {
                     DocumentDate = _GoodsDeliveredq.DocumentDate,
@@ -225,6 +227,7 @@ namespace ERPAPI.Controllers
                     QuantityEntry = 0,
                     QuantityOut = item.Quantity,
                     QuantityOutBags = item.QuantitySacos,
+                    Precio = (decimal)item.Price,
                     BranchId = _GoodsDeliveredq.BranchId,
                     BranchName = _GoodsDeliveredq.BranchName,
                     WareHouseId = Convert.ToInt32(item.WareHouseId),
@@ -242,12 +245,16 @@ namespace ERPAPI.Controllers
                     CustomerId = _GoodsDeliveredq.CustomerId,
                     ValorTotal = ((decimal)item.QuantityAuthorized - item.Quantity) * Convert.ToDecimal(item.Price),
                     ValorMovimiento = item.Quantity * Convert.ToDecimal(item.Price),
+                    SourceDocumentId = (int)_GoodsDeliveredq.GoodsDeliveredId,
+                    SourceDocumentName = "Entrega de Mercaderias",
+                    SourceDocumentLine = (int)item.GoodsDeliveredLinedId,
+                    PdaNo = item.Pda
 
 
                 });
                 ARL.Saldo = ARL.Saldo - item.Quantity;
 
-                List<CertificadoLine> cdls = _context.CertificadoLine.Where(q => q.PdaNo == ARL.Pda &&q.IdCD == ARL.NoCertificadoDeposito&&q.CantidadDisponible<1)
+                List<CertificadoLine> cdls = _context.CertificadoLine.Where(q => q.PdaNo == ARL.Pda &&q.IdCD == ARL.NoCertificadoDeposito&&q.CantidadDisponible>0)
                     .ToList();
                 decimal cantrebajar = item.Quantity;
                 foreach (var cdl in cdls)
@@ -263,6 +270,7 @@ namespace ERPAPI.Controllers
                         decimal cantrebajarlinea = cantrebajar <= (decimal)cdl.CantidadDisponible ?
                             //(decimal)cdl.CantidadDisponible - 
                             cantrebajar : (decimal)cdl.CantidadDisponible;
+                        ////Sale del Cerrtificado
                         _context.Kardex.Add(new Kardex
                         {
                             DocumentDate = _GoodsDeliveredq.DocumentDate,
@@ -290,7 +298,7 @@ namespace ERPAPI.Controllers
                             DocType = 2,
                             SourceDocumentId = (int) _GoodsDeliveredq.GoodsDeliveredId,
                             SourceDocumentName = "Entrega de Mercaderias",  
-                            SourceDocumentLine = (int)cdl.CertificadoLineId,
+                            SourceDocumentLine = (int)item.GoodsDeliveredLinedId,
                             CustomerName = _GoodsDeliveredq.CustomerName,
                             CustomerId = _GoodsDeliveredq.CustomerId,
                             PdaNo = cdl.PdaNo,
