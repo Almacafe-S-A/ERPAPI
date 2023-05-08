@@ -365,9 +365,7 @@ namespace ERPAPI.Controllers
                     .Where(q => q.clave_e == controlPallets.WeightBallot)
                     .FirstOrDefaultAsync();
 
-                boletapeso.Boleto_Sal = _context.Boleto_Sal
-                    .Where(q => q.clave_e == boletapeso.clave_e)
-                    .FirstOrDefault();
+                
 
                 decimal cantidadSacos = (decimal)_GoodsReceived._GoodsReceivedLine.Sum(s => s.QuantitySacos);
 
@@ -409,6 +407,9 @@ namespace ERPAPI.Controllers
 
                 if (boletapeso!=null)
                 {
+                    boletapeso.Boleto_Sal = _context.Boleto_Sal
+                    .Where(q => q.clave_e == boletapeso.clave_e)
+                    .FirstOrDefault();
                     boletapeso.Boleto_Sal = await _context.Boleto_Sal.Where(q => q.clave_e == boletapeso.clave_e).FirstOrDefaultAsync();
                     _boletadesalida.OrdenNo = boletapeso.Orden;
                     _boletadesalida.Transportista = boletapeso.Tranportista;
