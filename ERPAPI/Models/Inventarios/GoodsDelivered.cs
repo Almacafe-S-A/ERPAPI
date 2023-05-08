@@ -60,7 +60,7 @@ namespace ERPAPI.Models
         [Display(Name = "Referencia")]
         public string Reference { get; set; }
 
-        public int BoletaPesoId { get; set; }
+        public int? BoletaPesoId { get; set; }
 
         [Display(Name = "Boleta de salida")]
         public Int64 ExitTicket { get; set; }
@@ -104,12 +104,6 @@ namespace ERPAPI.Models
         public List<GoodsDeliveryAuthorization> GoodsDeliveryAuthorizations { get; set; } = new List<GoodsDeliveryAuthorization>();
 
         //   public Kardex Kardex { get; set; }
-    }
-
-
-    public class GoodsDeliveredDTO : GoodsDelivered
-    {
-        public Kardex Kardex { get; set; } = new Kardex();
     }
 
 

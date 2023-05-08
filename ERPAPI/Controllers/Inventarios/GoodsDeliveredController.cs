@@ -329,7 +329,7 @@ namespace ERPAPI.Controllers
         /// <param name="_GoodsDelivered"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsDelivered>> Insert([FromBody]GoodsDeliveredDTO _GoodsDelivered)
+        public async Task<ActionResult<GoodsDelivered>> Insert([FromBody]GoodsDelivered _GoodsDelivered)
         {
             GoodsDelivered _GoodsDeliveredq = new GoodsDelivered();
             try
@@ -375,13 +375,23 @@ namespace ERPAPI.Controllers
                             _GoodsDeliveredq.PesoNeto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoNeto, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.TaraTransporte = _Boleto_Ent.Convercion(taracamion, _Boleto_Ent.UnidadPreferidaId);
 
+                            if (_GoodsDeliveredq.PesoNeto2 != _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity))
+                            {
+                                return BadRequest("Los el peso del detalle no coincide con el peso de la boleta");
+                            }
 
+
+                        }
+                        else
+                        {
+                            //if (_GoodsDeliveredq. != _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity))
+                            //{
+                            //    return BadRequest("Los el peso del detalle no coincide con el peso de la boleta");
+                            //}
                         }
 
 
-                        if (_GoodsDeliveredq.PesoNeto2 != _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity)) {
-                            return BadRequest("Los el peso del detalle no coincide con el peso de la boleta");
-                        }
+                        
 
                         _context.GoodsDelivered.Add(_GoodsDeliveredq);
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
