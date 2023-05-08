@@ -422,8 +422,11 @@ namespace ERPAPI.Controllers
                     CustomerId = _CertificadoDeposito.CustomerId,
                     PdaNo = item.PdaNo,
                     ValorTotal = item.Price * item.Quantity,
-                    ValorMovimiento = item.Price * item.Quantity,   
-                    
+                    ValorMovimiento = item.Price * item.Quantity,  
+                    Precio = item.Price,
+                    SourceDocumentId =(int) _CertificadoDeposito.IdCD,
+                     SourceDocumentName = "Certficado de Depósito",
+                    SourceDocumentLine = (int)item.CertificadoLineId,
 
                 };
                 kardices.Add(kardex);
@@ -479,6 +482,9 @@ namespace ERPAPI.Controllers
                     //_context.CertificadoLine.Add(item);
                 }
             }
+
+            List<Kardex> kardex = GeneraKardexCertificado(certificado);
+            _context.AddRange(kardex);
 
 
             certificado.IdEstado = 6;
@@ -613,8 +619,7 @@ namespace ERPAPI.Controllers
 
                     });
 
-                    List<Kardex> kardex = GeneraKardexCertificado(_CertificadoDeposito);
-                    _context.AddRange(kardex);
+                    
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                     await _context.SaveChangesAsync();

@@ -149,6 +149,11 @@ namespace ERPAPI.Controllers
                                         NoARLineId = (int)line.Key.GoodsDeliveryAuthorizationLineId,
                                     }).OrderBy(o => o.QuantityAuthorized).ToList();
                 ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == controlid).FirstOrDefault();
+
+                controlPalletsLines = await _context.ControlPalletsLine
+                    .Where(q => q.ControlPalletsId == controlid)
+
+                    .ToListAsync();
                 Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
                 if (_Boleto_Ent != null && _Boleto_Ent.Boleto_Sal != null)
                 {
@@ -170,23 +175,51 @@ namespace ERPAPI.Controllers
                     _ControlPallets.taracamion = Convert.ToDouble(_Boleto_Ent.Convercion(_ControlPallets.taracamion, _Boleto_Ent.UnidadPreferidaId));
                     _ControlPallets.UnitOfMeasureId = _Boleto_Ent.UnidadPreferidaId;
 
-                    
+
+                    goodsDeliveredLines = EntregaPesada(_ControlPallets,goodsDeliveredLines, goodsDeliveryAuthorizationsLines);
+
                 }
-                controlPalletsLines = await _context.ControlPalletsLine
-                    .Where(q => q.ControlPalletsId == controlid)
+                else
+                {
 
-                    .ToListAsync();
+                    goodsDeliveredLines = EntregaNoPesada(_ControlPallets, goodsDeliveredLines, goodsDeliveryAuthorizationsLines, controlPalletsLines);
 
-                decimal pesoentregar = (decimal)_ControlPallets.pesoneto2;
+                }
+                
+
+
+                
+                return Ok(goodsDeliveredLines.ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
+
+
+        private List<GoodsDeliveredLine> EntregaNoPesada(
+            ControlPallets _ControlPallets,
+            List<GoodsDeliveredLine> goodsDeliveredLines,
+            List<GoodsDeliveryAuthorizationLine> goodsDeliveryAuthorizationsLines,
+            List<ControlPalletsLine> controlPalletsLines
+
+            )
+
+        {
+            foreach (var controllinea in controlPalletsLines)
+            {
+                decimal pesoentregar = (decimal)controllinea.Qty;
                 int cantsacos = (int)_ControlPallets.TotalSacos;
 
 
                 foreach (var item in goodsDeliveredLines)
                 {
-                    item.WareHouseId = (long)_ControlPallets.WarehouseId;
-                    item.WareHouseName = _ControlPallets.WarehouseName;
-                    item.ControlPalletsId = (long)_ControlPallets.PalletId;
-                    
+                    item.WareHouseId = (long)controllinea.WarehouseId;
+                    item.WareHouseName = controllinea.WarehouseName;
+                    //item.ControlPalletsId = (long)_ControlPallets.PalletId;
+
                     List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines.Where(q => q.SubProductId == item.SubProductId).ToList();
                     decimal pesoentregalinea = 0;
                     if (item.QuantityAuthorized >= pesoentregar)
@@ -195,30 +228,75 @@ namespace ERPAPI.Controllers
                     }
                     else
                     {
-                        pesoentregalinea = (decimal)item.QuantityAuthorized ;
+                        pesoentregalinea = (decimal)item.QuantityAuthorized;
 
                     }
-                    if (pesoentregar ==0)
+                    if (pesoentregar == 0)
                     {
                         pesoentregalinea = 0;
                     }
-                    
+
                     pesoentregar = pesoentregar - pesoentregalinea;
-                    
+
 
                     item.Quantity = pesoentregalinea;
                     item.Total = pesoentregar;
-                    item.QuantitySacos = cantsacos ;
+                    item.QuantitySacos = 0;
                     item.ControlPalletsId = _ControlPallets.PalletId;
 
                 }
-                return Ok(goodsDeliveredLines.ToList());
             }
-            catch (Exception ex)
+            
+
+            return goodsDeliveredLines;
+
+        }
+
+        private List<GoodsDeliveredLine> EntregaPesada(
+            ControlPallets _ControlPallets, 
+            List<GoodsDeliveredLine> goodsDeliveredLines,
+            List<GoodsDeliveryAuthorizationLine> goodsDeliveryAuthorizationsLines
+            ) 
+        
+        {
+            decimal pesoentregar = (decimal)_ControlPallets.pesoneto2;
+            int cantsacos = (int)_ControlPallets.TotalSacos;
+
+
+            foreach (var item in goodsDeliveredLines)
             {
-                _logger.LogError(ex.Message);
-                return BadRequest("Ocurrio un error:" + ex.Message);
+                item.WareHouseId = (long)_ControlPallets.WarehouseId;
+                item.WareHouseName = _ControlPallets.WarehouseName;
+                item.ControlPalletsId = (long)_ControlPallets.PalletId;
+
+                List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines.Where(q => q.SubProductId == item.SubProductId).ToList();
+                decimal pesoentregalinea = 0;
+                if (item.QuantityAuthorized >= pesoentregar)
+                {
+                    pesoentregalinea = pesoentregar;
+                }
+                else
+                {
+                    pesoentregalinea = (decimal)item.QuantityAuthorized;
+
+                }
+                if (pesoentregar == 0)
+                {
+                    pesoentregalinea = 0;
+                }
+
+                pesoentregar = pesoentregar - pesoentregalinea;
+
+
+                item.Quantity = pesoentregalinea;
+                item.Total = pesoentregar;
+                item.QuantitySacos = cantsacos;
+                item.ControlPalletsId = _ControlPallets.PalletId;
+
             }
+
+            return goodsDeliveredLines;
+
         }
 
 
