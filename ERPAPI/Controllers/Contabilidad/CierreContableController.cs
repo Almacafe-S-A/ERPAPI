@@ -78,7 +78,7 @@ namespace ERPAPI.Controllers
                 .Include(i => i.BitacoraCierresContable)
                 .FirstOrDefault();
 
-            if (proceso.Estatus == "FINALIZADO" ) return BadRequest("Este proceso ya ha sido ejecutado previmente el " + proceso.FechaCierre?.ToString("dd/MM/yyyy"));
+            if (proceso.Estatus == "FINALIZADO" && proceso.PasoCierre != 4) return BadRequest("Este proceso ya ha sido ejecutado previmente el " + proceso.FechaCierre?.ToString("dd/MM/yyyy"));
 
             if (proceso.Estatus == "PROCESANDO") return BadRequest("Este proceso actualmente se encuentra en EJECUCION");
 
