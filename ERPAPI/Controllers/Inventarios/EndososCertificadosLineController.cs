@@ -182,7 +182,29 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.EndososCertificadosLine
+                             .Include(d => d.EndososLiberacion)
                              .Where(q => q.EndososCertificadosId == EndososCertificadosId).ToListAsync();
+                Items = (from i in Items
+                         select new EndososCertificadosLine {
+                             CantidadLiberacion = i.EndososLiberacion.Sum(s => s.Quantity),
+                             EndososCertificadosLineId = i.EndososCertificadosLineId
+                            ,EndososCertificadosId = i.EndososCertificadosId
+                            ,UnitOfMeasureId = i.UnitOfMeasureId
+                            ,UnitOfMeasureName = i.UnitOfMeasureName
+                            ,CertificadoLineId = i.CertificadoLineId
+                            ,SubProductId = i.SubProductId
+                            ,SubProductName = i.SubProductName
+                            ,Quantity = i.Quantity
+                            ,Price = i.Price
+                            ,ValorEndoso = i.ValorEndoso
+                            ,Saldo = i.Saldo
+                            ,DerechosFiscales = i.DerechosFiscales
+                            ,Pda = i.Pda
+                            ,ValorUnitarioDerechos = i.ValorUnitarioDerechos
+
+                         })
+
+                    .ToList();
             }
             catch (Exception ex)
             {
