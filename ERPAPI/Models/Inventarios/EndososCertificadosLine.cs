@@ -15,9 +15,12 @@ namespace ERPAPI.Models
 
         [Display(Name = "Id Endoso")]
         public Int64 EndososCertificadosId { get; set; }
+  
         [ForeignKey("EndososCertificadosId")]
         public EndososCertificados EndososCertificados { get; set; }
 
+        public List<EndososLiberacion> EndososLiberacion { get; set; }
+        
         public int Pda { get; set; }
 
         [Display(Name = "Unidad de medida")]
