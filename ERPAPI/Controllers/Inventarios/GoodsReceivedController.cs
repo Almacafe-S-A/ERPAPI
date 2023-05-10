@@ -168,12 +168,16 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.GoodsReceived
-                        .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
-                            && p.CustomerId == clienteid
-                            && p.ProductId == servicioid
-                            && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == p.GoodsReceivedId))
-                        .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                    List<GoodsReceivedLine> GoodsRecievedList = _context.GoodsReceivedLine
+                        .Where(p => !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == p.GoodsReceiveLinedId)).ToList();
+                    Items = await (from gr in _context.GoodsReceived
+                                   join grl in _context.GoodsReceivedLine on gr.GoodsReceivedId equals grl.GoodsReceivedId
+                                   where branchlist.Any(b => gr.BranchId == b.BranchId)
+                                       && gr.CustomerId == clienteid
+                                       && gr.ProductId == servicioid
+                                       && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == grl.GoodsReceiveLinedId)
+                                   orderby gr.GoodsReceivedId descending
+                                   select gr).ToListAsync();
                 }
                 else
                 {
