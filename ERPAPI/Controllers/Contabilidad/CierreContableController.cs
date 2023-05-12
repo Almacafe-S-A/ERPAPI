@@ -1096,7 +1096,7 @@ namespace ERPAPI.Controllers
                     _je.PeriodoId = periodo?.Id;
                     _je.Periodo = periodo.Anio.ToString();
                     _je.TypeJournalName = "Voucher de Registros";
-                    _je.VoucherType = 9;
+                    _je.VoucherType = 21;
                     _je.DatePosted = new DateTime(pfecha.Year, pfecha.Month, DateTime.DaysInMonth(pfecha.Year, pfecha.Month));
 
                     _context.JournalEntry.Add(_je);

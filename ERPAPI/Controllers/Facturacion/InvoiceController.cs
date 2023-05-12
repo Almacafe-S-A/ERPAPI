@@ -299,19 +299,6 @@ namespace ERPAPI.Controllers
 
                     asiento = GeneraAsientoPorCobrarFactura(factura).Result.Value;
 
-                    //if (factura.SalesTypeId == 2)
-                    //{
-                        
-                    //}
-                    //else
-                    //{
-                    //    //asiento = GeneraAsientoContadoFactura(factura).Result.Value;
-                    //}
-
-                    
-
-                    
-
                     factura.JournalEntryId = asiento.JournalEntryId;
                     factura.Saldo = factura.SubTotal;
                     factura.SaldoImpuesto = factura.Tax;
@@ -320,20 +307,18 @@ namespace ERPAPI.Controllers
                         item.Saldo = item.SubTotal;
                     }
 
-                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-
-                    await _context.SaveChangesAsync();
-
-
-                    
-
-                   
                     factura.FechaModificacion = DateTime.Now;
 
+                    Numalet let;
+                    let = new Numalet();
+                    let.SeparadorDecimalSalida = "Lempiras";
+                    let.MascaraSalidaDecimal = "00/100 ";
+                    let.ApocoparUnoParteEntera = true;
+                    factura.TotalLetras = let.ToCustomCardinal((factura.Total)).ToUpper();
+
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
-
 
                     transaction.Commit();
                 }
@@ -408,12 +393,7 @@ namespace ERPAPI.Controllers
 
                         _Invoiceq.NumeroDEI = "PROFORMA";
 
-                        Numalet let;
-                        let = new Numalet();
-                        let.SeparadorDecimalSalida = "Lempiras";
-                        let.MascaraSalidaDecimal = "00/100 ";
-                        let.ApocoparUnoParteEntera = true;
-                        _Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
+                        
 
 
                         foreach (var item in _Invoiceq.InvoiceLine)
@@ -445,8 +425,18 @@ namespace ERPAPI.Controllers
                         _Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
                         _Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);                        
                         _Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.SubTotal);
-                        _Invoiceq.TotalGravado = _Invoiceq.InvoiceLine.Where(q => q.TaxAmount> 0).Sum(s => s.SubTotal);
+                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
+                        _Invoiceq.TotalGravado = _Invoiceq.Exonerado ? 0 : _Invoiceq.InvoiceLine.Where(q => q.SubTotal> 0).Sum(s => s.SubTotal);
+                        _Invoiceq.TotalExonerado = _Invoiceq.Exonerado ? _Invoiceq.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal):0;
                         _Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
+
+                        Numalet let;
+                        let = new Numalet();
+                        let.SeparadorDecimalSalida = "Lempiras";
+                        let.MascaraSalidaDecimal = "00/100 ";
+                        let.ApocoparUnoParteEntera = true;
+                        _Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
+
 
 
                         _context.Invoice.Add(_Invoiceq);
