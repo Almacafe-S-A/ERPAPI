@@ -187,6 +187,7 @@ namespace ERPAPI.Controllers
                 Items = (from i in Items
                          select new EndososCertificadosLine {
                              CantidadLiberacion = i.EndososLiberacion.Sum(s => s.Quantity),
+                             ValorLiberado = (i.EndososLiberacion.Sum(s => s.Quantity) * i.Price),
                              EndososCertificadosLineId = i.EndososCertificadosLineId
                             ,EndososCertificadosId = i.EndososCertificadosId
                             ,UnitOfMeasureId = i.UnitOfMeasureId
