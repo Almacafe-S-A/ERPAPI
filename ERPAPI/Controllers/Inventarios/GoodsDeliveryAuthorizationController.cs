@@ -276,19 +276,31 @@ namespace ERPAPI.Controllers
                                                Pda = cd.Key.PdaNo,
                                            }).ToList();
 
-                List<EndososCertificadosLine> endososCertificadosLines = _context.EndososCertificadosLine.Include(i => i.EndososCertificados)
+                 endosos = _context.EndososCertificados
+                .Include(i => i.EndososCertificadosLine)
+                .Where(q => certificados.Any(a => a == q.IdCD) ).ToList();
+
+                List<EndososCertificadosLine> endososCertificadosLines = _context.EndososCertificadosLine
+                    .Include(i => i.EndososCertificados)
+                    .Include(i => i.EndososLiberacion)
                    .Where(q => endosos.Any(a => a.EndososCertificadosId == q.EndososCertificadosId)).ToList();
 
-                foreach (var item in pendientes)
+                foreach (var endosodetalle in endososCertificadosLines)
                 {
-                    var endoso = endososCertificadosLines
-                        .Where(q => q.Pda ==  item.Pda && q.EndososCertificados.IdCD == item.NoCertificadoDeposito).FirstOrDefault();
-                    if (endoso != null) {
-                        item.Saldo = item.Saldo - endoso.Saldo;
-                        item.SaldoProducto = item.SaldoProducto - endoso.Saldo;
+                    decimal saldoendoso = endosodetalle.Quantity - endosodetalle.EndososLiberacion.Sum(s => s.Quantity);
+                    foreach (var item in pendientes)
+                    {
+                        
+                        if (endosodetalle.Pda == item.Pda && endosodetalle.EndososCertificados.NoCD == item.NoCertificadoDeposito )
+                        {
+                            decimal saldooriginal = item.SaldoProducto;
+                            item.SaldoProducto =saldoendoso> item.SaldoProducto?item.SaldoProducto:item.SaldoProducto - saldoendoso;
+                            saldoendoso = saldoendoso - (saldooriginal - item.SaldoProducto);
+                        }
                     }
                 }
 
+                    
                 if (pendientes.Count>7)
                 {
                     return BadRequest("La autorizacion solo puede contener 7 lineas de detalle");
