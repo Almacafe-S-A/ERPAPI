@@ -620,6 +620,9 @@ namespace ERPAPI.Controllers
                 Periodo periodo = new Periodo();
                 periodo = periodo.PeriodoActivo(_context);
 
+                
+                CostCenter centrocosto = _context.CostCenter.Where(x => x.BranchId == factura.BranchId).FirstOrDefault();
+
                 partida = new JournalEntry
                 {
                     Date = DateTime.Now,
@@ -645,22 +648,43 @@ namespace ERPAPI.Controllers
 
                 };
 
-                partida.JournalEntryLines.Add(new JournalEntryLine
+                if (factura.Tax > 0)
                 {
-                    AccountId = (long)tax.CuentaContableIngresosId,
-                    AccountName = tax.CuentaContableIngresosNombre,
-                    CostCenterId = 1,
-                    CostCenterName = "San Pedro Sula",
-                    Debit = factura.Tax,
-                    Credit = 0,
-                    CreatedDate = DateTime.Now,
-                    CreatedUser = User.Identity.Name,
-                    ModifiedUser = User.Identity.Name,
-                    ModifiedDate = DateTime.Now,
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (long)tax.CuentaContableIngresosId,
+                        AccountName = tax.CuentaContableIngresosNombre,
+                        CostCenterId = centrocosto.CostCenterId,
+                        CostCenterName = centrocosto.CostCenterName,
+                        Debit = 0,
+                        Credit = factura.Tax,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
 
 
 
-                });
+                    });
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (long)tax.CuentaContablePorCobrarId,
+                        AccountName = tax.CuentaContablePorCobrarNombre,
+                        CostCenterId = centrocosto.CostCenterId,
+                        CostCenterName = centrocosto.CostCenterName,
+                        Debit = factura.Tax,
+                        Credit = 0,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+
+
+
+                    });
+                }
+
+                
 
 
                 foreach (var item in factura.InvoiceLine)
@@ -677,10 +701,10 @@ namespace ERPAPI.Controllers
                     {
                         AccountId = (int)relation.CuentaContableIngresosId,
                         AccountName = relation.CuentaContablePorCobrarNombre,
-                        CostCenterId = 1,
-                        CostCenterName = "San Pedro Sula",
-                        Debit = item.Amount - item.DiscountAmount,
-                        Credit = 0,
+                        CostCenterId = centrocosto.CostCenterId,
+                        CostCenterName = centrocosto.CostCenterName,
+                        Debit = 0,
+                        Credit = item.Amount - item.DiscountAmount,
                         CreatedDate = DateTime.Now,
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
@@ -691,24 +715,24 @@ namespace ERPAPI.Controllers
                     });
                 }
 
-                Accounting accounting = _context.Accounting.Where(q => q.AccountId == factura.accountManagement.AccountId).FirstOrDefault();
+                //Accounting accounting = _context.Accounting.Where(q => q.AccountId == factura.accountManagement.AccountId).FirstOrDefault();
 
-                partida.JournalEntryLines.Add(new JournalEntryLine
-                {
-                    AccountId = accounting.AccountId,
-                    AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
-                    CostCenterId = 1,
-                    CostCenterName = "San Pedro Sula",
-                    Debit = 0,
-                    Credit = factura.Total,
-                    CreatedDate = DateTime.Now,
-                    CreatedUser = User.Identity.Name,
-                    ModifiedUser = User.Identity.Name,
-                    ModifiedDate = DateTime.Now,
+                //partida.JournalEntryLines.Add(new JournalEntryLine
+                //{
+                //    AccountId = accounting.AccountId,
+                //    AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
+                //    CostCenterId = centrocosto.CostCenterId,
+                //    CostCenterName = centrocosto.CostCenterName,
+                //    Debit = 0,
+                //    Credit = factura.Total,
+                //    CreatedDate = DateTime.Now,
+                //    CreatedUser = User.Identity.Name,
+                //    ModifiedUser = User.Identity.Name,
+                //    ModifiedDate = DateTime.Now,
 
 
 
-                });
+                //});
 
 
 
