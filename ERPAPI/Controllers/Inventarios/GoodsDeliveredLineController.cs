@@ -220,8 +220,14 @@ namespace ERPAPI.Controllers
                     item.WareHouseName = controllinea.WarehouseName;
                     //item.ControlPalletsId = (long)_ControlPallets.PalletId;
 
-                    List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines.Where(q => q.SubProductId == item.SubProductId).ToList();
+                    List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines
+                        .Where(q => q.SubProductId == item.SubProductId).ToList();
                     decimal pesoentregalinea = 0;
+                    if (!(item.SubProductId == controllinea.SubProductId 
+                        && item.UnitOfMeasureId == controllinea.UnitofMeasureId))
+                    {
+                        continue;
+                    }
                     if (item.QuantityAuthorized >= pesoentregar)
                     {
                         pesoentregalinea = pesoentregar;
