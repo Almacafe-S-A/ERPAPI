@@ -183,9 +183,18 @@ namespace ERPAPI.Controllers
                 {
 
                     goodsDeliveredLines = EntregaNoPesada(_ControlPallets, goodsDeliveredLines, goodsDeliveryAuthorizationsLines, controlPalletsLines);
+                    foreach (var item in goodsDeliveredLines)
+                    {
+                        if (item != goodsDeliveredLines.First())
+                        {
+                            item.QuantitySacos = 0;
+                        }
+                    }
 
                 }
                 
+
+                goodsDeliveredLines = goodsDeliveredLines.Where(q => q.Quantity>0).ToList();
 
 
                 

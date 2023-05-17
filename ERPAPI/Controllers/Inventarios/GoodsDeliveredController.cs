@@ -384,10 +384,7 @@ namespace ERPAPI.Controllers
                         }
                         else
                         {
-                            //if (_GoodsDeliveredq. != _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity))
-                            //{
-                            //    return BadRequest("Los el peso del detalle no coincide con el peso de la boleta");
-                            //}
+                            _GoodsDeliveredq.PesoNeto2 = _GoodsDeliveredq._GoodsDeliveredLine.Sum(s => s.Quantity);
                         }
 
 
