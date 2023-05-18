@@ -399,7 +399,8 @@ namespace ERPAPI.Controllers
                     TotalDebit = 0,
                     ModifiedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
-
+                    TypeJournalName = "Pagos de Clientes",
+                    VoucherType = 12,
 
 
 
