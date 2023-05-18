@@ -83,7 +83,32 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.CertificadoDeposito.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.IdCD).ToListAsync();
+                    Items = await _context.CertificadoDeposito.Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
+                        .OrderByDescending(b => b.IdCD).ToListAsync();
+                    Items = (from c in Items
+                             join b in _context.EndososCertificados on c.IdCD equals b.IdCD into CertificadoEndoso
+                             from d in CertificadoEndoso.DefaultIfEmpty()
+                             select new CertificadoDeposito
+                             {
+                                 Endoso = new EndososCertificados
+                                 {
+                                     BankName = d == null ? "No Endosado" : d.BankName,
+                                 },
+                                 IdCD = c.IdCD,
+                                 SolicitudCertificadoId = c.SolicitudCertificadoId,
+                                 FechaCertificado = c.FechaCertificado,
+                                 FechaVencimientoDeposito = c.FechaVencimientoDeposito,
+                                 CustomerName = c.CustomerName,
+                                 ServicioName = c.ServicioName,
+                                 BranchName = c.BranchName,
+                                 NoPoliza = c.NoPoliza,
+                                 Producto = c.Producto,
+                                 Quantitysum = c.Quantitysum,
+                                 Estado = c.Estado,
+                                 Impresiones = c.Impresiones,
+                                 impresionesTalon = c.impresionesTalon
+                             }
+                            ).ToList();
                 }
                 else
                 {
