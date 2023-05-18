@@ -74,7 +74,7 @@ namespace ERPAPI.Models
             return $"{this.GetPrefijo()}-{this.NoInicio.ToString().PadLeft(8,'0')} al {this.GetPrefijo()}-{this.NoFin.ToString().PadLeft(8, '0')}";
         }
 
-        public NumeracionSAR ObtenerNumeracionSarValida(int tipoDocumento,ApplicationDbContext _context)
+        public NumeracionSAR ObtenerNumeracionSarValida(int tipoDocumento,int sucursal,ApplicationDbContext _context)
         {
 
             NumeracionSAR numeracionSAR = new NumeracionSAR();
@@ -83,6 +83,7 @@ namespace ERPAPI.Models
 
             numeracionSARs = _context.NumeracionSAR
                     .Where(q => q.DocTypeId == tipoDocumento
+                    && q.BranchId== sucursal
                     && fecha < q.FechaLimite
                     && (q.Correlativo <= q.NoFin || q.SiguienteNumero == null || q.Correlativo == null)
                     && q.IdEstado == 1)

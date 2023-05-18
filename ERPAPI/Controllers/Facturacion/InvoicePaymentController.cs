@@ -372,6 +372,8 @@ namespace ERPAPI.Controllers
             {
                 Periodo periodo = new Periodo();
                 periodo = periodo.PeriodoActivo(_context);
+                CostCenter centrocosto = _context.CostCenter.Where(x => x.BranchId == pago.BranchId).FirstOrDefault();
+
 
                 pago.accountManagement = await  _context.AccountManagement
                     .Include(i => i.Accounting)
@@ -410,8 +412,8 @@ namespace ERPAPI.Controllers
                 {
                     AccountId = pago.accountManagement.AccountId,
                     AccountName = $"{pago.accountManagement.Accounting.AccountCode} - {pago.accountManagement.Accounting.AccountName}",
-                    CostCenterId = 1,
-                    CostCenterName = "San Pedro Sula",
+                    CostCenterId = centrocosto.CostCenterId,
+                    CostCenterName = centrocosto.CostCenterName,
                     Debit = pago.MontoPagado,
                     Credit = 0,
                     CreatedDate = DateTime.Now,
@@ -437,8 +439,8 @@ namespace ERPAPI.Controllers
                         {
                             AccountId = (long)tax.CuentaContablePorCobrarId,
                             AccountName = tax.CuentaContablePorCobrarNombre,
-                            CostCenterId = 1,
-                            CostCenterName = "San Pedro Sula",
+                            CostCenterId = centrocosto.CostCenterId,
+                            CostCenterName = centrocosto.CostCenterName,
                             Debit = 0,
                             Credit = item.MontoPagado,
                             CreatedDate = DateTime.Now,
@@ -464,8 +466,8 @@ namespace ERPAPI.Controllers
                     {
                         AccountId = (int)relation.CuentaContableIngresosId,
                         AccountName = relation.CuentaContablePorCobrarNombre,
-                        CostCenterId = 1,
-                        CostCenterName = "San Pedro Sula",
+                        CostCenterId = centrocosto.CostCenterId,
+                        CostCenterName = centrocosto.CostCenterName,
                         Debit = 0,
                         Credit = item.MontoPagado,
                         CreatedDate = DateTime.Now,
