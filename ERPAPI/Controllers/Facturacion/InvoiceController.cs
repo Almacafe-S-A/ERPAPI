@@ -297,7 +297,7 @@ namespace ERPAPI.Controllers
                         CustomerId = factura.CustomerId,
                     });
 
-                    asiento = GeneraAsientoPorCobrarFactura(factura).Result.Value;
+                    asiento = GeneraAsientoFactura(factura).Result.Value;
 
                     factura.JournalEntryId = asiento.JournalEntryId;
                     factura.Saldo = factura.SubTotal;
@@ -603,7 +603,7 @@ namespace ERPAPI.Controllers
         /// <param name="factura"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<ActionResult<JournalEntry>> GeneraAsientoContadoFactura(Invoice factura)
+        public async Task<ActionResult<JournalEntry>> GeneraAsientoFactura(Invoice factura)
         {
             JournalEntry partida = new JournalEntry();
             ///Impuesto 
@@ -642,6 +642,8 @@ namespace ERPAPI.Controllers
                     TotalDebit = 0,
                     ModifiedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
+                    VoucherType= 1,
+                    TypeJournalName = "Factura de ventas",
 
 
 
@@ -700,7 +702,7 @@ namespace ERPAPI.Controllers
                     partida.JournalEntryLines.Add(new JournalEntryLine
                     {
                         AccountId = (int)relation.CuentaContableIngresosId,
-                        AccountName = relation.CuentaContablePorCobrarNombre,
+                        AccountName = relation.CuentaContableIngresosNombre,
                         CostCenterId = centrocosto.CostCenterId,
                         CostCenterName = centrocosto.CostCenterName,
                         Debit = 0,
@@ -713,26 +715,24 @@ namespace ERPAPI.Controllers
 
 
                     });
+
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (int)relation.CuentaContableIdPorCobrar,
+                        AccountName = relation.CuentaContablePorCobrarNombre,
+                        CostCenterId = centrocosto.CostCenterId,
+                        CostCenterName = centrocosto.CostCenterName,
+                        Debit = item.Amount - item.DiscountAmount,
+                        Credit = 0,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+
+
+
+                    });
                 }
-
-                //Accounting accounting = _context.Accounting.Where(q => q.AccountId == factura.accountManagement.AccountId).FirstOrDefault();
-
-                //partida.JournalEntryLines.Add(new JournalEntryLine
-                //{
-                //    AccountId = accounting.AccountId,
-                //    AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
-                //    CostCenterId = centrocosto.CostCenterId,
-                //    CostCenterName = centrocosto.CostCenterName,
-                //    Debit = 0,
-                //    Credit = factura.Total,
-                //    CreatedDate = DateTime.Now,
-                //    CreatedUser = User.Identity.Name,
-                //    ModifiedUser = User.Identity.Name,
-                //    ModifiedDate = DateTime.Now,
-
-
-
-                //});
 
 
 
@@ -755,134 +755,7 @@ namespace ERPAPI.Controllers
             return partida;
         }
 
-        /// <summary>
-        /// Genera el asiento de la factura
-        /// </summary>
-        /// <param name="factura"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        public async Task<ActionResult<JournalEntry>> GeneraAsientoPorCobrarFactura(Invoice factura) {
-            JournalEntry partida = new JournalEntry();
-            ///Impuesto 
-            ///
-            Tax tax = new Tax();
-            tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
-
-            if (tax.CuentaContablePorCobrarId == null || tax.CuentaContableIngresosId == null)
-            {
-                throw new Exception("No se han configurado las cuentas contables para el ISV");
-            }
-            try
-            {
-                Periodo periodo = new Periodo();
-                periodo = periodo.PeriodoActivo(_context);
-
-                partida = new JournalEntry
-                {
-                    Date = DateTime.Now,
-                    DatePosted = DateTime.Now,
-                    CreatedUser = User.Identity.Name,
-                    CreatedDate = DateTime.Now,
-                    EstadoId = 5,
-                    EstadoName = "Enviada a Aprobación",
-                    PeriodoId = periodo.Id,
-                    TypeOfAdjustmentId = 65,
-                    TypeOfAdjustmentName = "Asiento Diario",
-                    JournalEntryLines = new List<JournalEntryLine>(),
-                    Memo = $"Factura #{factura.NumeroDEI} a Cliente {factura.CustomerName} por concepto de {factura.ProductName}",
-                    Periodo = periodo.Anio.ToString(),
-                    Posted = false,
-                    TotalCredit = 0,
-                    TotalDebit = 0,
-                    ModifiedDate = DateTime.Now,
-                    ModifiedUser = User.Identity.Name,
-
-
-
-
-                };
-
-
-
-
-                
-
-                partida.JournalEntryLines.Add(new JournalEntryLine
-                {
-                    AccountId = (long)tax.CuentaContablePorCobrarId,
-                    AccountName = tax.CuentaContablePorCobrarNombre,
-                    CostCenterId = 1,
-                    CostCenterName = "San Pedro Sula",
-                    Debit = factura.Tax,
-                    Credit = 0,
-                    CreatedDate = DateTime.Now,
-                    CreatedUser = User.Identity.Name,
-                    ModifiedUser = User.Identity.Name,
-                    ModifiedDate = DateTime.Now,
-
-
-
-                });
-
-
-                foreach (var item in factura.InvoiceLine)
-                {
-                    ProductRelation relation = new ProductRelation();
-                    relation = _context.ProductRelation.Where(x =>
-                    x.ProductId == factura.ProductId
-                    && x.SubProductId == item.SubProductId
-                    )
-                        .FirstOrDefault();
-                    partida.JournalEntryLines.Add(new JournalEntryLine
-                    {
-                        AccountId = (long)relation.CuentaContableIdPorCobrar,
-                        AccountName = relation.CuentaContableIngresosNombre,
-                        CostCenterId = 1,
-                        CostCenterName = "San Pedro Sula",
-                        Debit = item.SubTotal,
-                        Credit = 0,
-                        CreatedDate = DateTime.Now,
-                        CreatedUser = User.Identity.Name,
-                        ModifiedUser = User.Identity.Name,
-                        ModifiedDate = DateTime.Now,
-                    });
-
-                    partida.JournalEntryLines.Add(new JournalEntryLine
-                    {
-                        AccountId = (int)relation.CuentaContableIngresosId,
-                        AccountName = relation.CuentaContablePorCobrarNombre,
-                        CostCenterId = 1,
-                        CostCenterName = "San Pedro Sula",
-                        Debit = 0,
-                        Credit = item.Total,
-                        CreatedDate = DateTime.Now,
-                        CreatedUser = User.Identity.Name,
-                        ModifiedUser = User.Identity.Name,
-                        ModifiedDate = DateTime.Now,
-
-
-
-                    });
-                }
-
-                partida.TotalCredit= partida.JournalEntryLines.Sum(s => s.Credit);
-                partida.TotalDebit= partida.JournalEntryLines.Sum(s => s.Debit);
-
-                partida.JournalEntryLines = partida.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
-
-
-                _context.JournalEntry.Add(partida);
-            }
-            catch (Exception )
-            {
-                
-                throw new Exception("Falta la configuracion contable en los subservicios utilizados");
-            }
-            
-
-            
-            return partida;
-        }
+       
 
         /// <summary>
         /// Actualiza la Invoice
