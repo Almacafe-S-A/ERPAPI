@@ -147,7 +147,7 @@ namespace ERPAPI.Controllers
 
                     
                     NumeracionSAR numeracionSAR = new NumeracionSAR();
-                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(9, _context);
+                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(9,debitnote.BranchId, _context);
 
                     debitnote.NumeroDEI = numeracionSAR.GetCorrelativo();
                     debitnote.RangoAutorizado = numeracionSAR.getRango();

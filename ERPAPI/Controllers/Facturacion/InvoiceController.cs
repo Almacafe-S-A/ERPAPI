@@ -265,7 +265,7 @@ namespace ERPAPI.Controllers
                     }
 
                     NumeracionSAR numeracionSAR = new NumeracionSAR();
-                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(1, _context);
+                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(1,factura.BranchId, _context);
 
                     factura.NumeroDEI = numeracionSAR.GetCorrelativo();
                     factura.Rango = numeracionSAR.getRango();
