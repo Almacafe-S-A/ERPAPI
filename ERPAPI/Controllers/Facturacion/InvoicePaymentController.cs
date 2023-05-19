@@ -278,7 +278,7 @@ namespace ERPAPI.Controllers
                         _InvoicePaymentsq = _InvoicePayments;
                         _InvoicePaymentsq.UsuarioCreacion= User.Identity.Name;
                         _InvoicePaymentsq.FechaCreacion = DateTime.Now;                    
-                        _InvoicePaymentsq.Estado = "En Revisión";
+                        _InvoicePaymentsq.Estado = "Aprobado";
                         _InvoicePaymentsq.EstadoId = 1;
                         Numalet let;
                         let = new Numalet();
