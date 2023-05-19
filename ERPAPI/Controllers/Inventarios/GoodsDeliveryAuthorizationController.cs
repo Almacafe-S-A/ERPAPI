@@ -606,9 +606,11 @@ namespace ERPAPI.Controllers
                 if (branch != null)
                 {
                     Items = await _context.GoodsDeliveryAuthorization
+                        .Include(g => g.GoodsDeliveryAuthorizationLine)
                       .Where(p =>
                            p.CustomerId == clienteid
                           && p.ProductId == servicioid
+                          && p.GoodsDeliveryAuthorizationLine.Sum(s => s.SaldoProducto)>0
                           )
                       .OrderByDescending(b => b.GoodsDeliveryAuthorizationId).ToListAsync();
 

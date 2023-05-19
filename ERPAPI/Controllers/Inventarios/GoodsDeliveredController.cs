@@ -343,9 +343,9 @@ namespace ERPAPI.Controllers
                         _GoodsDelivered._GoodsDeliveredLine = _GoodsDelivered._GoodsDeliveredLine.Where(q => q.Quantity > 0).ToList();
 
 
-                        _GoodsDeliveredq.SubProductName =String.Join(',' ,_GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.SubProductName));
-                        _GoodsDeliveredq.Certificados = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoCD));
-                        _GoodsDeliveredq.Autorizaciones = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoAR));
+                        _GoodsDeliveredq.SubProductName =String.Join(',' ,_GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.SubProductName).Distinct());
+                        _GoodsDeliveredq.Certificados = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoCD).Distinct());
+                        _GoodsDeliveredq.Autorizaciones = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoAR).Distinct());
                         _GoodsDeliveredq.Estado = "Emitido";
                         ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsDeliveredq.ControlId).FirstOrDefault();
                         _ControlPallets.Estado = "Entregado";
