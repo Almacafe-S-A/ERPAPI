@@ -256,7 +256,7 @@ namespace ERPAPI.Controllers
                         .Where(q => q.CustomerId == factura.CustomerId)
                         .FirstOrDefault();
 
-                    if (customer != null && customer.Exonerado == true  )
+                    if (customer != null && factura.Exonerado == true  )
                     {
                         if (factura.NoConstanciadeRegistro == String.Empty || factura.NoOCExenta == String.Empty)
                         {
