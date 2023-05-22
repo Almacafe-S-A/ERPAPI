@@ -197,7 +197,7 @@ namespace ERPAPI.Controllers
                 }
                 
 
-                goodsDeliveredLines = goodsDeliveredLines.Where(q => q.Quantity>0).ToList();
+                //goodsDeliveredLines = goodsDeliveredLines.Where(q => q.Quantity>0).ToList();
 
 
                 
