@@ -65,6 +65,35 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+
+        /// <summary>
+        /// Obtienne los de los controles de salidas pendientes y le resta el saldo autorizado 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetEndosos([FromQuery(Name = "Recibos")] int[] ARs)
+        {
+            List<EndososCertificados> endososCertificados = new List<EndososCertificados>();
+            
+
+            try
+            {
+                endososCertificados = _context.EndososCertificados.Where(q => ARs.Any(a => a == (int)q.NoCD)).ToList();
+
+               
+
+
+
+                return Ok(endososCertificados.ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Obtiene el Listado de EndososCertificadoses 
         /// El estado define cuales son los cai activos
