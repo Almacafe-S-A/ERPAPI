@@ -106,7 +106,9 @@ namespace ERPAPI.Controllers
                                  Quantitysum = c.Quantitysum,
                                  Estado = c.Estado,
                                  Impresiones = c.Impresiones,
-                                 impresionesTalon = c.impresionesTalon
+                                 impresionesTalon = c.impresionesTalon,
+                                 IdEstado = c.IdEstado,
+                                 
                              }
                             ).ToList();
                 }
