@@ -182,10 +182,11 @@ namespace ERPAPI.Controllers
                         if (item != goodsDeliveredLines.First())
                         {
                             item.QuantitySacos = 0;
-                            item.WareHouseId = (long)_ControlPallets.WarehouseId;
-                            item.WareHouseName = _ControlPallets.WarehouseName;
+                            
 
                         }
+                        item.WareHouseId = (long)_ControlPallets.WarehouseId;
+                        item.WareHouseName = _ControlPallets.WarehouseName;
                     }
 
                 }
@@ -193,7 +194,15 @@ namespace ERPAPI.Controllers
                 {
 
                     goodsDeliveredLines = EntregaNoPesada(_ControlPallets, goodsDeliveredLines, goodsDeliveryAuthorizationsLines, controlPalletsLines);
-                    
+                    foreach (var item in goodsDeliveredLines)
+                    {
+                        if (item != goodsDeliveredLines.First())
+                        {
+                            item.QuantitySacos = 0;
+
+
+                        }
+                    }
 
                 }
                 
