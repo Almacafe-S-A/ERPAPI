@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
@@ -10,6 +11,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.CodeAnalysis.Operations;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -139,10 +142,63 @@ namespace ERPAPI.Controllers
             {
                 /////Selecciona todos los control de ingresos con boleta de peso asociada y completos
                 controlPalletsAvailable = await _context.ControlPallets
+                    .Include(i => i._ControlPalletsLine)
                     .Where(q => q.EsIngreso == 0 && q.Estado != "Entregado"
                          && !_context.GoodsDelivered.Any(a => a.ControlId == q.ControlPalletsId)
                     // && q.BoletaPeso.Boleto_Sal !=  null
                     ).ToListAsync();
+
+                controlPalletsAvailable = (from c in controlPalletsAvailable
+                                           select new ControlPallets {
+                                            ControlPalletsId = c.ControlPalletsId,
+                                            Motorista = c.Motorista,
+                                            BranchId = c.BranchId,
+                                            BranchName = c.BranchName,
+                                            IdEstado = c.IdEstado,
+                                            Estado = c.Estado,
+                                            WarehouseId = c.WarehouseId,
+                                            WarehouseName = c.WarehouseName,
+                                            DocumentDate = c.DocumentDate,
+                                            ProductId = c.ProductId,
+                                            Product = c.Product,
+                                            ProductName = c.ProductName,
+                                            SubProductId = c.SubProductId,
+                                            SubProduct = c.SubProduct,
+                                            SubProductName = c.SubProductName,
+                                            Observaciones = c.Observaciones,
+                                            CustomerId = c.CustomerId,
+                                            Customer = c.Customer,
+                                            CustomerName = c.CustomerName,
+                                            DescriptionProduct = c.DescriptionProduct,
+                                            Placa = c.Placa,
+                                            Marca = c.Marca,
+                                            UnitOfMeasureId = c.UnitOfMeasureId,
+                                            unitOfMeasure = c.unitOfMeasure,
+                                            UnitOfMeasureName = c.UnitOfMeasureName,
+                                            PalletId = c.PalletId,
+                                            EsIngreso = c.EsIngreso,
+                                            EsSalida = c.EsSalida,
+                                            SubTotal = c.SubTotal,
+                                            TotalSacos = c.TotalSacos,
+                                            TotalSacosPolietileno = c.TotalSacosPolietileno,
+                                            TotalSacosYute = c.TotalSacosYute,
+                                            SacosDevueltos = c.SacosDevueltos,
+                                            QQPesoBruto = c.QQPesoBruto,
+                                            Tara = c.Tara,
+                                            QQPesoNeto = c.QQPesoNeto,
+                                            QQPesoFinal = c.QQPesoFinal,
+                                            ProductoPesado = c.ProductoPesado,
+                                            FechaCreacion = c.FechaCreacion,
+                                            FechaModificacion = c.FechaModificacion,
+                                            UsuarioCreacion = c.UsuarioCreacion,
+                                            UsuarioModificacion = c.UsuarioModificacion,
+                                            Impreso = c.Impreso,
+                                            WeightBallot = c.WeightBallot,
+                                            BoletaPeso = c.BoletaPeso,
+                                            GoodsDeliveryAuthorizationId = c.GoodsDeliveryAuthorizationId,
+                                            Total = (bool)c.ProductoPesado?(decimal)c.TotalSacos:(decimal)c._ControlPalletsLine.Sum(s =>s.Qty),
+
+                                           }).ToList();
 
 
             }

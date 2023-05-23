@@ -100,6 +100,8 @@ namespace ERPAPI.Models
         [ForeignKey("WeightBallot")]
         public Boleto_Ent BoletaPeso { get; set; }
 
+        [NotMapped]
+        public decimal Total { get; set; }
 
         [Display(Name = "Id Autorización")]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
