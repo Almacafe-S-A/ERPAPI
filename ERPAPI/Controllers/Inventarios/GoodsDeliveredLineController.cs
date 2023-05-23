@@ -177,12 +177,6 @@ namespace ERPAPI.Controllers
 
 
                     goodsDeliveredLines = EntregaPesada(_ControlPallets,goodsDeliveredLines, goodsDeliveryAuthorizationsLines);
-
-                }
-                else
-                {
-
-                    goodsDeliveredLines = EntregaNoPesada(_ControlPallets, goodsDeliveredLines, goodsDeliveryAuthorizationsLines, controlPalletsLines);
                     foreach (var item in goodsDeliveredLines)
                     {
                         if (item != goodsDeliveredLines.First())
@@ -193,6 +187,13 @@ namespace ERPAPI.Controllers
 
                         }
                     }
+
+                }
+                else
+                {
+
+                    goodsDeliveredLines = EntregaNoPesada(_ControlPallets, goodsDeliveredLines, goodsDeliveryAuthorizationsLines, controlPalletsLines);
+                    
 
                 }
                 
