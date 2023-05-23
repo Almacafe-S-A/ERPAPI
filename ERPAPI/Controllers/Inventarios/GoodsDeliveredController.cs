@@ -347,7 +347,9 @@ namespace ERPAPI.Controllers
                         _GoodsDeliveredq.Certificados = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoCD).Distinct());
                         _GoodsDeliveredq.Autorizaciones = String.Join(',', _GoodsDeliveredq._GoodsDeliveredLine.Select(s => s.NoAR).Distinct());
                         _GoodsDeliveredq.Estado = "Emitido";
-                        ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsDeliveredq.ControlId).FirstOrDefault();
+                        ControlPallets _ControlPallets = _context.ControlPallets
+                            .Include(i => i._ControlPalletsLine)
+                            .Where(q => q.ControlPalletsId == _GoodsDeliveredq.ControlId).FirstOrDefault();
                         _ControlPallets.Estado = "Entregado";
 
                         Boleto_Ent _Boleto_Ent = _context.Boleto_Ent
@@ -375,20 +377,20 @@ namespace ERPAPI.Controllers
                             _GoodsDeliveredq.PesoNeto = _Boleto_Ent.Convercion((double)_GoodsDeliveredq.PesoNeto, _Boleto_Ent.UnidadPreferidaId);
                             _GoodsDeliveredq.TaraTransporte = _Boleto_Ent.Convercion(taracamion, _Boleto_Ent.UnidadPreferidaId);
 
-                            if (_GoodsDeliveredq.PesoNeto2 != _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity))
-                            {
-                                return BadRequest("Los el peso del detalle no coincide con el peso de la boleta");
-                            }
+                            
 
 
                         }
                         else
                         {
-                            _GoodsDeliveredq.PesoNeto2 = _GoodsDeliveredq._GoodsDeliveredLine.Sum(s => s.Quantity);
+                            _GoodsDeliveredq.PesoNeto2 = (decimal)_ControlPallets._ControlPalletsLine.Sum(s => s.Qty);
                         }
 
+                        if (_GoodsDeliveredq.PesoNeto2 != _GoodsDeliveredq._GoodsDeliveredLine.Sum(x => x.Quantity))
+                        {
+                            return BadRequest("Los el peso del detalle no coincide con el peso de la boleta");
+                        }
 
-                        
 
                         _context.GoodsDelivered.Add(_GoodsDeliveredq);
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
