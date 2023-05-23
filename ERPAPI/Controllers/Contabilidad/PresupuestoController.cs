@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -199,9 +200,11 @@ namespace ERPAPI.Controllers
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        throw ex;
-                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                        _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                        if (ex.InnerException is SqlException sqlException && sqlException.Message.Contains("Cannot insert duplicate key"))
+                        {
+                            return BadRequest("Ya existe una bodega registrada con este nombre en esta Sucursal.");
+                        }
                     }
                 }
             }
