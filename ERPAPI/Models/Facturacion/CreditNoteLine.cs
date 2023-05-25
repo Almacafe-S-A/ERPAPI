@@ -69,7 +69,11 @@ namespace ERPAPI.Models
           [Display(Name = "Subtotal")]
         [Column(TypeName = "Money")]
         public decimal SubTotal { get; set; }
-         [Display(Name = "% Impuesto")]
+
+        public decimal CreditValue { get; set; }
+
+
+        [Display(Name = "% Impuesto")]
         public decimal TaxPercentage { get; set; }
 
         [Display(Name = "Código Impuesto")]

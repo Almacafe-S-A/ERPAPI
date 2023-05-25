@@ -113,8 +113,8 @@ namespace ERPAPI.Controllers
                 boletas = await _context.Boleto_Ent
                 .Where(q => q.CustomerId == customerId
                 && !_context.ControlPallets.Any(a => a.WeightBallot == q.clave_e)
-                && !(_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e))
-                && q.completo == completo
+                && !_context.BoletaDeSalida.Any(a => a.WeightBallot == q.clave_e)
+                && q.completo == false
                 && q.Ingreso == esIngreso
                 ).ToListAsync();
                 var query =  (from c in boletas

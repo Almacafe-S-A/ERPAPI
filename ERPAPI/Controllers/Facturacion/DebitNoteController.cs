@@ -187,7 +187,11 @@ namespace ERPAPI.Controllers
                         InvoiceId = debitnote.InvoiceId,
                         NoDocumento = debitnote.NumeroDEI,
                         CustomerId = debitnote.CustomerId,
+                        TipoDocumentoId = 4,
+                        TipoDocumento = "Nota de Debito",
+                        DocumentoId = debitnote.DebitNoteId,
                         
+
                     });
 
 

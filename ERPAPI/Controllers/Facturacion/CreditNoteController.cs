@@ -122,6 +122,326 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
+        /// Obtiene los Datos de la CreditNote por medio del Id enviado.
+        /// </summary>
+        /// <param name="CreditnoteId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CreditNoteId}/{estado}")]
+        public async Task<IActionResult> ChangeStatus(Int64 CreditnoteId, int estado)
+        {
+            CreditNote Items = new CreditNote();
+            try
+            {
+                Items = await _context
+                    .CreditNote
+                    .Where(q => q.CreditNoteId == CreditnoteId).
+                    FirstOrDefaultAsync();
+
+                switch (estado)
+                {
+                    case 1:
+                        Items.Estado = "Revisado";
+                        Items.RevisadoEl = DateTime.Now;
+                        Items.RevisadoPor = User.Identity.Name;
+                        break;
+                    case 2:
+                        Items.Estado = "Aprobado";
+                        Items.AprobadoEl = DateTime.Now;
+                        Items.AprobadoPor = User.Identity.Name;
+                        break;
+                    case 3:
+                        Items.Estado = "Rechazado";
+                        Items.RevisadoEl = DateTime.Now;
+                        break;
+                    default:
+                        break;
+                }
+
+                Items.UsuarioModificacion = User.Identity.Name;
+                Items.FechaModificacion = DateTime.Now;
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
+        /// <summary>
+        /// Obtiene los Datos de la CreditNote por medio del Id enviado.
+        /// </summary>
+        /// <param name="CreditNoteId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CreditNoteId}")]
+        public async Task<IActionResult> Generar(Int64 CreditNoteId)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                CreditNote creditnote = new CreditNote();
+                try
+                {
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
+                    creditnote = await _context.CreditNote
+                        .Include(i => i.CreditNoteLine)
+                        .Where(q => q.CreditNoteId == CreditNoteId)
+                        .FirstOrDefaultAsync();
+
+                    Customer customer = _context.Customer
+                        .Where(q => q.CustomerId == creditnote.CustomerId)
+                        .FirstOrDefault();
+
+                    
+                    NumeracionSAR numeracionSAR = new NumeracionSAR();
+                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(8, creditnote.BranchId, _context);
+
+                    creditnote.NumeroDEI = numeracionSAR.GetCorrelativo();
+                    creditnote.RangoAutorizado = numeracionSAR.getRango();
+                    creditnote.CAI = numeracionSAR._cai;
+                    creditnote.NoInicio = numeracionSAR.NoInicio.ToString();
+                    creditnote.NoFin = numeracionSAR.NoFin.ToString();
+                    creditnote.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                    creditnote.UsuarioModificacion = User.Identity.Name.ToUpper();
+                    creditnote.FechaModificacion = DateTime.Now;
+                    //creditnote. = DateTime.Now.AddDays(creditnote.DiasVencimiento);
+                    creditnote.Estado = "Emitido";
+
+                    _context.NumeracionSAR.Update(numeracionSAR);
+
+                    //var alerta = await GeneraAlerta(creditnote);
+
+                    JournalEntry asiento = new JournalEntry();
+
+
+                    _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
+                    {
+                        Debito = 0,
+                        Fecha = DateTime.Now,
+                        CustomerName = creditnote.CustomerName,
+                        Credito = creditnote.Total,
+                        Sinopsis = $"Credito por Nota de Credito #{creditnote.NumeroDEI} " ,                        
+                        NoDocumento = creditnote.NumeroDEI,
+                        CustomerId = creditnote.CustomerId,
+                        TipoDocumentoId = 9,
+                        TipoDocumento = "Nota de Credito",
+                        DocumentoId = creditnote.CreditNoteId,
+                    });
+
+                    asiento = GeneraAsiento(creditnote).Result.Value;
+
+                    creditnote.JournalEntryId = asiento.JournalEntryId;
+                    //creditnote.Saldo = creditnote.SubTotal;
+                    //creditnote.SaldoImpuesto = creditnote.Tax;
+                    //foreach (var item in creditnote.CreditNoteLine)
+                    //{
+                    //    item.Saldo = item.SubTotal;
+                    //}
+
+                    creditnote.FechaModificacion = DateTime.Now;
+
+                    Numalet let;
+                    let = new Numalet();
+                    let.SeparadorDecimalSalida = "Lempiras";
+                    let.MascaraSalidaDecimal = "00/100 ";
+                    let.ApocoparUnoParteEntera = true;
+                    creditnote.TotalLetras = let.ToCustomCardinal((creditnote.Total)).ToUpper();
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    transaction.Rollback();
+                    return BadRequest($"Ocurrio un error:{ex.Message}");
+                }
+
+
+                return await Task.Run(() => Ok(creditnote));
+            }
+
+        }
+
+
+
+
+
+
+        /// <summary>
+        /// Genera el asiento de la creditnote
+        /// </summary>
+        /// <param name="creditnote"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public async Task<ActionResult<JournalEntry>> GeneraAsiento(CreditNote creditnote)
+        {
+            JournalEntry partida = new JournalEntry();
+            ///Impuesto 
+            ///
+            Tax tax = new Tax();
+            tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
+
+            if (tax.CuentaContablePorCobrarId == null || tax.CuentaContableIngresosId == null)
+            {
+                throw new Exception("No se han configurado las cuentas contables para el ISV");
+            }
+            try
+            {
+                Periodo periodo = new Periodo();
+                periodo = periodo.PeriodoActivo(_context);
+
+
+                CostCenter centrocosto = _context.CostCenter.Where(x => x.BranchId == creditnote.BranchId).FirstOrDefault();
+
+                partida = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    DatePosted = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    CreatedDate = DateTime.Now,
+                    EstadoId = 5,
+                    EstadoName = "Enviada a Aprobación",
+                    PeriodoId = periodo.Id,
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento Diario",
+                    JournalEntryLines = new List<JournalEntryLine>(),
+                    Memo = $"Nota de Credito #{creditnote.NumeroDEI} a Cliente {creditnote.CustomerName} por concepto de {creditnote.ProductName}",
+                    Periodo = periodo.Anio.ToString(),
+                    Posted = false,
+                    TotalCredit = 0,
+                    TotalDebit = 0,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    VoucherType = 3,
+                    TypeJournalName = "Nota de crédito",
+
+
+
+
+                };
+
+                //if (creditnote.Tax > 0)
+                //{
+                //    partida.JournalEntryLines.Add(new JournalEntryLine
+                //    {
+                //        AccountId = (long)tax.CuentaContableIngresosId,
+                //        AccountName = tax.CuentaContableIngresosNombre,
+                //        CostCenterId = centrocosto.CostCenterId,
+                //        CostCenterName = centrocosto.CostCenterName,
+                //        Debit = 0,
+                //        Credit = creditnote.Tax,
+                //        CreatedDate = DateTime.Now,
+                //        CreatedUser = User.Identity.Name,
+                //        ModifiedUser = User.Identity.Name,
+                //        ModifiedDate = DateTime.Now,
+
+
+
+                //    });
+                //    partida.JournalEntryLines.Add(new JournalEntryLine
+                //    {
+                //        AccountId = (long)tax.CuentaContablePorCobrarId,
+                //        AccountName = tax.CuentaContablePorCobrarNombre,
+                //        CostCenterId = centrocosto.CostCenterId,
+                //        CostCenterName = centrocosto.CostCenterName,
+                //        Debit = creditnote.Tax,
+                //        Credit = 0,
+                //        CreatedDate = DateTime.Now,
+                //        CreatedUser = User.Identity.Name,
+                //        ModifiedUser = User.Identity.Name,
+                //        ModifiedDate = DateTime.Now,
+
+
+
+                //    });
+                //}
+
+
+
+
+                foreach (var item in creditnote.CreditNoteLine)
+                {
+                    ProductRelation relation = new ProductRelation();
+                    relation = _context.ProductRelation.Where(x =>
+                    x.ProductId == creditnote.ProductId
+                    && x.SubProductId == item.SubProductId
+                    )
+                        .FirstOrDefault();
+
+
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (int)relation.CuentaContableIngresosId,
+                        AccountName = relation.CuentaContableIngresosNombre,
+                        CostCenterId = centrocosto.CostCenterId,
+                        CostCenterName = centrocosto.CostCenterName,
+                        Debit = item.CreditValue,
+                        Credit = 0,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+
+
+
+                    });
+
+                    partida.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = (int)relation.CuentaContableIdPorCobrar,
+                        AccountName = relation.CuentaContablePorCobrarNombre,
+                        CostCenterId = centrocosto.CostCenterId,
+                        CostCenterName = centrocosto.CostCenterName,
+                        Debit = 0,
+                        Credit = item.CreditValue,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        ModifiedUser = User.Identity.Name,
+                        ModifiedDate = DateTime.Now,
+
+
+
+                    });
+                }
+
+
+
+                partida.TotalCredit = partida.JournalEntryLines.Sum(s => s.Credit);
+                partida.TotalDebit = partida.JournalEntryLines.Sum(s => s.Debit);
+
+                partida.JournalEntryLines = partida.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+
+                _context.JournalEntry.Add(partida);
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Falta la configuracion contable en los subservicios utilizados");
+            }
+
+
+
+            return partida;
+        }
+
+        /// <summary>
         /// Inserta una nueva CreditNote
         /// </summary>
         /// <param name="_CreditNote"></param>
@@ -143,21 +463,17 @@ namespace ERPAPI.Controllers
                         let = new Numalet();
                         let.SeparadorDecimalSalida = "Lempiras";
                         let.MascaraSalidaDecimal = "00/100 ";
-                        let.ApocoparUnoParteEntera = true;
+                        let.ApocoparUnoParteEntera = true;                        
+                        _CreditNoteq.Total = _CreditNoteq.CreditNoteLine.Sum(x => x.CreditValue);
                         _CreditNoteq.TotalLetras = let.ToCustomCardinal((_CreditNoteq.Total)).ToUpper();
-                        _CreditNoteq.Total = _CreditNoteq.CreditNoteLine.Sum(x => x.Total);
-                        _CreditNoteq.Tax = _CreditNoteq.CreditNoteLine.Sum(x => x.TaxAmount);
-                        _CreditNoteq.Discount = _CreditNoteq.CreditNoteLine.Sum(x => x.DiscountAmount);
                         _CreditNoteq.UsuarioCreacion= User.Identity.Name;
                         _CreditNoteq.UsuarioModificacion = User.Identity.Name;
                         _CreditNoteq.CreditNoteDate = DateTime.Now;
-                       
-                        
-                        _CreditNoteq.NumeroSAR = "PROFORMA";
-                        _CreditNoteq.NúmeroDEI = 0;
 
+                        _CreditNoteq.Estado = "Revisión";
+                        _CreditNoteq.NumeroDEI = "PROFORMA";
 
-                        Invoice factura = await _context.Invoice.Where(q => q.InvoiceId == _CreditNote.InvoiceId).FirstOrDefaultAsync();
+                        CreditNote factura = await _context.CreditNote.Where(q => q.CreditNoteId == _CreditNote.CreditNoteId).FirstOrDefaultAsync();
 
                         
 
@@ -171,23 +487,6 @@ namespace ERPAPI.Controllers
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-
-                        await _context.SaveChangesAsync();
-
-                        
-
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _CreditNote.CreditNoteId,
-                            DocType = "CreditNote",
-                            ClaseInicial =
-                                         Newtonsoft.Json.JsonConvert.SerializeObject(_CreditNote, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_CreditNote, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insert",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-
-                        });
 
                         await _context.SaveChangesAsync();
 

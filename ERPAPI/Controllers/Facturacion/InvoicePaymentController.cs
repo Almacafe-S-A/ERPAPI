@@ -317,6 +317,10 @@ namespace ERPAPI.Controllers
                             Sinopsis = $"Recibo de Pago #{_InvoicePaymentsq.Id} por Facturas # {_InvoicePaymentsq.NoDocumentos} ",
                             InvoiceId = null,
                             NoDocumento = _InvoicePaymentsq.Id.ToString(),
+                            DocumentoId = _InvoicePaymentsq.Id,
+                            TipoDocumentoId = 0,
+                            TipoDocumento = "Recibo de Pago",
+                            
                         });
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 

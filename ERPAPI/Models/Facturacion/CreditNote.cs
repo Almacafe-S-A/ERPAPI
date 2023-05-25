@@ -45,7 +45,8 @@ namespace ERPAPI.Models
         public string TipoDocumento { get; set; }
 
         [Display(Name = "Número de Nota de crédito")]
-        public int NúmeroDEI { get; set; }
+        public string NumeroDEI { get; set; }
+
 
         public string NumeroSAR { get; set; }
 
@@ -62,6 +63,10 @@ namespace ERPAPI.Models
 
         [Display(Name = "Número de Factura")]
         public string CAI { get; set; }
+
+        public Int64? JournalEntryId { get; set; }
+        [ForeignKey("JournalEntryId")]
+        public JournalEntry JournalEntry { get; set; }
 
         [Display(Name = "Número de orden de compra exenta")]
         public string NoOCExenta { get; set; }
@@ -184,6 +189,14 @@ namespace ERPAPI.Models
 
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
+
+        public string AprobadoPor { get; set; }
+
+        public DateTime? AprobadoEl { get; set; }
+
+        public string RevisadoPor { get; set; }
+
+        public DateTime? RevisadoEl { get; set; }
 
         public string Impreso { get; set; }
         public List<CreditNoteLine> CreditNoteLine { get; set; } = new List<CreditNoteLine>();

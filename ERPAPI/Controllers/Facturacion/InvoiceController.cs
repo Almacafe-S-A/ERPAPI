@@ -295,6 +295,9 @@ namespace ERPAPI.Controllers
                         InvoiceId = factura.InvoiceId,
                         NoDocumento = factura.NumeroDEI,
                         CustomerId = factura.CustomerId,
+                        TipoDocumentoId = 1,
+                        TipoDocumento = "Factura",
+                        DocumentoId = factura.InvoiceId,
                     });
 
                     asiento = GeneraAsientoFactura(factura).Result.Value;
