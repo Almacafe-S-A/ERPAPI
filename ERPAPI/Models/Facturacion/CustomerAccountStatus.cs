@@ -20,6 +20,14 @@ namespace ERPAPI.Models
         [ForeignKey("InvoiceId")]
         public Invoice Invoice { get; set; }
 
+        public Int64 DocumentoId { get; set; }
+
+        public Int64? TipoDocumentoId { get; set; }
+        [ForeignKey("TipoDocumentoId")]
+        public TiposDocumento TiposDocumento { get; set; }
+
+        public string TipoDocumento { get; set; }
+
         public string Sinopsis { get; set; }
 
         public int? InvoicePaymentId { get; set; }

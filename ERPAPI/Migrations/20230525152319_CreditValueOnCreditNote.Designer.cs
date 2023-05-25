@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230525152319_CreditValueOnCreditNote")]
+    partial class CreditValueOnCreditNote
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2672,10 +2674,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("Money");
 
-                    b.Property<DateTime?>("AprobadoEl");
-
-                    b.Property<string>("AprobadoPor");
-
                     b.Property<int>("BranchId");
 
                     b.Property<string>("BranchName");
@@ -2732,8 +2730,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("InvoiceId");
 
-                    b.Property<long?>("JournalEntryId");
-
                     b.Property<string>("NoConstanciadeRegistro");
 
                     b.Property<string>("NoFin");
@@ -2744,9 +2740,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NoSAG");
 
-                    b.Property<string>("NumeroDEI");
-
                     b.Property<string>("NumeroSAR");
+
+                    b.Property<int>("NúmeroDEI");
 
                     b.Property<long>("ProductId");
 
@@ -2757,10 +2753,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("RangoAutorizado");
 
                     b.Property<string>("Remarks");
-
-                    b.Property<DateTime?>("RevisadoEl");
-
-                    b.Property<string>("RevisadoPor");
 
                     b.Property<int>("SalesTypeId");
 
@@ -2807,8 +2799,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("CreditNoteId");
-
-                    b.HasIndex("JournalEntryId");
 
                     b.ToTable("CreditNote");
                 });
@@ -3115,8 +3105,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("Debito");
 
-                    b.Property<long>("DocumentoId");
-
                     b.Property<DateTime>("Fecha");
 
                     b.Property<int?>("InvoiceId");
@@ -3129,10 +3117,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Sinopsis");
 
-                    b.Property<string>("TipoDocumento");
-
-                    b.Property<long?>("TipoDocumentoId");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
@@ -3140,8 +3124,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("InvoicePaymentId");
-
-                    b.HasIndex("TipoDocumentoId");
 
                     b.ToTable("CustomerAcccountStatus");
                 });
@@ -12136,13 +12118,6 @@ namespace ERPAPI.Migrations
                         .HasForeignKey("WarehouseId");
                 });
 
-            modelBuilder.Entity("ERPAPI.Models.CreditNote", b =>
-                {
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId");
-                });
-
             modelBuilder.Entity("ERPAPI.Models.CreditNoteLine", b =>
                 {
                     b.HasOne("ERPAPI.Models.CreditNote", "CreditNote")
@@ -12193,10 +12168,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.InvoicePayments", "InvoicePayments")
                         .WithMany()
                         .HasForeignKey("InvoicePaymentId");
-
-                    b.HasOne("ERPAPI.Models.TiposDocumento", "TiposDocumento")
-                        .WithMany()
-                        .HasForeignKey("TipoDocumentoId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CustomerArea", b =>
