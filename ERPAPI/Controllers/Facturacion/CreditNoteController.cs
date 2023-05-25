@@ -183,8 +183,8 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="CreditNoteId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{CreditNoteId}")]
-        public async Task<IActionResult> Generar(Int64 CreditNoteId)
+        [HttpGet("[action]/{CreditNoteId}/{interna}")]
+        public async Task<IActionResult> Generar(Int64 CreditNoteId ,  int interna )
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -203,23 +203,32 @@ namespace ERPAPI.Controllers
                         .Where(q => q.CustomerId == creditnote.CustomerId)
                         .FirstOrDefault();
 
-                    
-                    NumeracionSAR numeracionSAR = new NumeracionSAR();
-                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(8, creditnote.BranchId, _context);
+                    if(interna== 0)
+                    {
+                        NumeracionSAR numeracionSAR = new NumeracionSAR();
+                        numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(8, creditnote.BranchId, _context);
 
-                    creditnote.NumeroDEI = numeracionSAR.GetCorrelativo();
-                    creditnote.RangoAutorizado = numeracionSAR.getRango();
-                    creditnote.CAI = numeracionSAR._cai;
-                    creditnote.NoInicio = numeracionSAR.NoInicio.ToString();
-                    creditnote.NoFin = numeracionSAR.NoFin.ToString();
-                    creditnote.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                        creditnote.NumeroDEI = numeracionSAR.GetCorrelativo();
+                        creditnote.RangoAutorizado = numeracionSAR.getRango();
+                        creditnote.CAI = numeracionSAR._cai;
+                        creditnote.NoInicio = numeracionSAR.NoInicio.ToString();
+                        creditnote.NoFin = numeracionSAR.NoFin.ToString();
+                        creditnote.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                        _context.NumeracionSAR.Update(numeracionSAR);
+
+                    }
+                    else
+                    {
+                        creditnote.NumeroDEI = "Interna";
+                    }
+
+
                     creditnote.UsuarioModificacion = User.Identity.Name.ToUpper();
                     creditnote.FechaModificacion = DateTime.Now;
                     //creditnote. = DateTime.Now.AddDays(creditnote.DiasVencimiento);
                     creditnote.Estado = "Emitido";
 
-                    _context.NumeracionSAR.Update(numeracionSAR);
-
+                    
                     //var alerta = await GeneraAlerta(creditnote);
 
                     JournalEntry asiento = new JournalEntry();
