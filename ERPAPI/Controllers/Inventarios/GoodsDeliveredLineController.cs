@@ -148,11 +148,12 @@ namespace ERPAPI.Controllers
                                         Pda = (int)line.Key.Pda,
                                         NoARLineId = (int)line.Key.GoodsDeliveryAuthorizationLineId,
                                     }).OrderBy(o => o.QuantityAuthorized).ToList();
-                ControlPallets _ControlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == controlid).FirstOrDefault();
+                ControlPallets _ControlPallets = _context.ControlPallets
+                    .Include(i => i._ControlPalletsLine)
+                    .Where(q => q.ControlPalletsId == controlid).FirstOrDefault();
 
                 controlPalletsLines = await _context.ControlPalletsLine
                     .Where(q => q.ControlPalletsId == controlid)
-
                     .ToListAsync();
                 Boleto_Ent _Boleto_Ent = _context.Boleto_Ent.Where(q => q.clave_e == _ControlPallets.WeightBallot).Include(i => i.Boleto_Sal).FirstOrDefault();
                 if (_Boleto_Ent != null && _Boleto_Ent.Boleto_Sal != null)
@@ -177,12 +178,13 @@ namespace ERPAPI.Controllers
 
 
                     goodsDeliveredLines = EntregaPesada(_ControlPallets,goodsDeliveredLines, goodsDeliveryAuthorizationsLines);
+                    goodsDeliveredLines = goodsDeliveredLines.Where(q => q.QuantitySacos > 0).OrderByDescending(d => d.Quantity).ToList();
                     foreach (var item in goodsDeliveredLines)
                     {
                         if (item != goodsDeliveredLines.First())
                         {
                             item.QuantitySacos = 0;
-                            
+                            item.UnitOfMeasureName = "";
 
                         }
                         item.WareHouseId = (long)_ControlPallets.WarehouseId;
@@ -230,7 +232,7 @@ namespace ERPAPI.Controllers
             )
 
         {
-            foreach (var controllinea in controlPalletsLines)
+            foreach (var controllinea in _ControlPallets._ControlPalletsLine)
             {
                 decimal pesoentregar = (decimal)controllinea.Qty;
                 int cantsacos = (int)_ControlPallets.TotalSacos;
@@ -238,12 +240,13 @@ namespace ERPAPI.Controllers
 
                 foreach (var item in goodsDeliveredLines)
                 {
-                    item.WareHouseId = (long)controllinea.WarehouseId;
-                    item.WareHouseName = controllinea.WarehouseName;
+                    
                     //item.ControlPalletsId = (long)_ControlPallets.PalletId;
 
                     List<GoodsDeliveryAuthorizationLine> authorizationLines = goodsDeliveryAuthorizationsLines
                         .Where(q => q.SubProductId == item.SubProductId).ToList();
+
+                    
                     decimal pesoentregalinea = 0;
                     if (!(item.SubProductId == controllinea.SubProductId 
                         && item.UnitOfMeasureId == controllinea.UnitofMeasureId))
@@ -266,7 +269,8 @@ namespace ERPAPI.Controllers
 
                     pesoentregar = pesoentregar - pesoentregalinea;
 
-
+                    item.WareHouseId = (long)controllinea.WarehouseId;
+                    item.WareHouseName = controllinea.WarehouseName;
                     item.Quantity = pesoentregalinea;
                     item.Total = pesoentregar;
                     item.QuantitySacos = 0;

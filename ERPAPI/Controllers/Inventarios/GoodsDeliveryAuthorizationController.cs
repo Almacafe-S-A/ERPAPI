@@ -610,7 +610,7 @@ namespace ERPAPI.Controllers
                       .Where(p =>
                            p.CustomerId == clienteid
                           && p.ProductId == servicioid
-                          && p.GoodsDeliveryAuthorizationLine.Sum(s => s.SaldoProducto)>0
+                          && p.GoodsDeliveryAuthorizationLine.Sum(s => s.Saldo)>0
                           )
                       .OrderByDescending(b => b.GoodsDeliveryAuthorizationId).ToListAsync();
 
