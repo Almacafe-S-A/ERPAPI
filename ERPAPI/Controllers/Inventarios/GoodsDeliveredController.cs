@@ -164,7 +164,7 @@ namespace ERPAPI.Controllers
                 SubProductName = _GoodsDelivered.SubProductName,
                 Vigilante = _GoodsDelivered.VigilanteName,
                 ARNo = (int)_GoodsDelivered._GoodsDeliveredLine.FirstOrDefault().NoAR,
-                DocumentoTipo = "E/M ",
+                DocumentoTipo = "Entrega de Mercaderias",
                 DocumentoId = (int)_GoodsDelivered.GoodsDeliveredId,
                 CargadoId = 13,
                 Cargadoname = "Cargado",
@@ -174,6 +174,10 @@ namespace ERPAPI.Controllers
                 UnitOfMeasureName = _GoodsDelivered._GoodsDeliveredLine[0].UnitOfMeasureName,
                 WeightBallot = _GoodsDelivered.BoletaPesoId,
                 BoletaDeSalidaLines = new List<BoletaDeSalidaLine>(),
+                ProductName = _GoodsDelivered.ProductName,
+                VigilanteId = _GoodsDelivered.VigilanteId,
+                Producto = _GoodsDelivered.ProductId,
+
             };
 
 
@@ -188,10 +192,9 @@ namespace ERPAPI.Controllers
                 {
                     SubProductId = item.SubProductId,
                     SubProductName = item.SubProductName,
-                    Quantity = item.QuantitySacos,
-
+                    Quantity = item.QuantitySacos == 0? item.Quantity : item.QuantitySacos,
                     UnitOfMeasureId = (int)item.UnitOfMeasureId,
-                    UnitOfMeasureName = "Sacos",
+                    UnitOfMeasureName = item.UnitOfMeasureName,
                     Warehouseid = (int)item.WareHouseId,
                     WarehouseName = item.WareHouseName,
                 });
