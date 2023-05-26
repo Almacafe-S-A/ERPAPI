@@ -21,10 +21,21 @@ namespace ERPAPI.Models
         public Int64 IdTipoDocumento { get; set; }
 
         [Display(Name = "No Correlativo")]
-        public string NoCorrelativo { get; set; }
+        public string NoCorrelativoDocumento { get; set; }
+
+        public DateTime FechaLimiteDocumento { get; set; }
+
+        public string CAIDocumento { get; set; }
 
         [Display(Name = "CAI")]
         public string CAI { get; set; }
+
+        public string NumeroDEI { get; set; }
+
+        public DateTime? FechaLimiteEmision { get; set; }
+
+        public string RangoEmision { get; set; }
+
 
         [Display(Name = "Fecha de Emision")]
         public DateTime FechaEmision { get; set; }
@@ -41,11 +52,11 @@ namespace ERPAPI.Models
         public Int64 VendorId { get; set; }
 
         [Display(Name = "CAI Proveedor")]
-        public string VendorCAI { get; set; }
+        public string VendorName { get; set; }
 
-        [ForeignKey("IdEmpleado")]
-        [Display(Name = "Empleado")]
-        public long IdEmpleado { get; set; }
+        public int VendorInvoiceId { get; set; }
+
+        public string CantidadLetras { get; set; }
 
         [ForeignKey("BranchId")]
         [Display(Name = "Sucursal")]
@@ -57,16 +68,10 @@ namespace ERPAPI.Models
         [Display(Name = "Codigo Sucursal")]
         public string BranchCode { get; set; }
 
-        [ForeignKey("IdPuntoEmision")]
-        [Display(Name = "Punto de emisión")]
-        public Int64 IdPuntoEmision { get; set; }
 
         public Int64 IdEstado { get; set; }
 
         public string Estado { get; set; }
-
-        [Display(Name = "Numero de Factura")]
-        public int NumeroDEI { get; set; }
 
         [Display(Name = "Descripcion Impuesto Retenido")]
         public string RetentionTaxDescription { get; set; }

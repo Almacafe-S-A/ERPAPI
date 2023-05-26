@@ -154,59 +154,49 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+
                         _RetentionReceiptq = _RetentionReceipt;
-                        RetentionReceipt _retentionreceipt = await _context.RetentionReceipt.Where(q => q.BranchId == _RetentionReceipt.BranchId)
-                                                 .Where(q => q.IdPuntoEmision == _RetentionReceipt.IdPuntoEmision)
-                                                 .FirstOrDefaultAsync();
-                        if (_retentionreceipt != null)
-                        {
-                            _RetentionReceiptq.NumeroDEI = _context.RetentionReceipt.Where(q => q.BranchId == _RetentionReceipt.BranchId)
-                                                  .Where(q => q.IdPuntoEmision == _RetentionReceipt.IdPuntoEmision).Max(q => q.NumeroDEI);
-                        }
+                        NumeracionSAR numeracionSAR = new NumeracionSAR();
+                        numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(7, _RetentionReceiptq.BranchId, _context);
 
-                        _RetentionReceiptq.NumeroDEI += 1;
-                        
-                        Int64 IdCai = await _context.NumeracionSAR
-                                                 .Where(q => q.BranchId == _RetentionReceiptq.BranchId)
-                                                 .Where(q => q.IdPuntoEmision == _RetentionReceiptq.IdPuntoEmision)
-                                                 .Where(q => q.Estado == "Activo").Select(q => q.IdCAI).FirstOrDefaultAsync();
-
-
-                        if (IdCai == 0)
-                        {
-                            return BadRequest("No existe un CAI activo para el punto de emisión");
-                        }
-
-                        _RetentionReceiptq.DueDate = await _context.NumeracionSAR
-                                                     .Where(q => q.BranchId == _RetentionReceipt.BranchId)
-                                                     .Where(q => q.IdCAI == IdCai)
-                                                     .Where(q => q.IdPuntoEmision == _RetentionReceipt.IdPuntoEmision)
-                                                     .Where(q => q.Estado == "Activo").Select(q => q.FechaLimite).FirstOrDefaultAsync();
-
-                        _RetentionReceiptq.BranchCode = await _context.Branch.Where(q => q.BranchId == _RetentionReceipt.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
-                        _RetentionReceiptq.CAI = await _context.CAI.Where(q => q.IdCAI == IdCai).Select(q => q._cai).FirstOrDefaultAsync();
+                        _RetentionReceiptq.NumeroDEI = numeracionSAR.GetCorrelativo();
+                        _RetentionReceiptq.RangoEmision = numeracionSAR.getRango();
+                        _RetentionReceiptq.CAI = numeracionSAR._cai;
+                        //_RetentionReceiptq.NoInicio = numeracionSAR.NoInicio.ToString();
+                        //_RetentionReceiptq.NoFin = numeracionSAR.NoFin.ToString();
+                        _RetentionReceiptq.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                        _context.NumeracionSAR.Update(numeracionSAR);
 
                         _context.RetentionReceipt.Add(_RetentionReceiptq);
+
+                        Vendor vendor = _context.Vendor.Where(q =>q.VendorId == _RetentionReceiptq.VendorId).FirstOrDefault();
+                        if (vendor != null) {
+                            _RetentionReceiptq.VendorName = vendor.VendorName;
+
+                        }
+
+                        VendorInvoice vendorInvoice = _context.VendorInvoice.Where(q => q.VendorInvoiceId == _RetentionReceiptq.VendorInvoiceId).FirstOrDefault();
+                        if (vendorInvoice != null)
+                        {
+                            _RetentionReceiptq.CAIDocumento = vendorInvoice.CAI;
+                            _RetentionReceiptq.NoCorrelativoDocumento= vendorInvoice.NumeroDEI;
+                            _RetentionReceiptq.FechaLimiteEmision = vendorInvoice.FechaLimiteEmision;
+                        }
+
+
+                        Numalet let;
+                        let = new Numalet();
+                        let.SeparadorDecimalSalida = "Lempiras";
+                        let.MascaraSalidaDecimal = "00/100 ";
+                        let.ApocoparUnoParteEntera = true;
+                        _RetentionReceiptq.CantidadLetras = let.ToCustomCardinal((_RetentionReceiptq.TotalAmount)).ToUpper();
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                         await _context.SaveChangesAsync();
 
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _RetentionReceiptq.RetentionReceiptId,
-                            DocType = "RetentionReceipt",
-                            ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_RetentionReceiptq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _RetentionReceiptq.UsuarioCreacion,
-                            UsuarioModificacion = _RetentionReceiptq.UsuarioModificacion,
-                            UsuarioEjecucion = _RetentionReceiptq.UsuarioModificacion,
-
-                        });
+                        
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
