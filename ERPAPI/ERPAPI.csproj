@@ -54,6 +54,8 @@
     <Compile Remove="Migrations\20230327053929_Pagosfacturas.Designer.cs" />
     <Compile Remove="Migrations\20230416191118_DebitNoteModel.cs" />
     <Compile Remove="Migrations\20230416191118_DebitNoteModel.Designer.cs" />
+    <Compile Remove="Migrations\20230526155145_VendorInvoiceFields.cs" />
+    <Compile Remove="Migrations\20230526155145_VendorInvoiceFields.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />

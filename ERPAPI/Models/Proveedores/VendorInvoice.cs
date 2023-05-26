@@ -42,7 +42,7 @@ namespace ERPAPI.Models
         public string TipoDocumento { get; set; }
 
         [Display(Name = "Numero de Factura")]
-        public int NumeroDEI { get; set; }
+        public string NumeroDEI { get; set; }
 
         [Display(Name = "Numero de inicio")]
         public string NoInicio { get; set; }
@@ -154,10 +154,26 @@ namespace ERPAPI.Models
 
         public string Estado { get; set; }
 
-        public Int64 AccountId { get; set; }
+        public Int64? AccountIdCredito { get; set; }
 
-        [ForeignKey("AccountId")]
-        public Accounting  Account { get; set; }
+        [ForeignKey("AccountIdCredito")]
+        public Accounting  Accountcredito { get; set; }
+
+        public string AccountNameCredito { get; set; }
+
+        public Int64? AccountIdGasto { get; set; }
+
+        [ForeignKey("AccountIdGasto")]
+        public Accounting AccountGasto { get; set; }
+
+        public string AccountNameGasto { get; set; }
+
+
+        public Int64? CostCenterId { get; set; }
+        [ForeignKey("CostCenterId")]
+        public CostCenter CostCenter { get; set; }
+
+        public string CostCenterName { get; set; }
 
 
         public DateTime FechaCreacion { get; set; }
