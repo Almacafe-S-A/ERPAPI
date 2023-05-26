@@ -581,7 +581,6 @@ namespace ERPAPI.Controllers
                     _CertificadoDeposito.SujetasAPago = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
                     _CertificadoDeposito.SituadoEn = branch.Address;
 
-
                     if (!AutorizacionCNBS(_CertificadoDeposito.Total, _CertificadoDeposito.BranchId))                    
                         return BadRequest("Limite CNBS ha sido superado");                    
 
@@ -589,10 +588,9 @@ namespace ERPAPI.Controllers
                         return BadRequest("Limite Mercadria asegurado ha sido superado");
                     if (_CertificadoDeposito._CertificadoLine.LastOrDefault().PdaNo > 8)
                         return BadRequest("Limite de partidas de un ccertificado es 8");
+                    if (_CertificadoDeposito.FechaVencimientoDeposito <= _CertificadoDeposito.FechaCertificado)
+                        return BadRequest("La Fecha de Vencimiento del Depósito debe ser mayor que la Fecha de Creación.");
                     
-
-
-
                     _CertificadoDeposito.Producto = "Productos Varios";
                     if (_CertificadoDeposito._CertificadoLine.Where(q => q.PdaNo ==2).FirstOrDefault()==null)
                     {
