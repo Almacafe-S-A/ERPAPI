@@ -478,7 +478,6 @@ namespace ERPAPI.Controllers
                         _CreditNoteq.UsuarioCreacion= User.Identity.Name;
                         _CreditNoteq.UsuarioModificacion = User.Identity.Name;
                         _CreditNoteq.CreditNoteDate = DateTime.Now;
-
                         _CreditNoteq.Estado = "Revisión";
                         _CreditNoteq.NumeroDEI = "PROFORMA";
 

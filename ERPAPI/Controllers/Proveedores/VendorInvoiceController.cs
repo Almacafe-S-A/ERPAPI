@@ -179,10 +179,10 @@ namespace ERPAPI.Controllers
 
 
 
-                    Accounting account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountId).FirstOrDefaultAsync();
+                    Accounting account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountIdCredito).FirstOrDefaultAsync();
                     _je.JournalEntryLines.Add(new JournalEntryLine
                     {
-                        AccountId = Convert.ToInt32(_VendorInvoiceq.AccountId),
+                        AccountId = Convert.ToInt32(_VendorInvoiceq.AccountIdCredito),
                         AccountName = $"{account.AccountCode} - {account.AccountName} ",
                         Description = account.AccountName,
                         Credit = _VendorInvoiceq.Total,
@@ -193,27 +193,26 @@ namespace ERPAPI.Controllers
                         ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
                         Memo = "",
                     });
-                    foreach (var item in _VendorInvoiceq.VendorInvoiceLine)
-                    {
-                        account = await _context.Accounting.Where(acc => acc.AccountId == item.AccountId).FirstOrDefaultAsync();
-                        item.VendorInvoiceId = _VendorInvoiceq.VendorInvoiceId;
-                        _context.VendorInvoiceLine.Add(item);
-                        _je.JournalEntryLines.Add(new JournalEntryLine
-                        {
-                            AccountId = Convert.ToInt32(item.AccountId),
-                            AccountName = $"{account.AccountCode} - {account.AccountName} ",
-                            Description = account.AccountName,
-                            Credit = 0,
-                            Debit = item.Total,
-                            CostCenterId = Convert.ToInt64(item.CostCenterId),                            
-                            CreatedDate = DateTime.Now,
-                            ModifiedDate = DateTime.Now,
-                            CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                            ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                            Memo = "",
-                        });
-                    }
 
+
+                    account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountIdGasto).FirstOrDefaultAsync();
+                    
+                    
+                    _je.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = Convert.ToInt32(_VendorInvoiceq.AccountIdGasto),
+                        AccountName = $"{account.AccountCode} - {account.AccountName} ",
+                        Description = account.AccountName,
+                        Credit = 0,
+                        Debit = _VendorInvoiceq.Total,
+                        CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
+                        CostCenterName= _VendorInvoiceq.CostCenterName,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedUser = _VendorInvoiceq.UsuarioCreacion,
+                        ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
+                        Memo = "",
+                    });
 
                     _je.TotalCredit= _je.JournalEntryLines.Sum(s => s.Credit);
                     _je.TotalDebit= _je.JournalEntryLines.Sum(s => s.Debit); ;
