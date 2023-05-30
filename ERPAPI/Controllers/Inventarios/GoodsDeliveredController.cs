@@ -198,6 +198,10 @@ namespace ERPAPI.Controllers
                     Warehouseid = (int)item.WareHouseId,
                     WarehouseName = item.WareHouseName,
                 });
+                if (item.QuantitySacos > 0)
+                {
+                    break;
+                }
             }
             _context.BoletaDeSalida.Add(_boletadesalida);
 

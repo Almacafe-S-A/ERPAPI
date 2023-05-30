@@ -184,7 +184,7 @@ namespace ERPAPI.Controllers
                         if (item != goodsDeliveredLines.First())
                         {
                             item.QuantitySacos = 0;
-                            item.UnitOfMeasureName = "";
+                            //item.UnitOfMeasureName = "";
 
                         }
                         item.WareHouseId = (long)_ControlPallets.WarehouseId;
