@@ -194,7 +194,7 @@ namespace ERPAPI.Controllers
                     SubProductName = item.SubProductName,
                     Quantity = item.QuantitySacos == 0? item.Quantity : item.QuantitySacos,
                     UnitOfMeasureId = (int)item.UnitOfMeasureId,
-                    UnitOfMeasureName = item.UnitOfMeasureName,
+                    UnitOfMeasureName = item.QuantitySacos == 0? item.UnitOfMeasureName:"Sacos",
                     Warehouseid = (int)item.WareHouseId,
                     WarehouseName = item.WareHouseName,
                 });
