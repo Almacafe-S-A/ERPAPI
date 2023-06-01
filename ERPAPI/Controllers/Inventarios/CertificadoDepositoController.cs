@@ -283,12 +283,11 @@ namespace ERPAPI.Controllers
             List<EndososCertificados> endosos = new List<EndososCertificados>();
             try
             {
-                Items = await _context.CertificadoDeposito.Where(q => q.CustomerId == CustomerId).ToListAsync();
+                Items = await _context.CertificadoDeposito.Where(q => q.CustomerId == CustomerId && q.IdEstado == 6).ToListAsync();
 
                 endosos = await _context.EndososCertificados.Where(q => q.CustomerId == CustomerId).ToListAsync();
 
                 Items = Items.Where(q => !endosos.Any(a => a.NoCD == q.IdCD)).ToList();
-
 
             }
             catch (Exception ex)
