@@ -83,34 +83,7 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.CertificadoDeposito.Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
-                        .OrderByDescending(b => b.IdCD).ToListAsync();
-                    Items = (from c in Items
-                             join b in _context.EndososCertificados on c.IdCD equals b.IdCD into CertificadoEndoso
-                             from d in CertificadoEndoso.DefaultIfEmpty()
-                             select new CertificadoDeposito
-                             {
-                                 Endoso = new EndososCertificados
-                                 {
-                                     BankName = d == null ? "No Endosado" : d.BankName,
-                                 },
-                                 IdCD = c.IdCD,
-                                 SolicitudCertificadoId = c.SolicitudCertificadoId,
-                                 FechaCertificado = c.FechaCertificado,
-                                 FechaVencimientoDeposito = c.FechaVencimientoDeposito,
-                                 CustomerName = c.CustomerName,
-                                 ServicioName = c.ServicioName,
-                                 BranchName = c.BranchName,
-                                 NoPoliza = c.NoPoliza,
-                                 Producto = c.Producto,
-                                 Quantitysum = c.Quantitysum,
-                                 Estado = c.Estado,
-                                 Impresiones = c.Impresiones,
-                                 impresionesTalon = c.impresionesTalon,
-                                 IdEstado = c.IdEstado,
-                                 
-                             }
-                            ).ToList();
+                    Items = await _context.CertificadoDeposito.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.IdCD).ToListAsync();
                 }
                 else
                 {
@@ -310,17 +283,11 @@ namespace ERPAPI.Controllers
             List<EndososCertificados> endosos = new List<EndososCertificados>();
             try
             {
-                Items = await _context.CertificadoDeposito
-                    .Where(q => q.CustomerId == CustomerId
-                    && q.Estado.Equals("Vigente")
-                    
-                    )
-                    .ToListAsync();
+                Items = await _context.CertificadoDeposito.Where(q => q.CustomerId == CustomerId && q.IdEstado == 6).ToListAsync();
 
                 endosos = await _context.EndososCertificados.Where(q => q.CustomerId == CustomerId).ToListAsync();
 
                 Items = Items.Where(q => !endosos.Any(a => a.NoCD == q.IdCD)).ToList();
-
 
             }
             catch (Exception ex)
@@ -588,6 +555,7 @@ namespace ERPAPI.Controllers
                     _CertificadoDeposito.SujetasAPago = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
                     _CertificadoDeposito.SituadoEn = branch.Address;
 
+
                     if (!AutorizacionCNBS(_CertificadoDeposito.Total, _CertificadoDeposito.BranchId))                    
                         return BadRequest("Limite CNBS ha sido superado");                    
 
@@ -595,9 +563,10 @@ namespace ERPAPI.Controllers
                         return BadRequest("Limite Mercadria asegurado ha sido superado");
                     if (_CertificadoDeposito._CertificadoLine.LastOrDefault().PdaNo > 8)
                         return BadRequest("Limite de partidas de un ccertificado es 8");
-                    if (_CertificadoDeposito.FechaVencimientoDeposito <= _CertificadoDeposito.FechaCertificado)
-                        return BadRequest("La Fecha de Vencimiento del Depósito debe ser mayor que la Fecha de Creación.");
                     
+
+
+
                     _CertificadoDeposito.Producto = "Productos Varios";
                     if (_CertificadoDeposito._CertificadoLine.Where(q => q.PdaNo ==2).FirstOrDefault()==null)
                     {
