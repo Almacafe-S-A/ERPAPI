@@ -11,9 +11,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using Newtonsoft.Json;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Controllers
 {
@@ -81,15 +84,73 @@ namespace ERPAPI.Controllers
                 var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
                 int count = user.Count();
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
-                if (branchlist.Count > 0)
-                {
-                    Items = await _context.CertificadoDeposito.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.IdCD).ToListAsync();
-                }
-                else
-                {
-                    Items = await _context.CertificadoDeposito.OrderByDescending(b => b.IdCD).ToListAsync();
-                }
-                
+
+
+                //Items = await .ToListAsync();
+
+                Items = (from c in _context.CertificadoDeposito
+                    .Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
+                         join en in  _context.EndososCertificados on c.IdCD equals en.IdCD
+                         into ce
+                         from e in ce.DefaultIfEmpty()
+                         select new CertificadoDeposito {                           
+                            IdCD = c.IdCD,
+                            NoCD = c.NoCD,
+                            SolicitudCertificadoId = c.SolicitudCertificadoId,
+                            CustomerId = c.CustomerId,
+                            CustomerName = c.CustomerName,
+                            PrecioCafe = c.PrecioCafe,
+                            BranchId = c.BranchId,
+                            Branch = c.Branch,
+                            BranchName = c.BranchName,
+                            SituadoEn = c.SituadoEn,
+                            ServicioId = c.ServicioId,
+                            Servicio = c.Servicio,
+                            ServicioName = c.ServicioName,
+                            Producto = c.Producto,
+                            Direccion = c.Direccion,
+                            FechaCertificado = c.FechaCertificado,
+                            NombreEmpresa = c.NombreEmpresa,
+                            IdEstado = c.IdEstado,
+                            Estado = c.Estado,
+                            InsuranceId = c.InsuranceId,
+                            Insurances = c.Insurances,
+                            EmpresaSeguro = c.EmpresaSeguro,
+                            Recibos = c.Recibos,
+                            InsurancePolicyId = c.InsurancePolicyId,
+                            InsurancePolicy = c.InsurancePolicy,
+                            NoPoliza = c.NoPoliza,
+                            SujetasAPago = c.SujetasAPago,
+                            FechaVencimientoDeposito = c.FechaVencimientoDeposito,
+                            NoTraslado = c.NoTraslado,
+                            Aduana = c.Aduana,
+                            ManifiestoNo = c.ManifiestoNo,
+                            Almacenaje = c.Almacenaje,
+                            Seguro = c.Seguro,
+                            OtrosCargos = c.OtrosCargos,
+                            FechaVencimientoCertificado = c.FechaVencimientoCertificado,
+                            PorcentajeDeudas = c.PorcentajeDeudas,
+                            TotalDerechos = c.TotalDerechos,
+                            PendienteAutorizar = c.PendienteAutorizar,
+                            Comentario = c.Comentario,
+                            Mensaje = c.Mensaje,
+                            NoRecibo = c.NoRecibo,
+                            PolizaPropia = c.PolizaPropia,
+                            Quantitysum = c.Quantitysum,
+                            Total = c.Total,
+                            FechaCreacion = c.FechaCreacion,
+                            FechaModificacion = c.FechaModificacion,
+                            UsuarioCreacion = c.UsuarioCreacion,
+                            UsuarioModificacion = c.UsuarioModificacion,
+                            Endoso =  new EndososCertificados {
+                                BankName = e == null?"N/A":e.BankName,
+                            } ,
+                            Impreso = c.Impreso,
+                            Impresiones = c.Impresiones,
+                            impresionesTalon = c.impresionesTalon,
+                            _CertificadoLine = c._CertificadoLine,
+                         }).OrderByDescending(b => b.IdCD).ToList();
+
             }
             catch (Exception ex)
             {
