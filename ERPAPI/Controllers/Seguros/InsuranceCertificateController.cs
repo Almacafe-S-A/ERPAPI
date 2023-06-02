@@ -133,7 +133,7 @@ namespace ERPAPI.Controllers
                 let.ApocoparUnoParteEntera = true;
 
                 //List<Customer> customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
-                List<InsurancePolicy> policies = await _context.InsurancePolicy.Where(q => q.EstadoId == 1 && q.Propias).ToListAsync();
+                List<InsurancePolicy> policies = await _context.InsurancePolicy.Where(q => q.EstadoId == 101 && q.Propias).ToListAsync();
                 List<Customer> customers = new List<Customer>();
                 List<InsuranceCertificate> insurancesCerticates = new List<InsuranceCertificate>();
                     
@@ -173,7 +173,10 @@ namespace ERPAPI.Controllers
                        .Include(i => i._CertificadoLine)
                        .Include(i => i.Branch)
                        //.Where(c => c.CustomerId == customer.CustomerId)
-                       .Where(c => c.InsurancePolicyId == policy.InsurancePolicyId && c.CustomerId == customer.CustomerId && c.BranchId == branch.BranchId)
+                       .Where(c => c.InsurancePolicyId == policy.InsurancePolicyId
+                       && c.CustomerId == customer.CustomerId 
+                       && c.BranchId == branch.BranchId
+                       && c.IdEstado == 6)
                        .ToListAsync();
                             if (certificadoDepositos.Count() == 0)
                             {
