@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Controllers
 {
@@ -36,8 +37,9 @@ namespace ERPAPI.Controllers
                 if (feriado.Id == 0)
                 {
                     Feriado f =  context.Feriados
-                        .Where(q => q.Nombre == feriado.Nombre || (q.FechaInicio >= feriado.FechaInicio &&  feriado.FechaInicio<=q.FechaFin) ||
-                        (q.FechaFin >= feriado.FechaFin && feriado.FechaFin<=q.FechaFin )).FirstOrDefault();
+                        .Where(q => q.Nombre == feriado.Nombre && q.PeriodoId == feriado.PeriodoId 
+                        && ((q.FechaInicio >= feriado.FechaInicio &&  feriado.FechaInicio<=q.FechaFin) ||
+                        (q.FechaFin >= feriado.FechaFin && feriado.FechaFin<=q.FechaFin ))).FirstOrDefault();
                     if (f != null)
                     {
                         return BadRequest("Ya existe un Feriado con esta configuracion");
@@ -120,12 +122,12 @@ namespace ERPAPI.Controllers
             }
         }
 
-        [HttpGet("[action]/{anio}")]
-        public async Task<ActionResult> GetFeriadoAnio(int anio)
+    /*    [HttpGet("[action]/{anio}")]
+        public async Task<ActionResult> GetFeriadoAnio(int P)
         {
             try
             {
-                var feriados = await context.Feriados.Include(e=>e.Estado).Where(f=>f.Anio==anio).ToListAsync();
+                var feriados = await context.Feriados.Include(e=>e.Estado).Where(f=>f.PeriodoId==anio).ToListAsync();
                 return Ok(feriados);
             }
             catch (Exception ex)
@@ -133,7 +135,7 @@ namespace ERPAPI.Controllers
                 logger.LogError(ex, "Error al cargar feriados por año");
                 return BadRequest(ex);
             }
-        }
+        }*/
 
         [HttpGet("[action]/{fecha}")]
         public async Task<ActionResult> GetFeriadoFecha(DateTime fecha)
@@ -147,6 +149,65 @@ namespace ERPAPI.Controllers
             {
                 logger.LogError(ex, "Error al cargar feriados");
                 return BadRequest(ex);
+            }
+        }
+
+        /// <summary>
+        /// Obtiene el Listado de Feriados 
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{periodoId}")]
+        public async Task<ActionResult<List<Feriado>>> GetFeriadosByPeriodo(int periodoId)
+        {
+            List<Feriado> Items = new List<Feriado>();
+            try
+            {
+                Items = await context.Feriados.Where(q => q.PeriodoId == periodoId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+        [HttpPut("[action]")]
+        public async Task<ActionResult<Feriado>> Update(Feriado feriado)
+        {
+            try
+            {
+                Feriado feriadoExistente = await context.Feriados.FirstOrDefaultAsync(f => f.Id == feriado.Id);
+                if (feriadoExistente == null)
+                {
+                    return NotFound("Registro de feriado a actualizar no existe");
+                }
+
+                // Verificar si existe otro feriado con el mismo nombre en el mismo PeriodoId
+                Feriado feriadoDuplicado = await context.Feriados
+                    .FirstOrDefaultAsync(f => f.Nombre == feriado.Nombre && f.PeriodoId == feriado.PeriodoId && f.Id != feriado.Id);
+                if (feriadoDuplicado != null)
+                {
+                    return BadRequest("Ya existe un Feriado con este nombre en el mismo PeriodoId");
+                }
+
+                // Actualizar las propiedades del feriado existente con los valores del feriado recibido
+                context.Entry(feriadoExistente).CurrentValues.SetValues(feriado);
+
+                // Actualizar los datos de auditoría
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
+                await context.SaveChangesAsync();
+                return Ok(feriadoExistente);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al actualizar el registro del feriado");
+                return BadRequest("Error al actualizar el registro del feriado");
             }
         }
 

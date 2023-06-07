@@ -12,9 +12,10 @@ namespace ERPAPI.Models
         [Display(Name = "Id")]
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-
-        [Required]
-        public int Anio { get; set; }
+        
+        public int PeriodoId { get; set; }
+        [ForeignKey("PeriodoId")]
+        public Periodo Periodo { get; set; }
 
         [Required]
         public string Nombre { get; set; }
