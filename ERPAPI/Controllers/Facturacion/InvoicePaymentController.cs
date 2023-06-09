@@ -318,7 +318,7 @@ namespace ERPAPI.Controllers
                             InvoiceId = null,
                             NoDocumento = _InvoicePaymentsq.Id.ToString(),
                             DocumentoId = _InvoicePaymentsq.Id,
-                            TipoDocumentoId = 0,
+                            TipoDocumentoId = null,
                             TipoDocumento = "Recibo de Pago",
                             
                         });
