@@ -97,6 +97,41 @@ namespace ERPAPI.Controllers
                     .Where(a =>a.PeriodoId == periodoId 
                     && (a.CostCenterId == centrocosto||centrocosto==0))
                     .Include("Accounting").ToListAsync();
+
+                Items = (from c in Items
+                         select new Presupuesto
+                         {
+                             AccountCode = c.Accounting.AccountCode,
+                             AccountingName = c.Accounting.AccountName,
+                             AccountigId = c.AccountigId,
+                             PresupuestoEnero = c.PresupuestoEnero,
+                             PresupuestoFebrero = c.PresupuestoFebrero,
+                             PresupuestoMarzo = c.PresupuestoMarzo,
+                             PresupuestoAbril = c.PresupuestoAbril,
+                             PresupuestoMayo = c.PresupuestoMayo,
+                             PresupuestoJunio = c.PresupuestoJunio,
+                             PresupuestoJulio = c.PresupuestoJulio,
+                             PresupuestoAgosto = c.PresupuestoAgosto,
+                             PresupuestoSeptiembre = c.PresupuestoSeptiembre,
+                             PresupuestoOctubre = c.PresupuestoOctubre,
+                             PresupuestoNoviembre = c.PresupuestoNoviembre,
+                             PresupuestoDiciembre = c.PresupuestoDiciembre,
+                             TotalMontoPresupuesto = c.TotalMontoPresupuesto,
+                             EjecucionEnero = c.EjecucionEnero,
+                             EjecucionFebrero = c.EjecucionFebrero,
+                             EjecucionMarzo = c.EjecucionMarzo,
+                             EjecucionAbril = c.EjecucionAbril,
+                             EjecucionMayo = c.EjecucionMayo,
+                             EjecucionJunio = c.EjecucionJunio,
+                             EjecucionJulio = c.EjecucionJulio,
+                             EjecucionAgosto = c.EjecucionAgosto,
+                             EjecucionSeptiembre = c.EjecucionSeptiembre,
+                             EjecucionOctubre = c.EjecucionOctubre,
+                             EjecucionNoviembre = c.EjecucionNoviembre,
+                             EjecucionDiciembre = c.EjecucionDiciembre,
+                             TotalMontoEjecucion = c.TotalMontoEjecucion
+                         }
+               ).ToList();
             }
             catch (Exception ex)
             {
