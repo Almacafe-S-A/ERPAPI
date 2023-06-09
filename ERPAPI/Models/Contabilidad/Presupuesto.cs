@@ -21,6 +21,10 @@ namespace ERPAPI.Models
         [ForeignKey("PeriodoId")]
         public Periodo Periodo { get; set; }
 
+        [NotMapped]
+        public string AccountCode { get; set; }
+        [NotMapped]
+        public string AccountingName { get; set; }
 
         public decimal PresupuestoEnero { get; set; }
         public decimal PresupuestoFebrero { get; set; }
