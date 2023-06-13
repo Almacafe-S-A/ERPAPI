@@ -101,6 +101,9 @@ namespace ERPAPI.Controllers
                 Items = (from c in Items
                          select new Presupuesto
                          {
+                             Id = c.Id,
+                             PeriodoId = c.PeriodoId,
+                             Periodo = c.Periodo,
                              AccountCode = c.Accounting.AccountCode,
                              AccountingName = c.Accounting.AccountName,
                              AccountigId = c.AccountigId,
