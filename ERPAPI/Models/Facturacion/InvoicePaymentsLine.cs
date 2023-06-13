@@ -25,7 +25,7 @@ namespace ERPAPI.Models
 
         public string SubProductName { get; set; }
 
-        public int InvoivceId { get; set; }
+        public int? InvoivceId { get; set; }
 
         [ForeignKey("InvoivceId")]
         public Invoice Invoice { get; set; }

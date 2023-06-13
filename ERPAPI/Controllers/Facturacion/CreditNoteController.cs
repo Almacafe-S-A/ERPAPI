@@ -339,6 +339,10 @@ namespace ERPAPI.Controllers
                     ModifiedUser = User.Identity.Name,
                     VoucherType = 3,
                     TypeJournalName = "Nota de crédito",
+                    PartyTypeId = 1,
+                    PartyTypeName = "Cliente",
+                    PartyName = creditnote.CustomerName,
+                    PartyId = creditnote.CustomerId,
 
 
 

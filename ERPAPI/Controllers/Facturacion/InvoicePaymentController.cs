@@ -106,7 +106,7 @@ namespace ERPAPI.Controllers
             {
                 List<InvoiceLine> detallefactura =  _context.InvoiceLine
                     .Include(i => i.Invoice)
-                    .Where(q => InvoiceIds.Any(a=> a == q.InvoiceId)).ToList();
+                    .Where(q => InvoiceIds.Any(a=> a == q.InvoiceId) && q.Saldo > 0).ToList();
 
                 Items = (from d in detallefactura
                         select new InvoicePaymentsLine {
@@ -288,15 +288,21 @@ namespace ERPAPI.Controllers
                         _InvoicePaymentsq.CantidadenLetras = let.ToCustomCardinal((_InvoicePaymentsq.MontoPagado)).ToUpper();
 
 
-                        var resppuesta =  GeneraAsiento(_InvoicePaymentsq);
-
-                        JournalEntry asiento = resppuesta.Result.Value as JournalEntry;
-
-                                                  
 
 
-                        _InvoicePaymentsq.JournalId = asiento.JournalEntryId;
+                        _InvoicePaymentsq.JournalId = null;
                         _InvoicePaymentsq.NoDocumentos = String.Join(", ", _InvoicePaymentsq.InvoicePaymentsLines.DistinctBy(d => d.InvoivceId).Select(s => s.NoDocumento));
+
+                        foreach (var item in _InvoicePaymentsq.InvoicePaymentsLines)
+                        {
+                            if (item.SubProduct != null)
+                            {
+                                item.SubProductName = item.SubProduct.SubProductName;
+                                item.SubProductId = item.SubProduct.SubproductId;
+                                item.SubProduct = null;
+                                item.InvoivceId = null;
+                            }
+                        }
 
 
                         _context.InvoicePayments.Add(_InvoicePaymentsq);
@@ -326,12 +332,18 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
+                        var resppuesta = GeneraAsiento(_InvoicePaymentsq);
+                        JournalEntry asiento = resppuesta.Result.Value as JournalEntry;
+
+                        _InvoicePaymentsq.JournalId = asiento.JournalEntryId;
+
+
                         foreach (var item in _InvoicePaymentsq.InvoicePaymentsLines)
                         {
                             if (item.SubProductId == null)
                             {
                                 Invoice invoice = _context.Invoice.Where(q => q.NumeroDEI == item.NoDocumento ).FirstOrDefault();
-                                invoice.SaldoImpuesto = invoice.SaldoImpuesto - item.MontoPagado;
+                                if (invoice != null)  invoice.SaldoImpuesto = invoice.SaldoImpuesto - item.MontoPagado;
                                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                                 await _context.SaveChangesAsync();
                                 continue;
@@ -400,7 +412,7 @@ namespace ERPAPI.Controllers
                     TypeOfAdjustmentId = 65,
                     TypeOfAdjustmentName = "Asiento Diario",
                     JournalEntryLines = new List<JournalEntryLine>(),
-                    Memo = $"Pago recibido #{pago.Id} de correspondiente a {String.Join(", ", pago.InvoicePaymentsLines.DistinctBy(d => d.InvoivceId).Select(s => s.NoDocumento))} ",
+                    Memo = $"Pago de Factura(s) No. {String.Join(", ", pago.InvoicePaymentsLines.DistinctBy(d => d.InvoivceId).Select(s => s.NoDocumento))} con Recibo No. {pago.Id}   ",
                     Periodo = periodo.Anio.ToString(),
                     Posted = false,
                     TotalCredit = 0,
@@ -409,6 +421,10 @@ namespace ERPAPI.Controllers
                     ModifiedUser = User.Identity.Name,
                     TypeJournalName = "Pagos de Clientes",
                     VoucherType = 12,
+                    PartyTypeId = 1,
+                    PartyTypeName = "Cliente",
+                    PartyName = pago.CustomerName,
+                    PartyId = pago.CustomerId,
 
 
 
@@ -433,7 +449,10 @@ namespace ERPAPI.Controllers
 
                 foreach (var item in pago.InvoicePaymentsLines)
                 {
-
+                    if (item.MontoPagado<= 0 )
+                    {
+                        continue;
+                    }
 
                     Invoice invoice = _context.Invoice.Where(q => q.InvoiceId == item.InvoivceId).FirstOrDefault();
                     if (item.SubProductId == null && item.MontoPagado > 0 )
