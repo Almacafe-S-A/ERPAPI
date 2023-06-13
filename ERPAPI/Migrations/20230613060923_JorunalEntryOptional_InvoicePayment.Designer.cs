@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230613060923_JorunalEntryOptional_InvoicePayment")]
+    partial class JorunalEntryOptional_InvoicePayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -7438,7 +7440,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("InvoicePaymentId");
 
-                    b.Property<int?>("InvoivceId");
+                    b.Property<int>("InvoivceId");
 
                     b.Property<decimal>("MontoAdeudaPrevio");
 
@@ -13073,7 +13075,8 @@ namespace ERPAPI.Migrations
 
                     b.HasOne("ERPAPI.Models.Invoice", "Invoice")
                         .WithMany()
-                        .HasForeignKey("InvoivceId");
+                        .HasForeignKey("InvoivceId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ERPAPI.Models.SubProduct", "SubProduct")
                         .WithMany()

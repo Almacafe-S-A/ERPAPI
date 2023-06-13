@@ -256,6 +256,10 @@ namespace ERPAPI.Controllers
                     ModifiedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
                     VoucherType = 4,
+                    PartyTypeId = 1,
+                    PartyTypeName = "Cliente",
+                    PartyName = debitnote.CustomerName,
+                    PartyId = (int)debitnote.CustomerId,
 
 
 
