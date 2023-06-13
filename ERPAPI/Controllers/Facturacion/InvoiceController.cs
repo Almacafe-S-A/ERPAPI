@@ -638,7 +638,7 @@ namespace ERPAPI.Controllers
                     TypeOfAdjustmentId = 65,
                     TypeOfAdjustmentName = "Asiento Diario",
                     JournalEntryLines = new List<JournalEntryLine>(),
-                    Memo = $"Factura #{factura.NumeroDEI} a Cliente {factura.CustomerName} por concepto de {factura.ProductName}",
+                    Memo = $"Factura #{factura.NumeroDEI} a Cliente {factura.CustomerName} por concepto de servicios de {factura.ProductName}",
                     Periodo = periodo.Anio.ToString(),
                     Posted = false,
                     TotalCredit = 0,
@@ -647,6 +647,10 @@ namespace ERPAPI.Controllers
                     ModifiedUser = User.Identity.Name,
                     VoucherType= 1,
                     TypeJournalName = "Factura de ventas",
+                    PartyTypeId = 1,
+                    PartyTypeName = "Cliente",
+                    PartyName = factura.CustomerName,
+                    PartyId= factura.CustomerId,
 
 
 
