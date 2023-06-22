@@ -27,7 +27,15 @@ namespace ERPAPI.Models
 
         [ForeignKey("IdEstado")]
         public Estados Estado { get; set; }
-
+        public bool Lunes { get; set; }
+        public bool Martes { get; set; }
+        public bool Miercoles { get; set; }
+        public bool Jueves { get; set; }
+        public bool Viernes { get; set; }
+        public bool Sabado { get; set; }
+        public bool Domingo { get; set; }
+        public bool Almuerzo { get; set; }
+        public string Factor { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioModificacion { get; set; }
