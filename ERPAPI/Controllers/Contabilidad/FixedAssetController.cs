@@ -263,7 +263,7 @@ namespace ERPAPI.Controllers
                 {
                     Date = DateTime.Now,
                     Memo = $"Se dio de baja el Activo {_FixedAssetq.FixedAssetName} por motivo de {motivoMensaje}",
-                    DatePosted = DateTime.Now,
+                    DatePosted = _FixedAsset.FechaBaja,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
