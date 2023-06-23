@@ -960,7 +960,7 @@ namespace ERPAPI.Controllers
                                 && p.Estado != "Depreciado"
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
-                                && p.AssetDate >= pfecha
+                                && p.AssetDate <= pfecha
                                 )
                                 .ToListAsync();
                             foreach (var item in activos)
