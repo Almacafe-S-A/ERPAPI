@@ -54,6 +54,8 @@ namespace ERPAPI.Models
 
         public string Solicitante { get; set; }
 
+        public bool CobroPorTiempo { get; set; }
+
         public decimal? Cantidad { get; set; }
 
         [Display(Name = "Estado")]
