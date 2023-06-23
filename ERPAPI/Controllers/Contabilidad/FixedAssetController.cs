@@ -206,6 +206,9 @@ namespace ERPAPI.Controllers
                 .Where(x => x.FixedAssetId == _FixedAsset.FixedAssetId)
                 .FirstOrDefault();
 
+                //DepreciationFixedAsset depreciationFixedAssets = _context.DepreciationFixedAsset
+                //    .Where(q => q.FixedAssetId == _FixedAsset.FixedAssetId  && q.Year == _baja ).FirstOrDefault();
+
                 Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
 
                 List<BitacoraCierreProcesos> procesos = _context.BitacoraCierreProceso
@@ -225,7 +228,7 @@ namespace ERPAPI.Controllers
 
                 if (_FixedAssetq.AssetDate >  _FixedAsset.FechaBaja)
                 {
-                    return BadRequest("No se Puede dar de baja el activo la fecha de baja es previa a la fecha de adquisicion");
+                   return BadRequest("No se Puede dar de baja el activo la fecha de baja es previa a la fecha de adquisicion");
                 }
 
                 if (_FixedAssetq.IdEstado == 105)

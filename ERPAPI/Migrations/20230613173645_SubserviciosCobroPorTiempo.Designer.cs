@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230613173645_SubserviciosCobroPorTiempo")]
+    partial class SubserviciosCobroPorTiempo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -10181,8 +10183,6 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("Balance");
 
                     b.Property<string>("Barcode");
-
-                    b.Property<bool>("CobroPorTiempo");
 
                     b.Property<string>("Description");
 
