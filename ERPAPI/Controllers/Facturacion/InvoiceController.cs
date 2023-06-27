@@ -379,13 +379,13 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        if (_Invoice.Exonerado )
-                        {
-                            if (_Invoice.NoOCExenta == String.Empty || _Invoice.NoConstanciadeRegistro == String.Empty)
-                            {
-                                throw new Exception("Numero de OC y No contancia son requeridos para clientes exonerados");
-                            }
-                        }
+                        //if (_Invoice.Exonerado )
+                        //{
+                        //    if (_Invoice.NoOCExenta == String.Empty || _Invoice.NoConstanciadeRegistro == String.Empty)
+                        //    {
+                        //        throw new Exception("Numero de OC y No contancia son requeridos para clientes exonerados");
+                        //    }
+                        //}
 
                         _Invoiceq = _Invoice;
                         _Invoiceq.UsuarioCreacion= User.Identity.Name;
