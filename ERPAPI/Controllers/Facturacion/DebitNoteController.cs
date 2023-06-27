@@ -123,7 +123,7 @@ namespace ERPAPI.Controllers
         /// <summary>
         /// Obtiene los Datos de la Invoice por medio del Id enviado.
         /// </summary>
-        /// <param name="InvoiceId"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
         [HttpGet("[action]/{Id}")]
         public async Task<IActionResult> GenerarNotaDebito(Int64 Id)
@@ -187,7 +187,7 @@ namespace ERPAPI.Controllers
                         InvoiceId = debitnote.InvoiceId,
                         NoDocumento = debitnote.NumeroDEI,
                         CustomerId = debitnote.CustomerId,
-                        TipoDocumentoId = 4,
+                        TipoDocumentoId = 9,
                         TipoDocumento = "Nota de Debito",
                         DocumentoId = debitnote.DebitNoteId,
                         
@@ -196,6 +196,12 @@ namespace ERPAPI.Controllers
 
 
                     debitnote.FechaModificacion = DateTime.Now;
+                    Numalet let;
+                    let = new Numalet();
+                    let.SeparadorDecimalSalida = "Lempiras";
+                    let.MascaraSalidaDecimal = "00/100 ";
+                    let.ApocoparUnoParteEntera = true;
+                    debitnote.TotalLetras = let.ToCustomCardinal((debitnote.Amount)).ToUpper();
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
