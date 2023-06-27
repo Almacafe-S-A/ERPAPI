@@ -58,6 +58,8 @@ namespace ERPAPI.Models
         [ForeignKey("CuentaBancariaId ")]
         public AccountManagement accountManagement { get; set; }
 
+        public string NumeroDEIString { get; set; }
+
         public Int64 Bank { get; set; }
 
         public string BankName { get; set; }
