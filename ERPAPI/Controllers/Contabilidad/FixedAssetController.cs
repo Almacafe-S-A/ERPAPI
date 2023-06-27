@@ -206,6 +206,13 @@ namespace ERPAPI.Controllers
                 .Where(x => x.FixedAssetId == _FixedAsset.FixedAssetId)
                 .FirstOrDefault();
 
+                if (_FixedAsset.FechaBaja == null)
+                {
+                    return BadRequest("No se recibio la fecha de baja del activo");
+                }
+
+                DateTime fechabaja = (DateTime)_FixedAsset.FechaBaja;
+
                 //DepreciationFixedAsset depreciationFixedAssets = _context.DepreciationFixedAsset
                 //    .Where(q => q.FixedAssetId == _FixedAsset.FixedAssetId  && q.Year == _baja ).FirstOrDefault();
 
@@ -214,7 +221,7 @@ namespace ERPAPI.Controllers
                 List<BitacoraCierreProcesos> procesos = _context.BitacoraCierreProceso
                     .Where(q => q.BitacoraCierresContable.PeriodoId == periodo.Id
                     && q.PasoCierre == 3
-                    && q.BitacoraCierresContable.Mes == _FixedAsset.FechaBaja.Month)
+                    && q.BitacoraCierresContable.Mes == fechabaja.Month)
                     .Include(i => i.BitacoraCierresContable).ToList();
 
                 foreach (var item in procesos)
@@ -263,7 +270,7 @@ namespace ERPAPI.Controllers
                 {
                     Date = DateTime.Now,
                     Memo = $"Se dio de baja el Activo {_FixedAssetq.FixedAssetName} por motivo de {motivoMensaje}",
-                    DatePosted = _FixedAsset.FechaBaja,
+                    DatePosted = fechabaja,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
@@ -354,6 +361,7 @@ namespace ERPAPI.Controllers
                 _context.JournalEntry.Add(_je);
                 _FixedAssetq.IdEstado = 110;
                 _FixedAssetq.Estado = "Dado de Baja";
+                _FixedAssetq.FechaBaja = fechabaja;
 
                 await _context.SaveChangesAsync();
             }

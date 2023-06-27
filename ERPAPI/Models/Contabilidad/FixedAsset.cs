@@ -111,6 +111,8 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         public decimal AccumulatedDepreciation { get; set; }
 
+        public DateTime? FechaBaja { get; set; }
+
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
 
@@ -133,7 +135,7 @@ namespace ERPAPI.Models
 
         public int MotivoId { get; set; }
 
-        public DateTime FechaBaja { get; set; }
+        
     }
 
 
