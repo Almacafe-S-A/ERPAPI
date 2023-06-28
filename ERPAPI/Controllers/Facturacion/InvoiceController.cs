@@ -278,6 +278,10 @@ namespace ERPAPI.Controllers
                     factura.ExpirationDate = DateTime.Now.AddDays(factura.DiasVencimiento);
                     factura.Estado = "Emitido";
 
+
+                    
+
+
                     _context.NumeracionSAR.Update(numeracionSAR);
 
                     //var alerta = await GeneraAlerta(factura);
@@ -312,12 +316,7 @@ namespace ERPAPI.Controllers
 
                     factura.FechaModificacion = DateTime.Now;
 
-                    Numalet let;
-                    let = new Numalet();
-                    let.SeparadorDecimalSalida = "Lempiras";
-                    let.MascaraSalidaDecimal = "00/100 ";
-                    let.ApocoparUnoParteEntera = true;
-                    factura.TotalLetras = let.ToCustomCardinal((factura.Total)).ToUpper();
+                   factura = CalcularTotales(factura);
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -337,6 +336,29 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => Ok(factura));
             }
            
+        }
+
+
+        private Invoice CalcularTotales(Invoice factura) {
+            factura.Tax = factura.InvoiceLine.Sum(s => s.TaxAmount);
+            factura.Amount = factura.InvoiceLine.Sum(s => s.Amount);
+            factura.Discount = factura.InvoiceLine.Sum(s => s.DiscountAmount);
+            factura.SubTotal = factura.InvoiceLine.Sum(s => s.SubTotal);
+            factura.Tax = factura.InvoiceLine.Sum(s => s.TaxAmount);
+            factura.TotalGravado = factura.Exonerado ? 0 : factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal);
+            factura.TotalExonerado = factura.Exonerado ? factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal) : 0;
+            factura.Total = factura.InvoiceLine.Sum(s => s.Total);
+
+            Numalet let;
+            let = new Numalet();
+            let.SeparadorDecimalSalida = "Lempiras";
+            let.MascaraSalidaDecimal = "00/100 ";
+            let.ApocoparUnoParteEntera = true;
+            factura.TotalLetras = let.ToCustomCardinal((factura.Total)).ToUpper();
+
+            return factura;
+
+
         }
 
 
@@ -424,22 +446,24 @@ namespace ERPAPI.Controllers
                         }
 
 
-                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
-                        _Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
-                        _Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);                        
-                        _Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.SubTotal);
-                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
-                        _Invoiceq.TotalGravado = _Invoiceq.Exonerado ? 0 : _Invoiceq.InvoiceLine.Where(q => q.SubTotal> 0).Sum(s => s.SubTotal);
-                        _Invoiceq.TotalExonerado = _Invoiceq.Exonerado ? _Invoiceq.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal):0;
-                        _Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
+                        //_Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
+                        //_Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
+                        //_Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);                        
+                        //_Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.SubTotal);
+                        //_Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
+                        //_Invoiceq.TotalGravado = _Invoiceq.Exonerado ? 0 : _Invoiceq.InvoiceLine.Where(q => q.SubTotal> 0).Sum(s => s.SubTotal);
+                        //_Invoiceq.TotalExonerado = _Invoiceq.Exonerado ? _Invoiceq.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal):0;
+                        //_Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
 
-                        Numalet let;
-                        let = new Numalet();
-                        let.SeparadorDecimalSalida = "Lempiras";
-                        let.MascaraSalidaDecimal = "00/100 ";
-                        let.ApocoparUnoParteEntera = true;
-                        _Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
+                        //Numalet let;
+                        //let = new Numalet();
+                        //let.SeparadorDecimalSalida = "Lempiras";
+                        //let.MascaraSalidaDecimal = "00/100 ";
+                        //let.ApocoparUnoParteEntera = true;
+                        //_Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
 
+
+                        _Invoiceq = CalcularTotales(_Invoice);
 
 
                         _context.Invoice.Add(_Invoiceq);

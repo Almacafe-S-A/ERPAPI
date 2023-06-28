@@ -182,7 +182,7 @@ namespace ERPAPI.Controllers
                         Credito = 0,
                         Fecha = DateTime.Now,
                         CustomerName = debitnote.CustomerName,
-                        Debito = debitnote.Total,
+                        Debito = debitnote.Amount,
                         Sinopsis = $"Nota de debito #{debitnote.NumeroDEI} " +debitnote.Remarks,
                         InvoiceId = debitnote.InvoiceId,
                         NoDocumento = debitnote.NumeroDEI,
@@ -271,45 +271,47 @@ namespace ERPAPI.Controllers
 
                 };
 
-                if (debitnote.SalesTypeId == 2)
+                //if (debitnote.SalesTypeId == 2)
+                //{
+                    
+                //}
+                //else
+                //{
+                //    Accounting accounting = _context.Accounting
+                //        .Where(q => q.AccountId == debitnote.accountManagement.AccountId)
+                //        .FirstOrDefault();
+                //    partida.JournalEntryLines.Add(new JournalEntryLine
+                //    {
+                //        AccountId = accounting.AccountId,
+                //        AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
+                //        CostCenterId = 1,
+                //        CostCenterName = "San Pedro Sula",
+                //        Debit = 0,
+                //        Credit = debitnote.Amount,
+                //        CreatedDate = DateTime.Now,
+                //        CreatedUser = User.Identity.Name,
+                //        ModifiedUser = User.Identity.Name,
+                //        ModifiedDate = DateTime.Now,
+
+
+
+                //    });
+                //}
+
+
+                partida.JournalEntryLines.Add(new JournalEntryLine
                 {
-                    partida.JournalEntryLines.Add(new JournalEntryLine
-                    {
-                        AccountId = (long)debitnote.CuentaContableIngresosId,
-                        AccountName = debitnote.CuentaContableIngresosNombre,
-                        CostCenterId = 1,
-                        CostCenterName = "San Pedro Sula",
-                        Debit = 0,
-                        Credit = debitnote.Amount ,
-                        CreatedDate = DateTime.Now,
-                        CreatedUser = User.Identity.Name,
-                        ModifiedUser = User.Identity.Name,
-                        ModifiedDate = DateTime.Now,
-                    });
-                }
-                else
-                {
-                    Accounting accounting = _context.Accounting
-                        .Where(q => q.AccountId == debitnote.accountManagement.AccountId)
-                        .FirstOrDefault();
-                    partida.JournalEntryLines.Add(new JournalEntryLine
-                    {
-                        AccountId = accounting.AccountId,
-                        AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
-                        CostCenterId = 1,
-                        CostCenterName = "San Pedro Sula",
-                        Debit = 0,
-                        Credit = debitnote.Amount,
-                        CreatedDate = DateTime.Now,
-                        CreatedUser = User.Identity.Name,
-                        ModifiedUser = User.Identity.Name,
-                        ModifiedDate = DateTime.Now,
-
-
-
-                    });
-                }
-               
+                    AccountId = (long)debitnote.CuentaContableIngresosId,
+                    AccountName = debitnote.CuentaContableIngresosNombre,
+                    CostCenterId = 1,
+                    CostCenterName = "San Pedro Sula",
+                    Debit = 0,
+                    Credit = debitnote.Amount,
+                    CreatedDate = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    ModifiedUser = User.Identity.Name,
+                    ModifiedDate = DateTime.Now,
+                });
 
                 partida.JournalEntryLines.Add(new JournalEntryLine
                 {
