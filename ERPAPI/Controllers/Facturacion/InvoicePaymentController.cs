@@ -377,7 +377,146 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_InvoicePaymentsq));
         }
 
-        
+
+        /// <summary>
+        /// Anula la invoicepayment por medio del Id enviado.
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{ID}")]
+        public async Task<IActionResult> AnularReciboPago(Int64 ID)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                InvoicePayments invoicepayment = new InvoicePayments();
+                try
+                {
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
+                    invoicepayment = await _context.InvoicePayments
+                        //.Include(i => i.JournalEntry)
+                        .Where(q => q.Id == ID)
+                        .FirstOrDefaultAsync();
+
+                    Customer customer = _context.Customer
+                        .Where(q => q.CustomerId == invoicepayment.CustomerId)
+                        .FirstOrDefault();
+
+
+                    JournalEntry asientoFactura = _context.JournalEntry
+                        .Include(j => j.JournalEntryLines)
+                        .Where(q => q.JournalEntryId == invoicepayment.JournalId).FirstOrDefault();
+
+
+
+                    JournalEntry asientoreversado = new JournalEntry();
+
+                    asientoreversado = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        DatePosted = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        CreatedDate = DateTime.Now,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobación",
+                        PeriodoId = periodo.Id,
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento Diario",
+                        JournalEntryLines = new List<JournalEntryLine>(),
+                        Memo = $"Recibo #{invoicepayment.Id} anulado a Cliente {invoicepayment.CustomerName}",
+                        Periodo = periodo.Anio.ToString(),
+                        Posted = false,
+                        TotalCredit = 0,
+                        TotalDebit = 0,
+                        ModifiedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+                        VoucherType = 1,
+                        TypeJournalName = "Factura de ventas",
+                        PartyTypeId = 1,
+                        PartyTypeName = "Cliente",
+                        PartyName = invoicepayment.CustomerName,
+                        PartyId = invoicepayment.CustomerId,
+
+
+
+
+                    };
+                    foreach (var item in asientoFactura.JournalEntryLines)
+                    {
+                        asientoreversado.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = item.AccountId,
+                            CostCenterId = item.CostCenterId,
+                            CostCenterName = item.CostCenterName,
+                            CreatedDate = DateTime.Now,
+                            CreatedUser = User.Identity.Name,
+                            Credit = item.Debit,
+                            Debit = item.Credit,
+                            AccountName = item.AccountName,
+                            Description = item.Description,
+                            Memo = item.Memo,
+                            ModifiedDate = DateTime.Now,
+                            ModifiedUser = User.Identity.Name,
+                            PartyId = item.PartyId,
+                            PartyTypeName = item.PartyTypeName,
+                            PartyName = item.PartyName,
+                            PartyTypeId = item.PartyTypeId,
+
+
+                        });
+                    }
+
+
+                    asientoreversado.TotalCredit = asientoreversado.JournalEntryLines.Sum(s => s.Credit);
+                    asientoreversado.TotalDebit = asientoreversado.JournalEntryLines.Sum(s => s.Debit);
+
+                    asientoreversado.JournalEntryLines = asientoreversado.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+                    _context.JournalEntry.Add(asientoreversado);
+
+
+
+                    invoicepayment.Estado = "Anulado";
+
+                    invoicepayment.FechaModificacion = DateTime.Now;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    _context.CancelledDocuments.Add(new CancelledDocuments
+                    {
+                        FechaCreacion = DateTime.Now,
+                        IdDocumento = invoicepayment.Id,
+                        IdTipoDocumento = 1,
+                        TipoDocumento = "Recibo de Pago",
+                        JournalEntryId = asientoreversado.JournalEntryId,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name
+                    });
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    transaction.Rollback();
+                    return BadRequest($"Ocurrio un error:{ex.Message}");
+                }
+
+
+                return await Task.Run(() => Ok(invoicepayment));
+            }
+
+        }
+
+
         /// <summary>
         /// Genera el asiento de la pago
         /// </summary>
@@ -442,6 +581,10 @@ namespace ERPAPI.Controllers
                     CreatedUser = User.Identity.Name,
                     ModifiedUser = User.Identity.Name,
                     ModifiedDate = DateTime.Now,
+                    PartyTypeId = 1,
+                    PartyTypeName = "Cliente",
+                    PartyName = pago.CustomerName,
+                    PartyId = pago.CustomerId,
 
 
 
@@ -472,6 +615,10 @@ namespace ERPAPI.Controllers
                             CreatedUser = User.Identity.Name,
                             ModifiedUser = User.Identity.Name,
                             ModifiedDate = DateTime.Now,
+                            PartyTypeId = 1,
+                            PartyTypeName = "Cliente",
+                            PartyName = pago.CustomerName,
+                            PartyId = pago.CustomerId,
 
 
 
@@ -499,6 +646,10 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
                         ModifiedDate = DateTime.Now,
+                        PartyTypeId = 1,
+                        PartyTypeName = "Cliente",
+                        PartyName = pago.CustomerName,
+                        PartyId = pago.CustomerId,
 
 
 

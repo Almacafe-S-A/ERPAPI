@@ -225,6 +225,153 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Anula la debitNote por medio del Id enviado.
+        /// </summary>
+        /// <param name="debitnoteId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{debitnoteId}")]
+        public async Task<IActionResult> AnularNotaDebito(Int64 debitnoteId)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                DebitNote debitNote = new DebitNote();
+                try
+                {
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
+                    debitNote = await _context.DebitNote
+                        //.Include(i => i.InvoiceLine)
+                        .Include(i => i.JournalEntry)
+                        .Where(q => q.DebitNoteId == debitnoteId)
+                        .FirstOrDefaultAsync();
+
+                    Customer customer = _context.Customer
+                        .Where(q => q.CustomerId == debitNote.CustomerId)
+                        .FirstOrDefault();
+
+
+                    JournalEntry asientoFactura = _context.JournalEntry
+                        .Include(j => j.JournalEntryLines)
+                        .Where(q => q.JournalEntryId == debitNote.JournalEntryId).FirstOrDefault();
+
+
+
+                    JournalEntry asientoreversado = new JournalEntry();
+
+                    asientoreversado = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        DatePosted = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        CreatedDate = DateTime.Now,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobación",
+                        PeriodoId = periodo.Id,
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento Diario",
+                        JournalEntryLines = new List<JournalEntryLine>(),
+                        Memo = $"Nota de Debito #{debitNote.NumeroDEI} anulada a Cliente {debitNote.CustomerName}",
+                        Periodo = periodo.Anio.ToString(),
+                        Posted = false,
+                        TotalCredit = 0,
+                        TotalDebit = 0,
+                        ModifiedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+                        VoucherType = 1,
+                        TypeJournalName = "Factura de ventas",
+                        PartyTypeId = 1,
+                        PartyTypeName = "Cliente",
+                        PartyName = debitNote.CustomerName,
+                        PartyId = (int)debitNote.CustomerId,
+
+
+
+
+                    };
+                    foreach (var item in asientoFactura.JournalEntryLines)
+                    {
+                        asientoreversado.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = item.AccountId,
+                            CostCenterId = item.CostCenterId,
+                            CostCenterName = item.CostCenterName,
+                            CreatedDate = DateTime.Now,
+                            CreatedUser = User.Identity.Name,
+                            Credit = item.Debit,
+                            Debit = item.Credit,
+                            AccountName = item.AccountName,
+                            Description = item.Description,
+                            Memo = item.Memo,
+                            ModifiedDate = DateTime.Now,
+                            ModifiedUser = User.Identity.Name,
+                            PartyId = item.PartyId,
+                            PartyTypeName = item.PartyTypeName,
+                            PartyName = item.PartyName,
+                            PartyTypeId = item.PartyTypeId,
+
+
+                        });
+                    }
+
+
+                    asientoreversado.TotalCredit = asientoreversado.JournalEntryLines.Sum(s => s.Credit);
+                    asientoreversado.TotalDebit = asientoreversado.JournalEntryLines.Sum(s => s.Debit);
+
+                    asientoreversado.JournalEntryLines = asientoreversado.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+                    _context.JournalEntry.Add(asientoreversado);
+
+
+
+                    debitNote.Saldo = 0;
+                    //debitNote.SaldoImpuesto = 0;
+                    debitNote.Estado = "Anulado";
+
+                    //foreach (var item in debitNote.DebitNoteLine)
+                    //{
+                    //    item.Saldo = 0;
+                    //}
+
+                    debitNote.FechaModificacion = DateTime.Now;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    _context.CancelledDocuments.Add(new CancelledDocuments
+                    {
+                        FechaCreacion = DateTime.Now,
+                        IdDocumento = (int)debitNote.DebitNoteId,
+                        IdTipoDocumento = 9,
+                        TipoDocumento = "Nota de Debito",
+                        JournalEntryId = asientoreversado.JournalEntryId,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name
+                    });
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    transaction.Rollback();
+                    return BadRequest($"Ocurrio un error:{ex.Message}");
+                }
+
+
+                return await Task.Run(() => Ok(debitNote));
+            }
+
+        }
+
+
+        /// <summary>
         /// Genera el asiento de la debitnote
         /// </summary>
         /// <param name="debitnote"></param>
@@ -271,32 +418,6 @@ namespace ERPAPI.Controllers
 
                 };
 
-                //if (debitnote.SalesTypeId == 2)
-                //{
-                    
-                //}
-                //else
-                //{
-                //    Accounting accounting = _context.Accounting
-                //        .Where(q => q.AccountId == debitnote.accountManagement.AccountId)
-                //        .FirstOrDefault();
-                //    partida.JournalEntryLines.Add(new JournalEntryLine
-                //    {
-                //        AccountId = accounting.AccountId,
-                //        AccountName = $"{accounting.AccountCode} - {accounting.AccountName}",
-                //        CostCenterId = 1,
-                //        CostCenterName = "San Pedro Sula",
-                //        Debit = 0,
-                //        Credit = debitnote.Amount,
-                //        CreatedDate = DateTime.Now,
-                //        CreatedUser = User.Identity.Name,
-                //        ModifiedUser = User.Identity.Name,
-                //        ModifiedDate = DateTime.Now,
-
-
-
-                //    });
-                //}
 
 
                 partida.JournalEntryLines.Add(new JournalEntryLine
@@ -311,6 +432,10 @@ namespace ERPAPI.Controllers
                     CreatedUser = User.Identity.Name,
                     ModifiedUser = User.Identity.Name,
                     ModifiedDate = DateTime.Now,
+                    PartyTypeId = 1,
+                    PartyTypeName = "Cliente",
+                    PartyName = debitnote.CustomerName,
+                    PartyId = (int)debitnote.CustomerId,
                 });
 
                 partida.JournalEntryLines.Add(new JournalEntryLine
@@ -325,6 +450,10 @@ namespace ERPAPI.Controllers
                     CreatedUser = User.Identity.Name,
                     ModifiedUser = User.Identity.Name,
                     ModifiedDate = DateTime.Now,
+                    PartyTypeId = 1,
+                    PartyTypeName = "Cliente",
+                    PartyName = debitnote.CustomerName,
+                    PartyId = (int)debitnote.CustomerId,
 
 
 

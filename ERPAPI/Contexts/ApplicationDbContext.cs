@@ -37,7 +37,9 @@ namespace ERP.Contexts
             public DbSet<AccountManagement> AccountManagement { get; set; }
             public DbSet<CierresAccounting> CierresAccounting { get; set; }
             public DbSet<CierresJournal> CierresJournal { get; set; }
-            public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
+
+        public DbSet<CancelledDocuments> CancelledDocuments { get; set; }
+        public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
             public DbSet<Bank> Bank { get; set; }
             public DbSet<BankAccountTransfers> BankAccountTransfers { get; set; }
             public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }

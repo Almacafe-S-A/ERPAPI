@@ -27,6 +27,8 @@ namespace ERPAPI.Models
 
         public bool Exonerado { get; set; }
 
+        public bool Exento { get; set; }
+
         public Int64? CuentaBancariaId { get; set; }
         [ForeignKey("CuentaBancariaId ")]
         public AccountManagement accountManagement { get; set; }

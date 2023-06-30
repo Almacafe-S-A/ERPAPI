@@ -58,6 +58,8 @@
     <Compile Remove="Migrations\20230526155145_VendorInvoiceFields.Designer.cs" />
     <Compile Remove="Migrations\20230627123129_FechaBajaActivos.cs" />
     <Compile Remove="Migrations\20230627123129_FechaBajaActivos.Designer.cs" />
+    <Compile Remove="Migrations\20230630055729_documentscacelled.cs" />
+    <Compile Remove="Migrations\20230630055729_documentscacelled.Designer.cs" />
     <Compile Remove="Models\Account.cs" />
     <Compile Remove="Models\AccountClass.cs" />
     <Compile Remove="Models\AccountingChilds.cs" />
