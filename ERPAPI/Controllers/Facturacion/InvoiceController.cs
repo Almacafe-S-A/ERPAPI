@@ -228,6 +228,171 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Anula la factura por medio del Id enviado.
+        /// </summary>
+        /// <param name="InvoiceId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{InvoiceId}")]
+        public async Task<IActionResult> AnularFactura(Int64 InvoiceId)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                Invoice factura = new Invoice();
+                try
+                {
+                    List<InvoicePaymentsLine> pagos = _context.InvoicePaymentsLine
+                        .Include(i => i.InvoicePayment)
+                        .Where(q => q.InvoivceId == InvoiceId && q.InvoicePayment.Estado != "Anulado")
+                        .ToList();
+
+                    if (pagos.Count>0)
+                    {
+                        return BadRequest("Se han emitido pagos para esta factua, no se puede Anular");
+                    }
+                    
+
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
+                    factura = await _context.Invoice
+                        .Include(i => i.InvoiceLine)
+                        .Include(i => i.JournalEntry)
+                        .Where(q => q.InvoiceId == InvoiceId)
+                        .FirstOrDefaultAsync();
+
+                    Customer customer = _context.Customer
+                        .Where(q => q.CustomerId == factura.CustomerId)
+                        .FirstOrDefault();
+
+
+                    JournalEntry asientoFactura = _context.JournalEntry
+                        .Include(j => j.JournalEntryLines)
+                        .Where(q => q.JournalEntryId == factura.JournalEntryId).FirstOrDefault();
+
+
+
+                    JournalEntry asientoreversado = new JournalEntry();
+
+                    asientoreversado = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        DatePosted = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        CreatedDate = DateTime.Now,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobación",
+                        PeriodoId = periodo.Id,
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento Diario",
+                        JournalEntryLines = new List<JournalEntryLine>(),
+                        Memo = $"Factura #{factura.NumeroDEI} anulada a Cliente {factura.CustomerName}",
+                        Periodo = periodo.Anio.ToString(),
+                        Posted = false,
+                        TotalCredit = 0,
+                        TotalDebit = 0,
+                        ModifiedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+                        VoucherType = 1,
+                        TypeJournalName = "Factura de ventas",
+                        PartyTypeId = 1,
+                        PartyTypeName = "Cliente",
+                        PartyName = factura.CustomerName,
+                        PartyId = factura.CustomerId,
+
+
+
+
+                    };
+                    foreach (var item in asientoFactura.JournalEntryLines)
+                    {
+                        asientoreversado.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = item.AccountId,
+                            CostCenterId = item.CostCenterId,
+                            CostCenterName = item.CostCenterName,
+                            CreatedDate = DateTime.Now,
+                            CreatedUser = User.Identity.Name,
+                            Credit = item.Debit,
+                            Debit = item.Credit,
+                            AccountName = item.AccountName,
+                            Description = item.Description,
+                            Memo = item.Memo,
+                            ModifiedDate = DateTime.Now,
+                            ModifiedUser = User.Identity.Name,
+                            PartyId = item.PartyId,
+                            PartyTypeName = item.PartyTypeName,
+                            PartyName = item.PartyName,
+                            PartyTypeId = item.PartyTypeId,
+
+
+                        });
+                    }
+
+
+                    asientoreversado.TotalCredit = asientoreversado.JournalEntryLines.Sum(s => s.Credit);
+                    asientoreversado.TotalDebit = asientoreversado.JournalEntryLines.Sum(s => s.Debit);
+
+                    asientoreversado.JournalEntryLines = asientoreversado.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+                    _context.JournalEntry.Add(asientoreversado);
+
+
+
+                    factura.Saldo = 0;
+                    factura.SaldoImpuesto = 0;
+                    factura.Estado = "Anulado";
+
+                    foreach (var item in factura.InvoiceLine)
+                    {
+                        item.Saldo = 0;
+                    }
+
+                    factura.FechaModificacion = DateTime.Now;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    _context.CancelledDocuments.Add(new CancelledDocuments {
+                        FechaCreacion = DateTime.Now,
+                        IdDocumento = factura.InvoiceId,
+                        IdTipoDocumento = 1,
+                        TipoDocumento = "Factura",
+                        JournalEntryId = asientoreversado.JournalEntryId,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name
+                    });
+
+                    CustomerAcccountStatus accountstatus = _context.CustomerAcccountStatus.Where(q => q.DocumentoId == InvoiceId && q.TipoDocumentoId == 1).FirstOrDefault();
+
+                    accountstatus.Debito = 0;
+                    accountstatus.Credito= 0;
+
+                    accountstatus.Sinopsis = "#### A N U L A D O##### "+accountstatus.Sinopsis;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    transaction.Rollback();
+                    return BadRequest($"Ocurrio un error:{ex.Message}");
+                }
+
+
+                return await Task.Run(() => Ok(factura));
+            }
+
+        }
+
+
+
 
 
         /// <summary>
@@ -278,6 +443,10 @@ namespace ERPAPI.Controllers
                     factura.ExpirationDate = DateTime.Now.AddDays(factura.DiasVencimiento);
                     factura.Estado = "Emitido";
 
+
+                    
+
+
                     _context.NumeracionSAR.Update(numeracionSAR);
 
                     //var alerta = await GeneraAlerta(factura);
@@ -312,12 +481,7 @@ namespace ERPAPI.Controllers
 
                     factura.FechaModificacion = DateTime.Now;
 
-                    Numalet let;
-                    let = new Numalet();
-                    let.SeparadorDecimalSalida = "Lempiras";
-                    let.MascaraSalidaDecimal = "00/100 ";
-                    let.ApocoparUnoParteEntera = true;
-                    factura.TotalLetras = let.ToCustomCardinal((factura.Total)).ToUpper();
+                   factura = CalcularTotales(factura);
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -337,6 +501,29 @@ namespace ERPAPI.Controllers
                 return await Task.Run(() => Ok(factura));
             }
            
+        }
+
+
+        private Invoice CalcularTotales(Invoice factura) {
+            factura.Tax = factura.InvoiceLine.Sum(s => s.TaxAmount);
+            factura.Amount = factura.InvoiceLine.Sum(s => s.Amount);
+            factura.Discount = factura.InvoiceLine.Sum(s => s.DiscountAmount);
+            factura.SubTotal = factura.InvoiceLine.Sum(s => s.SubTotal);
+            factura.Tax = factura.InvoiceLine.Sum(s => s.TaxAmount);
+            factura.TotalGravado = factura.Exonerado ? 0 : factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal);
+            factura.TotalExonerado = factura.Exonerado ? factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal) : 0;
+            factura.Total = factura.InvoiceLine.Sum(s => s.Total);
+
+            Numalet let;
+            let = new Numalet();
+            let.SeparadorDecimalSalida = "Lempiras";
+            let.MascaraSalidaDecimal = "00/100 ";
+            let.ApocoparUnoParteEntera = true;
+            factura.TotalLetras = let.ToCustomCardinal((factura.Total)).ToUpper();
+
+            return factura;
+
+
         }
 
 
@@ -424,22 +611,24 @@ namespace ERPAPI.Controllers
                         }
 
 
-                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
-                        _Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
-                        _Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);                        
-                        _Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.SubTotal);
-                        _Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
-                        _Invoiceq.TotalGravado = _Invoiceq.Exonerado ? 0 : _Invoiceq.InvoiceLine.Where(q => q.SubTotal> 0).Sum(s => s.SubTotal);
-                        _Invoiceq.TotalExonerado = _Invoiceq.Exonerado ? _Invoiceq.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal):0;
-                        _Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
+                        //_Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
+                        //_Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
+                        //_Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);                        
+                        //_Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.SubTotal);
+                        //_Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
+                        //_Invoiceq.TotalGravado = _Invoiceq.Exonerado ? 0 : _Invoiceq.InvoiceLine.Where(q => q.SubTotal> 0).Sum(s => s.SubTotal);
+                        //_Invoiceq.TotalExonerado = _Invoiceq.Exonerado ? _Invoiceq.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal):0;
+                        //_Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
 
-                        Numalet let;
-                        let = new Numalet();
-                        let.SeparadorDecimalSalida = "Lempiras";
-                        let.MascaraSalidaDecimal = "00/100 ";
-                        let.ApocoparUnoParteEntera = true;
-                        _Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
+                        //Numalet let;
+                        //let = new Numalet();
+                        //let.SeparadorDecimalSalida = "Lempiras";
+                        //let.MascaraSalidaDecimal = "00/100 ";
+                        //let.ApocoparUnoParteEntera = true;
+                        //_Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
 
+
+                        _Invoiceq = CalcularTotales(_Invoice);
 
 
                         _context.Invoice.Add(_Invoiceq);

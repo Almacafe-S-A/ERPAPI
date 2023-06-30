@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230629143326_AnulacionDoccumetos")]
+    partial class AnulacionDoccumetos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -6207,12 +6209,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Almuerzo");
-
-                    b.Property<bool>("Domingo");
-
-                    b.Property<string>("Factor");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -6225,24 +6221,12 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<bool>("Jueves");
-
-                    b.Property<bool>("Lunes");
-
-                    b.Property<bool>("Martes");
-
-                    b.Property<bool>("Miercoles");
-
                     b.Property<string>("Nombre")
                         .IsRequired();
-
-                    b.Property<bool>("Sabado");
 
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<bool>("Viernes");
 
                     b.HasKey("Id");
 

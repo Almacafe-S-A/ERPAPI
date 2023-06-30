@@ -177,6 +177,150 @@ namespace ERPAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Anula la creditnote por medio del Id enviado.
+        /// </summary>
+        /// <param name="InvoiceId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{InvoiceId}")]
+        public async Task<IActionResult> AnularFactura(Int64 Id)
+        {
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                CreditNote creditnote = new CreditNote();
+                try
+                {
+                    Periodo periodo = new Periodo();
+                    periodo = periodo.PeriodoActivo(_context);
+
+                    creditnote = await _context.CreditNote
+                        .Include(i => i.CreditNoteLine)
+                        .Include(i => i.JournalEntry)
+                        .Where(q => q.InvoiceId == Id)
+                        .FirstOrDefaultAsync();
+
+                    Customer customer = _context.Customer
+                        .Where(q => q.CustomerId == creditnote.CustomerId)
+                        .FirstOrDefault();
+
+
+                    JournalEntry asientoFactura = _context.JournalEntry
+                        .Include(j => j.JournalEntryLines)
+                        .Where(q => q.JournalEntryId == creditnote.JournalEntryId).FirstOrDefault();
+
+
+
+                    JournalEntry asientoreversado = new JournalEntry();
+
+                    asientoreversado = new JournalEntry
+                    {
+                        Date = DateTime.Now,
+                        DatePosted = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        CreatedDate = DateTime.Now,
+                        EstadoId = 5,
+                        EstadoName = "Enviada a Aprobación",
+                        PeriodoId = periodo.Id,
+                        TypeOfAdjustmentId = 65,
+                        TypeOfAdjustmentName = "Asiento Diario",
+                        JournalEntryLines = new List<JournalEntryLine>(),
+                        Memo = $"Nota de credito #{creditnote.NumeroDEI} anulada a Cliente {creditnote.CustomerName}",
+                        Periodo = periodo.Anio.ToString(),
+                        Posted = false,
+                        TotalCredit = 0,
+                        TotalDebit = 0,
+                        ModifiedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+                        VoucherType = 1,
+                        TypeJournalName = "Factura de ventas",
+                        PartyTypeId = 1,
+                        PartyTypeName = "Cliente",
+                        PartyName = creditnote.CustomerName,
+                        PartyId = creditnote.CustomerId,
+
+
+
+
+                    };
+                    foreach (var item in asientoFactura.JournalEntryLines)
+                    {
+                        asientoreversado.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = item.AccountId,
+                            CostCenterId = item.CostCenterId,
+                            CostCenterName = item.CostCenterName,
+                            CreatedDate = DateTime.Now,
+                            CreatedUser = User.Identity.Name,
+                            Credit = item.Debit,
+                            Debit = item.Credit,
+                            AccountName = item.AccountName,
+                            Description = item.Description,
+                            Memo = item.Memo,
+                            ModifiedDate = DateTime.Now,
+                            ModifiedUser = User.Identity.Name,
+                            PartyId = item.PartyId,
+                            PartyTypeName = item.PartyTypeName,
+                            PartyName = item.PartyName,
+                            PartyTypeId = item.PartyTypeId,
+
+
+                        });
+                    }
+
+
+                    asientoreversado.TotalCredit = asientoreversado.JournalEntryLines.Sum(s => s.Credit);
+                    asientoreversado.TotalDebit = asientoreversado.JournalEntryLines.Sum(s => s.Debit);
+
+                    asientoreversado.JournalEntryLines = asientoreversado.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+                    _context.JournalEntry.Add(asientoreversado);
+
+
+
+                    //creditnote. = 0;
+                    //creditnote.SaldoImpuesto = 0;
+                    creditnote.Estado = "Anulado";
+
+                    
+
+                    creditnote.FechaModificacion = DateTime.Now;
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    _context.CancelledDocuments.Add(new CancelledDocuments
+                    {
+                        FechaCreacion = DateTime.Now,
+                        IdDocumento = creditnote.CreditNoteId,
+                        IdTipoDocumento = 9,
+                        TipoDocumento = "Nota de Credito",
+                        JournalEntryId = asientoreversado.JournalEntryId,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name
+                    });
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                    transaction.Rollback();
+                    return BadRequest($"Ocurrio un error:{ex.Message}");
+                }
+
+
+                return await Task.Run(() => Ok(creditnote));
+            }
+
+        }
+
+
 
         /// <summary>
         /// Obtiene los Datos de la CreditNote por medio del Id enviado.
@@ -349,43 +493,6 @@ namespace ERPAPI.Controllers
 
                 };
 
-                //if (creditnote.Tax > 0)
-                //{
-                //    partida.JournalEntryLines.Add(new JournalEntryLine
-                //    {
-                //        AccountId = (long)tax.CuentaContableIngresosId,
-                //        AccountName = tax.CuentaContableIngresosNombre,
-                //        CostCenterId = centrocosto.CostCenterId,
-                //        CostCenterName = centrocosto.CostCenterName,
-                //        Debit = 0,
-                //        Credit = creditnote.Tax,
-                //        CreatedDate = DateTime.Now,
-                //        CreatedUser = User.Identity.Name,
-                //        ModifiedUser = User.Identity.Name,
-                //        ModifiedDate = DateTime.Now,
-
-
-
-                //    });
-                //    partida.JournalEntryLines.Add(new JournalEntryLine
-                //    {
-                //        AccountId = (long)tax.CuentaContablePorCobrarId,
-                //        AccountName = tax.CuentaContablePorCobrarNombre,
-                //        CostCenterId = centrocosto.CostCenterId,
-                //        CostCenterName = centrocosto.CostCenterName,
-                //        Debit = creditnote.Tax,
-                //        Credit = 0,
-                //        CreatedDate = DateTime.Now,
-                //        CreatedUser = User.Identity.Name,
-                //        ModifiedUser = User.Identity.Name,
-                //        ModifiedDate = DateTime.Now,
-
-
-
-                //    });
-                //}
-
-
 
 
                 foreach (var item in creditnote.CreditNoteLine)
@@ -410,6 +517,10 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
                         ModifiedDate = DateTime.Now,
+                        PartyTypeId = 1,
+                        PartyTypeName = "Cliente",
+                        PartyName = creditnote.CustomerName,
+                        PartyId = creditnote.CustomerId,
 
 
 
@@ -427,6 +538,10 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
                         ModifiedDate = DateTime.Now,
+                        PartyTypeId = 1,
+                        PartyTypeName = "Cliente",
+                        PartyName = creditnote.CustomerName,
+                        PartyId = creditnote.CustomerId,
 
 
 
