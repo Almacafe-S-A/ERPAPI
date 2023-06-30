@@ -241,6 +241,17 @@ namespace ERPAPI.Controllers
                 Invoice factura = new Invoice();
                 try
                 {
+                    List<InvoicePaymentsLine> pagos = _context.InvoicePaymentsLine
+                        .Include(i => i.InvoicePayment)
+                        .Where(q => q.InvoivceId == InvoiceId && q.InvoicePayment.Estado != "Anulado")
+                        .ToList();
+
+                    if (pagos.Count>0)
+                    {
+                        return BadRequest("Se han emitido pagos para esta factua, no se puede Anular");
+                    }
+                    
+
                     Periodo periodo = new Periodo();
                     periodo = periodo.PeriodoActivo(_context);
 
@@ -352,6 +363,13 @@ namespace ERPAPI.Controllers
                         UsuarioCreacion = User.Identity.Name,
                         UsuarioModificacion = User.Identity.Name
                     });
+
+                    CustomerAcccountStatus accountstatus = _context.CustomerAcccountStatus.Where(q => q.DocumentoId == InvoiceId && q.TipoDocumentoId == 1).FirstOrDefault();
+
+                    accountstatus.Debito = 0;
+                    accountstatus.Credito= 0;
+
+                    accountstatus.Sinopsis = "#### A N U L A D O##### "+accountstatus.Sinopsis;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
