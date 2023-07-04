@@ -607,12 +607,5 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(_DebitNoteq));
 
         }
-
-
-
-
-
-
-
     }
 }
