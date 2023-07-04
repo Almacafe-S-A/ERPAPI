@@ -384,7 +384,7 @@ namespace ERPAPI.Controllers
         /// <param name="ID"></param>
         /// <returns></returns>
         [HttpGet("[action]/{ID}")]
-        public async Task<IActionResult> AnularReciboPago(Int64 ID)
+        public async Task<IActionResult> AnularRecibo(Int64 ID)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -395,7 +395,7 @@ namespace ERPAPI.Controllers
                     periodo = periodo.PeriodoActivo(_context);
 
                     invoicepayment = await _context.InvoicePayments
-                        //.Include(i => i.JournalEntry)
+                        .Include(i => i.InvoicePaymentsLines)
                         .Where(q => q.Id == ID)
                         .FirstOrDefaultAsync();
 
@@ -407,9 +407,26 @@ namespace ERPAPI.Controllers
                     JournalEntry asientoFactura = _context.JournalEntry
                         .Include(j => j.JournalEntryLines)
                         .Where(q => q.JournalEntryId == invoicepayment.JournalId).FirstOrDefault();
+                    /////revesiones de saldos
+                    List<InvoiceLine> facturasrever = _context.InvoiceLine
+                        .Include(i => i.Invoice)
+                        .Where(q => invoicepayment.InvoicePaymentsLines.Any(a => a.InvoivceId == q.InvoiceId))
+                        .ToList();
 
-
-
+                    foreach (var item in invoicepayment.InvoicePaymentsLines)
+                    {
+                        InvoiceLine linea = facturasrever.Where(q => q.InvoiceId == item.InvoivceId && q.SubProductId == item.SubProductId).FirstOrDefault();
+                        if (linea != null)
+                        {
+                            linea.Saldo += item.MontoPagado;
+                        }
+                        else
+                        {
+                            Invoice factura = _context.Invoice.Where(q => q.InvoiceId == item.InvoivceId).FirstOrDefault();
+                            factura.SaldoImpuesto += item.MontoPagado;
+                        }
+                    }
+                    ////////
                     JournalEntry asientoreversado = new JournalEntry();
 
                     asientoreversado = new JournalEntry
@@ -495,6 +512,14 @@ namespace ERPAPI.Controllers
                         UsuarioCreacion = User.Identity.Name,
                         UsuarioModificacion = User.Identity.Name
                     });
+
+
+                    CustomerAcccountStatus accountstatus = _context.CustomerAcccountStatus.Where(q => q.DocumentoId == ID && q.TipoDocumentoId == null).FirstOrDefault();
+
+                    accountstatus.Debito = 0;
+                    accountstatus.Credito = 0;
+
+                    accountstatus.Sinopsis = "#### A N U L A D O##### " + accountstatus.Sinopsis;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
