@@ -330,16 +330,22 @@ namespace ERPAPI.Controllers
                         });
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
-                        await _context.SaveChangesAsync();
-
                         var resppuesta = GeneraAsiento(_InvoicePaymentsq);
                         JournalEntry asiento = resppuesta.Result.Value as JournalEntry;
+
+                        await _context.SaveChangesAsync();
+
+                        
 
                         _InvoicePaymentsq.JournalId = asiento.JournalEntryId;
 
 
                         foreach (var item in _InvoicePaymentsq.InvoicePaymentsLines)
                         {
+                            if (item.InvoivceId == null)
+                            {
+                                continue;
+                            }
                             if (item.SubProductId == null)
                             {
                                 Invoice invoice = _context.Invoice.Where(q => q.NumeroDEI == item.NoDocumento ).FirstOrDefault();
@@ -415,6 +421,10 @@ namespace ERPAPI.Controllers
 
                     foreach (var item in invoicepayment.InvoicePaymentsLines)
                     {
+                        if (item.InvoivceId == null)
+                        {
+                            continue;
+                        }
                         InvoiceLine linea = facturasrever.Where(q => q.InvoiceId == item.InvoivceId && q.SubProductId == item.SubProductId).FirstOrDefault();
                         if (linea != null)
                         {
@@ -652,11 +662,24 @@ namespace ERPAPI.Controllers
 
                     }
                     ProductRelation relation = new ProductRelation();
-                    relation = _context.ProductRelation.Where(x =>
-                    x.ProductId == invoice.ProductId
-                    && x.SubProductId == item.SubProductId
-                    )
+
+                    if (invoice != null)
+                    {
+                        relation = _context.ProductRelation.Where(x =>
+                                x.ProductId == invoice.ProductId
+                                && x.SubProductId == item.SubProductId
+                                )
                         .FirstOrDefault();
+                    }
+                    else
+                    {
+                        relation = _context.ProductRelation.Where(x =>
+                                 //x.ProductId == invoice.ProductId &&
+                                 x.SubProductId == item.SubProductId
+                                )
+                        .FirstOrDefault();
+                    }
+                    
 
 
                     partida.JournalEntryLines.Add(new JournalEntryLine
