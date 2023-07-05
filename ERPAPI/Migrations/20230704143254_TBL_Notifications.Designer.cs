@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230704143254_TBL_Notifications")]
+    partial class TBL_Notifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -8263,7 +8265,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<DateTime?>("FechaLectura");
+                    b.Property<DateTime>("FechaLectura");
 
                     b.Property<DateTime>("FechaNotificacion");
 
@@ -8272,12 +8274,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("Link");
 
                     b.Property<string>("ModuloInvocacion");
-
-                    b.Property<string>("PermisoLectura");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioLectura");
 
                     b.HasKey("Id");
 
