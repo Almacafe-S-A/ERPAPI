@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
+using ERPAPI.Migrations;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -419,7 +420,14 @@ namespace ERPAPI.Controllers
 
                     Customer customer = _context.Customer
                         .Where(q => q.CustomerId == factura.CustomerId)
-                        .FirstOrDefault();
+                    .FirstOrDefault();
+
+                    if (factura.Exento && factura.Exonerado)
+                    {
+                        return BadRequest("No es permitido generar factura exenta y exonerada");
+                    }
+
+
 
                     if (customer != null && factura.Exonerado == true  )
                     {
@@ -584,6 +592,10 @@ namespace ERPAPI.Controllers
 
                         _Invoiceq.NumeroDEI = "PROFORMA";
 
+                        if (_Invoiceq.Exento && _Invoiceq.Exonerado)
+                        {
+                            return BadRequest("No es permitido generar factura exenta y exonerada");
+                        }
                         
 
 
