@@ -20,5 +20,9 @@ namespace ERPAPI.Models
 		public string PermisoLectura { get; set; }
 		public string UsuarioCreacion { get; set; }
 		public string UsuarioLectura { get; set; }
-	}
+        public string Titulo { get; set; }
+        public string Icono { get; set; }
+        public string Action { get; set; }
+        public string Controller { get; set; }
+    }
 }

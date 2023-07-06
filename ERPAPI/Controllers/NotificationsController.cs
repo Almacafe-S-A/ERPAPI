@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
 	//[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-	[Route("api/[controller]")]
+	[Route("api/Notifications")]
 	[ApiController]
 	public class NotificationsController : Controller
 	{
