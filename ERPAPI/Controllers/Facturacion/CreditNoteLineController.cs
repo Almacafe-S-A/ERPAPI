@@ -173,11 +173,39 @@ namespace ERPAPI.Controllers
                             DiscountPercentage= c.DiscountPercentage,
                             ProductId= c.ProductId,
                             WareHouseId= c.WareHouseId,
+                            SaldoPendiente = c.Saldo,
 
                          }
                          ).ToList();
 
-               
+                    
+
+                    
+                    
+
+                    if (invoice.SaldoImpuesto > 0)
+                    {
+                    Tax tax = new Tax();
+                    tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
+                    Items.Add(new CreditNoteLine
+                        {
+                            SubProductName = "Impuesto",
+                            SubProductId = 10000,
+                            Price = invoice.SaldoImpuesto,
+                            Quantity =1,
+                            UnitOfMeasureId = 1,
+                            UnitOfMeasureName= "Unidad",
+                            Amount= invoice.SaldoImpuesto,
+                            Total=invoice.SaldoImpuesto,
+                            AccountId= (int)tax.CuentaContablePorCobrarId,
+                            AccountName = tax.CuentaContablePorCobrarNombre,
+                            SaldoPendiente = invoice.SaldoImpuesto,
+                            
+                        });
+                    }
+                
+
+
 
             }
             catch (Exception ex)
