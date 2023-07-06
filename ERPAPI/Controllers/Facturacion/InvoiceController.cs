@@ -510,7 +510,8 @@ namespace ERPAPI.Controllers
             factura.Discount = factura.InvoiceLine.Sum(s => s.DiscountAmount);
             factura.SubTotal = factura.InvoiceLine.Sum(s => s.SubTotal);
             factura.Tax = factura.InvoiceLine.Sum(s => s.TaxAmount);
-            factura.TotalGravado = factura.Exonerado ? 0 : factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal);
+            factura.TotalGravado = factura.Exonerado || factura.Exento ? 0 : factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal);
+            factura.TotalExento = factura.Exento ? factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal) : 0;
             factura.TotalExonerado = factura.Exonerado ? factura.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal) : 0;
             factura.Total = factura.InvoiceLine.Sum(s => s.Total);
 
