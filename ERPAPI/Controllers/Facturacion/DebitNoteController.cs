@@ -230,7 +230,7 @@ namespace ERPAPI.Controllers
         /// <param name="debitnoteId"></param>
         /// <returns></returns>
         [HttpGet("[action]/{debitnoteId}")]
-        public async Task<IActionResult> AnularNotaDebito(Int64 debitnoteId)
+        public async Task<IActionResult> Anular(Int64 debitnoteId)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -349,6 +349,14 @@ namespace ERPAPI.Controllers
                         UsuarioCreacion = User.Identity.Name,
                         UsuarioModificacion = User.Identity.Name
                     });
+
+
+                    CustomerAcccountStatus accountstatus = _context.CustomerAcccountStatus.Where(q => q.DocumentoId == debitnoteId && q.TipoDocumentoId == 1).FirstOrDefault();
+
+                    accountstatus.Debito = 0;
+                    accountstatus.Credito = 0;
+
+                    accountstatus.Sinopsis = "#### A N U L A D O##### " + accountstatus.Sinopsis;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 

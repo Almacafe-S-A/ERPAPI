@@ -182,8 +182,8 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="InvoiceId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{InvoiceId}")]
-        public async Task<IActionResult> AnularFactura(Int64 Id)
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> Anular(Int64 Id)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -196,7 +196,7 @@ namespace ERPAPI.Controllers
                     creditnote = await _context.CreditNote
                         .Include(i => i.CreditNoteLine)
                         .Include(i => i.JournalEntry)
-                        .Where(q => q.InvoiceId == Id)
+                        .Where(q => q.CreditNoteId == Id)
                         .FirstOrDefaultAsync();
 
                     Customer customer = _context.Customer
@@ -300,6 +300,14 @@ namespace ERPAPI.Controllers
                         UsuarioModificacion = User.Identity.Name
                     });
 
+
+                    CustomerAcccountStatus accountstatus = _context.CustomerAcccountStatus.Where(q => q.DocumentoId == Id && q.TipoDocumentoId == 8).FirstOrDefault();
+
+                    accountstatus.Debito = 0;
+                    accountstatus.Credito = 0;
+
+                    accountstatus.Sinopsis = "#### A N U L A D O##### " + accountstatus.Sinopsis;
+
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
@@ -387,7 +395,7 @@ namespace ERPAPI.Controllers
                         Sinopsis = $"Credito por Nota de Credito #{creditnote.NumeroDEI} " ,                        
                         NoDocumento = creditnote.NumeroDEI,
                         CustomerId = creditnote.CustomerId,
-                        TipoDocumentoId = 9,
+                        TipoDocumentoId = 8,
                         TipoDocumento = "Nota de Credito",
                         DocumentoId = creditnote.CreditNoteId,
                     });
