@@ -395,12 +395,30 @@ namespace ERPAPI.Controllers
                     asiento = GeneraAsiento(creditnote).Result.Value;
 
                     creditnote.JournalEntryId = asiento.JournalEntryId;
-                    //creditnote.Saldo = creditnote.SubTotal;
-                    //creditnote.SaldoImpuesto = creditnote.Tax;
-                    //foreach (var item in creditnote.CreditNoteLine)
-                    //{
-                    //    item.Saldo = item.SubTotal;
-                    //}
+
+                    Invoice invoice = _context.Invoice
+                        .Include(i => i.InvoiceLine)
+                        .Where(q => q.InvoiceId == creditnote.InvoiceId).FirstOrDefault();
+
+                    foreach (var item in creditnote.CreditNoteLine)
+                    {
+                        
+                        if (item.SubProductId == 10000)
+                        {
+                            
+                            invoice.SaldoImpuesto = invoice.SaldoImpuesto - item.CreditValue;
+                           
+                            continue;
+
+                        }
+                        InvoiceLine invoiceLine = invoice.InvoiceLine.Where(q => item.SubProductId == q.SubProductId).FirstOrDefault();
+                        invoiceLine.Saldo = invoiceLine.Saldo - item.CreditValue;
+                        invoiceLine.Invoice.Saldo = invoiceLine.Invoice.Saldo - item.CreditValue;
+                        
+                    }
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                    await _context.SaveChangesAsync();
 
                     creditnote.FechaModificacion = DateTime.Now;
 
@@ -497,6 +515,57 @@ namespace ERPAPI.Controllers
 
                 foreach (var item in creditnote.CreditNoteLine)
                 {
+
+
+                    if (item.SubProductId == 10000 && item.CreditValue > 0)
+                    {
+
+
+                        partida.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = (long)tax.CuentaContablePorCobrarId,
+                            AccountName = tax.CuentaContablePorCobrarNombre,
+                            CostCenterId = centrocosto.CostCenterId,
+                            CostCenterName = centrocosto.CostCenterName,
+                            Debit = 0,
+                            Credit = item.CreditValue,
+                            CreatedDate = DateTime.Now,
+                            CreatedUser = User.Identity.Name,
+                            ModifiedUser = User.Identity.Name,
+                            ModifiedDate = DateTime.Now,
+                            PartyTypeId = 1,
+                            PartyTypeName = "Cliente",
+                            PartyName = creditnote.CustomerName,
+                            PartyId = creditnote.CustomerId,
+
+
+
+                        });
+
+                        partida.JournalEntryLines.Add(new JournalEntryLine
+                        {
+                            AccountId = (long)tax.CuentaContableIngresosId,
+                            AccountName = tax.CuentaContableIngresosNombre,
+                            CostCenterId = centrocosto.CostCenterId,
+                            CostCenterName = centrocosto.CostCenterName,
+                            Debit = item.CreditValue,
+                            Credit = 0,
+                            CreatedDate = DateTime.Now,
+                            CreatedUser = User.Identity.Name,
+                            ModifiedUser = User.Identity.Name,
+                            ModifiedDate = DateTime.Now,
+                            PartyTypeId = 1,
+                            PartyTypeName = "Cliente",
+                            PartyName = creditnote.CustomerName,
+                            PartyId = creditnote.CustomerId,
+
+
+
+                        });
+                        continue;
+
+                    }
+
                     ProductRelation relation = new ProductRelation();
                     relation = _context.ProductRelation.Where(x =>
                     x.ProductId == creditnote.ProductId
@@ -546,6 +615,9 @@ namespace ERPAPI.Controllers
 
 
                     });
+
+
+                    
                 }
 
 
@@ -600,9 +672,11 @@ namespace ERPAPI.Controllers
                         _CreditNoteq.Estado = "Revisión";
                         _CreditNoteq.NumeroDEI = "PROFORMA";
 
-                        CreditNote factura = await _context.CreditNote.Where(q => q.CreditNoteId == _CreditNote.CreditNoteId).FirstOrDefaultAsync();
+                        //CreditNote factura = await _context.CreditNote.Where(q => q.CreditNoteId == _CreditNote.CreditNoteId).FirstOrDefaultAsync();
 
-                        
+                        Invoice invoice = await _context.Invoice.Where(q => q.InvoiceId == _CreditNote.InvoiceId).FirstOrDefaultAsync();
+                        _CreditNoteq.ProductName= invoice.ProductName;
+                        _CreditNoteq.ProductId= invoice.ProductId;
 
                         _context.CreditNote.Add(_CreditNoteq);
 

@@ -72,6 +72,8 @@ namespace ERPAPI.Models
 
         public decimal CreditValue { get; set; }
 
+        public decimal SaldoPendiente { get; set; }
+
 
         [Display(Name = "% Impuesto")]
         public decimal TaxPercentage { get; set; }
