@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230705145253_TBL_NotificationsUpdate_1")]
+    partial class TBL_NotificationsUpdate_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1200,37 +1202,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("Iddetallecalculo");
 
                     b.ToTable("CalculoPlanillaDetalle");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CancelledDocuments", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("FechaCreacion");
-
-                    b.Property<DateTime>("FechaModificacion");
-
-                    b.Property<int>("IdDocumento");
-
-                    b.Property<long>("IdTipoDocumento");
-
-                    b.Property<long>("JournalEntryId");
-
-                    b.Property<string>("TipoDocumento");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioModificacion");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdTipoDocumento");
-
-                    b.HasIndex("JournalEntryId");
-
-                    b.ToTable("CancelledDocuments");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CategoriaPlanilla", b =>
@@ -2881,8 +2852,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<double>("Quantity");
 
-                    b.Property<decimal>("SaldoPendiente");
-
                     b.Property<long>("SubProductId");
 
                     b.Property<string>("SubProductName");
@@ -3865,8 +3834,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("NoSAG");
 
                     b.Property<string>("NumeroDEI");
-
-                    b.Property<string>("NumeroDEIString");
 
                     b.Property<string>("RTN");
 
@@ -7161,8 +7128,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Estado");
 
-                    b.Property<bool>("Exento");
-
                     b.Property<bool>("Exonerado");
 
                     b.Property<DateTime>("ExpirationDate");
@@ -8298,17 +8263,11 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Action");
-
-                    b.Property<string>("Controller");
-
                     b.Property<string>("Description");
 
                     b.Property<DateTime?>("FechaLectura");
 
                     b.Property<DateTime>("FechaNotificacion");
-
-                    b.Property<string>("Icono");
 
                     b.Property<bool>("Leido");
 
@@ -8317,8 +8276,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("ModuloInvocacion");
 
                     b.Property<string>("PermisoLectura");
-
-                    b.Property<string>("Titulo");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -12009,19 +11966,6 @@ namespace ERPAPI.Migrations
                         .WithMany("Branch")
                         .HasForeignKey("StateId")
                         .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.CancelledDocuments", b =>
-                {
-                    b.HasOne("ERPAPI.Models.TiposDocumento", "TiposDocumento")
-                        .WithMany()
-                        .HasForeignKey("IdTipoDocumento")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ERPAPI.Models.CertificadoDeposito", b =>

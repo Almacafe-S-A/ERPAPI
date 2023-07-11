@@ -90,8 +90,25 @@ namespace ERPAPI.Controllers
             BitacoraCierreContable cierre = new BitacoraCierreContable();
             cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();         
             
+            Notifications notifications = new Notifications
+            {
+                Description = "Ha finalizado el Cierre "+proceso.Proceso,
+                FechaNotificacion = DateTime.Now,
+                FechaLectura = null,
+                Leido = false,
+                ModuloInvocacion = "Contabilidad/Cierres",
+                Link = null,
+	            PermisoLectura = "Contabilidad.Procesos.Cierre Contable Manual",
+	            UsuarioCreacion = User.Identity.Name,
+	            UsuarioLectura = null,
+	            Titulo = "Cierres",
+	            Icono = "fa fa-calculator",
+                Action = "CierreContable",
+	            Controller = "CierreContable"
+            };
+            _context.Notifications.Add(notifications);
 
-
+            _context.SaveChanges();
 
             switch (proceso.PasoCierre)
             {
