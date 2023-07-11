@@ -75,7 +75,7 @@ namespace ERPAPI.Controllers
 					//YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
 					new appAuditor(context, logger, User.Identity.Name).SetAuditor();
 
-					await context.SaveChangesAsync();
+                    await context.SaveChangesAsync();
 					return Ok(notifications);
 				}
 				else
@@ -133,12 +133,12 @@ namespace ERPAPI.Controllers
 			}
 		}
 
-		[HttpPost("[action]")]
-		public async Task<ActionResult> MarkNotificationAsRead(Notifications notification)
+		[HttpGet("[action]/{Id}")]
+		public async Task<ActionResult> MarkNotificationAsRead(int Id)
 		{
 			try
 			{
-				var existingNotification = await context.Notifications.FindAsync(notification.Id);
+				var existingNotification = await context.Notifications.FindAsync(Id);
 				if (existingNotification != null)
 				{
 					existingNotification.Leido = true;
