@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
 using ERPAPI.Models;
+using ERPAPI.DTOS;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +59,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            //  int Count = Items.Count();
+            //  int Count = facturas.Count();
             return await Task.Run(() => Ok(Items));
         }
 
@@ -92,7 +93,7 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            //  int Count = Items.Count();
+            //  int Count = facturas.Count();
             return await Task.Run(() => Ok(Items));
         }
 
@@ -208,13 +209,64 @@ namespace ERPAPI.Controllers
         [HttpGet("[action]/{CustomerId}")]
         public async Task<IActionResult> GetFacturasPendientesPagoByCustomer(int CustomerId)
         {
-            List<Invoice> Items = new List<Invoice>();
+            List<Invoice> facturas = new List<Invoice>();
+
+            List<DebitNote> debitNotes= new List<DebitNote>();
+
+            List<Documento> documentos = new List<Documento>();
             try
             {
-                Items = await _context.Invoice
+                facturas = await _context.Invoice
+                    .Include(i => i.InvoiceLine)
                     .Where(q => q.CustomerId == CustomerId
-                    && q.Saldo > 0 
+                    && q.Estado == "Emitido"
+                    && q.InvoiceLine.Sum(s => s.Saldo) > 0 
                     ).ToListAsync();
+
+                debitNotes = await _context.DebitNote
+                    .Where(q => q.CustomerId == CustomerId
+                    && q.Estado == "Emitido"
+                    && q.Saldo > 0).ToListAsync();
+
+
+                documentos.AddRange((from f in facturas
+                                    select new Documento {
+                                        DocumentoId = f.InvoiceId,
+                                        DocumentType = "Factura",
+                                        DocumentTypeId = 1,
+                                        FechaDocumento = f.InvoiceDate,
+                                        FechaVencimiento = f.InvoiceDueDate,
+                                        JournalId = (int?)f.JournalEntryId,
+                                        NumeroDEI = f.NumeroDEI,
+                                        Saldo= f.InvoiceLine.Sum(s => s.Saldo),
+                                        SaldoImpuesto= f.SaldoImpuesto, 
+                                        Sucursal = f.BranchName,
+                                        Total= f.Total,
+                                        ProductId = (int)f.ProductId,
+                                        ProductName = f.ProductName,
+                                    }).ToList());
+
+
+                documentos.AddRange((from d in debitNotes
+                                     select new Documento {
+                                        Total= d.Total,
+                                        DocumentoId = (int)d.DebitNoteId,
+                                        DocumentType  = "Nota de Debito",
+                                        DocumentTypeId = 9,
+                                        FechaDocumento= d.DebitNoteDate,
+                                        FechaVencimiento = d.DebitNoteDueDate,
+                                        JournalId= (int?)d.JournalEntryId,
+                                        NumeroDEI= d.NumeroDEI,
+                                        Saldo= d.Saldo,
+                                        SaldoImpuesto = 0,
+                                        Sucursal = d.BranchName,
+                                        ProductName = "N/A",
+                                        
+
+                                        
+                                        
+
+                                     }).ToList());
             }
             catch (Exception ex)
             {
@@ -224,7 +276,7 @@ namespace ERPAPI.Controllers
             }
 
 
-            return await Task.Run(() => Ok(Items));
+            return await Task.Run(() => Ok(documentos));
         }
 
 
@@ -244,6 +296,11 @@ namespace ERPAPI.Controllers
                     List<InvoicePaymentsLine> pagos = _context.InvoicePaymentsLine
                         .Include(i => i.InvoicePayment)
                         .Where(q => q.InvoivceId == InvoiceId && q.InvoicePayment.Estado != "Anulado")
+                        .ToList();
+
+                    List<CreditNote> creditNotes = _context.CreditNote
+                        //.Include(i => i.CreditNoteLine)
+                        .Where(q => q.InvoiceId == InvoiceId && q.Estado == "Emitido")
                         .ToList();
 
                     if (pagos.Count>0)
@@ -623,21 +680,6 @@ namespace ERPAPI.Controllers
                         }
 
 
-                        //_Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
-                        //_Invoiceq.Amount = _Invoiceq.InvoiceLine.Sum(s => s.Amount);
-                        //_Invoiceq.Discount = _Invoiceq.InvoiceLine.Sum(s => s.DiscountAmount);                        
-                        //_Invoiceq.SubTotal = _Invoiceq.InvoiceLine.Sum(s => s.SubTotal);
-                        //_Invoiceq.Tax = _Invoiceq.InvoiceLine.Sum(s => s.TaxAmount);
-                        //_Invoiceq.TotalGravado = _Invoiceq.Exonerado ? 0 : _Invoiceq.InvoiceLine.Where(q => q.SubTotal> 0).Sum(s => s.SubTotal);
-                        //_Invoiceq.TotalExonerado = _Invoiceq.Exonerado ? _Invoiceq.InvoiceLine.Where(q => q.SubTotal > 0).Sum(s => s.SubTotal):0;
-                        //_Invoiceq.Total = _Invoiceq.InvoiceLine.Sum(s => s.Total);
-
-                        //Numalet let;
-                        //let = new Numalet();
-                        //let.SeparadorDecimalSalida = "Lempiras";
-                        //let.MascaraSalidaDecimal = "00/100 ";
-                        //let.ApocoparUnoParteEntera = true;
-                        //_Invoiceq.TotalLetras = let.ToCustomCardinal((_Invoiceq.Total)).ToUpper();
 
 
                         _Invoiceq = CalcularTotales(_Invoice);
@@ -872,6 +914,9 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
                         ModifiedDate = DateTime.Now,
+                        PartyTypeName = "Cliente",
+                        PartyName = factura.CustomerName,
+                        PartyId = factura.CustomerId,
 
 
 
@@ -888,6 +933,9 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
                         ModifiedDate = DateTime.Now,
+                        PartyTypeName = "Cliente",
+                        PartyName = factura.CustomerName,
+                        PartyId = factura.CustomerId,
 
 
 
@@ -919,6 +967,9 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
                         ModifiedDate = DateTime.Now,
+                        PartyTypeName = "Cliente",
+                        PartyName = factura.CustomerName,
+                        PartyId = factura.CustomerId,
 
 
 
@@ -936,6 +987,9 @@ namespace ERPAPI.Controllers
                         CreatedUser = User.Identity.Name,
                         ModifiedUser = User.Identity.Name,
                         ModifiedDate = DateTime.Now,
+                        PartyTypeName = "Cliente",
+                        PartyName = factura.CustomerName,
+                        PartyId = factura.CustomerId,
 
 
 
