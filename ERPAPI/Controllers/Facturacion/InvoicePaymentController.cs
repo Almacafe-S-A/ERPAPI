@@ -6,14 +6,18 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
+using ERPAPI.DTOS;
+using ERPAPI.Models;
 using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations.Internal;
 using Microsoft.Extensions.Logging;
 using MoreLinq;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace ERPAPI.Controllers
 {
@@ -98,27 +102,33 @@ namespace ERPAPI.Controllers
         /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<IActionResult> GetDetalletInvoiceById([FromBody]int[] InvoiceIds )
+        public async Task<IActionResult> GetDetalletInvoiceById([FromBody]List<Identificador> documentos )
         {
             List<InvoicePaymentsLine> Items = new List<InvoicePaymentsLine>();
 
             try
             {
-                List<InvoiceLine> detallefactura =  _context.InvoiceLine
+                int[] InvoiceIds = documentos.Where(q => q.Tipo == 1).Select(s => s.Id).ToArray();
+
+                List<InvoiceLine> detallefactura = _context.InvoiceLine
                     .Include(i => i.Invoice)
-                    .Where(q => InvoiceIds.Any(a=> a == q.InvoiceId) && q.Saldo > 0).ToList();
+                    .Where(q => InvoiceIds.Any(a => a == q.InvoiceId) && q.Saldo > 0).ToList();
 
                 Items = (from d in detallefactura
-                        select new InvoicePaymentsLine {
-                            SubProductName= d.SubProductName,
-                            SubProductId= d.SubProductId,   
-                            MontoAdeudaPrevio = d.Saldo,
-                            MontoRestante = 0,
-                            MontoPagado= 0,
-                            ValorOriginal = d.Total,
-                            InvoivceId = d.InvoiceId,
-                            NoDocumento= d.Invoice.NumeroDEI,                                                 
-                        }).ToList();
+                         select new InvoicePaymentsLine
+                         {
+                             SubProductName = d.SubProductName,
+                             SubProductId = d.SubProductId,
+                             MontoAdeudaPrevio = d.Saldo,
+                             MontoRestante = 0,
+                             MontoPagado = 0,
+                             ValorOriginal = d.Total,
+                             InvoivceId = d.InvoiceId,
+                             NoDocumento = d.Invoice.NumeroDEI,
+                             TipoDocumento = 1,
+                             DocumentId = d.InvoiceId,
+
+                         }).ToList();
 
                 foreach (var facturaid in InvoiceIds)
                 {
@@ -136,6 +146,34 @@ namespace ERPAPI.Controllers
                             ValorOriginal = invoice.SaldoImpuesto,
                             InvoivceId = invoice.InvoiceId,
                             NoDocumento = invoice.NumeroDEI,
+                            TipoDocumento= 1,
+                            DocumentId= invoice.InvoiceId,
+
+                        });
+                    }
+                }
+
+                int[] debitnoteids = documentos.Where(q => q.Tipo == 9).Select(s => s.Id).ToArray();
+
+
+                foreach (var id in debitnoteids)
+                {
+                    DebitNote debitnote = await _context.DebitNote.Where(q => q.DebitNoteId == id).FirstOrDefaultAsync();
+
+                    if (debitnote.Saldo > 0)
+                    {
+                        Items.Add(new InvoicePaymentsLine
+                        {
+                            SubProductName = "Saldo Nota de Debito",
+                            SubProductId = null,
+                            MontoAdeudaPrevio = debitnote.Saldo,
+                            MontoRestante = debitnote.Saldo,
+                            MontoPagado = 0,
+                            ValorOriginal = debitnote.Saldo,
+                            //InvoivceId = invoice.InvoiceId,
+                            NoDocumento = debitnote.NumeroDEI,
+                            TipoDocumento = 9,
+                            DocumentId = (int)debitnote.DebitNoteId,
                         });
                     }
                 }
@@ -346,6 +384,17 @@ namespace ERPAPI.Controllers
                             {
                                 continue;
                             }
+                            if (item.TipoDocumento == 9 )
+                            {
+                                DebitNote debitNote = _context.DebitNote.Where(q => q.DebitNoteId == item.DocumentId).FirstOrDefault();
+                                if(debitNote != null ) {
+                                    debitNote.Saldo = debitNote.Saldo - item.MontoPagado;
+                                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                                    await _context.SaveChangesAsync();
+                                    continue;
+                                }
+
+                            }
                             if (item.SubProductId == null)
                             {
                                 Invoice invoice = _context.Invoice.Where(q => q.NumeroDEI == item.NoDocumento ).FirstOrDefault();
@@ -355,6 +404,7 @@ namespace ERPAPI.Controllers
                                 continue;
 
                             }
+                            
                             InvoiceLine invoiceLine = _context.InvoiceLine.Where(q => q.Invoice.NumeroDEI == item.NoDocumento && item.SubProductId == q.SubProductId ).FirstOrDefault();
                             invoiceLine.Saldo = invoiceLine.Saldo - item.MontoPagado;
                             invoiceLine.Invoice.Saldo = invoiceLine.Invoice.Saldo - item.MontoPagado;
@@ -630,6 +680,35 @@ namespace ERPAPI.Controllers
                     if (item.MontoPagado<= 0 )
                     {
                         continue;
+                    }
+                    if (item.TipoDocumento == 9 )
+                    {
+                        DebitNote debitNote = _context.DebitNote.Where(q => q.DebitNoteId == item.DocumentId).FirstOrDefault();
+                        if (debitNote != null)
+                        {
+                            partida.JournalEntryLines.Add(new JournalEntryLine
+                            {
+                                AccountId = (long)debitNote.CuentaContableDebitoId,
+                                AccountName = debitNote.CuentaContableDebitoNombre,
+                                CostCenterId = centrocosto.CostCenterId,
+                                CostCenterName = centrocosto.CostCenterName,
+                                Debit = 0,
+                                Credit = item.MontoPagado,
+                                CreatedDate = DateTime.Now,
+                                CreatedUser = User.Identity.Name,
+                                ModifiedUser = User.Identity.Name,
+                                ModifiedDate = DateTime.Now,
+                                PartyTypeId = 1,
+                                PartyTypeName = "Cliente",
+                                PartyName = pago.CustomerName,
+                                PartyId = pago.CustomerId,
+
+
+
+                            });
+
+                            continue;
+                        }
                     }
 
                     Invoice invoice = _context.Invoice.Where(q => q.InvoiceId == item.InvoivceId).FirstOrDefault();

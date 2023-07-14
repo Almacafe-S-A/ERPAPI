@@ -30,6 +30,8 @@ namespace ERPAPI.Models
         [ForeignKey("InvoivceId")]
         public Invoice Invoice { get; set; }
 
+        public int DocumentId { get; set; }
+
         public string NoDocumento { get; set; }
 
         public int TipoDocumento { get; set; }
