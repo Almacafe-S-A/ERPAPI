@@ -47,7 +47,8 @@ namespace ERPAPI.Models
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
-
+        public string AttachmentURL { get; set; }
+        public string AttachementFileName { get; set; }
 
     }
 }
