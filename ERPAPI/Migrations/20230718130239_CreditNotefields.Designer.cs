@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230718130239_CreditNotefields")]
+    partial class CreditNotefields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2746,7 +2748,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Impreso");
 
-                    b.Property<long?>("InvoiceId");
+                    b.Property<long>("InvoiceId");
 
                     b.Property<long?>("JournalEntryId");
 
@@ -6188,12 +6190,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Almuerzo");
-
-                    b.Property<bool>("Domingo");
-
-                    b.Property<string>("Factor");
-
                     b.Property<DateTime>("FechaCreacion");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -6206,24 +6202,12 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdEstado");
 
-                    b.Property<bool>("Jueves");
-
-                    b.Property<bool>("Lunes");
-
-                    b.Property<bool>("Martes");
-
-                    b.Property<bool>("Miercoles");
-
                     b.Property<string>("Nombre")
                         .IsRequired();
-
-                    b.Property<bool>("Sabado");
 
                     b.Property<string>("UsuarioCreacion");
 
                     b.Property<string>("UsuarioModificacion");
-
-                    b.Property<bool>("Viernes");
 
                     b.HasKey("Id");
 
@@ -8271,43 +8255,6 @@ namespace ERPAPI.Migrations
                     b.HasKey("MotivoId");
 
                     b.ToTable("MotivoConciliacion");
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.Notifications", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Action");
-
-                    b.Property<string>("Controller");
-
-                    b.Property<string>("Description");
-
-                    b.Property<DateTime?>("FechaLectura");
-
-                    b.Property<DateTime>("FechaNotificacion");
-
-                    b.Property<string>("Icono");
-
-                    b.Property<bool>("Leido");
-
-                    b.Property<string>("Link");
-
-                    b.Property<string>("ModuloInvocacion");
-
-                    b.Property<string>("PermisoLectura");
-
-                    b.Property<string>("Titulo");
-
-                    b.Property<string>("UsuarioCreacion");
-
-                    b.Property<string>("UsuarioLectura");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.NumeracionSAR", b =>

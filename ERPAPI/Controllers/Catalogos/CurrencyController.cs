@@ -278,15 +278,7 @@ namespace ERPAPI.Controllers
                 {
                     flag = true;
                 }
-                //CreditNote
-                var VariableCreditNote = _context.CreditNote.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                                    .FirstOrDefault();
-                if (VariableCreditNote == null)
-                {
-                    flag = true;
-                }
-               
-               
+                
                 var VariableEmployees = _context.Employees.Where(a => a.IdCurrency == _Currency.CurrencyId)
                                                     .FirstOrDefault();
                 if (VariableEmployees == null)

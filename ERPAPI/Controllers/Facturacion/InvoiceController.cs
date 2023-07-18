@@ -280,6 +280,106 @@ namespace ERPAPI.Controllers
         }
 
 
+
+        /// <summary>
+        /// Obtiene los Datos de la Invoice por medio del Id enviado.
+        /// </summary>
+        /// <param name="CustomerId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetFacturasPendientesVigentesByCustomer(int CustomerId)
+        {
+            List<Invoice> facturas = new List<Invoice>();
+
+            List<DebitNote> debitNotes = new List<DebitNote>();
+
+            List<Documento> documentos = new List<Documento>();
+
+            List<Invoice> facturaspendientes = new List<Invoice>();
+            try
+            {
+                facturas = await _context.Invoice
+                    .Include(i => i.InvoiceLine)
+                    .Where(q => q.CustomerId == CustomerId
+                    && q.Estado == "Emitido"
+                    && q.InvoiceLine.Sum(s => s.Saldo) > 0
+                    ).ToListAsync();
+
+                debitNotes = await _context.DebitNote
+                    .Where(q => q.CustomerId == CustomerId
+                    && q.Estado == "Emitido"
+                    && q.Saldo > 0).ToListAsync();
+
+
+                documentos.AddRange((from f in facturas
+                                     select new Documento
+                                     {
+                                         DocumentoId = f.InvoiceId,
+                                         DocumentType = "Factura",
+                                         DocumentTypeId = 1,
+                                         FechaDocumento = f.InvoiceDate,
+                                         FechaVencimiento = f.InvoiceDueDate,
+                                         JournalId = (int?)f.JournalEntryId,
+                                         NumeroDEI = f.NumeroDEI,
+                                         Saldo = f.InvoiceLine.Sum(s => s.Saldo),
+                                         SaldoImpuesto = f.SaldoImpuesto,
+                                         Sucursal = f.BranchName,
+                                         Total = f.Total,
+                                         ProductId = (int)f.ProductId,
+                                         ProductName = f.ProductName,
+                                     }).ToList());
+
+
+                documentos.AddRange((from d in debitNotes
+                                     select new Documento
+                                     {
+                                         Total = d.Total,
+                                         DocumentoId = (int)d.DebitNoteId,
+                                         DocumentType = "Nota de Debito",
+                                         DocumentTypeId = 9,
+                                         FechaDocumento = d.DebitNoteDate,
+                                         FechaVencimiento = d.DebitNoteDueDate,
+                                         JournalId = (int?)d.JournalEntryId,
+                                         NumeroDEI = d.NumeroDEI,
+                                         Saldo = d.Saldo,
+                                         SaldoImpuesto = 0,
+                                         Sucursal = d.BranchName,
+                                         ProductName = "N/A",
+
+
+
+
+
+                                     }).ToList());
+
+                facturaspendientes = (from f in facturas
+                                                    select new Invoice
+                                                    {
+                                                        InvoiceId = f.InvoiceId,
+                                                       
+                                                        JournalEntryId = (int?)f.JournalEntryId,
+                                                        NumeroDEI = f.NumeroDEI,
+                                                        Saldo = f.InvoiceLine.Sum(s => s.Saldo),
+                                                        SaldoImpuesto = f.SaldoImpuesto,
+                                                        Sucursal = f.BranchName,
+                                                        Total = f.Total,
+                                                        ProductId = (int)f.ProductId,
+                                                        ProductName = f.ProductName,
+                                                    }).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+
+            return await Task.Run(() => Ok(facturaspendientes));
+        }
+
+
         /// <summary>
         /// Anula la factura por medio del Id enviado.
         /// </summary>

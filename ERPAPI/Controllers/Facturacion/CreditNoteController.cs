@@ -107,7 +107,8 @@ namespace ERPAPI.Controllers
             CreditNote Items = new CreditNote();
             try
             {
-                Items = await _context.CreditNote.Where(q => q.CreditNoteId == CreditNoteId).FirstOrDefaultAsync();
+                Items = await _context.CreditNote
+                    .Where(q => q.CreditNoteId == CreditNoteId).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -678,13 +679,20 @@ namespace ERPAPI.Controllers
                         _CreditNoteq.UsuarioModificacion = User.Identity.Name;
                         _CreditNoteq.CreditNoteDate = DateTime.Now;
                         _CreditNoteq.Estado = "Revisión";
-                        _CreditNoteq.NumeroDEI = "PROFORMA";
+                        _CreditNoteq.NumeroDEI = "BORRADOR";
+
 
                         //CreditNote factura = await _context.CreditNote.Where(q => q.CreditNoteId == _CreditNote.CreditNoteId).FirstOrDefaultAsync();
 
-                        Invoice invoice = await _context.Invoice.Where(q => q.InvoiceId == _CreditNote.InvoiceId).FirstOrDefaultAsync();
-                        _CreditNoteq.ProductName= invoice.ProductName;
-                        _CreditNoteq.ProductId= invoice.ProductId;
+                        Invoice invoice = await _context.Invoice
+                            .Where(q => q.InvoiceId == _CreditNote.InvoiceId)
+                            .FirstOrDefaultAsync();
+                        if (invoice != null) {
+                            _CreditNoteq.ProductName = invoice.ProductName;
+                            _CreditNoteq.ProductId = invoice.ProductId;
+
+                        }
+                        
 
                         _context.CreditNote.Add(_CreditNoteq);
 

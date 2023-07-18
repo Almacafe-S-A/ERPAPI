@@ -125,8 +125,8 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{Id}")]
-        public async Task<IActionResult> GenerarNotaDebito(Int64 Id)
+        [HttpGet("[action]/{Id}/{interna}")]
+        public async Task<IActionResult> GenerarNotaDebito(Int64 Id, int interna)
         {
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -145,22 +145,34 @@ namespace ERPAPI.Controllers
                         .Where(q => q.CustomerId == debitnote.CustomerId)
                         .FirstOrDefault();
 
-                    
-                    NumeracionSAR numeracionSAR = new NumeracionSAR();
-                    numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(9,debitnote.BranchId, _context);
 
-                    debitnote.NumeroDEI = numeracionSAR.GetCorrelativo();
-                    debitnote.RangoAutorizado = numeracionSAR.getRango();
-                    debitnote.CAI = numeracionSAR._cai;
-                    debitnote.NoInicio = numeracionSAR.NoInicio.ToString();
-                    debitnote.NoFin = numeracionSAR.NoFin.ToString();
-                    debitnote.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                    if (interna != 1) {
+                        NumeracionSAR numeracionSAR = new NumeracionSAR();
+                        numeracionSAR = numeracionSAR.ObtenerNumeracionSarValida(9, debitnote.BranchId, _context);
+
+                        debitnote.NumeroDEI = numeracionSAR.GetCorrelativo();
+                        debitnote.RangoAutorizado = numeracionSAR.getRango();
+                        debitnote.CAI = numeracionSAR._cai;
+                        debitnote.NoInicio = numeracionSAR.NoInicio.ToString();
+                        debitnote.NoFin = numeracionSAR.NoFin.ToString();
+                        debitnote.FechaLimiteEmision = numeracionSAR.FechaLimite;
+                        _context.NumeracionSAR.Update(numeracionSAR);
+
+
+                    }
+                    else
+                    {
+                        debitnote.NumeroDEI = "Interna";
+                    }
+
+
+                    debitnote.Estado = "Emitido";
                     debitnote.UsuarioModificacion = User.Identity.Name.ToUpper();
                     debitnote.FechaModificacion = DateTime.Now;
                     debitnote.DebitNoteDueDate = DateTime.Now.AddDays(debitnote.DiasVencimiento);
-                    debitnote.Estado = "Emitido";
 
-                    _context.NumeracionSAR.Update(numeracionSAR);
+
+                    
 
                     //var alerta = await GeneraAlerta(debitnote);
 
@@ -351,7 +363,7 @@ namespace ERPAPI.Controllers
                     });
 
 
-                    CustomerAcccountStatus accountstatus = _context.CustomerAcccountStatus.Where(q => q.DocumentoId == debitnoteId && q.TipoDocumentoId == 1).FirstOrDefault();
+                    CustomerAcccountStatus accountstatus = _context.CustomerAcccountStatus.Where(q => q.DocumentoId == debitnoteId && q.TipoDocumentoId == 9).FirstOrDefault();
 
                     accountstatus.Debito = 0;
                     accountstatus.Credito = 0;
