@@ -120,7 +120,8 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> GenerateInsuranceCertificates(dynamic dto)
         {
-            int? clienteid = dto.ClienteId;
+            int? clienteid = dto.IdCliente ?? 0;
+            int? servicioid = dto.IdServicio ?? 0;
             DateTime fecha = dto.Fecha;
             try
             {
@@ -136,13 +137,10 @@ namespace ERPAPI.Controllers
                 List<InsurancePolicy> policies = await _context.InsurancePolicy.Where(q => q.EstadoId == 101 && q.Propias).ToListAsync();
                 List<Customer> customers = new List<Customer>();
                 List<InsuranceCertificate> insurancesCerticates = new List<InsuranceCertificate>();
-                    
-                   
-
                 
                 if (clienteid == 0 || clienteid == null)
                 {
-                    customers =  await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
+                    customers = await _context.Customer.Where(w => w.IdEstado == 1).Include(p => p.ProductType).ToListAsync();
                     insurancesCerticates = _context.InsuranceCertificate.Where(q => q.EstadoId == 1).ToList();
                 }
                 else
@@ -150,9 +148,7 @@ namespace ERPAPI.Controllers
                     customers = await _context.Customer.Where(w => w.IdEstado == 1 && w.CustomerId == clienteid)
                         .Include(p => p.ProductType).ToListAsync();
                     insurancesCerticates = _context.InsuranceCertificate.Where(q => q.EstadoId == 1 && q.CustomerId == clienteid).ToList();
-
                 }
-
                 foreach (var certificado in insurancesCerticates)
                 {
                     certificado.EstadoId = 2;
@@ -191,12 +187,13 @@ namespace ERPAPI.Controllers
                                 BranchId = branch.BranchId,
                                 CustomerId = customer.CustomerId,
                                 CustomerName = customer.CustomerName,
+                                InsuranceName = policy.InsurancesName,
                                 InsuranceId = Convert.ToInt32(policy.InsurancesId),
                                 Amount = 0,
                                 Date = fecha.AddDays((DateTime.Now.Day * -1) + 1),
                                 DueDate = fecha.AddDays(DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - DateTime.Now.Day),
                                 AmountWords = "",
-                                ProductTypeId = customer.ProductTypeId,
+                                ProductTypeId = servicioid.Value,
                                 ProductTypes = customer.ProductType.ProductTypeName,
                                 EstadoId = 1,
                                 InsurancePolicyNumber = policy.PolicyNumber,
