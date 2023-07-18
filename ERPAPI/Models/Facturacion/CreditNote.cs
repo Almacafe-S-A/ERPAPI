@@ -17,11 +17,7 @@ namespace ERPAPI.Models
         public int ShipmentId { get; set; }
 
         [Display(Name = "Fiscal")]
-        public bool Fiscal { get; set; }
-
-
-        [Display(Name = "Punto de emisión")]
-        public Int64 IdPuntoEmision { get; set; }
+        public bool Fiscal { get; set; }        
        
         [Display(Name = "Fecha de nota de crédito")]
         public DateTime CreditNoteDate { get; set; }
@@ -29,7 +25,7 @@ namespace ERPAPI.Models
         public int CreditNoteTypeId { get; set; }
 
         [Display(Name = "Factura Asociada")]
-        public Int64 InvoiceId { get; set; }
+        public Int64? InvoiceId { get; set; }
       
 
         [Display(Name = "Certificado depósito")]
@@ -38,8 +34,7 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
 
-        [Display(Name = "Caja")]
-        public string Caja { get; set; }
+        
 
         [Display(Name = "Tipo de Nota de crédito")]
         public string TipoDocumento { get; set; }
@@ -47,8 +42,7 @@ namespace ERPAPI.Models
         [Display(Name = "Número de Nota de crédito")]
         public string NumeroDEI { get; set; }
 
-
-        public string NumeroSAR { get; set; }
+        public string NumeroDEIDocumentoAsociado { get; set; }
 
         [Display(Name = "Número de inicio")]
         public string NoInicio { get; set; }
@@ -109,11 +103,6 @@ namespace ERPAPI.Models
 
       
 
-        [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
 
         [Display(Name = "SubProducto")]
         public Int64? SubProductId { get; set; }
@@ -121,11 +110,9 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre SubProducto")]
         public string SubProductName { get; set; }
 
-        [Display(Name = "Moneda tasa")]
-        public decimal Currency { get; set; }
+        
 
-        [Display(Name = "Número de referencia de cliente")]
-        public string CustomerRefNumber { get; set; }
+        
         [Display(Name = "Tipo de ventas")]
         public int SalesTypeId { get; set; }
 
@@ -145,14 +132,9 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         [Display(Name = "Impuesto")]
         public decimal Tax { get; set; }
-        [Column(TypeName = "Money")]
-        [Display(Name = "Impuesto 18%")]
-        public decimal Tax18 { get; set; }
 
 
-        [Display(Name = "Flete")]
-        [Column(TypeName = "Money")]
-        public decimal Freight { get; set; }
+        
 
         [Display(Name = "Total exento")]
         [Column(TypeName = "Money")]
@@ -166,9 +148,6 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         public decimal TotalGravado { get; set; }
 
-        [Display(Name = "Total Gravado 18%")]
-        [Column(TypeName = "Money")]
-        public decimal TotalGravado18 { get; set; }
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
 
