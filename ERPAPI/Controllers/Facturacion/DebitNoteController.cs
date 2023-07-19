@@ -249,6 +249,22 @@ namespace ERPAPI.Controllers
                 DebitNote debitNote = new DebitNote();
                 try
                 {
+
+                    List<InvoicePaymentsLine> pagos = _context.InvoicePaymentsLine
+                        .Include(i => i.InvoicePayment)
+                        .Where(q => q.DocumentId == debitnoteId &&q.TipoDocumento == 9&&  q.InvoicePayment.Estado == "Emitido")
+                        .ToList();
+
+                    //List<CreditNote> creditNotes = _context.CreditNote
+                    ////.Include(i => i.CreditNote)
+                    //    .Where(q => q.InvoiceId == debitnoteId && q.TipoDocumento == "Nota de Credito" & q.Estado == "Emitido")
+                    //    .ToList();
+
+                    if (pagos.Count > 0  )
+                    {
+                        return BadRequest("Se han emitido pagos para esta Nota de Debito, no se puede Anular");
+                    }
+
                     Periodo periodo = new Periodo();
                     periodo = periodo.PeriodoActivo(_context);
 
