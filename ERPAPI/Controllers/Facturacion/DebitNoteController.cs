@@ -252,7 +252,7 @@ namespace ERPAPI.Controllers
 
                     List<InvoicePaymentsLine> pagos = _context.InvoicePaymentsLine
                         .Include(i => i.InvoicePayment)
-                        .Where(q => q.DocumentId == debitnoteId && q.InvoicePayment.Estado == "Emitido")
+                        .Where(q => q.DocumentId == debitnoteId &&q.TipoDocumento == 9&&  q.InvoicePayment.Estado == "Emitido")
                         .ToList();
 
                     //List<CreditNote> creditNotes = _context.CreditNote
