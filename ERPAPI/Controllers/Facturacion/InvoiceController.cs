@@ -403,9 +403,9 @@ namespace ERPAPI.Controllers
                         .Where(q => q.InvoiceId == InvoiceId && q.Estado == "Emitido")
                         .ToList();
 
-                    if (pagos.Count>0)
+                    if (pagos.Count>0 || creditNotes.Count > 0)
                     {
-                        return BadRequest("Se han emitido pagos para esta factua, no se puede Anular");
+                        return BadRequest("Se han emitido pagos para esta factura, no se puede Anular");
                     }
                     
 
