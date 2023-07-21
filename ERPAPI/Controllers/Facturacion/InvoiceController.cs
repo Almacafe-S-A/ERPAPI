@@ -1137,6 +1137,8 @@ namespace ERPAPI.Controllers
 
                 _context.Entry(_Invoiceq).CurrentValues.SetValues((_Invoice));
 
+                _Invoiceq = CalcularTotales(_Invoiceq);
+
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 

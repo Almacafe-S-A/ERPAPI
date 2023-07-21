@@ -387,6 +387,11 @@ namespace ERPAPI.Controllers
                             if (item.TipoDocumento == 9 )
                             {
                                 DebitNote debitNote = _context.DebitNote.Where(q => q.DebitNoteId == item.DocumentId).FirstOrDefault();
+                                if (debitNote.DebitNoteDate< _InvoicePayments.FechaPago)
+                                {
+                                    throw new Exception($"La fecha de Nota de Debito No Ref {debitNote.DebitNoteId} no puede ser posterior al recibo de pago");
+                                }
+                                
                                 if(debitNote != null ) {
                                     debitNote.Saldo = debitNote.Saldo - item.MontoPagado;
                                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
@@ -394,10 +399,18 @@ namespace ERPAPI.Controllers
                                     continue;
                                 }
 
+
+
                             }
                             if (item.SubProductId == null)
                             {
+
+
                                 Invoice invoice = _context.Invoice.Where(q => q.NumeroDEI == item.NoDocumento ).FirstOrDefault();
+                                if (invoice.InvoiceDate < _InvoicePayments.FechaPago)
+                                {
+                                    throw new Exception($"La fecha de la Factura No Ref {invoice.InvoiceId}  no puede ser posterior al recibo de pago");
+                                }
                                 if (invoice != null)  invoice.SaldoImpuesto = invoice.SaldoImpuesto - item.MontoPagado;
                                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                                 await _context.SaveChangesAsync();

@@ -488,6 +488,8 @@ namespace ERPAPI.Controllers
 
 
                 CostCenter centrocosto = _context.CostCenter.Where(x => x.BranchId == creditnote.BranchId).FirstOrDefault();
+                
+                string numero = creditnote.NumeroDEI == "Interna" ? creditnote.CreditNoteId.ToString() : creditnote.NumeroDEI;
 
                 partida = new JournalEntry
                 {
@@ -501,7 +503,7 @@ namespace ERPAPI.Controllers
                     TypeOfAdjustmentId = 65,
                     TypeOfAdjustmentName = "Asiento Diario",
                     JournalEntryLines = new List<JournalEntryLine>(),
-                    Memo = $"Nota de Credito #{creditnote.NumeroDEI} a Cliente {creditnote.CustomerName} por concepto de {creditnote.ProductName}",
+                    Memo = $"Nota de Credito #{numero} a Cliente {creditnote.CustomerName} por concepto de {creditnote.ProductName}",
                     Periodo = periodo.Anio.ToString(),
                     Posted = false,
                     TotalCredit = 0,
