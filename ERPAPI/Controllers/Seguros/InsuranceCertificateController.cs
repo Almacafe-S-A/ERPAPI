@@ -158,8 +158,6 @@ namespace ERPAPI.Controllers
 
                 foreach (var policy in policies)
                 {
-                    
-
                     foreach (var customer in customers)
                     {
                         foreach (var branch in branches)
@@ -172,7 +170,8 @@ namespace ERPAPI.Controllers
                        .Where(c => c.InsurancePolicyId == policy.InsurancePolicyId
                        && c.CustomerId == customer.CustomerId 
                        && c.BranchId == branch.BranchId
-                       && c.IdEstado == 6)
+                       && c.IdEstado == 6
+                       && c.ServicioId == servicioid)
                        .ToListAsync();
                             if (certificadoDepositos.Count() == 0)
                             {
@@ -193,7 +192,9 @@ namespace ERPAPI.Controllers
                                 Date = fecha.AddDays((DateTime.Now.Day * -1) + 1),
                                 DueDate = fecha.AddDays(DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) - DateTime.Now.Day),
                                 AmountWords = "",
-                                ProductTypeId = servicioid.Value,
+                                ServicioId = servicioid,
+                                ServicioName = certificadoDepositos.FirstOrDefault().ServicioName,
+                                ProductTypeId = customer.ProductType.ProductTypeId,
                                 ProductTypes = customer.ProductType.ProductTypeName,
                                 EstadoId = 1,
                                 InsurancePolicyNumber = policy.PolicyNumber,

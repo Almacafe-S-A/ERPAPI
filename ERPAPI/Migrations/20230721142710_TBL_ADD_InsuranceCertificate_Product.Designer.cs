@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230721142710_TBL_ADD_InsuranceCertificate_Product")]
+    partial class TBL_ADD_InsuranceCertificate_Product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2713,6 +2715,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CAI");
 
+                    b.Property<string>("Caja");
+
                     b.Property<long>("CertificadoDepositoId");
 
                     b.Property<string>("Correo");
@@ -2723,9 +2727,17 @@ namespace ERPAPI.Migrations
 
                     b.Property<int>("CreditNoteTypeId");
 
+                    b.Property<decimal>("Currency");
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
+
                     b.Property<int>("CustomerId");
 
                     b.Property<string>("CustomerName");
+
+                    b.Property<string>("CustomerRefNumber");
 
                     b.Property<string>("Direccion");
 
@@ -2742,11 +2754,16 @@ namespace ERPAPI.Migrations
 
                     b.Property<bool>("Fiscal");
 
+                    b.Property<decimal>("Freight")
+                        .HasColumnType("Money");
+
                     b.Property<long>("IdEstado");
+
+                    b.Property<long>("IdPuntoEmision");
 
                     b.Property<string>("Impreso");
 
-                    b.Property<long?>("InvoiceId");
+                    b.Property<long>("InvoiceId");
 
                     b.Property<long?>("JournalEntryId");
 
@@ -2762,7 +2779,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NumeroDEI");
 
-                    b.Property<string>("NumeroDEIDocumentoAsociado");
+                    b.Property<string>("NumeroSAR");
 
                     b.Property<long>("ProductId");
 
@@ -2794,6 +2811,9 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("Tax")
                         .HasColumnType("Money");
 
+                    b.Property<decimal>("Tax18")
+                        .HasColumnType("Money");
+
                     b.Property<string>("Tefono");
 
                     b.Property<string>("TipoDocumento");
@@ -2808,6 +2828,9 @@ namespace ERPAPI.Migrations
                         .HasColumnType("Money");
 
                     b.Property<decimal>("TotalGravado")
+                        .HasColumnType("Money");
+
+                    b.Property<decimal>("TotalGravado18")
                         .HasColumnType("Money");
 
                     b.Property<string>("TotalLetras");
@@ -6628,10 +6651,6 @@ namespace ERPAPI.Migrations
                     b.Property<int>("InsuranceEndorsementId")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("AttachementFileName");
-
-                    b.Property<string>("AttachmentURL");
 
                     b.Property<long>("CostCenterId");
 

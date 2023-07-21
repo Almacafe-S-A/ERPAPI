@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ERPAPI.Models
 {
@@ -34,7 +36,11 @@ namespace ERPAPI.Models
 
         public string DatePlace { get; set; }
 
-        
+        public Int64? ServicioId { get; set; }
+        [ForeignKey("ServicioId")]
+        public Product Servicio { get; set; }
+
+        public string ServicioName { get; set; }
 
 
         public decimal Amount { get; set; }
