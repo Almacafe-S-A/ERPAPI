@@ -425,6 +425,8 @@ namespace ERPAPI.Controllers
                 Periodo periodo = new Periodo();
                 periodo = periodo.PeriodoActivo(_context);
 
+                string numero = debitnote.NumeroDEI == "Interna" ? debitnote.DebitNoteId.ToString() : debitnote.NumeroDEI;
+
                 partida = new JournalEntry
                 {
                     Date = DateTime.Now,
@@ -437,7 +439,7 @@ namespace ERPAPI.Controllers
                     TypeOfAdjustmentId = 65,
                     TypeOfAdjustmentName = "Asiento Diario",
                     JournalEntryLines = new List<JournalEntryLine>(),
-                    Memo = $"Nota de Debito #{debitnote.NumeroDEI} a Cliente {debitnote.CustomerName} por concepto de {debitnote.Remarks}",
+                    Memo = $"Nota de Debito #{numero} a Cliente {debitnote.CustomerName} por concepto de {debitnote.Remarks}",
                     Periodo = periodo.Anio.ToString(),
                     Posted = false,
                     TotalCredit = 0,
