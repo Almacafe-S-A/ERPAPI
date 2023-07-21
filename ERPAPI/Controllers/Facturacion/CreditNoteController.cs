@@ -682,6 +682,7 @@ namespace ERPAPI.Controllers
                         _CreditNoteq.CreditNoteDate = DateTime.Now;
                         _CreditNoteq.Estado = "Revisión";
                         _CreditNoteq.NumeroDEI = "BORRADOR";
+                        
 
 
                         //CreditNote factura = await _context.CreditNote.Where(q => q.CreditNoteId == _CreditNote.CreditNoteId).FirstOrDefaultAsync();
