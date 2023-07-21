@@ -120,6 +120,64 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+
+        /// <summary>
+        /// Obtiene los Datos de la CreditNote por medio del Id enviado.
+        /// </summary>
+        /// <param name="DebitNoteId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{DebitNoteId}/{estado}")]
+        public async Task<IActionResult> ChangeStatus(Int64 DebitNoteId, int estado)
+        {
+            DebitNote Items = new DebitNote();
+            try
+            {
+                Items = await _context
+                    .DebitNote
+                    .Where(q => q.DebitNoteId == DebitNoteId).
+                    FirstOrDefaultAsync();
+
+                switch (estado)
+                {
+                    case 1:
+                        Items.Estado = "Revisado";
+                        Items.RevisadoEl = DateTime.Now;
+                        Items.RevisadoPor = User.Identity.Name;
+                        break;
+                    case 2:
+                        Items.Estado = "Aprobado";
+                        Items.AprobadoEl = DateTime.Now;
+                        Items.AprobadoPor = User.Identity.Name;
+                        break;
+                    case 3:
+                        Items.Estado = "Rechazado";
+                        Items.RevisadoEl = DateTime.Now;
+                        break;
+                    default:
+                        break;
+                }
+
+                Items.UsuarioModificacion = User.Identity.Name;
+                Items.FechaModificacion = DateTime.Now;
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
         /// <summary>
         /// Obtiene los Datos de la Invoice por medio del Id enviado.
         /// </summary>

@@ -167,6 +167,30 @@ namespace ERPAPI.Models
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
 
+
+
+        public string RevisadoPor { get; set; }
+
+        public DateTime? AprobadoEl { get; set; }
+
+        public string AprobadoPor { get; set;}
+
+        public DateTime? RevisadoEl { get; set; }
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
         public List<DebitNoteLine> DebitNoteLine { get; set; } = new List<DebitNoteLine>();
 
     }
