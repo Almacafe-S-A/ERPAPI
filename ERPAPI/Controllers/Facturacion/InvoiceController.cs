@@ -1131,10 +1131,16 @@ namespace ERPAPI.Controllers
             try
             {
                 _Invoiceq = await (from c in _context.Invoice
+                                   .Include(i => i.InvoiceLine)
                                  .Where(q => q.InvoiceId == _Invoice.InvoiceId)
                                    select c
                                 ).FirstOrDefaultAsync();
+                foreach (var item in _Invoice.InvoiceLine)
+                {
+                    InvoiceLine line = _context.InvoiceLine.Where(q => q.InvoiceLineId == item.InvoiceLineId).FirstOrDefault();
 
+                    _context.Entry(line).CurrentValues.SetValues(item);
+                }
                 _context.Entry(_Invoiceq).CurrentValues.SetValues((_Invoice));
 
                 _Invoiceq = CalcularTotales(_Invoiceq);

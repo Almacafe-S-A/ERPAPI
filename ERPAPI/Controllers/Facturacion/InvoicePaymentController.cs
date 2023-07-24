@@ -387,7 +387,7 @@ namespace ERPAPI.Controllers
                             if (item.TipoDocumento == 9 )
                             {
                                 DebitNote debitNote = _context.DebitNote.Where(q => q.DebitNoteId == item.DocumentId).FirstOrDefault();
-                                if (debitNote.DebitNoteDate< _InvoicePayments.FechaPago)
+                                if (debitNote.DebitNoteDate> _InvoicePayments.FechaPago)
                                 {
                                     throw new Exception($"La fecha de Nota de Debito No Ref {debitNote.DebitNoteId} no puede ser posterior al recibo de pago");
                                 }
@@ -407,7 +407,7 @@ namespace ERPAPI.Controllers
 
 
                                 Invoice invoice = _context.Invoice.Where(q => q.NumeroDEI == item.NoDocumento ).FirstOrDefault();
-                                if (invoice.InvoiceDate < _InvoicePayments.FechaPago)
+                                if (invoice.InvoiceDate > _InvoicePayments.FechaPago)
                                 {
                                     throw new Exception($"La fecha de la Factura No Ref {invoice.InvoiceId}  no puede ser posterior al recibo de pago");
                                 }
