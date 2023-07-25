@@ -286,6 +286,29 @@ namespace ERPAPI.Controllers
 
                     creditnote.FechaModificacion = DateTime.Now;
 
+                    Invoice invoice = _context.Invoice.Where(q => q.InvoiceId == creditnote.InvoiceId)
+                        .Include(i => i.InvoiceLine)
+                        .FirstOrDefault();
+
+                    if (invoice != null)
+                    {
+                        foreach (var item in creditnote.CreditNoteLine)
+                        {
+                            if (item.SubProductId== 10000)
+                            {
+                                invoice.SaldoImpuesto += item.CreditValue;
+                                continue;
+                            }
+                            invoice.InvoiceLine.Where(q => q.SubProductId == item.SubProductId ).FirstOrDefault().Saldo += item.CreditValue;
+                        }
+
+                    }
+
+                    
+
+                   
+
+
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
