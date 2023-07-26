@@ -592,7 +592,7 @@ namespace ERPAPI.Controllers
                     accountstatus.Debito = 0;
                     accountstatus.Credito = 0;
 
-                    accountstatus.Sinopsis = "#### A N U L A D O##### " + accountstatus.Sinopsis;
+                    accountstatus.Sinopsis = "**Anulado**" + accountstatus.Sinopsis;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 

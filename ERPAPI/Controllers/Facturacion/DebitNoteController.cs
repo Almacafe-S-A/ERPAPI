@@ -253,7 +253,7 @@ namespace ERPAPI.Controllers
                         Fecha = DateTime.Now,
                         CustomerName = debitnote.CustomerName,
                         Debito = debitnote.Amount,
-                        Sinopsis = $"Nota de debito #{debitnote.NumeroDEI} " +debitnote.Remarks,
+                        Sinopsis = $"Nota de Debito #{debitnote.NumeroDEI} " ,
                         InvoiceId = debitnote.InvoiceId,
                         NoDocumento = debitnote.NumeroDEI,
                         CustomerId = debitnote.CustomerId,
@@ -442,7 +442,7 @@ namespace ERPAPI.Controllers
                     accountstatus.Debito = 0;
                     accountstatus.Credito = 0;
 
-                    accountstatus.Sinopsis = "#### A N U L A D O##### " + accountstatus.Sinopsis;
+                    accountstatus.Sinopsis = "**Anulado**" + accountstatus.Sinopsis;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 

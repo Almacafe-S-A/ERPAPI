@@ -330,7 +330,7 @@ namespace ERPAPI.Controllers
                     accountstatus.Debito = 0;
                     accountstatus.Credito = 0;
 
-                    accountstatus.Sinopsis = "#### A N U L A D O##### " + accountstatus.Sinopsis;
+                    accountstatus.Sinopsis = "**Anulado**" + accountstatus.Sinopsis;
 
                     new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -416,7 +416,7 @@ namespace ERPAPI.Controllers
                         Fecha = DateTime.Now,
                         CustomerName = creditnote.CustomerName,
                         Credito = creditnote.Total,
-                        Sinopsis = $"Credito por Nota de Credito #{creditnote.NumeroDEI} " ,                        
+                        Sinopsis = $"Nota de Credito #{creditnote.NumeroDEI} " ,                        
                         NoDocumento = creditnote.NumeroDEI,
                         CustomerId = creditnote.CustomerId,
                         TipoDocumentoId = 8,
