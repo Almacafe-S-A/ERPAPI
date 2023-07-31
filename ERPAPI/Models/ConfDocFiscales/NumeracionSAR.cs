@@ -80,6 +80,10 @@ namespace ERPAPI.Models
             NumeracionSAR numeracionSAR = new NumeracionSAR();
             List<NumeracionSAR> numeracionSARs = new List<NumeracionSAR>();
             DateTime fecha = DateTime.Now;
+            fecha = new DateTime(fecha.Year, fecha.Month, fecha.Day);
+            fecha = fecha.AddHours(23);
+            fecha = fecha.AddMinutes(59);
+
 
             numeracionSARs = _context.NumeracionSAR
                     .Where(q => q.DocTypeId == tipoDocumento
