@@ -757,6 +757,11 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _Invoiceq.InvoiceLine)
                         {
+                            if ((item.UnitOfMeasure == null&& String.IsNullOrEmpty( item.UnitOfMeasureName))|| (item.SubProduct == null && String.IsNullOrEmpty(item.UnitOfMeasureName)))
+                            {
+                                return BadRequest("Verifique los detalles de la Factura");
+                            }
+
                             if (item.UnitOfMeasure !=null)
                             {
                                 item.UnitOfMeasureId = item.UnitOfMeasure.UnitOfMeasureId;

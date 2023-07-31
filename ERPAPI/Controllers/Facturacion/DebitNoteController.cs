@@ -594,7 +594,7 @@ namespace ERPAPI.Controllers
                     {
                         _DebitNoteq = _DebitNote;
                         _DebitNoteq.Estado = "Revisión";
-                        _DebitNoteq.NumeroDEIString = _DebitNoteq.NumeroDEIString.Substring(0,20);
+                        _DebitNoteq.NumeroDEIString = _DebitNoteq.NumeroDEIString.Length < 13 ? _DebitNoteq.NumeroDEIString: _DebitNoteq.NumeroDEIString.Substring(0,20);
 
                         Numalet let;
                         let = new Numalet();
