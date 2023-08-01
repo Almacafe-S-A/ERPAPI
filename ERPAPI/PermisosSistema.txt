@@ -287,6 +287,7 @@ Inventarios.Reportes.Kardex de Producto x Estiba
 Inventarios.Reportes.Kardex Detallado x Producto
 Inventarios.Reportes.Kardex x CD
 Inventarios.Reportes.Kardex x AR
+Inventarios.Reportes.Reporte de Transacciones
 Inventarios.Reportes.Servicios de Bodega
 Clientes
 Clientes.Datos de Clientes
