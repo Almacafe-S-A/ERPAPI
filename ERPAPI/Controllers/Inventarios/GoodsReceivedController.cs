@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
 using ERPAPI.Models;
+using ERPMVC.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -459,13 +460,16 @@ namespace ERPAPI.Controllers
 
         }
 
-        private async Task<ActionResult<Alert>> ValidarPaisesGAFI(GoodsReceived goodsReceived, Country country)
+        private async Task<ActionResult<Alert>> ValidarPaisesGAFI(GoodsReceived goodsReceived)
         {
 
             Alert Alerta = null;
+            Country country = await _context.Country.Where(q => q.Id == goodsReceived.CountryId).FirstOrDefaultAsync();
+            Country countryGAFI = await _context.Country.Where(q => q.Name.ToLower() == country.Name.ToLower() && country.Id != q.Id).FirstOrDefaultAsync();
 
-            if (country.GAFI == true)
+            if (countryGAFI.GAFI == true)
             {
+
                 Alerta = new Alert();
                 Alerta.DocumentId = (long)goodsReceived.CountryId;
                 Alerta.DocumentName = "LISTA PROHIBIDA";
@@ -594,7 +598,7 @@ namespace ERPAPI.Controllers
         /// <param name="_GoodsReceived"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsReceived>> Insert([FromBody] GoodsReceived _GoodsReceived)
+        public async Task<ActionResult<ResponseDTO<GoodsReceived>>> Insert([FromBody] GoodsReceived _GoodsReceived)
         {
             List<Alert> alerts = new List<Alert>();
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
@@ -612,8 +616,7 @@ namespace ERPAPI.Controllers
                             return BadRequest("Los recibos de mercaderias que contienen cafe solo pueden contener ese tipo de producto"); 
                         }
 
-                        Country country = null;
-                        var validarpais = await ValidarPaisesGAFI(_GoodsReceivedq, country);
+                        var validarpais = await ValidarPaisesGAFI(_GoodsReceivedq);
                         if (validarpais.Value != null)// Valida si es o no un pais GAFI
                         {
                             alerts.Add(validarpais.Value);
@@ -716,8 +719,10 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            return await Task.Run(() => Ok(_GoodsReceivedq));
+            ResponseDTO<GoodsReceived> response = new ResponseDTO<GoodsReceived>();
+            response.model = _GoodsReceivedq;
+            response.alerts = alerts;
+            return await Task.Run(() => Ok(response));
         }
 
 
