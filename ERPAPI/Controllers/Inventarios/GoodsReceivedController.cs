@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
 using ERPAPI.Models;
+using ERPMVC.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -459,15 +460,66 @@ namespace ERPAPI.Controllers
 
         }
 
+        private async Task<ActionResult<Alert>> ValidarPaisesGAFI(GoodsReceived goodsReceived)
+        {
 
-        private async Task<ActionResult<SubProduct>> ValidarProductosProhibidos(GoodsReceivedLine producto,GoodsReceived goodsReceived){
+            Alert Alerta = null;
+            Country country = await _context.Country.Where(q => q.Id == goodsReceived.CountryId).FirstOrDefaultAsync();
+            Country countryGAFI = await _context.Country.Where(q => q.Name.ToLower() == country.Name.ToLower() && country.Id != q.Id).FirstOrDefaultAsync();
+
+            if (countryGAFI.GAFI == true)
+            {
+
+                Alerta = new Alert();
+                Alerta.DocumentId = (long)goodsReceived.CountryId;
+                Alerta.DocumentName = "LISTA PROHIBIDA";
+                Alerta.AlertName = "Países GAFI";
+                Alerta.Code = "COUNTRY01";
+                Alerta.DescriptionAlert = "Lista de Países GAFI";
+                Alerta.FechaCreacion = DateTime.Now;
+                Alerta.FechaModificacion = DateTime.Now;
+                Alerta.UsuarioCreacion = User.Identity.Name;
+                Alerta.UsuarioModificacion = User.Identity.Name;
+                Alerta.PersonName = goodsReceived.CustomerName;
+                Alerta.Description = $"País GAFI {goodsReceived.CountryName} en recibo de mercaderia";
+                Alerta.DescriptionAlert = $"País GAFI {goodsReceived.CountryName} en recibo de mercaderia";
+                Alerta.Type = "168";
+                Alerta.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 168).FirstOrDefault().Nombre;
+                _context.Alert.Add(Alerta);
+
+                BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = Alerta.AlertId,
+                    DocType = "Alert",
+                    ClaseInicial =
+                    Newtonsoft.Json.JsonConvert.SerializeObject(Alerta, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = Alerta.UsuarioCreacion,
+                    UsuarioModificacion = Alerta.UsuarioModificacion,
+                    UsuarioEjecucion = Alerta.UsuarioModificacion,
+
+                });
+
+                await _context.SaveChangesAsync();
+                return Alerta;
+            }
+            else
+            {
+
+                return Alerta;
+            }
+        }
+        
+        private async Task<ActionResult<Alert>> ValidarProductosProhibidos(GoodsReceivedLine producto,GoodsReceived goodsReceived, SubProduct _subproduct)
+        {
            
-            SubProduct _subproduct = _context.SubProduct
-                .Where(q => q.SubproductId == producto.SubProductId).FirstOrDefault();
+                Alert Alerta = null;
+           
             if (_subproduct.ProductTypeId == 3)
             {
-                //Alert AlertP = new Alert();
-                Alert Alerta = new Alert();
+                Alerta = new Alert();
                 Alerta.DocumentId = (long)producto.SubProductId;
                 Alerta.DocumentName = "LISTA PROHIBIDA";
                 Alerta.AlertName = "Productos";
@@ -482,9 +534,7 @@ namespace ERPAPI.Controllers
                 Alerta.DescriptionAlert = $"Producto Prohibido {producto.SubProductName} en recibo de mercaderia";
                 Alerta.Type = "168";
                 Alerta.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 168).FirstOrDefault().Nombre;
-                // var AlertaP = await InsertAlert(Alerta);
                 _context.Alert.Add(Alerta);
-                //await _context.SaveChangesAsync();
 
                 BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
                 {
@@ -502,13 +552,12 @@ namespace ERPAPI.Controllers
                 });
 
                  await _context.SaveChangesAsync();
-                return BadRequest(_subproduct);
-
+                return Alerta;
             }
             else
             {
                 
-                return _subproduct;
+                return Alerta;
             }
 
 
@@ -549,9 +598,9 @@ namespace ERPAPI.Controllers
         /// <param name="_GoodsReceived"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsReceived>> Insert([FromBody] GoodsReceived _GoodsReceived)
+        public async Task<ActionResult<ResponseDTO<GoodsReceived>>> Insert([FromBody] GoodsReceived _GoodsReceived)
         {
-
+            List<Alert> alerts = new List<Alert>();
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
             try
             {
@@ -559,12 +608,19 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-
+                        
                         _GoodsReceivedq = _GoodsReceived;
                         var validarProductoTipoCafe = await ValidarProductoTipoCafe(_GoodsReceivedq);
                         if (validarProductoTipoCafe.Result is BadRequestObjectResult)
                         {
                             return BadRequest("Los recibos de mercaderias que contienen cafe solo pueden contener ese tipo de producto"); 
+                        }
+
+                        var validarpais = await ValidarPaisesGAFI(_GoodsReceivedq);
+                        if (validarpais.Value != null)// Valida si es o no un pais GAFI
+                        {
+                            alerts.Add(validarpais.Value);
+
                         }
                         //_GoodsReceived = (GoodsReceived)valido.Value;
                         _GoodsReceived.esCafe = validarProductoTipoCafe.Value;
@@ -588,14 +644,17 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
+                            SubProduct _subproduct = _context.SubProduct
+                                .Where(q => q.SubproductId == item.SubProductId).FirstOrDefault();
                             //item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
-                            var validarproductos = await ValidarProductosProhibidos(item,_GoodsReceivedq);
-                            if (validarproductos.Result is BadRequestObjectResult)// Valida si es o no producto prohibido
+                            var validarproductos = await ValidarProductosProhibidos(item,_GoodsReceivedq, _subproduct);
+                            if (validarproductos.Value != null)// Valida si es o no producto prohibido
                             {
+                                alerts.Add(validarproductos.Value);
 
                             }
                             //_context.GoodsReceivedLine.Add(item); // Siempre Agrega el prodcuto
-                            var generarKardex = await GenerarKardexRecibo(item,_GoodsReceivedq,validarproductos.Value); // Genera el Kardex Fisico
+                            var generarKardex = await GenerarKardexRecibo(item,_GoodsReceivedq, _subproduct); // Genera el Kardex Fisico
                             item.Kardex =  generarKardex.Value;
                             item.SaldoporCertificar = item.Quantity;////Asigna el valor al saldo por certificar al detalle
 
@@ -660,8 +719,10 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
-            return await Task.Run(() => Ok(_GoodsReceivedq));
+            ResponseDTO<GoodsReceived> response = new ResponseDTO<GoodsReceived>();
+            response.model = _GoodsReceivedq;
+            response.alerts = alerts;
+            return await Task.Run(() => Ok(response));
         }
 
 
