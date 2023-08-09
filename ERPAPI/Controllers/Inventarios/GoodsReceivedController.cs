@@ -465,9 +465,9 @@ namespace ERPAPI.Controllers
 
             Alert Alerta = null;
             Country country = await _context.Country.Where(q => q.Id == goodsReceived.CountryId).FirstOrDefaultAsync();
-            Country countryGAFI = await _context.Country.Where(q => q.Name.ToLower() == country.Name.ToLower() && country.Id != q.Id).FirstOrDefaultAsync();
+            Country countryGAFI = await _context.Country.Where(q => q.Name.ToLower() == country.Name.ToLower() && country.GAFI == true).FirstOrDefaultAsync();
 
-            if (countryGAFI.GAFI == true)
+            if (countryGAFI != null )
             {
 
                 Alerta = new Alert();
@@ -516,8 +516,11 @@ namespace ERPAPI.Controllers
         {
            
                 Alert Alerta = null;
+            List<SubProduct> productoprohibidos = new List<SubProduct> ();
+
+            productoprohibidos = _context.SubProduct.Where(q => _subproduct.ProductName.ToLower().Contains(q.ProductName.ToLower()) && q.ProductTypeId == 3).ToList();
            
-            if (_subproduct.ProductTypeId == 3)
+            if ( productoprohibidos.Count > 0)
             {
                 Alerta = new Alert();
                 Alerta.DocumentId = (long)producto.SubProductId;
@@ -719,9 +722,10 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-            ResponseDTO<GoodsReceived> response = new ResponseDTO<GoodsReceived>();
-            response.model = _GoodsReceivedq;
-            response.alerts = alerts;
+            ResponseDTO<GoodsReceived> response = new ResponseDTO<GoodsReceived> {
+                model = _GoodsReceivedq,
+                alerts = alerts
+            };
             return await Task.Run(() => Ok(response));
         }
 
