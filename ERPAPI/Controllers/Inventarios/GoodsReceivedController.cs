@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
 using ERPAPI.Models;
+using ERPAPI.Helpers;
 using ERPMVC.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +15,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Text;
+using ERPMVC.Helpers;
 
 namespace ERPAPI.Controllers
 {
@@ -22,11 +27,13 @@ namespace ERPAPI.Controllers
     [ApiController]
     public class GoodsReceivedController : Controller
     {
+        private readonly IOptions<MyConfig> config;
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
 
-        public GoodsReceivedController(ILogger<GoodsReceivedController> logger, ApplicationDbContext context)
+        public GoodsReceivedController(ILogger<GoodsReceivedController> logger, ApplicationDbContext context, IOptions<MyConfig> config)
         {
+            this.config = config;
             _context = context;
             _logger = logger;
         }
@@ -608,7 +615,7 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        
+
                         _GoodsReceivedq = _GoodsReceived;
                         var validarProductoTipoCafe = await ValidarProductoTipoCafe(_GoodsReceivedq);
                         if (validarProductoTipoCafe.Result is BadRequestObjectResult)
@@ -620,8 +627,47 @@ namespace ERPAPI.Controllers
                         if (validarpais.Value != null)// Valida si es o no un pais GAFI
                         {
                             alerts.Add(validarpais.Value);
+                            try {
+                                string correoOrigen = config.Value.emailsender;
+                                string contraseña = config.Value.passwordsmtp;
+                                string correoDestino = config.Value.EmailAlertaNivelUno;
+                                string host = config.Value.smtp;
+                                string puerto = config.Value.port;
 
+                            MailMessage correo = new MailMessage();
+                            correo.From = new MailAddress(correoOrigen, "Notificación de Alerta", Encoding.UTF8);
+                            correo.To.Add(correoDestino);
+                            correo.Subject = "ALERTA";
+
+                            StringBuilder bodyBuilder = new StringBuilder();
+                            foreach (var alert in alerts)
+                            {
+                                bodyBuilder.AppendLine("ALERTA: " + alert.Description);
+                            }
+
+                            correo.Body = bodyBuilder.ToString();
+                            correo.IsBodyHtml = true;
+                            correo.Priority = MailPriority.Normal;
+
+                            SmtpClient smtp = new SmtpClient();
+                                smtp.Host = host;
+                                smtp.Port = Convert.ToInt32(puerto);
+                            smtp.UseDefaultCredentials = false;
+                            smtp.Credentials = new NetworkCredential(correoOrigen, contraseña);
+                            smtp.EnableSsl = true;
+
+                            ServicePointManager.ServerCertificateValidationCallback = (s, cert, chain, sslPolicyErrors) => true;
+
+                            smtp.Send(correo);
+
+                            Console.WriteLine("Correo enviado correctamente.");
                         }
+        catch (Exception ex)
+                    {
+                        Console.WriteLine("Error al enviar el correo: " + ex.Message);
+                    }
+                        }
+
                         //_GoodsReceived = (GoodsReceived)valido.Value;
                         _GoodsReceived.esCafe = validarProductoTipoCafe.Value;
 
@@ -651,7 +697,7 @@ namespace ERPAPI.Controllers
                             if (validarproductos.Value != null)// Valida si es o no producto prohibido
                             {
                                 alerts.Add(validarproductos.Value);
-
+                            
                             }
                             //_context.GoodsReceivedLine.Add(item); // Siempre Agrega el prodcuto
                             var generarKardex = await GenerarKardexRecibo(item,_GoodsReceivedq, _subproduct); // Genera el Kardex Fisico
@@ -722,7 +768,13 @@ namespace ERPAPI.Controllers
             ResponseDTO<GoodsReceived> response = new ResponseDTO<GoodsReceived>();
             response.model = _GoodsReceivedq;
             response.alerts = alerts;
+
             return await Task.Run(() => Ok(response));
+        }
+        private bool RemoteServerCertificateValidationCallback(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            //Console.WriteLine(certificate);
+            return true;
         }
 
 
