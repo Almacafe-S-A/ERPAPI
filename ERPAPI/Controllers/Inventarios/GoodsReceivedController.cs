@@ -652,7 +652,7 @@ namespace ERPAPI.Controllers
                             SmtpClient smtp = new SmtpClient();
                                 smtp.Host = host;
                                 smtp.Port = Convert.ToInt32(puerto);
-                            smtp.UseDefaultCredentials = false;
+                            smtp.UseDefaultCredentials = true;
                             smtp.Credentials = new NetworkCredential(correoOrigen, contraseña);
                             smtp.EnableSsl = true;
 
@@ -662,7 +662,7 @@ namespace ERPAPI.Controllers
 
                             Console.WriteLine("Correo enviado correctamente.");
                         }
-        catch (Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine("Error al enviar el correo: " + ex.Message);
                     }
@@ -743,12 +743,6 @@ namespace ERPAPI.Controllers
                             await _context.SaveChangesAsync();///Asigna el numero del recibo a la boleta de salida 
                         }
 
-                        //TODO : Validar si es necesario
-                        //BoletaDeSalida _bol = await _context.BoletaDeSalida
-                        //                      .Where(q => q.BoletaDeSalidaId == boletasalida.Value.BoletaDeSalidaId).FirstOrDefaultAsync();
-
-                        //_bol.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
-                        //_context.Entry(_bol).CurrentValues.SetValues((_bol));
                         var generarasiento = await GeneraAsientoReciboMercaderias(_GoodsReceivedq);
                         transaction.Commit();
                     }
