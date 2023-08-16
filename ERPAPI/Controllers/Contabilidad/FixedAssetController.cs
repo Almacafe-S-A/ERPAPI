@@ -213,10 +213,9 @@ namespace ERPAPI.Controllers
 
                 DateTime fechabaja = (DateTime)_FixedAsset.FechaBaja;
 
-                List<DepreciationFixedAsset> depreciacionesaplicadas = _context.DepreciationFixedAsset
-                    .Where(q => q.FixedAssetId == _FixedAssetq.FixedAssetId).ToList();
+                
 
-                bool seaplicodepreciacion = depreciacionesaplicadas.Count > 0;
+                bool seaplicodepreciacion = _FixedAssetq.AccumulatedDepreciation > 0;
 
                 //DepreciationFixedAsset depreciationFixedAssets = _context.DepreciationFixedAsset
                 //    .Where(q => q.FixedAssetId == _FixedAsset.FixedAssetId  && q.Year == _baja ).FirstOrDefault();
@@ -310,7 +309,7 @@ namespace ERPAPI.Controllers
 
                 });
 
-                if (!seaplicodepreciacion)
+                if (seaplicodepreciacion)
                 {
                     ////////Lineas de Asiento por valor LIBROS//////////////
                     _je.JournalEntryLines.Add(new JournalEntryLine()
