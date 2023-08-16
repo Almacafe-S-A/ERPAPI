@@ -27,6 +27,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using ERPAPI.Helpers;
 
 [assembly:ApiConventionType(typeof(DefaultApiConventions))]
 
@@ -64,6 +65,8 @@ namespace ERPAPI
             services.AddAutoMapper();
 
             services.AddLogging();
+
+            services.Configure<MyConfig>(Configuration.GetSection("MailSettings"));
 
             services.Configure<IdentityOptions>(options =>
             {

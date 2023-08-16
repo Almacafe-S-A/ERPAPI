@@ -213,6 +213,10 @@ namespace ERPAPI.Controllers
 
                 DateTime fechabaja = (DateTime)_FixedAsset.FechaBaja;
 
+                
+
+                bool seaplicodepreciacion = _FixedAssetq.AccumulatedDepreciation > 0;
+
                 //DepreciationFixedAsset depreciationFixedAssets = _context.DepreciationFixedAsset
                 //    .Where(q => q.FixedAssetId == _FixedAsset.FixedAssetId  && q.Year == _baja ).FirstOrDefault();
 
@@ -242,12 +246,14 @@ namespace ERPAPI.Controllers
                 {
                     return BadRequest("No se Puede dar de baja el activo");
                 }
-                if (_FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting == null)
+
+
+                if (_FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting == null && seaplicodepreciacion)
                 {
                     return BadRequest("no se encontro la cuenta de Depreciacion");
                 }
 
-                if (_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting == null)
+                if (_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting == null && seaplicodepreciacion)
                 {
                     return BadRequest("no se encontro la cuenta de Depreciacion Acumulada");
                 }
@@ -303,19 +309,24 @@ namespace ERPAPI.Controllers
 
                 });
 
-                ////////Lineas de Asiento por valor LIBROS//////////////
-                _je.JournalEntryLines.Add(new JournalEntryLine()
+                if (seaplicodepreciacion)
                 {
-                    ModifiedDate = DateTime.Now,
-                    CreatedDate = DateTime.Now,
-                    ModifiedUser = User.Identity.Name,
-                    CreatedUser = User.Identity.Name,
-                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccountingId),
-                    AccountName = _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountName,
-                    CostCenterId = _FixedAssetq.CenterCostId,
-                    CostCenterName = _FixedAssetq.CenterCostName,
-                    Debit = depreciacionacumulada
-                });
+                    ////////Lineas de Asiento por valor LIBROS//////////////
+                    _je.JournalEntryLines.Add(new JournalEntryLine()
+                    {
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+                        CreatedUser = User.Identity.Name,
+                        AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccountingId),
+                        AccountName = _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountName,
+                        CostCenterId = _FixedAssetq.CenterCostId,
+                        CostCenterName = _FixedAssetq.CenterCostName,
+                        Debit = depreciacionacumulada
+                    });
+                }
+
+                
 
                 Accounting cuentaMotivo = new Accounting();
                 string codigoCuentamotivo = "";
