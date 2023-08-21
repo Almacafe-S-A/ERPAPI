@@ -148,20 +148,7 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _SubServicesWareHouseq.SubServicesWareHouseId,
-                            DocType = "SubServicesWareHouse",
-                            ClaseInicial =
-                         Newtonsoft.Json.JsonConvert.SerializeObject(_SubServicesWareHouseq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _SubServicesWareHouseq.UsuarioCreacion,
-                            UsuarioModificacion = _SubServicesWareHouseq.UsuarioModificacion,
-                            UsuarioEjecucion = _SubServicesWareHouseq.UsuarioModificacion,
-
-                        });
+                        
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();

@@ -29,13 +29,13 @@ namespace ERPAPI.Models
         [Display(Name = "Tipo prohibición")]
         public string TipoProhibidoName { get; set; }
 
-        public bool CobroPorTiempo { get; set; }
+        public bool CobroPorTiempo { get; set; } = false;
 
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
 
         [Display(Name = "Estado")]
-        public string Estado { get; set; }
+        public string Estado { get; set; } 
 
         [Display(Name = "Saldo Quintales")]
         public decimal Balance { get; set; }
