@@ -188,8 +188,17 @@ namespace ERPAPI.Controllers
                 _SubServicesWareHouseq = await _context.SubServicesWareHouse
                     .Where(q => q.SubServicesWareHouseId == id)
                     .FirstOrDefaultAsync();
-                _SubServicesWareHouseq.IdEstado = 2;
-                _SubServicesWareHouseq.Estado = "Inactivo";
+                if (_SubServicesWareHouseq.QuantityHours <= 0)
+                {
+                    return BadRequest("No se pueden aprobar Servicios brindados con cantidad de horas en cero");
+                }
+
+                if (_SubServicesWareHouseq.EndTime <= _SubServicesWareHouseq.StartTime)
+                {
+                    return BadRequest("No se pueden aprobar Servicios brindados con la fecha final menor o igual a la dee inicio");
+                }
+                _SubServicesWareHouseq.IdEstado = 6;
+                _SubServicesWareHouseq.Estado = "Aprobado";
                 _SubServicesWareHouseq.UsuarioModificacion = User.Identity.Name;
 
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
