@@ -302,7 +302,7 @@ namespace ERPAPI.Controllers
                     .Include(i => i.InvoiceLine)
                     .Where(q => q.CustomerId == CustomerId
                     && q.Estado == "Emitido"
-                    && q.InvoiceLine.Sum(s => s.Saldo) > 0
+                    && (q.InvoiceLine.Sum(s => s.Saldo) > 0 || q.SaldoImpuesto > 0)
                     ).ToListAsync();
 
                 debitNotes = await _context.DebitNote
