@@ -268,7 +268,7 @@ Inventarios.Areas Ocupadas
 Inventarios.Areas Ocupadas.Agregar
 Inventarios.Areas Ocupadas.Editar
 Inventarios.Reportes
-Inventarios.Reportes.Guias Emision Emitidas
+Inventarios.Reportes.Guias Remision Emitidas
 Inventarios.Reportes.Movimientos Diarios
 Inventarios.Reportes.Movimientos Boletas de Peso
 Inventarios.Reportes.Movimientos Detalle Boletas de Peso
