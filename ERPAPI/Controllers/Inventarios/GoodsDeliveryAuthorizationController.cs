@@ -301,10 +301,10 @@ namespace ERPAPI.Controllers
                 }
 
                     
-                if (pendientes.Count>7)
-                {
-                    return BadRequest("La autorizacion solo puede contener 7 lineas de detalle");
-                }
+                //if (pendientes.Count>7)
+                //{
+                //    return BadRequest("La autorizacion solo puede contener 7 lineas de detalle");
+                //}
 
                 return Ok(pendientes);
             }
