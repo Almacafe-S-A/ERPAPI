@@ -445,12 +445,19 @@ namespace ERPAPI.Controllers
                         {
                             CertificadoDeposito certificadoDeposito = await _context.CertificadoDeposito
                                 .Where(q => q.IdCD == item.NoCertificadoDeposito).FirstOrDefaultAsync();
+
+                            if (item.UnitOfMeasure != null )
+                            {
+                                item.UnitOfMeasureId = item.UnitOfMeasure.UnitOfMeasureId;
+                                item.UnitOfMeasureName = item.UnitOfMeasure.UnitOfMeasureName;
+                                item.UnitOfMeasure = null;
+                            }
                             
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                      .Where(q => q.SubproductId == item.SubProductId)
                                                             select c
                                                      ).FirstOrDefaultAsync();
-                            if (item.SaldoProducto < item.Quantity)
+                            if (item.CertificadoLineId>0 && item.SaldoProducto < item.Quantity)
                             {
                                 return await Task.Run(() => BadRequest($"La cantidad a retirar no puede ser superior al total del ciertificado"));
                             }
@@ -546,20 +553,23 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _GoodsDeliveryAuthorization.UsuarioModificacion,
 
                         });
-
-                        foreach (var item in _GoodsDeliveryAuthorization.CertificadosAsociados)
+                        if (_GoodsDeliveryAuthorization.CertificadosAsociados != null)
                         {
-                            decimal? saldoPendienteautorizar = 0;
+                            foreach (var item in _GoodsDeliveryAuthorization.CertificadosAsociados)
+                            {
+                                decimal? saldoPendienteautorizar = 0;
 
-                            CertificadoDeposito cd = _context.CertificadoDeposito.Where(q => q.IdCD == item).Include(i => i._CertificadoLine).FirstOrDefault();
-                            foreach (var linea in cd._CertificadoLine)
-                            {
-                                saldoPendienteautorizar += linea.CantidadDisponibleAutorizar;
-                                
-                            }
-                            if (saldoPendienteautorizar<=0)
-                            {
-                                cd.PendienteAutorizar = false;
+                                CertificadoDeposito cd = _context.CertificadoDeposito.Where(q => q.IdCD == item).Include(i => i._CertificadoLine).FirstOrDefault();
+                                foreach (var linea in cd._CertificadoLine)
+                                {
+                                    saldoPendienteautorizar += linea.CantidadDisponibleAutorizar;
+
+                                }
+                                if (saldoPendienteautorizar <= 0)
+                                {
+                                    cd.PendienteAutorizar = false;
+                                }
+
                             }
 
                         }

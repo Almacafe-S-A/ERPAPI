@@ -110,6 +110,8 @@ namespace ERPAPI.Models
     {
         public List<Int64> CertificadosAsociados { get; set; }
 
+        
+
 
     }
 }
