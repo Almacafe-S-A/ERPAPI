@@ -22,7 +22,7 @@ using ERPMVC.Helpers;
 
 namespace ERPAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/GoodsReceived")]
     [ApiController]
     public class GoodsReceivedController : Controller
@@ -30,12 +30,15 @@ namespace ERPAPI.Controllers
         private readonly IOptions<MyConfig> config;
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
+        private readonly EmailHelper _email;
 
-        public GoodsReceivedController(ILogger<GoodsReceivedController> logger, ApplicationDbContext context, IOptions<MyConfig> config)
+
+        public GoodsReceivedController(ILogger<GoodsReceivedController> logger, ApplicationDbContext context, IOptions<MyConfig> config, EmailHelper email)
         {
             this.config = config;
             _context = context;
             _logger = logger;
+            _email = email;
         }
 
         /// <summary>
@@ -472,7 +475,7 @@ namespace ERPAPI.Controllers
 
             Alert Alerta = null;
             Country country = await _context.Country.Where(q => q.Id == goodsReceived.CountryId).FirstOrDefaultAsync();
-            Country countryGAFI = await _context.Country.Where(q => q.Name.ToLower() == country.Name.ToLower() && country.GAFI == true).FirstOrDefaultAsync();
+            Country countryGAFI = await _context.Country.Where(q => q.Name.Equals(country.Name, StringComparison.OrdinalIgnoreCase)  && q.GAFI == true).FirstOrDefaultAsync();
 
             if (countryGAFI != null )
             {
@@ -600,6 +603,7 @@ namespace ERPAPI.Controllers
         
         }
 
+       
 
 
         /// <summary>
@@ -612,8 +616,7 @@ namespace ERPAPI.Controllers
         {
             List<Alert> alerts = new List<Alert>();
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
-            try
-            {
+            
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
@@ -630,47 +633,10 @@ namespace ERPAPI.Controllers
                         if (validarpais.Value != null)// Valida si es o no un pais GAFI
                         {
                             alerts.Add(validarpais.Value);
-                            try {
-                                string correoOrigen = config.Value.emailsender;
-                                string contraseña = config.Value.passwordsmtp;
-                                string correoDestino = config.Value.EmailAlertaNivelUno;
-                                string host = config.Value.smtp;
-                                string puerto = config.Value.port;
-
-                            MailMessage correo = new MailMessage();
-                            correo.From = new MailAddress(correoOrigen, "Notificación de Alerta", Encoding.UTF8);
-                            correo.To.Add(correoDestino);
-                            correo.Subject = "ALERTA";
-
-                            StringBuilder bodyBuilder = new StringBuilder();
-                            foreach (var alert in alerts)
-                            {
-                                bodyBuilder.AppendLine("ALERTA: " + alert.Description);
-                            }
-
-                            correo.Body = bodyBuilder.ToString();
-                            correo.IsBodyHtml = true;
-                            correo.Priority = MailPriority.Normal;
-
-                            SmtpClient smtp = new SmtpClient();
-                                smtp.Host = host;
-                                smtp.Port = Convert.ToInt32(puerto);
-                            smtp.UseDefaultCredentials = true;
-                            smtp.Credentials = new NetworkCredential(correoOrigen, contraseña);
-                            smtp.EnableSsl = true;
-
-                            ServicePointManager.ServerCertificateValidationCallback = (s, cert, chain, sslPolicyErrors) => true;
-
-                            smtp.Send(correo);
-
-                            Console.WriteLine("Correo enviado correctamente.");
-                        }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Error al enviar el correo: " + ex.Message);
-                    }
+                           
                         }
 
+                        
                         //_GoodsReceived = (GoodsReceived)valido.Value;
                         _GoodsReceived.esCafe = validarProductoTipoCafe.Value;
 
@@ -748,6 +714,9 @@ namespace ERPAPI.Controllers
 
                         var generarasiento = await GeneraAsientoReciboMercaderias(_GoodsReceivedq);
                         transaction.Commit();
+
+                        
+
                     }
                     catch (Exception ex)
                     {
@@ -755,13 +724,20 @@ namespace ERPAPI.Controllers
                         throw ex;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
 
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
+                if (alerts.Count > 0)
+                {
+                    StringBuilder cuerpo = new StringBuilder();
+                    string asunto = $"Alerta Recibo de Mercaderias - Cliente {_GoodsReceived.CustomerName}";
+                    cuerpo.AppendLine(asunto);
+                    cuerpo.AppendLine($"Recibo de Mercaderias No: {_GoodsReceived.GoodsReceivedId}");
+                    foreach (var alert in alerts)
+                    {
+                      cuerpo.AppendLine("ALERTA: " + alert.ToString());
+                    }
+                await _email.EnviarCorreo(cuerpo,asunto,config.Value.EmailAlertaNivelUno);
+                }
+            
             ResponseDTO<GoodsReceived> response = new ResponseDTO<GoodsReceived> {
                 model = _GoodsReceivedq,
                 alerts = alerts

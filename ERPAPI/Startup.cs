@@ -84,7 +84,7 @@ namespace ERPAPI
                 //options.Password.RequiredUniqueChars = 1;
             });
 
-
+            services.AddTransient<EmailHelper, EmailHelper>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -117,6 +117,7 @@ namespace ERPAPI
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 config.IncludeXmlComments(xmlPath);
             });
+
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
