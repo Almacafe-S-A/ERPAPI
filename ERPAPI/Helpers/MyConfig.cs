@@ -7,6 +7,7 @@ namespace ERPAPI.Helpers
 {
     public class MyConfig
     {
+        public string dominio { get; set; }
         public string urlbase { get; set; }
         public string EmailAlertaNivelUno { get; set; }
         public string UserPassword { get; set; }
