@@ -452,6 +452,14 @@ namespace ERPAPI.Controllers
                                 item.UnitOfMeasureName = item.UnitOfMeasure.UnitOfMeasureName;
                                 item.UnitOfMeasure = null;
                             }
+
+                            if (item.Product != null) {
+                                item.SubProductId = item.Product.SubProductId;
+                                item.SubProductName = item.Product.SubProductName;
+                                item.Product= null;
+                                _GoodsDeliveryAuthorization.ProductoAutorizado = item.SubProductName;
+
+                            }
                             
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                      .Where(q => q.SubproductId == item.SubProductId)
