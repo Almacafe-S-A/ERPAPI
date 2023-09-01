@@ -457,7 +457,8 @@ namespace ERPAPI.Controllers
                                 item.SubProductId = item.Product.SubProductId;
                                 item.SubProductName = item.Product.SubProductName;
                                 item.Product= null;
-                            
+                                _GoodsDeliveryAuthorization.ProductoAutorizado = item.SubProductName;
+
                             }
                             
                             SubProduct _subproduct = await (from c in _context.SubProduct
