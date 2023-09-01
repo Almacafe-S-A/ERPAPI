@@ -108,11 +108,20 @@ namespace ERPAPI.Controllers
             List<ControlPalletsLine> controlPalletsLines = new List<ControlPalletsLine>();
             List<GoodsDeliveryAuthorizationLine> goodsDeliveryAuthorizationsLines = new List<GoodsDeliveryAuthorizationLine>();
             List<GoodsDeliveredLine> goodsDeliveredLines = new List<GoodsDeliveredLine>();
+            List<GoodsDeliveryAuthorizationLine> arNoCD = new List<GoodsDeliveryAuthorizationLine>();
 
             goodsDeliveryAuthorizationsLines = await _context.GoodsDeliveryAuthorizationLine
                 .Where(q => ARs.Any(a => a == q.GoodsDeliveryAuthorizationId))
                 .OrderBy(o => o.SaldoProducto)
                 .ToListAsync();
+
+            arNoCD = goodsDeliveryAuthorizationsLines
+                .Where(q => q.NoCertificadoDeposito == 0).ToList();
+
+            goodsDeliveryAuthorizationsLines = goodsDeliveryAuthorizationsLines
+                .Where(q => q.NoCertificadoDeposito != 0).ToList();
+
+
 
             try
             {
@@ -148,6 +157,29 @@ namespace ERPAPI.Controllers
                                         Pda = (int)line.Key.Pda,
                                         NoARLineId = (int)line.Key.GoodsDeliveryAuthorizationLineId,
                                     }).OrderBy(o => o.QuantityAuthorized).ToList();
+
+                if (arNoCD.Count>0)
+                {
+                    goodsDeliveredLines.AddRange((from c in arNoCD
+                                                  select new GoodsDeliveredLine {
+                                                    SubProductId = c.SubProductId,
+                                                    SubProductName= c.SubProductName,
+                                                    Quantity= 0,
+                                                    QuantityAuthorized = c.Saldo,
+                                                    Description =c.SubProductName,
+                                                    UnitOfMeasureId = c.UnitOfMeasureId,
+                                                    UnitOfMeasureName= c.UnitOfMeasureName,
+                                                    WareHouseId=(long)c.WarehouseId,
+                                                    WareHouseName = c.WarehouseName,
+                                                    NoCD = 0,
+                                                    NoAR= c.GoodsDeliveryAuthorizationId,
+                                                    Pda= 0,
+                                                    NoARLineId = c.GoodsDeliveryAuthorizationLineId
+                                                  
+                                                  
+                                                  }).ToList());
+                    goodsDeliveryAuthorizationsLines.AddRange(arNoCD);
+                }
                 ControlPallets _ControlPallets = _context.ControlPallets
                     .Include(i => i._ControlPalletsLine)
                     .Where(q => q.ControlPalletsId == controlid).FirstOrDefault();

@@ -27,6 +27,9 @@ namespace ERPAPI.Models
 
         [Display(Name = "Producto cliente")]
         public string SubProductName { get; set; }
+        [NotMapped]
+        public CustomerProduct Product { get; set; }
+
 
         [Display(Name = "Unidad de medida")]
         public Int64 UnitOfMeasureId { get; set; }
