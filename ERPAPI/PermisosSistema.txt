@@ -289,6 +289,7 @@ Inventarios.Reportes.Kardex Detallado x Producto
 Inventarios.Reportes.Kardex x CD
 Inventarios.Reportes.Kardex x AR
 Inventarios.Reportes.Servicios de Bodega
+Pendiente
 Clientes
 Clientes.Datos de Clientes
 Clientes.Datos de Clientes.Agregar
