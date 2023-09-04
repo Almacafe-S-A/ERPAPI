@@ -255,7 +255,8 @@ namespace ERPAPI.Controllers
                     SourceDocumentId = (int)_GoodsDeliveredq.GoodsDeliveredId,
                     SourceDocumentName = "Entrega de Mercaderias",
                     SourceDocumentLine = (int)item.GoodsDeliveredLinedId,
-                    PdaNo = item.Pda
+                    PdaNo = item.Pda,
+                    Estiba = item.ControlPalletsId,
 
 
                 });
@@ -314,6 +315,7 @@ namespace ERPAPI.Controllers
                             GoodsAuthorizationId= ARL.GoodsDeliveryAuthorizationId,
                             ValorTotal = Math.Abs((decimal) cdls.Sum(s => s.CantidadDisponible) - cantrebajarlinea) * Convert.ToDecimal(cdl.Price),
                             ValorMovimiento = cantrebajarlinea * Convert.ToDecimal(cdl.Price),
+                            Estiba = item.ControlPalletsId,
 
 
                         });
