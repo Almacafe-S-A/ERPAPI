@@ -299,12 +299,7 @@ namespace ERPAPI.Controllers
                     flag = true;
                 }
                 
-                var VariableVendorInvoice = _context.VendorInvoice.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                    .FirstOrDefault();
-                if (VariableVendorInvoice == null)
-                {
-                    flag = true;
-                }
+                
                 if (flag) { 
                          currency = _context.Currency
                         .Where(x => x.CurrencyId == (int)_Currency.CurrencyId)
