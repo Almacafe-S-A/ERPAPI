@@ -100,7 +100,7 @@ namespace ERPAPI.Models
 
     public class RetentionReceiptDTO: RetentionReceipt
     {
-        public bool PendienteRetencion { get; set; }
+        public bool RetecionPendiente { get; set; }
     }
 }
 

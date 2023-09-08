@@ -178,7 +178,7 @@ namespace ERPAPI.Controllers
                         if (vendorInvoice != null)
                         {
                             //Verifica si marca factura sigue disponible para una retencion posterior
-                            if (!_RetentionReceipt.PendienteRetencion)
+                            if (!_RetentionReceipt.RetecionPendiente)
                             {
                                 vendorInvoice.RetecionPendiente = false;
                             }
