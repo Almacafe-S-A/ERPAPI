@@ -182,6 +182,11 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
 
         public string Impreso { get; set; }
+
+        public bool AplicaRetencion { get; set; }
+
+        public bool RetecionPendiente { get; set; }
+
         public List<VendorInvoiceLine> VendorInvoiceLine { get; set; } = new List<VendorInvoiceLine>();
     }
 }
