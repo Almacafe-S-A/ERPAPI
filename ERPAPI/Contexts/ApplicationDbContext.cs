@@ -371,7 +371,6 @@ namespace ERP.Contexts
 
         public DbSet<VendorInvoice> VendorInvoice { get; set; }
 
-        public DbSet<VendorInvoiceLine> VendorInvoiceLine { get; set; }
 
         public DbSet<PaymentTerms> PaymentTerms { get; set; }
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }

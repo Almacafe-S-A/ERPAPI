@@ -135,8 +135,7 @@ namespace ERPAPI.Controllers
             {
                 try
                 {
-                    _VendorInvoiceq.PurchaseOrderId = null;
-                    //_VendorInvoiceq.Sucursal = await _context.Branch.Where(q => q.BranchId == _VendorInvoiceq.BranchId).Select(q => q.BranchCode).FirstOrDefaultAsync();
+                   
                     Numalet let;
                     let = new Numalet();
                     let.SeparadorDecimalSalida = "Lempiras";
@@ -144,8 +143,21 @@ namespace ERPAPI.Controllers
                     let.ApocoparUnoParteEntera = true;
                     _VendorInvoiceq.TotalLetras = let.ToCustomCardinal((_VendorInvoiceq.Total)).ToUpper();
 
+                    _VendorInvoiceq.RetecionPendiente = _VendorInvoiceq.AplicaRetencion;
+                    //obtener proveedor
+                    Vendor vendor = _context.Vendor.Where(v => v.VendorId == _VendorInvoiceq.VendorId).FirstOrDefault();
+
+                    if (vendor!=null)
+                    {
+                        _VendorInvoiceq.VendorRTN = vendor.RTN;
+                        _VendorInvoiceq.VendorName = vendor.VendorName;
+                    }    
+
                     _context.VendorInvoice.Add(_VendorInvoiceq);
-                    //await _context.SaveChangesAsync();
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                    await _context.SaveChangesAsync();
 
                     Periodo periodo = new Periodo();
                     periodo = periodo.PeriodoActivo(_context);
@@ -217,26 +229,10 @@ namespace ERPAPI.Controllers
                     _je.TotalCredit= _je.JournalEntryLines.Sum(s => s.Credit);
                     _je.TotalDebit= _je.JournalEntryLines.Sum(s => s.Debit); ;
 
-                    
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
                     _context.JournalEntry.Add(_je);
 
-                    await _context.SaveChangesAsync();
-
-                    BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                    {
-                        IdOperacion = 4, ///////Falta definir los Id de las Operaciones
-                        DocType = "VendorInvoice",
-                        ClaseInicial =
-                        Newtonsoft.Json.JsonConvert.SerializeObject(_VendorInvoiceq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                        ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_VendorInvoiceq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                        Accion = "Insert",
-                        FechaCreacion = DateTime.Now,
-                        FechaModificacion = DateTime.Now,
-                        UsuarioCreacion = _VendorInvoiceq.UsuarioCreacion,
-                        UsuarioModificacion = _VendorInvoiceq.UsuarioModificacion,
-                        UsuarioEjecucion = _VendorInvoiceq.UsuarioModificacion,
-
-                    });
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
