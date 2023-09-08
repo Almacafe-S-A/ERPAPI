@@ -143,7 +143,7 @@ namespace ERPAPI.Controllers
                     let.ApocoparUnoParteEntera = true;
                     _VendorInvoiceq.TotalLetras = let.ToCustomCardinal((_VendorInvoiceq.Total)).ToUpper();
 
-
+                    _VendorInvoiceq.RetecionPendiente = _VendorInvoiceq.AplicaRetencion;
                     //obtener proveedor
                     Vendor vendor = _context.Vendor.Where(v => v.VendorId == _VendorInvoiceq.VendorId).FirstOrDefault();
 
