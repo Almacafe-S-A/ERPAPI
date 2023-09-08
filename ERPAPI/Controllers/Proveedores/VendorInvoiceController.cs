@@ -96,6 +96,41 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene el Listado de VendorInvoicees PENDIENTES DE RETECION
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetVendorInvoicePendienteRetencion()
+        {
+            List<VendorInvoice> Items = new List<VendorInvoice>();
+            try
+            {
+                var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
+                //string correo = User.Identity.Name.ToString();
+                int count = user.Count();
+                List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
+                if (branchlist.Count > 0)
+                {
+                    Items = await _context.VendorInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId) && p.RetecionPendiente && p.AplicaRetencion).OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
+                }
+                else
+                {
+                    Items = await _context.VendorInvoice.OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene los Datos de la VendorInvoice por medio del Id enviado.
         /// </summary>

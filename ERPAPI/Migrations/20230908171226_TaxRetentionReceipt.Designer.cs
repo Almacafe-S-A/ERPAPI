@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230908171226_TaxRetentionReceipt")]
+    partial class TaxRetentionReceipt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -10847,6 +10849,9 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("AccountNameGasto");
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("Money");
+
                     b.Property<bool>("AplicaRetencion");
 
                     b.Property<int>("BranchId");
@@ -10855,9 +10860,22 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CAI");
 
+                    b.Property<string>("Correo");
+
                     b.Property<long?>("CostCenterId");
 
                     b.Property<string>("CostCenterName");
+
+                    b.Property<decimal>("Currency");
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<string>("CurrencyName");
+
+                    b.Property<string>("Direccion");
+
+                    b.Property<decimal>("Discount")
+                        .HasColumnType("Money");
 
                     b.Property<string>("Estado");
 
@@ -10868,6 +10886,9 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaLimiteEmision");
 
                     b.Property<DateTime>("FechaModificacion");
+
+                    b.Property<decimal>("Freight")
+                        .HasColumnType("Money");
 
                     b.Property<long>("IdEstado");
 
@@ -10885,14 +10906,32 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("NumeroDEI");
 
+                    b.Property<DateTime>("OrderDate");
+
+                    b.Property<int?>("PurchaseOrderId");
+
+                    b.Property<string>("RTN");
+
+                    b.Property<DateTime>("ReceivedDate");
+
                     b.Property<string>("Remarks");
 
                     b.Property<bool>("RetecionPendiente");
 
                     b.Property<int>("SalesTypeId");
 
+                    b.Property<int>("ShipmentId");
+
+                    b.Property<decimal>("SubTotal")
+                        .HasColumnType("Money");
+
                     b.Property<decimal>("Tax")
                         .HasColumnType("Money");
+
+                    b.Property<decimal>("Tax18")
+                        .HasColumnType("Money");
+
+                    b.Property<string>("Tefono");
 
                     b.Property<string>("TipoDocumento");
 
@@ -10902,7 +10941,13 @@ namespace ERPAPI.Migrations
                     b.Property<decimal>("TotalExento")
                         .HasColumnType("Money");
 
+                    b.Property<decimal>("TotalExonerado")
+                        .HasColumnType("Money");
+
                     b.Property<decimal>("TotalGravado")
+                        .HasColumnType("Money");
+
+                    b.Property<decimal>("TotalGravado18")
                         .HasColumnType("Money");
 
                     b.Property<string>("TotalLetras");
@@ -10923,7 +10968,7 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("VendorName");
 
-                    b.Property<string>("VendorRTN");
+                    b.Property<string>("VendorRefNumber");
 
                     b.HasKey("VendorInvoiceId");
 
@@ -10933,9 +10978,54 @@ namespace ERPAPI.Migrations
 
                     b.HasIndex("CostCenterId");
 
+                    b.HasIndex("PurchaseOrderId");
+
                     b.HasIndex("VendorId");
 
                     b.ToTable("VendorInvoice");
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.VendorInvoiceLine", b =>
+                {
+                    b.Property<long>("VendorInvoiceLineId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("AccountId");
+
+                    b.Property<decimal>("Amount");
+
+                    b.Property<long?>("CostCenterId");
+
+                    b.Property<string>("CostCenterName");
+
+                    b.Property<string>("Description");
+
+                    b.Property<string>("ItemName");
+
+                    b.Property<decimal>("TaxAmount");
+
+                    b.Property<string>("TaxCode");
+
+                    b.Property<long?>("TaxId");
+
+                    b.Property<decimal>("TaxPercentage");
+
+                    b.Property<decimal>("Total");
+
+                    b.Property<int>("VendorInvoiceId");
+
+                    b.HasKey("VendorInvoiceLineId");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("CostCenterId");
+
+                    b.HasIndex("TaxId");
+
+                    b.HasIndex("VendorInvoiceId");
+
+                    b.ToTable("VendorInvoiceLine");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.VendorOfCustomer", b =>
@@ -13639,9 +13729,34 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("CostCenterId");
 
+                    b.HasOne("ERPAPI.Models.PurchaseOrder", "PurchaseOrder")
+                        .WithMany()
+                        .HasForeignKey("PurchaseOrderId");
+
                     b.HasOne("ERPAPI.Models.Vendor", "Vendor")
                         .WithMany()
                         .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("ERPAPI.Models.VendorInvoiceLine", b =>
+                {
+                    b.HasOne("ERPAPI.Models.Accounting", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
+                        .WithMany()
+                        .HasForeignKey("CostCenterId");
+
+                    b.HasOne("ERPAPI.Models.Tax", "Tax")
+                        .WithMany()
+                        .HasForeignKey("TaxId");
+
+                    b.HasOne("ERPAPI.Models.VendorInvoice", "VendorInvoice")
+                        .WithMany("VendorInvoiceLine")
+                        .HasForeignKey("VendorInvoiceId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -145,7 +145,7 @@ namespace ERPAPI.Controllers
         /// <param name="_RetentionReceipt"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<RetentionReceipt>> Insert([FromBody]RetentionReceipt _RetentionReceipt)
+        public async Task<ActionResult<RetentionReceipt>> Insert([FromBody]RetentionReceiptDTO _RetentionReceipt)
         {
             RetentionReceipt _RetentionReceiptq = new RetentionReceipt();
             try
@@ -168,7 +168,6 @@ namespace ERPAPI.Controllers
                         _context.NumeracionSAR.Update(numeracionSAR);
 
                         _context.RetentionReceipt.Add(_RetentionReceiptq);
-
                         Vendor vendor = _context.Vendor.Where(q =>q.VendorId == _RetentionReceiptq.VendorId).FirstOrDefault();
                         if (vendor != null) {
                             _RetentionReceiptq.VendorName = vendor.VendorName;
@@ -178,6 +177,11 @@ namespace ERPAPI.Controllers
                         VendorInvoice vendorInvoice = _context.VendorInvoice.Where(q => q.VendorInvoiceId == _RetentionReceiptq.VendorInvoiceId).FirstOrDefault();
                         if (vendorInvoice != null)
                         {
+                            //Verifica si marca factura sigue disponible para una retencion posterior
+                            if (!_RetentionReceipt.PendienteRetencion)
+                            {
+                                vendorInvoice.RetecionPendiente = false;
+                            }
                             _RetentionReceiptq.CAIDocumento = vendorInvoice.CAI;
                             _RetentionReceiptq.NoCorrelativoDocumento= vendorInvoice.NumeroDEI;
                             _RetentionReceiptq.FechaLimiteEmision = vendorInvoice.FechaLimiteEmision;
