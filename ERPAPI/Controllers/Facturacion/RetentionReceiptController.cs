@@ -178,13 +178,10 @@ namespace ERPAPI.Controllers
                         if (vendorInvoice != null)
                         {
                             //Verifica si marca factura sigue disponible para una retencion posterior
-                            if (!_RetentionReceipt.PendienteRetencion)
+                            if (!_RetentionReceipt.RetecionPendiente)
                             {
                                 vendorInvoice.RetecionPendiente = false;
                             }
-                            _RetentionReceiptq.CAIDocumento = vendorInvoice.CAI;
-                            _RetentionReceiptq.NoCorrelativoDocumento= vendorInvoice.NumeroDEI;
-                            _RetentionReceiptq.FechaLimiteEmision = vendorInvoice.FechaLimiteEmision;
                         }
 
 

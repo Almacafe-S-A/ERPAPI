@@ -113,7 +113,8 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.VendorInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId) && p.RetecionPendiente && p.AplicaRetencion).OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
+                    Items = await _context.VendorInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId) && p.RetecionPendiente && p.AplicaRetencion)
+                        .OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
                 }
                 else
                 {

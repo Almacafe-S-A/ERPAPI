@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230911203519_VendorInvoicRetetion")]
+    partial class VendorInvoicRetetion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -9770,6 +9772,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<DateTime>("FechaEmision");
 
+                    b.Property<DateTime>("FechaLimiteDocumento");
+
                     b.Property<DateTime?>("FechaLimiteEmision");
 
                     b.Property<DateTime>("FechaModificacion");
@@ -10423,10 +10427,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("CuentaContablePorCobrarNombre");
 
-                    b.Property<long?>("CuentaImpuestoPagadoId");
-
-                    b.Property<string>("CuentaImpuestoPagadoNombre");
-
                     b.Property<long?>("CuentaImpuestoporCobrarId");
 
                     b.Property<long?>("CuentaImpuestoporPagarId");
@@ -10450,8 +10450,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("UsuarioModificacion");
 
                     b.HasKey("TaxId");
-
-                    b.HasIndex("CuentaImpuestoPagadoId");
 
                     b.HasIndex("CuentaImpuestoporCobrarId");
 
@@ -13555,10 +13553,6 @@ namespace ERPAPI.Migrations
 
             modelBuilder.Entity("ERPAPI.Models.Tax", b =>
                 {
-                    b.HasOne("ERPAPI.Models.Accounting", "CuentaImpuestoPagado")
-                        .WithMany()
-                        .HasForeignKey("CuentaImpuestoPagadoId");
-
                     b.HasOne("ERPAPI.Models.Accounting", "CuentaContableIngresos")
                         .WithMany()
                         .HasForeignKey("CuentaImpuestoporCobrarId");
