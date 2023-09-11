@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230911193130_ImpuestoPagado")]
+    partial class ImpuestoPagado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -9792,10 +9794,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("RetentionTaxDescription");
 
-                    b.Property<string>("TaxDescription");
-
-                    b.Property<long?>("TaxId");
-
                     b.Property<double>("TaxableBase");
 
                     b.Property<double>("TotalAmount");
@@ -9811,8 +9809,6 @@ namespace ERPAPI.Migrations
                     b.Property<string>("VendorName");
 
                     b.HasKey("RetentionReceiptId");
-
-                    b.HasIndex("TaxId");
 
                     b.ToTable("RetentionReceipt");
                 });
@@ -13473,13 +13469,6 @@ namespace ERPAPI.Migrations
                         .WithMany()
                         .HasForeignKey("UnitOfMeasureId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ERPAPI.Models.RetentionReceipt", b =>
-                {
-                    b.HasOne("ERPAPI.Models.Tax", "Tax")
-                        .WithMany()
-                        .HasForeignKey("TaxId");
                 });
 
             modelBuilder.Entity("ERPAPI.Models.SalesOrder", b =>

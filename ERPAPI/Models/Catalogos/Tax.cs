@@ -31,6 +31,11 @@ namespace ERPAPI.Models
         public string CuentaContablePorCobrarNombre { get; set; }
         [ForeignKey("CuentaImpuestoporPagarId")]
         public Accounting CuentaContablePorCobrar { get; set; }
+
+        public Int64? CuentaImpuestoPagadoId { get; set; }
+        public string CuentaImpuestoPagadoNombre { get; set; }
+        [ForeignKey("CuentaImpuestoPagadoId")]
+        public Accounting CuentaImpuestoPagado { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
