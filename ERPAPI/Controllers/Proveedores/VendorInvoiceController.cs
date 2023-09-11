@@ -119,6 +119,156 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Aprueba una factura de proveedores
+        ///
+        /// </summary>
+        /// <returns></returns>
+         [HttpGet("[action]/{VendorInvoiceId}")]
+        public async Task<ActionResult<JournalEntry>> Aprobar(int vendorInvoiceId) {
+            try
+            {
+                Periodo periodo = new Periodo();
+                periodo = periodo.PeriodoActivo(_context);
+
+                VendorInvoice vendorInvoice = new VendorInvoice();
+                vendorInvoice = await _context.VendorInvoice
+                    .Where(q => q.VendorInvoiceId == vendorInvoiceId).FirstOrDefaultAsync();
+                if (vendorInvoice == null)
+                {
+                    return NotFound();
+                }
+
+                vendorInvoice.IdEstado = 6;
+                vendorInvoice.Estado = "Aprobado";
+
+
+                JournalEntry _je = new JournalEntry
+                {
+                    Date = vendorInvoice.VendorInvoiceDate,
+                    Memo = $"Factura de Compra a Proveedor No. {vendorInvoice.VendorInvoiceId} a proveedor {vendorInvoice.VendorName}",
+                    DatePosted = vendorInvoice.VendorInvoiceDate,
+                    ModifiedDate = DateTime.Now,
+                    CreatedDate = DateTime.Now,
+                    ModifiedUser = vendorInvoice.UsuarioModificacion,
+                    CreatedUser = vendorInvoice.UsuarioCreacion,
+                    PartyId = Convert.ToInt32(vendorInvoice.VendorId),
+                    PartyTypeName = vendorInvoice.VendorName,
+                    TotalDebit = vendorInvoice.Total,
+                    TotalCredit = vendorInvoice.Total,
+                    PartyTypeId = 3,
+                    PartyName = "Proveedor",
+                    TypeJournalName = "Factura de Compras",
+                    VoucherType = 2,
+                    EstadoId = 6,
+                    EstadoName = "Aprobado",
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento diario",
+                    Periodo = periodo.Anio.ToString(),
+                    PeriodoId = periodo.Id,
+                    Posted = false,
+
+                };
+
+
+
+                Accounting account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdCredito).FirstOrDefaultAsync();
+                _je.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdCredito),
+                    AccountName = $"{account.AccountCode} - {account.AccountName} ",
+                    Description = account.AccountName,
+                    Credit = vendorInvoice.TotalExento + vendorInvoice.TotalGravado,
+                    Debit = 0,
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedUser = vendorInvoice.UsuarioCreacion,
+                    ModifiedUser = vendorInvoice.UsuarioModificacion,
+                    Memo = "",
+                    PartyId = (int)vendorInvoice.VendorId,
+                    PartyName = vendorInvoice.VendorName,
+                    PartyTypeName = "Proveedor",
+                    PartyTypeId = 2,
+                });
+
+                if (vendorInvoice.Tax > 0)
+                {
+                    Tax tax = await _context.Tax.Where(q => q.TaxId == 1).FirstAsync();
+                    Accounting cuentaimpuesto = await _context.Accounting
+                        .Where(acc => acc.AccountId == tax.CuentaImpuestoPagadoId).FirstOrDefaultAsync();
+                    if (cuentaimpuesto == null)
+                    {
+                        return BadRequest("No se ha configurado una cuenta contable para el Impuesto");
+                    }
+                    _je.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = Convert.ToInt32(vendorInvoice.AccountIdCredito),
+                        AccountName = $"{cuentaimpuesto.AccountCode} - {cuentaimpuesto.AccountName} ",
+                        Description = cuentaimpuesto.AccountName,
+                        Credit = vendorInvoice.Tax ,
+                        Debit = 0,
+                        CreatedDate = DateTime.Now,
+                        ModifiedDate = DateTime.Now,
+                        CreatedUser = vendorInvoice.UsuarioCreacion,
+                        ModifiedUser = vendorInvoice.UsuarioModificacion,
+                        Memo = "",
+                        PartyId = (int)vendorInvoice.VendorId,
+                        PartyName = vendorInvoice.VendorName,
+                        PartyTypeName = "Proveedor",
+                        PartyTypeId = 2,
+                    });
+
+                }
+
+
+                account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdGasto).FirstOrDefaultAsync();
+
+
+                _je.JournalEntryLines.Add(new JournalEntryLine
+                {
+                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdGasto),
+                    AccountName = $"{account.AccountCode} - {account.AccountName} ",
+                    Description = account.AccountName,
+                    Credit = 0,
+                    Debit = vendorInvoice.Total,
+                    CostCenterId = Convert.ToInt64(vendorInvoice.CostCenterId),
+                    CostCenterName = vendorInvoice.CostCenterName,
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now,
+                    CreatedUser = vendorInvoice.UsuarioCreacion,
+                    ModifiedUser = vendorInvoice.UsuarioModificacion,
+                    Memo = "",
+                    PartyId = (int)vendorInvoice.VendorId,
+                    PartyName = vendorInvoice.VendorName,
+                    PartyTypeName = "Proveedor",
+                    PartyTypeId = 2,
+                });
+
+                _je.TotalCredit = _je.JournalEntryLines.Sum(s => s.Credit);
+                _je.TotalDebit = _je.JournalEntryLines.Sum(s => s.Debit); ;
+                
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                _context.JournalEntry.Add(_je);
+
+                
+
+                await _context.SaveChangesAsync();
+
+                return await Task.Run(() => Ok(_je));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest( ex.ToString());
+                throw;
+            }
+            
+            
+
+
+        }
 
 
         /// <summary>
@@ -142,6 +292,8 @@ namespace ERPAPI.Controllers
                     let.MascaraSalidaDecimal = "00/100 ";
                     let.ApocoparUnoParteEntera = true;
                     _VendorInvoiceq.TotalLetras = let.ToCustomCardinal((_VendorInvoiceq.Total)).ToUpper();
+                    _VendorInvoiceq.IdEstado = 5;
+                    _VendorInvoiceq.Estado = "Enviado a Aprobación";
 
                     _VendorInvoiceq.RetecionPendiente = _VendorInvoiceq.AplicaRetencion;
                     //obtener proveedor
@@ -159,81 +311,7 @@ namespace ERPAPI.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    Periodo periodo = new Periodo();
-                    periodo = periodo.PeriodoActivo(_context);
-
-                    JournalEntry _je = new JournalEntry
-                    {
-                        Date = _VendorInvoiceq.VendorInvoiceDate,
-                        Memo = "Factura de Compra a Proveedores",
-                        DatePosted = _VendorInvoiceq.VendorInvoiceDate,
-                        ModifiedDate = DateTime.Now,
-                        CreatedDate = DateTime.Now,
-                        ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                        CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                        PartyId = Convert.ToInt32(_VendorInvoiceq.VendorId),
-                        PartyTypeName = _VendorInvoiceq.VendorName,
-                        TotalDebit = _VendorInvoiceq.Total,
-                        TotalCredit = _VendorInvoiceq.Total,                        
-                        PartyTypeId = 3,
-                        PartyName = "Proveedor",
-                        TypeJournalName = "Factura de Compras",
-                        VoucherType = 2,
-                        EstadoId = 5,
-                        EstadoName = "Enviada a Aprobacion",
-                        TypeOfAdjustmentId = 65,
-                        TypeOfAdjustmentName = "Asiento diario",
-                        Periodo = periodo.Anio.ToString(),
-                        PeriodoId = periodo.Id,
-                        Posted = false,
-
-                    };
-
-
-
-                    Accounting account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountIdCredito).FirstOrDefaultAsync();
-                    _je.JournalEntryLines.Add(new JournalEntryLine
-                    {
-                        AccountId = Convert.ToInt32(_VendorInvoiceq.AccountIdCredito),
-                        AccountName = $"{account.AccountCode} - {account.AccountName} ",
-                        Description = account.AccountName,
-                        Credit = _VendorInvoiceq.Total,
-                        Debit = 0,
-                        CreatedDate = DateTime.Now,
-                        ModifiedDate = DateTime.Now,
-                        CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                        ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                        Memo = "",
-                    });
-
-
-                    account = await _context.Accounting.Where(acc => acc.AccountId == _VendorInvoiceq.AccountIdGasto).FirstOrDefaultAsync();
                     
-                    
-                    _je.JournalEntryLines.Add(new JournalEntryLine
-                    {
-                        AccountId = Convert.ToInt32(_VendorInvoiceq.AccountIdGasto),
-                        AccountName = $"{account.AccountCode} - {account.AccountName} ",
-                        Description = account.AccountName,
-                        Credit = 0,
-                        Debit = _VendorInvoiceq.Total,
-                        CostCenterId = Convert.ToInt64(_VendorInvoiceq.CostCenterId),
-                        CostCenterName= _VendorInvoiceq.CostCenterName,
-                        CreatedDate = DateTime.Now,
-                        ModifiedDate = DateTime.Now,
-                        CreatedUser = _VendorInvoiceq.UsuarioCreacion,
-                        ModifiedUser = _VendorInvoiceq.UsuarioModificacion,
-                        Memo = "",
-                    });
-
-                    _je.TotalCredit= _je.JournalEntryLines.Sum(s => s.Credit);
-                    _je.TotalDebit= _je.JournalEntryLines.Sum(s => s.Debit); ;
-
-                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
-
-                    _context.JournalEntry.Add(_je);
-
-                    await _context.SaveChangesAsync();
 
                     transaction.Commit();
                 }
@@ -273,7 +351,7 @@ namespace ERPAPI.Controllers
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
-                //_context.VendorInvoice.Update(_VendorInvoiceq);
+                //_context.VendorInvoice.Update(vendorInvoice);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
