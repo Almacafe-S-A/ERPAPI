@@ -23,8 +23,6 @@ namespace ERPAPI.Models
         [Display(Name = "No Correlativo")]
         public string NoCorrelativoDocumento { get; set; }
 
-        public DateTime FechaLimiteDocumento { get; set; }
-
         public string CAIDocumento { get; set; }
 
         [Display(Name = "CAI")]
@@ -90,11 +88,11 @@ namespace ERPAPI.Models
         public Tax Tax { get; set; }
         public string TaxDescription { get; set; }
 
+        public string VendorInvoice { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
-
     }
 
 
