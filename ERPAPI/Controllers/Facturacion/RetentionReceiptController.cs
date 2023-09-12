@@ -182,6 +182,11 @@ namespace ERPAPI.Controllers
                             {
                                 vendorInvoice.RetecionPendiente = false;
                             }
+                            //Asigna los valores del documento relacionado
+                            _RetentionReceiptq.CAIDocumento = vendorInvoice.CAI;
+                            _RetentionReceiptq.NoCorrelativoDocumento = vendorInvoice.NumeroDEI;
+                            _RetentionReceiptq.FechaLimiteDocumento = vendorInvoice.FechaLimiteEmision;
+                            
                         }
 
 

@@ -25,6 +25,8 @@ namespace ERPAPI.Models
 
         public string CAIDocumento { get; set; }
 
+        public DateTime FechaLimiteDocumento { get; set; }
+
         [Display(Name = "CAI")]
         public string CAI { get; set; }
 
