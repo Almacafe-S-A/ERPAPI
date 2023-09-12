@@ -90,6 +90,8 @@ namespace ERPAPI.Models
         public Tax Tax { get; set; }
         public string TaxDescription { get; set; }
 
+        public int? Impreso { get; set; }
+
         public string VendorInvoice { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
