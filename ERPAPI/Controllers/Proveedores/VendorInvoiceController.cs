@@ -113,7 +113,8 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.VendorInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId) && p.RetecionPendiente && p.AplicaRetencion)
+                    Items = await _context.VendorInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId) 
+                    && p.RetecionPendiente && p.AplicaRetencion )
                         .OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
                 }
                 else
@@ -182,7 +183,7 @@ namespace ERPAPI.Controllers
                 JournalEntry _je = new JournalEntry
                 {
                     Date = vendorInvoice.VendorInvoiceDate,
-                    Memo = $"Factura de Compra a Proveedor No. {vendorInvoice.VendorInvoiceId} a proveedor {vendorInvoice.VendorName}",
+                    Memo = $"{vendorInvoice.Remarks} del proveedor {vendorInvoice.VendorName}, Factura #{vendorInvoice.NumeroDEI}",
                     DatePosted = vendorInvoice.VendorInvoiceDate,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
