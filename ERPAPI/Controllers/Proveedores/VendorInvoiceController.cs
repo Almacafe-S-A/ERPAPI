@@ -156,12 +156,76 @@ namespace ERPAPI.Controllers
 
             return await Task.Run(() => Ok(Items));
         }
+
+
         /// <summary>
-        /// Aprueba una factura de proveedores
+        /// Anula una factura de proveedores
         ///
         /// </summary>
         /// <returns></returns>
-         [HttpGet("[action]/{VendorInvoiceId}")]
+        [HttpGet("[action]/{VendorInvoiceId}")]
+        public async Task<ActionResult<JournalEntry>> Anular(int vendorInvoiceId)
+        {
+            try
+            {
+                Periodo periodo = new Periodo();
+                periodo = periodo.PeriodoActivo(_context);
+
+                VendorInvoice vendorInvoice = new VendorInvoice();
+                vendorInvoice = await _context.VendorInvoice
+                    .Where(q => q.VendorInvoiceId == vendorInvoiceId).FirstOrDefaultAsync();
+                if (vendorInvoice == null)
+                {
+                    return NotFound();
+                }
+
+                vendorInvoice.IdEstado = 7;
+                vendorInvoice.Estado = "Anulado";
+                vendorInvoice.UsuarioModificacion = User.Identity.Name;
+                vendorInvoice.FechaModificacion = DateTime.Now;
+
+
+                JournalEntry _je = new JournalEntry();
+                _je = _context.JournalEntry.Where(q => q.JournalEntryId == vendorInvoice.JournalEntryId ).FirstOrDefault();
+
+                if (_je == null) {
+                    return BadRequest("No se encontro el asiento contable para esta factura de proveedores");
+                }
+
+                _je.EstadoId = 7;
+                _je.EstadoName = "Rechazado";
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                
+
+                await _context.SaveChangesAsync();
+
+
+                return await Task.Run(() => Ok(_je));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+                throw;
+            }
+
+
+
+
+        }
+
+
+
+
+
+
+        /// <summary>
+        /// Aprueba una factura de proveedores
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{VendorInvoiceId}")]
         public async Task<ActionResult<JournalEntry>> Aprobar(int vendorInvoiceId) {
             try
             {
@@ -184,11 +248,11 @@ namespace ERPAPI.Controllers
                 {
                     Date = vendorInvoice.VendorInvoiceDate,
                     Memo = $"{vendorInvoice.VendorInvoiceName} del proveedor {vendorInvoice.VendorName}, Factura #{vendorInvoice.NumeroDEI}",
-                    DatePosted = vendorInvoice.VendorInvoiceDate,
+                    DatePosted = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
-                    ModifiedUser = vendorInvoice.UsuarioModificacion,
-                    CreatedUser = vendorInvoice.UsuarioCreacion,
+                    ModifiedUser = User.Identity.Name,
+                    CreatedUser = User.Identity.Name,
                     PartyId = Convert.ToInt32(vendorInvoice.VendorId),
                     PartyTypeName = vendorInvoice.VendorName,
                     TotalDebit = vendorInvoice.Total,
@@ -223,8 +287,8 @@ namespace ERPAPI.Controllers
                     CostCenterName = vendorInvoice.CostCenterName,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
-                    CreatedUser = vendorInvoice.UsuarioCreacion,
-                    ModifiedUser = vendorInvoice.UsuarioModificacion,
+                    CreatedUser = _je.CreatedUser,
+                    ModifiedUser = _je.ModifiedUser,
                     Memo = "",
                     PartyId = (int)vendorInvoice.VendorId,
                     PartyName = vendorInvoice.VendorName,
@@ -251,8 +315,8 @@ namespace ERPAPI.Controllers
                         Debit = vendorInvoice.Tax,
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
-                        CreatedUser = vendorInvoice.UsuarioCreacion,
-                        ModifiedUser = vendorInvoice.UsuarioModificacion,
+                        CreatedUser = _je.CreatedUser,
+                        ModifiedUser = _je.ModifiedUser,
                         Memo = "",
                         PartyId = (int)vendorInvoice.VendorId,
                         PartyName = vendorInvoice.VendorName,
@@ -276,14 +340,14 @@ namespace ERPAPI.Controllers
                     Debit = 0,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
-                    CreatedUser = vendorInvoice.UsuarioCreacion,
-                    ModifiedUser = vendorInvoice.UsuarioModificacion,
+                    CreatedUser = _je.CreatedUser,
+                    ModifiedUser = _je.ModifiedUser,
                     Memo = "",
                     PartyId = (int)vendorInvoice.VendorId,
                     PartyName = vendorInvoice.VendorName,
                     PartyTypeName = "Proveedor",
                     PartyTypeId = 2,
-                });
+                }); ;
 
                 _je.TotalCredit = _je.JournalEntryLines.Sum(s => s.Credit);
                 _je.TotalDebit = _je.JournalEntryLines.Sum(s => s.Debit); ;
@@ -296,6 +360,11 @@ namespace ERPAPI.Controllers
                 
 
                 await _context.SaveChangesAsync();
+
+                vendorInvoice.JournalEntryId= _je.JournalEntryId;
+
+                await _context.SaveChangesAsync();
+
 
                 return await Task.Run(() => Ok(_je));
 
@@ -326,13 +395,15 @@ namespace ERPAPI.Controllers
             {
                 try
                 {
-                   
-                    Numalet let;
-                    let = new Numalet();
-                    let.SeparadorDecimalSalida = "Lempiras";
-                    let.MascaraSalidaDecimal = "00/100 ";
-                    let.ApocoparUnoParteEntera = true;
-                    _VendorInvoiceq.TotalLetras = let.ToCustomCardinal((_VendorInvoiceq.Total)).ToUpper();
+
+                    if (_VendorInvoiceq.ExpirationDate< _VendorInvoiceq.VendorInvoiceDate)
+                    {
+                        return BadRequest("La fecha de vencimiento no puede ser menor a la de emisión");
+                    }
+
+
+                    _VendorInvoiceq.UsuarioCreacion = User.Identity.Name;
+                    _VendorInvoiceq.FechaCreacion = DateTime.Now;
                     _VendorInvoiceq.IdEstado = 5;
                     _VendorInvoiceq.Estado = "Enviado a Aprobación";
 
@@ -382,12 +453,38 @@ namespace ERPAPI.Controllers
             VendorInvoice _VendorInvoiceq = _VendorInvoice;
             try
             {
+                if (_VendorInvoice.ExpirationDate < _VendorInvoice.VendorInvoiceDate)
+                {
+                    return BadRequest("La fecha de vencimiento no puede ser menor a la de emisión");
+                }
+
                 _VendorInvoiceq = await (from c in _context.VendorInvoice
                                  .Where(q => q.VendorInvoiceId == _VendorInvoice.VendorInvoiceId)
                                          select c
                                 ).FirstOrDefaultAsync();
 
+                _VendorInvoice.UsuarioCreacion = _VendorInvoiceq.UsuarioCreacion;
+                _VendorInvoice.FechaCreacion = _VendorInvoiceq.FechaCreacion;
+
                 _context.Entry(_VendorInvoiceq).CurrentValues.SetValues((_VendorInvoice));
+
+                _VendorInvoice.UsuarioModificacion = User.Identity.Name;
+                _VendorInvoice.FechaModificacion = DateTime.Now;
+
+                _VendorInvoiceq.IdEstado = 5;
+                _VendorInvoiceq.Estado = "Enviado a Aprobación";
+
+                _VendorInvoiceq.RetecionPendiente = _VendorInvoiceq.AplicaRetencion;
+                //obtener proveedor
+                Vendor vendor = _context.Vendor.Where(v => v.VendorId == _VendorInvoiceq.VendorId).FirstOrDefault();
+
+                if (vendor != null)
+                {
+                    _VendorInvoiceq.VendorRTN = vendor.RTN;
+                    _VendorInvoiceq.VendorName = vendor.VendorName;
+                }
+
+                
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
