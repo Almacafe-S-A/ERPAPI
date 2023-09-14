@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ERPAPI.Contexts;
+using ERPAPI.Migrations;
 
 namespace ERPAPI.Controllers
 {
@@ -186,14 +187,78 @@ namespace ERPAPI.Controllers
 
 
                 JournalEntry _je = new JournalEntry();
-                _je = _context.JournalEntry.Where(q => q.JournalEntryId == vendorInvoice.JournalEntryId ).FirstOrDefault();
+                _je = _context.JournalEntry.Where(q => q.JournalEntryId == vendorInvoice.JournalEntryId )
+                    .Include(i => i.JournalEntryLines)
+                    .FirstOrDefault();
 
                 if (_je == null) {
                     return BadRequest("No se encontro el asiento contable para esta factura de proveedores");
                 }
 
-                _je.EstadoId = 7;
-                _je.EstadoName = "Rechazado";
+                JournalEntry asientoreversado = new JournalEntry();
+
+                asientoreversado = new JournalEntry
+                {
+                    Date = DateTime.Now,
+                    DatePosted = DateTime.Now,
+                    CreatedUser = User.Identity.Name,
+                    CreatedDate = DateTime.Now,
+                    EstadoId = 6,
+                    EstadoName = "Aprobada",
+                    PeriodoId = periodo.Id,
+                    TypeOfAdjustmentId = 65,
+                    TypeOfAdjustmentName = "Asiento Diario",
+                    JournalEntryLines = new List<JournalEntryLine>(),
+                    Memo = $"Factura #{vendorInvoice.NumeroDEI} anulada a Proveedor {vendorInvoice.VendorName}",
+                    Periodo = periodo.Anio.ToString(),
+                    Posted = false,
+                    TotalCredit = 0,
+                    TotalDebit = 0,
+                    ModifiedDate = DateTime.Now,
+                    ModifiedUser = User.Identity.Name,
+                    VoucherType = 2,
+                    TypeJournalName = "Factura de Compras",
+                    PartyTypeId = 1,
+                    PartyTypeName = "Proveedor",
+                    PartyName = vendorInvoice.VendorName,
+                    PartyId = (int)vendorInvoice.VendorId,
+
+
+
+
+                };
+                foreach (var item in _je.JournalEntryLines)
+                {
+                    asientoreversado.JournalEntryLines.Add(new JournalEntryLine
+                    {
+                        AccountId = item.AccountId,
+                        CostCenterId = item.CostCenterId,
+                        CostCenterName = item.CostCenterName,
+                        CreatedDate = DateTime.Now,
+                        CreatedUser = User.Identity.Name,
+                        Credit = item.Debit,
+                        Debit = item.Credit,
+                        AccountName = item.AccountName,
+                        Description = item.Description,
+                        Memo = item.Memo,
+                        ModifiedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+                        PartyId = item.PartyId,
+                        PartyTypeName = item.PartyTypeName,
+                        PartyName = item.PartyName,
+                        PartyTypeId = item.PartyTypeId,
+
+
+                    });
+                }
+
+
+                asientoreversado.TotalCredit = asientoreversado.JournalEntryLines.Sum(s => s.Credit);
+                asientoreversado.TotalDebit = asientoreversado.JournalEntryLines.Sum(s => s.Debit);
+
+                asientoreversado.JournalEntryLines = asientoreversado.JournalEntryLines.OrderBy(o => o.Credit).ThenBy(t => t.AccountId).ToList();
+
+                _context.JournalEntry.Add(asientoreversado);
 
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
@@ -254,11 +319,11 @@ namespace ERPAPI.Controllers
                     ModifiedUser = User.Identity.Name,
                     CreatedUser = User.Identity.Name,
                     PartyId = Convert.ToInt32(vendorInvoice.VendorId),
-                    PartyTypeName = vendorInvoice.VendorName,
+                    PartyTypeName = "Proveedor",
                     TotalDebit = vendorInvoice.Total,
                     TotalCredit = vendorInvoice.Total,
                     PartyTypeId = 3,
-                    PartyName = "Proveedor",
+                    PartyName = vendorInvoice.VendorName,
                     TypeJournalName = "Factura de Compras",
                     VoucherType = 2,
                     EstadoId = 6,
