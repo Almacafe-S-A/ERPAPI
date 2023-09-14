@@ -13,7 +13,7 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int VendorInvoiceId { get; set; }
         public string VendorInvoiceName { get; set; }
-       
+
 
 
         [Display(Name = "Fecha de Factura")]
@@ -24,7 +24,7 @@ namespace ERPAPI.Models
         [Display(Name = "Fecha de vencimiento")]
         public DateTime ExpirationDate { get; set; }
         [Display(Name = "Tipo de Factura")]
-        public int VendorInvoiceTypeId { get; set; }    
+        public int VendorInvoiceTypeId { get; set; }
 
 
         [Display(Name = "Numero de Factura")]
@@ -33,28 +33,13 @@ namespace ERPAPI.Models
         [Display(Name = "Numero de Factura")]
         public string NumeroDEI { get; set; }
 
-        [Display(Name = "Numero de inicio")]
-        public string NoInicio { get; set; }
-
-        [Display(Name = "Numero fin")]
-        public string NoFin { get; set; }
-
         [Display(Name = "Fecha Limite")]
         public DateTime FechaLimiteEmision { get; set; }
 
         [Display(Name = "Numero de Factura")]
         public string CAI { get; set; }
 
-        [Display(Name = "Numero de orden de compra exenta")]
-        public string NoOCExenta { get; set; }
 
-        [Display(Name = "Numero de constancia de registro de exoneracion")]
-        public string NoConstanciadeRegistro { get; set; }
-
-        [Display(Name = "Numero de registro de la SAG")]
-        public string NoSAG { get; set; }
-
-       
 
         [Display(Name = "Sucursal")]
         public int BranchId { get; set; }
@@ -94,8 +79,6 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
 
-        public string TotalLetras { get; set; }
-
         public Int64 IdEstado { get; set; }
 
         public string Estado { get; set; }
@@ -104,7 +87,7 @@ namespace ERPAPI.Models
 
 
         [ForeignKey("AccountIdCredito")]
-        public Accounting  Accountcredito { get; set; }
+        public Accounting Accountcredito { get; set; }
 
         public string AccountNameCredito { get; set; }
 
@@ -114,6 +97,11 @@ namespace ERPAPI.Models
         public Accounting AccountGasto { get; set; }
 
         public string AccountNameGasto { get; set; }
+
+        public Int64? JournalEntryId { get; set; }
+
+        [ForeignKey("JournalEntryId")]
+        public JournalEntry JournalEntry { get; set; }
 
 
         public Int64? CostCenterId { get; set; }
