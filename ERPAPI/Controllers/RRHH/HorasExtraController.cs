@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
+using ERPAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,13 +27,14 @@ namespace ERPAPI.Controllers
             this.logger = logger;
         }
 
-        [HttpGet("[action]/{fecha}/{todos}")]
-        public async Task<ActionResult> GetHorasExtrasFecha(DateTime fecha, int todos)
+        [HttpGet("[action]/{Fecha}/{Todos}")]
+        public async Task<ActionResult> GetHorasExtrasFecha(DateTime Fecha, int Todos)
         {
             try
             {
-                DateTime fechaBusqueda = new DateTime(fecha.Year, fecha.Month, fecha.Day, 0, 0, 0);
-                if (todos == 1)
+
+                DateTime fechaBusqueda = new DateTime(Fecha.Year, Fecha.Month, Fecha.Day);
+                if (Todos == 1)
                 {
                     var horas = await context.HorasExtrasBiometrico
                         .Include(e => e.Empleado)
