@@ -183,7 +183,7 @@ namespace ERPAPI.Controllers
                 JournalEntry _je = new JournalEntry
                 {
                     Date = vendorInvoice.VendorInvoiceDate,
-                    Memo = $"{vendorInvoice.Remarks} del proveedor {vendorInvoice.VendorName}, Factura #{vendorInvoice.NumeroDEI}",
+                    Memo = $"{vendorInvoice.VendorInvoiceName} del proveedor {vendorInvoice.VendorName}, Factura #{vendorInvoice.NumeroDEI}",
                     DatePosted = vendorInvoice.VendorInvoiceDate,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
@@ -209,14 +209,17 @@ namespace ERPAPI.Controllers
 
 
 
-                Accounting account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdCredito).FirstOrDefaultAsync();
+                Accounting account = new Accounting();
+
                 _je.JournalEntryLines.Add(new JournalEntryLine
                 {
-                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdCredito),
+                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdGasto),
                     AccountName = $"{account.AccountCode} - {account.AccountName} ",
                     Description = account.AccountName,
-                    Credit = vendorInvoice.TotalExento + vendorInvoice.TotalGravado,
-                    Debit = 0,
+                    Credit = 0,
+                    Debit = vendorInvoice.TotalExento + vendorInvoice.TotalGravado,
+                    CostCenterId = Convert.ToInt64(vendorInvoice.CostCenterId),
+                    CostCenterName = vendorInvoice.CostCenterName,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedUser = vendorInvoice.UsuarioCreacion,
@@ -227,6 +230,7 @@ namespace ERPAPI.Controllers
                     PartyTypeName = "Proveedor",
                     PartyTypeId = 2,
                 });
+
 
                 if (vendorInvoice.Tax > 0)
                 {
@@ -242,8 +246,8 @@ namespace ERPAPI.Controllers
                         AccountId = Convert.ToInt32(vendorInvoice.AccountIdCredito),
                         AccountName = $"{cuentaimpuesto.AccountCode} - {cuentaimpuesto.AccountName} ",
                         Description = cuentaimpuesto.AccountName,
-                        Credit = vendorInvoice.Tax ,
-                        Debit = 0,
+                        Credit = 0 ,
+                        Debit = vendorInvoice.Tax,
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
                         CreatedUser = vendorInvoice.UsuarioCreacion,
@@ -261,15 +265,16 @@ namespace ERPAPI.Controllers
                 account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdGasto).FirstOrDefaultAsync();
 
 
+                
+
+                account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdCredito).FirstOrDefaultAsync();
                 _je.JournalEntryLines.Add(new JournalEntryLine
                 {
-                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdGasto),
+                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdCredito),
                     AccountName = $"{account.AccountCode} - {account.AccountName} ",
                     Description = account.AccountName,
-                    Credit = 0,
-                    Debit = vendorInvoice.Total,
-                    CostCenterId = Convert.ToInt64(vendorInvoice.CostCenterId),
-                    CostCenterName = vendorInvoice.CostCenterName,
+                    Credit = vendorInvoice.Total,
+                    Debit = 0,
                     CreatedDate = DateTime.Now,
                     ModifiedDate = DateTime.Now,
                     CreatedUser = vendorInvoice.UsuarioCreacion,
