@@ -211,6 +211,7 @@ namespace ERPAPI.Controllers
 
                 Accounting account = new Accounting();
 
+                account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdGasto).FirstOrDefaultAsync();
                 _je.JournalEntryLines.Add(new JournalEntryLine
                 {
                     AccountId = Convert.ToInt32(vendorInvoice.AccountIdGasto),
@@ -262,9 +263,7 @@ namespace ERPAPI.Controllers
                 }
 
 
-                account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdGasto).FirstOrDefaultAsync();
-
-
+                
                 
 
                 account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdCredito).FirstOrDefaultAsync();
