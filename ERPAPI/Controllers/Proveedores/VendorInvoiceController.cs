@@ -115,7 +115,7 @@ namespace ERPAPI.Controllers
                 if (branchlist.Count > 0)
                 {
                     Items = await _context.VendorInvoice.Where(p => branchlist.Any(b => p.BranchId == b.BranchId) 
-                    && p.RetecionPendiente && p.AplicaRetencion )
+                    && p.RetecionPendiente && p.AplicaRetencion && p.IdEstado == 6 )
                         .OrderByDescending(b => b.VendorInvoiceId).ToListAsync();
                 }
                 else
@@ -313,7 +313,7 @@ namespace ERPAPI.Controllers
                 {
                     Date = vendorInvoice.VendorInvoiceDate,
                     Memo = $"{vendorInvoice.VendorInvoiceName} del proveedor {vendorInvoice.VendorName}, Factura #{vendorInvoice.NumeroDEI}",
-                    DatePosted = DateTime.Now,
+                    DatePosted = vendorInvoice.VendorInvoiceDate,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
