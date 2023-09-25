@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230923154721_HorarioCambioEstado")]
+    partial class HorarioCambioEstado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -9779,8 +9781,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("IdTipoDocumento");
 
-                    b.Property<int?>("Impreso");
-
                     b.Property<string>("NoCorrelativoDocumento");
 
                     b.Property<string>("NumeroDEI");
@@ -10882,7 +10882,15 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("Impreso");
 
-                    b.Property<long?>("JournalEntryId");
+                    b.Property<string>("NoConstanciadeRegistro");
+
+                    b.Property<string>("NoFin");
+
+                    b.Property<string>("NoInicio");
+
+                    b.Property<string>("NoOCExenta");
+
+                    b.Property<string>("NoSAG");
 
                     b.Property<string>("NumeroDEI");
 
@@ -10905,6 +10913,8 @@ namespace ERPAPI.Migrations
 
                     b.Property<decimal>("TotalGravado")
                         .HasColumnType("Money");
+
+                    b.Property<string>("TotalLetras");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -10931,8 +10941,6 @@ namespace ERPAPI.Migrations
                     b.HasIndex("AccountIdGasto");
 
                     b.HasIndex("CostCenterId");
-
-                    b.HasIndex("JournalEntryId");
 
                     b.HasIndex("VendorId");
 
@@ -13643,10 +13651,6 @@ namespace ERPAPI.Migrations
                     b.HasOne("ERPAPI.Models.CostCenter", "CostCenter")
                         .WithMany()
                         .HasForeignKey("CostCenterId");
-
-                    b.HasOne("ERPAPI.Models.JournalEntry", "JournalEntry")
-                        .WithMany()
-                        .HasForeignKey("JournalEntryId");
 
                     b.HasOne("ERPAPI.Models.Vendor", "Vendor")
                         .WithMany()
