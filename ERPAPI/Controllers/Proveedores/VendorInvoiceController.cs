@@ -311,11 +311,11 @@ namespace ERPAPI.Controllers
 
                 JournalEntry _je = new JournalEntry
                 {
-                    Date = vendorInvoice.VendorInvoiceDate  ,
+                    Date =   DateTime.Now,
                     Memo = $"{vendorInvoice.VendorInvoiceName} del proveedor {vendorInvoice.VendorName}, Factura #{vendorInvoice.NumeroDEI}",
-                    DatePosted = DateTime.Now,
+                    DatePosted = vendorInvoice.VendorInvoiceDate,
                     ModifiedDate = DateTime.Now,
-                    CreatedDate = vendorInvoice.VendorInvoiceDate,
+                    CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
                     CreatedUser = User.Identity.Name,
                     PartyId = Convert.ToInt32(vendorInvoice.VendorId),
