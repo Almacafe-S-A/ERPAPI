@@ -24,7 +24,7 @@ namespace ERPAPI.Helpers
             {
                 return await Task.Run(()=>DateTime.ParseExact(cadena, "hh:mm tt", CultureInfo.InvariantCulture));
             }
-            return await Task.Run(() => DateTime.ParseExact(cadena, "hh:mm", CultureInfo.InvariantCulture));
+            return await Task.Run(() => DateTime.ParseExact(cadena, "HH:mm", CultureInfo.InvariantCulture));
         }
     }
 }

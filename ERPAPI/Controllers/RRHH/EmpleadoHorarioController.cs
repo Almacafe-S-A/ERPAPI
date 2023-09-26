@@ -95,7 +95,8 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var registros = await context.EmpleadoHorarios.Include(e => e.Empleado)
+                var registros = await context.EmpleadoHorarios
+                    .Include(e => e.Empleado)
                     .Include(h => h.HorarioEmpleado)
                     .Include(e=>e.Estado)
                     .ToListAsync();
