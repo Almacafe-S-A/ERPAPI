@@ -22,7 +22,7 @@ using ERPMVC.Helpers;
 
 namespace ERPAPI.Controllers
 {
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/GoodsReceived")]
     [ApiController]
     public class GoodsReceivedController : Controller
