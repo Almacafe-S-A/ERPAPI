@@ -59,16 +59,16 @@ namespace ERPAPI.Controllers
                         {
                             throw new Exception("Empleado no existe en asignado a un codigo de biometrico");
                         }
-
                         det.IdEmpleado = relacion.EmpleadoId;
 
+                        //SI ENCUENTRA UNA INASISTENCIA EN EL PARA EL EMPLEADO PARA LA FECHA QUE SE CARGO EL BIOMETRICO, CAMBIA LA INASISTENCIA A ANULADA
                         var inasistencia = await
                             context.Inasistencias.FirstOrDefaultAsync(
                                 i => i.Fecha.Equals(biometrico.Fecha) && i.IdEmpleado == det.IdEmpleado);
 
                         if (inasistencia != null)
                         {
-                            inasistencia.IdEstado = 81;
+                            inasistencia.IdEstado = 81; //81 = ESTADO ANULADO
                         }
                     }
                 }
@@ -167,6 +167,22 @@ namespace ERPAPI.Controllers
                             {
                                 context.Inasistencias.Remove(inasistencia);
                             }
+                            else
+                            {
+                                var registro = new ControlAsistencias()
+                                {
+                                    Id = 0,
+                                    IdEmpleado = detalle.IdEmpleado,
+                                    Fecha = detalle.FechaHora,
+                                    TipoAsistencia = 83,
+                                    Dia = ((int)biometrico.Fecha.DayOfWeek),
+                                    FechaCreacion = DateTime.Now,
+                                    UsuarioCreacion = User.Identity.Name,
+                                    FechaModificacion = DateTime.Now,
+                                    UsuarioModificacion = User.Identity.Name
+                                };
+                                context.ControlAsistencias.Add(registro);
+                                }
 
                             if (detalle.Tipo.ToUpper().Equals("E"))
                             {
@@ -211,6 +227,7 @@ namespace ERPAPI.Controllers
                                         await context.SaveChangesAsync();
                                     }
                                 }
+                               
                             }
                             else
                             {

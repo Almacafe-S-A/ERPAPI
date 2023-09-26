@@ -33,7 +33,7 @@ namespace ERPAPI.Controllers
             var empleados = await (from emp in context.Employees
                 where !context.DetallesBiometricos.Any(
                         d => d.Encabezado.Fecha.Equals(fecha) && d.Encabezado.IdEstado == 62 && d.IdEmpleado == emp.IdEmpleado) && 
-                      !context.Inasistencias.Any(i=> i.Fecha.Equals(fecha) && i.IdEmpleado == emp.IdEmpleado)
+                      !context.Inasistencias.Any(i=> i.Fecha.Equals(fecha) && i.IdEmpleado == emp.IdEmpleado && emp.IdEstado == 1)
                 select emp).ToListAsync();
 
             foreach (var emp in empleados)
@@ -45,7 +45,7 @@ namespace ERPAPI.Controllers
                     IdEmpleado = emp.IdEmpleado,
                     Observacion = "",
                     TipoInasistencia = 150,
-                    IdEstado = 80,
+                    IdEstado = 80,//ESTADO 80 CREADO
                     FechaCreacion = DateTime.Today,
                     FechaModificacion = DateTime.Today,
                     UsuarioCreacion = "",
@@ -53,7 +53,7 @@ namespace ERPAPI.Controllers
                                         };
 
                 context.Inasistencias.Add(registro);
-            }
+                            }
 
             await context.SaveChangesAsync();
         }
@@ -68,7 +68,7 @@ namespace ERPAPI.Controllers
                     .Include(e=>e.Estado)
                     .Include(e=>e.Tipo)
                     .Include(e=>e.Empleado)
-                    .Where(i => i.Fecha.Equals(fecha) && i.IdEstado != 81).ToListAsync();
+                    .Where(i => i.Fecha.Equals(fecha) && i.IdEstado != 81).ToListAsync();//81 ESTADO ANULADO
                 return Ok(inasistencias);
             }
             catch (Exception ex)
@@ -117,7 +117,20 @@ namespace ERPAPI.Controllers
                 if (registroExistente == null)
                     throw new Exception("Inasistencia a actualizar no existe.");
                 registroExistente.IdEstado = 82;
-
+                //SE GUARDA REGISTRO DE ASISTENCIA EN EL CONTROLADOR DE INASISTENCIA
+                var asistencias = new ControlAsistencias()
+                {
+                    Id = 0,
+                    IdEmpleado = registroExistente.IdEmpleado,
+                    Fecha = registroExistente.Fecha,
+                    TipoAsistencia = idTipo,
+                    Dia = ((int)registroExistente.Fecha.DayOfWeek),
+                    FechaCreacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioModificacion = User.Identity.Name
+                };
+                context.ControlAsistencias.Add(asistencias);
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(context, logger, User.Identity.Name).SetAuditor();
 
@@ -139,7 +152,7 @@ namespace ERPAPI.Controllers
                 var registroExistente = await context.Inasistencias.FirstOrDefaultAsync(i => i.Id == idInasistencia);
                 if (registroExistente == null)
                     throw new Exception("Inasistencia a actualizar no existe.");
-                registroExistente.IdEstado = 83;
+                registroExistente.IdEstado = 83; //ESTADO 83 = RECHAZADO
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(context, logger, User.Identity.Name).SetAuditor();
