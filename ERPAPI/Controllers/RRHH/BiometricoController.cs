@@ -229,7 +229,7 @@ namespace ERPAPI.Controllers
                                 }
                                
                             }
-                            else
+                            if(detalle.Tipo.Equals("1"))
                             {
                                 //Salidas
                                 var horasalidaHorario = await Util.ParseHora(horario.HoraFinal);
