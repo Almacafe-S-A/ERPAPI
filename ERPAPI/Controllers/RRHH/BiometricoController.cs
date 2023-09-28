@@ -35,10 +35,10 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == biometrico.Fecha.Date).FirstOrDefault();
+                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == biometrico.Fecha.Date && biometrico.IdEstado == 62).FirstOrDefault();
                 if (biometricofecha != null)
                 {
-                    return BadRequest("Ya existe una carga para esta fecha");
+                    return BadRequest("Ya existe una carga aprobada para esta fecha");
                 }
 
 
@@ -184,7 +184,7 @@ namespace ERPAPI.Controllers
                                 context.ControlAsistencias.Add(registro);
                                 }
 
-                            if (detalle.Tipo.ToUpper().Equals("E"))
+                            if (detalle.Tipo.ToUpper().Equals("ENTRADA"))
                             {
                                 //Entradas
                                 var horaEntradaHorario = await Util.ParseHora(horario.HoraInicio);
@@ -229,7 +229,7 @@ namespace ERPAPI.Controllers
                                 }
                                
                             }
-                            if(detalle.Tipo.Equals("1"))
+                            if(detalle.Tipo.Equals("SALIDA"))
                             {
                                 //Salidas
                                 var horasalidaHorario = await Util.ParseHora(horario.HoraFinal);
