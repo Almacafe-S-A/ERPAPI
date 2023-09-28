@@ -184,7 +184,7 @@ namespace ERPAPI.Controllers
                                 context.ControlAsistencias.Add(registro);
                                 }
 
-                            if (detalle.Tipo.ToUpper().Equals("ENTRADA"))
+                            if (detalle.Tipo.Equals("Entrada"))
                             {
                                 //Entradas
                                 var horaEntradaHorario = await Util.ParseHora(horario.HoraInicio);
@@ -229,7 +229,7 @@ namespace ERPAPI.Controllers
                                 }
                                
                             }
-                            if(detalle.Tipo.Equals("SALIDA"))
+                            if(detalle.Tipo.Equals("Salida"))
                             {
                                 //Salidas
                                 var horasalidaHorario = await Util.ParseHora(horario.HoraFinal);
