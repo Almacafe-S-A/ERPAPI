@@ -36,10 +36,10 @@ namespace ERPAPI.Controllers
                 if (registro.Id == 0)
                 {
                     var verificador =
-                        await context.EmpleadoHorarios.FirstOrDefaultAsync(r => r.EmpleadoId == registro.EmpleadoId);
+                        await context.EmpleadoHorarios.FirstOrDefaultAsync(r => r.EmpleadoId == registro.EmpleadoId && r.HorarioId == registro.HorarioId);
                     if (verificador != null)
                     {
-                        throw new Exception("No se puede asignar más de un horario a un empleado");
+                        throw new Exception("No se puede asignar el mismo horario al empleado");
                     }
 
                     context.EmpleadoHorarios.Add(registro);
