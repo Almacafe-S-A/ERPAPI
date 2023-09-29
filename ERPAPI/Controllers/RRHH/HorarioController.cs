@@ -48,10 +48,10 @@ namespace ERPAPI.Controllers
                 }
                 else
                 {
-                    Horario horarioExistente = await context.Horarios.FirstOrDefaultAsync(f => f.Id == horario.Id);
-                    if (horarioExistente == null)
+                    Horario horarioExistente = await context.Horarios.FirstOrDefaultAsync(f => f.Id == horario.Id || f.Nombre == horario.Nombre);
+                    if (horarioExistente != null)
                     {
-                        throw new Exception("Registro de horario a actualizar no existe");
+                        throw new Exception("Registro de horario existente");
                     }
 
                     context.Entry(horarioExistente).CurrentValues.SetValues(horario);
