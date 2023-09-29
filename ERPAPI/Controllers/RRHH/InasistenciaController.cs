@@ -33,7 +33,7 @@ namespace ERPAPI.Controllers
             var empleados = await (from emp in context.Employees
                 where !context.DetallesBiometricos.Any(
                         d => d.Encabezado.Fecha.Equals(fecha) && d.Encabezado.IdEstado == 62 && d.IdEmpleado == emp.IdEmpleado) && 
-                      !context.Inasistencias.Any(i=> i.Fecha.Equals(fecha) && i.IdEmpleado == emp.IdEmpleado && emp.IdEstado == 1)
+                      !context.Inasistencias.Any(i=> i.Fecha.Equals(fecha) && i.IdEmpleado == emp.IdEmpleado)
                 select emp).ToListAsync();
 
             foreach (var emp in empleados)
@@ -44,7 +44,7 @@ namespace ERPAPI.Controllers
                     Fecha=fecha,
                     IdEmpleado = emp.IdEmpleado,
                     Observacion = "",
-                    TipoInasistencia = 150,
+                    TipoInasistencia = 13,
                     IdEstado = 80,//ESTADO 80 CREADO
                     FechaCreacion = DateTime.Today,
                     FechaModificacion = DateTime.Today,
@@ -68,7 +68,7 @@ namespace ERPAPI.Controllers
                     .Include(e=>e.Estado)
                     .Include(e=>e.Tipo)
                     .Include(e=>e.Empleado)
-                    .Where(i => i.Fecha.Equals(fecha) && i.IdEstado != 81).ToListAsync();//81 ESTADO ANULADO
+                    .Where(i => i.Fecha.Equals(fecha) && i.IdEstado != 81 && i.Empleado.IdEstado == 1).ToListAsync();//81 ESTADO ANULADO
                 return Ok(inasistencias);
             }
             catch (Exception ex)
@@ -117,6 +117,8 @@ namespace ERPAPI.Controllers
                 if (registroExistente == null)
                     throw new Exception("Inasistencia a actualizar no existe.");
                 registroExistente.IdEstado = 82;
+                registroExistente.Observacion = comentario;
+                registroExistente.TipoInasistencia = idTipo;
                 //SE GUARDA REGISTRO DE ASISTENCIA EN EL CONTROLADOR DE INASISTENCIA
                 var asistencias = new ControlAsistencias()
                 {

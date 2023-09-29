@@ -33,6 +33,8 @@ namespace ERPAPI.Controllers
                 var asignaciones = await (from emp in context.Employees
                     join asg in context.EmpleadosBiometrico on emp.IdEmpleado equals asg.EmpleadoId into easg
                     from empasg in easg.DefaultIfEmpty()
+                    where (emp.IdEstado == 1) // Agrega la condición IdEstado == 1 aquí
+
                     select new EmpleadoBiometricoAsignacionDTO()
                            {
                                EmpleadoId = emp.IdEmpleado,
