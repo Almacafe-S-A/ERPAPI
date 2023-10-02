@@ -366,10 +366,12 @@ namespace ERPAPI.Controllers
                             TipoDocumento = "Recibo de Pago",
                             
                         });
-                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                        
 
                         var resppuesta = GeneraAsiento(_InvoicePaymentsq);
                         JournalEntry asiento = resppuesta.Result.Value as JournalEntry;
+
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                         await _context.SaveChangesAsync();
 
