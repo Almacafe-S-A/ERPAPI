@@ -776,7 +776,7 @@ namespace ERPAPI.Controllers
 
                     partida.JournalEntryLines.Add(new JournalEntryLine
                     {
-                        AccountId = (int)relation.CuentaContableIngresosId,
+                        AccountId = (int)relation.CuentaContableIdPorCobrar,
                         AccountName = relation.CuentaContablePorCobrarNombre,
                         CostCenterId = centrocosto.CostCenterId,
                         CostCenterName = centrocosto.CostCenterName,
