@@ -366,10 +366,12 @@ namespace ERPAPI.Controllers
                             TipoDocumento = "Recibo de Pago",
                             
                         });
-                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                        
 
                         var resppuesta = GeneraAsiento(_InvoicePaymentsq);
                         JournalEntry asiento = resppuesta.Result.Value as JournalEntry;
+
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                         await _context.SaveChangesAsync();
 
@@ -776,7 +778,7 @@ namespace ERPAPI.Controllers
 
                     partida.JournalEntryLines.Add(new JournalEntryLine
                     {
-                        AccountId = (int)relation.CuentaContableIngresosId,
+                        AccountId = (int)relation.CuentaContableIdPorCobrar,
                         AccountName = relation.CuentaContablePorCobrarNombre,
                         CostCenterId = centrocosto.CostCenterId,
                         CostCenterName = centrocosto.CostCenterName,
