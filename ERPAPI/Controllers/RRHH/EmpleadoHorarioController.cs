@@ -99,6 +99,7 @@ namespace ERPAPI.Controllers
                     .Include(e => e.Empleado)
                     .Include(h => h.HorarioEmpleado)
                     .Include(e=>e.Estado)
+                    .OrderBy(e => e.Empleado.IdEmpleado) // Ordena por IdEmpleado
                     .ToListAsync();
                 return Ok(registros);
             }
