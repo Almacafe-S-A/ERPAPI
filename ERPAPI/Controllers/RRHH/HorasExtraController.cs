@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 namespace ERPAPI.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
+    [Route("api/HorasExtra")]
     [ApiController]
     public class HorasExtraController : ControllerBase
     {
@@ -107,6 +107,32 @@ namespace ERPAPI.Controllers
             {
                 logger.LogError(ex, "Error al rechazar la hora extra");
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("[action]")]
+        public async Task<ActionResult<HorasExtraController>> Update(HorasExtraBiometrico horasExtra)
+        {
+            try
+            {
+                HorasExtraBiometrico horasExtraExistente = await context.HorasExtrasBiometrico.FirstOrDefaultAsync(f => f.Id == horasExtra.Id);
+                if (horasExtraExistente == null)
+                {
+                    return NotFound("Registro de Hora Extra a actualizar no existe");
+                }
+                // Actualizar las propiedades del feriado existente con los valores del feriado recibido
+                context.Entry(horasExtraExistente).CurrentValues.SetValues(horasExtra);
+
+                // Actualizar los datos de auditoría
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
+                await context.SaveChangesAsync();
+                return Ok(horasExtraExistente);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al actualizar el registro de Hora Extra");
+                return BadRequest("Error al actualizar el registro de Hora Extra");
             }
         }
     }
