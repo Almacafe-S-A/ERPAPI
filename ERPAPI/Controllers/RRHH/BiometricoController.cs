@@ -118,7 +118,7 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var registros = await context.DetallesBiometricos.Include(e=> e.Empleado).Where(b => b.Encabezado.Id == IdBiometrico).ToListAsync();
+                var registros = await context.DetallesBiometricos.Include(e=> e.Empleado).Where(b => b.Encabezado.Id == IdBiometrico).OrderBy(b => b.IdEmpleado).ThenBy(b => b.Tipo).ToListAsync();
                 return Ok(registros);
             }
             catch (Exception ex)
