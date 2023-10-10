@@ -35,10 +35,10 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == biometrico.Fecha.Date && biometrico.IdEstado == 62).FirstOrDefault();
+                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == biometrico.Fecha.Date).FirstOrDefault();
                 if (biometricofecha != null)
                 {
-                    return BadRequest("Ya existe una carga aprobada para esta fecha");
+                    throw new Exception("Ya existe una carga aprobada para esta fecha");
                 }
 
 
