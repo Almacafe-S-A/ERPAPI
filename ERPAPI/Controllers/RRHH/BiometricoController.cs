@@ -38,7 +38,7 @@ namespace ERPAPI.Controllers
                 var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == biometrico.Fecha.Date).FirstOrDefault();
                 if (biometricofecha != null)
                 {
-                    throw new Exception("Ya existe una carga aprobada para esta fecha");
+                    throw new Exception("Ya existe una carga para esta fecha");
                 }
 
 
