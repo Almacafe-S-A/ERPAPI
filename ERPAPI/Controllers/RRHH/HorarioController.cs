@@ -31,45 +31,6 @@ namespace ERPAPI.Controllers
             this.logger = logger;
         }
 
-        [HttpPost("[action]")]
-        public async Task<ActionResult> Guardar(Horario horario)
-        {
-            try
-            {
-                if (horario.Id == 0)
-                {
-                    context.Horarios.Add(horario);
-
-                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
-
-                    await context.SaveChangesAsync();
-                    return Ok(horario);
-                }
-                else
-                {
-                    Horario horarioExistente = await context.Horarios.FirstOrDefaultAsync(f => f.Id == horario.Id || f.Nombre == horario.Nombre);
-                    if (horarioExistente != null)
-                    {
-                        throw new Exception("Registro de horario existente");
-                    }
-
-                    context.Entry(horarioExistente).CurrentValues.SetValues(horario);
-
-                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
-
-                    await context.SaveChangesAsync();
-                    return Ok(horarioExistente);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error al guardar el registro del horario");
-                return BadRequest(ex);
-            }
-        }
-
         [HttpGet("[action]")]
         public async Task<ActionResult> GetHorarios()
         {
@@ -121,7 +82,11 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = context.Database.BeginTransaction())
                 {
-
+                    Horario horarioExistente = await context.Horarios.FirstOrDefaultAsync(f => f.Nombre == _Horario.Nombre);
+                    if (horarioExistente != null)
+                    {
+                        throw new Exception("Registro de horario existente");
+                    }
                     try
                     {
                         _Horarioq = _Horario;
@@ -156,53 +121,48 @@ namespace ERPAPI.Controllers
         }
 
 
-
-        /// <param name="_Horario"></param>
-        /// <returns></returns>
         [HttpPut("[action]")]
         public async Task<ActionResult<Horario>> Update([FromBody] Horario _Horario)
         {
-            Horario _Horarioq =  new Horario();
+            Horario _Horarioq = new Horario();
             try
             {
                 using (var transaction = context.Database.BeginTransaction())
                 {
-                    try
+                    _Horarioq = await context.Horarios.FirstOrDefaultAsync(q => q.Id == _Horario.Id);
+
+                    if (_Horarioq == null)
                     {
-                        _Horarioq = await (from c in context.Horarios
-                                  .Where(q => q.Id == _Horario.Id)
-                                           select c
-                                 ).FirstOrDefaultAsync();
-
-                        _Horario.UsuarioCreacion = _Horarioq.UsuarioCreacion;
-                        _Horario.FechaCreacion = _Horarioq.FechaCreacion;
-                        _Horario.FechaModificacion = DateTime.Now;
-                        _Horario.UsuarioModificacion = User.Identity.Name;
-
-                        context.Entry(_Horarioq).CurrentValues.SetValues((_Horario));
-
-                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                        new appAuditor(context, logger, User.Identity.Name).SetAuditor();                      
-                        await context.SaveChangesAsync();
-                        transaction.Commit();
-
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        throw ex;
+                        return NotFound("Horario no encontrado");
                     }
 
+                    // Verifica si el nombre ha cambiado antes de validar su existencia
+                        Horario horarioExistente = await context.Horarios.FirstOrDefaultAsync(f => f.Nombre == _Horario.Nombre && f.Id != _Horario.Id);
+
+                        if (horarioExistente != null)
+                        {
+                            return BadRequest("Nombre de horario ya existe");
+                        }
+
+                    _Horario.UsuarioCreacion = _Horarioq.UsuarioCreacion;
+                    _Horario.FechaCreacion = _Horarioq.FechaCreacion;
+                    _Horario.FechaModificacion = DateTime.Now;
+                    _Horario.UsuarioModificacion = User.Identity.Name;
+                    context.Entry(_Horarioq).CurrentValues.SetValues(_Horario);
+
+                    //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                    new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+                    await context.SaveChangesAsync();
+                    transaction.Commit();
                 }
             }
             catch (Exception ex)
             {
-
-                logger.LogError($"Ocurrio un error: {ex.ToString()}");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                logger.LogError($"Ocurrió un error: {ex.ToString()}");
+                return BadRequest($"Ocurrió un error: {ex.Message}");
             }
 
-            return await Task.Run(() => Ok(_Horarioq));
+            return Ok(_Horarioq);
         }
 
 
