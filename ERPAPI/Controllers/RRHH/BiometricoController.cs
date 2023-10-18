@@ -38,7 +38,7 @@ namespace ERPAPI.Controllers
                 var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == biometrico.Fecha.Date).FirstOrDefault();
                 if (biometricofecha != null)
                 {
-                    return BadRequest("Ya existe una carga para esta fecha");
+                    throw new Exception("Ya existe una carga para esta fecha");
                 }
 
 
@@ -159,7 +159,6 @@ namespace ERPAPI.Controllers
                             var horario = horarioEmpleado.HorarioEmpleado;
                             
                             //Eliminar inasistencia si existe
-
                             var inasistencia = await context.Inasistencias.FirstOrDefaultAsync(r =>
                                 r.Fecha.Equals(biometrico.Fecha) && r.IdEmpleado == detalle.IdEmpleado);
 
@@ -167,9 +166,10 @@ namespace ERPAPI.Controllers
                             {
                                 context.Inasistencias.Remove(inasistencia);
                             }
-                            else
+
+                            if (detalle.Tipo.Equals("Entrada"))
                             {
-                                var registro = new ControlAsistencias()
+                                var registroentrada = new ControlAsistencias()
                                 {
                                     Id = 0,
                                     IdEmpleado = detalle.IdEmpleado,
@@ -181,11 +181,7 @@ namespace ERPAPI.Controllers
                                     FechaModificacion = DateTime.Now,
                                     UsuarioModificacion = User.Identity.Name
                                 };
-                                context.ControlAsistencias.Add(registro);
-                                }
-
-                            if (detalle.Tipo.Equals("Entrada"))
-                            {
+                                context.ControlAsistencias.Add(registroentrada);
                                 //Entradas
                                 var horaEntradaHorario = await Util.ParseHora(horario.HoraInicio);
                                 var horaEntradaBiometrico = DateTime.Today.AddHours(detalle.FechaHora.Hour)
@@ -206,7 +202,7 @@ namespace ERPAPI.Controllers
                                                             IdBiometrico = biometrico.Id,
                                                             IdEstado = 70
                                                        };
-
+                                        registroentrada.TipoAsistencia = 77;
                                         var registroExistente = await context.LlegadasTardeBiometrico
                                             .Include(b => b.Encabezado)
                                             .FirstOrDefaultAsync(
@@ -227,7 +223,7 @@ namespace ERPAPI.Controllers
                                         await context.SaveChangesAsync();
                                     }
                                 }
-                               
+                                
                             }
                             if(detalle.Tipo.Equals("Salida"))
                             {
