@@ -17,14 +17,9 @@ namespace ERPAPI.Models
         [ForeignKey("PeriodoId")]
         public Periodo Periodo { get; set; }
 
-        [Required]
         public string Nombre { get; set; }
-
-        [Required]
         public DateTime FechaInicio { get; set; }
-        [Required]
         public DateTime FechaFin { get; set; }
-        [Required]
         public long IdEstado { get; set; }
         
         [ForeignKey("IdEstado")]
