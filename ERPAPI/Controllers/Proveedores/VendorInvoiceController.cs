@@ -329,7 +329,7 @@ namespace ERPAPI.Controllers
                     EstadoId = 6,
                     EstadoName = "Aprobado",
                     TypeOfAdjustmentId = 65,
-                    TypeOfAdjustmentName = "Asiento diario",
+                    TypeOfAdjustmentName = "Asiento de diario",
                     Periodo = periodo.Anio.ToString(),
                     PeriodoId = periodo.Id,
                     Posted = false,
@@ -343,7 +343,7 @@ namespace ERPAPI.Controllers
                 account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdGasto).FirstOrDefaultAsync();
                 _je.JournalEntryLines.Add(new JournalEntryLine
                 {
-                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdGasto),
+                    AccountId = Convert.ToInt32(account.AccountId),
                     AccountName = $"{account.AccountCode} - {account.AccountName} ",
                     Description = account.AccountName,
                     Credit = 0,
@@ -373,7 +373,7 @@ namespace ERPAPI.Controllers
                     }
                     _je.JournalEntryLines.Add(new JournalEntryLine
                     {
-                        AccountId = Convert.ToInt32(vendorInvoice.AccountIdCredito),
+                        AccountId = Convert.ToInt32(cuentaimpuesto.AccountId),
                         AccountName = $"{cuentaimpuesto.AccountCode} - {cuentaimpuesto.AccountName} ",
                         Description = cuentaimpuesto.AccountName,
                         Credit = 0 ,
@@ -398,7 +398,7 @@ namespace ERPAPI.Controllers
                 account = await _context.Accounting.Where(acc => acc.AccountId == vendorInvoice.AccountIdCredito).FirstOrDefaultAsync();
                 _je.JournalEntryLines.Add(new JournalEntryLine
                 {
-                    AccountId = Convert.ToInt32(vendorInvoice.AccountIdCredito),
+                    AccountId = Convert.ToInt32(account.AccountId),
                     AccountName = $"{account.AccountCode} - {account.AccountName} ",
                     Description = account.AccountName,
                     Credit = vendorInvoice.Total,
