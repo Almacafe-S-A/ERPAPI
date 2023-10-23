@@ -70,7 +70,7 @@ namespace ERPAPI.Controllers
             List<Deduction> Items = new List<Deduction>();
             try
             {
-                Items = await _context.Deduction.OrderBy(b => b.DeductionId).ToListAsync();
+                Items = await _context.Deduction.OrderByDescending(b => b.DeductionId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -206,8 +206,8 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
             return await Task.Run(() => Ok(_Deductionq));
+
         }
 
         /// <summary>

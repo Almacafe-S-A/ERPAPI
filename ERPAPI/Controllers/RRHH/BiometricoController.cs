@@ -200,7 +200,7 @@ namespace ERPAPI.Controllers
                                                             Horas = diferencia.Hours,
                                                             Minutos = diferencia.Minutes,
                                                             IdBiometrico = biometrico.Id,
-                                                            IdEstado = 70
+                                                            IdEstado = 97 //Esradp 97 Pendiente de Aprobacion
                                                        };
                                         registroentrada.TipoAsistencia = 77;
                                         var registroExistente = await context.LlegadasTardeBiometrico
