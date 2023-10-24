@@ -8,6 +8,9 @@ namespace ERPAPI.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
+
+        public int No { get; set; }
+
         [ForeignKey("DeductionId")]
         public Deduction Deduction { get; set; }
         public Int64 DeductionId { get; set; }

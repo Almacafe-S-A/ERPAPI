@@ -107,6 +107,31 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+        /// <summary>
+        /// Obtiene los Datos de Deduccion por medio del Id enviado.
+        /// </summary>
+        /// <param name="DeductionId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{DeductionId}")]
+        public async Task<IActionResult> GetDeductionQtiesById(Int64 DeductionId)
+        {
+            List<DeductionQty> Items =new List<DeductionQty>();
+            try
+            {
+                Items = await _context.DeductionQties.Where(q => q.DeductionId == DeductionId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
         /// <summary>
         /// Obtiene el color por la descripcion enviada
         /// </summary>
