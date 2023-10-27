@@ -195,7 +195,7 @@ namespace ERPAPI.Controllers
                                         //Es una llegada tarde
                                         var registro = new LlegadasTardeBiometrico()
                                                        {
-                                                            Id = registroentrada.Id,
+                                                            Id = 0,
                                                             IdEmpleado = detalle.IdEmpleado,
                                                             Horas = diferencia.Hours,
                                                             Minutos = diferencia.Minutes,
