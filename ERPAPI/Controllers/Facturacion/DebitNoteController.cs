@@ -247,13 +247,15 @@ namespace ERPAPI.Controllers
 
                     await _context.SaveChangesAsync();
 
+                    string numero = debitnote.NumeroDEI == "Interna"? debitnote.DebitNoteId.ToString(): debitnote.NumeroDEI;
+
                     _context.CustomerAcccountStatus.Add(new CustomerAcccountStatus
                     {
                         Credito = 0,
                         Fecha = DateTime.Now,
                         CustomerName = debitnote.CustomerName,
                         Debito = debitnote.Amount,
-                        Sinopsis = $"Nota de Debito #{debitnote.NumeroDEI} " ,
+                        Sinopsis = $"Nota de Debito #{numero} " ,
                         InvoiceId = debitnote.InvoiceId,
                         NoDocumento = debitnote.NumeroDEI,
                         CustomerId = debitnote.CustomerId,

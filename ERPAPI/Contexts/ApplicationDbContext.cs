@@ -388,6 +388,8 @@ namespace ERP.Contexts
 
         public DbSet<Deduction> Deduction { get; set; }
 
+        public DbSet<DeductionQty> DeductionQties { get; set; }
+
         public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
 
 

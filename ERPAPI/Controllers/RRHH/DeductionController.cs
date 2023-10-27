@@ -70,7 +70,7 @@ namespace ERPAPI.Controllers
             List<Deduction> Items = new List<Deduction>();
             try
             {
-                Items = await _context.Deduction.OrderBy(b => b.DeductionId).ToListAsync();
+                Items = await _context.Deduction.OrderByDescending(b => b.DeductionId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -100,6 +100,31 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Obtiene los Datos de Deduccion por medio del Id enviado.
+        /// </summary>
+        /// <param name="DeductionId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{DeductionId}")]
+        public async Task<IActionResult> GetDeductionQtiesById(Int64 DeductionId)
+        {
+            List<DeductionQty> Items =new List<DeductionQty>();
+            try
+            {
+                Items = await _context.DeductionQties.Where(q => q.DeductionId == DeductionId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
@@ -206,8 +231,8 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
             return await Task.Run(() => Ok(_Deductionq));
+
         }
 
         /// <summary>
