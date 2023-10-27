@@ -195,13 +195,15 @@ namespace ERPAPI.Controllers
                                         //Es una llegada tarde
                                         var registro = new LlegadasTardeBiometrico()
                                                        {
-                                                            Id = 0,
+                                                            Id = registroentrada.Id,
                                                             IdEmpleado = detalle.IdEmpleado,
                                                             Horas = diferencia.Hours,
                                                             Minutos = diferencia.Minutes,
                                                             IdBiometrico = biometrico.Id,
-                                                            IdEstado = 70
-                                                       };
+                                                            IdEstado = 97, //Estado 97 = Pendiente de Aprobacion,
+                                                            Fecha = detalle.FechaHora,
+                                                            Dia = ((int)biometrico.Fecha.DayOfWeek)
+                                        };
                                         registroentrada.TipoAsistencia = 77;
                                         var registroExistente = await context.LlegadasTardeBiometrico
                                             .Include(b => b.Encabezado)

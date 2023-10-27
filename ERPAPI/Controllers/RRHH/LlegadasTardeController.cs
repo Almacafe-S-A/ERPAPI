@@ -71,10 +71,24 @@ namespace ERPAPI.Controllers
                 var registro = await context.LlegadasTardeBiometrico.FirstOrDefaultAsync(r => r.Id == idLlegadaTarde);
                 if (registro == null)
                     throw new Exception("El registro de la llegada tarde a aprobar no existe.");
-                if (registro.IdEstado != 97)
+                if (registro.IdEstado != 97) //Estado 97 = Pendiente de Aprobacion
                     throw new Exception("Solo se puede aprobar registros en estado de Cargado.");
                 registro.IdEstado = 71;
 
+                var registroentrada = new ControlAsistencias()
+                {
+                    //falta revision de id de control de asistencia
+                    Id = 0,
+                    IdEmpleado = registro.IdEmpleado,
+                    Fecha = registro.Fecha,
+                    TipoAsistencia = 83,
+                    Dia = ((int)registro.Fecha.DayOfWeek),
+                    FechaCreacion = DateTime.Now,
+                    UsuarioCreacion = User.Identity.Name,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioModificacion = User.Identity.Name
+                };
+                context.ControlAsistencias.Add(registroentrada);
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(context, logger, User.Identity.Name).SetAuditor();
 
