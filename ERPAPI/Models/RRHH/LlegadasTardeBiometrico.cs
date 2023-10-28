@@ -41,8 +41,8 @@ namespace ERPAPI.Models
         [ForeignKey("IdEstado")]
         public Estados Estado { get; set; }
 
-        public int ControlAsistenciaId { get; set; }
-        [ForeignKey("Id")]
+        public int ? ControlAsistenciaId { get; set; }
+        [ForeignKey("ControlAsistenciaId")]
         public ControlAsistencias ControlAsistencias { get; set; }
     }
 }
