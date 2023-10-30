@@ -131,6 +131,34 @@ namespace ERPAPI.Controllers
                 
                 _Feriadoq = _Feriado;
                 context.Feriados.Add(_Feriadoq);
+                List<Employees> employees = context.Employees.Where(q => q.IdEstado == 1).ToList();
+
+                foreach (var employee in employees)
+                {
+                    
+                        int totalDays = (_Feriadoq.FechaFin - _Feriadoq.FechaInicio).Days;
+
+                        for (int i = 0; i <= totalDays; i++)
+                        {
+                            DateTime currentDate = _Feriadoq.FechaInicio.AddDays(i);
+                            context.ControlAsistencias.Add(new ControlAsistencias
+                            {
+                                Id = 0,
+                                IdEmpleado = employee.IdEmpleado,
+                                Fecha = currentDate,
+                                TipoAsistencia = 79,
+                                Dia = (int)currentDate.DayOfWeek,
+                                FechaCreacion = DateTime.Now,
+                                UsuarioCreacion = User.Identity.Name,
+                                FechaModificacion = DateTime.Now,
+                                UsuarioModificacion = User.Identity.Name
+                            });
+                        }
+                }
+
+                // Save changes to the database
+                context.SaveChanges();
+
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(context, logger, User.Identity.Name).SetAuditor();

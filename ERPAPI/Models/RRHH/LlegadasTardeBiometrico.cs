@@ -25,6 +25,11 @@ namespace ERPAPI.Models
         [Required]
         public int Minutos { get; set; }
 
+        [Display(Name = "Fecha")]
+        public DateTime Fecha { get; set; }
+
+        [Display(Name = "Dia")]
+        public int Dia { get; set; }
         public Biometrico Encabezado { get; set; }
 
         [ForeignKey("IdEmpleado")]
@@ -35,5 +40,9 @@ namespace ERPAPI.Models
 
         [ForeignKey("IdEstado")]
         public Estados Estado { get; set; }
+
+        public int ? ControlAsistenciaId { get; set; }
+        [ForeignKey("ControlAsistenciaId")]
+        public ControlAsistencias ControlAsistencias { get; set; }
     }
 }

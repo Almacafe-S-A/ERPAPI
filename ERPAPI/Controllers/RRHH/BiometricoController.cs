@@ -151,6 +151,10 @@ namespace ERPAPI.Controllers
                         int periodoGraciaSalida = (int) (confGracia.Valordecimal ?? 60);
                         foreach (var detalle in biometrico.Detalle)
                         {
+                            //Se omiten los empleados con tipo de planilla Funcionarios
+                            Employees empleado = context.Employees.Where(q => q.IdEmpleado == detalle.IdEmpleado).FirstOrDefault();
+                            if (empleado.IdTipoPlanilla == 7) continue;
+
                             var horarioEmpleado = await context.EmpleadoHorarios.Include(h => h.HorarioEmpleado)
                                 .FirstOrDefaultAsync(e => e.EmpleadoId == detalle.IdEmpleado);
                             if (horarioEmpleado == null)
@@ -200,8 +204,11 @@ namespace ERPAPI.Controllers
                                                             Horas = diferencia.Hours,
                                                             Minutos = diferencia.Minutes,
                                                             IdBiometrico = biometrico.Id,
-                                                            IdEstado = 97 //Esradp 97 Pendiente de Aprobacion
-                                                       };
+                                                            IdEstado = 97, //Estado 97 = Pendiente de Aprobacion,
+                                                            Fecha = detalle.FechaHora,
+                                                            Dia = ((int)biometrico.Fecha.DayOfWeek),
+                                                            ControlAsistenciaId = registroentrada.Id
+                                        };
                                         registroentrada.TipoAsistencia = 77;
                                         var registroExistente = await context.LlegadasTardeBiometrico
                                             .Include(b => b.Encabezado)
