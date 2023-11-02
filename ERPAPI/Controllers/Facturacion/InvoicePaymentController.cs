@@ -312,8 +312,22 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _InvoicePaymentsq = _InvoicePayments;
+                        //Validaciones
+                        if (_InvoicePaymentsq.MontoPagado<=0)
+                        {
+                            return BadRequest("Espicifique el monto a pagar");
+                        }
+                        string montodetalle = _InvoicePaymentsq.InvoicePaymentsLines.Sum(s => s.MontoPagado).ToString("0.00");
+                        string montopagado = _InvoicePayments.MontoPagado.ToString("0.00");
+                        if (!montodetalle.Equals(montopagado) )
+                        {
+                            return BadRequest("Monto del desposito y el monto pagado del detalle no coinciden");
+                        }
 
-                        _InvoicePaymentsq = _InvoicePayments;
+                        //
+
+
+
                         _InvoicePaymentsq.UsuarioCreacion= User.Identity.Name;
                         _InvoicePaymentsq.FechaCreacion = DateTime.Now;                    
                         _InvoicePaymentsq.Estado = "Aprobado";
