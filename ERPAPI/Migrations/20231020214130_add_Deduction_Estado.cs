@@ -15,7 +15,7 @@ namespace ERPAPI.Migrations
             migrationBuilder.AddColumn<long>(
                 name: "EstadoId",
                 table: "Deduction",
-                nullable: false,
+                nullable: true,
                 defaultValue: 0L);
 
             migrationBuilder.CreateIndex(
