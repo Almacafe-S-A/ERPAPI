@@ -21,6 +21,7 @@ namespace ERPAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Deduction_IdEstado",
                 table: "Deduction",
+                
                 column: "IdEstado");
 
             migrationBuilder.AddForeignKey(
@@ -29,7 +30,7 @@ namespace ERPAPI.Migrations
                 column: "IdEstado",
                 principalTable: "Estados",
                 principalColumn: "IdEstado",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

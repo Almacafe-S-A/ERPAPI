@@ -19,7 +19,7 @@ namespace ERPAPI.Migrations
             migrationBuilder.AddColumn<long>(
                 name: "IdEstado",
                 table: "Deduction",
-                nullable: false,
+                nullable: true,
                 defaultValue: 0L);
 
             migrationBuilder.AddForeignKey(
