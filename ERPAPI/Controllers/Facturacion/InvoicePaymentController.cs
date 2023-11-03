@@ -656,7 +656,7 @@ namespace ERPAPI.Controllers
                 partida = new JournalEntry
                 {
                     Date = DateTime.Now,
-                    DatePosted = DateTime.Now,
+                    DatePosted = pago.FechaPago,
                     CreatedUser = User.Identity.Name,
                     CreatedDate = DateTime.Now,
                     EstadoId = 5,
