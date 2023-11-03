@@ -30,32 +30,56 @@ namespace ERPAPI.Controllers
 
         private async Task GenerarInasistencias(DateTime fecha)
         {
-            var empleados = await (from emp in context.Employees
-                where !context.DetallesBiometricos.Any(
-                        d => d.Encabezado.Fecha.Equals(fecha) && d.Encabezado.IdEstado == 62 && d.IdEmpleado == emp.IdEmpleado) && 
-                      !context.Inasistencias.Any(i=> i.Fecha.Equals(fecha) && i.IdEmpleado == emp.IdEmpleado)
-                select emp).ToListAsync();
-
-            foreach (var emp in empleados)
+            try
             {
-                Inasistencia registro = new Inasistencia()
-                                        {
-                    Id = 0,
-                    Fecha=fecha,
-                    IdEmpleado = emp.IdEmpleado,
-                    Observacion = "",
-                    TipoInasistencia = 13,
-                    IdEstado = 80,//ESTADO 80 CREADO
-                    FechaCreacion = DateTime.Today,
-                    FechaModificacion = DateTime.Today,
-                    UsuarioCreacion = "",
-                    UsuarioModificacion = ""
-                                        };
+                //Solo debe mostrar los empleados si existe la Carga de Biométrico de la fecha consultada.
+                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == fecha.Date).FirstOrDefault();
+                if (biometricofecha == null)
+                {
+                    throw new Exception("No existe una carga biometrica para esta fecha");
+                }
+                var empleados = await (from emp in context.Employees
+                                       where !context.DetallesBiometricos.Any(
+                                               d => d.Encabezado.Fecha.Equals(fecha) && d.Encabezado.IdEstado == 62 && d.IdEmpleado == emp.IdEmpleado) &&
+                      !context.Inasistencias.Any(i=> i.Fecha.Equals(fecha) && i.IdEmpleado == emp.IdEmpleado)
+                                       select emp).ToListAsync();
+                foreach (var emp in empleados)
+                {
+                    var horarioEmpleado = await context.EmpleadoHorarios.Include(h => h.HorarioEmpleado)
+                                                .FirstOrDefaultAsync(e => e.EmpleadoId == emp.IdEmpleado);
 
-                context.Inasistencias.Add(registro);
-                            }
+                    if (horarioEmpleado == null)
+                    {
+                        continue;                   
+                    }
+                    else
+                    {
+                        Inasistencia registro = new Inasistencia()
+                        {
+                            Id = 0,
+                            Fecha = fecha,
+                            IdEmpleado = emp.IdEmpleado,
+                            Observacion = "",
+                            TipoInasistencia = 13,
+                            IdEstado = 97,//ESTADO 97 PENDIENTE DE APROBACION
+                            FechaCreacion = DateTime.Today,
+                            FechaModificacion = DateTime.Today,
+                            UsuarioCreacion = "",
+                            UsuarioModificacion = "",
+                            HoraLlegada = horarioEmpleado.HorarioEmpleado.HoraInicio
+                        };
 
-            await context.SaveChangesAsync();
+                        context.Inasistencias.Add(registro);
+                    }
+                }
+
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error al generar inasistencias: {0}", ex.Message);
+                throw ex;
+            }
         }
 
         [HttpGet("[action]/{fecha}")]
