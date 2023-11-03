@@ -36,6 +36,7 @@ namespace ERPAPI.Models
         [ForeignKey("TipoInasistencia")]
         public ElementoConfiguracion Tipo { get; set; }
 
+        public string HoraLlegada { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public string UsuarioModificacion { get; set; }
