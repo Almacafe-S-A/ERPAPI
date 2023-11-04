@@ -207,7 +207,8 @@ namespace ERPAPI.Controllers
                                                             IdEstado = 97, //Estado 97 = Pendiente de Aprobacion,
                                                             Fecha = detalle.FechaHora,
                                                             Dia = ((int)biometrico.Fecha.DayOfWeek),
-                                                            ControlAsistenciaId = registroentrada.Id
+                                                            ControlAsistenciaId = registroentrada.Id,
+                                                            HoraLlegada = horario.HoraInicio
                                         };
                                         registroentrada.TipoAsistencia = 77;
                                         var registroExistente = await context.LlegadasTardeBiometrico
