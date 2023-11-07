@@ -100,9 +100,7 @@ namespace ERPAPI.Controllers
         }
         /// <summary>
         /// Obtiene el Listado de Planillas activo
-        /// El estado define cuales son los cai activos
         /// </summary>
-        /// <returns></returns>
         [HttpGet("[action]")]
         public async Task<IActionResult> GetTipoPlanillasActivo()
         {
@@ -118,7 +116,6 @@ namespace ERPAPI.Controllers
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
-            //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
         /// <summary>
