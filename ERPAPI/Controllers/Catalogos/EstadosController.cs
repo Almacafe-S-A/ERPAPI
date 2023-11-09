@@ -102,6 +102,24 @@ namespace ERPAPI.Controllers
 
         }
 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Estados>> GetActivosBonificacion()
+        {
+            try
+            {
+
+                Estados Items = await _context.Estados.Where(q => q.IdEstado == 98 && q.IdEstado == 99).FirstOrDefaultAsync();
+                return Ok(Items);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+        }
+
         [HttpGet("[action]/{NombreEstado}/{IdConfi}")]
         public async Task<IActionResult> GetEstadoByNombreEstado(String NombreEstado, Int64 IdConfi)
         {

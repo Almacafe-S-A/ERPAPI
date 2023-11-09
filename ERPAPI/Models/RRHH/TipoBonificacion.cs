@@ -16,6 +16,8 @@ namespace ERPAPI.Models
         [Required]
         public string Nombre { get; set; }
 
+        public double Valor { get; set; }
+
         [Required]
         public long EstadoId { get; set; }
 

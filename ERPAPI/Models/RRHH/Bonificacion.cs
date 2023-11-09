@@ -22,6 +22,8 @@ namespace ERPAPI.Models
         [Required]
         public double Monto { get; set; }
 
+        public double Cantidad { get; set; }
+
         [Required]
         public DateTime FechaBono { get; set; }
 
@@ -48,5 +50,9 @@ namespace ERPAPI.Models
 
         [Required]
         public string UsuarioCreacion { get; set; }
+
+        public string NombreQuincena { get; set; }
+
+        public long Quincena { get; set; }
     }
 }
