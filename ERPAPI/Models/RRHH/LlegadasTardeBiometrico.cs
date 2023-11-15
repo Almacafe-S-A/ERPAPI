@@ -24,6 +24,7 @@ namespace ERPAPI.Models
 
         [Required]
         public int Minutos { get; set; }
+        public string HoraLlegada { get; set; }
 
         [Display(Name = "Fecha")]
         public DateTime Fecha { get; set; }

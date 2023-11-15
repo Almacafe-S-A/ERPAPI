@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231104060633_LlegadasTarde_HoraLlegada_string")]
+    partial class LlegadasTarde_HoraLlegada_string
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -957,8 +959,6 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("Cantidad");
-
                     b.Property<long>("EmpleadoId");
 
                     b.Property<long>("EstadoId");
@@ -970,10 +970,6 @@ namespace ERPAPI.Migrations
                     b.Property<DateTime>("FechaModificacion");
 
                     b.Property<double>("Monto");
-
-                    b.Property<string>("NombreQuincena");
-
-                    b.Property<long>("Quincena");
 
                     b.Property<long>("TipoId");
 
@@ -10531,8 +10527,6 @@ namespace ERPAPI.Migrations
 
                     b.Property<string>("UsuarioModificacion")
                         .IsRequired();
-
-                    b.Property<double>("Valor");
 
                     b.HasKey("Id");
 

@@ -98,7 +98,26 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return await Task.Run(() => Ok(Items));
         }
+        /// <summary>
+        /// Obtiene el Listado de Planillas activo
+        /// </summary>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetTipoPlanillasActivo()
+        {
+            List<TipoPlanillas> Items = new List<TipoPlanillas>();
+            try
+            {
+                Items = await _context.TipoPlanillas.Include(e => e.Estado).Include(c => c.Categoria).Where(q => q.EstadoId == 1).ToListAsync();
+            }
+            catch (Exception ex)
+            {
 
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene los Datos de la Planilla por medio del Id enviado.
         /// </summary>
