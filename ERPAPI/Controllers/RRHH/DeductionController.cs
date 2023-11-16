@@ -254,6 +254,11 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
+                    Deduction registroExistente = await _context.Deduction.FirstOrDefaultAsync(f => f.Description == _Deduction.Description);
+                    if (registroExistente != null)
+                    {
+                        throw new Exception("Registro de Deducción existente.");
+                    }
                     try
                     {
                         _Deductionq = await (from c in _context.Deduction
