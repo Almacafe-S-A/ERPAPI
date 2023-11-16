@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Controllers
 {
@@ -189,6 +190,11 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
+                    Deduction registroExistente = await _context.Deduction.FirstOrDefaultAsync(f => f.Description == _Deduction.Description);
+                    if (registroExistente != null)
+                    {
+                        throw new Exception("Registro de Deducción existente.");
+                    }
                     try
                     {
                         _Deductionq = _Deduction;
@@ -248,6 +254,11 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
+                    Deduction registroExistente = await _context.Deduction.FirstOrDefaultAsync(f => f.Description == _Deduction.Description);
+                    if (registroExistente != null)
+                    {
+                        throw new Exception("Registro de Deducción existente.");
+                    }
                     try
                     {
                         _Deductionq = await (from c in _context.Deduction
