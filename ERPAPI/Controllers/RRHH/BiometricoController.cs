@@ -146,7 +146,7 @@ namespace ERPAPI.Controllers
                     try
                     {
                         var confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 140);
-                        int periodoGraciaEntrada = (int) (confGracia.Valordecimal ?? 5);
+                        int periodoGraciaEntrada = (int) (confGracia.Valordecimal-4 ?? 1);
                         confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 141);
                         int periodoGraciaSalida = (int) (confGracia.Valordecimal ?? 60);
                         foreach (var detalle in biometrico.Detalle)
@@ -166,6 +166,9 @@ namespace ERPAPI.Controllers
                             var inasistencia = await context.Inasistencias.FirstOrDefaultAsync(r =>
                                 r.Fecha.Equals(biometrico.Fecha) && r.IdEmpleado == detalle.IdEmpleado);
 
+                            //contextos para buscar los horarios de los empleados
+                            var empleadohorario = await context.EmpleadoHorarios.FirstOrDefaultAsync(r => r.EmpleadoId == detalle.IdEmpleado);
+                            var diasempleados = await context.Horarios.FirstOrDefaultAsync(r => r.Id == empleadohorario.HorarioId);
                             if (inasistencia != null)
                             {
                                 context.Inasistencias.Remove(inasistencia);
@@ -231,7 +234,16 @@ namespace ERPAPI.Controllers
                                         await context.SaveChangesAsync();
                                     }
                                 }
-                                
+                                //Validacion Los empleados que no trabajan el sábado y mostrar como Descanso,
+                                if (diasempleados.Sabado == false && registroentrada.Dia == 6)
+                                {
+                                    registroentrada.TipoAsistencia = 78;
+                                }
+                                //Validacion Los empleados que no trabajan el domingo y mostrar como Descanso,
+                                if (diasempleados.Domingo == false && registroentrada.Dia == 0)
+                                {
+                                    registroentrada.TipoAsistencia = 78;
+                                }
                             }
                             if(detalle.Tipo.Equals("Salida"))
                             {
