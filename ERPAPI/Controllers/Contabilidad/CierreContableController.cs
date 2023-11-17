@@ -982,7 +982,7 @@ namespace ERPAPI.Controllers
                                 .ToListAsync();
                             foreach (var item in activos)
                             {
-                                var adepreciar = item.TotalDepreciated;                                
+                                decimal adepreciar = item.TotalDepreciated;                                
 
                                 
                                 var depreciacion = _context.DepreciationFixedAsset.Where(q => q.FixedAssetId == item.FixedAssetId && q.Year == pfecha.Year).FirstOrDefault();
@@ -1033,7 +1033,7 @@ namespace ERPAPI.Controllers
                                         }
                                         if (item.AssetDate.Day > 14 && item.AssetDate.Day < 30 && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
                                         {
-                                            adepreciar = (item.TotalDepreciated / 30) * item.AssetDate.Day;
+                                            adepreciar =Decimal.Round( ((item.TotalDepreciated / 30) * item.AssetDate.Day),2);
                                         }
                                     }
 
@@ -1094,7 +1094,6 @@ namespace ERPAPI.Controllers
                             _je.JournalEntryLines.Add(jelDepreciacion);
                             _je.JournalEntryLines.Add(jelDepreciacionMensual);
 
-                            //_je.JournalEntryLines = new List<JournalEntryLine>();
 
 
                         }
