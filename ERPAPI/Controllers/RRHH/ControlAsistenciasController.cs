@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ERPAPI.Contexts;
+using SQLitePCL;
 
 namespace ERPAPI.Controllers
 {
@@ -172,11 +173,14 @@ namespace ERPAPI.Controllers
             List<ControlAsistencias> Items = new List<ControlAsistencias>();
             try
             {
+                DateTime FechaFinMes = new DateTime(_ControlAsistenciasP.FechaModificacion.Year, _ControlAsistenciasP.FechaModificacion.Month,
+                    DateTime.DaysInMonth( _ControlAsistenciasP.FechaModificacion.Year, _ControlAsistenciasP.FechaModificacion.Month));
+
                 Items = await _context.ControlAsistencias.Include(i => i.Empleado)
                                 .Where(
                                 q => q.Empleado.IdEstado == 1 &&
                                     q.Fecha >= _ControlAsistenciasP.FechaCreacion &&
-                                    q.Fecha <= _ControlAsistenciasP.FechaModificacion
+                                    q.Fecha <= FechaFinMes
                                 ).ToListAsync();
                 ;
             }
