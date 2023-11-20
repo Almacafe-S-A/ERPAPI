@@ -974,10 +974,11 @@ namespace ERPAPI.Controllers
                             var activos = await _context.FixedAsset
                                 .Where(p => p.IdEstado != 109
                                 && p.IdEstado != 110
-                                && p.Estado != "Depreciado"
+                                && (p.Estado != "Depreciado")
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
                                 && p.AssetDate <= pfecha
+                                
                                 )
                                 .ToListAsync();
                             foreach (var item in activos)
@@ -1033,7 +1034,7 @@ namespace ERPAPI.Controllers
                                         }
                                         if (item.AssetDate.Day > 14 && item.AssetDate.Day < 30 && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
                                         {
-                                            adepreciar =Decimal.Round( ((item.TotalDepreciated / 30) * item.AssetDate.Day),2);
+                                            adepreciar =((item.TotalDepreciated / 30) * item.AssetDate.Day);
                                         }
                                     }
 
@@ -1071,6 +1072,7 @@ namespace ERPAPI.Controllers
                                 {
                                     item.IdEstado = 109;
                                     item.Estado = "Depreciado";
+                                    item.DepreciatedDate= pfecha;
                                     item.NetValue = item.ResidualValue;
                                 }
                                 else
