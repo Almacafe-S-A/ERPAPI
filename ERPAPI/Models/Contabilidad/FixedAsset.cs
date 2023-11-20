@@ -112,6 +112,7 @@ namespace ERPAPI.Models
         public decimal AccumulatedDepreciation { get; set; }
 
         public DateTime? FechaBaja { get; set; }
+        public DateTime? DepreciatedDate { get; set; }
 
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
