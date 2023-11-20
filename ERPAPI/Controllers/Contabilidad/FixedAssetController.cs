@@ -222,20 +222,18 @@ namespace ERPAPI.Controllers
 
                 Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
 
-                List<BitacoraCierreProcesos> procesos = _context.BitacoraCierreProceso
-                    .Where(q => q.BitacoraCierresContable.PeriodoId == periodo.Id
+                BitacoraCierreProcesos procesos = _context.BitacoraCierreProceso
+                    .Where(q => q.BitacoraCierresContable.Anio == fechabaja.Year
                     && q.PasoCierre == 3
-                    && q.BitacoraCierresContable.Mes == fechabaja.Month)
-                    .Include(i => i.BitacoraCierresContable).ToList();
+                    && q.BitacoraCierresContable.Mes >= fechabaja.Month)
+                    .Include(i => i.BitacoraCierresContable).FirstOrDefault();
 
-                foreach (var item in procesos)
+
+                if (procesos.Estatus == "FINALIZADO")
                 {
-                    if (item.Estatus == "FINALIZADO")
-                    {
-                        return BadRequest("No se Puede dar de baja el activo en la fecha indicada, se ha ejecutado una depreciacion previamente en el mes de baja seleccionado");
-                    }
+                    return BadRequest("No se Puede dar de baja el activo en la fecha indicada, se ha ejecutado una depreciacion previamente en el mes de baja seleccionado");
                 }
-                
+
 
                 if (_FixedAssetq.AssetDate >  _FixedAsset.FechaBaja)
                 {
