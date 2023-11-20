@@ -93,7 +93,7 @@ namespace ERPAPI.Controllers
             cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();
 
             DateTime fechainiciocierre = new DateTime((int)cierre.Anio, (int)cierre.Mes, 1 );
-            DateTime fechafinalcierre = new DateTime((int)cierre.Anio, (int)cierre.Mes,DateTime.DaysInMonth( fechainiciocierre));
+            DateTime fechafinalcierre = new DateTime((int)cierre.Anio, (int)cierre.Mes,DateTime.DaysInMonth((int)cierre.Anio, (int)cierre.Mes),23,59,59);
 
             Notifications notifications = new Notifications
             {
