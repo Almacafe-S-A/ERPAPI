@@ -86,10 +86,15 @@ namespace ERPAPI.Controllers
 
             _context.SaveChanges();
 
+            
+
 
             BitacoraCierreContable cierre = new BitacoraCierreContable();
-            cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();         
-            
+            cierre = _context.BitacoraCierreContable.Where(q => q.Id == proceso.IdBitacoraCierre).FirstOrDefault();
+
+            DateTime fechainiciocierre = new DateTime((int)cierre.Anio, (int)cierre.Mes, 1 );
+            DateTime fechafinalcierre = new DateTime((int)cierre.Anio, (int)cierre.Mes,DateTime.DaysInMonth( fechainiciocierre));
+
             Notifications notifications = new Notifications
             {
                 Description = "Ha finalizado el Cierre "+proceso.Proceso,
@@ -125,7 +130,7 @@ namespace ERPAPI.Controllers
 
                 case 3:
                     
-                    await DepreciacionActivosFijos(proceso, cierre, new DateTime((int)cierre.Anio,(int)cierre.Mes,1));
+                    await DepreciacionActivosFijos(proceso, cierre, fechafinalcierre );
                     break;
 
                 case 5:
@@ -972,9 +977,10 @@ namespace ERPAPI.Controllers
 
 
                             var activos = await _context.FixedAsset
-                                .Where(p => p.IdEstado != 109
+                                .Where(
+                                p => p.IdEstado != 109
                                 && p.IdEstado != 110
-                                && (p.Estado != "Depreciado")
+                                && p.Estado != "Depreciado"
                                 && p.FixedAssetGroupId == grupo.FixedAssetGroupId
                                 && p.CenterCostId == costCenter.CostCenterId
                                 && p.AssetDate <= pfecha
