@@ -45,7 +45,7 @@ namespace ERPAPI.Controllers
                                        select emp).ToListAsync();
                 foreach (var emp in empleados)
                 {
-                    var horarioEmpleado = await context.DetallesBiometricos.FirstOrDefaultAsync(e => e.IdEmpleado == emp.IdEmpleado);
+                    var horarioEmpleado = await context.DetallesBiometricos.Where(e => e.FechaHora == fecha).FirstOrDefaultAsync(e => e.IdEmpleado == emp.IdEmpleado);
                     if (horarioEmpleado == null)
                     {
                         continue;                   
