@@ -45,15 +45,16 @@ namespace ERPAPI.Controllers
                                        select emp).ToListAsync();
                 foreach (var emp in empleados)
                 {
-                    var horarioEmpleado = await context.EmpleadoHorarios.Include(h => h.HorarioEmpleado)
-                                                .FirstOrDefaultAsync(e => e.EmpleadoId == emp.IdEmpleado);
-
+                    var horarioEmpleado = await context.DetallesBiometricos.FirstOrDefaultAsync(e => e.IdEmpleado == emp.IdEmpleado);
                     if (horarioEmpleado == null)
                     {
                         continue;                   
                     }
+
                     else
                     {
+                        string horaEmpleadoString = horarioEmpleado.FechaHora.ToString("HH:mm:ss");
+
                         Inasistencia registro = new Inasistencia()
                         {
                             Id = 0,
@@ -66,7 +67,7 @@ namespace ERPAPI.Controllers
                             FechaModificacion = DateTime.Today,
                             UsuarioCreacion = "",
                             UsuarioModificacion = "",
-                            HoraLlegada = horarioEmpleado.HorarioEmpleado.HoraInicio
+                            HoraLlegada = horaEmpleadoString
                         };
 
                         context.Inasistencias.Add(registro);
