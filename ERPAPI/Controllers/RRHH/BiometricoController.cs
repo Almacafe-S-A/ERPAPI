@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ERP.Contexts;
@@ -155,11 +156,17 @@ namespace ERPAPI.Controllers
                             Employees empleado = context.Employees.Where(q => q.IdEmpleado == detalle.IdEmpleado).FirstOrDefault();
                             if (empleado.IdTipoPlanilla == 7) continue;
 
-                            var horarioEmpleado = await context.EmpleadoHorarios.Include(h => h.HorarioEmpleado)
+                            var horarioEmpleado = await context.EmpleadoHorarios.Include(h => h.HorarioEmpleado).Where(q => q.HorarioId == detalle.IdHorario)
                                 .FirstOrDefaultAsync(e => e.EmpleadoId == detalle.IdEmpleado);
                             if (horarioEmpleado == null)
-                                throw new Exception("Empleado sin horario asignado en el archivo del biometrico:" + detalle.Empleado.NombreEmpleado);
-
+                            {
+                                horarioEmpleado = await context.EmpleadoHorarios.Include(h => h.HorarioEmpleado).FirstOrDefaultAsync(e => e.EmpleadoId == detalle.IdEmpleado);
+                                if (horarioEmpleado == null)
+                                {
+                                    throw new Exception("Empleado sin horario asignado en el archivo del biometrico:" + detalle.Empleado.NombreEmpleado);
+                                }
+                            }
+                            detalle.IdHorario = horarioEmpleado.HorarioId;
                             var horario = horarioEmpleado.HorarioEmpleado;
                             
                             //Eliminar inasistencia si existe
