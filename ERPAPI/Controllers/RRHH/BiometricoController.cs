@@ -146,9 +146,9 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        var confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 140);
-                        int periodoGraciaEntrada = (int) (confGracia.Valordecimal-4 ?? 1);
-                        confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 141);
+                        //var confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 140);
+                        int periodoGraciaEntrada = 0;
+                        var confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 141);
                         int periodoGraciaSalida = (int) (confGracia.Valordecimal ?? 60);
                         foreach (var detalle in biometrico.Detalle)
                         {
