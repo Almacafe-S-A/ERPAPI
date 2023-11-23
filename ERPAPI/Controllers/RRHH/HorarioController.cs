@@ -82,10 +82,19 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = context.Database.BeginTransaction())
                 {
-                    Horario horarioExistente = await context.Horarios.FirstOrDefaultAsync(f => f.Nombre == _Horario.Nombre);
-                    if (horarioExistente != null)
+                    // Verifica si _Horario.Nombre está establecido y tiene un valor válido
+                    if (string.IsNullOrEmpty(_Horario.Nombre))
                     {
-                        throw new Exception("Registro de horario existente");
+                        throw new ArgumentNullException(nameof(_Horario.Nombre), "El nombre del horario no puede ser nulo o vacío");
+                    }
+
+                    // Realiza la búsqueda del horario en la base de datos utilizando Where
+                    var horariosExistente = await context.Horarios.Where(f => f.Nombre == _Horario.Nombre).ToListAsync();
+
+                    // Comprueba si se encontraron horarios existentes
+                    if (horariosExistente.Any())
+                    {
+                        return BadRequest("Nombre de horario ya existe");
                     }
                     try
                     {
@@ -112,10 +121,13 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
+                logger.LogError($"Ocurrió un error: {ex.ToString()}");
 
-                logger.LogError($"Ocurrio un error: {ex.ToString()}");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                // Devolver un mensaje de error como JSON al cliente
+                var errorMessage = $"Ocurrió un error: {ex.Message}";
+                return Json(new { error = errorMessage });
             }
+
 
             return await Task.Run(() => Ok(_Horarioq));
         }
@@ -137,9 +149,9 @@ namespace ERPAPI.Controllers
                     }
 
                     // Verifica si el nombre ha cambiado antes de validar su existencia
-                        Horario horarioExistente = await context.Horarios.FirstOrDefaultAsync(f => f.Nombre == _Horario.Nombre && f.Id != _Horario.Id);
+                        var horarioExistente = await context.Horarios.Where(f => f.Nombre == _Horario.Nombre && f.Id != _Horario.Id).ToListAsync();
 
-                        if (horarioExistente != null)
+                        if (horarioExistente .Any())
                         {
                             return BadRequest("Nombre de horario ya existe");
                         }

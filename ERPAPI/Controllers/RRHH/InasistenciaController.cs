@@ -32,11 +32,11 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                //Solo debe mostrar los empleados si existe la Carga de Biométrico de la fecha consultada.
-                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == fecha.Date).FirstOrDefault();
+                //Solo debe mostrar los empleados si existe la Carga de Biométrico aprobada (IdEstado == 62) de la fecha consultada.
+                var biometricofecha = this.context.Biometricos.Where(q => q.Fecha.Date == fecha.Date && q.IdEstado == 62).FirstOrDefault();
                 if (biometricofecha == null)
                 {
-                    throw new Exception("No existe una carga biometrica para esta fecha");
+                    throw new Exception("No existe una carga biometrica aprobada para esta fecha");
                 }
                 var empleados = await (from emp in context.Employees
                                        where !context.DetallesBiometricos.Any(
