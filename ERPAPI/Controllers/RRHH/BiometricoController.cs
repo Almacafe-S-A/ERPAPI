@@ -89,7 +89,7 @@ namespace ERPAPI.Controllers
                 context.Entry(registroExistente).CurrentValues.SetValues(biometrico);
                 await context.SaveChangesAsync();
                 return Ok(biometrico);
-            } 
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error al guardar los registros del biometrico");
@@ -119,7 +119,7 @@ namespace ERPAPI.Controllers
         {
             try
             {
-                var registros = await context.DetallesBiometricos.Include(e=> e.Empleado).Where(b => b.Encabezado.Id == IdBiometrico).OrderBy(b => b.IdEmpleado).ThenBy(b => b.Tipo).ToListAsync();
+                var registros = await context.DetallesBiometricos.Include(e => e.Empleado).Where(b => b.Encabezado.Id == IdBiometrico).OrderBy(b => b.IdEmpleado).ThenBy(b => b.Tipo).ToListAsync();
                 return Ok(registros);
             }
             catch (Exception ex)
@@ -149,9 +149,11 @@ namespace ERPAPI.Controllers
                         //var confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 140);
                         int periodoGraciaEntrada = 0;
                         var confGracia = await context.ElementoConfiguracion.FirstOrDefaultAsync(p => p.Id == 141);
-                        int periodoGraciaSalida = (int) (confGracia.Valordecimal ?? 60);
+                        int periodoGraciaSalida = (int)(confGracia.Valordecimal ?? 60);
                         foreach (var detalle in biometrico.Detalle)
                         {
+                            var horaEntrada = new DateTime();
+                            var horaSalida = new DateTime();
                             //Se omiten los empleados con tipo de planilla Funcionarios
                             Employees empleado = context.Employees.Where(q => q.IdEmpleado == detalle.IdEmpleado).FirstOrDefault();
                             if (empleado.IdTipoPlanilla == 7) continue;
@@ -168,7 +170,7 @@ namespace ERPAPI.Controllers
                             }
                             detalle.IdHorario = horarioEmpleado.HorarioId;
                             var horario = horarioEmpleado.HorarioEmpleado;
-                            
+
                             //Eliminar inasistencia si existe
                             var inasistencia = await context.Inasistencias.FirstOrDefaultAsync(r =>
                                 r.Fecha.Equals(biometrico.Fecha) && r.IdEmpleado == detalle.IdEmpleado);
@@ -198,27 +200,28 @@ namespace ERPAPI.Controllers
                                 context.ControlAsistencias.Add(registroentrada);
                                 //Entradas
                                 var horaEntradaHorario = await Util.ParseHora(horario.HoraInicio);
-                                var horaEntradaBiometrico = DateTime.Today.AddHours(detalle.FechaHora.Hour)
-                                    .AddMinutes(detalle.FechaHora.Minute);
+                                var horaEntradaBiometrico = DateTime.Today.AddHours(detalle.FechaHora.Hour).AddMinutes(detalle.FechaHora.Minute);
+                                horaEntrada = horaEntradaBiometrico;
+                                string horaEntradaString = horaEntradaBiometrico.ToString("HH:mm:ss");
 
                                 if (horaEntradaBiometrico > horaEntradaHorario)
                                 {
                                     var diferencia = horaEntradaBiometrico.Subtract(horaEntradaHorario);
-                                    if (diferencia.Minutes > periodoGraciaEntrada)
+                                    if ((diferencia.Hours * 60 + diferencia.Minutes) >= periodoGraciaEntrada)
                                     {
                                         //Es una llegada tarde
                                         var registro = new LlegadasTardeBiometrico()
-                                                       {
-                                                            Id = 0,
-                                                            IdEmpleado = detalle.IdEmpleado,
-                                                            Horas = diferencia.Hours,
-                                                            Minutos = diferencia.Minutes,
-                                                            IdBiometrico = biometrico.Id,
-                                                            IdEstado = 97, //Estado 97 = Pendiente de Aprobacion,
-                                                            Fecha = detalle.FechaHora,
-                                                            Dia = ((int)biometrico.Fecha.DayOfWeek),
-                                                            ControlAsistenciaId = registroentrada.Id,
-                                                            HoraLlegada = horario.HoraInicio
+                                        {
+                                            Id = 0,
+                                            IdEmpleado = detalle.IdEmpleado,
+                                            Horas = diferencia.Hours,
+                                            Minutos = diferencia.Minutes,
+                                            IdBiometrico = biometrico.Id,
+                                            IdEstado = 97, //Estado 97 = Pendiente de Aprobacion,
+                                            Fecha = detalle.FechaHora,
+                                            Dia = ((int)biometrico.Fecha.DayOfWeek),
+                                            ControlAsistenciaId = registroentrada.Id,
+                                            HoraLlegada = horario.HoraInicio
                                         };
                                         registroentrada.TipoAsistencia = 77;
                                         var registroExistente = await context.LlegadasTardeBiometrico
@@ -226,7 +229,6 @@ namespace ERPAPI.Controllers
                                             .FirstOrDefaultAsync(
                                                 r => r.IdEmpleado == detalle.IdEmpleado &&
                                                      r.Encabezado.Fecha.Equals(biometrico.Fecha));
-
                                         if (registroExistente != null)
                                         {
                                             if (registroExistente.Horas < registro.Horas)
@@ -241,36 +243,24 @@ namespace ERPAPI.Controllers
                                         await context.SaveChangesAsync();
                                     }
                                 }
-                                //Validacion Los empleados que no trabajan el sábado y mostrar como Descanso,
-                                if (diasempleados.Sabado == false && registroentrada.Dia == 6)
+                                else if (horaEntradaBiometrico < horaEntradaHorario)
                                 {
-                                    registroentrada.TipoAsistencia = 78;
-                                }
-                                //Validacion Los empleados que no trabajan el domingo y mostrar como Descanso,
-                                if (diasempleados.Domingo == false && registroentrada.Dia == 0)
-                                {
-                                    registroentrada.TipoAsistencia = 78;
-                                }
-                            }
-                            if(detalle.Tipo.Equals("Salida"))
-                            {
-                                //Salidas
-                                var horasalidaHorario = await Util.ParseHora(horario.HoraFinal);
-                                var horaSalidaBiometrico = DateTime.Today.AddHours(detalle.FechaHora.Hour)
-                                    .AddMinutes(detalle.FechaHora.Minute);
-
-                                if (horaSalidaBiometrico > horasalidaHorario)
-                                {
-                                    var diferencia = horaSalidaBiometrico.Subtract(horasalidaHorario);
-                                    if ((diferencia.Hours * 60 + diferencia.Minutes) >= periodoGraciaSalida)
+                                    if (detalle.Empleado.HorasExtra ?? false)
                                     {
-                                        if (detalle.Empleado.HorasExtra ?? false)
+                                        var diferencia = horaEntradaHorario.Subtract(horaEntradaBiometrico);
+                                        if ((diferencia.Hours * 60 + diferencia.Minutes) >= periodoGraciaEntrada)
                                         {
-                                            //Potencial Hora Extra
+                                            string horasalida = biometrico.Detalle
+                                                .Where(q => q.IdEmpleado == detalle.IdEmpleado &&
+                                                            q.Tipo.Equals("Salida") &&
+                                                            q.FechaHora.Date == biometrico.Fecha.Date)
+                                                .FirstOrDefault()?.FechaHora.ToString("HH:mm:ss") ?? "No se encontró registro de salida";
                                             var registro = new HorasExtraBiometrico()
                                             {
                                                 Id = 0,
                                                 IdEmpleado = detalle.IdEmpleado,
+                                                HoraEntrada = horaEntradaString,
+                                                HoraSalida = horasalida,
                                                 Horas = diferencia.Hours,
                                                 Minutos = diferencia.Minutes,
                                                 IdBiometrico = biometrico.Id,
@@ -284,14 +274,84 @@ namespace ERPAPI.Controllers
 
                                             if (registroExistente != null)
                                             {
-                                                if (registroExistente.Horas < registro.Horas)
-                                                {
-                                                    registroExistente.Horas = registro.Horas;
-                                                    await context.SaveChangesAsync();
-                                                    continue;
-                                                }
-                                            }
+                                                registro.Horas += registroExistente.Horas;
+                                                registro.Minutos += registroExistente.Minutos;
+                                                await context.SaveChangesAsync();
+                                                continue;
 
+                                            }
+                                            context.HorasExtrasBiometrico.Add(registro);
+                                            await context.SaveChangesAsync();
+                                        }
+                                    }
+                                }
+                                //Validacion Los empleados que no trabajan el sábado y mostrar como Descanso,
+                                if (diasempleados.Sabado == false && registroentrada.Dia == 6)
+                                {
+                                    registroentrada.TipoAsistencia = 78;
+                                }
+                                //Validacion Los empleados que no trabajan el domingo y mostrar como Descanso,
+                                if (diasempleados.Domingo == false && registroentrada.Dia == 0)
+                                {
+                                    registroentrada.TipoAsistencia = 78;
+                                }
+                            }
+                            if (detalle.Tipo.Equals("Salida"))
+                            {
+                                //Salidas
+                                var horasalidaHorario = await Util.ParseHora(horario.HoraFinal);
+                                var horaSalidaBiometrico = DateTime.Today.AddHours(detalle.FechaHora.Hour)
+                                    .AddMinutes(detalle.FechaHora.Minute);
+                                horaSalida = horaSalidaBiometrico;
+                                string horaSalidaString = horaSalidaBiometrico.ToString("HH:mm:ss");
+                                if (horaSalidaBiometrico > horasalidaHorario)
+                                {
+                                    var diferencia = horaSalidaBiometrico.Subtract(horasalidaHorario);
+                                    if ((diferencia.Hours * 60 + diferencia.Minutes) >= periodoGraciaSalida)
+                                    {
+                                        if (detalle.Empleado.HorasExtra ?? false)
+                                        {
+                                            string horaentrada = biometrico.Detalle
+                                                .Where(q => q.IdEmpleado == detalle.IdEmpleado &&
+                                                            q.Tipo.Equals("Entrada") &&
+                                                            q.FechaHora.Date == biometrico.Fecha.Date)
+                                                .FirstOrDefault()?.FechaHora.ToString("HH:mm:ss") ?? "No se encontró registro de salida";
+                                            var registro = new HorasExtraBiometrico()
+                                            {
+                                                Id = 0,
+                                                IdEmpleado = detalle.IdEmpleado,
+                                                HoraEntrada = horaentrada,
+                                                HoraSalida = horaSalidaString,
+                                                Horas = diferencia.Hours,
+                                                Minutos = diferencia.Minutes,
+                                                IdBiometrico = biometrico.Id,
+                                                IdEstado = 70
+                                            };
+                                            var registroExistente = await context.HorasExtrasBiometrico
+                                                .Include(b => b.Encabezado)
+                                                .FirstOrDefaultAsync(
+                                                    r => r.IdEmpleado == detalle.IdEmpleado &&
+                                                         r.Encabezado.Fecha.Equals(biometrico.Fecha));
+                                            if (registroExistente != null)
+                                            {
+                                                // Sumar las horas y minutos del registro existente al registro actual
+                                                int totalHoras = registro.Horas + registroExistente.Horas;
+                                                int totalMinutos = registro.Minutos + registroExistente.Minutos;
+
+                                                // Ajustar los minutos a horas si superan los 60
+                                                int horasExtra = totalMinutos / 60;
+                                                int minutosExtra = totalMinutos % 60;
+
+                                                // Actualizar el registro actual con las horas y minutos ajustados
+                                                registro.Horas = totalHoras + horasExtra;
+                                                registro.Minutos = minutosExtra;
+
+                                                // Eliminar el registro existente y agregar el registro actualizado
+                                                context.HorasExtrasBiometrico.Remove(registroExistente);
+                                                context.HorasExtrasBiometrico.Add(registro);
+                                                await context.SaveChangesAsync();
+                                                continue;
+                                            }
                                             context.HorasExtrasBiometrico.Add(registro);
                                             await context.SaveChangesAsync();
                                         }

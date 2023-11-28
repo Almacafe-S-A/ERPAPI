@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using ERP.Contexts;
@@ -71,6 +72,16 @@ namespace ERPAPI.Controllers
                 if (registro.IdEstado != 70)
                     throw new Exception("Solo se puede aprobar registros en estado de Cargado.");
                 registro.IdEstado = 71;
+                // Obtener la hora de entrada como string y convertirla a un objeto DateTime
+                DateTime horaEntrada;
+                if (!DateTime.TryParseExact(registro.HoraEntrada, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out horaEntrada))
+                    throw new Exception("El formato de hora de entrada no es válido.");
+
+                TimeSpan limite1 = new TimeSpan(16, 0, 0);
+                TimeSpan limite2 = new TimeSpan(20, 0, 0);
+                TimeSpan limite3 = new TimeSpan(20, 1, 0);
+                TimeSpan limite4 = new TimeSpan(0, 0, 0);
+
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(context, logger, User.Identity.Name).SetAuditor();
