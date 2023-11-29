@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Controllers
 {
@@ -33,7 +34,7 @@ namespace ERPAPI.Controllers
         {
             try
             {
-
+                Todos = 1;
                 DateTime fechaBusqueda = new DateTime(Fecha.Year, Fecha.Month, Fecha.Day);
                 if (Todos == 1)
                 {
@@ -49,7 +50,7 @@ namespace ERPAPI.Controllers
                     var horas = await context.HorasExtrasBiometrico
                         .Include(e => e.Empleado)
                         .Include(e => e.Estado)
-                        .Where(l => l.Encabezado.Fecha.Equals(fechaBusqueda) && l.IdEstado == 70)
+                        .Where(l => l.Encabezado.Fecha.Equals(fechaBusqueda) && l.IdEstado == 70 )
                         .ToListAsync();
                     return Ok(horas);
                 }
@@ -72,6 +73,17 @@ namespace ERPAPI.Controllers
                 if (registro.IdEstado != 70)
                     throw new Exception("Solo se puede aprobar registros en estado de Cargado.");
                 registro.IdEstado = 71;
+                // Obtener la hora de entrada como string y convertirla a un objeto DateTime
+                DateTime horaEntrada;
+                if (!DateTime.TryParseExact(registro.HoraEntrada, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out horaEntrada))
+                    throw new Exception("El formato de hora de entrada no es válido.");
+
+                TimeSpan limite1 = new TimeSpan(16, 0, 0);
+                TimeSpan limite2 = new TimeSpan(20, 0, 0);
+                TimeSpan limite3 = new TimeSpan(20, 1, 0);
+                TimeSpan limite4 = new TimeSpan(0, 0, 0);
+
+
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(context, logger, User.Identity.Name).SetAuditor();
 
@@ -134,6 +146,46 @@ namespace ERPAPI.Controllers
                 logger.LogError(ex, "Error al actualizar el registro de Hora Extra");
                 return BadRequest("Error al actualizar el registro de Hora Extra");
             }
+        }
+
+        /// <summary>
+        /// Obtiene los Datos de la hora extra por medio del Id enviado.
+        /// </summary>
+        /// <param name="idHoraExtra"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{idHoraExtra}/{estado}")]
+        public async Task<IActionResult> ChangeStatus(long idHoraExtra, int estado)
+        {
+            HorasExtraBiometrico Items = new HorasExtraBiometrico();
+            try
+            {
+                Items = await context
+                    .HorasExtrasBiometrico
+                    .Where(q => q.Id == idHoraExtra).
+                    FirstOrDefaultAsync();
+                switch (estado)
+                {
+                        case 1:
+                        Items.Estados = "Revisado";
+                        break;
+                        case 2:
+                        Items.Estados = "Aprobado";
+                        break;
+                        case 3:
+                        Items.Estados = "Rechazado";
+                        break;
+                    default:
+                        break;
+                }
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
         }
     }
 }
