@@ -264,7 +264,8 @@ namespace ERPAPI.Controllers
                                                 Horas = diferencia.Hours,
                                                 Minutos = diferencia.Minutes,
                                                 IdBiometrico = biometrico.Id,
-                                                IdEstado = 70
+                                                IdEstado = 70,
+                                                Estados = "Pendiente"
                                             };
                                             var registroExistente = await context.HorasExtrasBiometrico
                                                 .Include(b => b.Encabezado)
@@ -325,7 +326,8 @@ namespace ERPAPI.Controllers
                                                 Horas = diferencia.Hours,
                                                 Minutos = diferencia.Minutes,
                                                 IdBiometrico = biometrico.Id,
-                                                IdEstado = 70
+                                                IdEstado = 70,
+                                                Estados = "Pendiente"
                                             };
                                             var registroExistente = await context.HorasExtrasBiometrico
                                                 .Include(b => b.Encabezado)

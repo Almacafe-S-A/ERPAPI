@@ -36,6 +36,7 @@ namespace ERPAPI.Models
 
         [Required]
         public long IdEstado { get; set; }
+        public string Estados { get; set; }
 
         [ForeignKey("IdEstado")]
         public Estados Estado { get; set; }

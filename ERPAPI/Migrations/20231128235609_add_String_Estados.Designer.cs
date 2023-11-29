@@ -4,14 +4,16 @@ using ERP.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ERPAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128235609_add_String_Estados")]
+    partial class add_String_Estados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4195,17 +4197,13 @@ namespace ERPAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<decimal>("April")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("April");
 
-                    b.Property<decimal>("August")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("August");
 
-                    b.Property<decimal>("December")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("December");
 
-                    b.Property<decimal>("February")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("February");
 
                     b.Property<DateTime>("FechaCreacion");
 
@@ -4213,32 +4211,23 @@ namespace ERPAPI.Migrations
 
                     b.Property<long>("FixedAssetId");
 
-                    b.Property<decimal>("January")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("January");
 
-                    b.Property<decimal>("July")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("July");
 
-                    b.Property<decimal>("June")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("June");
 
-                    b.Property<decimal>("March")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("March");
 
-                    b.Property<decimal>("May")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("May");
 
-                    b.Property<decimal>("November")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("November");
 
-                    b.Property<decimal>("October")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("October");
 
-                    b.Property<decimal>("September")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("September");
 
-                    b.Property<decimal>("TotalDepreciated")
-                        .HasColumnType("Money");
+                    b.Property<decimal>("TotalDepreciated");
 
                     b.Property<string>("UsuarioCreacion");
 
@@ -5352,8 +5341,6 @@ namespace ERPAPI.Migrations
                         .HasColumnType("Money");
 
                     b.Property<decimal>("DepreciacionMensualNIIF");
-
-                    b.Property<DateTime?>("DepreciatedDate");
 
                     b.Property<string>("Estado");
 
