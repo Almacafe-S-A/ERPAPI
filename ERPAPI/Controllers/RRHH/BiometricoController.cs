@@ -221,7 +221,7 @@ namespace ERPAPI.Controllers
                                             Fecha = detalle.FechaHora,
                                             Dia = ((int)biometrico.Fecha.DayOfWeek),
                                             ControlAsistenciaId = registroentrada.Id,
-                                            HoraLlegada = horario.HoraInicio
+                                            HoraLlegada = horaEntradaString
                                         };
                                         registroentrada.TipoAsistencia = 77;
                                         var registroExistente = await context.LlegadasTardeBiometrico

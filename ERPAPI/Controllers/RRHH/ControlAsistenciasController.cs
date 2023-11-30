@@ -503,6 +503,29 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
 
         }
 
+        /// <param name="idControlAsistencia"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{idHoraExtra}")]
+        public async Task<IActionResult> ChangeStatus(int idControlAsistencia)
+        {
+            ControlAsistencias Items = new ControlAsistencias();
+            try
+            {
+                Items = await _context
+                    .ControlAsistencias
+                    .Where(q => q.Id == idControlAsistencia).
+                    FirstOrDefaultAsync();
+                Items.Revisado = true;
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
 
     }
 }
