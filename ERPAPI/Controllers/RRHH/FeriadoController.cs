@@ -183,28 +183,65 @@ namespace ERPAPI.Controllers
         [HttpPut("[action]")]
         public async Task<ActionResult<Feriado>> Update(Feriado _Feriado)
         {
-            Feriado _Feriadoq = _Feriado;
             try
             {
-                _Feriadoq = await (from c in context.Feriados
-                                    .Where(q => q.Id == _Feriado.Id)
-                                   select c
-                                  ).FirstOrDefaultAsync();
-                context.Entry(_Feriadoq).CurrentValues.SetValues((_Feriado));
+                Feriado _Feriadoq = await context.Feriados.FirstOrDefaultAsync(q => q.Id == _Feriado.Id);
 
-                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+                if (_Feriadoq != null)
+                {
+                    // Eliminar registros de ControlAsistencias asociados al feriado
+                    List<ControlAsistencias> _feriadoControl = context.ControlAsistencias
+                        .Where(q => q.TipoAsistencia == 79 && q.Fecha >= _Feriadoq.FechaInicio && q.Fecha <= _Feriadoq.FechaFin)
+                        .ToList();
 
-                await context.SaveChangesAsync();
+                    context.ControlAsistencias.RemoveRange(_feriadoControl);
+
+                    // Actualizar los valores del feriado con los nuevos datos
+                    context.Entry(_Feriadoq).CurrentValues.SetValues(_Feriado);
+
+                    // Insertar nuevos registros de ControlAsistencias para el feriado actualizado
+                    List<Employees> employees = context.Employees.Where(q => q.IdEstado == 1).ToList();
+
+                    foreach (var employee in employees)
+                    {
+                        int totalDays = (_Feriado.FechaFin - _Feriado.FechaInicio).Days;
+
+                        for (int i = 0; i <= totalDays; i++)
+                        {
+                            DateTime currentDate = _Feriado.FechaInicio.AddDays(i);
+                            context.ControlAsistencias.Add(new ControlAsistencias
+                            {
+                                Id = 0,
+                                IdEmpleado = employee.IdEmpleado,
+                                Fecha = currentDate,
+                                TipoAsistencia = 79,
+                                Dia = (int)currentDate.DayOfWeek,
+                                FechaCreacion = DateTime.Now,
+                                UsuarioCreacion = User.Identity.Name,
+                                FechaModificacion = DateTime.Now,
+                                UsuarioModificacion = User.Identity.Name
+                            });
+                        }
+                    }
+
+                    // Registro de auditoría
+                    // new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+
+                    await context.SaveChangesAsync();
+                    return Ok(_Feriadoq);
+                }
+                else
+                {
+                    return NotFound("Feriado no encontrado");
+                }
             }
             catch (Exception ex)
             {
-
-                logger.LogError($"Ocurrio un error: {ex.ToString()}");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                logger.LogError($"Ocurrió un error: {ex.ToString()}");
+                return BadRequest($"Ocurrió un error: {ex.Message}");
             }
-            return await Task.Run(() => Ok(_Feriadoq));
         }
+
 
         /// <summary>
         /// Elimina un feriado       
@@ -214,29 +251,36 @@ namespace ERPAPI.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Delete([FromBody] Feriado _Feriado)
         {
-            Feriado _Feriadoq = new Feriado();
             try
             {
-                _Feriadoq = context.Feriados
-                .Where(x => x.Id == (Int64)_Feriado.Id)
-                .FirstOrDefault();
+                Feriado _Feriadoq = context.Feriados.FirstOrDefault(x => x.Id == _Feriado.Id);
 
-                context.Feriados.Remove(_Feriadoq);
+                if (_Feriadoq != null)
+                {
+                    List<ControlAsistencias> _feriadoControl = context.ControlAsistencias
+                        .Where(q => q.TipoAsistencia == 79 && q.Fecha >= _Feriadoq.FechaInicio && q.Fecha <= _Feriadoq.FechaFin)
+                        .ToList();
+                        context.ControlAsistencias.RemoveRange(_feriadoControl);
+                   
 
-                //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+                    context.Feriados.Remove(_Feriadoq);
 
+                    // Aquí puedes agregar tu registro de auditoría si es necesario
+                    // new appAuditor(context, logger, User.Identity.Name).SetAuditor();
 
-                await context.SaveChangesAsync();
+                    await context.SaveChangesAsync();
+                    return Ok(_Feriadoq); // Devuelve el feriado eliminado
+                }
+                else
+                {
+                    return NotFound("Feriado no encontrado");
+                }
             }
             catch (Exception ex)
             {
-                logger.LogError($"Ocurrio un error: {ex.ToString()}");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
+                logger.LogError($"Ocurrió un error: {ex.ToString()}");
+                return BadRequest($"Ocurrió un error: {ex.Message}");
             }
-
-            return await Task.Run(() => Ok(_Feriadoq));
-
         }
     }
 }

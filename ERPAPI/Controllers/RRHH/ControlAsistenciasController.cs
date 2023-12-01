@@ -503,6 +503,36 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
 
         }
 
+        [HttpGet("[action]/{idEmpleado}/{anio}/{mes}")]
+        public async Task<IActionResult> ChangeStatus(int idEmpleado, int anio, int mes)
+        {
+            ControlAsistencias Items = new ControlAsistencias();
+            int month = mes + 1;
+            DateTime fechacontrolinicio = new DateTime(anio, month, 1);
+
+            DateTime fechacontrolfinal = new DateTime(anio, month,DateTime.DaysInMonth( anio,month)); 
+            try
+            {
+
+                Items = await _context
+                    .ControlAsistencias
+                    .Where(q => q.IdEmpleado == idEmpleado && q.Fecha>=fechacontrolinicio && q.Fecha <= fechacontrolfinal ).
+                    FirstOrDefaultAsync();
+                if (Items == null)
+                {
+                    return NotFound("No se encontraron elementos para el empleado y fechas proporcionadas.");
+                }
+                Items.Revisado = true;
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
 
     }
 }
