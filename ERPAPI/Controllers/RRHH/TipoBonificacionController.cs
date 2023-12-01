@@ -53,14 +53,6 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-                        // Verifica si ya existe un registro con el mismo nombre en la base de datos
-                        bool existeRegistroConMismoNombre = await context.TiposBonificaciones.AnyAsync(t => t.Nombre == registro.Nombre);
-
-                        if (existeRegistroConMismoNombre)
-                        {
-                            throw new Exception("Ya existe un Tipo de Bonificación registrado con ese nombre.");
-                        }
-
                         if (string.IsNullOrEmpty(registro.Nombre))
                         {
                             transaction.Rollback();
@@ -77,8 +69,17 @@ namespace ERPAPI.Controllers
                             return BadRequest("Usuario de creación o modificación no pueden estar vacíos");
                         }
 
-                        if (registro.Id == 0)
+                        if (registro.Id == 0) // Verificación de existencia solo al crear un nuevo registro
                         {
+                            // Verifica si ya existe un registro con el mismo nombre en la base de datos
+                            bool existeRegistroConMismoNombre = await context.TiposBonificaciones.AnyAsync(t => t.Nombre == registro.Nombre);
+
+                            if (existeRegistroConMismoNombre)
+                            {
+                                transaction.Rollback();
+                                return BadRequest("Ya existe un Tipo de Bonificación registrado con ese nombre.");
+                            }
+
                             await context.TiposBonificaciones.AddAsync(registro);
 
                             // YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
@@ -95,6 +96,18 @@ namespace ERPAPI.Controllers
                             return BadRequest("Registro a modificar no existe");
                         }
 
+                        // Verifica si el nombre del registro editado es diferente del nombre original en la base de datos
+                        if (registro.Nombre != registroExistente.Nombre)
+                        {
+                            bool existeRegistroConMismoNombre = await context.TiposBonificaciones.AnyAsync(t => t.Nombre == registro.Nombre);
+
+                            if (existeRegistroConMismoNombre)
+                            {
+                                transaction.Rollback();
+                                return BadRequest("Ya existe un Tipo de Bonificación registrado con ese nombre.");
+                            }
+                        }
+
                         context.Entry(registroExistente).CurrentValues.SetValues(registro);
 
                         // YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
@@ -103,7 +116,6 @@ namespace ERPAPI.Controllers
                         await context.SaveChangesAsync();
                         transaction.Commit();
                         return Ok(registroExistente);
-
                     }
                     catch (Exception ex)
                     {
