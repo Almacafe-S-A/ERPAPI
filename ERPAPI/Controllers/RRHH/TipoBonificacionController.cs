@@ -108,14 +108,14 @@ namespace ERPAPI.Controllers
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        logger.LogError(ex, "Ocurrió un error al momento de guardar el tipo de deducción");
+                        logger.LogError(ex, "Ocurrió un error al momento de guardar el tipo de bonificación");
                         return BadRequest(new { errorMessage = ex.Message });
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ocurrió un error al momento de guardar el tipo de deducción");
+                logger.LogError(ex, "Ocurrió un error al momento de guardar el tipo de bonificación");
                 return BadRequest(ex.Message);
             }
         }

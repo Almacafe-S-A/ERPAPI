@@ -503,8 +503,6 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
 
         }
 
-        /// <param name="idControlAsistencia"></param>
-        /// <returns></returns>
         [HttpGet("[action]/{idEmpleado}/{anio}/{mes}")]
         public async Task<IActionResult> ChangeStatus(int idEmpleado, int anio, int mes)
         {
@@ -520,6 +518,10 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
                     .ControlAsistencias
                     .Where(q => q.IdEmpleado == idEmpleado && q.Fecha>=fechacontrolinicio && q.Fecha <= fechacontrolfinal ).
                     FirstOrDefaultAsync();
+                if (Items == null)
+                {
+                    return NotFound("No se encontraron elementos para el empleado y fechas proporcionadas.");
+                }
                 Items.Revisado = true;
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                 _context.SaveChanges();
