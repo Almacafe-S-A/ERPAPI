@@ -505,15 +505,20 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
 
         /// <param name="idControlAsistencia"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{idHoraExtra}")]
-        public async Task<IActionResult> ChangeStatus(int idControlAsistencia)
+        [HttpGet("[action]/{idEmpleado}/{anio}/{mes}")]
+        public async Task<IActionResult> ChangeStatus(int idEmpleado, int anio, int mes)
         {
             ControlAsistencias Items = new ControlAsistencias();
+            int month = mes + 1;
+            DateTime fechacontrolinicio = new DateTime(anio, month, 1);
+
+            DateTime fechacontrolfinal = new DateTime(anio, month,DateTime.DaysInMonth( anio,month)); 
             try
             {
+
                 Items = await _context
                     .ControlAsistencias
-                    .Where(q => q.Id == idControlAsistencia).
+                    .Where(q => q.IdEmpleado == idEmpleado && q.Fecha>=fechacontrolinicio && q.Fecha <= fechacontrolfinal ).
                     FirstOrDefaultAsync();
                 Items.Revisado = true;
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
