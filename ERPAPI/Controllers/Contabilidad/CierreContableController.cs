@@ -1040,7 +1040,7 @@ namespace ERPAPI.Controllers
                                         }
                                         if (item.AssetDate.Day > 14 && item.AssetDate.Day < 30 && (item.AssetDate.Month == pfecha.Month && item.AssetDate.Year == pfecha.Year))
                                         {
-                                            adepreciar =((item.TotalDepreciated / 30) * (item.AssetDate.Day-14));
+                                            adepreciar =((item.TotalDepreciated / 30) * ( DateTime.DaysInMonth(item.AssetDate.Year, item.AssetDate.Month - item.AssetDate.Day)));
                                         }
                                     }
 
@@ -1090,7 +1090,7 @@ namespace ERPAPI.Controllers
 
 
                                 jelDepreciacionMensual.Credit += adepreciar;
-                                jelDepreciacion.Debit += adepreciar;
+                                jelDepreciacion.Debit += adepreciar; 
                             }
 
 
