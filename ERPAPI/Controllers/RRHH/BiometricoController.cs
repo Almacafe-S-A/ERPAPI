@@ -265,7 +265,8 @@ namespace ERPAPI.Controllers
                                                 Minutos = diferencia.Minutes,
                                                 IdBiometrico = biometrico.Id,
                                                 IdEstado = 70,
-                                                Estados = "Pendiente"
+                                                Estados = "Pendiente",
+                                                HoraAlumerzo = 0
                                             };
                                             var registroExistente = await context.HorasExtrasBiometrico
                                                 .Include(b => b.Encabezado)
@@ -286,16 +287,16 @@ namespace ERPAPI.Controllers
                                         }
                                     }
                                 }
-                                //Validacion Los empleados que no trabajan el sábado y mostrar como Descanso,
-                                if (diasempleados.Sabado == false && registroentrada.Dia == 6)
-                                {
-                                    registroentrada.TipoAsistencia = 78;
-                                }
-                                //Validacion Los empleados que no trabajan el domingo y mostrar como Descanso,
-                                if (diasempleados.Domingo == false && registroentrada.Dia == 0)
-                                {
-                                    registroentrada.TipoAsistencia = 78;
-                                }
+                                /*    //Validacion Los empleados que no trabajan el sábado y mostrar como Descanso,
+                                    if (diasempleados.Sabado == false && registroentrada.Dia == 6)
+                                    {
+                                        registroentrada.TipoAsistencia = 78;
+                                    }
+                                    //Validacion Los empleados que no trabajan el domingo y mostrar como Descanso,
+                                    if (diasempleados.Domingo == false && registroentrada.Dia == 0)
+                                    {
+                                        registroentrada.TipoAsistencia = 78;
+                                    }*/
                             }
                             if (detalle.Tipo.Equals("Salida"))
                             {

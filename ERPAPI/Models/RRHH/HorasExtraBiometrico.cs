@@ -24,6 +24,7 @@ namespace ERPAPI.Models
 
         [Required]
         public int Minutos { get; set; }
+        public int HoraAlumerzo { get; set; }
 
         public string Observaciones { get; set; }
         public string HoraEntrada { get; set; }
