@@ -33,7 +33,7 @@ namespace ERPAPI.Models
         [ForeignKey("IdEmpleado")]
         public Employees Empleado { get; set; }
 
-        public bool? SalidaPendiente { get; set; }
+        public bool SalidaPendiente { get; set; }
 
     }
 }
