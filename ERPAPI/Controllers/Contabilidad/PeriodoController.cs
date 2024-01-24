@@ -107,6 +107,32 @@ namespace ERPAPI.Controllers
 
 
         /// <summary>
+        /// Obtiene el periodo activo
+        /// </summary>
+  
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<ActionResult<Periodo>> GetPeriodoActivo()
+        {
+            Periodo Items = new Periodo();
+            try
+            {
+                Items = await _context.Periodo.Where(q => q.Estado != "Cerrado" && q.Estado !="Bloqueado").FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+
+        /// <summary>
         /// Inserta una nueva Periodo
         /// </summary>
         /// <param name="_Periodo"></param>
@@ -288,6 +314,27 @@ namespace ERPAPI.Controllers
                                         ).FirstOrDefaultAsync();
 
                         _context.Entry(_Periodoq).CurrentValues.SetValues((_Periodo));
+
+                        Periodo periodoactivo = _context.Periodo.Where(q => q.IdEstado == 105  || q.IdEstado == 107).FirstOrDefault();
+
+                        if (_Periodo.IdEstado == 106) 
+                        {
+                            return BadRequest("Pendiente la ejecucion de cierres");
+                        }
+                        if (_Periodo.IdEstado == 107 && periodoactivo != null)
+                        {
+                            return BadRequest("Solo puede existir un periodo abierto");
+                        }
+                        if (_Periodo.IdEstado == 105)
+                        {
+                            ///valida un periodo abierto
+                            ///
+
+                        }
+                        if (_Periodoq.IdEstado == 108)
+                        {
+
+                        }
 
                         //_context.Periodo.Update(_Periodoq);
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,11 @@ namespace ERPAPI.Models
 
         [Display(Name = "Linea Endoso Id")]
         public Int64 EndososLineId { get; set; }
+        
+        [ForeignKey ("EndososLineId")]
+        public EndososCertificadosLine EndososCertificadosLine { get; set; }
+        
+        public int Pda { get; set; }
 
         [Display(Name = "Tipo de Endoso")]
         public string TipoEndoso { get; set; }

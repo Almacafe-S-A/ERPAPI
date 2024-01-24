@@ -37,22 +37,8 @@ namespace ERPAPI.Models
         public string BranchName { get; set; }
 
         public Int64 IdEstado { get; set; }
-        public string Estado { get; set; }
-
-        [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
-
-        [Display(Name = "Moneda tasa")]
-        public decimal Currency { get; set; }
-
-
-        [Display(Name = "Bodega")]
-        public int WarehouseId { get; set; }
-
-        [Display(Name = "Bodega")]
+        public string Estado { get; set; }   
+       
         public string WarehouseName { get; set; }
 
         [Display(Name = "Producto Cliente")]
@@ -67,18 +53,31 @@ namespace ERPAPI.Models
         [Display(Name = "Producto")]
         public string ProductName { get; set; }
 
+
+
         [Display(Name = "Recibimos de")]
-        public string Name { get; set; }
+        public string EntregadoA { get; set; }
         [Display(Name = "Referencia")]
         public string Reference { get; set; }
+
+        public int? BoletaPesoId { get; set; }
 
         [Display(Name = "Boleta de salida")]
         public Int64 ExitTicket { get; set; }
         public string Placa { get; set; }
         public string Marca { get; set; }
 
-        [Display(Name = "Boleta de peso")]
-        public Int64 WeightBallot { get; set; }
+        public string Motorista { get; set; }
+
+        [Display(Name = "Vigilante")]
+        public Int64 VigilanteId { get; set; }
+
+        [Display(Name = "Vigilante")]
+        public string VigilanteName { get; set; }
+
+        public string Certificados { get; set; }
+
+        public string Autorizaciones { get; set; }
 
         public decimal PesoBruto { get; set; }
 
@@ -98,18 +97,13 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public Int64 GoodsDeliveryAuthorizationId { get; set; }
 
         public string Impreso { get; set; }
         public List<GoodsDeliveredLine> _GoodsDeliveredLine { get; set; } = new List<GoodsDeliveredLine>();
 
-     //   public Kardex Kardex { get; set; }
-    }
+        public List<GoodsDeliveryAuthorization> GoodsDeliveryAuthorizations { get; set; } = new List<GoodsDeliveryAuthorization>();
 
-
-    public class GoodsDeliveredDTO : GoodsDelivered
-    {
-        public Kardex Kardex { get; set; } = new Kardex();
+        //   public Kardex Kardex { get; set; }
     }
 
 

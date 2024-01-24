@@ -37,7 +37,9 @@ namespace ERP.Contexts
             public DbSet<AccountManagement> AccountManagement { get; set; }
             public DbSet<CierresAccounting> CierresAccounting { get; set; }
             public DbSet<CierresJournal> CierresJournal { get; set; }
-            public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
+
+        public DbSet<CancelledDocuments> CancelledDocuments { get; set; }
+        public DbSet<CierresJournalEntryLine> CierresJournalEntryLine { get; set; }
             public DbSet<Bank> Bank { get; set; }
             public DbSet<BankAccountTransfers> BankAccountTransfers { get; set; }
             public DbSet<IncomeAndExpensesAccount> IncomeAndExpensesAccount { get; set; }
@@ -56,6 +58,8 @@ namespace ERP.Contexts
             public DbSet<JournalEntry> JournalEntry { get; set; }
             public DbSet<JournalEntryLine> JournalEntryLine { get; set; }
             public DbSet<JournalEntryCanceled> JournalEntryCanceled { get; set; }
+
+            public DbQuery<BalanceSaldos> BalanceSaldos { get; set; }
 
         public DbSet<JournalClosing> JournalClosings { get; set; }
         public DbSet<Presupuesto> Presupuesto { get; set; }
@@ -150,6 +154,14 @@ namespace ERP.Contexts
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<InvoiceLine> InvoiceLine { get; set; }
 
+        public DbSet<InvoicePayments> InvoicePayments { get; set; }
+
+        public DbSet<InvoicePaymentsLine> InvoicePaymentsLine { get; set; }
+
+
+
+        public DbSet<CustomerAcccountStatus> CustomerAcccountStatus { get; set; }
+
         public DbSet<EmployeeExtraHours> EmployeeExtraHours { get; set; }
         public DbSet<EmployeeExtraHoursDetail> EmployeeExtraHoursDetail { get; set; }
         public DbSet<ScheduleSubservices> ScheduleSubservices { get; set; }
@@ -192,8 +204,6 @@ namespace ERP.Contexts
         public virtual DbSet<Warehouse> Warehouse { get; set; }
         public virtual DbSet<SalesType> SalesType { get; set; }
         public virtual DbSet<UnitOfMeasure> UnitOfMeasure { get; set; }
-        public DbSet<ProformaInvoice> ProformaInvoice { get; set; }
-        public DbSet<ProformaInvoiceLine> ProformaInvoiceLine { get; set; }
         public DbSet<InvoiceCalculation> InvoiceCalculation { get; set; }
 
         public DbSet<JournalEntryConfiguration> JournalEntryConfiguration { get; set; }
@@ -213,13 +223,13 @@ namespace ERP.Contexts
         public DbSet<CustomerConditions> CustomerConditions { get; set; }
         public DbSet<ElementoConfiguracion> ElementoConfiguracion { get; set; }
         public DbSet<GrupoConfiguracion> GrupoConfiguracion { get; set; }
-        public DbSet<ControlPallets> ControlPallets { get; set; }
+		public DbSet<Notifications> Notifications { get; set; }
+		public DbSet<ControlPallets> ControlPallets { get; set; }
         public DbSet<ControlPalletsLine> ControlPalletsLine { get; set; }
         public DbSet<GoodsReceived> GoodsReceived { get; set; }
         public DbSet<GoodsReceivedLine> GoodsReceivedLine { get; set; }
         public DbSet<GoodsDelivered> GoodsDelivered { get; set; }
         public DbSet<GoodsDeliveredLine> GoodsDeliveredLine { get; set; }
-        public DbSet<GoodsDeliveryAuthLine> GoodsDeliveryAuthLines { get; set; }
         public DbSet<GoodsDeliveryAuthorizedSignatures> goodsDeliveryAuthorizedSignatures { get; set; }
 
         public DbSet<InventarioFisico> InventarioFisico { get; set; }
@@ -361,7 +371,6 @@ namespace ERP.Contexts
 
         public DbSet<VendorInvoice> VendorInvoice { get; set; }
 
-        public DbSet<VendorInvoiceLine> VendorInvoiceLine { get; set; }
 
         public DbSet<PaymentTerms> PaymentTerms { get; set; }
         public DbSet<ControlAsistencias> ControlAsistencias { get; set; }
@@ -378,6 +387,8 @@ namespace ERP.Contexts
         public DbSet<Contrato_movimientos> Contrato_movimientos { get; set; }
 
         public DbSet<Deduction> Deduction { get; set; }
+
+        public DbSet<DeductionQty> DeductionQties { get; set; }
 
         public DbSet<RetentionReceipt> RetentionReceipt { get; set; }
 
@@ -470,6 +481,11 @@ namespace ERP.Contexts
            .IsUnique(true);
 
 
+            modelBuilder.Entity<Presupuesto>()
+          .HasIndex(p => new { p.CostCenterId, p.PeriodoId ,p.AccountigId})
+          .IsUnique(true);
+
+
 
             modelBuilder.Entity<Contrato_plan_pagos>().HasKey(t => new { t.Nro_cuota, t.ContratoId });
 
@@ -479,6 +495,8 @@ namespace ERP.Contexts
 
             modelBuilder.Entity<PolicyClaims>()
            .HasKey(c => new { c.idroleclaim, c.IdPolicy });
+
+           
 
             modelBuilder.Entity<CheckAccount>()
           .HasIndex(u => u.CheckAccountNo)

@@ -129,6 +129,7 @@ namespace ERPAPI.Models
 
             switch (UOM)
             {
+                
                 case 1:
                     return Decimal.Round(Convert.ToDecimal(pesoLBE), 3);
                     
@@ -153,7 +154,10 @@ namespace ERPAPI.Models
                     
                 case 8:
                     return Decimal.Round(Convert.ToDecimal(tmi), 3);
-                    
+
+                default:               
+                    return Decimal.Round(Convert.ToDecimal(qq), 3);
+
             }
 
             return Decimal.Round(Convert.ToDecimal(pesoLBE),3);

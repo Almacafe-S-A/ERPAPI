@@ -12,19 +12,11 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 GoodsDeliveryAuthorizationId { get; set; }
 
-        [Display(Name = "Nombre de autorizacion")]
-        public string AuthorizationName { get; set; }
         [Display(Name = "Fecha de documento")]
         public DateTime DocumentDate { get; set; }
 
         [Display(Name = "Fecha de autorizacion")]
         public DateTime AuthorizationDate { get; set; }
-
-        [Display(Name = "Fecha de documento")]
-        public Int64 NoCD { get; set; }
-
-        [Display(Name = "Fecha de documento")]
-        public string Name { get; set; }
 
         public string Certificados { get; set; }
 
@@ -33,9 +25,19 @@ namespace ERPAPI.Models
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
+        public string ProductoAutorizado { get; set; }
+
         public string Autorizados { get; set; }
 
         public string RetiroAutorizadoA { get; set; }
+
+        public decimal TotalAutorizado { get; set; }
+
+        public decimal TotalDerechos { get; set; }
+
+        public decimal TotalCantidad { get; set; }
+
+        public string TotalUnidadesLetras { get; set; }
 
 
 
@@ -69,6 +71,12 @@ namespace ERPAPI.Models
         public DateTime? FechaCreacion { get; set; }
         [Display(Name = "Fecha de Modificación")]
         public DateTime? FechaModificacion { get; set; }
+
+        public string UsuarioAprobacion { get; set; }
+
+        public string UsuarioRevisor { get; set; }
+
+
         [Display(Name = "Usuario de Creacion")]
         public string UsuarioCreacion { get; set; }
 
@@ -78,24 +86,11 @@ namespace ERPAPI.Models
         public string Impreso { get; set; }
 
         [Display(Name = "Póliza No.")]
-        public Int64 NoPoliza { get; set; }
+        public Int64 NoPolizaImportacion { get; set; }
 
         [Display(Name = "Delegado Fiscal")]
         public string DelegadoFiscal { get; set; }
 
-        [Display(Name = "Seguro")]
-        public string EmpresaSeguro { get; set; }
-
-
-        [Display(Name = "Número de traslado")]
-        public string NoTraslado { get; set; }
-
-
-        [Display(Name = "Aduana")]
-        public string Aduana { get; set; }
-
-        [Display(Name = "Carta de porte o manifiesto No.")]
-        public string ManifiestoNo { get; set; }
 
         public string Estado { get; set; }
 
@@ -113,11 +108,9 @@ namespace ERPAPI.Models
 
     public class GoodsDeliveryAuthorizationDTO : GoodsDeliveryAuthorization
     {
-        public int editar { get; set; } = 1;
-
-        public Kardex Kardex { get; set; } = new Kardex();
-
         public List<Int64> CertificadosAsociados { get; set; }
+
+        
 
 
     }

@@ -48,7 +48,7 @@ namespace ERPAPI.Controllers
                     var llegadas = await context.LlegadasTardeBiometrico
                         .Include(e => e.Empleado)
                         .Include(e => e.Estado)
-                        .Where(l => l.Encabezado.Fecha.Equals(fechaBusqueda) && l.IdEstado == 70)
+                        .Where(l => l.Encabezado.Fecha.Equals(fechaBusqueda) && l.IdEstado == 97)
                         .ToListAsync();
                     return Ok(llegadas);
                 }
@@ -71,9 +71,15 @@ namespace ERPAPI.Controllers
                 var registro = await context.LlegadasTardeBiometrico.FirstOrDefaultAsync(r => r.Id == idLlegadaTarde);
                 if (registro == null)
                     throw new Exception("El registro de la llegada tarde a aprobar no existe.");
-                if (registro.IdEstado != 70)
+                if (registro.IdEstado != 97) //Estado 97 = Pendiente de Aprobacion
                     throw new Exception("Solo se puede aprobar registros en estado de Cargado.");
                 registro.IdEstado = 71;
+
+                //Se actualiza el tipo de asistencia a Dia Laboral
+                var registroentrada = new ControlAsistencias();
+                registroentrada = context.ControlAsistencias.Where(q => q.Id == registro.ControlAsistenciaId).FirstOrDefault();
+                registroentrada.TipoAsistencia = 83;
+
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(context, logger, User.Identity.Name).SetAuditor();
@@ -96,7 +102,7 @@ namespace ERPAPI.Controllers
                 var registro = await context.LlegadasTardeBiometrico.FirstOrDefaultAsync(r => r.Id == idLlegadaTarde);
                 if (registro == null)
                     throw new Exception("El registro de la llegada tarde a rechazar no existe.");
-                if (registro.IdEstado != 70)
+                if (registro.IdEstado != 97)
                     throw new Exception("Solo se puede rechazar registros en estado de Cargado.");
                 registro.IdEstado = 72;
 

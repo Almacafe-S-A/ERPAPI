@@ -20,19 +20,24 @@ namespace ERPAPI.Models
         [Display(Name = "Número de certificado")]
         public Int64 NoCertificadoDeposito { get; set; }
 
-        public int? Pda { get; set; }        
+        public int? Pda { get; set; }
 
         [Display(Name = "Producto cliente")]
         public Int64 SubProductId { get; set; }
 
         [Display(Name = "Producto cliente")]
         public string SubProductName { get; set; }
+        [NotMapped]
+        public CustomerProduct Product { get; set; }
+
 
         [Display(Name = "Unidad de medida")]
         public Int64 UnitOfMeasureId { get; set; }
 
         [Display(Name = "Unidad de medida")]
         public string UnitOfMeasureName { get; set; }
+        [NotMapped]
+        public UnitOfMeasure UnitOfMeasure { get; set; }
 
         [Display(Name = "Unidad de medida")]
         public Int64 WarehouseId { get; set; }

@@ -278,19 +278,7 @@ namespace ERPAPI.Controllers
                 {
                     flag = true;
                 }
-                //CreditNote
-                var VariableCreditNote = _context.CreditNote.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                                    .FirstOrDefault();
-                if (VariableCreditNote == null)
-                {
-                    flag = true;
-                }
-                var VariableDebitNote = _context.DebitNote.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                                    .FirstOrDefault();
-                if (VariableDebitNote == null)
-                {
-                    flag = true;
-                }
+                
                 var VariableEmployees = _context.Employees.Where(a => a.IdCurrency == _Currency.CurrencyId)
                                                     .FirstOrDefault();
                 if (VariableEmployees == null)
@@ -310,18 +298,8 @@ namespace ERPAPI.Controllers
                 {
                     flag = true;
                 }
-                var VariableJournalEntry = _context.JournalEntry.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                    .FirstOrDefault();
-                if (VariableJournalEntry == null)
-                {
-                    flag = true;
-                }
-                var VariableVendorInvoice = _context.VendorInvoice.Where(a => a.CurrencyId == _Currency.CurrencyId)
-                                    .FirstOrDefault();
-                if (VariableVendorInvoice == null)
-                {
-                    flag = true;
-                }
+                
+                
                 if (flag) { 
                          currency = _context.Currency
                         .Where(x => x.CurrencyId == (int)_Currency.CurrencyId)

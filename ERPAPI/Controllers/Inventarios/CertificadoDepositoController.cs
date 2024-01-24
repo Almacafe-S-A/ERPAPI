@@ -11,9 +11,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.CodeAnalysis.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using Newtonsoft.Json;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Controllers
 {
@@ -81,15 +84,73 @@ namespace ERPAPI.Controllers
                 var user = _context.Users.Where(w => w.UserName == User.Identity.Name.ToString());
                 int count = user.Count();
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
-                if (branchlist.Count > 0)
-                {
-                    Items = await _context.CertificadoDeposito.Where(p => branchlist.Any(b => p.BranchId == b.BranchId)).OrderByDescending(b => b.IdCD).ToListAsync();
-                }
-                else
-                {
-                    Items = await _context.CertificadoDeposito.OrderByDescending(b => b.IdCD).ToListAsync();
-                }
-                
+
+
+                //Items = await .ToListAsync();
+
+                Items = (from c in _context.CertificadoDeposito
+                    .Where(p => branchlist.Any(b => p.BranchId == b.BranchId))
+                         join en in  _context.EndososCertificados on c.IdCD equals en.IdCD
+                         into ce
+                         from e in ce.DefaultIfEmpty()
+                         select new CertificadoDeposito {                           
+                            IdCD = c.IdCD,
+                            NoCD = c.NoCD,
+                            SolicitudCertificadoId = c.SolicitudCertificadoId,
+                            CustomerId = c.CustomerId,
+                            CustomerName = c.CustomerName,
+                            PrecioCafe = c.PrecioCafe,
+                            BranchId = c.BranchId,
+                            Branch = c.Branch,
+                            BranchName = c.BranchName,
+                            SituadoEn = c.SituadoEn,
+                            ServicioId = c.ServicioId,
+                            Servicio = c.Servicio,
+                            ServicioName = c.ServicioName,
+                            Producto = c.Producto,
+                            Direccion = c.Direccion,
+                            FechaCertificado = c.FechaCertificado,
+                            NombreEmpresa = c.NombreEmpresa,
+                            IdEstado = c.IdEstado,
+                            Estado = c.Estado,
+                            InsuranceId = c.InsuranceId,
+                            Insurances = c.Insurances,
+                            EmpresaSeguro = c.EmpresaSeguro,
+                            Recibos = c.Recibos,
+                            InsurancePolicyId = c.InsurancePolicyId,
+                            InsurancePolicy = c.InsurancePolicy,
+                            NoPoliza = c.NoPoliza,
+                            SujetasAPago = c.SujetasAPago,
+                            FechaVencimientoDeposito = c.FechaVencimientoDeposito,
+                            NoTraslado = c.NoTraslado,
+                            Aduana = c.Aduana,
+                            ManifiestoNo = c.ManifiestoNo,
+                            Almacenaje = c.Almacenaje,
+                            Seguro = c.Seguro,
+                            OtrosCargos = c.OtrosCargos,
+                            FechaVencimientoCertificado = c.FechaVencimientoCertificado,
+                            PorcentajeDeudas = c.PorcentajeDeudas,
+                            TotalDerechos = c.TotalDerechos,
+                            PendienteAutorizar = c.PendienteAutorizar,
+                            Comentario = c.Comentario,
+                            Mensaje = c.Mensaje,
+                            NoRecibo = c.NoRecibo,
+                            PolizaPropia = c.PolizaPropia,
+                            Quantitysum = c.Quantitysum,
+                            Total = c.Total,
+                            FechaCreacion = c.FechaCreacion,
+                            FechaModificacion = c.FechaModificacion,
+                            UsuarioCreacion = c.UsuarioCreacion,
+                            UsuarioModificacion = c.UsuarioModificacion,
+                            Endoso =  new EndososCertificados {
+                                BankName = e == null?"N/A":e.BankName,
+                            } ,
+                            Impreso = c.Impreso,
+                            Impresiones = c.Impresiones,
+                            impresionesTalon = c.impresionesTalon,
+                            _CertificadoLine = c._CertificadoLine,
+                         }).OrderByDescending(b => b.IdCD).ToList();
+
             }
             catch (Exception ex)
             {
@@ -119,16 +180,20 @@ namespace ERPAPI.Controllers
                 Items = await _context.CertificadoDeposito
                     .Include(i => i._CertificadoLine)
                      .Where(p =>
-                          //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                          branchlist.Any(b => p.BranchId == b.BranchId) &&
                           p.CustomerId == clienteid &&
                           p.ServicioId == servicioid &&
-                          p.PendienteAutorizar == null || p.PendienteAutorizar == true
-                          // p._CertificadoLine.Sum(s=>s.CantidadDisponibleAutorizar).
+                         ( p.PendienteAutorizar == null || p.PendienteAutorizar == true )&&
+                          !p.Estado.Equals("Anulado") &&
+                          p.Estado.Equals("Vigente")
+                         // p._CertificadoLine.Sum(s=>s.CantidadDisponibleAutorizar).
                          //&& p.IdEstado != 6
                          //&& _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId)
                          )
 
                      .OrderByDescending(b => b.IdCD).ToListAsync();
+                List<EndososCertificados> endosos = _context.EndososCertificados.Where(q => q.Saldo > 0 && q.CustomerId == clienteid ).ToList();
+
                
             }
             catch (Exception ex)
@@ -164,11 +229,9 @@ namespace ERPAPI.Controllers
                     {
                         Items = await _context.CertificadoDeposito
                         .Where(p =>
-                            //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                            
                             p.CustomerId == clienteid &&
                             p.ServicioId == servicioid
-                           //&& p.IdEstado != 6
-                           //&& !_context.CertificadoDeposito.Any(a => a. == p.GoodsReceivedId)
                            )
 
                         .OrderByDescending(b => b.IdCD).ToListAsync();
@@ -177,11 +240,10 @@ namespace ERPAPI.Controllers
                     {
                         Items = await _context.CertificadoDeposito
                        .Where(p =>
-                            //branchlist.Any(b => p.BranchId == b.BranchId) &&
+                            
                             p.CustomerId == clienteid &&
                             p.ServicioId == servicioid
-                           //&& p.IdEstado != 6
-                           //&& _context.LiquidacionLine.Any(a => a.GoodsReceivedLine.GoodsReceivedId == p.GoodsReceivedId)
+
                            )
 
                        .OrderByDescending(b => b.IdCD).ToListAsync();
@@ -268,6 +330,36 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+
+        /// <summary>
+        /// Obtiene los certificados liberados
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{CustomerId}")]
+        public async Task<IActionResult> GetCertificadosNoEndosados(Int64 CustomerId)
+        {
+            List<CertificadoDeposito> Items = new List<CertificadoDeposito>();
+
+            List<EndososCertificados> endosos = new List<EndososCertificados>();
+            try
+            {
+                Items = await _context.CertificadoDeposito.Where(q => q.CustomerId == CustomerId && q.IdEstado == 6).ToListAsync();
+
+                endosos = await _context.EndososCertificados.Where(q => q.CustomerId == CustomerId).ToListAsync();
+
+                Items = Items.Where(q => !endosos.Any(a => a.NoCD == q.IdCD)).ToList();
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
         /// <summary>
         /// Obtiene los certificados de deposito por cliente.
         /// </summary>
@@ -381,14 +473,20 @@ namespace ERPAPI.Controllers
                     UnitOfMeasureName = item.UnitMeasurName,
                     TypeOperationId = TipoOperacion.Entrada,
                     TypeOperationName = "Entrada",
-                    Total = item.TotalCantidad,
+                    Total = item.Quantity,
                     DocumentLine= (int)item.CertificadoLineId,
                     DocumentName = "Certficado de Depósito",
                     DocumentId = _CertificadoDeposito.IdCD,
                     DocType = 2,
                     CustomerName = _CertificadoDeposito.CustomerName,
                     CustomerId = _CertificadoDeposito.CustomerId,
-                    
+                    PdaNo = item.PdaNo,
+                    ValorTotal = item.Price * item.Quantity,
+                    ValorMovimiento = item.Price * item.Quantity,  
+                    Precio = item.Price,
+                    SourceDocumentId =(int) _CertificadoDeposito.IdCD,
+                     SourceDocumentName = "Certficado de Depósito",
+                    SourceDocumentLine = (int)item.CertificadoLineId,
 
                 };
                 kardices.Add(kardex);
@@ -445,6 +543,9 @@ namespace ERPAPI.Controllers
                 }
             }
 
+            List<Kardex> kardex = GeneraKardexCertificado(certificado);
+            _context.AddRange(kardex);
+
 
             certificado.IdEstado = 6;
             certificado.Estado = "Vigente";
@@ -455,6 +556,8 @@ namespace ERPAPI.Controllers
             {
                 solicitudCertificado.UsuarioModificacion = User.Identity.Name;
             }
+            new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
 
             await _context.SaveChangesAsync();
 
@@ -495,13 +598,13 @@ namespace ERPAPI.Controllers
         {
             
             SolicitudCertificadoDeposito _SolicitudCertificado ;
-            CertificadoDeposito _CertificadoDepositoq = new CertificadoDeposito();
 
             using (var transaction = _context.Database.BeginTransaction())
             {
                 try
                 {
-
+                    Branch branch = new Branch();
+                    branch = _context.Branch.Where(q => q.BranchId == _CertificadoDeposito.BranchId).FirstOrDefault();
                     
                     _context.CertificadoDeposito.Add(_CertificadoDeposito);
                     
@@ -511,6 +614,8 @@ namespace ERPAPI.Controllers
                     _CertificadoDeposito.Quantitysum = _CertificadoDeposito._CertificadoLine.Sum(s => s.Quantity);
                     _CertificadoDeposito.TotalDerechos = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
                     _CertificadoDeposito.SujetasAPago = _CertificadoDeposito._CertificadoLine.Sum(s => s.DerechosFiscales);
+                    _CertificadoDeposito.SituadoEn = branch.Address;
+
 
                     if (!AutorizacionCNBS(_CertificadoDeposito.Total, _CertificadoDeposito.BranchId))                    
                         return BadRequest("Limite CNBS ha sido superado");                    
@@ -530,22 +635,31 @@ namespace ERPAPI.Controllers
                     }
 
 
+                    foreach (var lineacertificado in _CertificadoDeposito._CertificadoLine)
+                    {
+                        lineacertificado.Amount = lineacertificado.Quantity * lineacertificado.Price;
+                        lineacertificado.DerechosFiscales = lineacertificado.ValorUnitarioDerechos * lineacertificado.Quantity;
+
+                    }
+
 
                     _SolicitudCertificado = new SolicitudCertificadoDeposito(_CertificadoDeposito);
 
                     //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
-                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                    
 
                     await _context.SaveChangesAsync();
 
                     _context.SolicitudCertificadoDeposito.Add(_SolicitudCertificado);
                     _context.SolicitudCertificadoLine.AddRange(_SolicitudCertificado._SolicitudCertificadoLine);
-                    
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                     await _context.SaveChangesAsync();
 
                     _CertificadoDeposito.SolicitudCertificadoId = (int)_SolicitudCertificado.IdSCD;     
                     _SolicitudCertificado.NoCD = (int)_CertificadoDeposito.IdCD;
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
 
                     await _context.SaveChangesAsync();
 
@@ -565,8 +679,9 @@ namespace ERPAPI.Controllers
 
                     });
 
-                    List<Kardex> kardex = GeneraKardexCertificado(_CertificadoDeposito);
-                    _context.AddRange(kardex);
+                    
+
+                    new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
@@ -600,7 +715,7 @@ namespace ERPAPI.Controllers
                         if (_CertificadoDepositoq.FechaCertificado.Date != DateTime.Now.Date)
                             return BadRequest("Los Certificados solo pueden ser anulados el mismo dia que se emitieron");
 
-                        if (_CertificadoDepositoq.ServicioId != 3)
+                        if (_CertificadoDepositoq.ServicioId != 3 && _CertificadoDepositoq.Estado == "Vigente")
 
                         {
 
@@ -796,46 +911,6 @@ namespace ERPAPI.Controllers
                     }
                     
                 }
-
-
-                
-
-
-
-                //_goodsreceivedlis = await _context.CertificadoDeposito.Where(q => q.IdCD == Convert.ToInt64(listacertificados[0])).FirstOrDefault();
-
-                //using (var command = _context.Database.GetDbConnection().CreateCommand())
-                //{
-                //    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName         "
-                //   + " , SUM(Quantity) AS Cantidad, SUM(grl.IdCD) AS IdCD         "                    
-                //   + " , SUM(grl.Quantity) * (grl.Price)  AS Total                            "
-                //   + " ,Price "
-                //   + $"  FROM CertificadoLine grl                 where  CertificadoLineId in ({inparams})                                "
-                //   + "  GROUP BY grl.SubProductId,grl.UnitMeasureId, grl.SubProductName, grl.UnitMeasurName,grl.IdCD,grl.Price       "
-                // );
-
-                //    _context.Database.OpenConnection();
-                //    using (var result = command.ExecuteReader())
-                //    {
-                //        // do something with result
-                //        while (await result.ReadAsync())
-                //        {
-                //            _goodsreceivedlis._CertificadoLine.Add(new CertificadoLine
-                //            {                                
-                //                SubProductId = Convert.ToInt64(result["SubProductId"]),
-                //                SubProductName = result["SubProductName"].ToString(),
-                //                UnitMeasureId = Convert.ToInt64(result["UnitMeasureId"]),
-                //                UnitMeasurName = result["UnitMeasurName"].ToString(),
-                //                Quantity = Convert.ToInt32(result["Cantidad"]),
-                //                IdCD = Convert.ToInt32(result["IdCD"]),
-                //                Price = Convert.ToDouble(result["Price"]),
-
-                //               // Total = Convert.ToDouble(result["Total"]),
-
-                //            });
-                //        }
-                //    }
-                //}
 
 
             }

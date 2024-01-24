@@ -77,6 +77,105 @@ namespace ERPAPI.Controllers
             return Ok(Items);
         }
 
+
+        [HttpGet("[action]/{IdCD}")]
+        public async Task<IActionResult> GetDetalleCertificadoDisponibleparaEndoso(Int64 IdCD)
+        {
+
+            List<EndososCertificadosLine> pendientes = new List<EndososCertificadosLine>();
+
+
+
+            if (_context.EndososCertificados.Where(q => q.IdCD == IdCD) == null)
+            {
+                return BadRequest("El Certificado se encuentra endosado, no se puede endosar");
+            }
+
+
+
+            try
+            {
+                List<CertificadoLine> certificadoLines = await _context.CertificadoLine.Where(q => IdCD == q.IdCD).ToListAsync();
+                certificadoLines = (from cd in certificadoLines
+                                    select new CertificadoLine()
+                                    {
+                                        Amount = cd.Amount,
+                                        CantidadDisponible = cd.CantidadDisponible,
+                                        CantidadDisponibleAutorizar = cd.CantidadDisponibleAutorizar.HasValue ? cd.CantidadDisponibleAutorizar : cd.Quantity,
+                                        CertificadoLineId = cd.CertificadoLineId,
+                                        Observaciones = cd.Observaciones,
+                                        Merma = cd.Merma,
+                                        PdaNo = cd.PdaNo,
+                                        Quantity = cd.Quantity,
+                                        Description = cd.Description,
+                                        IdCD = cd.IdCD,
+                                        DerechosFiscales = cd.DerechosFiscales,
+                                        GoodsReceivedLine = cd.GoodsReceivedLine,
+                                        GoodsReceivedLineId = cd.GoodsReceivedLineId,
+                                        Price = cd.Price,
+                                        ReciboId = cd.ReciboId,
+                                        Saldo = cd.Saldo,
+                                        SaldoEndoso = cd.SaldoEndoso,
+                                        //SubProduct = cd.SubProduct,
+                                        SubProductId = cd.SubProductId,
+                                        SubProductName = cd.SubProductName,
+                                        TotalCantidad = cd.TotalCantidad,
+                                        UnitMeasureId = cd.UnitMeasureId,
+                                        UnitMeasurName = cd.UnitMeasurName,
+                                        ValorUnitarioDerechos = cd.ValorUnitarioDerechos,
+                                        WarehouseId = cd.WarehouseId,
+                                        WarehouseName = cd.WarehouseName,
+
+
+                                    }).ToList();
+
+                pendientes = (from cd in certificadoLines.Where(q => q.CantidadDisponibleAutorizar > 0 || q.CantidadDisponibleAutorizar == null)
+                                          .GroupBy(g => new
+                                          {
+                                              g.IdCD,
+                                              g.PdaNo,
+                                              g.SubProductId,
+                                              g.WarehouseName,
+                                              g.UnitMeasurName,
+                                              g.UnitMeasureId,
+                                              g.WarehouseId,
+                                              g.SubProductName,
+                                              g.Price,
+                                              g.ValorUnitarioDerechos,
+                                          })
+                              select new EndososCertificadosLine()
+                              {
+                                  EndososCertificadosLineId = 0,
+                                  UnitOfMeasureName = cd.Key.UnitMeasurName,
+                                  UnitOfMeasureId = (long)cd.Key.UnitMeasureId,
+                                  Quantity = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
+                                  SubProductId = (long)cd.Key.SubProductId,
+                                  SubProductName = cd.Key.SubProductName,
+                                  // = (int)cd.Key.IdCD,
+                                  Price = (decimal)cd.Key.Price,
+                                  ValorEndoso = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar) * cd.Key.Price,
+                                  ValorUnitarioDerechos = cd.Key.ValorUnitarioDerechos,
+                                  CertificadoLineId = 0,
+                                  Saldo = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
+                                  SaldoPrev = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
+                                  DerechosFiscales = cd.Sum(s => s.DerechosFiscales),
+                                  Pda = (int)cd.Key.PdaNo,
+                                  
+                              }).ToList();
+                if (pendientes.Count > 7)
+                {
+                    return BadRequest("La autorizacion solo puede contener 7 lineas de detalle");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return Ok(pendientes);
+        }
+
         [HttpGet("[action]/{EndososCertificadosId}")]
         public async Task<IActionResult> GetEndososCertificadosLineByEndososCertificadosId(Int64 EndososCertificadosId)
         {
@@ -84,7 +183,30 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.EndososCertificadosLine
+                             .Include(d => d.EndososLiberacion)
                              .Where(q => q.EndososCertificadosId == EndososCertificadosId).ToListAsync();
+                Items = (from i in Items
+                         select new EndososCertificadosLine {
+                             CantidadLiberacion = i.EndososLiberacion.Sum(s => s.Quantity),
+                             ValorLiberado = (i.EndososLiberacion.Sum(s => s.Quantity) * i.Price),
+                             EndososCertificadosLineId = i.EndososCertificadosLineId
+                            ,EndososCertificadosId = i.EndososCertificadosId
+                            ,UnitOfMeasureId = i.UnitOfMeasureId
+                            ,UnitOfMeasureName = i.UnitOfMeasureName
+                            ,CertificadoLineId = i.CertificadoLineId
+                            ,SubProductId = i.SubProductId
+                            ,SubProductName = i.SubProductName
+                            ,Quantity = i.Quantity
+                            ,Price = i.Price
+                            ,ValorEndoso = i.ValorEndoso
+                            ,Saldo = i.Saldo
+                            ,DerechosFiscales = i.DerechosFiscales
+                            ,Pda = i.Pda
+                            ,ValorUnitarioDerechos = i.ValorUnitarioDerechos
+
+                         })
+
+                    .ToList();
             }
             catch (Exception ex)
             {

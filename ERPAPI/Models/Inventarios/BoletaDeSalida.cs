@@ -17,7 +17,7 @@ namespace ERPAPI.Models
 
         public string DocumentoTipo { get; set; }
 
-        public int? GuiaRemisionId { get; set; }        
+        public int? GuiaRemisionId { get; set; }
 
         [Display(Name = "Sr. Vigilante")]
         public Int64 VigilanteId { get; set; }
@@ -32,10 +32,12 @@ namespace ERPAPI.Models
         public Int64 BranchId { get; set; }
 
         [Display(Name = "Sucursal")]
-        public string BranchName { get; set; }       
+        public string BranchName { get; set; }
 
         [Display(Name = "Cliente")]
         public Int64 CustomerId { get; set; }
+        [ForeignKey("CustomerId")]
+        public Customer Customer { get; set; }
         [Display(Name = "Cliente")]
         public string CustomerName { get; set; }
 
@@ -44,6 +46,11 @@ namespace ERPAPI.Models
         public string Marca { get; set; }
 
         public string Motorista { get; set; }
+
+        public string Observaciones { get; set; }
+
+
+        public string PlacaContenedor { get; set; }
 
         [Display(Name = "Cargado/Vacio")]
         public Int64 CargadoId { get; set; }
@@ -63,9 +70,10 @@ namespace ERPAPI.Models
 
 
         [Display(Name = "Boleta de peso")]
-        public Int64 WeightBallot { get; set; }
+        public Int64? WeightBallot { get; set; }
 
         public Int64? Producto { get; set; }
+
         [ForeignKey("Producto")]
         public Product Product { get; set; }
 

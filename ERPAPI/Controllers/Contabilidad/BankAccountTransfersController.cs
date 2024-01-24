@@ -197,7 +197,6 @@ namespace ERPAPI.Controllers
                     TotalDebit = cantidad,
                     EstadoId = 5,
                     EstadoName = "Enviada a Aprobacion",
-                    CurrencyId = 1,
                     TypeOfAdjustmentId = 65,
                     TypeOfAdjustmentName = "Asiento Diario",
                     TypeJournalName = "Transferencias",

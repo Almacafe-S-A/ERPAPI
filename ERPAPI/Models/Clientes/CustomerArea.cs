@@ -59,6 +59,11 @@ namespace ERPAPI.Models
         [Display(Name = "Bodega")]
         public string WareHouseName { get; set; }
 
+
+        public int? InvoiceId { get; set; }
+        [ForeignKey("InvoiceId")]
+        public Invoice Invoice { get; set; }
+
         public double Ancho { get; set; }
 
         public double Alto { get; set; }

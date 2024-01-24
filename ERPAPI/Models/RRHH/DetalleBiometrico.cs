@@ -25,9 +25,15 @@ namespace ERPAPI.Models
         [Required]
         public string Tipo { get; set; }
 
+        [Required]
+        public long IdHorario { get; set; }
+
         public Biometrico Encabezado { get; set; }
 
         [ForeignKey("IdEmpleado")]
         public Employees Empleado { get; set; }
+
+        public bool SalidaPendiente { get; set; }
+
     }
 }

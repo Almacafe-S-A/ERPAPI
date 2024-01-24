@@ -96,13 +96,14 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
         /// <summary>
         /// Obtiene los certificados de deposito por cliente.
         /// </summary>
         /// <param name="IdCD"></param>
         /// <returns></returns>
         [HttpGet("[action]/{IdCD}")]
-        public async Task<ActionResult<GoodsDeliveryAuthorization>> Aprobar(int IdCD)
+        public async Task<ActionResult<GoodsDeliveryAuthorization>> Revisar(int IdCD)
         {
 
             GoodsDeliveryAuthorization autorizacion = await _context.GoodsDeliveryAuthorization
@@ -118,10 +119,61 @@ namespace ERPAPI.Controllers
 
 
             autorizacion.EstadoId = 6;
-            autorizacion.Estado = "Aprobado";
+            autorizacion.Estado = "Revisado";
             autorizacion.UsuarioModificacion = User.Identity.Name;
             autorizacion.FechaModificacion = DateTime.Now;
+            autorizacion.UsuarioRevisor = User.Identity.Name;
 
+            await _context.SaveChangesAsync();
+
+            return autorizacion;
+
+        }
+
+        /// <summary>
+        /// Obtiene los certificados de deposito por cliente.
+        /// </summary>
+        /// <param name="IdCD"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{IdCD}")]
+        public async Task<ActionResult<GoodsDeliveryAuthorization>> Aprobar(int IdCD)
+        {
+
+            GoodsDeliveryAuthorization autorizacion = await _context.GoodsDeliveryAuthorization
+                .Include(i => i.GoodsDeliveryAuthorizationLine)
+                .Where(q => q.GoodsDeliveryAuthorizationId == IdCD)
+                //.Include(i => i.autor)
+                .FirstOrDefaultAsync();
+
+            if (autorizacion == null)
+            {
+                return BadRequest();
+            }
+
+
+
+            autorizacion.EstadoId = 6;
+            autorizacion.Estado = "Aprobado";
+
+            autorizacion.UsuarioModificacion = User.Identity.Name;
+            autorizacion.FechaModificacion = DateTime.Now;
+            autorizacion.UsuarioAprobacion = User.Identity.Name;
+            
+
+
+            Numalet let;
+            let = new Numalet();
+            let.SeparadorDecimalSalida = autorizacion.GoodsDeliveryAuthorizationLine
+                .FirstOrDefault().UnitOfMeasureName;
+            let.MascaraSalidaDecimal = "00/100 ";
+            let.ApocoparUnoParteEntera = true;
+            autorizacion.TotalUnidadesLetras = let.ToCustomCardinal((autorizacion.TotalCantidad))
+                .ToUpper();
+
+            foreach (var item in autorizacion.GoodsDeliveryAuthorizationLine)
+            {
+                item.Saldo = item.Quantity;
+            }
             await _context.SaveChangesAsync();
 
             return autorizacion;
@@ -138,42 +190,121 @@ namespace ERPAPI.Controllers
         public async Task<IActionResult> GetDetalleCertificadosPendientes([FromQuery(Name = "Recibos")] int[] certificados)
         {
 
-            List<GoodsDeliveryAuthorizationLine> pendientes = new List<GoodsDeliveryAuthorizationLine>();
-
-            if (_context.EndososCertificados.Where(q => certificados.Any(a =>a == q.IdCD) && q.FechaCancelacion!=null).Count()>0)
-            {
-                return BadRequest("El Certificado se encuentra endosado, no se puede emitir autorización");
-            }
             
+            List<GoodsDeliveryAuthorizationLine> pendientes = new List<GoodsDeliveryAuthorizationLine>();
+            if (certificados.Count() == 0) return Ok(pendientes);
+
+            List<EndososCertificados> endosos = _context.EndososCertificados
+                .Include(i => i.EndososCertificadosLine)
+                .Where(q => certificados.Any(a => a == q.IdCD) && q.Saldo == q.CantidadEndosar).ToList();
+
+            if (endosos.Count>0)
+            {
+                return BadRequest($"Los Certificados {String.Join(",",endosos.Select(s => s.IdCD).ToList())} se encuentran endosados y no tienen saldo disponible a autorizar, no se puede emitir autorización");
+            }
+
             try
             {
-                pendientes = await (from cd in _context.CertificadoLine
-                                           where
-                                           //lineasrecibo.GoodsReceived.CustomerId == customerid && 
-                                           //lineasrecibo.GoodsReceived.ProductId == servicio &&
-                                           certificados.Any(q => q == cd.IdCD)  
-                                           && cd.CantidadDisponibleAutorizar !=0
-                                           //  && !_context.CertificadoLine.Any(a => a.CertificadoLineId == lineasrecibo.GoodsReceiveLinedId)
-                                           select new GoodsDeliveryAuthorizationLine()
+                List<CertificadoLine> certificadoLines = await _context.CertificadoLine
+                    .Where(q => certificados.Any(idCD => idCD == q.IdCD)).ToListAsync();
+                certificadoLines = (from cd in certificadoLines
+                                    select new CertificadoLine() {
+                                        Amount = cd.Amount,
+                                        CantidadDisponible = cd.CantidadDisponible,
+                                        CantidadDisponibleAutorizar = cd.CantidadDisponibleAutorizar.HasValue ? cd.CantidadDisponibleAutorizar: cd.Quantity,
+                                        CertificadoLineId = cd.CertificadoLineId,
+                                        Observaciones = cd.Observaciones,
+                                        Merma = cd.Merma,
+                                        PdaNo = cd.PdaNo,
+                                        Quantity =cd.Quantity,
+                                        Description = cd.Description,
+                                        IdCD = cd.IdCD,
+                                        DerechosFiscales = cd.DerechosFiscales, 
+                                        GoodsReceivedLine = cd.GoodsReceivedLine,
+                                        GoodsReceivedLineId = cd.GoodsReceivedLineId,
+                                        Price = cd.Price,
+                                        ReciboId = cd.ReciboId,
+                                        Saldo = cd.Saldo,
+                                        SaldoEndoso = cd.SaldoEndoso,
+                                        //SubProduct = cd.SubProduct,
+                                        SubProductId = cd.SubProductId,
+                                        SubProductName = cd.SubProductName,
+                                        TotalCantidad = cd.TotalCantidad,
+                                        UnitMeasureId = cd.UnitMeasureId,   
+                                        UnitMeasurName = cd.UnitMeasurName,
+                                        ValorUnitarioDerechos = cd.ValorUnitarioDerechos,
+                                        WarehouseId = cd.WarehouseId,
+                                        WarehouseName = cd.WarehouseName,
+                                        
+                                    
+                                    }).ToList();
+
+               
+
+                pendientes =  (from cd in certificadoLines.Where(q => q.CantidadDisponibleAutorizar >0 || q.CantidadDisponibleAutorizar == null)
+                                           .GroupBy(g => new
+                                           {
+                                               g.IdCD,
+                                               g.PdaNo,
+                                               g.SubProductId,
+                                               g.WarehouseName,
+                                               g.UnitMeasurName,
+                                               g.UnitMeasureId,
+                                               g.WarehouseId,
+                                               g.SubProductName,
+                                               //g.Amount,
+                                               g.Price,
+                                               g.ValorUnitarioDerechos,
+                                           })
+                                    select new GoodsDeliveryAuthorizationLine()
                                            {
                                                GoodsDeliveryAuthorizationId = 0,
-                                               UnitOfMeasureName = cd.UnitMeasurName,
-                                               UnitOfMeasureId = (long)cd.UnitMeasureId,
-                                               Quantity = cd.CantidadDisponibleAutorizar==null? cd.Quantity : (decimal)cd.CantidadDisponibleAutorizar,
-                                               SubProductId = (long)cd.SubProductId,
-                                               SubProductName = cd.SubProductName,
-                                               CertificadoLineId = cd.CertificadoLineId,
-                                               NoCertificadoDeposito = (int)cd.IdCD,
-                                               Price = (long)cd.Price,
-                                               WarehouseId = (int)cd.WarehouseId,
-                                               WarehouseName = cd.WarehouseName,
-                                               valorcertificado = cd.Amount,
-                                               SaldoProducto = cd.CantidadDisponibleAutorizar == null ? cd.Quantity : (decimal)cd.CantidadDisponibleAutorizar,
-                                               ValorUnitarioDerechos = cd.ValorUnitarioDerechos,
+                                               UnitOfMeasureName = cd.Key.UnitMeasurName,
+                                               UnitOfMeasureId = (long)cd.Key.UnitMeasureId,
+                                               Quantity = 0,
+                                               SubProductId = (long)cd.Key.SubProductId,
+                                               SubProductName = cd.Key.SubProductName,
+                                               NoCertificadoDeposito = (int)cd.Key.IdCD,
+                                               Price = (decimal)cd.Key.Price,
+                                               WarehouseId = (int)cd.Key.WarehouseId,
+                                               WarehouseName = cd.Key.WarehouseName,
+                                               valorcertificado = 0,                                          
+                                               SaldoProducto = (decimal)cd.Sum(s => s.CantidadDisponibleAutorizar),
+                                               ValorUnitarioDerechos = cd.Key.ValorUnitarioDerechos,
                                                ValorImpuestos = 0,
-                                               DerechosFiscales = cd.DerechosFiscales,
-                                               Pda = cd.PdaNo,
-                                           }).ToListAsync();
+                                               DerechosFiscales = cd.Sum(s =>s.DerechosFiscales),
+                                               Pda = cd.Key.PdaNo,
+                                           }).ToList();
+
+                 endosos = _context.EndososCertificados
+                .Include(i => i.EndososCertificadosLine)
+                .Where(q => certificados.Any(a => a == q.IdCD) ).ToList();
+
+                List<EndososCertificadosLine> endososCertificadosLines = _context.EndososCertificadosLine
+                    .Include(i => i.EndososCertificados)
+                    .Include(i => i.EndososLiberacion)
+                   .Where(q => endosos.Any(a => a.EndososCertificadosId == q.EndososCertificadosId)).ToList();
+
+                foreach (var endosodetalle in endososCertificadosLines)
+                {
+                    decimal saldoendoso = endosodetalle.Quantity - endosodetalle.EndososLiberacion.Sum(s => s.Quantity);
+                    foreach (var item in pendientes)
+                    {
+                        
+                        if (endosodetalle.Pda == item.Pda && endosodetalle.EndososCertificados.NoCD == item.NoCertificadoDeposito )
+                        {
+                            decimal saldooriginal = item.SaldoProducto;
+                            item.SaldoProducto =saldoendoso> item.SaldoProducto?item.SaldoProducto:item.SaldoProducto - saldoendoso;
+                            saldoendoso = saldoendoso - (saldooriginal - item.SaldoProducto);
+                        }
+                    }
+                }
+
+                    
+                //if (pendientes.Count>7)
+                //{
+                //    return BadRequest("La autorizacion solo puede contener 7 lineas de detalle");
+                //}
 
                 return Ok(pendientes);
             }
@@ -195,7 +326,7 @@ namespace ERPAPI.Controllers
             try
             {
                 Items = await _context.GoodsDeliveryAuthorization
-                    //.Include(q=>q.GoodsDeliveryAuthorizationLine)
+                       .Include(q=>q.GoodsDeliveryAuthorizationLine)
                     //.Include(i => i.goodsDeliveryAuthorizedSignatures)
                        .Where(q => q.GoodsDeliveryAuthorizationId == GoodsDeliveryAuthorizationId).FirstOrDefaultAsync();
                 if (Items!=null)
@@ -247,7 +378,6 @@ namespace ERPAPI.Controllers
             try
             {
                 List<int> listayaprocesada = _context.BoletaDeSalida
-                                              //.Where(q => q.GoodsDeliveryAuthorizationId > 0)
                                               .Select(q => q.DocumentoId).ToList();
 
                 Items = await _context.GoodsDeliveryAuthorization.Where(q => !listayaprocesada.Contains((int)q.GoodsDeliveryAuthorizationId)).ToListAsync();
@@ -279,9 +409,13 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        _GoodsDeliveryAuthorization.TotalAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.valorcertificado);
+                        _GoodsDeliveryAuthorization.TotalCantidad = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Sum(s => s.Quantity); 
+                        _GoodsDeliveryAuthorization.ProductoAutorizado = _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.FirstOrDefault().SubProductName;
                         _GoodsDeliveryAuthorizationq = _GoodsDeliveryAuthorization;
                         _GoodsDeliveryAuthorizationq.Estado = "Revisión";
                         _GoodsDeliveryAuthorizationq.EstadoId = 5;
+                        _GoodsDeliveryAuthorizationq.Certificados = String.Join(", ", _GoodsDeliveryAuthorization.GoodsDeliveryAuthorizationLine.Select(s => s.NoCertificadoDeposito).Distinct().ToArray());
 
                         
                         //Firmas
@@ -302,51 +436,36 @@ namespace ERPAPI.Controllers
 
                         _context.GoodsDeliveryAuthorization.Add(_GoodsDeliveryAuthorizationq);
 
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+
+                        await _context.SaveChangesAsync();
+
 
                         foreach (var item in _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationLine)
                         {
-                            item.GoodsDeliveryAuthorizationId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId;
-                            _context.GoodsDeliveryAuthorizationLine.Add(item);
-
-                            CertificadoLine certificadoLine = _context.CertificadoLine
-                             .Where(q => q.CertificadoLineId == item.CertificadoLineId).FirstOrDefault();
-
                             CertificadoDeposito certificadoDeposito = await _context.CertificadoDeposito
-                                //.Include(i => i._CertificadoLine)
                                 .Where(q => q.IdCD == item.NoCertificadoDeposito).FirstOrDefaultAsync();
 
-                            List<Kardex> kardexCertificadodeposito = await _context.Kardex.Where(q =>
-                                    q.DocType == 2
-                                    && q.DocumentId == certificadoDeposito.IdCD 
-                                    && q.SubProducId == item.SubProductId
-                                    ).ToListAsync();
-                            Kardex kardexMaxCertificadodeposito =
-                                kardexCertificadodeposito
-                                .Where(q => q.KardexId == kardexCertificadodeposito
-                                .Select(s => s.KardexId).Max()).FirstOrDefault();
-
-                            
-
-                            
-
-                            if (kardexMaxCertificadodeposito == null) { 
-                                BadRequest($"No se Encontro Kardex Para este Producto en el Certificado"); 
+                            if (item.UnitOfMeasure != null )
+                            {
+                                item.UnitOfMeasureId = item.UnitOfMeasure.UnitOfMeasureId;
+                                item.UnitOfMeasureName = item.UnitOfMeasure.UnitOfMeasureName;
+                                item.UnitOfMeasure = null;
                             }
 
-                          
+                            if (item.Product != null) {
+                                item.SubProductId = item.Product.SubProductId;
+                                item.SubProductName = item.Product.SubProductName;
+                                item.Product= null;
+                                _GoodsDeliveryAuthorization.ProductoAutorizado = item.SubProductName;
 
+                            }
                             
-
                             SubProduct _subproduct = await (from c in _context.SubProduct
                                                      .Where(q => q.SubproductId == item.SubProductId)
                                                             select c
                                                      ).FirstOrDefaultAsync();
-
-                            //if(kardexMaxCertificadodeposito.TotalCD< item.Quantity)
-                            //{
-                            //    return await Task.Run(() => BadRequest($"La cantidad a retirar no puede ser superior al total del ciertificado"));
-                            //}
-                            if (item.SaldoProducto < item.Quantity)
+                            if (item.CertificadoLineId>0 && item.SaldoProducto < item.Quantity)
                             {
                                 return await Task.Run(() => BadRequest($"La cantidad a retirar no puede ser superior al total del ciertificado"));
                             }
@@ -355,6 +474,8 @@ namespace ERPAPI.Controllers
                             {
                                 KardexDate = DateTime.Now,
                                 DocumentDate = _GoodsDeliveryAuthorization.DocumentDate,
+                                CustomerId = _GoodsDeliveryAuthorization.CustomerId,
+                                CustomerName = _GoodsDeliveryAuthorization.CustomerName,
                                 ProducId = _GoodsDeliveryAuthorizationq.ProductId,
                                 ProductName = _GoodsDeliveryAuthorizationq.ProductName,
                                 SubProducId = Convert.ToInt32(item.SubProductId),
@@ -362,6 +483,7 @@ namespace ERPAPI.Controllers
                                 QuantityEntry = item.Quantity,
                                 QuantityOut = 0,
                                 QuantityEntryBags = 0,
+                                Precio = item.Price,
                                 BranchId = _GoodsDeliveryAuthorization.BranchId,
                                 BranchName = _GoodsDeliveryAuthorization.BranchName,
                                 WareHouseId = Convert.ToInt32(item.WarehouseId),
@@ -372,36 +494,54 @@ namespace ERPAPI.Controllers
                                 TypeOperationName = "Entrada",
                                 DocumentName = "Autorizacion de Retiro",
                                 DocType = 3,
+                                DocumentId = _GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId,
+                                DocumentLine= (int)item.GoodsDeliveryAuthorizationLineId,
                                 Total = item.Quantity,
+                                SourceDocumentId = (int)_GoodsDeliveryAuthorizationq.GoodsDeliveryAuthorizationId,
+                                SourceDocumentName = "Autorizacion de Retiro",
+                                SourceDocumentLine = (int)item.GoodsDeliveryAuthorizationLineId,
+                                PdaNo = item.Pda,
+
                             });
 
-                            ///////////////////////Sale del Certificado////////////////
-                            _context.Kardex.Add(new Kardex
-                            {
-                                KardexDate = DateTime.Now,
-                                DocumentDate = kardexMaxCertificadodeposito.DocumentDate,
-                                ProducId = kardexMaxCertificadodeposito.ProducId,
-                                ProductName = kardexMaxCertificadodeposito.ProductName,
-                                SubProducId = Convert.ToInt32(kardexMaxCertificadodeposito.SubProducId),
-                                SubProductName = item.SubProductName,
-                                QuantityEntry = 0,
-                                QuantityOut = item.Quantity,
-                                QuantityEntryBags = 0,
-                                BranchId = kardexMaxCertificadodeposito.BranchId,
-                                BranchName = kardexMaxCertificadodeposito.BranchName,
-                                WareHouseId = Convert.ToInt32(kardexMaxCertificadodeposito.WareHouseId),
-                                WareHouseName = kardexMaxCertificadodeposito.WareHouseName,
-                                UnitOfMeasureId = kardexMaxCertificadodeposito.UnitOfMeasureId,
-                                UnitOfMeasureName = kardexMaxCertificadodeposito.UnitOfMeasureName,
-                                TypeOperationId = TipoOperacion.Salida,
-                                TypeOperationName = "Salida",
-                                DocumentName = "Certificado Deposito/Autorizacion Retiro",
-                                DocType = 2,
-                                Total = kardexMaxCertificadodeposito.Total - item.valorcertificado,
-                            }) ;
+                            
 
-                            certificadoLine.CantidadDisponibleAutorizar = certificadoLine.CantidadDisponibleAutorizar == null ?certificadoLine.Quantity - item.Quantity
-                                :certificadoLine.CantidadDisponibleAutorizar -  item.Quantity;
+
+                            decimal cantautorizar = item.Quantity;
+
+                            List<CertificadoLine> certificadoLines =  _context.CertificadoLine.Where(q => q.IdCD == item.NoCertificadoDeposito && q.PdaNo == item.Pda).ToList();
+                            foreach (var detallecert in certificadoLines)
+                            {
+                                if (cantautorizar<=0)                                
+                                {
+                                    break;
+                                }
+
+                                detallecert.CantidadDisponibleAutorizar = detallecert.CantidadDisponibleAutorizar.HasValue ? detallecert.CantidadDisponibleAutorizar : detallecert.Quantity;
+                                decimal autorizado = detallecert.CantidadDisponibleAutorizar >= cantautorizar ? cantautorizar : (decimal)detallecert.CantidadDisponibleAutorizar;
+                                decimal saldo = (decimal)detallecert.CantidadDisponibleAutorizar - autorizado;
+                                detallecert.CantidadDisponibleAutorizar = saldo;
+
+                                cantautorizar -= autorizado;
+
+                                List<Kardex> kardexCertificadodeposito = await _context.Kardex.Where(q =>
+                                    q.DocType == 2
+                                    && q.DocumentId == certificadoDeposito.IdCD
+                                    && q.SubProducId == item.SubProductId
+                                    && q.DocumentLine == detallecert.CertificadoLineId
+                                    ).ToListAsync();
+                                Kardex kardexMaxCertificadodeposito =
+                                    kardexCertificadodeposito
+                                    .Where(q => q.KardexId == kardexCertificadodeposito
+                                    .Select(s => s.KardexId).Max()).FirstOrDefault();
+
+                                if (kardexMaxCertificadodeposito == null)
+                                {
+                                    BadRequest($"No se Encontro Kardex Para este Producto en el Certificado");
+                                }
+                                
+                            }
+
                         }
                           
 
@@ -421,27 +561,28 @@ namespace ERPAPI.Controllers
                             UsuarioEjecucion = _GoodsDeliveryAuthorization.UsuarioModificacion,
 
                         });
-
-                        await _context.SaveChangesAsync();
-
-                       
-
-                        foreach (var item in _GoodsDeliveryAuthorization.CertificadosAsociados)
+                        if (_GoodsDeliveryAuthorization.CertificadosAsociados != null)
                         {
-                            decimal? saldoPendienteautorizar = 0;
+                            foreach (var item in _GoodsDeliveryAuthorization.CertificadosAsociados)
+                            {
+                                decimal? saldoPendienteautorizar = 0;
 
-                            CertificadoDeposito cd = _context.CertificadoDeposito.Where(q => q.IdCD == item).Include(i => i._CertificadoLine).FirstOrDefault();
-                            foreach (var linea in cd._CertificadoLine)
-                            {
-                                saldoPendienteautorizar += linea.CantidadDisponibleAutorizar;
-                                
-                            }
-                            if (saldoPendienteautorizar<=0)
-                            {
-                                cd.PendienteAutorizar = false;
+                                CertificadoDeposito cd = _context.CertificadoDeposito.Where(q => q.IdCD == item).Include(i => i._CertificadoLine).FirstOrDefault();
+                                foreach (var linea in cd._CertificadoLine)
+                                {
+                                    saldoPendienteautorizar += linea.CantidadDisponibleAutorizar;
+
+                                }
+                                if (saldoPendienteautorizar <= 0)
+                                {
+                                    cd.PendienteAutorizar = false;
+                                }
+
                             }
 
                         }
+
+                        new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
                         await _context.SaveChangesAsync();
 
@@ -483,10 +624,11 @@ namespace ERPAPI.Controllers
                 if (branch != null)
                 {
                     Items = await _context.GoodsDeliveryAuthorization
+                        .Include(g => g.GoodsDeliveryAuthorizationLine)
                       .Where(p =>
                            p.CustomerId == clienteid
                           && p.ProductId == servicioid
-                          //&& (p.Porcertificar == null || (bool)p.Porcertificar)
+                          && p.GoodsDeliveryAuthorizationLine.Sum(s => s.Saldo)>0
                           )
                       .OrderByDescending(b => b.GoodsDeliveryAuthorizationId).ToListAsync();
 
@@ -496,7 +638,6 @@ namespace ERPAPI.Controllers
                 else
                 {
                     return await Task.Run(() => Ok(Items));
-                    // Items = await _context.GoodsReceived.OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
                 }
             }
             catch (Exception ex)

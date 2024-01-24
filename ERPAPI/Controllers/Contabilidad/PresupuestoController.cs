@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -82,6 +83,71 @@ namespace ERPAPI.Controllers
         }
 
         /// <summary>
+        /// Obtiene el Listado de Presupuestoes 
+        /// El estado define cuales son los cai activos
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]/{periodoId}/{centrocosto}")]
+        public async Task<ActionResult<List<Presupuesto>>> GetPreuspuestosByPeriodo(int periodoId,int centrocosto)
+        {
+            List<Presupuesto> Items = new List<Presupuesto>();
+            try
+            {
+                Items = await _context.Presupuesto
+                    .Where(a =>a.PeriodoId == periodoId 
+                    && (a.CostCenterId == centrocosto||centrocosto==0))
+                    .Include("Accounting").ToListAsync();
+
+                Items = (from c in Items
+                         select new Presupuesto
+                         {
+                             Id = c.Id,
+                             PeriodoId = c.PeriodoId,
+                             Periodo = c.Periodo,
+                             AccountCode = c.Accounting.AccountCode,
+                             AccountingName = c.Accounting.AccountName,
+                             AccountigId = c.AccountigId,
+                             PresupuestoEnero = c.PresupuestoEnero,
+                             PresupuestoFebrero = c.PresupuestoFebrero,
+                             PresupuestoMarzo = c.PresupuestoMarzo,
+                             PresupuestoAbril = c.PresupuestoAbril,
+                             PresupuestoMayo = c.PresupuestoMayo,
+                             PresupuestoJunio = c.PresupuestoJunio,
+                             PresupuestoJulio = c.PresupuestoJulio,
+                             PresupuestoAgosto = c.PresupuestoAgosto,
+                             PresupuestoSeptiembre = c.PresupuestoSeptiembre,
+                             PresupuestoOctubre = c.PresupuestoOctubre,
+                             PresupuestoNoviembre = c.PresupuestoNoviembre,
+                             PresupuestoDiciembre = c.PresupuestoDiciembre,
+                             TotalMontoPresupuesto = c.TotalMontoPresupuesto,
+                             EjecucionEnero = c.EjecucionEnero,
+                             EjecucionFebrero = c.EjecucionFebrero,
+                             EjecucionMarzo = c.EjecucionMarzo,
+                             EjecucionAbril = c.EjecucionAbril,
+                             EjecucionMayo = c.EjecucionMayo,
+                             EjecucionJunio = c.EjecucionJunio,
+                             EjecucionJulio = c.EjecucionJulio,
+                             EjecucionAgosto = c.EjecucionAgosto,
+                             EjecucionSeptiembre = c.EjecucionSeptiembre,
+                             EjecucionOctubre = c.EjecucionOctubre,
+                             EjecucionNoviembre = c.EjecucionNoviembre,
+                             EjecucionDiciembre = c.EjecucionDiciembre,
+                             TotalMontoEjecucion = c.TotalMontoEjecucion
+                         }
+               ).ToList();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+        /// <summary>  
         /// Obtiene los Datos de la Presupuesto por medio del Id enviado.
         /// </summary>
         /// <param name="PresupuestoId"></param>
@@ -121,6 +187,8 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
+                        
+
                         Accounting _Presupuestop = await (from c in _context.Accounting
                                          .Where(q => q.AccountId == _Presupuesto.AccountigId
                                          )
@@ -170,9 +238,11 @@ namespace ERPAPI.Controllers
                     catch (Exception ex)
                     {
                         transaction.Rollback();
-                        _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                        throw ex;
-                        // return BadRequest($"Ocurrio un error:{ex.Message}");
+                        _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                        if (ex.InnerException is SqlException sqlException && sqlException.Message.Contains("Cannot insert duplicate key"))
+                        {
+                            return BadRequest("Ya existe una bodega registrada con este nombre en esta Sucursal.");
+                        }
                     }
                 }
             }

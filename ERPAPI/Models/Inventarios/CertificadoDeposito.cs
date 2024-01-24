@@ -36,6 +36,8 @@ namespace ERPAPI.Models
         public Branch Branch { get; set; }
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
+        ///Dirreccion de la sucursal
+        public string SituadoEn { get; set; }
 
 
         [Display(Name = "Tipo Servicio")]

@@ -84,6 +84,11 @@ namespace ERPAPI.Controllers
                                    Product = new Product {
                                         ProductName  = e.ProductName
                                    },
+                                   CuentaContableIngresosId= c.CuentaContableIngresosId,
+                                   CuentaContableIngresosNombre= c.CuentaContableIngresosNombre,
+                                   CuentaContableIdPorCobrar = c.CuentaContableIdPorCobrar,
+                                   CuentaContablePorCobrarNombre = c.CuentaContablePorCobrarNombre,
+
                                    Estado = c.Estado
 
 

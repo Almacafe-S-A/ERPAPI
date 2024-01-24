@@ -275,7 +275,7 @@ namespace ERPAPI.Controllers
                 {
                     try
                     {
-
+                        
                         _customer.CityId = _customer.CityId == 0 ? null : _customer.CityId;
                         _customer.CountryId = _customer.CountryId == 0 ? null : _customer.CountryId;
                         _customer.StateId = _customer.StateId == 0 ? null : _customer.StateId;
@@ -287,10 +287,20 @@ namespace ERPAPI.Controllers
                                               select c
                                    ).FirstOrDefault();
 
+                        if (customerq.IdEstado == 1 && _customer.IdEstado == 2)
+                        {
+                            _customer.FechaBaja = DateTime.Now;
+                        }
+                        else
+                        {
+                            _customer.FechaBaja = customerq.FechaBaja;
+                        }
+
                         _customer.FechaCreacion = customerq.FechaCreacion;
                         _customer.UsuarioCreacion = customerq.UsuarioCreacion;
                         _customer.FechaModificacion = customerq.FechaModificacion;
                         _customer.UsuarioModificacion = User.Identity.Name;
+                       
 
                         //_context.Customer.Update(_customer);
 
@@ -299,24 +309,6 @@ namespace ERPAPI.Controllers
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
 
-
-                        await _context.SaveChangesAsync();
-
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _customer.CustomerId,
-                            DocType = "Customer",
-                            ClaseInicial =
-                               Newtonsoft.Json.JsonConvert.SerializeObject(customerq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            ResultadoSerializado = Newtonsoft.Json.JsonConvert.SerializeObject(_customer, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Update",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _customer.UsuarioCreacion,
-                            UsuarioModificacion = _customer.UsuarioModificacion,
-                            UsuarioEjecucion = _customer.UsuarioModificacion,
-
-                        });
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();

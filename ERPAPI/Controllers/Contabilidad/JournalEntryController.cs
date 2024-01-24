@@ -101,14 +101,33 @@ namespace ERPAPI.Controllers
 
 
         // GET: api/JournalEntry
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetJournalEntryAjustes()
-
+        [HttpGet("[action]/{PeriodoId}")]
+        public async Task<IActionResult> GetJournalEntryAsientosByPeriodo(int PeriodoId)
         {
             List<JournalEntry> Items = new List<JournalEntry>();
             try
             {
-                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 66).ToListAsync();
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == 65 && q.PeriodoId == PeriodoId).ToListAsync();
+                //Items = await _context.JournalEntry.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
+        
+
+
+      // GET: api/JournalEntry
+      [HttpGet("[action]/{tipo}")]
+        public async Task<IActionResult> GetJournalEntryPorTipo(int tipo)
+        {
+            List<JournalEntry> Items = new List<JournalEntry>();
+            try
+            {
+                Items = await _context.JournalEntry.Where(q => q.TypeOfAdjustmentId == tipo).ToListAsync();
                 //Items = await _context.JournalEntry.ToListAsync();
             }
             catch (Exception ex)
@@ -165,6 +184,12 @@ namespace ERPAPI.Controllers
                     try
                     {
                         _JournalEntryq = _JournalEntry;
+                        
+                        Periodo periodoactivo = new Periodo();
+                        periodoactivo = await _context.Periodo.Where(q => q.Estado == "Abierto").FirstOrDefaultAsync(); 
+                        _JournalEntryq.PeriodoId = periodoactivo.Id;
+                        _JournalEntryq.Periodo = periodoactivo.Anio.ToString();
+
                         _context.JournalEntry.Add(_JournalEntryq);
                         // await _context.SaveChangesAsync();
                         decimal sumacreditos = 0, sumadebitos = 0;
@@ -302,6 +327,11 @@ namespace ERPAPI.Controllers
                                 check.Estado = "Rechazado";
                                 check.IdEstado = 99;
                             }
+                        }
+
+                        if (_JournalEntry.PeriodoId == null)
+                        {
+                            throw new Exception($"El asiento contable {_JournalEntry.JournalEntryId} no tiene un periodo asignado no se puede actualizar");
                         }
 
                         transaction.Commit();

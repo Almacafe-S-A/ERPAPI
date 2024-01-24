@@ -255,17 +255,6 @@ namespace ERPAPI.Controllers
 
                     var claims = (List<Claim>) await _userManager.GetClaimsAsync(usuario);
                     var listaRoles = _approle.Select(async x => await _rolemanager.FindByNameAsync(x));
-                    // var listClaims = listaRoles.Select(x => _rolemanager.GetClaimsAsync(x.Result).Result.Where(c=>c.Value.Equals("true")).ToList());
-                    //foreach (IList<Claim> claimsRole in listClaims)
-                    // {
-                        //claims.AddRange(claimsRole.ToArray());
-                    // }
-                    //Verificacion manual debido a que la accion permite que se invoque de forma anonima
-                    //var permiso = claims.FirstOrDefault(x => x.Type.Equals("Seguridad.Iniciar Sesion") && x.Value.Equals("true"));
-                    //if (permiso == null)
-                    //{
-                    //    return BadRequest($"El Usuario no tiene permiso para iniciar sesión");
-                    //}
 
                     claims.Add(new Claim(ClaimTypes.Email, usuario.Email));
                     claims.Add(new Claim(ClaimTypes.Name, usuario.UserName));

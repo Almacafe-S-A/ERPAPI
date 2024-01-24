@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using ERP.Contexts;
 using ERPAPI.Contexts;
 using ERPAPI.Models;
+using ERPAPI.Helpers;
+using ERPMVC.DTO;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Text;
+using ERPMVC.Helpers;
 
 namespace ERPAPI.Controllers
 {
@@ -21,13 +27,18 @@ namespace ERPAPI.Controllers
     [ApiController]
     public class GoodsReceivedController : Controller
     {
+        private readonly IOptions<MyConfig> config;
         private readonly ApplicationDbContext _context;
         private readonly ILogger _logger;
+        private readonly EmailHelper _email;
 
-        public GoodsReceivedController(ILogger<GoodsReceivedController> logger, ApplicationDbContext context)
+
+        public GoodsReceivedController(ILogger<GoodsReceivedController> logger, ApplicationDbContext context, IOptions<MyConfig> config, EmailHelper email)
         {
+            this.config = config;
             _context = context;
             _logger = logger;
+            _email = email;
         }
 
         /// <summary>
@@ -168,12 +179,16 @@ namespace ERPAPI.Controllers
                 List<UserBranch> branchlist = await _context.UserBranch.Where(w => w.UserId == user.FirstOrDefault().Id).ToListAsync();
                 if (branchlist.Count > 0)
                 {
-                    Items = await _context.GoodsReceived
-                        .Where(p => branchlist.Any(b => p.BranchId == b.BranchId)
-                            && p.CustomerId == clienteid
-                            && p.ProductId == servicioid
-                            && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == p.GoodsReceivedId))
-                        .OrderByDescending(b => b.GoodsReceivedId).ToListAsync();
+                    List<GoodsReceivedLine> GoodsRecievedList = _context.GoodsReceivedLine
+                        .Where(p => !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == p.GoodsReceiveLinedId)).ToList();
+                    Items = await (from gr in _context.GoodsReceived
+                                   join grl in _context.GoodsReceivedLine on gr.GoodsReceivedId equals grl.GoodsReceivedId
+                                   where branchlist.Any(b => gr.BranchId == b.BranchId)
+                                       && gr.CustomerId == clienteid
+                                       && gr.ProductId == servicioid
+                                       && !_context.LiquidacionLine.Any(a => a.GoodsReceivedLineId == grl.GoodsReceiveLinedId)
+                                   orderby gr.GoodsReceivedId descending
+                                   select gr).ToListAsync();
                 }
                 else
                 {
@@ -262,10 +277,6 @@ namespace ERPAPI.Controllers
             Alert _Alertq = new Alert();
             try
             {
-                // using (var transaction = _context.Database.BeginTransaction())
-                //{
-                // try
-                // {
                 _Alertq = _Alert;
                 _context.Alert.Add(_Alertq);
                 await _context.SaveChangesAsync();
@@ -289,7 +300,6 @@ namespace ERPAPI.Controllers
             }
             catch (Exception ex)
             {
-
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
@@ -360,13 +370,19 @@ namespace ERPAPI.Controllers
         private async Task<ActionResult<BoletaDeSalida>> InsertBoletaSalida(GoodsReceived _GoodsReceived) {
             try
             {
-                ControlPallets controlPallets = _context.ControlPallets.Where(q => q.ControlPalletsId == _GoodsReceived.ControlId).Include(i => i._ControlPalletsLine).FirstOrDefault();
+                ControlPallets controlPallets = _context.ControlPallets
+                    .Where(q => q.ControlPalletsId == _GoodsReceived.ControlId)
+                    .Include(i => i._ControlPalletsLine).FirstOrDefault();
 
 
                 if (controlPallets == null) return BadRequest(); 
-                Boleto_Ent boletapeso = await  _context.Boleto_Ent.Where(q => q.clave_e == controlPallets.WeightBallot).FirstOrDefaultAsync();
+                Boleto_Ent boletapeso = await  _context.Boleto_Ent
+                    .Where(q => q.clave_e == controlPallets.WeightBallot)
+                    .FirstOrDefaultAsync();
 
-               
+                
+
+                decimal cantidadSacos = (decimal)_GoodsReceived._GoodsReceivedLine.Sum(s => s.QuantitySacos);
 
 
 
@@ -382,12 +398,12 @@ namespace ERPAPI.Controllers
                     Marca = _GoodsReceived.Marca,
                     Placa = _GoodsReceived.Placa,
                     Motorista = _GoodsReceived.Motorista,
-                    Quantity = (decimal)_GoodsReceived._GoodsReceivedLine.Select(q => q.QuantitySacos).Sum(),
+                    Quantity = cantidadSacos == 0 ? (decimal) _GoodsReceived.PesoNeto2 :cantidadSacos,
                     SubProductId = (long)_GoodsReceived._GoodsReceivedLine[0].SubProductId,
                     SubProductName = _GoodsReceived._GoodsReceivedLine.Count()>1?"Productos Varios":
                                 _GoodsReceived._GoodsReceivedLine[0].SubProductName,
                     ProductName = _GoodsReceived.ProductName,     
-                    Producto = _GoodsReceived.SubProductId,
+                    Producto = _GoodsReceived.ProductId,
                     CargadoId = 14,
                     Cargadoname = "Vacío",
                     DocumentoTipo = "Recibo de Mercaderías",
@@ -406,6 +422,9 @@ namespace ERPAPI.Controllers
 
                 if (boletapeso!=null)
                 {
+                    boletapeso.Boleto_Sal = _context.Boleto_Sal
+                    .Where(q => q.clave_e == boletapeso.clave_e)
+                    .FirstOrDefault();
                     boletapeso.Boleto_Sal = await _context.Boleto_Sal.Where(q => q.clave_e == boletapeso.clave_e).FirstOrDefaultAsync();
                     _boletadesalida.OrdenNo = boletapeso.Orden;
                     _boletadesalida.Transportista = boletapeso.Tranportista;
@@ -451,15 +470,69 @@ namespace ERPAPI.Controllers
 
         }
 
+        private async Task<ActionResult<Alert>> ValidarPaisesGAFI(GoodsReceived goodsReceived)
+        {
 
-        private async Task<ActionResult<SubProduct>> ValidarProductosProhibidos(GoodsReceivedLine producto,GoodsReceived goodsReceived){
-           
-            SubProduct _subproduct = _context.SubProduct
-                .Where(q => q.SubproductId == producto.SubProductId).FirstOrDefault();
-            if (_subproduct.ProductTypeId == 3)
+            Alert Alerta = null;
+            Country country = await _context.Country.Where(q => q.Id == goodsReceived.CountryId).FirstOrDefaultAsync();
+            Country countryGAFI = await _context.Country.Where(q => q.Name.Equals(country.Name, StringComparison.OrdinalIgnoreCase)  && q.GAFI == true).FirstOrDefaultAsync();
+
+            if (countryGAFI != null )
             {
-                //Alert AlertP = new Alert();
-                Alert Alerta = new Alert();
+
+                Alerta = new Alert();
+                Alerta.DocumentId = (long)goodsReceived.CountryId;
+                Alerta.DocumentName = "LISTA PROHIBIDA";
+                Alerta.AlertName = "Países GAFI";
+                Alerta.Code = "COUNTRY01";
+                Alerta.DescriptionAlert = "Lista de Países GAFI";
+                Alerta.FechaCreacion = DateTime.Now;
+                Alerta.FechaModificacion = DateTime.Now;
+                Alerta.UsuarioCreacion = User.Identity.Name;
+                Alerta.UsuarioModificacion = User.Identity.Name;
+                Alerta.PersonName = goodsReceived.CustomerName;
+                Alerta.Description = $"País GAFI {goodsReceived.CountryName} en recibo de mercaderia";
+                Alerta.DescriptionAlert = $"País GAFI {goodsReceived.CountryName} en recibo de mercaderia";
+                Alerta.Type = "168";
+                Alerta.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 168).FirstOrDefault().Nombre;
+                _context.Alert.Add(Alerta);
+
+                BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
+                {
+                    IdOperacion = Alerta.AlertId,
+                    DocType = "Alert",
+                    ClaseInicial =
+                    Newtonsoft.Json.JsonConvert.SerializeObject(Alerta, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                    Accion = "Insertar",
+                    FechaCreacion = DateTime.Now,
+                    FechaModificacion = DateTime.Now,
+                    UsuarioCreacion = Alerta.UsuarioCreacion,
+                    UsuarioModificacion = Alerta.UsuarioModificacion,
+                    UsuarioEjecucion = Alerta.UsuarioModificacion,
+
+                });
+
+                await _context.SaveChangesAsync();
+                return Alerta;
+            }
+            else
+            {
+
+                return Alerta;
+            }
+        }
+        
+        private async Task<ActionResult<Alert>> ValidarProductosProhibidos(GoodsReceivedLine producto,GoodsReceived goodsReceived, SubProduct _subproduct)
+        {
+           
+                Alert Alerta = null;
+            List<SubProduct> productoprohibidos = new List<SubProduct> ();
+
+            productoprohibidos = _context.SubProduct.Where(q => _subproduct.ProductName.ToLower().Contains(q.ProductName.ToLower()) && q.ProductTypeId == 3).ToList();
+           
+            if ( productoprohibidos.Count > 0)
+            {
+                Alerta = new Alert();
                 Alerta.DocumentId = (long)producto.SubProductId;
                 Alerta.DocumentName = "LISTA PROHIBIDA";
                 Alerta.AlertName = "Productos";
@@ -474,9 +547,7 @@ namespace ERPAPI.Controllers
                 Alerta.DescriptionAlert = $"Producto Prohibido {producto.SubProductName} en recibo de mercaderia";
                 Alerta.Type = "168";
                 Alerta.DescriptionAlert = _context.ElementoConfiguracion.Where(p => p.Id == 168).FirstOrDefault().Nombre;
-                // var AlertaP = await InsertAlert(Alerta);
                 _context.Alert.Add(Alerta);
-                //await _context.SaveChangesAsync();
 
                 BitacoraWrite _writealert = new BitacoraWrite(_context, new Bitacora
                 {
@@ -494,13 +565,12 @@ namespace ERPAPI.Controllers
                 });
 
                  await _context.SaveChangesAsync();
-                return BadRequest(_subproduct);
-
+                return Alerta;
             }
             else
             {
                 
-                return _subproduct;
+                return Alerta;
             }
 
 
@@ -533,6 +603,7 @@ namespace ERPAPI.Controllers
         
         }
 
+       
 
 
         /// <summary>
@@ -541,12 +612,11 @@ namespace ERPAPI.Controllers
         /// <param name="_GoodsReceived"></param>
         /// <returns></returns>
         [HttpPost("[action]")]
-        public async Task<ActionResult<GoodsReceived>> Insert([FromBody] GoodsReceived _GoodsReceived)
+        public async Task<ActionResult<ResponseDTO<GoodsReceived>>> Insert([FromBody] GoodsReceived _GoodsReceived)
         {
-
+            List<Alert> alerts = new List<Alert>();
             GoodsReceived _GoodsReceivedq = new GoodsReceived();
-            try
-            {
+            
                 using (var transaction = _context.Database.BeginTransaction())
                 {
                     try
@@ -558,6 +628,15 @@ namespace ERPAPI.Controllers
                         {
                             return BadRequest("Los recibos de mercaderias que contienen cafe solo pueden contener ese tipo de producto"); 
                         }
+
+                        var validarpais = await ValidarPaisesGAFI(_GoodsReceivedq);
+                        if (validarpais.Value != null)// Valida si es o no un pais GAFI
+                        {
+                            alerts.Add(validarpais.Value);
+                           
+                        }
+
+                        
                         //_GoodsReceived = (GoodsReceived)valido.Value;
                         _GoodsReceived.esCafe = validarProductoTipoCafe.Value;
 
@@ -580,14 +659,17 @@ namespace ERPAPI.Controllers
 
                         foreach (var item in _GoodsReceivedq._GoodsReceivedLine)
                         {
+                            SubProduct _subproduct = _context.SubProduct
+                                .Where(q => q.SubproductId == item.SubProductId).FirstOrDefault();
                             //item.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
-                            var validarproductos = await ValidarProductosProhibidos(item,_GoodsReceivedq);
-                            if (validarproductos.Result is BadRequestObjectResult)// Valida si es o no producto prohibido
+                            var validarproductos = await ValidarProductosProhibidos(item,_GoodsReceivedq, _subproduct);
+                            if (validarproductos.Value != null)// Valida si es o no producto prohibido
                             {
-
+                                alerts.Add(validarproductos.Value);
+                            
                             }
                             //_context.GoodsReceivedLine.Add(item); // Siempre Agrega el prodcuto
-                            var generarKardex = await GenerarKardexRecibo(item,_GoodsReceivedq,validarproductos.Value); // Genera el Kardex Fisico
+                            var generarKardex = await GenerarKardexRecibo(item,_GoodsReceivedq, _subproduct); // Genera el Kardex Fisico
                             item.Kardex =  generarKardex.Value;
                             item.SaldoporCertificar = item.Quantity;////Asigna el valor al saldo por certificar al detalle
 
@@ -630,14 +712,11 @@ namespace ERPAPI.Controllers
                             await _context.SaveChangesAsync();///Asigna el numero del recibo a la boleta de salida 
                         }
 
-                        //TODO : Validar si es necesario
-                        //BoletaDeSalida _bol = await _context.BoletaDeSalida
-                        //                      .Where(q => q.BoletaDeSalidaId == boletasalida.Value.BoletaDeSalidaId).FirstOrDefaultAsync();
-
-                        //_bol.GoodsReceivedId = _GoodsReceivedq.GoodsReceivedId;
-                        //_context.Entry(_bol).CurrentValues.SetValues((_bol));
                         var generarasiento = await GeneraAsientoReciboMercaderias(_GoodsReceivedq);
                         transaction.Commit();
+
+                        
+
                     }
                     catch (Exception ex)
                     {
@@ -645,15 +724,31 @@ namespace ERPAPI.Controllers
                         throw ex;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
 
-                _logger.LogError($"Ocurrio un error: { ex.ToString() }");
-                return BadRequest($"Ocurrio un error:{ex.Message}");
-            }
+                if (alerts.Count > 0)
+                {
+                    StringBuilder cuerpo = new StringBuilder();
+                    string asunto = $"Alerta Recibo de Mercaderias - Cliente {_GoodsReceived.CustomerName}";
+                    cuerpo.AppendLine(asunto);
+                    cuerpo.AppendLine($"Recibo de Mercaderias No: {_GoodsReceived.GoodsReceivedId}");
+                    foreach (var alert in alerts)
+                    {
+                      cuerpo.AppendLine("ALERTA: " + alert.ToString());
+                    }
+                await _email.EnviarCorreo(cuerpo,asunto,config.Value.EmailAlertaNivelUno);
+                }
+            
+            ResponseDTO<GoodsReceived> response = new ResponseDTO<GoodsReceived> {
+                model = _GoodsReceivedq,
+                alerts = alerts
+            };
 
-            return await Task.Run(() => Ok(_GoodsReceivedq));
+            return await Task.Run(() => Ok(response));
+        }
+        private bool RemoteServerCertificateValidationCallback(object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+        {
+            //Console.WriteLine(certificate);
+            return true;
         }
 
 
@@ -691,7 +786,11 @@ namespace ERPAPI.Controllers
                     CustomerName = _GoodsReceivedq.CustomerName,
                     DocumentId = _GoodsReceivedq.GoodsReceivedId,
                     Estiba = item.ControlPalletsId,
+                    SourceDocumentId = (int)_GoodsReceivedq.GoodsReceivedId,
+                    SourceDocumentName = "ReciboMercaderia/GoodsReceived",
+                    SourceDocumentLine = (int)item.GoodsReceiveLinedId,
                     
+
                 };   
                 _context.Kardex.Add(kardex);
 
@@ -921,51 +1020,7 @@ namespace ERPAPI.Controllers
                     //.GroupBy(g => g.SubProductId)
                     .Include(i => i.GoodsReceived)
                     .ToListAsync();
-                //List<GoodsReceivedLineDTO> d = _context.Query<GoodsReceivedLineDTO>().FromSql (
-                //("  SELECT  grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName         "
-                // + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
-                // + "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
-                // + $"  FROM GoodsReceivedLine grl                 where  GoodsReceivedId in ({inparams})                                "
-                // + "  GROUP BY grl.SubProductId, grl.SubProductName, grl.UnitOfMeasureName        "
-                // )
-                //    ).AsNoTracking().ToList();
-                //.Where(q => listarecibos.Contains(q.GoodsReceivedId)).ToList();
-
-              //  List<GoodsReceivedLineDTO> d = new List<GoodsReceivedLineDTO>();
-
-                //var goodreceived = _context.GoodsReceived.
-                //using (var command = _context.Database.GetDbConnection().CreateCommand())
-                //{
-                //    command.CommandText = ("  SELECT  grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName         "
-                // + " , SUM(Quantity) AS Cantidad, SUM(grl.QuantitySacos) AS CantidadSacos         "
-                //  //+ "  , SUM(grl.Price) Precio, SUM(grl.Total) AS Total                            "
-                //  + "  , grl.Price as Precio, SUM(grl.Quantity) * (grl.Price)  AS Total                            "
-                // + $"  FROM GoodsReceivedLine grl                 where  GoodsReceivedId in ({inparams})                                "
-                // + "  GROUP BY grl.SubProductId,grl.UnitOfMeasureId, grl.SubProductName, grl.UnitOfMeasureName,grl.Price        "
-                // );
-
-                //   _context.Database.OpenConnection();
-                //    using (var result = command.ExecuteReader())
-                //    {
-                //        // do something with result
-                //        while (await result.ReadAsync())
-                //        {
-                //            _goodsreceivedlis._GoodsReceivedLine.Add(new GoodsReceivedLine {
-                //                SubProductId = Convert.ToInt64(result["SubProductId"]),
-                //                SubProductName = result["SubProductName"].ToString(),
-                //                UnitOfMeasureId = Convert.ToInt64(result["UnitOfMeasureId"]),
-                //                UnitOfMeasureName = result["UnitOfMeasureName"].ToString(),
-                //                Quantity = Convert.ToDecimal(result["Cantidad"]),
-                //                QuantitySacos = Convert.ToInt32(result["CantidadSacos"]),
-                //                Price = Convert.ToDecimal(result["Precio"]),
-                //                Total = Convert.ToDecimal(result["Total"]),
-                                
-                //            });
-                //        }
-                //    }
-                //}
-
-
+               
             }
             catch (Exception ex)
             {

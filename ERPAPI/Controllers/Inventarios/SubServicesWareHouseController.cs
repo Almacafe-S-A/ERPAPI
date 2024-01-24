@@ -139,6 +139,8 @@ namespace ERPAPI.Controllers
                     {
 
                         _SubServicesWareHouseq = _SubServicesWareHouse;
+                        _SubServicesWareHouseq.UsuarioCreacion = User.Identity.Name;
+                        _SubServicesWareHouseq.FechaCreacion = DateTime.Now;
                         _context.SubServicesWareHouse.Add(_SubServicesWareHouseq);
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
@@ -146,20 +148,7 @@ namespace ERPAPI.Controllers
 
                         await _context.SaveChangesAsync();
 
-                        BitacoraWrite _write = new BitacoraWrite(_context, new Bitacora
-                        {
-                            IdOperacion = _SubServicesWareHouseq.SubServicesWareHouseId,
-                            DocType = "SubServicesWareHouse",
-                            ClaseInicial =
-                         Newtonsoft.Json.JsonConvert.SerializeObject(_SubServicesWareHouseq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
-                            Accion = "Insertar",
-                            FechaCreacion = DateTime.Now,
-                            FechaModificacion = DateTime.Now,
-                            UsuarioCreacion = _SubServicesWareHouseq.UsuarioCreacion,
-                            UsuarioModificacion = _SubServicesWareHouseq.UsuarioModificacion,
-                            UsuarioEjecucion = _SubServicesWareHouseq.UsuarioModificacion,
-
-                        });
+                        
 
                         await _context.SaveChangesAsync();
                         transaction.Commit();
@@ -178,6 +167,48 @@ namespace ERPAPI.Controllers
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return await Task.Run(() => BadRequest($"Ocurrio un error:{ex.Message}"));
+            }
+
+            return await Task.Run(() => Ok(_SubServicesWareHouseq));
+        }
+
+        /// <summary>
+        /// Aprueba (pasa a Estatus Cerrado),para que el subservcio pase a contabilidad, CxC, Facturacion.
+        /// </summary>
+        /// <param name="_SubServicesWareHouseq"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<SubServicesWareHouse>> Aprobar (int id)
+        {
+
+            SubServicesWareHouse _SubServicesWareHouseq = new SubServicesWareHouse();
+
+            try
+            {
+                _SubServicesWareHouseq = await _context.SubServicesWareHouse
+                    .Where(q => q.SubServicesWareHouseId == id)
+                    .FirstOrDefaultAsync();
+                if (_SubServicesWareHouseq.QuantityHours <= 0)
+                {
+                    return BadRequest("No se pueden aprobar Servicios brindados con cantidad de horas en cero");
+                }
+
+                if (_SubServicesWareHouseq.EndTime <= _SubServicesWareHouseq.StartTime)
+                {
+                    return BadRequest("No se pueden aprobar Servicios brindados con la fecha final menor o igual a la dee inicio");
+                }
+                _SubServicesWareHouseq.IdEstado = 6;
+                _SubServicesWareHouseq.Estado = "Aprobado";
+                _SubServicesWareHouseq.UsuarioModificacion = User.Identity.Name;
+
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
             return await Task.Run(() => Ok(_SubServicesWareHouseq));
@@ -203,6 +234,8 @@ namespace ERPAPI.Controllers
                                                         select c
                              ).FirstOrDefaultAsync();
 
+                        _SubServicesWareHouse.FechaCreacion= _SubServicesWareHouseq.FechaCreacion;
+                        _SubServicesWareHouse.UsuarioCreacion= _SubServicesWareHouseq.UsuarioCreacion;
                         _context.Entry(_SubServicesWareHouseq).CurrentValues.SetValues((_SubServicesWareHouse));
 
                         //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA

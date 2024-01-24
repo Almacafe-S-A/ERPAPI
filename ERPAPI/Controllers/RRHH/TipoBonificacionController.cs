@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Controllers
 {
@@ -57,55 +58,79 @@ namespace ERPAPI.Controllers
                             transaction.Rollback();
                             return BadRequest("Nombre de tipo de bonificación no puede estar en blanco");
                         }
-
-                        if (string.IsNullOrEmpty(registro.UsuarioCreacion) ||
-                            string.IsNullOrEmpty(registro.UsuarioModificacion))
+                        if (registro.Valor <= 0)
                         {
                             transaction.Rollback();
-                            return BadRequest("Usuario de creación o modificación o pueden estar vacios");
+                            return BadRequest("Valor de tipo de bonificación no puede ser menor o igual a 0");
+                        }
+                        if (string.IsNullOrEmpty(registro.UsuarioCreacion) || string.IsNullOrEmpty(registro.UsuarioModificacion))
+                        {
+                            transaction.Rollback();
+                            return BadRequest("Usuario de creación o modificación no pueden estar vacíos");
                         }
 
-                        if (registro.Id == 0)
+                        if (registro.Id == 0) // Verificación de existencia solo al crear un nuevo registro
                         {
+                            // Verifica si ya existe un registro con el mismo nombre en la base de datos
+                            bool existeRegistroConMismoNombre = await context.TiposBonificaciones.AnyAsync(t => t.Nombre == registro.Nombre);
+
+                            if (existeRegistroConMismoNombre)
+                            {
+                                transaction.Rollback();
+                                return BadRequest("Ya existe un Tipo de Bonificación registrado con ese nombre.");
+                            }
+
                             await context.TiposBonificaciones.AddAsync(registro);
 
-                            //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                            // YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                             new appAuditor(context, logger, User.Identity.Name).SetAuditor();
 
                             await context.SaveChangesAsync();
                             transaction.Commit();
                             return Ok(registro);
                         }
-                        
-                        var registroExistente =
-                            await context.TiposBonificaciones.FirstOrDefaultAsync(r => r.Id == registro.Id);
+
+                        var registroExistente = await context.TiposBonificaciones.FirstOrDefaultAsync(r => r.Id == registro.Id);
                         if (registroExistente == null)
                         {
-                            throw new Exception("Registro a modificar no existe");
+                            return BadRequest("Registro a modificar no existe");
+                        }
+
+                        // Verifica si el nombre del registro editado es diferente del nombre original en la base de datos
+                        if (registro.Nombre != registroExistente.Nombre)
+                        {
+                            bool existeRegistroConMismoNombre = await context.TiposBonificaciones.AnyAsync(t => t.Nombre == registro.Nombre);
+
+                            if (existeRegistroConMismoNombre)
+                            {
+                                transaction.Rollback();
+                                return BadRequest("Ya existe un Tipo de Bonificación registrado con ese nombre.");
+                            }
                         }
 
                         context.Entry(registroExistente).CurrentValues.SetValues(registro);
 
-                        //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
+                        // YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                         new appAuditor(context, logger, User.Identity.Name).SetAuditor();
 
                         await context.SaveChangesAsync();
                         transaction.Commit();
                         return Ok(registroExistente);
-                        
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         transaction.Rollback();
-                        throw;
+                        logger.LogError(ex, "Ocurrió un error al momento de guardar el tipo de bonificación");
+                        return BadRequest(new { errorMessage = ex.Message });
                     }
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Ocurrio un error al momento de guardar el tipo deducción");
+                logger.LogError(ex, "Ocurrió un error al momento de guardar el tipo de bonificación");
                 return BadRequest(ex.Message);
             }
         }
+
     }
 }

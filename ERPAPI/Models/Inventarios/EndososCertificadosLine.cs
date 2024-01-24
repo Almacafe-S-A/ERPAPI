@@ -15,7 +15,12 @@ namespace ERPAPI.Models
 
         [Display(Name = "Id Endoso")]
         public Int64 EndososCertificadosId { get; set; }
+  
+        [ForeignKey("EndososCertificadosId")]
+        public EndososCertificados EndososCertificados { get; set; }
 
+        public List<EndososLiberacion> EndososLiberacion { get; set; }
+        
         public int Pda { get; set; }
 
         [Display(Name = "Unidad de medida")]
@@ -34,15 +39,23 @@ namespace ERPAPI.Models
         public string SubProductName { get; set; }
 
         [Display(Name = "Cantidad")]
-        public decimal Quantity { get; set; }        
+        public decimal Quantity { get; set; }
 
         [Display(Name = "Precio")]
         public decimal Price { get; set; }
 
         [Display(Name = "Valor endoso")]
         public decimal ValorEndoso { get; set; }
+        [NotMapped]
+        public decimal CantidadLiberacion { get; set; }
+        [NotMapped]
+        public decimal ValorLiberado { get; set; }
 
         public decimal Saldo { get; set; }
+
+        [NotMapped]
+        public decimal SaldoPrev { get; set; }
+
 
         public decimal? DerechosFiscales { get; set; }
 

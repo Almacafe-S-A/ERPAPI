@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ERPAPI.Contexts;
+using SQLitePCL;
 
 namespace ERPAPI.Controllers
 {
@@ -153,6 +154,40 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Obtiene el control de asitencia por empleado mediante el Id enviado.
+        /// Y la fecha se envia en el campo FechaCreacion y la FechaModificacion 
+        /// </summary>
+        /// <param name="_ControlAsistenciasP"></param>
+        /// <returns></returns>
+        [HttpPost("[action]")]
+        public async Task<IActionResult> GetControlAsistenciasByEmplActivos([FromBody] ControlAsistencias _ControlAsistenciasP)
+        {
+            List<ControlAsistencias> Items = new List<ControlAsistencias>();
+            try
+            {
+                DateTime FechaFinMes = new DateTime(_ControlAsistenciasP.FechaModificacion.Year, _ControlAsistenciasP.FechaModificacion.Month,
+                    DateTime.DaysInMonth( _ControlAsistenciasP.FechaModificacion.Year, _ControlAsistenciasP.FechaModificacion.Month));
+
+                Items = await _context.ControlAsistencias.Include(i => i.Empleado)
+                                .Where(
+                                q => q.Empleado.IdEstado == 1 &&
+                                    q.Fecha >= _ControlAsistenciasP.FechaCreacion &&
+                                    q.Fecha <= FechaFinMes
+                                ).ToListAsync();
+                ;
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
@@ -468,6 +503,36 @@ Newtonsoft.Json.JsonConvert.SerializeObject(ControlAsistencias, new JsonSerializ
 
         }
 
+        [HttpGet("[action]/{idEmpleado}/{anio}/{mes}")]
+        public async Task<IActionResult> ChangeStatus(int idEmpleado, int anio, int mes)
+        {
+            ControlAsistencias Items = new ControlAsistencias();
+            int month = mes + 1;
+            DateTime fechacontrolinicio = new DateTime(anio, month, 1);
+
+            DateTime fechacontrolfinal = new DateTime(anio, month,DateTime.DaysInMonth( anio,month)); 
+            try
+            {
+
+                Items = await _context
+                    .ControlAsistencias
+                    .Where(q => q.IdEmpleado == idEmpleado && q.Fecha>=fechacontrolinicio && q.Fecha <= fechacontrolfinal ).
+                    FirstOrDefaultAsync();
+                if (Items == null)
+                {
+                    return NotFound("No se encontraron elementos para el empleado y fechas proporcionadas.");
+                }
+                Items.Revisado = true;
+                new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
+        }
 
     }
 }

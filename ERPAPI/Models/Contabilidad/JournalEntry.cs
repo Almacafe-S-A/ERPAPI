@@ -15,14 +15,11 @@ namespace ERPAPI.Models
 
         public JournalEntry()
         {
-          //  JournalEntryLines = new HashSet<JournalEntryLine>();
+            //  JournalEntryLines = new HashSet<JournalEntryLine>();
         }
 
-        [Display(Name = "Id Libro Mayor")]
-        public int? GeneralLedgerHeaderId { get; set; }
-        [Display(Name = "Id de la Moneda")]
-        public int CurrencyId { get; set; }
-
+        
+        
         [Display(Name = "Tipo de Socio de negocios")]
         public int PartyTypeId { get; set; }
 
@@ -36,7 +33,7 @@ namespace ERPAPI.Models
         [Display(Name = "Id de Socio de negocios")]
         public int? PartyId { get; set; }
 
-        public string PartyName { get; set; } 
+        public string PartyName { get; set; }
 
         [Display(Name = "Tipos de Voucher/Documento")]
         //  public JournalVoucherTypes? VoucherType { get; set; }
@@ -54,11 +51,11 @@ namespace ERPAPI.Models
         public string Memo { get; set; }
         public string ReferenceNo { get; set; }
         public bool? Posted { get; set; }
-        public virtual GeneralLedgerHeader GeneralLedgerHeader { get; set; }
-        public virtual Party Party { get; set; }
+        
+        
         [Display(Name = "Id de Registro Pago")]
         public Int32 IdPaymentCode { get; set; }
-        public Int32  IdTypeofPayment { get; set; }
+        public Int32 IdTypeofPayment { get; set; }
         [Display(Name = "Estado")]
         public Int64? EstadoId { get; set; }
         [Display(Name = "Estado")]
@@ -83,19 +80,27 @@ namespace ERPAPI.Models
 
         public DateTime? ApprovedDate { get; set; }
 
-        public bool? ClosingEntry { get; set; }
+       
+        public string Periodo { get; set; }
+
+        public int? PeriodoId { get; set; }
+        [ForeignKey("PeriodoId")]
+        public Periodo PeriodoNav { get; set; }
+
 
         public List<JournalEntryLine> JournalEntryLines { get; set; } = new List<JournalEntryLine>();
+
+
         [Required]
         [Display(Name = "Usuario de creacion")]
         public string CreatedUser { get; set; }
-        [Required]
+       
         [Display(Name = "Usuario de modificacion")]
         public string ModifiedUser { get; set; }
         [Required]
         [Display(Name = "Fecha de creacion")]
         public DateTime CreatedDate { get; set; }
-        [Required]
+        
         [Display(Name = "Fecha de Modificacion")]
         public DateTime ModifiedDate { get; set; }
 

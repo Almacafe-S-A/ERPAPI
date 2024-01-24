@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Controllers
 {
@@ -70,7 +71,7 @@ namespace ERPAPI.Controllers
             List<Deduction> Items = new List<Deduction>();
             try
             {
-                Items = await _context.Deduction.OrderBy(b => b.DeductionId).ToListAsync();
+                Items = await _context.Deduction.OrderByDescending(b => b.DeductionId).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -100,6 +101,31 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Obtiene los Datos de Deduccion por medio del Id enviado.
+        /// </summary>
+        /// <param name="DeductionId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{DeductionId}")]
+        public async Task<IActionResult> GetDeductionQtiesById(Int64 DeductionId)
+        {
+            List<DeductionQty> Items =new List<DeductionQty>();
+            try
+            {
+                Items = await _context.DeductionQties.Where(q => q.DeductionId == DeductionId).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 
@@ -164,6 +190,11 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
+                    Deduction registroExistente = await _context.Deduction.FirstOrDefaultAsync(f => f.Description == _Deduction.Description);
+                    if (registroExistente != null)
+                    {
+                        throw new Exception("Registro de Deducción existente.");
+                    }
                     try
                     {
                         _Deductionq = _Deduction;
@@ -206,8 +237,8 @@ namespace ERPAPI.Controllers
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
-
             return await Task.Run(() => Ok(_Deductionq));
+
         }
 
         /// <summary>
@@ -223,6 +254,11 @@ namespace ERPAPI.Controllers
             {
                 using (var transaction = _context.Database.BeginTransaction())
                 {
+                    Deduction registroExistente = await _context.Deduction.FirstOrDefaultAsync(f => f.Description == _Deduction.Description);
+                    if (registroExistente != null)
+                    {
+                        throw new Exception("Registro de Deducción existente.");
+                    }
                     try
                     {
                         _Deductionq = await (from c in _context.Deduction

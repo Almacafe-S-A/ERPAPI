@@ -141,7 +141,7 @@ namespace ERPAPI.Controllers
                             IdOperacion = _Alert.AlertId,
                             DocType = "Alert",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            JsonConvert.SerializeObject(_Alert, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,
@@ -214,7 +214,7 @@ namespace ERPAPI.Controllers
                             IdOperacion = _GoodsReceivedLine.GoodsReceiveLinedId,
                             DocType = "GoodsReceivedLine",
                             ClaseInicial =
-                            Newtonsoft.Json.JsonConvert.SerializeObject(_GoodsReceivedLineq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
+                            JsonConvert.SerializeObject(_GoodsReceivedLineq, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }),
                             Accion = "Insertar",
                             FechaCreacion = DateTime.Now,
                             FechaModificacion = DateTime.Now,

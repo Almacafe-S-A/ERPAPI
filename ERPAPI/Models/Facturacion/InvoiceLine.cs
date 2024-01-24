@@ -32,10 +32,20 @@ namespace ERPAPI.Models
         public string SubProductName { get; set; }
 
         [Display(Name = "Unidad de Medida")]
-        public Int64 UnitOfMeasureId { get; set; }
+        public int UnitOfMeasureId { get; set; }
 
         [Display(Name = "Unidad de Medida")]
         public string UnitOfMeasureName { get; set; }
+
+       
+        public Int64? CustomerAreaId { get; set; }
+
+        [ForeignKey("CustomerAreaId")]
+        public CustomerArea CustomerArea { get; set; }
+
+
+        [ForeignKey("UnitOfMeasureId")]
+        public UnitOfMeasure UnitOfMeasure { get; set; }
 
 
         [Display(Name = "Descripcion")]
@@ -87,5 +97,7 @@ namespace ERPAPI.Models
         public decimal TaxAmount { get; set; }
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
+
+        public decimal Saldo { get; set; }
     }
 }

@@ -1,25 +1,4 @@
-﻿/********************************************************************************************************
--- NAME   :  CRUDNumeracionSAR
--- PROPOSE:  show record NumeracionSAR
-REVISIONS:
-version              Date                Author                        Description
-----------           -------------       ---------------               -------------------------------
-13.0                  09/12/2019          Marvin.Guillen                 Validation of duplicated
-12.0                  16/09/2019          Carlos.Castillo                Changes of Paginacion of Controller
-11.0                  21/08/2019          Freddy.Chinchilla              Changes of Campos Virtuales
-10.0                  19/06/2019          Freddy.Chinchilla              Changes of Task run return controllers
-9.0                  21/05/2019          Freddy.Chinchilla              Changes of Numeracion SAR delete
-8.0                  09/05/2019          Freddy.Chinchilla              Post to put update Numeracion SAR
-7.0                  08/05/2019          Freddy.Chinchilla              Changes of datos
-6.0                  30/04/2019          Freddy.Chinchilla              Changes of Add Colomns
-5.0                  29/04/2019          Freddy.Chinchilla              Changes of Mejoras a Numeracion SAR
-4.0                  26/04/2019          Freddy.Chinchilla              Changes of GetById
-3.0                  22/04/2019          Freddy.Chinchilla              Changes of mejoras a controller
-2.0                  22/04/2019          Freddy.Chinchilla              Changes of Autorize
-1.0                  22/04/2019          Freddy.Chinchilla              Creation of controller
-********************************************************************************************************/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -287,8 +266,42 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+        /// <summary>
+        /// Obtiene la nuemracion SAR valida para el tipo de documento 
+        /// </summary>
+        /// <param name="tipoDocumento"></param>
+        /// <returns></returns>
+        public NumeracionSAR ObtenerNumeracionSarValida( int tipoDocumento)
+        {
+
+            NumeracionSAR numeracionSAR = new NumeracionSAR();
+            List<NumeracionSAR> numeracionSARs = new List<NumeracionSAR>();
+            numeracionSARs = _context.NumeracionSAR
+                    .Where(q => q.IdEstado == 1
+                    && q.DocTypeId == tipoDocumento
+                    && q.FechaLimite <= DateTime.Now
+                    && (q.Correlativo <= q.NoFin || q.SiguienteNumero == null || q.Correlativo == null)
+                    && q.IdEstado == 1
+                    ).ToList();
+
+            if (numeracionSARs.Count == 0)
+            {
+                Exception exception = new Exception("No existe numeracion valida");
+                throw exception;
+            }
+            if (numeracionSARs.Count > 1)
+            {
+                Exception exception = new Exception("Se encontro mas de una numeracion valida");
+                throw exception;
+            }
 
 
+            numeracionSAR = numeracionSARs.FirstOrDefault();
+
+            return numeracionSAR;
+
+
+        }
 
 
 

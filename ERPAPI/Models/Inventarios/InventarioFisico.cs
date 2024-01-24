@@ -52,6 +52,10 @@ namespace ERPAPI.Models
 
         public string UsuarioModificacion { get; set; }
 
+        public string RevisadoPor { get; set; }
+
+        public string AutorizadoPor { get; set; }
+
         public List<InventarioFisicoLine> InventarioFisicoLines { get; set; }
 
         public List<InventarioBodegaHabilitada> InventarioBodegaHabilitadaLines { get; set; }

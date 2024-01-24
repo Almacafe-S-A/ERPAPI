@@ -29,11 +29,23 @@ namespace ERPAPI.Models
 
         public int? DocumentLine { get; set; }
 
+        public int? SourceDocumentId { get; set; }
+
+        public int? SourceDocumentLine { get; set; }
+
+        public Int64? GoodsAuthorizationId { get; set; }
+        [ForeignKey("GoodsAuthorizationId")]
+        public GoodsDeliveryAuthorization GoodsDeliveryAuthorization { get; set; }
+
         [Display(Name = "Documento")]
         public string DocumentName { get; set; }
 
+        public string SourceDocumentName { get; set; }
+
         [Display(Name = "Fecha de Kardex")]
         public DateTime DocumentDate { get; set; }
+
+        public int? PdaNo { get; set; }
 
 
         [Display(Name = "Entrada/Salida")]
@@ -99,26 +111,18 @@ namespace ERPAPI.Models
         [Display(Name = "Saldo sacos")]
         public decimal TotalBags { get; set; }
 
+        public decimal? Precio { get; set; }
+
+        public decimal? ValorTotal { get; set; }
+
+        public decimal? ValorMovimiento { get; set; }
+
         public bool MaxKardex { get; set; } = true;
 
         public KardexTypes KardexTypeId { get; set; }
 
         //public List<KardexLine> _KardexLine { get; set; }
 
-
-    }
-
-
-    public class KardexDTO : Kardex
-    {
-       public List<Int64> Ids { get; set; } = new List<long>();
-       public Int64 SalesOrderId { get; set; }
-
-        [Display(Name = "Fecha de inicio")]
-        public DateTime? StartDate { get; set; }
-
-        [Display(Name = "Fecha de fin")]
-        public DateTime? EndDate { get; set; }
 
     }
 

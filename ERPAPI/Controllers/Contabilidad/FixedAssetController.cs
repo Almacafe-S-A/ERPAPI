@@ -193,30 +193,65 @@ namespace ERPAPI.Controllers
         /// </summary>
         /// <param name="FixedAssetId"></param>
         /// <returns></returns>
-        [HttpGet("[action]/{FixedAssetId}/{motivo}")]
-        public async Task<IActionResult> BajaActivo(Int64 FixedAssetId, int motivo)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> BajaActivo([FromBody] FixedAssetDTO _FixedAsset)
         {
             FixedAsset _FixedAssetq = new FixedAsset();
             try
             {
-                _FixedAssetq = await _context.FixedAsset.Where(q => q.FixedAssetId == FixedAssetId).FirstOrDefaultAsync();
                 _FixedAssetq = _context.FixedAsset
                     .Include(q => q.FixedAssetGroup.DepreciationFixedAssetAccounting)
                     .Include(q => q.FixedAssetGroup.FixedAssetAccounting)
                     .Include(q => q.FixedAssetGroup.AccumulatedDepreciationAccounting)
-                .Where(x => x.FixedAssetId == FixedAssetId)
+                .Where(x => x.FixedAssetId == _FixedAsset.FixedAssetId)
                 .FirstOrDefault();
+
+                if (_FixedAsset.FechaBaja == null)
+                {
+                    return BadRequest("No se recibio la fecha de baja del activo");
+                }
+
+                DateTime fechabaja = (DateTime)_FixedAsset.FechaBaja;
+
+                
+
+                bool seaplicodepreciacion = _FixedAssetq.AccumulatedDepreciation > 0;
+
+                //DepreciationFixedAsset depreciationFixedAssets = _context.DepreciationFixedAsset
+                //    .Where(q => q.FixedAssetId == _FixedAsset.FixedAssetId  && q.Year == _baja ).FirstOrDefault();
+
+                Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
+
+                BitacoraCierreProcesos procesos = _context.BitacoraCierreProceso
+                    .Where(q => q.BitacoraCierresContable.Anio == fechabaja.Year
+                    && q.PasoCierre == 3
+                    && q.BitacoraCierresContable.Mes >= fechabaja.Month)
+                    .Include(i => i.BitacoraCierresContable).FirstOrDefault();
+
+
+                if (procesos.Estatus == "FINALIZADO")
+                {
+                    return BadRequest("No se Puede dar de baja el activo en la fecha indicada, se ha ejecutado una depreciacion previamente en el mes de baja seleccionado");
+                }
+
+
+                if (_FixedAssetq.AssetDate >  _FixedAsset.FechaBaja)
+                {
+                   return BadRequest("No se Puede dar de baja el activo la fecha de baja es previa a la fecha de adquisicion");
+                }
 
                 if (_FixedAssetq.IdEstado == 105)
                 {
                     return BadRequest("No se Puede dar de baja el activo");
                 }
-                if (_FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting == null)
+
+
+                if (_FixedAssetq.FixedAssetGroup.DepreciationFixedAssetAccounting == null && seaplicodepreciacion)
                 {
                     return BadRequest("no se encontro la cuenta de Depreciacion");
                 }
 
-                if (_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting == null)
+                if (_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting == null && seaplicodepreciacion)
                 {
                     return BadRequest("no se encontro la cuenta de Depreciacion Acumulada");
                 }
@@ -233,13 +268,13 @@ namespace ERPAPI.Controllers
                 _FixedAssetq.NetValue = 0;
                 var valorasiento = valoractivo;
 
-                string motivoMensaje = motivo == 1 ? "Venta" : "Obsolecencia";
+                string motivoMensaje = _FixedAsset.MotivoId == 1 ? "Venta" : "Obsolecencia";
 
                 JournalEntry _je = new JournalEntry
                 {
                     Date = DateTime.Now,
                     Memo = $"Se dio de baja el Activo {_FixedAssetq.FixedAssetName} por motivo de {motivoMensaje}",
-                    DatePosted = DateTime.Now,
+                    DatePosted = fechabaja,
                     ModifiedDate = DateTime.Now,
                     CreatedDate = DateTime.Now,
                     ModifiedUser = User.Identity.Name,
@@ -272,24 +307,29 @@ namespace ERPAPI.Controllers
 
                 });
 
-                ////////Lineas de Asiento por valor LIBROS//////////////
-                _je.JournalEntryLines.Add(new JournalEntryLine()
+                if (seaplicodepreciacion)
                 {
-                    ModifiedDate = DateTime.Now,
-                    CreatedDate = DateTime.Now,
-                    ModifiedUser = User.Identity.Name,
-                    CreatedUser = User.Identity.Name,
-                    AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccountingId),
-                    AccountName = _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountName,
-                    CostCenterId = _FixedAssetq.CenterCostId,
-                    CostCenterName = _FixedAssetq.CenterCostName,
-                    Debit = depreciacionacumulada
-                });
+                    ////////Lineas de Asiento por valor LIBROS//////////////
+                    _je.JournalEntryLines.Add(new JournalEntryLine()
+                    {
+                        ModifiedDate = DateTime.Now,
+                        CreatedDate = DateTime.Now,
+                        ModifiedUser = User.Identity.Name,
+                        CreatedUser = User.Identity.Name,
+                        AccountId = Convert.ToInt32(_FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccountingId),
+                        AccountName = _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountCode + "--" + _FixedAssetq.FixedAssetGroup.AccumulatedDepreciationAccounting.AccountName,
+                        CostCenterId = _FixedAssetq.CenterCostId,
+                        CostCenterName = _FixedAssetq.CenterCostName,
+                        Debit = depreciacionacumulada
+                    });
+                }
+
+                
 
                 Accounting cuentaMotivo = new Accounting();
                 string codigoCuentamotivo = "";
 
-                if (motivo == 1) /// por venta 
+                if (_FixedAsset.MotivoId == 1) /// por venta 
                 {
                     codigoCuentamotivo = "143010309";
                 }
@@ -315,14 +355,22 @@ namespace ERPAPI.Controllers
                 });
 
 
-                
+                //Periodo periodo = _context.Periodo.Where(q => q.IdEstado == 105).FirstOrDefault();
+
+                _je.PeriodoId = periodo?.Id;
+                _je.Periodo = periodo.Anio.ToString();
+                _je.TypeJournalName = "Voucher de Registros";
+                _je.VoucherType = 9;
+
+
 
 
                 ///////Actualiza el saldo de las cuentas ///////////
                 //ContabilidadHandler.ActualizarSaldoCuentas(_context, _je);
                 _context.JournalEntry.Add(_je);
-                _FixedAssetq.IdEstado = 105;
+                _FixedAssetq.IdEstado = 110;
                 _FixedAssetq.Estado = "Dado de Baja";
+                _FixedAssetq.FechaBaja = fechabaja;
 
                 await _context.SaveChangesAsync();
             }

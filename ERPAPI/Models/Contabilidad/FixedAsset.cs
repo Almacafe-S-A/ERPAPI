@@ -16,8 +16,8 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre de activo fijo")]
         public string FixedAssetName { get; set; }
 
-        [Display(Name = "Descripción de activos fijo")]
-        public string FixedAssetDescription { get; set; }
+        [Display(Name = "Ubicacion")]
+        public string Ubicacion { get; set; }
 
         [Display(Name = "Fecha del activo")]
         public DateTime AssetDate { get; set; }
@@ -111,6 +111,9 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         public decimal AccumulatedDepreciation { get; set; }
 
+        public DateTime? FechaBaja { get; set; }
+        public DateTime? DepreciatedDate { get; set; }
+
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
 
@@ -124,6 +127,17 @@ namespace ERPAPI.Models
         public string UsuarioModificacion { get; set; }
     }
 
+
+    public class FixedAssetDTO : FixedAsset
+    {
+        public List<FixedAsset> _FixedAsset { get; set; }
+        public int editar { get; set; } = 1;
+        public string token { get; set; }
+
+        public int MotivoId { get; set; }
+
+        
+    }
 
 
 }

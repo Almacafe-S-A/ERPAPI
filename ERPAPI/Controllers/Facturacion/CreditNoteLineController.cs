@@ -110,7 +110,7 @@ namespace ERPAPI.Controllers
         }
 
         [HttpGet("[action]/{CreditNoteId}")]
-        public async Task<IActionResult> GetCreditNoteLineByCreditNoteId(Int64 CreditNoteId)
+        public async Task<IActionResult> GetByCreditNoteId(Int64 CreditNoteId)
         {
             List<CreditNoteLine> Items = new List<CreditNoteLine>();
             try
@@ -122,6 +122,96 @@ namespace ERPAPI.Controllers
             {
 
                 _logger.LogError($"Ocurrio un error: { ex.ToString() }");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+            //  int Count = Items.Count();
+            return await Task.Run(() => Ok(Items));
+        }
+
+
+        /// <summary>
+        /// Obtiene el detalle de la factura en forma de Nota de credito
+        /// </summary>
+        /// <param name="InvoiceId"></param>
+        /// <returns></returns>
+        [HttpGet("[action]/{InvoiceId}")]
+        public async Task<IActionResult> GetByInvoiceId(int InvoiceId)
+        {
+            List<CreditNoteLine> Items = new List<CreditNoteLine>();
+            try
+            {
+                Invoice invoice = new Invoice();
+
+                invoice = await _context.Invoice.Where(q => q.InvoiceId == InvoiceId)
+                    .Include(i => i.InvoiceLine).FirstOrDefaultAsync();
+
+                if (invoice == null) { return Ok(Items); }
+
+                Items = (from c in invoice.InvoiceLine.Where(q =>q.Saldo >0)
+                         select new CreditNoteLine {
+                            AccountId= c.AccountId,
+                            AccountName= c.AccountName,
+                            Amount= c.Saldo,
+                            CostCenterId= c.CostCenterId,
+                            CostCenterName= c.CostCenterName,
+                            Description= c.Description,
+                            DiscountAmount= c.DiscountAmount,
+                            Price= c.Price,
+                            ProductName= c.ProductName,
+                            Quantity = (double)c.Quantity,
+                            UnitOfMeasureId= c.UnitOfMeasureId, 
+                            UnitOfMeasureName= c.UnitOfMeasureName,
+                            TaxAmount= c.TaxAmount,
+                            TaxPercentage= c.TaxPercentage,
+                            Total = c.Saldo,
+                            TaxId= c.TaxId,
+                            TaxCode= c.TaxCode,
+                            SubTotal= c.SubTotal,
+                            SubProductId= c.SubProductId,
+                            SubProductName= c.SubProductName,
+                            DiscountPercentage= c.DiscountPercentage,
+                            ProductId= c.ProductId,
+                            WareHouseId= c.WareHouseId,
+                            SaldoPendiente = c.Saldo,
+
+                         }
+                         ).ToList();
+
+                    
+
+                    
+                    
+
+                    if (invoice.SaldoImpuesto > 0)
+                    {
+                    Tax tax = new Tax();
+                    tax = _context.Tax.Where(x => x.TaxId == 1).FirstOrDefault();
+                    Items.Add(new CreditNoteLine
+                        {
+                            SubProductName = "Impuesto",
+                            SubProductId = 10000,
+                            Price = invoice.SaldoImpuesto,
+                            Quantity =1,
+                            UnitOfMeasureId = 1,
+                            UnitOfMeasureName= "Unidad",
+                            Amount= invoice.SaldoImpuesto,
+                            Total=invoice.SaldoImpuesto,
+                            AccountId= (int)tax.CuentaContablePorCobrarId,
+                            AccountName = tax.CuentaContablePorCobrarNombre,
+                            SaldoPendiente = invoice.SaldoImpuesto,
+                            
+                        });
+                    }
+                
+
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
                 return BadRequest($"Ocurrio un error:{ex.Message}");
             }
 

@@ -17,24 +17,15 @@ namespace ERPAPI.Models
         public int ShipmentId { get; set; }
 
         [Display(Name = "Fiscal")]
-        public bool Fiscal { get; set; }
-
-
-        [Display(Name = "Punto de emisión")]
-        public Int64 IdPuntoEmision { get; set; }
+        public bool Fiscal { get; set; }        
        
         [Display(Name = "Fecha de nota de crédito")]
         public DateTime CreditNoteDate { get; set; }
-        [Display(Name = "Fecha de vencimiento")]
-        public DateTime CreditNoteDueDate { get; set; }
-
-        [Display(Name = "Fecha de vencimiento")]
-        public DateTime ExpirationDate { get; set; }
-        [Display(Name = "Tipo de Factura")]
+        
         public int CreditNoteTypeId { get; set; }
 
         [Display(Name = "Factura Asociada")]
-        public Int64 InvoiceId { get; set; }
+        public Int64? InvoiceId { get; set; }
       
 
         [Display(Name = "Certificado depósito")]
@@ -43,14 +34,15 @@ namespace ERPAPI.Models
         [Display(Name = "Sucursal")]
         public string Sucursal { get; set; }
 
-        [Display(Name = "Caja")]
-        public string Caja { get; set; }
+        
 
         [Display(Name = "Tipo de Nota de crédito")]
         public string TipoDocumento { get; set; }
 
         [Display(Name = "Número de Nota de crédito")]
-        public int NúmeroDEI { get; set; }
+        public string NumeroDEI { get; set; }
+
+        public string NumeroDEIDocumentoAsociado { get; set; }
 
         [Display(Name = "Número de inicio")]
         public string NoInicio { get; set; }
@@ -58,11 +50,17 @@ namespace ERPAPI.Models
         [Display(Name = "Número fin")]
         public string NoFin { get; set; }
 
+        public string RangoAutorizado { get; set; }
+
         [Display(Name = "Fecha Limite de emisión")]
         public DateTime FechaLimiteEmision { get; set; }
 
         [Display(Name = "Número de Factura")]
         public string CAI { get; set; }
+
+        public Int64? JournalEntryId { get; set; }
+        [ForeignKey("JournalEntryId")]
+        public JournalEntry JournalEntry { get; set; }
 
         [Display(Name = "Número de orden de compra exenta")]
         public string NoOCExenta { get; set; }
@@ -103,14 +101,8 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre Producto")]
         public string ProductName { get; set; }
 
-        public DateTime OrderDate { get; set; }
-        public DateTime DeliveryDate { get; set; }
+      
 
-        [Display(Name = "Moneda")]
-        public int CurrencyId { get; set; }
-
-        [Display(Name = "Moneda")]
-        public string CurrencyName { get; set; }
 
         [Display(Name = "SubProducto")]
         public Int64? SubProductId { get; set; }
@@ -118,11 +110,9 @@ namespace ERPAPI.Models
         [Display(Name = "Nombre SubProducto")]
         public string SubProductName { get; set; }
 
-        [Display(Name = "Moneda tasa")]
-        public decimal Currency { get; set; }
+        
 
-        [Display(Name = "Número de referencia de cliente")]
-        public string CustomerRefNumber { get; set; }
+        
         [Display(Name = "Tipo de ventas")]
         public int SalesTypeId { get; set; }
 
@@ -142,14 +132,9 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         [Display(Name = "Impuesto")]
         public decimal Tax { get; set; }
-        [Column(TypeName = "Money")]
-        [Display(Name = "Impuesto 18%")]
-        public decimal Tax18 { get; set; }
 
 
-        [Display(Name = "Flete")]
-        [Column(TypeName = "Money")]
-        public decimal Freight { get; set; }
+        
 
         [Display(Name = "Total exento")]
         [Column(TypeName = "Money")]
@@ -163,9 +148,6 @@ namespace ERPAPI.Models
         [Column(TypeName = "Money")]
         public decimal TotalGravado { get; set; }
 
-        [Display(Name = "Total Gravado 18%")]
-        [Column(TypeName = "Money")]
-        public decimal TotalGravado18 { get; set; }
         [Column(TypeName = "Money")]
         public decimal Total { get; set; }
 
@@ -186,6 +168,14 @@ namespace ERPAPI.Models
 
         [Display(Name = "Usuario de modificación")]
         public string UsuarioModificacion { get; set; }
+
+        public string AprobadoPor { get; set; }
+
+        public DateTime? AprobadoEl { get; set; }
+
+        public string RevisadoPor { get; set; }
+
+        public DateTime? RevisadoEl { get; set; }
 
         public string Impreso { get; set; }
         public List<CreditNoteLine> CreditNoteLine { get; set; } = new List<CreditNoteLine>();

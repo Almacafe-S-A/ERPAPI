@@ -35,6 +35,16 @@ namespace ERPAPI.Models
 
         public string Transportista { get; set; }
 
+        public string RTNTransportista { get; set; }
+
+        public string OrdenNo { get; set; }
+
+        public string PlacaContenedor { get; set; }
+
+        public string DNIMotorista { get; set; }
+
+        public string Motorista { get; set; }
+
         public string Vigilante { get; set; }
 
         public string Observaciones { get; set; }
@@ -42,6 +52,12 @@ namespace ERPAPI.Models
         public string Marca { get; set; }
 
         public string Placa { get; set; }
+
+        public DateTime? FechaDocuemto { get; set; }
+
+        public DateTime? FechaEntrada { get; set; }
+
+        public DateTime? FechaSalida { get; set; }
 
         public string UsuarioCreacion { get; set; }
 

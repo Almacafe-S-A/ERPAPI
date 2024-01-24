@@ -13,7 +13,7 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Int64 SubServicesWareHouseId { get; set; }
 
-        [Display(Name = "Fecha de Subservicios")]      
+        [Display(Name = "Fecha de Subservicios")]
         public DateTime DocumentDate { get; set; }
 
         [Display(Name = "Cliente")]
@@ -27,6 +27,11 @@ namespace ERPAPI.Models
 
         [Display(Name = "Sucursal")]
         public string BranchName { get; set; }
+
+        public long? InvoiceLineId { get; set; }
+
+        [ForeignKey("InvoiceLineId")]
+        public InvoiceLine InvoiceLine { get; set; }
 
         [Display(Name = "Bodega")]
         public Int64 WareHouseId { get; set; }
@@ -49,6 +54,8 @@ namespace ERPAPI.Models
 
         public string Solicitante { get; set; }
 
+        public bool CobroPorTiempo { get; set; }
+
         public decimal? Cantidad { get; set; }
 
         [Display(Name = "Estado")]
@@ -57,6 +64,9 @@ namespace ERPAPI.Models
         [Display(Name = "Estado")]
         public string Estado { get; set; }
 
+        public int? InvoiceId { get; set; }
+        [ForeignKey("InvoiceId")]
+        public Invoice Invoice { get; set; }
 
 
         [Display(Name = "Sub Servicio")]

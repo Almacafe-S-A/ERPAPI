@@ -91,20 +91,22 @@ namespace ERPAPI.Controllers
                  CertificadoLineId = 0,
                  UnitMeasurName = lineasrecibo.UOM,
                  UnitMeasureId = (long)lineasrecibo.GoodsReceivedLine.UnitOfMeasureId,
-                 Quantity =Decimal.Round( lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null|| lineasrecibo.GoodsReceivedLine.SaldoporCertificar == lineasrecibo.GoodsReceivedLine.Quantity ?
-                      (decimal)lineasrecibo.CantidadRecibida - ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100)) :
-                      (decimal)lineasrecibo.GoodsReceivedLine.SaldoporCertificar,2),
+                 Quantity = Decimal.Round( lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null|| lineasrecibo.GoodsReceivedLine.SaldoporCertificar == lineasrecibo.GoodsReceivedLine.Quantity ?
+                      (decimal)lineasrecibo.CantidadRecibida -  ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100)) :
+                      (decimal)lineasrecibo.GoodsReceivedLine.SaldoporCertificar,2,MidpointRounding.AwayFromZero),
                  SubProductId = (long)lineasrecibo.SubProductId,
                  SubProductName = lineasrecibo.SubProductName,
                  ReciboId = (int)lineasrecibo.GoodsReceivedLine.GoodsReceivedId,
                  Price = (decimal)lineasrecibo.PrecioUnitarioCIF,
                  WarehouseId = (int)lineasrecibo.GoodsReceivedLine.WareHouseId,
                  WarehouseName = lineasrecibo.GoodsReceivedLine.WareHouseName,
-                 Amount = (decimal)lineasrecibo.CantidadRecibida * (decimal)lineasrecibo.PrecioUnitarioCIF,
+                 Amount = decimal.Round(Decimal.Round(lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null || lineasrecibo.GoodsReceivedLine.SaldoporCertificar == lineasrecibo.GoodsReceivedLine.Quantity ?
+                      (decimal)lineasrecibo.CantidadRecibida - ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100)) :
+                      (decimal)lineasrecibo.GoodsReceivedLine.SaldoporCertificar, 2, MidpointRounding.AwayFromZero) * (decimal)lineasrecibo.PrecioUnitarioCIF,2, MidpointRounding.AwayFromZero),
                  CantidadDisponible = lineasrecibo.GoodsReceivedLine.SaldoporCertificar == null || lineasrecibo.GoodsReceivedLine.Quantity== lineasrecibo.GoodsReceivedLine.SaldoporCertificar ?
-                          (decimal)lineasrecibo.CantidadRecibida -
-                              ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100))
-                          : lineasrecibo.GoodsReceivedLine.SaldoporCertificar,
+                         Decimal.Round((decimal)lineasrecibo.CantidadRecibida -
+                              ((decimal)lineasrecibo.CantidadRecibida * (lineasrecibo.SubProduct.Merma / 100)),2, MidpointRounding.AwayFromZero)
+                          :Decimal.Round((decimal) lineasrecibo.GoodsReceivedLine.SaldoporCertificar, 2, MidpointRounding.AwayFromZero),
                  ValorUnitarioDerechos = (decimal)lineasrecibo.ValorUnitarioDerechos,
                  DerechosFiscales = lineasrecibo.ValorUnitarioDerechos * lineasrecibo.CantidadRecibida,
                  GoodsReceivedLineId = lineasrecibo.GoodsReceivedLineId
@@ -124,7 +126,7 @@ namespace ERPAPI.Controllers
                                                   UnitMeasurName = detalle.UnitOfMeasureName,
                                                   UnitMeasureId = (long)detalle.UnitOfMeasureId,
                                                   Quantity =Decimal.Round( detalle.SaldoporCertificar == null || detalle.SaldoporCertificar==detalle.Quantity ?
-                                                     (decimal)detalle.Quantity - ((decimal)detalle.Quantity * (detalle.SubProduct.Merma / 100)) :
+                                                     detalle.Quantity - (detalle.Quantity * (detalle.SubProduct.Merma / 100)) :
                                                      (decimal)detalle.SaldoporCertificar,2),
                                                   SubProductId = (long)detalle.SubProductId,
                                                   SubProductName = detalle.SubProductName,
@@ -132,10 +134,11 @@ namespace ERPAPI.Controllers
                                                   Price = ObtenerPrecioCafe(detalle.SubProduct, preciodelcafe),
                                                   WarehouseId = (int)detalle.WareHouseId,
                                                   WarehouseName = detalle.WareHouseName,
-                                                  Amount = (decimal)detalle.Quantity * ObtenerPrecioCafe(detalle.SubProduct, preciodelcafe),
+                                                  Amount = detalle.Quantity * ObtenerPrecioCafe(detalle.SubProduct, preciodelcafe),
                                                   CantidadDisponible = detalle.SaldoporCertificar == null || detalle.SaldoporCertificar == detalle.Quantity ?
-                                                     (decimal)(decimal)detalle.Quantity - ((decimal)detalle.Quantity * (detalle.SubProduct.Merma / 100)) :
-                                                     detalle.SaldoporCertificar,
+                                                     Decimal.Round(detalle.Quantity - (detalle.Quantity * (detalle.SubProduct.Merma / 100)) ,2):
+                                                     Decimal.Round((decimal)detalle.SaldoporCertificar,2),
+                                                  Merma = Decimal.Round(detalle.Quantity * (detalle.SubProduct.Merma / 100),2),
                                                   ValorUnitarioDerechos = 0,
                                                   DerechosFiscales = 0,
                                                   GoodsReceivedLineId = detalle.GoodsReceiveLinedId
@@ -163,10 +166,12 @@ namespace ERPAPI.Controllers
                                                   Price = ObtenerPrecioCafe(detalle.Product, preciodelcafe),
                                                   WarehouseId = (int)detalle.WarehouseId,
                                                   WarehouseName = detalle.WarehouseName,
-                                                  Amount = (decimal)detalle.Cantidad * ObtenerPrecioCafe(detalle.Product, preciodelcafe),
-                                                  CantidadDisponible = (decimal)detalle.ValorPergamino 
-                                                  - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),
+                                                  Amount = Decimal.Round((decimal)detalle.ValorPergamino - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100))
+                                                  - ((decimal)detalle.ValorPergamino * (7 / 100)), 2) * (decimal)detalle.Cantidad * ObtenerPrecioCafe(detalle.Product, preciodelcafe),
+                                                  CantidadDisponible = Decimal.Round((decimal)detalle.ValorPergamino 
+                                                  - ((decimal)detalle.ValorPergamino * (detalle.Product.Merma / 100)),2),
                                                   ValorUnitarioDerechos = 0,
+                                                  Merma = Decimal.Round(detalle.Cantidad * (detalle.Product.Merma / 100), 2),
                                                   DerechosFiscales = 0,
                                                   //GoodsReceivedLineId = detalle.GoodsReceiveLinedId
                                               }
@@ -197,18 +202,19 @@ namespace ERPAPI.Controllers
                                       UnitMeasureId = (long)lineasrecibo.UnitOfMeasureId,
                                       Quantity = lineasrecibo.SaldoPendienteCertificar == 0 || 
                                             lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
-                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100)) - ((decimal)lineasrecibo.Cantidad * (7/ 100)) :
-                                           (decimal)lineasrecibo.SaldoPendienteCertificar,
+                                         Decimal.Round(  (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100)) - ((decimal)lineasrecibo.Cantidad * (7/ 100)) ,2):
+                                         Decimal.Round( (decimal)lineasrecibo.SaldoPendienteCertificar,2),
                                       SubProductId = (long)lineasrecibo.ProductoId,
                                       SubProductName = lineasrecibo.ProductoNombre,
                                       ReciboId = (int)lineasrecibo.Id,
                                       Price = 1,
                                       WarehouseId = (int)lineasrecibo.WarehouseId,
                                       WarehouseName = lineasrecibo.WarehouseName,
-                                      Amount = (decimal)lineasrecibo.Cantidad * 1,
+                                      Amount = (decimal)lineasrecibo.Cantidad ,
                                       CantidadDisponible = lineasrecibo.SaldoPendienteCertificar == 0 || lineasrecibo.SaldoPendienteCertificar == lineasrecibo.Cantidad ?
-                                           (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100))- ((decimal)lineasrecibo.Cantidad * (7 / 100)) :
-                                           (decimal)lineasrecibo.SaldoPendienteCertificar,
+                                          Decimal.Round( (decimal)lineasrecibo.Cantidad - ((decimal)lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100))- ((decimal)lineasrecibo.Cantidad * (7 / 100)) ):
+                                           Decimal.Round((decimal)lineasrecibo.SaldoPendienteCertificar, 2),
+                                      Merma = Decimal.Round(lineasrecibo.Cantidad * (lineasrecibo.Product.Merma / 100), 2),
                                       ValorUnitarioDerechos = 0,
                                       DerechosFiscales = 0,
                                   }).ToList();

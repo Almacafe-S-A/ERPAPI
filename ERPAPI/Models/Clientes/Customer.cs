@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ERPAPI.Models
@@ -14,7 +15,7 @@ namespace ERPAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id Cliente")]
         public Int64 CustomerId { get; set; }
-        
+
         [Display(Name = "Nombre del cliente")]
         public string CustomerName { get; set; }
 
@@ -34,6 +35,22 @@ namespace ERPAPI.Models
         [Required]
         [Display(Name = "RTN del cliente")]
         public string RTN { get; set; }
+
+        public bool Exonerado { get; set; }
+
+        public long? ProfesionId { get; set; }
+        [ForeignKey("ProfesionId")]
+        public ElementoConfiguracion ProfesionNav { get; set; }
+
+        public long? ActividadEconomicaId { get; set; }
+        [ForeignKey("ActividadEconomicaId")]
+        public ElementoConfiguracion ActividadEconomicaNav { get; set; }
+
+        public long? GeneroId { get; set; }
+        [ForeignKey("GeneroId")]
+        public ElementoConfiguracion GeneroNav { get; set; }
+
+
 
         [Display(Name = "Tipo de cliente")]
         public long? CustomerTypeId { get; set; } = null;
@@ -158,7 +175,13 @@ namespace ERPAPI.Models
         
         public DateTime? FechaCreacion { get; set; }
 
-       
+        public bool PEP { get; set; }
+
+        public bool AFND { get; set; }
+
+        public DateTime? FechaBaja { get; set; }
+
+
         public DateTime? FechaModificacion { get; set; }
 
         public List<CustomersOfCustomer> _Customers { get; set; }

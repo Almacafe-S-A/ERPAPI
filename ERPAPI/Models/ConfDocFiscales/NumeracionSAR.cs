@@ -1,9 +1,12 @@
-﻿using System;
+﻿using ERP.Contexts;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace ERPAPI.Models
 {
@@ -17,8 +20,8 @@ namespace ERPAPI.Models
 
         public string _cai { get; set; }
 
-        public string NoInicio { get; set; }
-        public string NoFin { get; set; }
+        public Int64 NoInicio { get; set; }
+        public Int64 NoFin { get; set; }
         public DateTime FechaLimite { get; set; }
         public int CantidadOtorgada { get; set; }
 
@@ -32,8 +35,6 @@ namespace ERPAPI.Models
         public string PuntoEmision { get; set; }
         public Int64 DocTypeId { get; set; }
         public string DocType { get; set; }
-        public Int64 DocSubTypeId { get; set; }
-        public string DocSubType { get; set; }
         [Display(Name = "Estado")]
         public Int64 IdEstado { get; set; }
         [Display(Name = "Estado")]
@@ -43,27 +44,74 @@ namespace ERPAPI.Models
         public string UsuarioCreacion { get; set; }
         public string UsuarioModificacion { get; set; }
 
-        public string GetNumeroSiguiente() {
+        public string GetCorrelativo() {
             if (this.Correlativo == null)
             {
                 this.Correlativo = Convert.ToInt64(this.NoInicio);
             }
 
-            this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo + 1}";
+            string correlativo =  $"{this.GetPrefijo()}-{this.Correlativo.ToString().PadLeft(8, '0')}";
 
 
-            return $"{this.GetPrefijo()}-{this.Correlativo + 1}";
+            
+            this.Correlativo = this.Correlativo+1;
+
+
+            this.SiguienteNumero = $"{this.GetPrefijo()}-{this.Correlativo}";
+
+            
+
+            return correlativo ;
 
         }
         public string GetPrefijo()
         {
-            return $"000-{this.DocType.Substring(0, 2)}-{this.PuntoEmision}";
+            return $"000-{this.PuntoEmision}-{this.DocType.Substring(0, 2)}";
 
         }
 
         public string getRango() {
-            return $"{this.GetPrefijo()}-{this.NoInicio} - {this.GetPrefijo()}-{this.NoFin}";
+            return $"{this.GetPrefijo()}-{this.NoInicio.ToString().PadLeft(8,'0')} al {this.GetPrefijo()}-{this.NoFin.ToString().PadLeft(8, '0')}";
         }
+
+        public NumeracionSAR ObtenerNumeracionSarValida(int tipoDocumento,int sucursal,ApplicationDbContext _context)
+        {
+
+            NumeracionSAR numeracionSAR = new NumeracionSAR();
+            List<NumeracionSAR> numeracionSARs = new List<NumeracionSAR>();
+            DateTime fecha = DateTime.Now;
+            fecha = new DateTime(fecha.Year, fecha.Month, fecha.Day);
+            fecha = fecha.AddHours(23);
+            fecha = fecha.AddMinutes(59);
+
+
+            numeracionSARs = _context.NumeracionSAR
+                    .Where(q => q.DocTypeId == tipoDocumento
+                    && q.BranchId== sucursal
+                    && fecha < q.FechaLimite
+                    && (q.Correlativo <= q.NoFin || q.SiguienteNumero == null || q.Correlativo == null)
+                    && q.IdEstado == 1)
+                    .ToList();
+
+            if (numeracionSARs.Count == 0)
+            {
+                Exception exception = new Exception("No existe numeracion valida");
+                throw exception;
+            }
+            if (numeracionSARs.Count > 1)
+            {
+                Exception exception = new Exception("Se encontro mas de una numeracion valida");
+                throw exception;
+            }
+
+
+            numeracionSAR = numeracionSARs.FirstOrDefault();
+
+            return numeracionSAR;
+
+
+        }
+
 
 
     }

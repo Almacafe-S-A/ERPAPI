@@ -24,6 +24,11 @@ namespace ERPAPI.Models
 
         [Required]
         public int Minutos { get; set; }
+        public int HoraAlumerzo { get; set; }
+
+        public string Observaciones { get; set; }
+        public string HoraEntrada { get; set; }
+        public string HoraSalida { get; set; }
 
         public Biometrico Encabezado { get; set; }
 
@@ -32,6 +37,7 @@ namespace ERPAPI.Models
 
         [Required]
         public long IdEstado { get; set; }
+        public string Estados { get; set; }
 
         [ForeignKey("IdEstado")]
         public Estados Estado { get; set; }

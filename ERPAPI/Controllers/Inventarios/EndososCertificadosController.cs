@@ -65,6 +65,35 @@ namespace ERPAPI.Controllers
             return await Task.Run(() => Ok(Items));
         }
 
+
+
+        /// <summary>
+        /// Obtienne los de los controles de salidas pendientes y le resta el saldo autorizado 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetEndosos([FromQuery(Name = "Recibos")] int[] ARs)
+        {
+            List<EndososCertificados> endososCertificados = new List<EndososCertificados>();
+            
+
+            try
+            {
+                endososCertificados = _context.EndososCertificados.Where(q => ARs.Any(a => a == (int)q.NoCD)).ToList();
+
+               
+
+
+
+                return Ok(endososCertificados.ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest("Ocurrio un error:" + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Obtiene el Listado de EndososCertificadoses 
         /// El estado define cuales son los cai activos
@@ -108,6 +137,9 @@ namespace ERPAPI.Controllers
             //  int Count = Items.Count();
             return Ok(Items);
         }
+
+
+        
 
         [HttpPost("[action]")]
         public async Task<IActionResult> GetEndososSaldoByLineByIdCD(EndososCertificadosLine _EndososCertificadosLine)
@@ -183,7 +215,32 @@ namespace ERPAPI.Controllers
 
             return Ok(Items);
         }
-       
+
+
+        /// <summary>
+        /// Obtiene los Datos de la EndososCertificados por medio del Id enviado.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetEndososporVencer()
+        {
+            List<EndososCertificados> Items = new List<EndososCertificados>();
+            try
+            {
+                Items = await _context.EndososCertificados.Include(i => i.CertificadoDeposito)
+                    .Where(q => DateTime.Now -  q.CertificadoDeposito.FechaVencimientoCertificado <TimeSpan.FromDays(30)).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+
+
+            return Ok(Items);
+        }
+
 
 
 
@@ -205,12 +262,21 @@ namespace ERPAPI.Controllers
                         _EndososCertificadosq = _EndososCertificados;
                         _EndososCertificadosq.FechaCancelacion = null;
                         _EndososCertificadosq.FechaLiberacion = null;
+                        _EndososCertificadosq.Saldo = _EndososCertificados.EndososCertificadosLine.Sum(s => s.Saldo);
+                        _EndososCertificadosq.CantidadEndosar = _EndososCertificados.EndososCertificadosLine.Sum(p => p.Quantity);
+                        _EndososCertificadosq.TotalEndoso = _EndososCertificados.EndososCertificadosLine.Sum(p => p.Price )* _EndososCertificadosq.CantidadEndosar;
+
+                        _EndososCertificadosq.ProductoEndosado = _EndososCertificados.EndososCertificadosLine.Count > 1 ? "Productos Varios" : _EndososCertificados.EndososCertificadosLine.FirstOrDefault().SubProductName;
+                        _EndososCertificadosq.Estado = "Vigente";
+                        _EndososCertificadosq.EstadoId = 1;
+                        
 
                         _context.EndososCertificados.Add(_EndososCertificadosq);
 
                         foreach (var item in _EndososCertificadosq.EndososCertificadosLine)
                         {
                             item.EndososCertificadosId = _EndososCertificados.EndososCertificadosId;
+                            //item.Saldo = item.Quantity;
                             _context.EndososCertificadosLine.Add(item);
                         }
 
@@ -233,6 +299,8 @@ namespace ERPAPI.Controllers
                             UsuarioCreacion = _EndososCertificadosq.UsuarioCreacion,
                             UsuarioModificacion = _EndososCertificadosq.UsuarioModificacion,
                             UsuarioEjecucion = _EndososCertificadosq.UsuarioModificacion,
+                            
+
 
                         });
 
@@ -267,15 +335,60 @@ namespace ERPAPI.Controllers
         [HttpPut("[action]")]
         public async Task<ActionResult<EndososCertificados>> Update([FromBody]EndososCertificados _EndososCertificados)
         {
+            if (_EndososCertificados.FechaCancelacion == null)
+            {
+                return BadRequest("Fecha de cancelacion no puede ser Nula");
+            }
             EndososCertificados _EndososCertificadosq = _EndososCertificados;
             try
             {
-                _EndososCertificadosq = await (from c in _context.EndososCertificados
-                                 .Where(q => q.EndososCertificadosId == _EndososCertificados.EndososCertificadosId)
-                                               select c
-                                ).FirstOrDefaultAsync();
+                _EndososCertificadosq = await _context.EndososCertificados
+                    .Where(q => q.EndososCertificadosId == _EndososCertificados.EndososCertificadosId)
+                    .Include(i => i.EndososCertificadosLine)
+                    .FirstOrDefaultAsync();
 
-                _context.Entry(_EndososCertificadosq).CurrentValues.SetValues((_EndososCertificados));
+               // _context.Entry(_EndososCertificadosq).CurrentValues.SetValues((_EndososCertificados));
+               _EndososCertificadosq.FechaCancelacion = _EndososCertificados.FechaCancelacion;
+
+
+                foreach (var item in _EndososCertificados.EndososCertificadosLine)
+                {
+                    _context.EndososLiberacion.Add(new EndososLiberacion {
+                        Pda = item.Pda,
+                        EndososId = item.EndososCertificadosId,
+                        EndososLineId = item.EndososCertificadosLineId,
+                        Quantity = item.CantidadLiberacion,
+                        UnitOfMeasureId = item.UnitOfMeasureId,
+                        UnitOfMeasureName = item.UnitOfMeasureName, 
+                        FechaCreacion =DateTime.Now,
+                        FechaLiberacion = (DateTime) _EndososCertificados.FechaCancelacion,
+                        UsuarioCreacion = User.Identity.Name,
+                        UsuarioModificacion = User.Identity.Name,
+                        Saldo = item.Quantity - item.CantidadLiberacion,
+                        FechaModificacion= DateTime.Now,
+                        SubProductName = item.SubProductName,
+                        SubProductId = item.SubProductId,   
+                        TipoEndoso = _EndososCertificados.NombreEndoso,
+                        
+                        
+                    
+                    
+                    });
+
+                    EndososCertificadosLine linea = _EndososCertificadosq.EndososCertificadosLine
+                        .Where(q => q.EndososCertificadosLineId == item.EndososCertificadosLineId).FirstOrDefault();
+
+                    linea.Saldo = item.Saldo - item.CantidadLiberacion;
+                }
+
+                _EndososCertificadosq.Saldo = _EndososCertificadosq.EndososCertificadosLine.Sum(s=>s.Saldo);
+
+                if (_EndososCertificadosq.Saldo == 0)
+                {
+                    _EndososCertificadosq.Estado = "Cancelado";
+                    _EndososCertificadosq.EstadoId = 2;
+                }
+
 
                 //YOJOCASU 2022-02-26 REGISTRO DE LOS DATOS DE AUDITORIA
                 new appAuditor(_context, _logger, User.Identity.Name).SetAuditor();

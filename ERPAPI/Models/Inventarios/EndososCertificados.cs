@@ -16,6 +16,9 @@ namespace ERPAPI.Models
         [Display(Name = "Id certificado")]
         public Int64 IdCD { get; set; }
 
+        [ForeignKey("IdCD")]
+        public CertificadoDeposito CertificadoDeposito { get; set; }
+
         [Display(Name = "Número de certificado")]
         public Int64 NoCD { get; set; }
 
@@ -53,15 +56,10 @@ namespace ERPAPI.Models
         [Display(Name = "Valor a endosar")]
         public decimal ValorEndosar { get; set; }
 
-        [Display(Name = "Tipo de endoso")]
-        public Int64 TipoEndosoId { get; set; }
-
-        [Display(Name = "Tipo de endoso")]
-        public string TipoEndosoName { get; set; }
-
-
         [Display(Name = "Cantidad a endosar")]
         public string FirmadoEn { get; set; }
+
+        public string ProductoEndosado { get; set; }
 
 
         [Display(Name = "Tipo de endoso")]
@@ -82,11 +80,15 @@ namespace ERPAPI.Models
         [Display(Name = "Total endoso")]
         public decimal TotalEndoso { get; set; }
 
+        public string Estado { get; set; }
+
+        public int EstadoId { get; set; }
+
+
         public DateTime? FechaLiberacion { get; set; }/// automatica al cancelar un endoso
 
         public DateTime? FechaCancelacion { get; set; }/// solo sera editable en las liberaciones
 
-        public decimal CantidadEndosada { get; set; } ///Se ingresara manual al registrar un Endoso
 
         public decimal Saldo { get; set; } /// solo se va mostrar en el grid Princial de endosos para referencias 
 

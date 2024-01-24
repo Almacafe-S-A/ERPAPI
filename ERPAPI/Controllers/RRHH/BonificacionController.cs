@@ -34,7 +34,7 @@ namespace ERPAPI.Controllers
                 if(inactivos)
                     bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId).ToListAsync();
                 else
-                    bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId && r.EstadoId == 90).ToListAsync();
+                    bonificaciones = await context.Bonificaciones.Where(r => r.EmpleadoId == empleadoId).ToListAsync();
 
                 return Ok(bonificaciones);
             }
@@ -45,26 +45,24 @@ namespace ERPAPI.Controllers
             }
         }
 
-        [HttpGet("[action]/{Periodo}/{Mes}/{inactivos}")]
-        public async Task<ActionResult> GetBonificacionesMesPeriodo(int Periodo, int Mes, bool inactivos)
+        [HttpGet("[action]/{Periodo}/{Mes}")]
+        public async Task<ActionResult> GetBonificacionesMesPeriodo(int Periodo, int Mes)
         {
             try
             {
-                DateTime fchInicio = new DateTime(Periodo,Mes,1);
+                // Corregir el orden de los parámetros en fchInicio y fchFin
+                DateTime fchInicio = new DateTime(Periodo, Mes, 1);
                 DateTime fchFin = new DateTime(Periodo, Mes, 1).AddMonths(1);
+
                 List<Bonificacion> bonificaciones = null;
-                if (inactivos)
-                    bonificaciones = await context.Bonificaciones
-                        .Include(e=> e.Empleado)
-                        .Include(t=>t.Tipo)
-                        .Include(e=>e.Estado)
-                        .Where(r => r.FechaBono>= fchInicio && r.FechaBono < fchFin).ToListAsync();
-                else
-                    bonificaciones = await context.Bonificaciones
-                        .Include(e => e.Empleado)
-                        .Include(t => t.Tipo)
-                        .Include(e => e.Estado)
-                        .Where(r => r.FechaBono >= fchInicio && r.FechaBono < fchFin && r.EstadoId == 90).ToListAsync();
+
+                bonificaciones = await context.Bonificaciones
+                    .Include(e => e.Empleado)
+                    .Include(t => t.Tipo)
+                    .Include(e => e.Estado)
+                    .Where(r => r.FechaBono >= fchInicio && r.FechaBono < fchFin)
+                    .OrderBy(b => b.EmpleadoId)
+                    .ToListAsync();
 
                 return Ok(bonificaciones);
             }
@@ -120,6 +118,38 @@ namespace ERPAPI.Controllers
                 logger.LogError(ex,"Error al guardar el registro de la bonificación");
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet("[action]/{idBonificacion}/{estado}")]
+        public async Task<IActionResult> ChangeStatus(long idBonificacion, int estado)
+        {
+            Bonificacion Items = new Bonificacion();
+            try
+            {
+                Items = await context
+                    .Bonificaciones
+                    .Where(q => q.Id == idBonificacion).
+                    FirstOrDefaultAsync();
+                switch (estado)
+                {
+                    case 1:
+                        Items.EstadoId = 6;
+                        break;
+                    case 2:
+                        Items.EstadoId = 7;
+                        break;
+                    default:
+                        break;
+                }
+                new appAuditor(context, logger, User.Identity.Name).SetAuditor();
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Ocurrio un error: {ex.ToString()}");
+                return BadRequest($"Ocurrio un error:{ex.Message}");
+            }
+            return await Task.Run(() => Ok(Items));
         }
     }
 }
